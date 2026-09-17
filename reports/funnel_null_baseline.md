@@ -11,7 +11,7 @@ Over 64,000 simulated 12-month (252-trading-day) careers:
 - Mean monthly net income: $1 (Standard) / -$28 (Consistency); P(net income > 0): 26.3% / 20.4%
 - Right tail (monthly net income p80/p90/p95): $43/$199/$388 (Standard), $2/$128/$292 (Consistency)
 
-Reading: at this sizing, a zero-edge trader roughly breaks even on average on the Standard path and loses money on average on the Consistency path, with a lottery-like right tail. The most favorable null critical values used by the power gate come from the 5-micro, 1 round-turn/day configuration, not the 2-micro headline sizing shown above.
+Reading: at this sizing, a zero-edge trader roughly breaks even on average on the Standard path and loses money on average on the Consistency path, with a lottery-like right tail. The most favorable null critical values used by the power gate come from the 6-micro (p80, p90) and 7-micro (p95) 1 round-turn/day configurations, not the 2-micro headline sizing shown above. The size ladder was extended to 30 micros after this report was first written; the critical-value table below reflects the extended grid.
 
 ## Headline: zero-edge trader, 2 micros, 1 round turn/day, 12 months (252 trading days)
 
@@ -94,18 +94,6 @@ Caveat: a zero-edge trader rarely holds many XFAs at once — only about 0.03% o
 
 | Path | Micros | RT/day | Pass/attempt | P(payout ≤12m) | Net mean | Net p50 | Net p80 | Net p90 | P(net>0) | XFA breaches/run |
 |---|---|---|---|---|---|---|---|---|---|---|
-| standard | 1 | 1 | 14.7% | 33.8% | -$53 | -$72 | -$58 | -$11 | 9.1% | 0.58 |
-| standard | 1 | 2 | 12.9% | 30.4% | -$60 | -$72 | -$64 | -$29 | 6.9% | 0.54 |
-| standard | 1 | 4 | 9.2% | 21.3% | -$67 | -$72 | -$68 | -$52 | 4.0% | 0.40 |
-| standard | 2 | 1 | 18.1% | 66.0% | $1 | -$76 | $43 | $199 | 26.4% | 2.10 |
-| standard | 2 | 2 | 16.7% | 64.5% | -$18 | -$80 | $20 | $142 | 23.1% | 2.02 |
-| standard | 2 | 4 | 14.0% | 55.4% | -$43 | -$88 | -$17 | $66 | 17.1% | 1.73 |
-| standard | 3 | 1 | 19.5% | 77.2% | $83 | -$49 | $198 | $459 | 39.7% | 3.79 |
-| standard | 3 | 2 | 18.0% | 75.1% | $45 | -$64 | $147 | $361 | 35.9% | 3.75 |
-| standard | 3 | 4 | 15.2% | 67.8% | -$8 | -$91 | $59 | $234 | 27.4% | 3.27 |
-| standard | 5 | 1 | 18.4% | 79.2% | $177 | -$34 | $401 | $817 | 46.0% | 6.56 |
-| standard | 5 | 2 | 16.9% | 76.8% | $105 | -$70 | $300 | $651 | 41.1% | 6.48 |
-| standard | 5 | 4 | 14.5% | 70.4% | $9 | -$118 | $157 | $418 | 31.9% | 5.78 |
 | consistency | 1 | 1 | 14.7% | 19.5% | -$61 | -$76 | -$68 | -$30 | 7.0% | 0.50 |
 | consistency | 1 | 2 | 12.9% | 17.2% | -$65 | -$76 | -$68 | -$34 | 5.4% | 0.47 |
 | consistency | 1 | 4 | 9.2% | 11.2% | -$70 | -$76 | -$68 | -$62 | 3.2% | 0.36 |
@@ -118,6 +106,32 @@ Caveat: a zero-edge trader rarely holds many XFAs at once — only about 0.03% o
 | consistency | 5 | 1 | 18.4% | 60.8% | $27 | -$107 | $185 | $477 | 33.7% | 6.44 |
 | consistency | 5 | 2 | 16.9% | 56.9% | -$23 | -$135 | $120 | $376 | 28.8% | 6.39 |
 | consistency | 5 | 4 | 14.5% | 48.3% | -$89 | -$188 | $10 | $215 | 21.2% | 5.72 |
+| consistency | 6 | 1 | 17.2% | 60.5% | $5 | -$126 | $178 | $473 | 31.8% | 7.30 |
+| consistency | 7 | 1 | 15.6% | 58.6% | -$40 | -$162 | $133 | $424 | 28.8% | 7.92 |
+| consistency | 8 | 1 | 14.6% | 56.6% | -$74 | -$191 | $103 | $391 | 26.8% | 8.21 |
+| consistency | 10 | 1 | 12.7% | 52.8% | -$145 | -$248 | $31 | $298 | 22.3% | 8.60 |
+| consistency | 15 | 1 | 9.8% | 43.6% | -$279 | -$362 | -$112 | $122 | 13.4% | 8.45 |
+| consistency | 20 | 1 | 8.3% | 37.9% | -$369 | -$448 | -$203 | -$18 | 9.6% | 8.32 |
+| consistency | 30 | 1 | 6.1% | 26.5% | -$509 | -$583 | -$358 | -$203 | 4.2% | 7.35 |
+| standard | 1 | 1 | 14.7% | 33.8% | -$53 | -$72 | -$58 | -$11 | 9.1% | 0.58 |
+| standard | 1 | 2 | 12.9% | 30.4% | -$60 | -$72 | -$64 | -$29 | 6.9% | 0.54 |
+| standard | 1 | 4 | 9.2% | 21.3% | -$67 | -$72 | -$68 | -$52 | 4.0% | 0.40 |
+| standard | 2 | 1 | 18.1% | 66.0% | $1 | -$76 | $43 | $199 | 26.4% | 2.10 |
+| standard | 2 | 2 | 16.7% | 64.5% | -$18 | -$80 | $20 | $142 | 23.1% | 2.02 |
+| standard | 2 | 4 | 14.0% | 55.4% | -$43 | -$88 | -$17 | $66 | 17.1% | 1.73 |
+| standard | 3 | 1 | 19.5% | 77.2% | $83 | -$49 | $198 | $459 | 39.7% | 3.79 |
+| standard | 3 | 2 | 18.0% | 75.1% | $45 | -$64 | $147 | $361 | 35.9% | 3.75 |
+| standard | 3 | 4 | 15.2% | 67.8% | -$8 | -$91 | $59 | $234 | 27.4% | 3.27 |
+| standard | 5 | 1 | 18.4% | 79.2% | $177 | -$34 | $401 | $817 | 46.0% | 6.56 |
+| standard | 5 | 2 | 16.9% | 76.8% | $105 | -$70 | $300 | $651 | 41.1% | 6.48 |
+| standard | 5 | 4 | 14.5% | 70.4% | $9 | -$118 | $157 | $418 | 31.9% | 5.78 |
+| standard | 6 | 1 | 17.2% | 76.9% | $170 | -$57 | $420 | $874 | 44.0% | 7.40 |
+| standard | 7 | 1 | 15.6% | 73.6% | $132 | -$98 | $392 | $860 | 39.8% | 8.00 |
+| standard | 8 | 1 | 14.6% | 71.3% | $101 | -$130 | $361 | $849 | 37.4% | 8.27 |
+| standard | 10 | 1 | 12.7% | 66.8% | $30 | -$199 | $290 | $771 | 32.1% | 8.64 |
+| standard | 15 | 1 | 9.8% | 56.4% | -$133 | -$330 | $70 | $531 | 22.6% | 8.48 |
+| standard | 20 | 1 | 8.3% | 49.8% | -$244 | -$420 | -$82 | $344 | 17.2% | 8.34 |
+| standard | 30 | 1 | 6.1% | 35.2% | -$436 | -$559 | -$304 | -$62 | 8.8% | 7.35 |
 
 ## Sensitivity: bootstrap mean block length (headline size)
 
@@ -134,12 +148,12 @@ Caveat: a zero-edge trader rarely holds many XFAs at once — only about 0.03% o
 
 | Path | Quantile | Monthly net | at micros | RT/day |
 |---|---|---|---|---|
-| standard | p80 | $401 | 5 | 1 |
-| standard | p90 | $817 | 5 | 1 |
-| standard | p95 | $1,329 | 5 | 1 |
+| standard | p80 | $420 | 6 | 1 |
+| standard | p90 | $874 | 6 | 1 |
+| standard | p95 | $1,423 | 7 | 1 |
 | consistency | p80 | $185 | 5 | 1 |
 | consistency | p90 | $477 | 5 | 1 |
-| consistency | p95 | $820 | 5 | 1 |
+| consistency | p95 | $829 | 6 | 1 |
 
 ## Assumptions and limits
 
@@ -151,5 +165,5 @@ Caveat: a zero-edge trader rarely holds many XFAs at once — only about 0.03% o
 - Payouts are gross (no profit split applied); the payout policy is greedy (withdraws the maximum allowed as soon as eligible); one Combine attempt at a time; max 5 XFAs live per trader.
 - Not modeled: XFA activation delay, LFA call-up, inactivity rules, the optional Daily Loss Limit plan, and taxes.
 - Sample size: the largest ladder rung, N = 64,000 runs; both paths reach Monte Carlo stability at N = 16,000 (per the tolerance rule in the stability tables above).
-- Runtime: this baseline took about 1,946 seconds (roughly 32 minutes) to generate.
+- Runtime: this baseline took about 1,946 seconds (roughly 32 minutes) to generate, plus 553 seconds (about 9 minutes) for the later size-ladder extension to 6-30 micros — 2,499 seconds (about 42 minutes) in total.
 - Rules conflicts flagged in Stage A.1 are still encoded at the stricter reading in every case (e.g. Combine consistency 50% vs. 55%); full list in `rules/xfa_rules.py`.

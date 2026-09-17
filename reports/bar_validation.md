@@ -4,7 +4,7 @@
 **Window:** 2025-04-01 00:00 UTC → 2026-09-16 00:00 UTC (first bar Mon 2025-03-31 19:00 CT, last bar Tue 2026-09-15 18:59 CT)
 **Reproduce:** `uv run python -m data.build_mes_bars` and `uv run python -m data.tick_crosscheck`
 **Machine-readable results:** `reports/bar_validation_summary.json`, `reports/tick_crosscheck_summary.json`
-**Output series:** `data/processed/MES/ohlcv-1m_MES_v_0_2025-04-01_2026-09-16.parquet` (517,197 bars, flag columns documented in `data/bars.py`)
+**Output series (as validated, 2026-09-16):** `data/processed/MES/ohlcv-1m_MES_v_0_2025-04-01_2026-09-16.parquet` (517,197 bars, flag columns documented in `data/bars.py`). **That file no longer exists.** The Stage C Task 6 seal migration split it into the research slice `data/processed/MES/ohlcv-1m_MES_v_0_2025-04-01_2026-06-19_research.parquet` (431,999 bars, read-only — the name `data/research_bars.py` hardcodes) plus the encrypted holdout under `data/sealed/`. Rebuilding the full-window file is refused by `data/build_mes_bars.py` by design. Everything below describes the full 517,197-bar series as it was validated.
 
 ## Verdict
 

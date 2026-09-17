@@ -1,0 +1,272 @@
+{
+ "generated_utc": "2026-09-17T14:50:15.183426+00:00",
+ "real_window_trade_dates": [
+  "2025-10-01",
+  "2025-12-31"
+ ],
+ "real": {
+  "bars": 88360,
+  "planted_jumps": 1273,
+  "jump_ticks": 16,
+  "criteria": {
+   "leak_canary_real_engine": "trades >= 100 AND mean captured < JUMP/4 ticks AND |z| < 4 AND |hit rate - 0.5| < 4 binomial SE",
+   "positive_control_detected": "trades >= 100 AND mean captured >= JUMP/2 ticks AND z >= 5",
+   "latency_control_real_engine": "trades >= 100 AND mean captured >= JUMP/2 ticks AND z >= 5",
+   "random_baseline": "trades >= 100 AND |mean gross ticks per round trip| < 4 SE",
+   "tripwire": "at every strategy call for bar N, exactly N+1 bars pulled from the feed"
+  },
+  "checks": {
+   "leak_canary_real_engine": {
+    "trades": 1210,
+    "mean_captured_ticks": -0.18925619834710744,
+    "se_ticks": 0.26652811247824626,
+    "z": -0.7100796857312915,
+    "hit_rate": 0.5145888594164456,
+    "hit_n": 1131,
+    "hit_se_under_null": 0.014867525836251314,
+    "passed": true
+   },
+   "positive_control_same_bar_fill_detected": {
+    "trades": 1212,
+    "mean_captured_ticks": 15.62953795379538,
+    "se_ticks": 0.2913412214066886,
+    "z": 53.64684708305598,
+    "hit_rate": 0.9484621778886118,
+    "hit_n": 1203,
+    "hit_se_under_null": 0.014415748292622299,
+    "passed": true
+   },
+   "positive_control_peek_next_bar_detected": {
+    "trades": 1212,
+    "mean_captured_ticks": 15.62953795379538,
+    "se_ticks": 0.2913412214066886,
+    "z": 53.64684708305598,
+    "hit_rate": 0.9484621778886118,
+    "hit_n": 1203,
+    "hit_se_under_null": 0.014415748292622299,
+    "passed": true
+   },
+   "latency_control_real_engine": {
+    "trades": 1212,
+    "mean_captured_ticks": 15.62953795379538,
+    "se_ticks": 0.2913412214066886,
+    "z": 53.64684708305598,
+    "hit_rate": 0.9484621778886118,
+    "hit_n": 1203,
+    "hit_se_under_null": 0.014415748292622299,
+    "passed": true
+   },
+   "random_baseline_planted_real_engine": {
+    "trades": 1826,
+    "mean_captured_ticks": 0.001095290251916758,
+    "se_ticks": 0.5790078070316373,
+    "z": 0.0018916675019148932,
+    "hit_rate": NaN,
+    "hit_n": 0,
+    "hit_se_under_null": NaN,
+    "passed": true
+   },
+   "random_baseline_clean_real_engine": {
+    "trades": 1825,
+    "mean_captured_ticks": 0.03452054794520548,
+    "se_ticks": 0.5548119300261259,
+    "z": 0.06222026974722753,
+    "hit_rate": NaN,
+    "hit_n": 0,
+    "hit_se_under_null": NaN,
+    "passed": true
+   },
+   "random_baseline_planted_same_bar_fill_mutant": {
+    "trades": 1828,
+    "mean_captured_ticks": 0.29048140043763676,
+    "se_ticks": 0.5776356330679494,
+    "z": 0.5028799883671068,
+    "hit_rate": NaN,
+    "hit_n": 0,
+    "hit_se_under_null": NaN,
+    "passed": true,
+    "note": "blind strategy on a LEAKY engine: shows no edge either, which is why this check alone cannot certify point-in-time discipline"
+   },
+   "tripwire_no_peek": {
+    "calls": 88360,
+    "violations": 0,
+    "passed": true
+   },
+   "strategy_receives_frozen_primitives_only": {
+    "calls": 88360,
+    "passed": true
+   },
+   "backdated_intents_refused": {
+    "fills": 0,
+    "refusal_reasons": [
+     "engine_intent_timestamp_mismatch"
+    ],
+    "passed": true
+   },
+   "hindsight_flag_never_gates_trading": {
+    "fills": 3614,
+    "passed": true
+   },
+   "every_bar_field_has_availability_class": {
+    "hindsight_fields": [
+     "vendor_degraded_day"
+    ],
+    "passed": true
+   }
+  },
+  "diagnostics": {
+   "same_bar_fill_on_latency_markers": {
+    "trades": 1212,
+    "mean_captured_ticks": 0.018976897689768978,
+    "se_ticks": 0.23969491438565463,
+    "z": 0.07917104849056704,
+    "hit_rate": 0.49776586237712245,
+    "hit_n": 1119,
+    "hit_se_under_null": 0.014947031888898777
+   },
+   "peek_next_bar_on_latency_markers": {
+    "trades": 1212,
+    "mean_captured_ticks": 0.018976897689768978,
+    "se_ticks": 0.23969491438565463,
+    "z": 0.07917104849056704,
+    "hit_rate": 0.49776586237712245,
+    "hit_n": 1119,
+    "hit_se_under_null": 0.014947031888898777
+   }
+  },
+  "all_passed": true
+ },
+ "synthetic_40_days": {
+  "bars": 16200,
+  "planted_jumps": 800,
+  "jump_ticks": 16,
+  "criteria": {
+   "leak_canary_real_engine": "trades >= 100 AND mean captured < JUMP/4 ticks AND |z| < 4 AND |hit rate - 0.5| < 4 binomial SE",
+   "positive_control_detected": "trades >= 100 AND mean captured >= JUMP/2 ticks AND z >= 5",
+   "latency_control_real_engine": "trades >= 100 AND mean captured >= JUMP/2 ticks AND z >= 5",
+   "random_baseline": "trades >= 100 AND |mean gross ticks per round trip| < 4 SE",
+   "tripwire": "at every strategy call for bar N, exactly N+1 bars pulled from the feed"
+  },
+  "checks": {
+   "leak_canary_real_engine": {
+    "trades": 800,
+    "mean_captured_ticks": 0.07125,
+    "se_ticks": 0.1249589341179528,
+    "z": 0.5701873219624681,
+    "hit_rate": 0.5161290322580645,
+    "hit_n": 713,
+    "hit_se_under_null": 0.018725147156828454,
+    "passed": true
+   },
+   "positive_control_same_bar_fill_detected": {
+    "trades": 800,
+    "mean_captured_ticks": 16.01625,
+    "se_ticks": 0.12404067895016548,
+    "z": 129.12094754362542,
+    "hit_rate": 1.0,
+    "hit_n": 800,
+    "hit_se_under_null": 0.017677669529663688,
+    "passed": true
+   },
+   "positive_control_peek_next_bar_detected": {
+    "trades": 800,
+    "mean_captured_ticks": 16.01625,
+    "se_ticks": 0.12404067895016548,
+    "z": 129.12094754362542,
+    "hit_rate": 1.0,
+    "hit_n": 800,
+    "hit_se_under_null": 0.017677669529663688,
+    "passed": true
+   },
+   "latency_control_real_engine": {
+    "trades": 800,
+    "mean_captured_ticks": 16.01625,
+    "se_ticks": 0.12404067895016548,
+    "z": 129.12094754362542,
+    "hit_rate": 1.0,
+    "hit_n": 800,
+    "hit_se_under_null": 0.017677669529663688,
+    "passed": true
+   },
+   "random_baseline_planted_real_engine": {
+    "trades": 347,
+    "mean_captured_ticks": -0.17002881844380405,
+    "se_ticks": 0.9954627468449442,
+    "z": -0.1708037985175232,
+    "hit_rate": NaN,
+    "hit_n": 0,
+    "hit_se_under_null": NaN,
+    "passed": true
+   },
+   "random_baseline_clean_real_engine": {
+    "trades": 347,
+    "mean_captured_ticks": 0.10662824207492795,
+    "se_ticks": 0.6823988528650904,
+    "z": 0.15625501365842456,
+    "hit_rate": NaN,
+    "hit_n": 0,
+    "hit_se_under_null": NaN,
+    "passed": true
+   },
+   "random_baseline_planted_same_bar_fill_mutant": {
+    "trades": 347,
+    "mean_captured_ticks": -0.02881844380403458,
+    "se_ticks": 1.0165859453031272,
+    "z": -0.028348261096056617,
+    "hit_rate": NaN,
+    "hit_n": 0,
+    "hit_se_under_null": NaN,
+    "passed": true,
+    "note": "blind strategy on a LEAKY engine: shows no edge either, which is why this check alone cannot certify point-in-time discipline"
+   },
+   "tripwire_no_peek": {
+    "calls": 16200,
+    "violations": 0,
+    "passed": true
+   },
+   "strategy_receives_frozen_primitives_only": {
+    "calls": 16200,
+    "passed": true
+   },
+   "backdated_intents_refused": {
+    "fills": 0,
+    "refusal_reasons": [
+     "engine_intent_timestamp_mismatch"
+    ],
+    "passed": true
+   },
+   "hindsight_flag_never_gates_trading": {
+    "fills": 722,
+    "passed": true
+   },
+   "every_bar_field_has_availability_class": {
+    "hindsight_fields": [
+     "vendor_degraded_day"
+    ],
+    "passed": true
+   }
+  },
+  "diagnostics": {
+   "same_bar_fill_on_latency_markers": {
+    "trades": 793,
+    "mean_captured_ticks": -0.03783102143757881,
+    "se_ticks": 0.13012681725939063,
+    "z": -0.29072425065286633,
+    "hit_rate": 0.4971830985915493,
+    "hit_n": 710,
+    "hit_se_under_null": 0.01876466562602004
+   },
+   "peek_next_bar_on_latency_markers": {
+    "trades": 793,
+    "mean_captured_ticks": -0.03783102143757881,
+    "se_ticks": 0.13012681725939063,
+    "z": -0.29072425065286633,
+    "hit_rate": 0.4971830985915493,
+    "hit_n": 710,
+    "hit_se_under_null": 0.01876466562602004
+   }
+  },
+  "all_passed": true
+ },
+ "all_passed": true
+}

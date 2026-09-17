@@ -1,0 +1,25 @@
+# Stages
+
+Naming convention: `Stage X.Y : Task Z` (per program ways-of-working).
+Prompts delivered in chat between BEGIN PROMPT / END PROMPT markers, not
+as files. This doc tracks stage scope only; prompt text lives in chat
+history, not here.
+
+- Stage A.1 — Data + rules engine offline build. No TopstepX credentials
+  required. Port Databento adapter, pull MES ohlcv-1m, validate bars,
+  calibrate cost model from existing ticks, build XFA rules engine with
+  known-answer tests. (In progress.)
+- Stage A.2 — TopstepX access and cost census, once Combine + API Access
+  are purchased. Practice account, API key, measured rate limits,
+  official fee table confirmation, written questions to Topstep support.
+- Stage B — Funnel simulator (XFA branch only) and rules-engine
+  integration tests against the Stage A.1 rules module. (Built 2026-09-17;
+  see progress.md, reports/funnel_null_baseline.md, reports/power_gate.md.)
+- Stage C — Backtest harness: strategy interface, fill model wired to
+  Stage A.1 cost model, leakage suite with planted-future canaries,
+  walk-forward splits with a sealed holdout. (Built 2026-09-17; see
+  progress.md, reports/leakage_suite.md. Holdout sealed behind data/holdout.py;
+  unlocks are logged in docs/HOLDOUT_UNLOCK_LOG.md and reserved for Stage D.2.)
+- Stage D.1 — Strategy research (separate session; not started).
+- Stage D.2 — Sealed holdout read under the pre-registered bar.
+- Stage E — Practice-account forward test, then one 50K Combine.

@@ -21,8 +21,12 @@ Per bar, in this order:
 1. Session change: if the bar starts a new trade date, strategy orders still
    pending from the old session are cancelled, the old day is closed through
    ``close_trading_day``, and a terminal account is restarted if configured.
-2. Fills: pending orders fill at this bar's open, booking commission + slippage
-   at the fill time bucket and size.
+2. Fills: pending market orders fill at this bar's open, booking commission +
+   slippage at the fill time bucket and size. Resting passive (limit) orders are
+   then tried against the bar's range: they fill at their limit price, commission
+   only, on a trade-through by one tick (``sim.fill_model.passive_fill_ticks``).
+   They are cancelled on expiry or, if they would add exposure, once the
+   no-new-positions window opens.
 3. Real-time MLL: an open position is marked at the bar's adverse extreme. On a
    breach it is liquidated at the tick where equity touched the floor (or at the
    open, if the bar gapped through it), and the account is breached.
@@ -52,7 +56,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Iterable, Iterator, Sequence
-from dataclasses import asdict, dataclass, field, is_dataclass, replace
+from dataclasses import asdict, dataclass, is_dataclass, replace
 from datetime import date, datetime, time, timedelta
 from enum import Enum
 from fractions import Fraction
@@ -66,13 +70,20 @@ from data.cme_calendar import HOLIDAYS, HolidayKind
 from rules import xfa_rules as xr
 from rules.xfa_rules import AccountState, OrderIntent, Phase, Refusal, Status
 from sim.costs import SlippageTable
-from sim.fill_model import MES_TICK_VALUE_CENTS, side_cost
+from sim.fill_model import (
+    MES_TICK_VALUE_CENTS,
+    passive_fill_ticks,
+    passive_side_cost,
+    side_cost,
+)
 from strategy.interface import (
     HINDSIGHT_FIELDS,
     AccountView,
     Bar,
+    PassiveIntent,
     Strategy,
     construct_bar,
+    passive_refusal,
 )
 
 ENGINE_REFUSAL_ORDER = (
@@ -83,12 +94,16 @@ ENGINE_REFUSAL_ORDER = (
     "engine_scheduled_closure",
     "engine_flatten_window",
     "engine_roll_blackout",
+    "engine_malformed_passive",  # a PassiveIntent's wrapped order is checked first
 )
 BAR_COLUMNS = (
     "ts_event", "open", "high", "low", "close", "volume", "instrument_id", "raw_symbol",
     "trade_date", "in_flatten_window", "in_no_new_positions_window", "early_halt_ct",
     "in_scheduled_closure", "is_roll_session", "gap_before_minutes", "vendor_degraded_day",
 )
+
+
+NS_PER_MINUTE = 60_000_000_000
 
 
 class EngineInvariantError(RuntimeError):
@@ -214,6 +229,7 @@ class IntentEvent:
     refusal: Refusal | None
     position_before: int
     pending_before: int
+    limit_price: float | None = None  # set for a PassiveIntent (resting limit order)
 
 
 @dataclass(frozen=True, slots=True)
@@ -232,6 +248,7 @@ class FillEvent:
     position_after: int
     balance_after_cents: int
     minutes_after_decision: int
+    order_type: str = "market"  # "market" | "passive"
 
 
 @dataclass(frozen=True, slots=True)
@@ -313,12 +330,27 @@ def ledger_to_jsonl(ledger: Sequence[LedgerEvent], path: Path) -> None:
 
 
 # ------------------------------------------------------------------ engine ----
-@dataclass(frozen=True)
+# Explicit "no roll blackout": only for synthetic bars that contain no contract splice.
+NO_ROLL_BLACKOUT: frozenset[date] = frozenset()
+
+
+@dataclass(frozen=True, kw_only=True)
 class EngineConfig:
+    """Engine settings. RESEARCH SCREENING DOES NOT BUILD THIS BY HAND: it goes through
+    ``screening.screen_candidate``, which holds the one canonical configuration
+    (docs/SCREENING.md). Hand construction is for engine tests and harness tooling.
+
+    ``roll_blackout`` is REQUIRED (Stage D.1a). Before that it defaulted to empty, and
+    omitting it silently changed results: family B's Stage D.1 runs held positions into
+    splice sessions, and a position spanning a splice raises ``EngineInvariantError``. Pass
+    ``roll_blackout_dates(...)`` for real data, or ``NO_ROLL_BLACKOUT`` explicitly for
+    synthetic bars.
+    """
+
     restart_on_terminal: bool  # required: a breach/pass ends the account; restart or stop
+    roll_blackout: frozenset[date]  # required: see the docstring
     phase: Phase = Phase.XFA
     slippage_statistic: str = "mean"
-    roll_blackout: frozenset[date] = field(default_factory=frozenset)
     # Hindsight fields (``strategy.interface.HINDSIGHT_FIELDS``) are blanked before the bar
     # reaches the strategy, so a strategy cannot condition on information published after the
     # fact. The engine keeps the true values for reporting. Set False only to measure what a
@@ -331,6 +363,12 @@ class _Order:
     decision_ts_ns: int
     signed_qty: int
     reason: str  # "strategy" | "forced_flatten"
+    limit_ticks: int | None = None  # set: a resting passive order at this price
+    expires_ts_ns: int | None = None  # passive only: cancelled on the first bar opening here+
+
+    @property
+    def is_passive(self) -> bool:
+        return self.limit_ticks is not None
 
 
 @dataclass(frozen=True)
@@ -390,7 +428,8 @@ class _Run:
     def fill(self, order: _Order, bar: Bar, price_ticks: int, reason: str) -> None:
         self.assert_fill_after_decision(order, bar)
         qty = abs(order.signed_qty)
-        cost = side_cost(self.table, bar.open_ts_utc, qty, self.config.slippage_statistic)
+        cost = (passive_side_cost(qty) if order.is_passive else
+                side_cost(self.table, bar.open_ts_utc, qty, self.config.slippage_statistic))
         self.position, gross = apply_fill(self.position, order.signed_qty, price_ticks)
         self.state = xr.record_realized_pnl(self.state, gross - cost.total_cents)
         if reason == "strategy":
@@ -404,6 +443,7 @@ class _Run:
             slippage_ticks_per_micro=cost.slippage_ticks_per_micro, gross_realized_cents=gross,
             position_after=self.position.qty, balance_after_cents=self.state.balance_cents,
             minutes_after_decision=(bar.ts_event_ns - order.decision_ts_ns) // 60_000_000_000,
+            order_type="passive" if order.is_passive else "market",
         ))
 
     def cancel_pending(self, ts_ns: int, reason: str, keep_forced: bool) -> None:
@@ -473,16 +513,42 @@ class _Run:
         self.last_close_balance = after.balance_cents
         self.strategy_fills_today = 0
 
+    def _cancel(self, order: _Order, bar: Bar, reason: str) -> None:
+        self.ledger.append(CancelEvent(bar.ts_event_ns, order.decision_ts_ns, self.account_index,
+                                       reason, "buy" if order.signed_qty > 0 else "sell",
+                                       abs(order.signed_qty)))
+
     def fill_pending_at_open(self, bar: Bar) -> None:
+        """Market orders fill at this bar's open; resting passive orders are then tried
+        against the bar's range (the open comes before any later trade-through)."""
         orders, self.pending = self.pending, ()
+        resting: list[_Order] = []
         for order in orders:
             if order.reason == "strategy" and self.state.status is not Status.ACTIVE:
-                self.ledger.append(CancelEvent(bar.ts_event_ns, order.decision_ts_ns,
-                                               self.account_index, "account_not_active",
-                                               "buy" if order.signed_qty > 0 else "sell",
-                                               abs(order.signed_qty)))
-                continue
-            self.fill(order, bar, _price_ticks(bar.open), order.reason)
+                self._cancel(order, bar, "account_not_active")
+            elif order.is_passive:
+                resting.append(order)
+            else:
+                self.fill(order, bar, _price_ticks(bar.open), order.reason)
+        self.pending = tuple(o for o in resting if self.try_passive(o, bar))
+
+    def try_passive(self, order: _Order, bar: Bar) -> bool:
+        """Fill, cancel or keep one resting order on ``bar``. True means it keeps resting."""
+        assert order.limit_ticks is not None and order.expires_ts_ns is not None
+        if bar.ts_event_ns >= order.expires_ts_ns:
+            self._cancel(order, bar, "passive_expired")
+            return False
+        adds_exposure = not xr.is_reducing(self.position.qty, order.signed_qty)
+        if adds_exposure and (bar.in_no_new_positions_window or xr.is_no_new_positions_window(
+                bar.open_ts_utc, bar.early_halt_ct)):
+            self._cancel(order, bar, "passive_no_new_positions_window")
+            return False
+        price = passive_fill_ticks(order.signed_qty, order.limit_ticks,
+                                   _price_ticks(bar.low), _price_ticks(bar.high))
+        if price is None:
+            return True
+        self.fill(order, bar, price, order.reason)
+        return False
 
     def check_mll(self, bar: Bar) -> None:
         q = self.position.qty
@@ -541,6 +607,18 @@ class _Run:
         )
 
     def structural_refusal(self, item: object, bar: Bar) -> Refusal | None:
+        if isinstance(item, PassiveIntent):
+            if not isinstance(item.intent, OrderIntent):
+                return Refusal("engine_not_an_intent",
+                               f"PassiveIntent wraps {type(item.intent).__name__}")
+            refusal = self.structural_refusal(item.intent, bar)
+            if refusal is not None:
+                return refusal
+            passive = passive_refusal(bar, item)
+            if passive is not None:
+                return Refusal("engine_malformed_passive",
+                               f"{passive.reason}: {passive.arithmetic}")
+            return None
         if isinstance(item, Refusal):
             return Refusal("strategy_construction_refusal", f"{item.reason}: {item.arithmetic}")
         if not isinstance(item, OrderIntent):
@@ -582,7 +660,9 @@ class _Run:
             exposure = self.position.qty + sum(o.signed_qty for o in self.pending)
             pending_before = sum(o.signed_qty for o in self.pending)
             refusal = self.structural_refusal(item, bar)
-            intent = item if isinstance(item, OrderIntent) else None
+            passive = item if isinstance(item, PassiveIntent) else None
+            intent = passive.intent if passive is not None else (
+                item if isinstance(item, OrderIntent) else None)
             if refusal is None and intent is not None:
                 refusal = xr.check_order(intent, self.state, exposure,
                                          self.state.session_start_balance_cents,
@@ -590,10 +670,17 @@ class _Run:
             accepted = refusal is None and intent is not None
             self.ledger.append(IntentEvent(bar.decision_ts_ns, self.account_index, intent,
                                            repr(item), accepted, refusal, self.position.qty,
-                                           pending_before))
-            if accepted:
-                self.pending = (*self.pending, _Order(bar.decision_ts_ns, intent.signed_quantity,
-                                                      "strategy"))
+                                           pending_before,
+                                           None if passive is None else float(passive.limit_price)))
+            if not accepted:
+                continue
+            if passive is None:
+                order = _Order(bar.decision_ts_ns, intent.signed_quantity, "strategy")
+            else:
+                order = _Order(bar.decision_ts_ns, intent.signed_quantity, "strategy",
+                               _price_ticks(float(passive.limit_price)),
+                               bar.decision_ts_ns + passive.ttl_bars * NS_PER_MINUTE)
+            self.pending = (*self.pending, order)
 
     def step(self, bar: Bar) -> None:
         if not isinstance(bar, Bar):
@@ -684,7 +771,8 @@ def bars_frame_to_list(frame: pd.DataFrame) -> list[Bar]:
 __all__ = [
     "BAR_COLUMNS", "ENGINE_REFUSAL_ORDER", "AccountStartEvent", "BacktestResult", "CancelEvent",
     "DayCloseEvent", "EngineConfig", "EngineInvariantError", "FillEvent", "ForcedFlattenEvent",
-    "IntentEvent", "Lot", "MllCheckEvent", "Position", "apply_fill", "bars_frame_to_list",
+    "IntentEvent", "Lot", "MllCheckEvent", "NO_ROLL_BLACKOUT", "Position", "apply_fill",
+    "bars_frame_to_list",
     "daily_net_pnl", "iter_bars", "ledger_to_jsonl", "reconstruct_balances",
     "roll_blackout_dates", "run_backtest", "splice_trade_dates_from_parquet",
 ]

@@ -19,8 +19,16 @@ taken on trust:
    one-way iterator and never has bar N+1 in hand at that moment.
 2. Every intent must carry ``ts_utc == bar.decision_ts_utc`` exactly. Use
    ``market_intent``. Backdated or future-dated intents are refused.
-3. An accepted intent is a market order. It fills at the NEXT bar's open
-   (``sim/fill_model.py``), never at a price the strategy has already seen.
+3. An accepted ``OrderIntent`` is a market order. It fills at the NEXT bar's
+   open (``sim/fill_model.py``), never at a price the strategy has already seen.
+   A ``PassiveIntent`` (built with ``limit_intent``, interface version 2) is a
+   resting limit order. It rests from the NEXT bar, fills only when a later bar
+   trades at least one tick THROUGH its price, and fills at exactly that price.
+   It must be non-marketable against the decision bar's close. It expires
+   ``ttl_bars`` minutes after its decision time; a session change or a forced
+   flatten cancels it, and once the no-new-positions window opens a passive
+   order that would add exposure is cancelled. The caveats (no queue position,
+   no market impact) are in ``sim.fill_model.PASSIVE_FILL_CAVEATS``.
 4. The engine structurally refuses intents on bars ``in_scheduled_closure`` or
    ``in_flatten_window``, and in roll-blackout sessions. The rules gate refuses
    new exposure from 15:08 CT and above the Scaling Plan limit.
@@ -61,7 +69,7 @@ from rules.xfa_rules import (
     construct_intent,
 )
 
-INTERFACE_VERSION = 1
+INTERFACE_VERSION = 2  # 2 (Stage D.1a): adds PassiveIntent / limit_intent
 NS_PER_S = 1_000_000_000
 BAR_SECONDS = 60
 NS_PER_BAR = BAR_SECONDS * NS_PER_S
@@ -200,13 +208,49 @@ class AccountView:
     unrealized_at_close_cents: int  # open position marked at this bar's close
 
 
+@dataclass(frozen=True, slots=True)
+class PassiveIntent:
+    """A resting limit order: a gate-checkable ``intent`` plus a limit price and a lifetime.
+
+    Build it only through ``limit_intent``. The engine re-checks every field, so a
+    hand-built one cannot smuggle in a marketable or off-grid limit.
+    """
+
+    intent: OrderIntent
+    limit_price: float
+    ttl_bars: int  # minutes after the decision time at which the order expires unfilled
+
+
+def passive_refusal(bar: Bar, passive: PassiveIntent) -> Refusal | None:
+    """Why ``passive`` is not a valid resting order on ``bar``, or None. Shared by
+    ``limit_intent`` and the engine."""
+    price = passive.limit_price
+    if isinstance(price, bool) or not isinstance(price, float | int) or price <= 0:
+        return Refusal("limit_bad_price", f"limit price {price!r} is not a positive number")
+    if not _on_grid(float(price)):
+        return Refusal("limit_off_tick",
+                       f"limit price {price!r} is not on the {MES_TICK_SIZE} grid")
+    ttl = passive.ttl_bars
+    if isinstance(ttl, bool) or not isinstance(ttl, int) or ttl <= 0:
+        return Refusal("limit_bad_ttl", f"ttl_bars {ttl!r} is not a positive integer")
+    side = passive.intent.side
+    marketable = price >= bar.close if side == "buy" else price <= bar.close
+    if marketable:
+        return Refusal("limit_marketable_on_arrival",
+                       f"{side} limit {price} vs decision-bar close {bar.close}: the order would "
+                       "take liquidity, not rest; use market_intent for an aggressive order")
+    return None
+
+
 @runtime_checkable
 class Strategy(Protocol):
     """The whole contract. Frozen at ``INTERFACE_VERSION``; change it only with a version bump."""
 
     name: str
 
-    def on_bar(self, bar: Bar, account: AccountView) -> Sequence[OrderIntent | Refusal]: ...
+    def on_bar(
+        self, bar: Bar, account: AccountView
+    ) -> Sequence[OrderIntent | PassiveIntent | Refusal]: ...
 
 
 def market_intent(bar: Bar, side: str, quantity_micros: int) -> OrderIntent | Refusal:
@@ -214,3 +258,15 @@ def market_intent(bar: Bar, side: str, quantity_micros: int) -> OrderIntent | Re
     return construct_intent(
         symbol=MES_SYMBOL, side=side, quantity_micros=quantity_micros, ts_utc=bar.decision_ts_utc
     )
+
+
+def limit_intent(
+    bar: Bar, side: str, quantity_micros: int, limit_price: float, ttl_bars: int
+) -> PassiveIntent | Refusal:
+    """The intended way to build a resting limit order, stamped with the bar's decision time."""
+    base = market_intent(bar, side, quantity_micros)
+    if isinstance(base, Refusal):
+        return base
+    passive = PassiveIntent(base, limit_price, ttl_bars)
+    refusal = passive_refusal(bar, passive)
+    return passive if refusal is None else refusal

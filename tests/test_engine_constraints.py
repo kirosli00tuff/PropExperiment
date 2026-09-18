@@ -18,6 +18,7 @@ import pytest
 from rules.xfa_rules import MES_SYMBOL, construct_intent
 from sim.costs import SlippageTable
 from sim.engine import (
+    NO_ROLL_BLACKOUT,
     AccountStartEvent,
     CancelEvent,
     EngineConfig,
@@ -95,8 +96,8 @@ D0 = date(2026, 1, 14)  # synthetic Wednesday
 D_PREV = date(2026, 1, 13)  # Tuesday
 D_NEXT = date(2026, 1, 15)  # Thursday
 
-RESTART = EngineConfig(restart_on_terminal=True)
-NO_RESTART = EngineConfig(restart_on_terminal=False)
+RESTART = EngineConfig(restart_on_terminal=True, roll_blackout=NO_ROLL_BLACKOUT)
+NO_RESTART = EngineConfig(restart_on_terminal=False, roll_blackout=NO_ROLL_BLACKOUT)
 
 
 @dataclass(frozen=True)

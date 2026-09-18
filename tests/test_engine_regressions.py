@@ -11,6 +11,7 @@ from datetime import UTC, date, datetime
 from rules.xfa_rules import OrderIntent, Status
 from sim.costs import SlippageTable
 from sim.engine import (
+    NO_ROLL_BLACKOUT,
     EngineConfig,
     FillEvent,
     ForcedFlattenEvent,
@@ -21,6 +22,8 @@ from sim.engine import (
     run_backtest,
 )
 from strategy.interface import AccountView, Bar, construct_bar, market_intent
+
+NO_RESTART = EngineConfig(restart_on_terminal=False, roll_blackout=NO_ROLL_BLACKOUT)
 
 
 def _stat(mean: float) -> dict:
@@ -99,7 +102,7 @@ def test_breach_by_entry_cost_liquidates_the_open_position_at_once() -> None:
         _bar(4, 5980.50, 5980.50, 5980.50, 5980.50),
     ]
     strategy = Schedule({0: ("buy", 20), 1: ("sell", 20), 2: ("buy", 1)})
-    result = run_backtest(iter(bars), strategy, EngineConfig(restart_on_terminal=False), ZERO_SLIP)
+    result = run_backtest(iter(bars), strategy, NO_RESTART, ZERO_SLIP)
 
     # Bar 1 fill: cost 20 x 61 = 1,220 -> balance -1,220. Intrabar low 5980.25 is -79 ticks:
     #   equity = -1,220 + 20 x (-79) x 125 = -1,220 - 197,500 = -198,720 > floor -200,000: ok.
@@ -131,7 +134,7 @@ def test_position_is_closed_at_the_old_session_close_not_the_new_session_open() 
         _bar_on(monday, 0, 6100.00, 6100.00, 6100.00, 6100.00),  # new session, gapped +100
     ]
     result = run_backtest(iter(bars), ScheduleAt({bars[0].ts_event_ns: ("buy", 2)}),
-                          EngineConfig(restart_on_terminal=False), ZERO_SLIP)
+                          NO_RESTART, ZERO_SLIP)
     fills = result.events(FillEvent)
     assert [f.reason for f in fills] == ["strategy", "forced_flatten_session_end"]
     # Closed at Friday's last CLOSE 6000.50, not Monday's 6100.00 open.
@@ -159,7 +162,7 @@ def test_terminal_account_does_not_repeat_its_last_day_pnl() -> None:
         _bar_on(day3, 0, 5900.00, 5900.00, 5900.00, 5900.00),
     ]
     result = run_backtest(iter(bars), ScheduleAt({bars[0].ts_event_ns: ("buy", 20)}),
-                          EngineConfig(restart_on_terminal=False), ZERO_SLIP)
+                          NO_RESTART, ZERO_SLIP)
     assert result.final_state.status is Status.BREACHED
     daily = daily_net_pnl(result)
     # Day 1 carries the whole loss; the dead account's later days are flat.
@@ -192,7 +195,7 @@ def test_intent_not_built_by_construct_intent_is_refused() -> None:
                 OrderIntent("MES", "buy", 0, datetime(2026, 1, 14, 15, 1, tzinfo=UTC)),
                 OrderIntent("MES", "buy", -3, datetime(2026, 1, 14, 15, 1, tzinfo=UTC))):
         result = run_backtest(iter(bars), HandBuiltIntent(bad),
-                              EngineConfig(restart_on_terminal=False), ZERO_SLIP)
+                              NO_RESTART, ZERO_SLIP)
         intents = result.events(IntentEvent)
         assert len(intents) == 1 and not intents[0].accepted
         assert intents[0].refusal.reason == "engine_malformed_intent"
@@ -224,12 +227,13 @@ def test_hindsight_flag_is_blank_in_the_bar_the_strategy_sees() -> None:
                              gap_before_minutes=0, vendor_degraded_day=True)
     assert isinstance(degraded, Bar) and degraded.vendor_degraded_day is True
     reader = HindsightReader()
-    run_backtest(iter([degraded]), reader, EngineConfig(restart_on_terminal=False), ZERO_SLIP)
+    run_backtest(iter([degraded]), reader, NO_RESTART, ZERO_SLIP)
     assert reader.seen == [False]
 
     unmasked = HindsightReader()
     run_backtest(iter([degraded]), unmasked,
-                 EngineConfig(restart_on_terminal=False, mask_hindsight_fields=False), ZERO_SLIP)
+                 EngineConfig(restart_on_terminal=False, roll_blackout=NO_ROLL_BLACKOUT,
+                              mask_hindsight_fields=False), ZERO_SLIP)
     assert unmasked.seen == [True]
 
 

@@ -20,6 +20,12 @@ history, not here.
   walk-forward splits with a sealed holdout. (Built 2026-09-17; see
   progress.md, reports/leakage_suite.md. Holdout sealed behind data/holdout.py;
   unlocks are logged in docs/HOLDOUT_UNLOCK_LOG.md and reserved for Stage D.2.)
-- Stage D.1 — Strategy research (separate session; not started).
+- Stage D.1 — Strategy research. (Run 2026-09-18; see progress.md and
+  reports/stage_d1_accounting.json. 23 hypotheses across 5 families screened on
+  train dates; none cleared the robust power-gate verdict; shortlist empty.)
+- Stage D.1a — Harness fixes: drift benchmark, passive/limit fills, shared
+  screening runner. (Built 2026-09-18; see progress.md, docs/SCREENING.md and
+  reports/stage_d1a_regression.json. Every future screen goes through
+  `screening.screen_candidate`.)
 - Stage D.2 — Sealed holdout read under the pre-registered bar.
 - Stage E — Practice-account forward test, then one 50K Combine.

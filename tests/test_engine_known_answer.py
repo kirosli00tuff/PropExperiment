@@ -32,6 +32,7 @@ from zoneinfo import ZoneInfo
 from sim import costs as costs_module
 from sim.costs import SlippageTable, load_slippage_table
 from sim.engine import (
+    NO_ROLL_BLACKOUT,
     AccountStartEvent,
     DayCloseEvent,
     EngineConfig,
@@ -105,7 +106,7 @@ class ScheduledStrategy:
         return tuple(market_intent(bar, side, qty) for side, qty in orders)
 
 
-CONFIG = EngineConfig(restart_on_terminal=True)
+CONFIG = EngineConfig(restart_on_terminal=True, roll_blackout=NO_ROLL_BLACKOUT)
 
 
 # =========================================================== 1: the prompt's test

@@ -18,6 +18,7 @@ from sim import leakage_canaries as lc
 from sim.costs import load_slippage_table
 from sim.engine import (
     BAR_COLUMNS,
+    NO_ROLL_BLACKOUT,
     EngineConfig,
     EngineInvariantError,
     _Order,
@@ -30,7 +31,7 @@ from strategy.interface import BAR_FIELD_AVAILABILITY, Bar
 from strategy.random_baseline import RandomBaseline
 
 TABLE = load_slippage_table()
-CONFIG = EngineConfig(restart_on_terminal=True)
+CONFIG = EngineConfig(restart_on_terminal=True, roll_blackout=NO_ROLL_BLACKOUT)
 
 
 @pytest.fixture(scope="module")

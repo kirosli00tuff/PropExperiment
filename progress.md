@@ -158,6 +158,24 @@ Everything in the task list was built. Nothing was cut. Order of work: ETA probe
 - **Correlation is the story.** Among days with ≥2 XFAs live and a breach, **21.9%** hit two or more accounts at once (Standard); with independent draws the same figure is **2.5%**. Per run: 5.0% vs 0.4%. Consistency: 20.4% vs 1.8%. Modelling the accounts as independent would understate cluster risk by roughly 9×.
 - **The funnel pays for variance.** Null monthly net income rises with size: 1 micro −$53, 2 micros +$1, 3 micros +$83, 5 micros +$177 (Standard, 1 round turn/day). Losses are capped at fees while payouts harvest upside, so a zero-edge gambler is better off sizing up. This drove the power-gate redesign below.
 
+**Stage B : Task 4 — power gate** (`funnel/power_gate.py`, `tests/test_power_gate.py`; `reports/power_gate.{md,json,csv}`, `reports/power_gate_samples.npz`). The screening criterion Stage D.1 runs before spending research time on a candidate. 120 grid points — win probability p in {0.40, 0.45, 0.50, 0.55, 0.60} x average win/loss ratio R in {0.75, 1.0, 1.5, 2.0} x round turns/day T in {1, 2, 4}, both payout paths — at 8,000 runs each: **960,000 simulated 12-month careers**.
+
+- **Two nulls, because the obvious one is too easy.** The *matched* null is a zero-edge trader at the same size and activity. The *robust* null is the most favourable zero-edge result at **any** size on the ladder — the coin-flipper who happened to pick the best size to gamble with. That redesign is forced by the sizing finding directly above: since a zero-edge gambler profits from sizing up, comparing a 2-micro candidate only against a 2-micro null would let a candidate "win" purely by being compared to a badly-sized coin flip. Robust critical values land at 6-7 micros (Standard) and 5-6 (Consistency).
+- **Confidence level, stated rather than assumed.** 80% is the headline, with 90% and 95% panels computed alongside. The verdict rule is conservative: a cell passes only if `power - 1.96*se >= 0.80`, so the lower bound must clear the bar, not the point estimate. A cell clearing 0.80 on the point estimate alone is marked `marginal` — exactly one does (standard, T=2, p=0.45, R=2.0, at 95%).
+
+| Null / confidence | Cells passing (of 120) |
+|---|---|
+| Matched, c = 80% | 46 |
+| Matched, c = 90% | 41 |
+| Matched, c = 95% | 36 (+1 marginal) |
+| **Robust, c = 80%** | **37** |
+
+- **The win/loss ratio dominates the win rate.** No cell with R = 0.75 passes anywhere in the grid — 0 of 30, under either null, at any confidence or activity level. At 1 round turn/day only one cell with R <= 1 passes at all. Lifting p from 0.40 to 0.60 cannot rescue a strategy whose losers match its winners; lifting R from 1.0 to 2.0 repeatedly can. Practical bar for Stage D.1 at 1 RT/day: **R >= 1.5 with p >= 0.55, or R = 2.0 with p >= 0.50.**
+- **Nine cells pass the matched null and fail the robust one.** Those are the candidates that would look real against a naive benchmark and are not proven. Use the robust verdict for any claim that has to survive scrutiny.
+- **Cost, for reference:** the modelled round turn costs $2.64 per micro at 1 RT/day, $2.61 at 2, $2.59 at 4. At p = 0.50, R = 1.0 the gross edge is exactly zero by construction, and cost alone is what makes that configuration lose money.
+
+**Provenance note, recorded because it matters for trust in these numbers.** Task 4 did not run during the Stage B-C session: the machine shut off in the gap after the size-ladder extension wrote its JSON (2026-09-17T22:57:12Z) and before the gate started. Everything else in this entry is from the original session. The gate was re-run unchanged on 2026-09-17 in a recovery session (`uv run python -m funnel.power_gate`, 2,905.5 s, output stamped 2026-09-18T00:21:27Z) against the same `reports/funnel_null_baseline.json` this entry already describes; no code was modified to produce it. That recovery session also found and fixed a related defect: `funnel/power_gate.py:56` defaults `screen()` to `reports/power_gate.json`, so while the file was missing the exact call this entry recommends to Stage D.1 raised `FileNotFoundError`. The test suite missed it because all five `screen()` tests pass an explicit `tmp_path`.
+
 **Stage C : Task 1 — strategy interface** (`strategy/interface.py`, `strategy/null_strategy.py`, `strategy/random_baseline.py`, `tests/test_strategy_interface.py`, 47 tests). Frozen `Bar` + `AccountView` in, `rules.xfa_rules.OrderIntent` out, so the rules gate consumes a strategy's output with no translation. `construct_bar` refuses malformed rows with named reasons, mirroring `construct_intent`. Both reference implementations are explicit non-strategies: the null emits nothing; the random baseline is an unconditional coin flip keyed by `blake2b(seed, bar.ts_event_ns)` that reads no price, volume or flag — the tests prove that by mutating every price and flag field and getting identical output.
 
 **Stage C : Tasks 2-3 — engine and fill model** (`sim/engine.py`, `sim/fill_model.py`, `tests/test_engine_known_answer.py` 7, `tests/test_engine_constraints.py` 15, `tests/test_fill_model.py` 19, `tests/test_engine_regressions.py` 6). Strict chronological replay from a one-way iterator; FIFO integer-tick lots so every P&L figure is exact to the cent; a complete ledger (intents with their refusal, fills, forced flattens, MLL checks, day closes, account starts) that `reconstruct_balances` rebuilds the final balance from.
@@ -242,12 +260,13 @@ The prompt reserved ultracode for a genuinely divided build, so here is the divi
 |---|---|---|
 | Engine full-history run | ~14 s | ~17k bars/s under load; 3 research months replay in ~5 s |
 | Funnel null baseline | ~6.5 min | **32 min** (5×) |
-| Power gate | 15-25 min | see below |
+| Power gate | 15-25 min | **48.4 min** (2×) |
 | Leakage suite | < 1 min | 37 s (real + synthetic) |
 | Authoring | ~4.5 h | ~2 h of hands-on time |
 | **Total** | **4.5-5.5 h** | **≈4 h of active work, spread over ~16 h wall clock** |
 
 - **Where the estimate was wrong, and why.** The Monte Carlo estimate assumed ~26 ms per run; a *null* run really costs ~3 ms, so the per-run estimate was 8× pessimistic — but the sensitivity grid multiplies runs by 24 configurations, and large-size configurations keep accounts alive far longer than the null headline, so the wall-clock came out 5× over. The lesson for the next probe: time the *most expensive* configuration in the grid, not the headline one.
+- **The power gate missed the same way the funnel did, for the same reason.** 15-25 min estimated, 2,905.5 s (48.4 min) actual. The estimate was again anchored on a cheap configuration: the grid's cheapest cell (T=1, p=0.40, R=0.75) costs about 2.4 s, the richest (T=4, p=0.60, R=2.0) about 78 s — a 30× spread, because high-edge cells keep five XFAs alive all year instead of breaching them early. Per-configuration costs came in at 267 s / 390 s / 700 s for Standard at T=1/2/4 and 312 s / 461 s / 775 s for Consistency (2,905 s total). Same lesson as the null baseline, now demonstrated twice: **time the most expensive configuration in the grid, not the headline one.**
 - **Authoring beat the estimate** because the ×6 design-iteration multiplier was pessimistic for work that was fully designed before writing, and because nine delegated pieces ran in parallel with my own.
 - **Wall clock ≫ working time.** An account session limit (~6.6 h) and the user being away (~6.8 h) dominate the calendar. No task was cut for time.
 

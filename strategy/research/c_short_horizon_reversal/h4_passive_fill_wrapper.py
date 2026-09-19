@@ -62,6 +62,9 @@ REFUTE CONDITION: not applicable, for the same reason.
 STATUS: NOT IMPLEMENTED. NOT SCREENED. Recorded as a LIMITATION of this
 Stage D.1 run: the harness has no passive/limit order capability, so no
 formalization of H4 can be backtested this session.
+
+Stage D.1b (2026-09-18): implemented as h4_passive_fill_reversal.py using
+limit_intent (interface v2); screened as trial #24.
 """
 
 from __future__ import annotations

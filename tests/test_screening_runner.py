@@ -88,3 +88,24 @@ def test_market_only_report_does_not_carry_passive_caveats() -> None:
                           splice_trade_dates=())
     assert report.passive_fills == 0 and not set(PASSIVE_FILL_CAVEATS) & set(report.caveats)
     assert report.exposure == "none" and report.verdict == "fail"
+
+
+def test_daily_net_series_covers_every_window_date_and_sums_to_net() -> None:
+    # Stage D.1b: the accounting consumes this series, so it must align to the window's
+    # dates (a $0 day included) and add up to the report's net to the cent.
+    frame = session_frame([path_ticks(-40)] * 5)
+    report = screen_frame(frame, "passive", PassiveDipBuyer, "synthetic", splice_trade_dates=())
+    assert len(report.daily_net_usd) == report.n_dates == 5
+    assert round(sum(report.daily_net_usd), 2) == report.net_pnl_usd
+    assert all(day < 0 for day in report.daily_net_usd)  # bought a falling session every day
+
+    flat = screen_frame(frame, "flat", lambda: _Flat(), "synthetic", splice_trade_dates=())
+    assert flat.daily_net_usd == (0.0,) * 5
+
+
+@dataclass(frozen=True)
+class _Flat:
+    name: str = "flat"
+
+    def on_bar(self, bar: Bar, account: AccountView) -> tuple:
+        return ()

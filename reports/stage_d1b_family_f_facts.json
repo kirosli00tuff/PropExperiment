@@ -1,0 +1,1357 @@
+{
+  "meta": {
+    "declaration_sha256": "9c17c508c50ee66e37fc471136368c4b364922bc16437f7d9f0b5d860314448d",
+    "eda_date_range": [
+      "2025-10-17",
+      "2026-05-13"
+    ],
+    "n_eda_dates_before_exclusions": 147,
+    "n_eda_dates_after_exclusions": 139,
+    "excluded_dates": [
+      {
+        "date": "2025-11-28",
+        "reason": "vendor_degraded_day"
+      },
+      {
+        "date": "2025-12-15",
+        "reason": "roll_blackout"
+      },
+      {
+        "date": "2025-12-16",
+        "reason": "roll_blackout"
+      },
+      {
+        "date": "2025-12-17",
+        "reason": "roll_blackout"
+      },
+      {
+        "date": "2026-03-16",
+        "reason": "roll_blackout+vendor_degraded_day"
+      },
+      {
+        "date": "2026-03-17",
+        "reason": "roll_blackout+vendor_degraded_day"
+      },
+      {
+        "date": "2026-03-18",
+        "reason": "roll_blackout"
+      },
+      {
+        "date": "2026-04-10",
+        "reason": "vendor_degraded_day"
+      }
+    ],
+    "sub_block_sizes": [
+      35,
+      35,
+      35,
+      34
+    ],
+    "seed": 20260918,
+    "n_resamples": 2000,
+    "mean_block_days": 5.0,
+    "bh_fdr_q": 0.1,
+    "m_tested_statistics": 57
+  },
+  "implementation_choices": [
+    "vendor_degraded_day is a per-bar, per-UTC-date flag; a trade date is excluded from the EDA set if ANY bar within that trade date carries the flag.",
+    "'Prior trade date' (F4.2, F4.3) and 'consecutive EDA dates' (F2.2) mean the immediately preceding date in the POST-EXCLUSION EDA date list, not the raw calendar-adjacent research trade date -- every computation stays strictly inside the declared EDA window and never reaches into fold 0's train dates or an excluded roll/vendor-degraded session.",
+    "Every return (1-minute, h-minute tiled window, and 30-minute bucket) is a close-to-close log return built from the standard 1-minute close-to-close step: it sums the h consecutive valid 1-minute steps the window's clock minutes cover (log(close at window end) - log(close of the bar immediately before the window's first minute)), never an open-to-close return of the window's own first/last bar. Windows/buckets are aligned to the clock grid (a bucket boundary at :00/:30, an h-minute window at multiples of h minutes from the segment's anchor: 08:30 CT for RTH, 17:00 CT for ETH), not to raw bar position, so one missing bar invalidates only the windows that actually contain it.",
+    "A window/bucket is valid only if every one of its h expected clock minutes has a bar AND every one of those h 1-minute steps (including the very first, which connects to whatever bar preceded the window) is itself a valid step. This makes ETH's very first window of every session segment always invalid, since no bar of the SAME trade date precedes the session's own first bar -- a direct, intentional consequence of the declared 'same trade date' return rule, not a bug.",
+    "Implied gross edge in ticks uses EXACT price differences (target window's close-of-last-bar minus close-of-bar-immediately-before-the-window, divided by 0.25), not a log-return approximation, for every directional statistic. Exact price data is always available for the forward window, so no approximation is needed; this also matches how F4.1/F4.2/F4.4 are defined (their own statistic is already an exact tick difference).",
+    "F6.1's predictor (open position in [0, 1] within the ETH range) is not naturally zero-centered, so its naive sign-trading rule uses sign(position - 0.5) -- the midpoint of the declared [0, 1] scale -- rather than sign(position); this is the only statistic where 'sign(predictor)' needed a centering choice.",
+    "F2.3's target (next bucket's realized volatility) has no sign -- it is not a return -- so the declared edge formula (mean of sign(predictor) x forward return) does not apply; implied_edge_ticks is null for F2.3, consistent with the declaration's own classification of F2.3 as eligible only through a directional reading, not as a directly signed edge.",
+    "F1.2 (variance ratio), F2.1 (|return| autocorrelation) and F2.2 (realized-variance autocorrelation) are non-directional by declaration; implied_edge_ticks is null for all of them.",
+    "F3.1's 'every bucket of the trade date' is read as the same 13 fixed 30-minute RTH buckets F3.2 defines explicitly, since that is the only bucket grid Family F declares anywhere; there is no separate ETH bucket grid in the family.",
+    "F5.2's trend-efficiency ratio uses an exact price difference in its numerator (|bucket close - bucket's pre-window close| / (bucket high - bucket low)), not the log return, since it is paired with a range term that is itself in price units; the lag-1 correlation that follows still uses the log return, matching every other correlation in the family.",
+    "Tercile/bucket edges (F2.4's trailing-vol terciles, F4.3's |gap| terciles, F5.1's relative-volume terciles, F5.2's efficiency terciles) are computed once on the full pooled EDA sample and held FROZEN across every bootstrap resample and sub-block, never recomputed per resample, since the declaration says a hypothesis's parameters are 'computed on EDA dates and frozen.'",
+    "F4.4's control level set (multiples of 50 offset by +12.5/+37.5 points) is used as the single, common control baseline for BOTH the multiples-of-50 and multiples-of-100 comparisons; the declaration defines the control set once, tied to the 50-point grid, and does not define a separate control grid for the multiples-of-100 comparison.",
+    "F4.4 is the only statistic scoped to 'any session' without a same-trade-date restriction: its crossing detection and forward-15 measurement use the raw gap_before_minutes == 0 continuity check only (not the same-trade-date restricted step validity used everywhere else in this family), so a round-number crossing's forward return may span the overnight boundary or a trade-date boundary. Every other statistic is confined to a single trade date (or, for F2.2/F4.2/F4.3, a pair of adjacent surviving EDA dates).",
+    "Bootstrap p-values use the declared two-sided formula (2 x min(share <= null, share >= null)), null = 0 for every statistic except F1.2 (VR, null = 1, per the declaration) and F4.4's difference-vs-control (null = 0, per the declaration, matching the default anyway). F4.3's statistic is a probability bounded below by 0; the declaration states no exception for it, so the same default (null = 0) formula is applied literally even though this makes its p-value near-trivial -- flagged because F4.3 is INELIGIBLE by declaration and never selects a hypothesis.",
+    "The 95% CI is the plain percentile bootstrap interval (2.5th/97.5th percentiles of the resampled statistic), not bias-corrected or accelerated, matching the percentile-bootstrap convention already used in this repo (screening/drift.py).",
+    "Each of the 57 statistics' bootstrap draws its 2,000-resample day-index sequence from a FRESH numpy Generator seeded with 20260918 (not one global generator advanced across all 57 statistics in sequence), so every statistic's resample path is independently reproducible from the declared seed alone. The day-block resampling itself reuses this repo's existing stationary bootstrap (funnel.null_generator.stationary_bootstrap_indices), which already implements the declared scheme (circular stationary block bootstrap, mean block length in days).",
+    "'4 contiguous, equal-count sub-blocks of the EDA dates' operates on the 139 EDA dates that remain AFTER exclusions (not the 147 before exclusions), since every statistic is computed on the post-exclusion set; 139 does not divide evenly by 4, so the split uses the most equal partition possible (35, 35, 35, 34 dates, in date order).",
+    "A pair or window is 'adjacent' only if both members are literally consecutive on the relevant index (consecutive clock-grid window indices within a day for F1.1/F2.4/F3.2/F5.x, consecutive surviving EDA dates for F2.2); a gap silently breaks the chain rather than being bridged to the next available observation.",
+    "Sub-block sign agreement compares sign(sub-block estimate - null) to sign(full sample estimate - null); a sub-block with zero valid observations contributes no sign (recorded as null) and is excluded from both the numerator and denominator of the agreement count.",
+    "F3.1's skew and excess kurtosis use the plain (biased) plug-in moment estimators (population standard deviation in the denominator): scipy is not a project dependency and the declaration does not specify a bias correction.",
+    "Bootstrap replicates that are undefined (a resample draws zero qualifying observations, or zero variance in a correlation/VR denominator) are dropped from the percentile CI and p-value computation rather than imputed."
+  ],
+  "tested_statistics": [
+    {
+      "id": "F1_1_h1_RTH",
+      "family": "F1.1",
+      "description": "Lag-1 autocorrelation of consecutive non-overlapping 1-min returns, RTH",
+      "directional": true,
+      "n": 52977,
+      "estimate": -0.02327035983910073,
+      "ci95_low": -0.04388507339120812,
+      "ci95_high": -0.0016960428669324692,
+      "p_boot": 0.034,
+      "sub_block_estimates": [
+        -0.03029448815094126,
+        -0.002103511111737448,
+        -0.046786116350161916,
+        0.021553328465604375
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -0.11816448647526286,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_1_h5_RTH",
+      "family": "F1.1",
+      "description": "Lag-1 autocorrelation of consecutive non-overlapping 5-min returns, RTH",
+      "directional": true,
+      "n": 10485,
+      "estimate": 0.01437685551366945,
+      "ci95_low": -0.008007418760635703,
+      "ci95_high": 0.036349456139864275,
+      "p_boot": 0.197,
+      "sub_block_estimates": [
+        -0.0060783486434900814,
+        0.06022161704393458,
+        0.020634754029966097,
+        -0.005006168069164249
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": -0.04864091559370529,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_1_h15_RTH",
+      "family": "F1.1",
+      "description": "Lag-1 autocorrelation of consecutive non-overlapping 15-min returns, RTH",
+      "directional": true,
+      "n": 3403,
+      "estimate": -0.0011120549278246295,
+      "ci95_low": -0.057938986119515125,
+      "ci95_high": 0.06236316381102532,
+      "p_boot": 0.938,
+      "sub_block_estimates": [
+        0.07771222393018914,
+        -0.04926192216145623,
+        -0.03485158397028517,
+        -0.009181314269598327
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -0.0940346752865119,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_1_h30_RTH",
+      "family": "F1.1",
+      "description": "Lag-1 autocorrelation of consecutive non-overlapping 30-min returns, RTH",
+      "directional": true,
+      "n": 1632,
+      "estimate": 0.02291507034748027,
+      "ci95_low": -0.03324138656916375,
+      "ci95_high": 0.07666170788777978,
+      "p_boot": 0.445,
+      "sub_block_estimates": [
+        0.05004206186981694,
+        -0.020548471693050754,
+        0.030566001948506467,
+        0.0006073084497039481
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": 0.03125,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_1_h60_RTH",
+      "family": "F1.1",
+      "description": "Lag-1 autocorrelation of consecutive non-overlapping 60-min returns, RTH",
+      "directional": true,
+      "n": 678,
+      "estimate": -0.03933536055055772,
+      "ci95_low": -0.10875094214076313,
+      "ci95_high": 0.025243954991183298,
+      "p_boot": 0.239,
+      "sub_block_estimates": [
+        -0.04555856149207603,
+        -0.050858778694438535,
+        -0.06716007669035932,
+        0.030240152745512994
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -0.8126843657817109,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_1_h1_ETH",
+      "family": "F1.1",
+      "description": "Lag-1 autocorrelation of consecutive non-overlapping 1-min returns, ETH",
+      "directional": true,
+      "n": 128968,
+      "estimate": 0.004534495960684172,
+      "ci95_low": -0.0340844919524752,
+      "ci95_high": 0.044390683943086796,
+      "p_boot": 0.914,
+      "sub_block_estimates": [
+        -0.0052483551043654,
+        -0.034612153417828494,
+        0.03903167292723265,
+        -0.037797852689449275
+      ],
+      "sub_block_sign_agree": 1,
+      "implied_edge_ticks": -0.080601389491967,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_1_h5_ETH",
+      "family": "F1.1",
+      "description": "Lag-1 autocorrelation of consecutive non-overlapping 5-min returns, ETH",
+      "directional": true,
+      "n": 25568,
+      "estimate": 0.009259777403346514,
+      "ci95_low": -0.018427109908295856,
+      "ci95_high": 0.02777757212384437,
+      "p_boot": 0.494,
+      "sub_block_estimates": [
+        0.03854095534603503,
+        -0.035808531155689716,
+        0.008528661782290937,
+        0.0038255057365577817
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -0.022762828535669587,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_1_h15_ETH",
+      "family": "F1.1",
+      "description": "Lag-1 autocorrelation of consecutive non-overlapping 15-min returns, ETH",
+      "directional": true,
+      "n": 8335,
+      "estimate": -0.05160264163031312,
+      "ci95_low": -0.1102756977494751,
+      "ci95_high": 0.033286265207259996,
+      "p_boot": 0.416,
+      "sub_block_estimates": [
+        -0.027787581748333335,
+        0.0006898288711128193,
+        -0.0983855249889666,
+        0.03378921019289833
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": -0.05206958608278344,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_1_h30_ETH",
+      "family": "F1.1",
+      "description": "Lag-1 autocorrelation of consecutive non-overlapping 30-min returns, ETH",
+      "directional": true,
+      "n": 4026,
+      "estimate": -0.038225378111061054,
+      "ci95_low": -0.08264794442220379,
+      "ci95_high": 0.018559323466224197,
+      "p_boot": 0.222,
+      "sub_block_estimates": [
+        -0.05717591879484514,
+        -0.01046756664940255,
+        -0.04687595797635273,
+        -0.016176359347283977
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": 0.03502235469448584,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_1_h60_ETH",
+      "family": "F1.1",
+      "description": "Lag-1 autocorrelation of consecutive non-overlapping 60-min returns, ETH",
+      "directional": true,
+      "n": 1803,
+      "estimate": 0.04896966110571789,
+      "ci95_low": -0.04505426197307478,
+      "ci95_high": 0.12156223431362942,
+      "p_boot": 0.352,
+      "sub_block_estimates": [
+        -0.053963861277751594,
+        -0.000828934701582701,
+        0.127502936110735,
+        5.070873891426115e-05
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": 0.6866333887964503,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_2_VR5_RTH",
+      "family": "F1.2",
+      "description": "Variance ratio VR(5) = Var(5-min return)/(5*Var(1-min return)), RTH",
+      "directional": false,
+      "n": 10623,
+      "estimate": 0.9296962283086778,
+      "ci95_low": 0.8968785290687105,
+      "ci95_high": 0.9718876661023937,
+      "p_boot": 0.002,
+      "sub_block_estimates": [
+        0.9330585335443299,
+        0.9912984856915852,
+        0.8765315412890695,
+        0.9911541218004082
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F1_2_VR15_RTH",
+      "family": "F1.2",
+      "description": "Variance ratio VR(15) = Var(15-min return)/(15*Var(1-min return)), RTH",
+      "directional": false,
+      "n": 3541,
+      "estimate": 0.9491018712487546,
+      "ci95_low": 0.8914180900340619,
+      "ci95_high": 1.0136437732420205,
+      "p_boot": 0.1,
+      "sub_block_estimates": [
+        0.9108393345304573,
+        1.0986785427771117,
+        0.8848849208524958,
+        1.0306862532109962
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": null,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_2_VR30_RTH",
+      "family": "F1.2",
+      "description": "Variance ratio VR(30) = Var(30-min return)/(30*Var(1-min return)), RTH",
+      "directional": false,
+      "n": 1770,
+      "estimate": 0.955685572777927,
+      "ci95_low": 0.8676999074364725,
+      "ci95_high": 1.0423818793662096,
+      "p_boot": 0.323,
+      "sub_block_estimates": [
+        0.9760167703297256,
+        1.0654425598245616,
+        0.849657183852834,
+        1.0690036974147887
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": null,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_2_VR60_RTH",
+      "family": "F1.2",
+      "description": "Variance ratio VR(60) = Var(60-min return)/(60*Var(1-min return)), RTH",
+      "directional": false,
+      "n": 816,
+      "estimate": 0.9932109671694769,
+      "ci95_low": 0.8729732517141998,
+      "ci95_high": 1.1091309322452114,
+      "p_boot": 0.908,
+      "sub_block_estimates": [
+        1.047834965251811,
+        1.0075979139547746,
+        0.9574436678902917,
+        0.9854160910914989
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": null,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_2_VR5_ETH",
+      "family": "F1.2",
+      "description": "Variance ratio VR(5) = Var(5-min return)/(5*Var(1-min return)), ETH",
+      "directional": false,
+      "n": 25709,
+      "estimate": 1.0713175111293718,
+      "ci95_low": 0.8872338427461203,
+      "ci95_high": 1.3042739598812212,
+      "p_boot": 0.732,
+      "sub_block_estimates": [
+        0.9530226076196453,
+        0.9194454509825669,
+        1.254791083946445,
+        0.8798378854066734
+      ],
+      "sub_block_sign_agree": 1,
+      "implied_edge_ticks": null,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_2_VR15_ETH",
+      "family": "F1.2",
+      "description": "Variance ratio VR(15) = Var(15-min return)/(15*Var(1-min return)), ETH",
+      "directional": false,
+      "n": 8476,
+      "estimate": 1.1047031587012734,
+      "ci95_low": 0.8772242684697269,
+      "ci95_high": 1.3815492680442143,
+      "p_boot": 0.729,
+      "sub_block_estimates": [
+        0.9889955398778975,
+        0.8516504359827917,
+        1.3021244065398738,
+        0.9283128360599318
+      ],
+      "sub_block_sign_agree": 1,
+      "implied_edge_ticks": null,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_2_VR30_ETH",
+      "family": "F1.2",
+      "description": "Variance ratio VR(30) = Var(30-min return)/(30*Var(1-min return)), ETH",
+      "directional": false,
+      "n": 4167,
+      "estimate": 0.9733310220887387,
+      "ci95_low": 0.874785621703826,
+      "ci95_high": 1.0545495790020953,
+      "p_boot": 0.501,
+      "sub_block_estimates": [
+        1.0261384715623072,
+        0.8869056559569116,
+        0.970552840680882,
+        0.9691231184888293
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": null,
+      "bh_reject": false
+    },
+    {
+      "id": "F1_2_VR60_ETH",
+      "family": "F1.2",
+      "description": "Variance ratio VR(60) = Var(60-min return)/(60*Var(1-min return)), ETH",
+      "directional": false,
+      "n": 1944,
+      "estimate": 0.8508868511571955,
+      "ci95_low": 0.7727815360830225,
+      "ci95_high": 0.9112830069999749,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.8384479669239321,
+        0.8576334023567025,
+        0.8623457799605901,
+        0.8363110436123782
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F2_1_lag1_RTH",
+      "family": "F2.1",
+      "description": "Autocorrelation of |1-min return| at lag 1 min, RTH",
+      "directional": false,
+      "n": 52977,
+      "estimate": 0.27650444998408596,
+      "ci95_low": 0.25126707947565335,
+      "ci95_high": 0.2952349747502404,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.2614107309830318,
+        0.26200492910360607,
+        0.22019286356316842,
+        0.28599356168470097
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F2_1_lag5_RTH",
+      "family": "F2.1",
+      "description": "Autocorrelation of |1-min return| at lag 5 min, RTH",
+      "directional": false,
+      "n": 52425,
+      "estimate": 0.2500635987063363,
+      "ci95_low": 0.2199866823310091,
+      "ci95_high": 0.27633394574986453,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.2556162510320275,
+        0.2374174239530423,
+        0.18814334593292004,
+        0.2324631402742375
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F2_1_lag15_RTH",
+      "family": "F2.1",
+      "description": "Autocorrelation of |1-min return| at lag 15 min, RTH",
+      "directional": false,
+      "n": 51045,
+      "estimate": 0.2326138252352578,
+      "ci95_low": 0.19773848973048727,
+      "ci95_high": 0.26500555851651797,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.2590669113776777,
+        0.23384136268184152,
+        0.158162582706492,
+        0.1952708926380525
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F2_1_lag60_RTH",
+      "family": "F2.1",
+      "description": "Autocorrelation of |1-min return| at lag 60 min, RTH",
+      "directional": false,
+      "n": 44835,
+      "estimate": 0.19325630138979036,
+      "ci95_low": 0.15382490633617812,
+      "ci95_high": 0.23508947545931866,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.23044430827311443,
+        0.20585329553663467,
+        0.12141008118972177,
+        0.12034659337939177
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F2_1_lag1_ETH",
+      "family": "F2.1",
+      "description": "Autocorrelation of |1-min return| at lag 1 min, ETH",
+      "directional": false,
+      "n": 128968,
+      "estimate": 0.33240393982564864,
+      "ci95_low": 0.28189795749520385,
+      "ci95_high": 0.36055865044884555,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.2621051901770474,
+        0.26719296954347227,
+        0.31947183278962826,
+        0.34282400996222195
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F2_1_lag5_ETH",
+      "family": "F2.1",
+      "description": "Autocorrelation of |1-min return| at lag 5 min, ETH",
+      "directional": false,
+      "n": 128410,
+      "estimate": 0.25412419298279526,
+      "ci95_low": 0.23181224575889048,
+      "ci95_high": 0.27247716314616316,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.23846130256594203,
+        0.21884968326146526,
+        0.2182220809731939,
+        0.2439969568782806
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F2_1_lag15_ETH",
+      "family": "F2.1",
+      "description": "Autocorrelation of |1-min return| at lag 15 min, ETH",
+      "directional": false,
+      "n": 127019,
+      "estimate": 0.23917887530257906,
+      "ci95_low": 0.19825444707677267,
+      "ci95_high": 0.2603916001323999,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.22278870168718118,
+        0.17997451654001004,
+        0.22613791447027579,
+        0.19110326574265696
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F2_1_lag60_ETH",
+      "family": "F2.1",
+      "description": "Autocorrelation of |1-min return| at lag 60 min, ETH",
+      "directional": false,
+      "n": 120764,
+      "estimate": 0.1884484118014273,
+      "ci95_low": 0.1587088813665961,
+      "ci95_high": 0.21527397766315684,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.19178680259235045,
+        0.14783720809069573,
+        0.1580998348619568,
+        0.14043866330181712
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F2_2_RV_autocorr_lag1",
+      "family": "F2.2",
+      "description": "Lag-1 autocorrelation of daily RTH realized variance across consecutive EDA dates",
+      "directional": false,
+      "n": 136,
+      "estimate": 0.4956733569531382,
+      "ci95_low": 0.3107754296863308,
+      "ci95_high": 0.6232679865530985,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.44763454315451384,
+        0.3317369289478136,
+        0.14545496188508392,
+        0.40723508957582605
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F2_3_leverage_asymmetry",
+      "family": "F2.3",
+      "description": "Correlation between a 30-min RTH bucket return and the next bucket's realized volatility",
+      "directional": false,
+      "n": 1632,
+      "estimate": -0.11414834002281528,
+      "ci95_low": -0.20228088366420394,
+      "ci95_high": -0.025416919875928434,
+      "p_boot": 0.006,
+      "sub_block_estimates": [
+        -0.24066597413028779,
+        -0.1590137262538049,
+        -0.04617635578366163,
+        -0.02065690663059478
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F2_4_15min_vol_tercile_bottom",
+      "family": "F2.4",
+      "description": "Lag-1 autocorrelation of 15-min RTH returns, bottom tercile of trailing 60-min realized vol",
+      "directional": true,
+      "n": 1135,
+      "estimate": 0.017493502256117382,
+      "ci95_low": -0.06057710738459781,
+      "ci95_high": 0.0925323200201347,
+      "p_boot": 0.666,
+      "sub_block_estimates": [
+        0.021016793662557074,
+        0.0032771545372376515,
+        -0.11899373874365754,
+        0.0694823795213976
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -0.21938325991189428,
+      "bh_reject": false
+    },
+    {
+      "id": "F2_4_15min_vol_tercile_top",
+      "family": "F2.4",
+      "description": "Lag-1 autocorrelation of 15-min RTH returns, top tercile of trailing 60-min realized vol",
+      "directional": true,
+      "n": 1134,
+      "estimate": -0.02052525419925397,
+      "ci95_low": -0.11001800964599215,
+      "ci95_high": 0.07843447480195662,
+      "p_boot": 0.635,
+      "sub_block_estimates": [
+        0.15540520877728378,
+        -0.18932331351000048,
+        -0.06877249562215236,
+        -0.08504344926959279
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -1.306878306878307,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket01_bucket02",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 0830-0900 return and bucket 0900-0930 return",
+      "directional": true,
+      "n": 138,
+      "estimate": 0.0858889111299099,
+      "ci95_low": -0.09980182024404055,
+      "ci95_high": 0.2712554588959422,
+      "p_boot": 0.371,
+      "sub_block_estimates": [
+        0.1732659777363059,
+        0.11721497391228705,
+        0.11499740190486002,
+        -0.151485833805514
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": 4.173913043478261,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket02_bucket03",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 0900-0930 return and bucket 0930-1000 return",
+      "directional": true,
+      "n": 138,
+      "estimate": -0.018486381985871533,
+      "ci95_low": -0.16732216509666564,
+      "ci95_high": 0.14146481575514522,
+      "p_boot": 0.813,
+      "sub_block_estimates": [
+        -0.24821774845543934,
+        0.29086798126576363,
+        -0.15306396007595427,
+        0.36515737061154485
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": 3.0579710144927534,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket03_bucket04",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 0930-1000 return and bucket 1000-1030 return",
+      "directional": true,
+      "n": 138,
+      "estimate": 0.04765833420545947,
+      "ci95_low": -0.18049682993079072,
+      "ci95_high": 0.23772301045226346,
+      "p_boot": 0.668,
+      "sub_block_estimates": [
+        0.05343235040464725,
+        -0.45693517677908785,
+        0.2846798839477663,
+        -0.14769109411587727
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": -1.8478260869565217,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket04_bucket05",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 1000-1030 return and bucket 1030-1100 return",
+      "directional": true,
+      "n": 138,
+      "estimate": 0.16108063116954147,
+      "ci95_low": -0.1667031396656651,
+      "ci95_high": 0.43972666038519415,
+      "p_boot": 0.561,
+      "sub_block_estimates": [
+        0.45991963698231836,
+        -0.10214497735628102,
+        -0.058853894201567544,
+        0.09729173715233756
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": 2.5869565217391304,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket05_bucket06",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 1030-1100 return and bucket 1100-1130 return",
+      "directional": true,
+      "n": 138,
+      "estimate": 0.09012226345584493,
+      "ci95_low": -0.1157951859207207,
+      "ci95_high": 0.23811799122243213,
+      "p_boot": 0.359,
+      "sub_block_estimates": [
+        0.16439384928113399,
+        0.0630564425694544,
+        0.029732812767994228,
+        0.09822213224357307
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": 2.9420289855072466,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket06_bucket07",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 1100-1130 return and bucket 1130-1200 return",
+      "directional": true,
+      "n": 138,
+      "estimate": -0.12312925779935495,
+      "ci95_low": -0.37600606098361117,
+      "ci95_high": 0.14912772794678508,
+      "p_boot": 0.379,
+      "sub_block_estimates": [
+        -0.22101940825981098,
+        -0.49894036380915546,
+        -0.15520448221273983,
+        0.3487801484199615
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -2.4855072463768115,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket07_bucket08",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 1130-1200 return and bucket 1200-1230 return",
+      "directional": true,
+      "n": 134,
+      "estimate": -0.07570045351288093,
+      "ci95_low": -0.21835182288224728,
+      "ci95_high": 0.06210389711992792,
+      "p_boot": 0.265,
+      "sub_block_estimates": [
+        0.06616703237104733,
+        -0.30304331404057533,
+        -0.10498086954799818,
+        -0.06569734426431582
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -7.559701492537314,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket08_bucket09",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 1200-1230 return and bucket 1230-1300 return",
+      "directional": true,
+      "n": 134,
+      "estimate": -0.193841203150445,
+      "ci95_low": -0.4007908410804558,
+      "ci95_high": 0.02866301805609996,
+      "p_boot": 0.099,
+      "sub_block_estimates": [
+        -0.528200831351712,
+        0.044376139969635804,
+        -0.07933012746484505,
+        -0.1157394987871477
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -6.223880597014926,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket09_bucket10",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 1230-1300 return and bucket 1300-1330 return",
+      "directional": true,
+      "n": 134,
+      "estimate": -0.0393636394811266,
+      "ci95_low": -0.2058391379294908,
+      "ci95_high": 0.1359845240227737,
+      "p_boot": 0.662,
+      "sub_block_estimates": [
+        0.014660083013843127,
+        0.09589293057862858,
+        -0.19206393243234401,
+        -0.002612362583516602
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": -1.5970149253731343,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket10_bucket11",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 1300-1330 return and bucket 1330-1400 return",
+      "directional": true,
+      "n": 134,
+      "estimate": 0.14048418978613728,
+      "ci95_low": -0.0722814024593067,
+      "ci95_high": 0.3411388568766916,
+      "p_boot": 0.184,
+      "sub_block_estimates": [
+        -0.07169621592571354,
+        0.5310923162271417,
+        0.1794006284819743,
+        -0.04996669147931956
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": 3.6940298507462686,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket11_bucket12",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 1330-1400 return and bucket 1400-1430 return",
+      "directional": true,
+      "n": 134,
+      "estimate": -0.11621243201549285,
+      "ci95_low": -0.3136425562814316,
+      "ci95_high": 0.05286612554800652,
+      "p_boot": 0.175,
+      "sub_block_estimates": [
+        -0.09003337917429462,
+        -0.37360620880527035,
+        0.02244387460749733,
+        -0.19738059809884032
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": 1.007462686567164,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_2_bucket12_bucket13",
+      "family": "F3.2",
+      "description": "Cross-day correlation between bucket 1400-1430 return and bucket 1430-1500 return",
+      "directional": true,
+      "n": 134,
+      "estimate": 0.10817872258742464,
+      "ci95_low": -0.09025815926891834,
+      "ci95_high": 0.2745980671028161,
+      "p_boot": 0.262,
+      "sub_block_estimates": [
+        0.16712523663290083,
+        -0.042966485365224835,
+        0.24916157444792167,
+        -0.18411161706050905
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": 2.3805970149253732,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_3_overnight_to_close_momentum",
+      "family": "F3.3",
+      "description": "Correlation of (first bar to 09:00 CT return) with the 14:30-15:00 return (literature-sourced, GHLZ/Baltussen form)",
+      "directional": true,
+      "n": 134,
+      "estimate": -0.05553047748515962,
+      "ci95_low": -0.24828058666160988,
+      "ci95_high": 0.1237854529705808,
+      "p_boot": 0.534,
+      "sub_block_estimates": [
+        -0.18837183303965516,
+        -0.51837607429315,
+        -0.04826341930783504,
+        0.16382258341278233
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -4.992537313432836,
+      "bh_reject": false
+    },
+    {
+      "id": "F3_3_opening_30min_to_close_momentum",
+      "family": "F3.3",
+      "description": "Correlation of (08:30-09:00 return) with the 14:30-15:00 return (literature-sourced, GHLZ/Baltussen form)",
+      "directional": true,
+      "n": 134,
+      "estimate": -0.10988584009806932,
+      "ci95_low": -0.27642438359132226,
+      "ci95_high": 0.07026369563729294,
+      "p_boot": 0.223,
+      "sub_block_estimates": [
+        -0.05381857259033794,
+        -0.5506002335572423,
+        0.14594791335971105,
+        -0.16130595029000028
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -6.335820895522388,
+      "bh_reject": false
+    },
+    {
+      "id": "F4_1_rth_open_crossing",
+      "family": "F4.1",
+      "description": "Mean signed forward 15-min return (ticks) after a close crosses the RTH-open reference, 09:00-14:29 CT",
+      "directional": true,
+      "n": 261,
+      "estimate": -3.4521072796934864,
+      "ci95_low": -8.665464663413433,
+      "ci95_high": 1.8193194113077653,
+      "p_boot": 0.21,
+      "sub_block_estimates": [
+        2.0422535211267605,
+        -6.306666666666667,
+        -7.852459016393443,
+        -1.7407407407407407
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -3.4521072796934864,
+      "bh_reject": false
+    },
+    {
+      "id": "F4_2_prior_rth_close_crossing",
+      "family": "F4.2",
+      "description": "Mean signed forward 15-min return (ticks) after a close crosses the prior RTH-close reference, 08:30-14:29 CT",
+      "directional": true,
+      "n": 237,
+      "estimate": -1.0421940928270041,
+      "ci95_low": -5.803984343637094,
+      "ci95_high": 3.8969352878626746,
+      "p_boot": 0.637,
+      "sub_block_estimates": [
+        3.888888888888889,
+        0.08571428571428572,
+        -4.015151515151516,
+        -6.131578947368421
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": -1.0421940928270041,
+      "bh_reject": false
+    },
+    {
+      "id": "F4_3_gap_fill_tercile_low",
+      "family": "F4.3",
+      "description": "P(RTH trades back to prior close by 15:00) | |gap| low tercile (novelty check only, INELIGIBLE)",
+      "directional": false,
+      "n": 44,
+      "estimate": 0.9545454545454546,
+      "ci95_low": 0.8809523809523809,
+      "ci95_high": 1.0,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.9,
+        0.9375,
+        1.0,
+        1.0
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F4_3_gap_fill_tercile_mid",
+      "family": "F4.3",
+      "description": "P(RTH trades back to prior close by 15:00) | |gap| mid tercile (novelty check only, INELIGIBLE)",
+      "directional": false,
+      "n": 43,
+      "estimate": 0.5813953488372093,
+      "ci95_low": 0.4411764705882353,
+      "ci95_high": 0.7105409356725145,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.75,
+        0.3333333333333333,
+        0.7,
+        0.5
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F4_3_gap_fill_tercile_high",
+      "family": "F4.3",
+      "description": "P(RTH trades back to prior close by 15:00) | |gap| high tercile (novelty check only, INELIGIBLE)",
+      "directional": false,
+      "n": 43,
+      "estimate": 0.3023255813953488,
+      "ci95_low": 0.18181818181818182,
+      "ci95_high": 0.40543976179569385,
+      "p_boot": 0.0,
+      "sub_block_estimates": [
+        0.36363636363636365,
+        0.2857142857142857,
+        0.38461538461538464,
+        0.16666666666666666
+      ],
+      "sub_block_sign_agree": 4,
+      "implied_edge_ticks": null,
+      "bh_reject": true
+    },
+    {
+      "id": "F4_4_round_number_multiples_of_50",
+      "family": "F4.4",
+      "description": "Mean forward 15-min return from L (ticks), multiples of 50 vs control levels (multiples of 50 offset +12.5/+37.5), any session, 30-min refractory per level",
+      "directional": true,
+      "n": 1249,
+      "estimate": -1.729814137696976,
+      "ci95_low": -5.002757739423397,
+      "ci95_high": 1.217825443297503,
+      "p_boot": 0.312,
+      "sub_block_estimates": [
+        1.8235669528893015,
+        0.8865447726207221,
+        -7.043189605939464,
+        -0.10050139818155263
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": -0.5156124899919936,
+      "control_mean_ticks": 1.2142016477049824,
+      "n_control": 2549,
+      "bh_reject": false
+    },
+    {
+      "id": "F4_4_round_number_multiples_of_100",
+      "family": "F4.4",
+      "description": "Mean forward 15-min return from L (ticks), multiples of 100 vs control levels (multiples of 50 offset +12.5/+37.5), any session, 30-min refractory per level",
+      "directional": true,
+      "n": 559,
+      "estimate": -4.577350127132531,
+      "ci95_low": -10.56759463913312,
+      "ci95_high": 0.18854607762105896,
+      "p_boot": 0.073,
+      "sub_block_estimates": [
+        0.7811457174638488,
+        -0.21008822401227456,
+        -12.431971751963701,
+        -1.8269035172788985
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -3.363148479427549,
+      "control_mean_ticks": 1.2142016477049824,
+      "n_control": 2549,
+      "bh_reject": false
+    },
+    {
+      "id": "F5_1_relvol_tercile_bottom",
+      "family": "F5.1",
+      "description": "Lag-1 correlation of consecutive 30-min RTH bucket returns, bottom tercile of first bucket's relative volume (20-day trailing)",
+      "directional": true,
+      "n": 464,
+      "estimate": 0.019584613248096096,
+      "ci95_low": -0.060278653034907405,
+      "ci95_high": 0.11071083909666665,
+      "p_boot": 0.611,
+      "sub_block_estimates": [
+        -0.12388210068559184,
+        -0.0635513108261481,
+        0.32283591894487546,
+        0.006018840000120406
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": 0.2413793103448276,
+      "bh_reject": false
+    },
+    {
+      "id": "F5_1_relvol_tercile_top",
+      "family": "F5.1",
+      "description": "Lag-1 correlation of consecutive 30-min RTH bucket returns, top tercile of first bucket's relative volume (20-day trailing)",
+      "directional": true,
+      "n": 464,
+      "estimate": 0.05254315276248216,
+      "ci95_low": -0.02846894899653593,
+      "ci95_high": 0.11725928930114236,
+      "p_boot": 0.182,
+      "sub_block_estimates": [
+        0.10354332633110115,
+        0.01778542981553918,
+        0.053493328499089735,
+        -0.04758998759366432
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": 1.0905172413793103,
+      "bh_reject": false
+    },
+    {
+      "id": "F5_2_efficiency_tercile_bottom",
+      "family": "F5.2",
+      "description": "Lag-1 correlation of consecutive 30-min RTH bucket returns, bottom tercile of first bucket's trend efficiency |price change|/range",
+      "directional": true,
+      "n": 544,
+      "estimate": 0.04785969157660305,
+      "ci95_low": -0.06755082576404271,
+      "ci95_high": 0.16379322215776543,
+      "p_boot": 0.384,
+      "sub_block_estimates": [
+        0.016685084456849547,
+        -0.16061013419693285,
+        0.056532010767609706,
+        0.23918376278973544
+      ],
+      "sub_block_sign_agree": 3,
+      "implied_edge_ticks": -0.9044117647058824,
+      "bh_reject": false
+    },
+    {
+      "id": "F5_2_efficiency_tercile_top",
+      "family": "F5.2",
+      "description": "Lag-1 correlation of consecutive 30-min RTH bucket returns, top tercile of first bucket's trend efficiency |price change|/range",
+      "directional": true,
+      "n": 544,
+      "estimate": 0.029289029374923004,
+      "ci95_low": -0.08832015991176005,
+      "ci95_high": 0.13029134748200022,
+      "p_boot": 0.678,
+      "sub_block_estimates": [
+        0.10023054598316006,
+        -0.0697127161827277,
+        0.06005661002503586,
+        -0.08658906524822943
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": -0.40441176470588236,
+      "bh_reject": false
+    },
+    {
+      "id": "F5_3_range_volume_residual",
+      "family": "F5.3",
+      "description": "Correlation of (range-vs-volume OLS residual x sign(bucket return)) with the next bucket's return",
+      "directional": true,
+      "n": 1632,
+      "estimate": 0.015018817731779694,
+      "ci95_low": -0.024301223654675047,
+      "ci95_high": 0.052674232967005664,
+      "p_boot": 0.452,
+      "sub_block_estimates": [
+        0.019102287908588315,
+        -0.0299424802518655,
+        0.05572172219899624,
+        -0.007073374018683368
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": 0.7634803921568627,
+      "bh_reject": false
+    },
+    {
+      "id": "F6_1_overnight_range_position",
+      "family": "F6.1",
+      "description": "Correlation of (08:30 open position within ETH high-low range) with the 08:30-09:30 return",
+      "directional": true,
+      "n": 138,
+      "estimate": 0.017003899605584842,
+      "ci95_low": -0.14574459844321005,
+      "ci95_high": 0.18729695886151018,
+      "p_boot": 0.838,
+      "sub_block_estimates": [
+        -0.030863514779070796,
+        0.01942703889667246,
+        -0.025240566349436305,
+        0.06631116900611177
+      ],
+      "sub_block_sign_agree": 2,
+      "implied_edge_ticks": 6.579710144927536,
+      "bh_reject": false
+    }
+  ],
+  "f3_1_descriptive_table": [
+    {
+      "bucket": "0830-0900",
+      "n": 138,
+      "mean_logret": 0.00020629106188218955,
+      "std_logret": 0.0029032915257079903,
+      "skew": -0.19381538211218996,
+      "excess_kurtosis": -0.30267545755514025,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "0900-0930",
+      "n": 138,
+      "mean_logret": 1.8666904655962573e-06,
+      "std_logret": 0.0021840317808337908,
+      "skew": -0.5051688639823552,
+      "excess_kurtosis": 2.0189408728726237,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "0930-1000",
+      "n": 138,
+      "mean_logret": 0.00013088070978308807,
+      "std_logret": 0.0023006280835989232,
+      "skew": -0.3020411581249531,
+      "excess_kurtosis": 0.7401951356932868,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "1000-1030",
+      "n": 138,
+      "mean_logret": 6.793244187000357e-05,
+      "std_logret": 0.0019683681334734574,
+      "skew": -0.43442509445463096,
+      "excess_kurtosis": 3.6101600856742966,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "1030-1100",
+      "n": 138,
+      "mean_logret": 9.053363415426023e-05,
+      "std_logret": 0.002015002894339304,
+      "skew": -1.5276713130444988,
+      "excess_kurtosis": 9.401969902790936,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "1100-1130",
+      "n": 138,
+      "mean_logret": 4.2494606200094154e-05,
+      "std_logret": 0.001581069533831466,
+      "skew": -0.7356856219328637,
+      "excess_kurtosis": 1.5436227797749416,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "1130-1200",
+      "n": 138,
+      "mean_logret": -6.563534938909764e-05,
+      "std_logret": 0.0016238975006099103,
+      "skew": 1.1841011764936675,
+      "excess_kurtosis": 5.387110145120184,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "1200-1230",
+      "n": 134,
+      "mean_logret": -9.423002911277467e-06,
+      "std_logret": 0.001484611535008945,
+      "skew": -0.7315099300940325,
+      "excess_kurtosis": 2.951005152812133,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "1230-1300",
+      "n": 134,
+      "mean_logret": 9.344383550840029e-05,
+      "std_logret": 0.0014826152827370875,
+      "skew": -0.2136952987306268,
+      "excess_kurtosis": 4.5864326927446015,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "1300-1330",
+      "n": 134,
+      "mean_logret": 0.00011732229508189521,
+      "std_logret": 0.0015330295311652815,
+      "skew": 0.09575846891183643,
+      "excess_kurtosis": 1.1045300275853611,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "1330-1400",
+      "n": 134,
+      "mean_logret": -2.2570737284497498e-05,
+      "std_logret": 0.0015533263621048282,
+      "skew": 0.5777313744372008,
+      "excess_kurtosis": 2.9546601670814887,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "1400-1430",
+      "n": 134,
+      "mean_logret": -2.6531239118925775e-05,
+      "std_logret": 0.0017955868997559697,
+      "skew": 1.4795313761901896,
+      "excess_kurtosis": 9.6524771916937,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    },
+    {
+      "bucket": "1430-1500",
+      "n": 134,
+      "mean_logret": 2.5273373373087622e-05,
+      "std_logret": 0.0017344267037532287,
+      "skew": -0.186079414332417,
+      "excess_kurtosis": 0.4897861494715934,
+      "ineligible": true,
+      "reason": "descriptive only per declaration; bucket means are clock seasonality and cannot clear the drift benchmark in-sample"
+    }
+  ]
+}

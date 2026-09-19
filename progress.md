@@ -891,3 +891,247 @@ Artifacts:
 - **Tests:** `tests/test_passive_fills.py`, `tests/test_drift_benchmark.py`, `tests/test_screening_runner.py`.
 - **Docs:** `docs/SCREENING.md`.
 - **Regression:** `strategy/research/_d1a_regression.py`, `reports/stage_d1a_regression.json`, `reports/stage_d1a_regression_prefix.json`.
+
+## 2026-09-18 — Stage D.1b: C-H4 and Family F (next hypothesis round)
+
+### Headline
+
+**The shortlist is still empty. This is the program's second consecutive clean null.**
+- **C-H4** (short-horizon reversal with passive fills, trial 24) fails every pre-registered condition. It loses more per trip than its market-fill parent C-H1: −$3.25 against −$2.79.
+- **Family F**, the declared-in-advance data-native exploration, computed its 57 declared statistics. The selection rule, fixed before any computation, **admitted zero hypotheses**:
+  - every statistically robust directional pattern is worth about 0.1 tick per trade, against a 2.1-tick round-turn cost;
+  - every pattern large enough to pay for costs is statistically indistinguishable from noise.
+- **The cumulative trial count is therefore N = 24, not 28+.** Across all 24 trials, the best t-stat is still 1.16. DSR is 0.000 for every trial, and at most 0.022 under the most generous variant. The in-sample winner among conditional strategies loses out of sample in 94% of CSCV splits.
+- `REGISTRATION.md` stays empty. Nothing here is ready for Stage D.2.
+
+### Guardrails, with evidence
+
+- **Sealed holdout:** `python -m data.holdout status` gave `all_ok: true` and `unlocks_logged: 0` before the session, during it (before the accounting run) and at the end.
+  - No file written this session reads `data/sealed` or names an unlock path.
+  - The Family F discovery computation loads bars only through `data.research_bars`, and asserts that its dates are a subset of the train union and disjoint from fold 0's train window.
+- **`REGISTRATION.md`:** 0 bytes. **`live/`, `ops/`:** empty. No TopstepX or ProjectX reference exists in any file written this session (grep verified).
+- **Shared runner only:**
+  - Every screening run and every accounting run went through `screen_candidate`. Nothing this session builds an `EngineConfig` or calls `run_backtest`.
+  - D.1's `_lead_accounting.py` did both, so it was not reused as a runner. Only its `TRIALS` list is imported.
+- **Databento spend: $0.00** of the $10 cap. No data acquired or quoted; the ledger is unchanged, last entry 2026-09-17.
+- **Tests:** 403 pass, including the leakage canaries: 392 before this session, plus 1 runner test and 10 C-H4 state-machine tests. Ruff is clean.
+- **One harness change, additive:** `ScreeningReport.daily_net_usd` is the net P&L per window date, in window order. The cumulative accounting needs it, and D.1 got the same series by bypassing the runner.
+  - A known-answer test pins that it covers every window date, including $0 days, and sums to `net_pnl_usd` to the cent.
+  - No verdict logic changed. The D.1 continuity check below reproduces all 23 trials exactly through it.
+
+### Delegation breakdown
+
+| Work | Who | Notes |
+|---|---|---|
+| C-H4 spec restated from D.1's log (item C7 and `h4_passive_fill_wrapper.py`), choice of H1 as the signal, limit price, exit rule, SUPPORT/REFUTE conditions | **Lead (Opus)** | Written into the subagent prompt before any code existed |
+| C-H4 implementation, 10 unit tests, one fold-0 screen | **Sonnet subagent** (general-purpose) | 148k tokens |
+| C-H4 code review and independent fold-0 re-run | **Lead** | Reproduced to the cent: 12,770 trips, −$41,538.26 |
+| Family F Task 2a: feature list, discovery window, inference plan, selection rule | **Lead** | Written and hashed before any computation |
+| Family F Task 2b: raw computation of the 57 declared statistics | **Sonnet subagent** (general-purpose) | 273k tokens |
+| Review of that computation; fix of one declared statistic that silently returned n = 0 (F3.3(a), see below) | **Lead** | |
+| Family F Task 2c (selection), Task 3 (cumulative accounting: module, run, reading), Task 4, this entry | **Lead** | |
+
+Two subagents in total, both Sonnet, and neither made a statistical or selection judgment.
+
+### Task 1 — C-H4: reversal with passive fills (trial 24)
+
+**Source, reused and not re-derived.**
+- Stage D.1 family C, item C7: Carver (2025), "There is no possibility that you would be able to overcome trading costs unless you were passively filled".
+- The source Carver cites for his 2–30-minute fast mean reversion: Safari & Schmidhuber (2025, arXiv:2501.16772).
+- D.1's logged mechanism: *"any of H1–H3, but specified from the start to require resting/limit-style fills (an order left at or better than the signal bar's close) rather than aggressive market-order fades"*.
+
+**Formalization** (`strategy/research/c_short_horizon_reversal/h4_passive_fill_reversal.py`, interface v2). One pre-chosen setting, no grid:
+- **Signal:** identical to C-H1: fade a 5-minute return whose magnitude ranks in the 20th–60th percentile of the trailing 120 one-minute-step values. H1 was chosen as the signal because it is the variant whose source Carver's post directly cites.
+- **Entry:** passive. `limit_intent` at the signal close + 1 tick for a sell, − 1 tick for a buy, TTL 5 bars. This is the nearest non-marketable price to "at the close", since a limit *at* the close is refused as marketable.
+- **Exit:** passive first. After 5 bars in the position, a limit at close ± 1 tick with TTL 5, and a market flatten if that expires. The whole round turn is passive where possible, which is what Carver's claim requires.
+- The magnitude window does not update while an entry order is resting. That is consistent with H1's update-only-when-flat rule; I noted it on review and accepted it.
+- **Implementation choices the subagent flagged, all accepted on review:**
+  - tick-integer rounding of limit prices;
+  - one internal `_exit_attempted` flag, because `AccountView` cannot distinguish "exit due" from "passive exit expired";
+  - a refused passive exit is treated like an expired one, so the market fallback follows;
+  - unit tests use shortened warm-up parameters, with the TTLs left at production values.
+
+**Pre-registered, before any backtest:**
+- **SUPPORT:**
+  - the fold-0 composite verdict passes, meaning the robust zero-edge gate AND both drift sub-checks;
+  - passive fills > 0, ≥ 30 trips, fade direction intact;
+  - then a stable pass across all 8 folds.
+- **REFUTE:** any one of:
+  - the composite fails;
+  - net ≤ $0;
+  - net per trip no better than C-H1's market-fill −$2.79 on fold 0, which refutes the specific claim that passive fills rescue this reversal.
+
+**Result, fold 0 train (142 dates): refuted, on all three REFUTE conditions.**
+
+| n trips | trades/day | p | R | net | net/trip | robust | drift | composite |
+|---|---|---|---|---|---|---|---|---|
+| 12,770 | 89.9 (T snapped to 4) | 0.433 | 0.805 | −$41,538 | −$3.25 | fail | fail (lower bound −$203/day) | **fail** |
+
+- **Fill mix:** 28,434 passive orders placed, 23,403 passive fills, 2,137 market fills (fallback exits).
+- **Why it did worse than market fills: gross, not costs.** Roughly $17.1k of the loss is modelled cost: 23.4k passive fills at $0.61, plus 2.1k market fills at about $1.32. That leaves about −$1.9 per trip *gross*, against about −$0.15 per trip for C-H1's market fills.
+  - The trade-through rule fills a fade only when price keeps moving through the level against it. That is exactly the adverse selection passive liquidity provision suffers.
+  - The rule drops the touch-and-bounce fills, which are the winners, so this result is **pessimistic by construction**.
+  - It therefore does not prove that a real resting order with good queue priority would lose. It does show that nothing in 1-minute bars can establish that it would win.
+- **8-fold extension: not triggered**, because fold 0 failed. The 289-day union run the accounting needs gives 26,723 trips, −$78,687, composite fail.
+
+**What this result does and does not account for.** These are the `PASSIVE_FILL_CAVEATS`, stated here rather than left to the runner:
+1. **Trade-through fill rule on 1-minute OHLC bars.** A limit fills only if a later bar trades at least one tick *through* it, and then at exactly the limit. A touch is not a fill.
+2. **Queue position is not modelled.** Trade-through assumes the level is exhausted before price goes through it; implied, hidden or cancelled liquidity can break that.
+3. **The order's own market impact is not modelled.**
+4. **Volume at the level is not checked.** Any trade-through fills the full size, so partial fills are impossible here.
+5. **Latency is not modelled,** neither the decision-to-order delay nor the cancel/replace delay.
+6. **No extra adverse-selection penalty is applied.** The trade-through rule and the real post-fill path carry it; the dropped touch fills bias the result pessimistically.
+7. **Market fallback exits use the two-day slippage calibration,** which is a lower bound on cost (its days are inside the sealed holdout; it excludes latency and adverse selection). Commission is $0.61 per side per micro, still to be confirmed at checkout.
+
+### Task 2a — Family F declared feature space (logged before computation)
+
+**`reports/stage_d1b_family_f_declaration.md`, sha256 `9c17c508c50ee66e37fc471136368c4b364922bc16437f7d9f0b5d860314448d`, written 2026-09-18T20:17:00Z.** That was before the computation script existed. Only the column schema and the fold construction were consulted to write it. Not committed mid-session (no commit was requested), so the hash plus the file's mtime is the evidence; the file is unchanged since, and its hash is recorded in the output JSON's meta. In summary:
+
+- **Discovery (EDA) window:** the 147 train-union dates *not* in fold 0's train window, 2025-10-17 → 2026-05-13, minus 8 excluded dates (6 roll-blackout, 4 vendor-degraded, 2 of them overlapping), leaving 139 dates.
+  - **Why:** Task 2d screens on fold 0 first, and discovery never saw fold 0's dates, so that screen would have been out-of-sample relative to discovery.
+- **The declared features, 57 tested statistics:**
+  - **F1** return autocorrelation, h ∈ {1, 5, 15, 30, 60} min, and variance ratios, RTH and ETH (18);
+  - **F2** volatility clustering, daily RV persistence, leverage asymmetry, vol-tercile-conditioned 15-min autocorrelation (12);
+  - **F3** 30-min bucket-to-bucket return correlations across RTH (12), plus intraday momentum in the Gao-Han-Li-Zhou / Baltussen form (2), plus descriptive bucket moments;
+  - **F4** crossings of the RTH open and the prior close, gap-fill by gap tercile, and round-number (×50, ×100) continuation versus control levels (7);
+  - **F5** relative-volume- and trend-efficiency-conditioned autocorrelation, range-per-volume residual (5);
+  - **F6** the 08:30 open's position inside the overnight range (1). Added beyond the prompt's starting list, before computation: the overnight range is a data-native reference no family used.
+- **Inference:** a stationary day-block bootstrap (mean block 5, 2,000 resamples), Benjamini–Hochberg at FDR 10% across all 57, sign agreement in ≥ 3 of 4 sub-blocks, and an implied gross edge in ticks for every directional statistic.
+- **Selection rule for Task 2c** (fixed in the same file): directional, AND BH-significant, AND sub-block-stable, AND implied edge ≥ 2.11 ticks per trade (≥ 0.98 only if the hypothesis is specified with passive entry and exit), AND not an already-screened A–E mechanism. If nothing qualifies, zero hypotheses.
+
+### Task 2b — stylized facts (`reports/stage_d1b_family_f_facts.json`)
+
+No signals, no P&L, no `strategy/interface.py`. The code is `strategy/research/f_data_native/_stylized_facts.py`, and 21 implementation choices are logged verbatim in the JSON.
+
+**Two deviations found on the lead's review, both logged:**
+1. **F3.3(a) silently returned n = 0.** The subagent computed the declared "first bar → 09:00 CT" return with its generic window routine. That routine requires a valid step *into* the first bar, which always crosses the daily halt, and a gap-free overnight. I replaced it with the literal statistic (first bar's close to the 08:59 CT bar's close, same instrument), which gives n = 134, and re-ran. This is a bug fix to a declared statistic, not a new one. Every other statistic is unchanged; the computation is deterministic.
+2. **F3.1 (descriptive bucket moments) covers the 13 RTH buckets only.** The declaration said every bucket of the trade date. It is descriptive and ineligible by declaration, so it cannot affect selection; noted, not re-run.
+
+**What the data say (EDA dates, 139 days):**
+
+| Feature | Finding | BH (10%) | Sub-blocks agreeing | Implied gross edge | Novel? |
+|---|---|---|---|---|---|
+| F1.1 1-min autocorr, RTH | −0.023 [−0.044, −0.002] | no (p .034) | 3/4 | 0.12 ticks for a fade | No: family C's region |
+| F1.1 other horizons | all \|ρ\| ≤ 0.05, all CIs span 0 | no | — | ≤ 0.8 ticks | — |
+| **F1.2 VR(5), RTH** | **0.930 [0.897, 0.972]**: mild mean reversion at 1–5 min | **yes** | 4/4 | about 0.1 tick (via F1.1) | No: C-H1/C-H3/C-H4's mechanism |
+| **F1.2 VR(60), ETH** | **0.851 [0.773, 0.911]**: overnight mean reversion within the hour | **yes** | 4/4 | ≤ 0.08 tick (via ETH F1.1 h ≤ 30) | Partly: no ETH reversal trial existed |
+| F2.1 \|r\| autocorr, lags 1–60 min | +0.19 to +0.33, RTH and ETH | yes (8/8) | 4/4 | non-directional | Textbook volatility clustering |
+| F2.2 daily RV persistence | +0.50 [0.31, 0.62] | yes | 4/4 | non-directional | Textbook; used by D-H1/D-H2 |
+| F2.3 leverage asymmetry | −0.114 [−0.202, −0.025]: down half-hours → higher next vol | yes | 4/4 | predicts vol, not side | Textbook |
+| F2.4 vol-tercile 15-min autocorr | ±0.02, CIs span 0 | no | 3/4 | −0.2 to −1.3 ticks | Near D-H1 |
+| F3.2 bucket → next bucket (12 pairs) | ρ from −0.19 to +0.16, all CIs span 0 | no (best p .099) | 2–4/4 | −7.6 to +4.2 ticks | New conditioning |
+| F3.3 intraday momentum (a) overnight→close, (b) first 30 min→close | −0.056 (p .53); −0.110 (p .22). Sign is *reversal*, the opposite of the literature's momentum | no | 3/4 | −5.0; −6.3 ticks | Literature (A10/A28), never screened |
+| F4.1 / F4.2 RTH-open / prior-close crossing | −3.5 / −1.0 ticks per 15 min, CIs span 0 | no | 3/4, 2/4 | −3.5, −1.0 | Near B |
+| F4.3 gap fill by \|gap\| tercile | 95% / 58% / 30% of gaps fill | yes (3/3) | 4/4 | ineligible by declaration | **D-H4's mechanism; replication, not discovery.** D-H4 still failed |
+| F4.4 round numbers vs control | ×50: −1.7 ticks (p .31); ×100: −4.6 (p .073) | no | 2/4, 3/4 | −0.5, −3.4 | New |
+| F5.1–F5.3 volume/range conditioning | \|ρ\| ≤ 0.05, all CIs span 0 | no | 2–3/4 | ≤ 1.1 ticks | New |
+| F6.1 open's position in the overnight range | +0.017 (p .84) | no | 2/4 | 6.6 ticks (noise) | New |
+
+**Descriptive:** RTH 30-min bucket returns are fat-tailed (excess kurtosis up to 9.7), with bucket means indistinguishable from zero. That is clock seasonality, ineligible by declaration.
+
+### Task 2c — hypotheses formalized: **zero**
+
+I applied the rule exactly as declared.
+- **Survives BH:** 15 of 57. Of these, 12 are ineligible by declaration (F2.1 ×8, F2.2, F4.3 ×3); F2.3 predicts volatility, not direction; and 2 remain eligible through a directional reading: VR(5) RTH and VR(60) ETH.
+- **Fails the economics:** both remaining facts are real but tiny.
+  - The fades they imply earn about 0.12 ticks (RTH, from F1.1 h1) and at most 0.08 ticks (ETH, F1.1 h ≤ 30) per trade, gross. The bar is 2.11 ticks at market, or 0.98 passive.
+  - Being 18× short of the market bar is not a near miss.
+  - VR(5) RTH is also C-H1/C-H3/C-H4's mechanism, and C-H4 has just shown that even passive fills do not rescue it.
+- **Not selected, ranked by the size of the implied edge.** All are large enough to pay for costs, and none is statistically distinguishable from zero:
+
+  | Statistic | Implied edge | p |
+  |---|---|---|
+  | F3.2 bucket 07→08 | −7.6 ticks | .27 |
+  | F6.1 | +6.6 ticks | .84 |
+  | F3.3(b) | −6.3 ticks | .22 |
+  | F3.2 bucket 08→09 | −6.2 ticks | .099 |
+  | F3.3(a) | −5.0 ticks | .53 |
+  | F4.4 ×100 | −4.6 ticks | .073 |
+  | F3.2 bucket 01→02 | +4.2 ticks | .37 |
+  | F3.2 bucket 10→11 | +3.7 ticks | .18 |
+  | F4.1 | −3.5 ticks | .21 |
+  | F3.2 buckets 02→03, 05→06, 04→05, 06→07, 12→13 | 2.4–3.1 ticks | .26–.81 |
+
+  - The smallest p among them is .073, and the BH threshold at that rank is about .03.
+  - Formalizing any of them would be testing noise that happens to be large. That is precisely what the rule exists to stop, and each would have added one to N.
+
+**Consequence:** Task 2d had nothing to screen, so zero Family F trials were run and N rises by 1 (C-H4), not by up to 7. The cap of 6 was never binding, so no justification for exceeding it arises.
+
+**Ideas for a future round (not computed; from the subagent and the lead):**
+- a direction-split gap fill (up-gaps vs down-gaps);
+- why short-lag \|r\| clustering is stronger in ETH;
+- where ETH's variance ratio crosses from above 1 to below 1;
+- whether F3.2's mid-morning bucket pattern aligns with the 09:00/10:00 CT release slots, which would make it an E-family question.
+
+None of these gets formalized without new data: every one of them was generated from the discovery dates.
+
+### Task 3 — cumulative multiple-comparisons accounting (`strategy/research/_d1b_accounting.py`, `reports/stage_d1b_accounting.json`)
+
+**Continuity first.** All 23 D.1 trials were re-run through `screen_candidate` on the 289-day train union and reproduce D.1's net P&L to the cent, and each daily-series Sharpe to 1e-6: **0 problems.** So this is D.1's accounting carried forward, not a new one. The whole run took 83 s on 12 workers.
+
+**N = 24**: D.1's 23 plus C-H4. No Family F hypothesis was formalized, so none enters the count. As a sensitivity, N is also widened by Family F's 57 EDA statistics.
+
+- **Deflated Sharpe Ratio (daily net P&L, 289 days):**
+
+  | Variant | N | Sharpe variance across trials | Expected max daily Sharpe under null | Best observed (A-H4 RTH, 0.068) → DSR |
+  |---|---|---|---|---|
+  | Cumulative, all 24 | 24 | 0.143 (up from 0.109, driven by C-H4's −1.15) | 0.750 | **0.000** |
+  | Variance excluding family C (most generous) | 24 | 0.0085 | 0.182 | **0.022** (D.1: 0.024 at N = 23) |
+  | Sensitivity: N + 57 EDA statistics | 81 | 0.143 | 0.930 | **0.000** |
+
+  - **C-H4:** daily Sharpe −1.15, t = −19.5; DSR 0.000 under every N, including uncorrected (N = 1). There is no "significant against this session's small count" artefact to catch, because nothing in this session is positive.
+  - **Judged against this session's trials alone:** C-H4 is the only new trial, so a this-session-only DSR/PBO is degenerate (1 strategy) and is reported as undefined, not as 0.
+- **Harvey/Liu/Zhu:** the best t-stat across all 24 is **1.16** (A-H4 RTH leg, drift-explained per D.1a). No trial clears t > 2.0, let alone 3.0.
+- **PBO (CSCV, 8 contiguous 36-day blocks of the train union, 70 splits; D.1's approximation, unchanged):**
+
+  | Candidate set | PBO | In-sample winner's mean OOS net | P(winner positive OOS) |
+  |---|---|---|---|
+  | All 24 | 0.129 | +$1,721 | 0.83 |
+  | Excluding family C (20) | 0.157 | +$1,721 | 0.83 |
+  | **Excluding the four unconditional longs (20)** | **0.400** | **−$521** | **0.06** |
+
+  - As in D.1, a low PBO with the longs included is beta, not edge. The winner is the drift-riding RTH long, which D.1a showed is 98% drift.
+  - With the longs removed, the conditional winner loses out of sample in **94% of splits**, the same as D.1.
+  - This set has 20 strategies, where D.1's comparable row had 9: D.1 also dropped family C and trials with annualised Sharpe below −1. That makes this PBO 0.400 instead of D.1's 0.943; the winner's out-of-sample record is identical.
+- **8-fold stability extension: not applicable.** No candidate cleared the robust verdict and the drift benchmark.
+
+### Task 4 — shortlist (updated, not reset)
+
+**Still empty.** Nothing cleared the Task 3 bar; nothing came close. For the record, the closest remain D.1's A-H4 legs and B-H2. The A-H4 legs are drift, per D.1a. B-H2 fails robust with t = 0.39. Nothing new joins them. No single winner, no D.2 readiness, and `REGISTRATION.md` is untouched. That decision remains the user's.
+
+### Should the program keep searching? A question for the user, stated plainly
+
+Two consecutive clean nulls, 24 trials, and a declared data-native sweep that found no tradable-magnitude structure are, in my judgment, **a signal worth discussing before another round**, not a reason for a third round of the same kind:
+
+- **What has been searched:**
+  - 1-minute MES bars only;
+  - 289 train days, April 2025 → May 2026;
+  - retail micro-contract costs (about 2.1 ticks per round turn at market);
+  - intraday-only holding (the XFA flatten);
+  - literature across 5 families, plus a declared EDA.
+- **What the searches agree on:**
+  - the robust structure in these bars is real but small: short-lag mean reversion (VR 0.85–0.93), volatility clustering, gap-fill base rates;
+  - it is an order of magnitude below cost;
+  - passive execution does not rescue it under a realistic, pessimistic fill rule;
+  - everything big enough to trade is noise at this sample size.
+- **What another round like this would buy:** more trials against the same 289 days. That raises N, lowers every future candidate's DSR, and consumes train data that cannot be un-seen. The sealed holdout stays safe, but the train set is increasingly mined.
+- **The options, and I recommend the user choose rather than defaulting to "search more":**
+  - **(a) Pause strategy search on this data.** Accept that 1-minute MES bars at micro-contract costs do not show an intraday edge findable by these methods.
+  - **(b) A scoped data decision** (spend, quote-then-log), each item named in D.1/D.1a:
+    - order-book days outside the holdout, for order flow and a realistic queue-position fill model, the one thing that could overturn C-H4's pessimistic verdict;
+    - MNQ/NQ, for cross-asset structure;
+    - a longer history, which gives power for the ranked-but-noisy Family F patterns and the calendar family.
+
+    Any new round on new data would still carry N = 24 forward.
+  - **(c) Revisit the constraint set,** since the XFA intraday flatten rules out every multi-day effect in the literature. That is a program-scope question, not a research one.
+
+Artifacts:
+- **Code:**
+  - `strategy/research/c_short_horizon_reversal/h4_passive_fill_reversal.py`;
+  - `strategy/research/_d1b_ch4_fold0.py`;
+  - `strategy/research/f_data_native/` (`_stylized_facts.py`, and `trials.py`, which is deliberately empty);
+  - `strategy/research/_d1b_accounting.py`;
+  - `screening/runner.py` (`daily_net_usd`).
+- **Tests:** `tests/test_c_h4_passive_reversal.py`, `tests/test_screening_runner.py`.
+- **Reports:** `reports/stage_d1b_family_f_declaration.md`, `reports/stage_d1b_family_f_facts.json`, `reports/stage_d1b_ch4_fold0.json`, `reports/stage_d1b_accounting.json`.
+- **Docs:** `docs/STAGES.md`, `docs/SCREENING.md` (N = 24).

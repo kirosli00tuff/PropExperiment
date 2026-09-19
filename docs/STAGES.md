@@ -27,5 +27,10 @@ history, not here.
   screening runner. (Built 2026-09-18; see progress.md, docs/SCREENING.md and
   reports/stage_d1a_regression.json. Every future screen goes through
   `screening.screen_candidate`.)
+- Stage D.1b — C-H4 (reversal with passive fills) and Family F, a bounded,
+  declared-in-advance data-native exploration. (Run 2026-09-18; see progress.md,
+  reports/stage_d1b_family_f_declaration.md and reports/stage_d1b_accounting.json.
+  C-H4 failed; Family F's pre-declared selection rule admitted zero hypotheses;
+  cumulative N = 24; shortlist still empty.)
 - Stage D.2 — Sealed holdout read under the pre-registered bar.
 - Stage E — Practice-account forward test, then one 50K Combine.

@@ -65,6 +65,7 @@ from sim.engine import (
     EngineConfig,
     FillEvent,
     IntentEvent,
+    daily_net_pnl,
     iter_bars,
     roll_blackout_dates,
     run_backtest,
@@ -162,6 +163,9 @@ class ScreeningReport:
     verdict: str  # "pass" only if the zero-edge gate AND the drift benchmark both clear
     reasons: tuple[str, ...]
     caveats: tuple[str, ...]
+    # Net P&L per window date, in window order, $0 on a date with no trading (Stage D.1b):
+    # the series the multiple-comparisons accounting (DSR, t-hurdle, PBO) consumes.
+    daily_net_usd: tuple[float, ...] = ()
 
     def to_dict(self) -> dict:
         out = asdict(self)
@@ -197,6 +201,12 @@ def _exposure(fills: tuple[FillEvent, ...]) -> str:
     short = any(f.position_after < 0 for f in fills)
     return {(True, True): "both", (True, False): "long_only", (False, True): "short_only",
             (False, False): "none"}[(long_, short)]
+
+
+def _daily_net_usd(result, dates: Sequence[date]) -> tuple[float, ...]:
+    days = daily_net_pnl(result)
+    by_date = days.groupby("trade_date")["day_net_cents"].sum() / 100.0
+    return tuple(float(by_date.get(d, 0.0)) for d in dates)
 
 
 # ------------------------------------------------------------------- screen ----
@@ -259,6 +269,7 @@ def screen_frame(
         drift_verdict="pass" if drift_ok else "fail",
         verdict="pass" if (zero_edge.robust == "pass" and drift_ok) else "fail",
         reasons=tuple(reasons), caveats=tuple(caveats),
+        daily_net_usd=_daily_net_usd(result, dates),
     )
 
 

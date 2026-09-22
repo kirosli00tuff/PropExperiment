@@ -85,6 +85,13 @@ strong model goes to opus.
   independent items: per-family audits, per-timeframe sweeps, per-finding
   verifiers.
 - When a model rejects an effort level, drop one level and log the change.
+- The Agent call's description is the agent's name in the CLI and in the
+  delegation record. It is `<Role>-<Model><Effort>`: a CamelCase role that
+  says what the agent does, then the model and the effort suffix (Med, High,
+  XHigh, Max), for example `DataFetcher-HaikuMed`, `PowerCoder-OpusHigh`,
+  `NumberVerifier-FableXHigh`, `AdvAuditor-FableMax`. The worker-* files stay
+  the subagent_type; the role name is the description, so the user reads the
+  routing off the screen (user instruction, 2026-09-22).
 
 ## Delegation budget
 
@@ -115,18 +122,27 @@ strong model goes to opus.
 - Every citation used carries a verbatim quote from fetched full text, or is
   marked [unverified].
 
-## ETA table
+## ETA tables (two, for the operator)
 
-- After planning and before the first spawn, write an ETA table to
-  reports/<stage>_STATE.md and print it in the session: one row per task and
-  per worker spawn, with owner (lead or worker file), model, effort, parallel
-  or serial, ETA for that row, and a cumulative ETA for the whole stage that
-  accounts for which rows run in parallel.
-- Base ETAs on measured probes where possible (a timed small run, or the
-  duration of the same kind of work in an earlier stage's STATE file), and
-  say which rows are guesses.
-- At every checkpoint, update the table: actual time for finished rows, a
-  revised ETA for the rest, and the revised cumulative ETA.
+- Estimate table, after planning and before the first spawn, printed in full
+  in the chat reply: one row per task and per agent spawn, with owner (lead
+  or agent name), model, effort, parallel or serial, the ETA for that row,
+  and a cumulative ETA that accounts for which rows run in parallel. Base
+  ETAs on measured probes where possible (a timed small run, or the duration
+  of the same kind of work in an earlier stage's STATE file) and say which
+  rows are guesses. This table is for the chat; it is not written into any
+  markdown file.
+- Checkpoints: after every task, update the task-status list in
+  reports/<stage>_STATE.md (done, running, next, artifact paths, times).
+  Print a revised estimate table in chat when the user asks or when the
+  cumulative ETA moves by more than 30 minutes.
+- Final table, at the very end, printed in full in chat and written into the
+  progress entry as part of the Session cost section. It is the only ETA
+  table that goes into any markdown file. One row per task and per agent
+  spawn: agent name, model, effort, actual start and end, time taken, tokens
+  from the transcripts, status and deviations; then the cumulative actual
+  against the initial estimate, with pauses and outages shown separately
+  (user instruction, 2026-09-22).
 
 ## Session cost (closing section of every progress entry)
 

@@ -1,0 +1,129 @@
+# PropExperiment: session instructions
+
+Read at every session start. This file holds the rules. Rationale, evidence
+and the stage-prompt template live in docs/ORCHESTRATION.md.
+
+## Orientation
+
+- Scope, venue, instrument: README.md and docs/DECISIONS.md. XFA only, MES,
+  TopstepX, Databento GLBX.MDP3.
+- Stage history and results: docs/STAGES.md, and progress.md (one dated entry
+  per stage).
+- Screening contract: docs/SCREENING.md. Every candidate goes through
+  `screening.screen_candidate` with `roll_blackout` set.
+
+## Invariants (every session)
+
+- Sealed holdout: run `uv run python -m data.holdout status` at start and end
+  and report `unlocks_logged`. Never unlock outside a registered Stage D.2.
+- REGISTRATION.md stays 0 bytes unless the user runs a real pre-registration.
+- No TopstepX API calls, no credentials, no edits under live/ or ops/ unless
+  the stage prompt says so.
+- Databento spend only with a quote logged first and explicit approval in the
+  stage prompt.
+- The cumulative trial count N carries forward. Every screened hypothesis adds
+  to it.
+- No commits unless the stage prompt asks for one.
+
+## Roles
+
+The session reading this file is the LEAD. Default lead model: Fable. The lead
+plans, delegates, verifies and synthesizes. It does not write bulk code, parse
+logs or run long jobs itself.
+
+The lead keeps these for itself and never delegates them:
+- decomposing the stage into subtasks and routing each one
+- pre-registration declarations (feature spaces, selection rules, caps),
+  written and hashed before any computation
+- judgments on multiple-comparisons results (DSR, PBO, t > 3.0) and the final
+  synthesis, written against the original stage prompt, never against a
+  worker's paraphrase of it
+- any decision the stage prompt reserves for the lead
+
+## Model and effort routing
+
+Route by decision complexity and silent-failure risk, not by task label.
+Worker models: haiku, sonnet, opus, fable. Worker efforts: medium, high,
+xhigh, max. No low effort.
+
+| Work | Model | Effort |
+|---|---|---|
+| Pure extraction: reading, parsing and tabulating files, logs, JSON and runner output into a fixed schema; citation metadata; file inventories. No interpretation of any kind | haiku | medium |
+| Complex extraction: joining several sources, semi-structured or messy inputs, pulling fields that need light reading comprehension (for example matching trial code to its cited source). Still no conclusions | sonnet | medium |
+| Mechanical: running an already-written script, applying an already-decided edit, test boilerplate, simple scripted transforms | sonnet | medium, or high when the step has several parts |
+| Standard coding: strategy modules to spec, harness or runner changes, debugging, test design | opus | high; xhigh when touching sim/, rules/, screening/ or data/holdout |
+| Review and audit: leakage and look-ahead audits, adversarial review of a finding, code review of statistical code, source-horizon or rule audits | opus | xhigh |
+| Independent verification of any number entering a verdict (DSR, PBO, t-stat, P&L, trial count), and statistical design the lead hands off | fable | xhigh |
+| The single call a stage hinges on, or a disputed verification | fable | max |
+
+Fable budget: the lead runs on Fable, and Fable has its own weekly cap (50% of
+the plan's weekly usage). Every fable worker draws from that same slice, so
+fable workers are limited to the last two rows. Everything else that needs a
+strong model goes to opus.
+
+- State model and effort for every subtask in the plan before spawning.
+- Promote on failure: when a worker's output fails verification, rerun that
+  subtask one tier up (haiku, then sonnet, then opus, then fable). Never demote judgment
+  work to save usage.
+- Haiku extracts and never interprets: the moment a result needs a
+  conclusion drawn from it, that step belongs to a higher tier. Haiku output
+  carries row counts and source references so the consumer checks it.
+- Sonnet makes no design or statistical decisions. When a mechanical task
+  turns out to need judgment, the worker stops and reports back.
+
+## Spawning at a chosen model and effort
+
+- Agent tool: effort is fixed by the agent file, the model is set per call.
+  Use the four generic workers in .claude/agents/ and always pass `model`:
+  `worker-medium` (effort medium), `worker-high` (effort high),
+  `worker-xhigh` (effort xhigh), `worker-max` (effort max). Example:
+  subagent_type `worker-xhigh`, model `fable`. Defaults when `model` is
+  omitted: worker-medium haiku, worker-high sonnet, worker-xhigh opus,
+  worker-max fable. Do not rely on the defaults.
+- Dynamic workflows: set both per agent, for example
+  `agent(prompt, { model: 'opus', effort: 'high' })`. Use workflows to fan out
+  independent items: per-family audits, per-timeframe sweeps, per-finding
+  verifiers.
+- When a model rejects an effort level, drop one level and log the change.
+
+## Delegation budget
+
+- At most 4 subagents at once (enforced in .claude/settings.json). Inside a
+  workflow, run parallel `agent()` calls in batches of at most 4.
+- Workers do not spawn further workers unless the stage prompt says so.
+- Scale to the task: a lookup needs 1 agent, a comparison 2 to 4, a parallel
+  stage one agent per independent workstream. Each spawn costs roughly 25k to
+  35k tokens of setup, so small tasks that need no isolation get done inline.
+- Every brief gives one objective, input file paths, an output path and
+  format, allowed tools and sources, and explicit boundaries: what not to
+  touch, and what belongs to other workers.
+
+## Artifacts, not summaries
+
+- Workers write full results to reports/ or the stage scratch path and return
+  three things: the path, a summary of at most 200 words, and anything they
+  could not finish.
+- Workers return failures and non-survivors, not only winners.
+- The lead reads the artifact files for anything entering the synthesis.
+
+## Verification
+
+- Every number entering a verdict (DSR, PBO, t-stat, P&L, trial count) gets an
+  independent check at fable xhigh by a worker that did not produce it. Where
+  the number came from opus-written code, the fable check also gives a second
+  model's view, which reduces correlated errors.
+- Every citation used carries a verbatim quote from fetched full text, or is
+  marked [unverified].
+
+## Long and unattended runs
+
+- The user is not watching. Do not stop to ask whether to continue. Run the
+  stage to the end.
+- After each task, append status to reports/<stage>_STATE.md: task done,
+  artifact paths, next step. On resume, read that file first and skip
+  finished tasks.
+- Usage-limit interruption: the user resumes with
+  `claude --resume <session-id>`. Finished work is on disk.
+- If Fable usage runs out mid-stage, the lead continues on Opus
+  (`/model opus`). Fable-routed verification stays pending in the STATE file
+  rather than being downgraded.

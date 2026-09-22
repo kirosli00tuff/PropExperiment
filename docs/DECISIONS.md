@@ -19,3 +19,8 @@
   not left generic.
 - No sandbox exists on TopstepX. All early testing runs on a Practice
   account against live endpoints.
+- Orchestration (2026-09-21): stage sessions run a Fable lead that plans,
+  routes, verifies and synthesizes, with workers on haiku (pure extraction
+  only), sonnet, opus or fable at medium, high, xhigh or max effort. No low
+  effort. Concurrency capped at 4. Rules in
+  CLAUDE.md, rationale and the stage-prompt template in docs/ORCHESTRATION.md.

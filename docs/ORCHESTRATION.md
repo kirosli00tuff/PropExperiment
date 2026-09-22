@@ -85,7 +85,9 @@ of 2026-09-21 and is mandatory.
     DELEGATION PLAN   table: task, owner (lead, or worker file + model),
                       parallel or serial, why that tier
     WHAT NOT TO DO
-    DELIVERABLE       dated progress.md entry and named artifacts
+    DELIVERABLE       dated progress.md entry and named artifacts, ending
+                      with the Session cost section (CLAUDE.md); the lead
+                      keeps a per-row and cumulative ETA table throughout
 
     END PROMPT
 

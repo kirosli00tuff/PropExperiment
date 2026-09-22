@@ -115,6 +115,39 @@ strong model goes to opus.
 - Every citation used carries a verbatim quote from fetched full text, or is
   marked [unverified].
 
+## ETA table
+
+- After planning and before the first spawn, write an ETA table to
+  reports/<stage>_STATE.md and print it in the session: one row per task and
+  per worker spawn, with owner (lead or worker file), model, effort, parallel
+  or serial, ETA for that row, and a cumulative ETA for the whole stage that
+  accounts for which rows run in parallel.
+- Base ETAs on measured probes where possible (a timed small run, or the
+  duration of the same kind of work in an earlier stage's STATE file), and
+  say which rows are guesses.
+- At every checkpoint, update the table: actual time for finished rows, a
+  revised ETA for the rest, and the revised cumulative ETA.
+
+## Session cost (closing section of every progress entry)
+
+Computed at the very end, after everything else is written:
+- Wall-clock time: total, and per task from the STATE file timestamps. Show
+  any pause, such as a usage-limit wait, separately so it is not counted as
+  work.
+- Tokens per model: sum each assistant message's usage fields (input,
+  output, cache read, cache creation) by model across this session's own
+  transcript and its subagent transcripts under
+  ~/.claude/projects/<this project>/<session id>/ (the main .jsonl plus
+  subagents/**/*.jsonl). One table: model, input, output, cache read, cache
+  creation, total.
+- One line per worker spawn: agent file, model, effort, tokens.
+- Delegation share: the fraction of tokens spent by the lead versus workers,
+  and by model tier.
+- These are token counts, not plan-credit percentages. The session cannot
+  read the /usage meter; the user records it before and after. If the
+  transcripts cannot be read, say so and report time only. Never estimate
+  token counts.
+
 ## Long and unattended runs
 
 - The user is not watching. Do not stop to ask whether to continue. Run the

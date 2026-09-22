@@ -36,5 +36,11 @@ history, not here.
   excludes. Decision brief only; no code, no backtest, no registration. (Run
   2026-09-18; see progress.md. The 15:08/15:10 CT flatten is confirmed and applies
   to the Combine, XFA and LFA alike; no researched prop firm permits overnight.)
+- Stage D.1d — Multi-timeframe audit and bounded coarser-bar sweep. (Run 2026-09-21; see
+  progress.md, reports/stage_d1d_horizon_audit.md, reports/stage_d1d_timeframe_declaration.md
+  and reports/stage_d1d_accounting.json. 7 of 24 trials were flagged as tested finer than
+  their source's horizon; all 7 re-tests at the source's grid failed; the declared 28-statistic
+  sweep at 5/15/30/60-minute bars admitted zero hypotheses; cumulative N = 31; shortlist
+  still empty.)
 - Stage D.2 — Sealed holdout read under the pre-registered bar.
 - Stage E — Practice-account forward test, then one 50K Combine.

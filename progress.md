@@ -1365,3 +1365,185 @@ On the measured evidence, **the flatten did not cause any observed failure.** Th
 It made no code changes. It did not touch `rules/xfa_rules.py`, `live/`, `ops/` or any adapter. It ran no backtest and no hypothesis test, spent no data, did not write to `REGISTRATION.md` and made no TopstepX API contact. The holdout was never unlocked (`unlocks_logged: 0`). It makes no recommendation.
 
 Artifacts: this entry; `docs/STAGES.md` (one line). Working files in the session scratchpad: raw HTML of the help-center pages and `items.tsv`, the 183-item extract (not committed).
+
+## 2026-09-21 — Stage D.1d: multi-timeframe audit and bounded coarser-bar sweep
+
+### Headline
+
+**The shortlist is still empty. This is the program's third consecutive clean null, and it closes the resolution-mismatch question.**
+- **Task 1:** 7 of the 24 trials were tested at a finer resolution than their cited source specifies. All 7 flags trace to two sources: Mesfin (2026), whose MNQ study runs entirely on 5-minute bars, and the daily-regime claims behind D-H1/D-H2, which the originals measured with an 11-minute half-life on 1-minute returns. Five adversarial verifiers upheld every flag and every non-flag.
+- **Task 3, re-tests:** all 7 re-tests at the source's own grid fail the composite verdict on fold 0 and on the 289-day train union. Nothing passed, so no fold extension ran.
+- **Task 3, sweep:** the declared Family G sweep computed its 28 statistics at 5, 15, 30 and 60-minute bars. **Zero survive Benjamini–Hochberg** (smallest p = .020 against a rank-1 threshold of .0036), so zero hypotheses were formalized, exactly as the declaration allowed for. Every fact large enough to pay for costs (8 of 28, at 2.9–10.1 ticks) has p ≥ .02 on 112–319 events.
+- **Task 4:** cumulative **N = 31** (24 + 7). The prior 24 trials reproduce D.1b's accounting to the cent and to 1e-6 in daily Sharpe. DSR is 0.000 for every trial (0.003 at best under the most generous variant); the best t-stat is still 1.16; with the unconditional longs removed, the in-sample winner loses out of sample in 96% of CSCV splits.
+- `REGISTRATION.md` stays empty. Nothing here is ready for Stage D.2.
+
+### Guardrails, with evidence
+
+- **Sealed holdout:** `uv run python -m data.holdout status` gave `all_ok: true`, `unlocks_logged: 0`, `research_has_no_holdout_rows: true` at the start, after the sweep, and at the end. Every D.1d module loads bars only through `data.research_bars` (statistics) or the shared runner (screens); `grep -rniE "unlock|data/sealed|topstepx|projectx"` over the new code finds nothing.
+- **Databento spend: $0.00.** No request, no quote. The ledger is unchanged: 72 entries, last written 2026-09-16.
+- **`REGISTRATION.md`:** 0 bytes. **`live/`, `ops/`:** empty. **`rules/xfa_rules.py`, `sim/`, `screening/`, `data/`, `funnel/`:** unchanged against HEAD.
+- **No bar or position spans a boundary:** every coarse bar lies inside one ETH or RTH segment of one trade date, ends at or before the no-new-positions time, and is dropped rather than truncated at 08:30, 15:00, an early close or the halt (declaration rules R2–R7). Every D.1d strategy closes its own position by 15:00 CT; the Fable review found no forced flatten in any traced run.
+- **Shared runner only:** every screen and every accounting run went through `screen_candidate`. Nothing this session builds an `EngineConfig`.
+- **Tests:** 509 pass, 1 xfail, up from 403: 27 resampler, 35 re-test and 44 Family G known-answer tests, all written against the declaration rather than the implementation's output. Ruff is clean. The xfail is documented below.
+- **Declared before computed:** `reports/stage_d1d_timeframe_declaration.md`, sha256 `07a906328a2aae2097ae30ea02e5b547cf37247245e1cd91b63808809619c745`, written 2026-09-21T23:01:09Z and made read-only before any computation module existed (`strategy/research/g_timeframe/` was created afterwards). The sweep script refuses to run if the file's hash changes, and the hash is embedded in every output JSON's meta. Nothing was added to either list after hashing.
+
+### Delegation breakdown, and what did not go to plan
+
+The prompt was written for ultracode with four per-timeframe workstreams. The session ran differently, and the record should say so:
+
+| Work | Who | Tokens | Outcome |
+|---|---|---|---|
+| Task 1 audit, families A–E (5 Opus auditors + 5 verifiers) | subagents | 744k, mostly lost | **The account's weekly limit killed 5 of 6 agents mid-run.** Only family A's audit finished; its verifier never ran. |
+| Task 1 audit, families B–E; two primary sources re-read (Mesfin PDF → `pdftotext`; Carver raw HTML) | **lead** | — | done inline, in `reports/stage_d1d_horizon_audit.md` |
+| Task 1 adversarial verification, one Opus refuter per family (A–E) | subagents | 784k (with the next row) | all 24 verdicts' flags upheld; three descriptive corrections applied (below) |
+| Resampler known-answer tests | 1 Opus subagent | | 27 tests; one latent divergence found (below) |
+| Task 2 declaration; the resampler, the 7 re-tests, the Family G sweep, the runners, the accounting; every run; selection; this entry | **lead** | — | The four timeframes ran as four forked processes of one shared module, each writing its own result file, not as four subagents: after the first workflow died on the limit, and once the user said the plan was now Pro, one resampler shared by all four was safer than four agents re-deriving it. |
+| Declaration-conformance review: does the code implement exactly the hashed rules? | 1 **Fable** subagent, effort xhigh | 687k (with the next row) | **"results trustworthy as computed"**; six LOW findings (below); it re-implemented G1–G5 from the declaration and reproduced all 28 statistics to 1e-9 |
+| Re-test and Family G known-answer tests | 2 Opus subagents | | 35 + 44 tests; one latent re-test defect found and fixed (below) |
+
+Model tiers followed the user's mid-session instruction: Fable for the hard logic (the review), Opus for regular work (audits, tests), the lead on Fable. No haiku or sonnet was used.
+
+### Task 1 — horizon-resolution audit of the 24 trials (`reports/stage_d1d_horizon_audit.md`)
+
+Evidence: D.1's untruncated `all_results.json`, each module's code, and two primary re-reads. Verdicts: **FAITHFUL** (matches, or a clock window that a 1-minute grid represents exactly); **RESOLUTION_MISMATCH** (source ≥ 5 min, trial finer); **SOURCE_SILENT**; **NON-RESOLUTION** (differs for a non-bar-size reason: flatten or window definition, D.1c's scope). A flag needs a mismatch plus a plausible understatement mechanism.
+
+| Trial | Source horizon | Tested | Verdict | Flag |
+|---|---|---|---|---|
+| A-H1 | 02:00–03:00 ET clock hour | fills at the 02:00/03:00 ET opens | FAITHFUL | |
+| A-H2 buy / sell | last 30 min, 15:30–16:00 ET | fills at 15:30/16:00 ET | FAITHFUL | |
+| A-H3 | JKM's Monday seasonal is in the **open-to-close** return | one session open-to-close | FAITHFUL (amended; see below) | |
+| A-H4 eth | close-to-open, 16:00 → 09:30 ET | 17:01 CT fill → 08:30 CT | NON-RESOLUTION | |
+| A-H4 rth | 09:30–16:00 ET | same | FAITHFUL | |
+| **B-H1 hold 5 / hold 75** | Mesfin: 5-min bars, OR = "the first six five-minute bars", bar+1 / bar+15 | OR15 on 1-min bars, 1-min close-through trigger | **RESOLUTION_MISMATCH** | **yes → 5 min** |
+| B-H2 | transaction-level stop execution (finer than 1 min) | 1-min close-through | FAITHFUL | |
+| **B-H3 breakout / fade** | Mesfin §4.1 (5-min bars) | OR30 on 1-min bars, 1-min trigger | **RESOLUTION_MISMATCH** | **yes → 5 min** |
+| B-H4 | no intraday resolution stated for the contraction measure | 1-min | SOURCE_SILENT | |
+| C-H1 | Safari & Schmidhuber: minute data | 5-min return on a 1-min grid | FAITHFUL | |
+| **C-H2** | Mesfin §4.2: 5-min bars, 20-bar baseline, bar+1 | 1-min bars, 60-bar baseline, hold 2 | **RESOLUTION_MISMATCH** | **yes → 5 min** |
+| C-H3 | no sourced horizon for the CLV construction | 1-min | SOURCE_SILENT | |
+| **D-H1** | a daily vol regime ("today predicts tomorrow") | EWMA λ 0.94 on 1-min returns: ≈ 11-min half-life | **RESOLUTION_MISMATCH** (signal window) | **yes → daily V from 5-min returns** |
+| **D-H2** | Carver: "vol targets using the last month or so of returns" (exact) | same 11-min half-life | **RESOLUTION_MISMATCH** (signal window) | **yes → daily V** |
+| D-H3 | Bookmap narrative, no timeframe | 1-min | SOURCE_SILENT | |
+| D-H4 | SR 917's overnight window | the 1-hour halt gap (≈49 h on Mondays); flat by 17:31 CT, never inside the source's 02:00–03:00 ET | NON-RESOLUTION (a different variable; **new relative to D.1c**) | |
+| E-H1 | 24 h pre-FOMC | truncated at 17:00 CT | NON-RESOLUTION (D.1c) | |
+| E-H2 | discovery within ~1 min, normalising over 5–15 min | 5-min window, 10-min hold | FAITHFUL | |
+| E-H3 | last half hour of witching Friday | 14:30–15:00 CT | FAITHFUL | |
+| E-H4 | a 4-session hold | single sessions | NON-RESOLUTION (D.1c) | |
+| C-H4 | as C-H1 | C-H1's signal, passive fills | FAITHFUL | |
+
+**Counts:** FAITHFUL 10, RESOLUTION_MISMATCH 7 (all flagged), SOURCE_SILENT 3, NON-RESOLUTION 4. **Every flag maps to the 5-minute grid**; no cited source specifies a 15-, 30- or 60-minute bar, so the coarser workstreams carried no re-tests.
+
+**Verification (after the declaration was hashed, so it could not widen the list).** Five Opus verifiers, one per family, re-derived every row and tried to refute it both ways. Every flag and every re-test grid was upheld, and every Mesfin and Carver string in quotation marks was found verbatim. Three descriptive corrections were applied and are recorded in the audit file's amendments section: **A-H3** relabelled NON-RESOLUTION → FAITHFUL, because JKM (fetched, p. 31) locate their significant Monday seasonal in the open-to-close return the trial holds, and the "weekend gap" rationale carried from D.1c is Rogalski (1984)'s cash-equity finding, which JKM cite but do not reproduce (medium confidence: the module's docstring names French 1980, under which close-to-close would be right); **A-H4 ETH** fills at 17:01 CT, not 17:00; **D-H4** also spans the weekend closure, and its "16:00 → 09:30 ET" horizon was the lead's reconstruction, not a log quote. The verifier's sharpest challenge, that D-H4's 17.5-hour source window forced to 1 hour is the same species of error as D-H1/D-H2, was rejected: the trial's variable is disjoint from the source's effect window and sometimes coarser than it, so no bar-size change repairs it, whereas lengthening D-H1/D-H2's estimator on the same bars does.
+
+### Task 2 — declaration (`reports/stage_d1d_timeframe_declaration.md`, sha256 `07a90632…19c745`, 2026-09-21T23:01:09Z)
+
+Fixed before any computation code existed, in the Family F format:
+- **Resampling rule R1–R7.** Session minute 0 = 17:00 CT. ETH = [17:00, 08:30), RTH = [08:30, 15:00), both capped at the no-new-positions time (15:08 CT; 17 minutes before a CME early close, read from the bar's own `early_halt_ct` only on the trade date's own calendar day). A slot exists only if it ends at or before its segment's end: dropped, never truncated or extended, so the 60-minute stubs 08:00–08:30 and 14:30–15:00 do not exist, and nothing crosses the halt, the flatten or a trade date. Missing minutes keep a bar; two instrument ids drop it. A bar completes at the decision time of its last minute, or late on the next bar if that minute is missing. One shared module (`strategy/research/g_timeframe/resample.py`) serves the statistics (vectorised) and the strategies (bar by bar), and the two are pinned identical.
+- **The 7 re-tests RT1–RT7**, one per flagged trial, changing only horizon-bearing parameters, each taking the source's value where the source states one: RT1/RT2 = B-H1 with OR = six 5-minute bars and bar+1 / bar+15 holds; RT3/RT4 = B-H3's legs on the same grid with the original 30-minute hold; RT5 = C-H2 on 5-minute bars with Mesfin's 20-bar baseline and bar+1 hold; RT6/RT7 = D-H1/D-H2 with V measured per trade date (an EWMA at the original λ over daily means of squared 5-minute returns). Thresholds, buffers, sides, base entries and one-entry-per-session unchanged. SUPPORT/REFUTE in the C-H4 form.
+- **Family G, M = 28 tested statistics:** G1 large-body follow-through (RTH, ETH), G2 session-extreme breakout (RTH, ETH), G3 opening-range breakout held to the RTH end, G4 VWAP-deviation continuation/reversion, G5 overnight-range break; each at 5, 15, 30 and 60 minutes; each an event statistic whose value is the mean signed next-bar move in ticks, so the statistic **is** the implied gross edge. G0 (coarse-bar lag-1 autocorrelation) is descriptive only: Family F's F1.1 already measured it at these horizons and found nothing. G1.RTH.5, G1.ETH.5 and G3.RTH.5 are counted but ineligible: they are the re-tests' own mechanism on the re-tests' own grid.
+- **Selection rule:** eligible, BH-significant at FDR 10% across this session's 28 only, ≥ 3 of 4 sub-blocks agree, **|edge| ≥ 2.11 ticks** (the $2.64 modelled market round turn; the 0.98-tick passive bar is unavailable because every G template is a market-order template), ≥ 30 events. **The cost bar does not change with the timeframe:** fewer trades per day at 60 minutes cost statistical power, not cost per trade. Cap: 8 across all four timeframes.
+- **Inference:** Family F's `compute_result`, imported unchanged (day-block bootstrap, seed 20260918, 2,000 resamples, mean block 5; percentile CI; two-sided p; sub-blocks 35/35/35/34 of the same 139 EDA dates). Stated plainly in the file: those dates are not fresh, and the discipline preserved is F's, that anything formalized is screened first on fold 0, which discovery never saw.
+
+### Task 3 — re-tests: all 7 fail on both windows (`reports/stage_d1d_retests.json`)
+
+Fold 0 train (142 dates) and the 289-day train union, through `screen_candidate`. Every composite verdict is **fail**: the robust zero-edge gate fails or is below grid in every case, and the drift benchmark's 95% lower bound is negative in every case. The original's figures on the same window are from `reports/stage_d1_accounting.json`.
+
+| Re-test | Window | n / T / p / R | Net (per trip) | Robust | Original: n / p / R / net (per trip) |
+|---|---|---|---|---|---|
+| RT1 B-H1, 5-min ORB, bar+1 | fold 0 | 134 / 0.94 / 0.485 / 0.82 | −$349 (−$2.60) | fail | 136 / 0.419 / 0.67 / −$1,096 (−$8.06) |
+| | union | 273 / 0.94 / 0.480 / 0.93 | −$478 (−$1.75) | fail | 276 / 0.438 / 0.85 / −$1,347 (−$4.88) |
+| RT2 B-H1, 5-min ORB, bar+15 | fold 0 | 134 / 0.94 / 0.515 / 0.67 | −$1,711 (−$12.77) | below_grid | 136 / 0.507 / 0.89 / −$542 (−$3.99) |
+| | union | 273 / 0.94 / 0.538 / 0.71 | −$2,002 (−$7.33) | below_grid | 276 / 0.533 / 0.86 / −$293 (−$1.06) |
+| RT3 B-H3 breakout, 5-min | fold 0 | 134 / 0.94 / 0.575 / 0.68 | −$338 (−$2.52) | below_grid | 135 / 0.489 / 0.91 / −$472 (−$3.50) |
+| | union | 273 / 0.94 / 0.535 / 0.76 | −$975 (−$3.57) | fail | 274 / 0.493 / 0.87 / −$1,186 (−$4.33) |
+| RT4 B-H3 fade, 5-min | fold 0 | 134 / 0.94 / 0.410 / 1.31 | −$355 (−$2.65) | fail | 135 / 0.459 / 1.10 / −$227 (−$1.68) |
+| | union | 273 / 0.94 / 0.432 / 1.23 | −$437 (−$1.60) | fail | 274 / 0.449 / 1.19 / −$231 (−$0.84) |
+| RT5 C-H2 spike fade, 5-min | fold 0 | 1,444 / 10.2 / 0.401 / 0.91 | −$5,717 (−$3.96) | fail | 4,512 / 0.361 / 1.24 / −$8,535 (−$1.89) |
+| | union | 2,824 / 9.8 / 0.411 / 0.91 | −$10,475 (−$3.71) | fail | 8,829 / 0.365 / 1.12 / −$20,090 (−$2.28) |
+| RT6 D-H1, daily-V gate | fold 0 | 102 / 0.72 / 0.373 / 1.30 | −$160 (−$1.57) | below_grid | 66 / 0.409 / 1.06 / −$117 (−$1.78) |
+| | union | 134 / 0.46 / 0.396 / 1.19 | −$217 (−$1.62) | below_grid | 106 / 0.434 / 0.80 / −$304 (−$2.87) |
+| RT7 D-H2, daily-V sizing | fold 0 | 116 / 0.82 / 0.397 / 1.14 | −$385 (−$3.32) | below_grid | 135 / 0.415 / 0.97 / −$1,181 (−$8.75) |
+| | union | 257 / 0.89 / 0.455 / 0.91 | −$1,070 (−$4.16) | fail | 276 / 0.460 / 0.84 / −$2,320 (−$8.41) |
+
+**Reading the table, as the declaration's resolution-effect rule requires:** "resolution understated the effect" is supported only where a re-test passes. None does, so it is supported for **none** of the 7. Direction of change, reported as such and nothing more: the per-trip loss shrank for RT1, RT3, RT6 and RT7 and grew for RT2, RT4 and RT5. The 5-minute close-through trigger did what the audit said it plausibly might, raising B-H1's win probability from 0.42 to 0.49, but the win/loss ratio fell with it; Mesfin's 75-minute hold, marginally positive on MNQ at his costs, is the worst row here (p 0.52, R 0.67, −$12.77 per trip). RT5's 5-minute spike population is a third the size of the 1-minute one and loses more per trip, which is Mesfin's own §4.2 finding on MNQ, reproduced on MES: the post-expansion reversal is real, but not capturable at a next-bar-open entry net of cost. RT1–RT4 share one trigger by construction (the source's six-bar range), so their four rows differ only in hold and side.
+
+### Task 3 — Family G sweep: 28 statistics, zero survive (`reports/stage_d1d_family_g_facts.json`, per-timeframe files `…_5m/15m/30m/60m.json`)
+
+- **Resampling, descriptive:** on the 139 EDA dates, 25,847 / 8,615 / 4,307 / 2,084 ETH bars and 10,607 / 3,533 / 1,766 / 816 RTH bars at 5/15/30/60 minutes; bars with a missing minute are 0.01%–0.10% of ETH and 0% of RTH. Zero late completions at any timeframe.
+- **G0 continuity:** the coarse-bar lag-1 autocorrelation equals Family F's F1.1 **to four decimals at every ETH timeframe** (e.g. +0.0093 at 5 min, −0.0515 at 15, −0.0381 at 30, +0.0493 at 60). RTH differs slightly (0.0151 vs 0.0144 at 5 min; −0.013 vs −0.039 at 60), and the review traced that to a definition, not to the resampler: F1.1's first RTH window spans the 08:29 → 08:30 step and G0's does not, so F has one more return per day.
+- **The 28 tested statistics, top of the p-ordering:**
+
+  | Statistic | n events | Edge (ticks) [95% CI] | p | Sub-blocks | Selection |
+  |---|---|---|---|---|---|
+  | G2.RTH.30 session-extreme breakout | 319 | **+5.19** [+0.73, +9.65] | .020 | 3/4 | not BH-significant (threshold .0036) |
+  | G1.RTH.5 large-body follow-through | 1,789 | +0.88 [+0.07, +1.76] | .034 | 4/4 | ineligible (RT5's grid); and below cost |
+  | G2.ETH.30 | 598 | −1.62 [−3.90, +0.32] | .124 | 3/4 | not significant |
+  | G2.ETH.5 | 1,328 | −0.49 | .137 | 3/4 | not significant |
+  | G5.RTH.15 overnight-range break | 129 | −4.02 [−11.2, +2.9] | .239 | 4/4 | not significant |
+  | G5.RTH.30 | 124 | +4.52 | .283 | 2/4 | not significant |
+  | G3.RTH.15 ORB held to the close | 138 | −10.08 | .452 | 3/4 | not significant |
+  | remaining 21 | 112–4,405 | −4.6 to +2.9 | .44–.98 | | not significant |
+
+- **The same split as Family F, one level coarser.** Eight statistics clear the 2.11-tick cost bar (2.9–10.1 ticks); their p-values are .020–.888 on 112–319 events. Everything with a small p (G1.RTH.5 at 0.88 ticks) is below cost. **Zero BH-significant, zero qualify, zero formalized**, and `G_TRIALS` is empty. No hypothesis was screened, so the sweep adds nothing to N.
+- **What the near-miss is worth noting for:** G2.RTH.30, a 30-minute close beyond the session's earlier extreme, is worth +5.2 ticks on the next 30-minute bar with a CI that excludes zero, but it is one of 28 tests, its sub-blocks read +4.2 / −0.6 / +6.3 / +10.0, and the rule this session fixed in advance says it is not distinguishable from noise at this multiplicity. It is logged, not promoted, and it would need new data to be looked at again.
+
+### Task 4 — cumulative accounting (`strategy/research/_d1d_accounting.py`, `reports/stage_d1d_accounting.json`)
+
+**Continuity first: 0 problems.** All 24 prior trials re-run through the runner on the train union reproduce `reports/stage_d1b_accounting.json` to the cent and each daily Sharpe to 1e-6. **N = 31**: 24 + 7 re-tests + 0 Family G.
+
+| Variant | N | Sharpe variance | E[max daily Sharpe under null] | Best DSR |
+|---|---|---|---|---|
+| Cumulative, all 31 | 31 | 0.117 | 0.713 | **0.000** |
+| Variance excluding family C (most generous) | 31 | 0.011 | 0.223 | **0.003** (A-H4 RTH, drift-explained per D.1a) |
+| This session only | 7 | 0.018 | 0.185 | **0.0004** (RT4) |
+| This session, uncorrected (N = 1) | 1 | — | — | 0.38 (RT4), 0.22, 0.20, 0.18, 0.15, 0.07, 0.00 |
+| Sensitivity: N + 57 F + 28 G EDA statistics | 116 | 0.117 | 0.882 | **0.000** |
+
+- **Harvey/Liu/Zhu:** the best t-stat across all 31 is still **1.16** (A-H4 RTH). All seven new trials have negative t-stats (RT5: −7.3). Nothing clears t > 2.0, let alone 3.0.
+- **PBO (CSCV, 8 contiguous 36-day blocks, 70 splits):**
+
+  | Candidate set | PBO | In-sample winner's mean OOS net | P(winner positive OOS) |
+  |---|---|---|---|
+  | All 31 | 0.129 | +$1,721 | 0.83 |
+  | Excluding family C (27) | 0.143 | +$1,721 | 0.83 |
+  | **Excluding the four unconditional longs (27)** | **0.671** | **−$960** | **0.04** |
+  | This session's 7 alone | 0.757 | −$975 | 0.01 |
+
+  As in D.1 and D.1b, the low PBO with the longs included is beta: the winner is the drift-riding RTH long. Among conditional strategies the in-sample winner now loses out of sample in 96% of splits (94% in D.1b); the seven new trials made the conditional pool worse, not better.
+
+### Task 5 — synthesis (lead only)
+
+**Does anything clear the bar? No.** Not one of the 7 re-tests, not one of the 28 declared statistics. The shortlist is empty, as it was after D.1 and D.1b, and `REGISTRATION.md` is untouched.
+
+**Was the resolution-mismatch hypothesis worth checking?** Yes, and it is now closed rather than open:
+- It was a real defect in the program's evidence, not a hypothetical one. The strongest quantitative source D.1 found (Mesfin's 947-day MNQ falsification study) was tested at the wrong grid in five trials, and the two volatility-state trials measured a "daily" regime with a quarter-hour estimator. A future reader of D.1 would have been entitled to say the sources were never tested as written.
+- Tested as written, the sources fail the same way. The 5-minute trigger does filter noise (B-H1's win probability rose from 0.42 to 0.49), but what it filters out is not where the loss was. Mesfin's one marginal positive (ORB bar+15) is MES's worst re-test row. The daily-vol versions of D-H1/D-H2 change how many days trade and not the sign of anything.
+- The sweep adds the coarser-resolution counterpart of Family F's null: the structure that is statistically robust in 5–60-minute bars is sub-cost, and the structure that would clear cost is not distinguishable from noise at this sample size. That is the same sentence D.1b wrote about 1-minute bars.
+
+**What this adds to "should the program keep searching":** the searched region now covers 1-, 5-, 15-, 30- and 60-minute bars, 31 trials, 85 declared statistics (57 + 28), three independent multiple-comparison corrections, and a source-faithfulness audit. Every result agrees. Raising N to 31 has lowered every future candidate's DSR, and the same 139 EDA dates have now been mined twice.
+
+**What remains unexamined after this session,** besides the order-book fill model already scoped for D.1e:
+1. **Power at coarse resolution, not method.** A 60-minute-bar effect worth 4–10 ticks has 112–170 events in 139 days here. Resolving it to the cost bar at conventional confidence needs several times that; that is a data-length question (the D.1b option (b) purchase), not a technique question.
+2. **Daily-bar signal construction proper.** RT6/RT7 moved a volatility estimator to daily; nobody has built a daily-range or daily-close conditioning variable (Crabel's narrow-range days, prior-day range terciles) for an intraday entry. B-H4 and D-H3 were SOURCE_SILENT, not re-tested, and a daily construction would be a new hypothesis rather than a resolution re-test, so it was correctly outside this session's declaration.
+3. **The multi-day region** catalogued by D.1c, unchanged: it needs a harness that can hold across trade dates and a venue that permits it.
+4. **A second instrument.** Cross-asset lead-lag has never been touched, for want of data.
+
+None of these is a reason to run another round on the existing 289 days. Each needs something the program does not have: more history, a new construction declared in advance, a different constraint set, or a second series.
+
+### Review findings and defects, all recorded
+
+- **Fable conformance review (xhigh): "results trustworthy as computed."** Six LOW findings, none touching a computed number: (1) `_run_retests.py`'s "supported" label does not read the original's verdict (inert: every original failed in D.1); (2) gross per trip, a declared descriptive column, is not produced because `ScreeningReport` carries no gross figure, so the comparison uses net per trip only; (3) RT6's first-day V = 0.0 enters its 60-day regime history, which tightens the low-vol gate marginally for the first 60 days of each window, an artefact inherited from D-H1 and left in place to keep the re-test faithful to the original; (4) the RTH G0-vs-F1.1 difference is definitional (above); (5) the "all six OR slots present" rule is an undeclared implementation choice that never bound (every RTH day has six); (6) if an entire last RTH slot were missing, a position would fall to the engine's flatten (never occurs in the data).
+- **Latent defect found by the re-test tests, fixed, re-run.** When rule R6's late completion delivers two coarse bars in one `push`, `OrbRetest` returned from inside the loop and `SpikeFadeRetest` consumed its hold flag before the fill existed, so the hold was never closed. The test writer verified that **no such push occurs on any research date at 5 minutes** (0 late completions). The fix (no early return; the hold ends at the first completion after the entry's decision bar at which the fill is visible) was applied, both scripts were re-run, and every re-test row and every accounting figure is identical to the pre-fix output. The strict xfail that found it now passes.
+- **Latent divergence found by the resampler tests, documented, kept as a strict xfail.** A 1-minute feed that stops inside a slot leaves the builder's last accumulator unreturned while `coarse_bars` emits a short bar; every research trade date runs past its segment ends, so it cannot occur here. The precondition is now stated in `resample.py`'s docstring.
+- **Cosmetic:** `_reject_reason`'s message hard-codes M = 28; `main()` asserts M = 28 before calling it, so it cannot misreport today.
+
+### Files that appeared during the session from outside its tasks
+
+`CLAUDE.md`, `docs/ORCHESTRATION.md`, `.claude/agents/worker-*.md`, `.claude/settings.json` and a five-line bullet in `docs/DECISIONS.md` were written at 16:25–16:29 PDT while this session's workflows were running. No subagent of this session issued a write to those paths (checked in every agent transcript), and no other Claude session transcript on this machine was active at that time; their content is the orchestration policy the user described in chat. They are left untouched, are not this session's artifacts, and await the user's confirmation.
+
+Artifacts:
+- **Reports:** `reports/stage_d1d_horizon_audit.md`; `reports/stage_d1d_timeframe_declaration.md` (read-only, hashed); `reports/stage_d1d_retests.json`; `reports/stage_d1d_family_g_facts.json` and the four per-timeframe files; `reports/stage_d1d_accounting.json`.
+- **Code:** `strategy/research/g_timeframe/` (`resample.py`, `retests.py`, `_run_retests.py`, `_stylized_facts.py`, `trials.py`, deliberately empty); `strategy/research/_d1d_accounting.py`.
+- **Tests:** `tests/test_d1d_resample.py`, `tests/test_d1d_retests.py`, `tests/test_d1d_family_g.py`.
+- **Docs:** `docs/STAGES.md` (one entry), `docs/SCREENING.md` (N = 31).
+- Scratchpad, not committed: `mesfin.txt`, `carver_vt.html`, `jkm.txt`, the pre-fix JSON copies.

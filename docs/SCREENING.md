@@ -63,7 +63,7 @@ The full list is `sim.fill_model.PASSIVE_FILL_CAVEATS`, which the runner attache
 
 ## Rules that still apply
 
-1. **Every call is a trial.** Log every screen you run, including failures, and carry the trial count forward. Stage D.1 logged N = 23; Stage D.1b added C-H4, so **N = 24**. The next round's accounting starts from 24 plus that round's own trials: extend `strategy/research/_d1b_accounting.py`, which re-runs every trial through this runner (`ScreeningReport.daily_net_usd` is the daily series it consumes).
+1. **Every call is a trial.** Log every screen you run, including failures, and carry the trial count forward. Stage D.1 logged N = 23; Stage D.1b added C-H4 (24); Stage D.1d added the seven re-tests RT1–RT7, so **N = 31**. The next round's accounting starts from 31 plus that round's own trials: continue `strategy/research/_d1d_accounting.py`, which re-runs every trial through this runner (`ScreeningReport.daily_net_usd` is the daily series it consumes) and verifies the prior trials reproduce to the cent.
 2. **Do not build `EngineConfig` or call `sim.engine.run_backtest` directly for screening.** `screening.runner.screen_frame` exists only for synthetic known-answer tests; it skips the train-date check.
 3. **Run the canaries after any harness change:** `uv run pytest tests/test_leakage_canaries.py`.
 4. **Costs are a lower bound.** The slippage table rests on two days of book data, both inside the sealed holdout, and excludes latency, adverse selection and queue position. Commission ($1.22/round turn) still needs checkout confirmation. A strategy that only works at modelled cost does not work.

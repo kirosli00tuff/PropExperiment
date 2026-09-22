@@ -140,9 +140,10 @@ strong model goes to opus.
   progress entry as part of the Session cost section. It is the only ETA
   table that goes into any markdown file. One row per task and per agent
   spawn: agent name, model, effort, actual start and end, time taken, tokens
-  from the transcripts, status and deviations; then the cumulative actual
-  against the initial estimate, with pauses and outages shown separately
-  (user instruction, 2026-09-22).
+  from the transcripts, status and deviations; a closing cumulative row for
+  the whole stage (total work time, total tokens, split lead versus workers)
+  set against the initial estimate, with pauses and outages shown as their
+  own rows and excluded from the work total (user instruction, 2026-09-22).
 
 ## Session cost (closing section of every progress entry)
 

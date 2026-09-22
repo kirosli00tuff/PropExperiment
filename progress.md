@@ -1364,3 +1364,4 @@ On the measured evidence, **the flatten did not cause any observed failure.** Th
 
 It made no code changes. It did not touch `rules/xfa_rules.py`, `live/`, `ops/` or any adapter. It ran no backtest and no hypothesis test, spent no data, did not write to `REGISTRATION.md` and made no TopstepX API contact. The holdout was never unlocked (`unlocks_logged: 0`). It makes no recommendation.
 
+Artifacts: this entry; `docs/STAGES.md` (one line). Working files in the session scratchpad: raw HTML of the help-center pages and `items.tsv`, the 183-item extract (not committed).

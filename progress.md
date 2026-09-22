@@ -1547,3 +1547,296 @@ Artifacts:
 - **Tests:** `tests/test_d1d_resample.py`, `tests/test_d1d_retests.py`, `tests/test_d1d_family_g.py`.
 - **Docs:** `docs/STAGES.md` (one entry), `docs/SCREENING.md` (N = 31).
 - Scratchpad, not committed: `mesfin.txt`, `carver_vt.html`, `jkm.txt`, the pre-fix JSON copies.
+
+## 2026-09-22 — Stage D.1e: defining the MES null (criteria, power and data quotes)
+
+**Bought nothing, screened nothing, N stays 31.** This stage wrote down what "MES is null" will mean before any data is purchased: a bounded statement per strategy class with an economic threshold ε derived from the program's own power gate, the test and power that establish it, the days each class needs, Databento quotes for the history and order-book days that would supply them, a second sealed holdout carved from that history, and the frozen list of tests Stage D.1f runs. Headline: ε = 34 net ticks per micro per day ($85 a day at 2 micros) is the smallest edge that funds the Topstep funnel under the robust null; every class reaches 80% null power at ε within 566 days, and the extended history supplies 992 to 1,151 days under a 2019 or 2020 start; the extension quotes at $7.59 and the 181 full-day order-book dates C6 needs at about $181 to $199; 47 of the 95 measured members can be resolved below the 2.11-tick cost bar with the full history and 48, the once-a-day constructions, cannot. Nothing was bought; the spend decision is the user's.
+
+Lead: Fable 5.1 at xhigh, across two sessions. The first session (00:33–01:36Z) died with the machine (system processes restarted 01:46Z); the second resumed at 04:32Z from `reports/stage_d1e_STATE.md` and the artifacts on disk. Ultracode was off, as the prompt said; the session reminder said it was on, and the prompt won (logged in the STATE file). Two user instructions were applied to CLAUDE.md during the first session (print the full ETA table in chat; agent names carry task, model and effort).
+
+### Guardrails
+
+| Check | Start (session 1, 00:33Z) | Resume (04:32Z) | End |
+|---|---|---|---|
+| `uv run python -m data.holdout status` | all_ok true, unlocks_logged 0 | all_ok true, unlocks_logged 0, research_has_no_holdout_rows true | all_ok true, unlocks_logged 0, research_has_no_holdout_rows True |
+| REGISTRATION.md | 0 bytes | 0 bytes | 0 bytes |
+| Databento spend this stage | $0.00 | $0.00: 95 `quote` events appended to `ledger/databento_spend.jsonl` (lines 72–166), every `usd` 0.0, no commit/settle/refused event, `shared_cumulative_usd` 84.006048 unchanged, no new file under data/vendor | same |
+| Trial count N | 31 | 31 (the 31 trials were re-run once for their per-trade distributions; no new hypothesis) | 31 |
+| git tree | clean at 2530d29 | dirty only with this stage's files (listed under Artifacts) | no commit |
+| rules/, live/, ops/, TopstepX | untouched | untouched | untouched |
+
+The quote script (`strategy/research/_d1e_quotes.py`) replaces both billable Databento namespaces with a raising guard before any call and never imports `data.adapter.fetch_range`; `tests/test_d1e_quotes.py` asserts the guard. Endpoints called, all free: `metadata.get_dataset_range`, `list_schemas`, `list_datasets`, `get_dataset_condition`, `get_cost`, `get_billable_size`, `symbology.resolve`.
+
+### Delegation record
+
+| Task | Owner | Model / effort | Outcome | Deviation from the plan |
+|---|---|---|---|---|
+| 0 Startup, context | lead | fable xhigh | done, 12 min | — |
+| 1a Recorded figures from the D.1b/D.1d JSONs | worker-medium | sonnet medium | `reports/stage_d1e_members_recorded.{json,md}`; 31 trials + 21 statistics matched uniquely, 4 min | — |
+| 1b Two additive runner fields + 31-trial re-run | worker-xhigh | opus xhigh | `screening/runner.py` (+`trip_pnls_usd`, `daily_n_trips`), 3 tests, `strategy/research/_d1e_members.py`, `reports/stage_d1e_members_trials.json`; continuity to the cent; 257 s run | promoted from the plan's sonnet high because it touches screening/ (CLAUDE.md routing) |
+| 1c Event and daily series for all 64 F/G statistics | worker-high | opus high | `strategy/research/_d1e_event_series.py`, `reports/stage_d1e_members_events.json`; every recorded estimate reproduced to 1e-9; 5 min | added subtask: the recorded reports hold no per-day series for statistics |
+| 1d Coverage map | lead | — | `reports/stage_d1e_coverage.md` | — |
+| 2a Power-gate cell table | worker-medium | haiku medium | `reports/stage_d1e_power_gate_cells.{json,md}`, 120 cells, 70 s | — |
+| 2b Finer and deeper gate points | worker-high | opus high | `strategy/research/_d1e_gate_extension.py`, `reports/stage_d1e_gate_extension.json`: 100 rows at T = 1, 2, 4, 8, 16, 32 | the run died with the machine at T=8; the lead restarted the self-resuming script inline in the background (a spawn would have cost more than the work) |
+| 2c ε | lead | — | section below | — |
+| 3a Power code, tests, run | worker-high | opus high | `strategy/research/_d1e_power.py`, `tests/test_d1e_power.py`, `reports/stage_d1e_power.{json,md}` | two passes plus one follow-up (rulings in `reports/_d1e_power_HANDOFF.md`); paused 05:04–05:46Z at the user's request; the file was split into four modules to respect the 800-line cap |
+| 3a' Re-run at the final ε | lead (inline) | — | one command | plan said sonnet medium; a one-line re-run needs no isolation |
+| 3b Verification of the power numbers | worker-xhigh | fable xhigh | `reports/stage_d1e_power_verification.md` | ran on the ε = 34 output, which turned out to be final, so no re-check after a re-run was needed |
+| 4a/4b Availability and quotes | worker-xhigh | opus xhigh | `strategy/research/_d1e_quotes.py`, `tests/test_d1e_quotes.py`, `reports/stage_d1e_quotes.{json,md}`, 95 ledger quote events; 16 min | — |
+| 4c Data-quality rules | lead | — | `docs/NULL_CRITERIA.md` section 4 | — |
+| 5 Second holdout, frozen list, Family H | lead | — | `reports/stage_d1f_confirmation_list.md` | — |
+| 5d Adversarial review | worker-max | fable max | `reports/stage_d1e_adversarial_review.md`, `reports/stage_d1e_adjudication.md` | ran once on the drafts (55 findings), then re-read the amended documents; the re-read was cut off by the session rate limit at about 07:35Z and resumed at 08:41Z from its transcript |
+| 6 NULL_CRITERIA.md | lead | — | `docs/NULL_CRITERIA.md` | — |
+| 7 Decision packet, entry, STAGES.md | lead | — | this entry | — |
+
+The first session's four initial Agent calls failed ("agent type not found") because the four worker files had not yet been picked up; they loaded a few minutes later and every spawn after that used them. Concurrency never exceeded four.
+
+### Task 1 — coverage map (`reports/stage_d1e_coverage.md`)
+
+Lead, from three extraction artifacts (Task 1a sonnet medium: recorded figures; Task 1b opus xhigh: the 31 trials re-run once through `screen_candidate` for their per-trade and per-day distributions, continuity to `stage_d1d_accounting.json` to the cent, `continuity_problems: []`; Task 1c opus high: event-level and per-day series for all 64 directional F and G statistics, every recorded estimate reproduced to 1e-9). No new trial, no new statistic; N = 31.
+
+**Seven classes, 101 members: 95 measured and 6 projected.**
+
+| Class | Members | Tier A (Holm family) | Tier B (null only) | Refinement to the prompt's list |
+|---|---|---|---|---|
+| C1 session clock | 6 trials (A-H1, A-H2 buy, A-H2 sell, A-H3, A-H4 eth, A-H4 rth) | 6 | 0 | none |
+| C2 reference levels and breakouts | 10 trials (B-H1 x2, B-H2, B-H3 x2, B-H4, RT1–RT4) + 21 statistics | 10 + 9 (F6.1, F4.1, F4.4x100, G2.RTH.30, G2.ETH.30, G2.ETH.5, G5.RTH.15, G5.RTH.30, G3.RTH.15) | 12 (F4.2, F4.4x50, G2/G3/G5 at the other timeframes) | F6.1 (the open's position in the overnight range) added: a reference-level statistic on the D.1b near-miss list the prompt did not place |
+| C3 short-horizon reversal and momentum | 4 trials (C-H1, C-H2, C-H3, RT5) + 36 statistics | 4 + 12 (nine F3.2 bucket pairs, F3.3 a and b, G1.RTH.5) | 24 (F1.1 at h = 1/5/15/30/60 for ETH and RTH, three F3.2 pairs, G1 and G4 at the other timeframes) | F1 enters through its directional statistic F1.1, not the F1.2 variance ratios, which have no side and are reported descriptively |
+| C4 volatility-state conditioning | 6 trials (D-H1..D-H4, RT6, RT7) + 7 statistics | 6 | 7 (F2.4 x2, F5.1 x2, F5.2 x2, F5.3) | F2 enters through F2.4 only; F2.1–F2.3 are non-directional facts |
+| C5 calendar and scheduled events | 4 trials (E-H1..E-H4) | 4 | 0 | none |
+| C6 passive execution | C-H4 | 1 (lower bound only) | 0 | class verdict belongs to D.1g |
+| C7 daily-bar constructions | H1–H6, declared in the confirmation list | 6 | 0 | new; power projected from proxies until D.1f measures it |
+
+Per member the map records trades (or events) per day, per-trade net mean and SD in ticks per micro, daily SD over every window date with zeros on no-trade days, lag-1 autocorrelation of the daily series, the within-day clustering VIF, and the window (trials: 289 train-union dates 2025-04-01..2026-05-13; statistics: 139 EDA dates 2025-10-17..2026-05-13). Three things the figures show that the power calculation then depends on: (1) the four high-frequency C3/C6 trials (30 to 141 trades a day) have the largest daily SDs, 47 to 104 ticks per micro, with mild within-day clustering (VIF 0.87 to 1.37); (2) daily autocorrelation is small for almost every member (|lag-1| < 0.25 except A-H4 rth leg at −0.30, G1.RTH.5 at −0.25 and F3.2 08→09 at +0.25), so the block bootstrap's inflation factors sit near 1; (3) E-H3 trades four times in 289 days and its daily series is almost all zeros, which is what makes its economic null trivially cheap and its structural question unanswerable at any feasible length.
+
+Out of scope, named so the verdict never overreaches: multi-day holding (venue, D.1c); other instruments and cross-asset effects (user decision); order-flow signals needing book data beyond C6's fill model; sizes other than 2 micros; passive execution outside C6; constructions not on the frozen list.
+
+Family H proxy rule (for Task 3 only; the criteria use measured series in D.1f): per-trade SD 100 ticks per micro for the five breakout/fade tests (between B-H1 hold-75's 49.8 and A-H4 rth's 114.6, nearer the latter for the three-quarter-session hold) and 115 for the open-to-close H6; firing fractions from the conditions' definitions under exchangeable ranges (NR4 1/4, NR7 1/7, inside day 1/4, terciles 1/3, outer CLV fifths 2/5, times 0.9 for a breach of the opening range before 14:30); daily SD = per-trade SD x sqrt(f). Nothing was read from any data for this.
+
+
+### Task 2 — the economic threshold ε
+
+Lead judgment on two worker artifacts: the haiku-medium tabulation of the Stage B grid (`reports/stage_d1e_power_gate_cells.{json,md}`, 120 cells, every cell's gross and net ticks per trade and net $/day at 2 micros beside its robust and matched verdicts) and the opus-high extension (`strategy/research/_d1e_gate_extension.py`, `reports/stage_d1e_gate_extension.json`: 100 further cells chosen by the lead to bracket the boundary in net ticks, at T = 1, 2, 4, 8 and 16 on both paths and, on the standard path only, 32 (all four T = 32 cells finished: one passes at $188.50 a day, none can bind), with the same `funnel.power_gate.evaluate_point`, the same 8,000 careers per cell, the same seeds, nothing under funnel/ modified; at T outside the baseline grid only the robust verdict is defined and the matched columns are null). A cell passes when its robust 80% power's lower 95% bound clears 0.80 (the Stage B rule); "marginal" means the point estimate clears and the bound does not, and marginal is not pass.
+
+**The boundary, read in net ticks per trade and in net ticks per micro per day (both paths):**
+
+| Path | T | cells | highest-$/day FAIL (ticks/micro/day, power) | lowest-$/day PASS (ticks/micro/day, power) | marginal cells |
+|---|---|---|---|---|---|
+| consistency | 1 | 32 | $83.98/day = 33.59 t/μ/d (33.59 t/trade, p=0.45, R=2.0, power 0.68) | $102.92/day = 41.17 t/μ/d (41.17 t/trade, p=0.65, R=1.0, power 0.90) | 39.7 |
+| consistency | 2 | 30 | $89.50/day = 35.80 t/μ/d (17.90 t/trade, p=0.5, R=1.5, power 0.78) | $87.48/day = 34.99 t/μ/d (17.50 t/trade, p=0.6, R=1.0, power 0.81) | — |
+| consistency | 4 | 31 | $86.58/day = 34.63 t/μ/d (8.66 t/trade, p=0.48, R=1.5, power 0.80) | $96.88/day = 38.75 t/μ/d (9.69 t/trade, p=0.66, R=0.75, power 0.91) | 33.8 |
+| consistency | 8 | 9 | $84.39/day = 33.76 t/μ/d (4.22 t/trade, p=0.4, R=2.0, power 0.76) | $92.02/day = 36.81 t/μ/d (4.60 t/trade, p=0.575, R=1.0, power 0.86) | — |
+| consistency | 16 | 6 | $47.97/day = 19.19 t/μ/d (1.20 t/trade, p=0.45, R=1.5, power 0.41) | $98.28/day = 39.31 t/μ/d (2.46 t/trade, p=0.4, R=2.0, power 0.84) | — |
+| standard | 1 | 32 | $114.59/day = 45.84 t/μ/d (45.84 t/trade, p=0.49, R=2.0, power 0.78) | $119.88/day = 47.95 t/μ/d (47.95 t/trade, p=0.57, R=1.5, power 0.84) | — |
+| standard | 2 | 30 | $110.73/day = 44.29 t/μ/d (22.15 t/trade, p=0.45, R=2.0, power 0.76) | $119.48/day = 47.79 t/μ/d (23.90 t/trade, p=0.53, R=1.5, power 0.84) | 42.8 |
+| standard | 4 | 31 | $100.08/day = 40.03 t/μ/d (10.01 t/trade, p=0.42, R=2.0, power 0.71) | $110.69/day = 44.28 t/μ/d (11.07 t/trade, p=0.6, R=1.0, power 0.84) | 44.4 |
+| standard | 8 | 9 | $94.77/day = 37.91 t/μ/d (4.74 t/trade, p=0.475, R=1.5, power 0.69) | $131.52/day = 52.61 t/μ/d (6.58 t/trade, p=0.425, R=2.0, power 0.92) | — |
+| standard | 16 | 6 | $98.28/day = 39.31 t/μ/d (2.46 t/trade, p=0.4, R=2.0, power 0.68) | $113.20/day = 45.28 t/μ/d (2.83 t/trade, p=0.475, R=1.5, power 0.81) | — |
+
+**Why ε is a daily figure.** Read per trade, the boundary falls with T (about 45 net ticks at one round turn a day, 22 at two, 11 at four, 5 to 7 at eight). Read per day it is roughly flat, the consistency path passing first between 34 and 39 ticks per micro per day at every T from 1 to 16 and the standard path between 44 and 53 (its lowest pass at T = 8 sits at 52.6 with the highest fail at 37.9), because the funnel's pass or fail depends on the daily P&L distribution, whose scale barely changes with how the session is cut. The members trade anywhere from 0.014 (E-H3) to 141 (C-H1) times a day, far outside the gate's 1-to-4 grid, so a per-trade ε at the class's "typical frequency" would have to be extrapolated off the grid for every class; the daily figure is the invariant the gate actually measured and needs no extrapolation. This is the one refinement to the prompt's Task 2 wording, and it is conservative: the daily P&L is what the Combine and XFA rules act on.
+
+**The rule (docs/NULL_CRITERIA.md 2.2), mechanical:** ε_day = floor( min over every evaluated cell with robust verdict "pass", both paths, all T, of net $/day at 2 micros ÷ $2.50 ). Taking the minimum over paths and T and rounding down are both in the direction that makes a null harder to claim. Because the verdict requires the power's lower bound to clear 0.80, a cell whose true power is below 0.80 essentially never passes at 8,000 careers, so the minimum approaches the true 80% contour from above and is not a Monte Carlo fluke. **ε_day = 34 net ticks per micro per day, $85.00 a day at 2 micros**, from the cell consistency path, T = 2, p = 0.60, R = 1.00 (grid): 17.496 net ticks per trade × 2 × $2.50 = $87.48 a day, robust power 0.812 with lower bound 0.804; nearest excluded cell marginal at $84.41 (consistency T = 4, p = 0.58, R = 1.00, power 0.804, lower bound 0.796). The next four passing cells sit at 36.8, 37.9, 38.8 and 39.0 ticks per micro per day, all on the consistency path at T = 4, and the standard path's boundary is higher (about 44 to 48 at T = 1 to 4), so the consistency path binds.
+
+**ε per class, per trade, beside the cost bars** (typical frequency = median trades per day of the class's trial members on the train union; C7 = median firing fraction):
+
+| Class | Typical trades/day | ε per trade (net ticks/micro) | Market bar | Passive bar | Gross-equivalent per trade |
+|---|---|---|---|---|---|
+| C1 | 0.938 | 36.26 | 2.11 | 0.98 | 38.37 |
+| C2 | 0.945 | 35.99 | 2.11 | 0.98 | 38.10 |
+| C3 | 36.151 | 0.94 | 2.11 | 0.98 | 3.05 |
+| C4 | 0.676 | 50.26 | 2.11 | 0.98 | 52.37 |
+| C5 | 0.097 | 350.93 | 2.11 | 0.98 | 353.04 |
+| C6 | 92.467 | 0.37 | 2.11 | 0.98 | 2.48 |
+| C7 | 0.263 | 129.52 | 2.11 | 0.98 | 131.63 |
+
+**What this means, said plainly.** ε is large. A strategy that trades once a day must earn about 34 net ticks on that trade, roughly a quarter of a session's typical range, before it funds a Combine at 2 micros; one that trades 36 times a day needs about one tick a trade. The economic null is therefore cheap to establish for every class (Task 3: the binding member needs 566 (F1_1_h1_RTH) days for 80% null power, and the extended history supplies 1,151 under a May 2019 start, 992 under a January 2020 start). What the data cannot settle for the low-frequency classes is the structural question at the cost-bar scale, whether any member has a positive net edge of a tick or two per trade: that needs about 190,000 to 1,600,000 days for the once-a-day members, which no purchasable MES history supplies. The program therefore claims the bounded economic null and reports the descriptive resolution (the smallest edge each class could have ruled out with the days it had) beside it; it does not claim "no edge". The prompt asked that if ε came out too small to resolve, the stage should say what the program CAN claim instead; the case here is the mirror image, and the same honesty applies.
+
+
+### Task 3 — power and sample size (`reports/stage_d1e_power.json`)
+
+Worker: opus high in two passes (`strategy/research/_d1e_power.py`, `_d1e_calendar.py`, `_d1e_power_report.py`; `tests/test_d1e_power.py`, 10 known-answer tests, all passing; run at ε = 34: 101 members, 2,000 replications per length, 151 s at 8 jobs). Verified independently by fable xhigh (`reports/stage_d1e_power_verification.md`; section below). Lead rulings during the build, all recorded in `reports/_d1e_power_HANDOFF.md`: the iid known-answer series lengthened to 50,000 days so the ±0.05 VIF band is three sampling deviations wide; the simulation's standard error changed to the replicate's own variance times the source series' bootstrap inflation factor, because a block-bootstrap replicate's autocovariances are already attenuated once and the original design attenuated them twice (measured: simulated null power 0.848 instead of 0.80 on an AR(1) with φ = 0.3; 0.80 ± 0.04 after the change); scipy absent, stdlib normal quantiles used (agreement 1e-15); and the chosen-figure rule below.
+
+**Method.** Unit: net ticks per micro per day (trials: `daily_net_usd / 2.5`; statistics: s × daily event sum − 2.11 × daily event count). Per member: SD of the daily series over every window date, r = trades or events per day, and VIF_boot, the inflation the program's own block-5 stationary bootstrap sees (Politis–Romano, p = 1/5, lags to 20). Analytic: (a) detection days n_a = ((z_a + z_0.8) SD √VIF / ε)² with z_a = Φ⁻¹(1 − 0.05/58) = 3.134, Holm's most stringent step applied to every member so each n_a is an upper bound on what Holm needs; (b) null-power days n_b = ((1.645 + 0.842) SD √VIF / ε)², the length at which a member with true edge 0 shows its one-sided 95% upper bound below ε with 80% probability. Simulation: stationary block-bootstrap resamples of each member's centred daily series (mean block 5, the program's helper, 2,000 replications) at 16 lengths from 10 to 3,000 days plus n_a and n_b themselves, shifted to ε and to 0; power curves with Monte Carlo standard errors; crossings by log-linear interpolation. Chosen figure: analytic unless the two differ by more than 15%, in which case the LARGER; the prompt said "use the simulated figure", and the deviation is logged because the simulation came out smaller for about a dozen heavy-tailed members (A-H3, A-H4 rth, RT2, several G statistics, by 16 to 39%), which reveals under-coverage of the closed-form upper bound at short lengths, not extra power, so planning on it would be anti-conservative; where the simulation asked for more days (F4.4 ×100, G4.RTH.5, G1.ETH.15) it was used. Twenty-nine low-frequency members have analytic n_b below the shortest simulated length (10 days) and keep the analytic figure, flagged. Family H is projected from the coverage map's proxy rule, analytic only.
+
+**Per class (ε = 34 ticks per micro per day):**
+
+| Class | Binding member (null power) | n_b analytic / simulated / chosen | Binding member (detection) | n_a chosen | Days supplied at S = 2019-05-06, 2019-07-01, 2020-01-02, 2021-01-04, 2022-01-03, 2023-01-03 | Null power at ε reachable |
+|---|---|---|---|---|---|---|
+| C1 | A-H4 rth leg | 149 / 161 / 149 | A-H4 rth leg | 379 | 1151, 1114, 992, 755, 516, 277 | all S |
+| C2 | G3.RTH.5 | 193 / 182 / 193 | G3.RTH.5 | 492 | 1151, 1114, 992, 755, 516, 277 | all S |
+| C3 | F1_1_h1_RTH | 566 / 571 / 566 | F1_1_h1_RTH | 1447 | 1151, 1114, 992, 755, 516, 277 | S ≤ 2021-01-04 |
+| C4 | F2_4_15min_vol_tercile_top | 171 / 152 / 171 | F2_4_15min_vol_tercile_top | 436 | 1151, 1114, 992, 755, 516, 277 | all S |
+| C5 | E-H1 scheduled macro drift | 16 / 10 / 16 | E-H1 scheduled macro drift | 41 | 1151, 1114, 992, 755, 516, 277 | all S |
+| C6 | C-H4 passive-fill reversal | 181 / 174 / 181 | C-H4 passive-fill reversal | 461 | 1151, 1114, 992, 755, 516, 277 | all S |
+| C7 | H6 prior-close location follow-through (projected) | 114 / censored / 114 | H6 prior-close location follow-through | 290 | 1151, 1114, 992, 755, 516, 277 | all S |
+
+Days supplied by the extension, confirmation window S..2024-02-29 after the roll blackout and the vendor-degraded dates (calendar estimate, ±3%): S = 2019-05-06: 1151, S = 2019-07-01: 1114, S = 2020-01-02: 992, S = 2021-01-04: 755, S = 2022-01-03: 516, S = 2023-01-03: 277. Holdout-2 (2024-04-01..2025-03-31) holds about 239 trade dates.
+
+**Reading.** (1) The economic null is cheap. The binding member of the whole list, F1_1_h1_RTH (the one-minute RTH lag autocorrelation, 381 events a day, C3), needs 566 days for 80% null power at ε; every other member needs 193 or fewer (C2's G3.RTH.5 193, C6's C-H4 181, C1's A-H4 rth leg 149, C7's projected H6 114). The extension supplies 992 to 1,151 days if the start rule lands in 2019 or 2020, 755 from 2021, 516 from 2022. Only C3 would fall short, and only if S lands in 2022 or later. (2) Detection power at ε is also within reach for every class but C3 (n_a 1,447 for F1_1_h1_RTH; 492 or fewer elsewhere, C6's C-H4 461). (3) What the history cannot do is resolve the structural question at the cost-bar scale for the low-frequency members. At 1,151 days the smallest edge the data can rule out, per trade, is C1 2.45 to 23.62 (A-H3 weekend effect); C2 0.30 to 14.00 (G3.RTH.5); C3 0.02 to 5.22 (G4.RTH.60); C4 0.46 to 3.27 (D-H4 overnight gap fade); C5 1.96 to 37.26 (E-H1 scheduled macro drift); C6 0.15 to 0.15 (C-H4 passive-fill reversal); C7 26.65 to 40.88 (H2 NR7 opening-range breakout) ticks per trade at S = 2019-05-06. Forty-seven of the 95 measured members can be resolved below the 2.11-tick market cost bar with the full history; 48 cannot, and they are exactly the once-a-day and rarer constructions (E-H1 37.3 ticks per trade, A-H3 23.6, G3.RTH.5 14.0, A-H4 rth 12.8, G3.RTH.15 11.7, F6.1 7.5, ...). A one-tick-per-trade edge for a once-a-day member would need on the order of 190,000 to 1,600,000 trade days to establish or exclude at 80% null power. No purchasable MES history does that, and the criteria therefore claim only the bounded economic null and report the descriptive resolution beside it.
+
+
+**Independent verification (fable xhigh, `reports/stage_d1e_power_verification.md`, scratch `reports/_d1e_power_verify_scratch.py`).** Recomputed from the raw series without importing the four power modules: ε_day = 34 and its cell reproduce (on both versions of the extension file the background job wrote during the check); all 101 members' r, SD and VIF match to under 1e-4 %, all 202 analytic sample sizes are identical; 13 members re-simulated with an independent seed (26 arm checks) agree within 5.2 %; the chosen-figure rule was applied correctly in all 190 arm cases, with one flag (F4.4 ×100, null-power arm) sitting on the 15 % boundary and flipping under the verifier's seed in the conservative direction; Family H projections, class tables, binding members, achievability flags and all 42 resolution-range cells exact; supplied days exact under the stated method, which undercounts trade dates by 3 to 4 % against the pipeline's early-halt convention (conservative, no flag changes); the tests' expectations are independent of the code and both required known-answer cases are present. Gaps the verifier listed for the record, none affecting a reported number: no test of the autocovariance divisor, of a negative-autocorrelation VIF, of the simulation SE against a hand value, of the class aggregation, of the degraded-date and blackout subtraction, or of the exact 15 % boundary. Verdict: VERIFIED on every section, WITH NOTES on four. After the unit correction the same verifier re-checked the corrected run (section 11 of the report): the per-micro series rebuilt from each trip's P&L and quantity matches the file to 2e-13 on all 31 trials, equals the USD series over 1.25 for exactly the 29 fixed-size trials and differs for D-H2 and RT7; SD, VIF and all 74 analytic sample sizes for the trials and the H rows are identical; the six new binding members re-simulated agree within 3.7% (E-H1's detection curve crosses 0.80 non-monotonically, 0.79 at the chosen 41 days and above 0.80 only from about 70, which the rule handled as designed); the chosen-figure rule on all 190 arm cases, N_C6 = 181, the class tables, all 42 resolution cells and the 47-of-95 count are exact; the 64 statistic rows are byte-identical to the earlier run. VERIFIED.
+
+### Task 4 — availability, quality rules and quotes (`reports/stage_d1e_quotes.md`, $0.00 spent)
+
+Worker: opus xhigh (`strategy/research/_d1e_quotes.py`, `tests/test_d1e_quotes.py`, 95 ledger `quote` events, `$0.00`). Verified by the lead against the ledger diff.
+
+**Availability (4a).** GLBX.MDP3 runs from 2010-06-06; `ohlcv-1m` from the start, `mbo` from 2017-05-21. MES.v.0's symbology interval opens 2019-04-01 (instrument 7849, MESM9), but the 2019-04 chunk quotes at 0 billable bytes: the first month with bars is **2019-05**. Dataset condition 2019-04-01..2025-04-01: 1,872 available days, **8 degraded** (2020-02-27, 02-28, 05-05, 06-30, 07-01; 2021-12-05; 2022-01-02; 2024-09-18), which the existing `vendor_degraded_day` path masks. The current raw data begins at UTC 2025-04-01T00:00 (chunk `range=2025-04-01_2025-05-01`), so the extension's last chunk is `range=2025-03-01_2025-04-01`: no overlap, no gap. Caveat found by the worker and settled by the lead in the confirmation list: the 2025-03-31 22:00–24:00 UTC bars belong to CME trade date 2025-04-01, the mined first date; they sit in the sealed 2025-03 chunk and stay sealed, and the research parquet is not rebuilt.
+
+**Quotes (4b), `metadata.get_cost` only, each a ledger `quote` event:**
+
+| Dataset | Range | Quote | Billable | On disk (zstd 0.327 measured) | Drive |
+|---|---|---|---|---|---|
+| MES.v.0 ohlcv-1m, continuous, monthly chunks exactly as `data.pull_mes` pulls them | 2019-04-01..2025-04-01, 72 chunks | **$7.59** (72 chunk quotes sum $7.5862; one whole-range quote $7.5862, difference $0.00) | 111.0 MiB | 36 MiB | main, beside the existing chunks |
+| Auxiliary schemas | — | none: the pipeline's only paid schema is ohlcv-1m; symbology and dataset condition are free and must be re-run over the range | — | — | — |
+| MES MBO, RTH 08:30–15:10 CT, 5 sampled days (2025-05-14, 08-13, 11-12, 2026-02-11, 2026-04-15) | per day | mean **$0.78/day** (range $0.47–1.24), 446 MiB billable/day | | ~145 MiB/day est. | LARGE STORAGE |
+| MES MBO, RTH x 20 / 40 / 60 / 120 days | linear scaling of the 5-day mean, not a quote | **$15.67 / $31.34 / $47.01 / $94.03** | 8.7 / 17.4 / 26.1 / 52.2 GiB | 2.8 / 5.7 / 8.5 / 17.1 GiB est. | LARGE STORAGE |
+| MES MBO full trade date x 20 / 40 / 60 / 120 | scaling | $20.00 / $40.00 / $60.00 / $120.00 | 11.1–66.7 GiB | 3.6–21.8 GiB est. | LARGE STORAGE |
+| MES mbp-10 RTH x 20 / 40 / 60 / 120 (for comparison) | scaling | $24.18 / $48.35 / $72.53 / $145.06 | 48–290 GiB | 16–95 GiB est. | LARGE STORAGE |
+| Linearity check: one contiguous 20-day block quoted whole (2025-10-01..10-29) | quote | mbo $22.03 vs 20 x full-day mean $20.00 (ratio 1.10); mbp-10 $33.49 vs $30.57 (1.10) | | | |
+
+Free space: main drive about 368 GB, `/mnt/large-storage` about 770 GB. Every MBO option fits on LARGE STORAGE with two orders of magnitude to spare; nothing secret is ever written there, and the sealed holdouts stay on the main drive. The MBO figures for the C6-needed day count are in the decision packet.
+
+**Ledger accounting:** `ledger/databento_spend.jsonl` 72 lines before, 167 after; new lines 72..166 are all `quote` with `usd` 0.0; `shared_cumulative_usd` 84.006048 before and after; `session_cumulative_usd` 0.0; no new file under `data/vendor`. Seven checks in the quotes report all PASS. The worker also noted that the configured external ledger path was absent and read the relocated copy read-only without modifying `data/config.py`.
+
+
+### Task 5 — the second holdout and the D.1f confirmation list (`reports/stage_d1f_confirmation_list.md`)
+
+Lead only. Written as a DRAFT in the first session (01:08Z), filled in and amended after the Task 5d review in the second, then hashed and made read-only (section below).
+
+**Second holdout (5a).** Trade dates **2024-04-01 through 2025-03-31** inclusive (239 CME trade dates by the calendar estimate; the exact count is recorded at sealing). Sealed as the 13 whole monthly raw chunks `range=2024-03-01_2024-04-01` through `range=2025-03-01_2025-04-01`, immediately after each chunk's round-trip verification and before any parquet is built from any new chunk, through `data/holdout.py`'s cipher and ceremony with a second `HoldoutPaths` (store `data/sealed/MES_holdout_v2/`, manifest `docs/HOLDOUT2_MANIFEST.json`, the same append-only unlock log, the same REGISTRATION.md requirement). The March 2024 trade dates are embargoed (inside a sealed chunk, never built into bars), which is what makes whole-chunk sealing byte-exact. The 2025-03-31 22:00–24:00 UTC bars (the missing first two hours of the mined trade date 2025-04-01) stay sealed. Why these bounds: it is the year immediately before the mined window, so the closest available regime to live conditions for a final D.2 read; with the current holdout (2026-06-22..2026-09-16) it gives D.2 two separated seasons; and it is several times the days any member needs for 80% null power at ε (Task 3).
+
+**Confirmation window.** Trade dates S (the start rule's date, computed in D.1f) through **2024-02-29**, built from the unsealed chunks only, with the current pipeline's exclusions (roll blackout of the splice date plus two prior sessions from symbology, vendor-degraded days, CME calendar extended to 2019–2024 before any run). The 289 train dates and the 139 EDA dates are never pooled into a confirmation figure; they are used only for the continuity check (every trial reproduces `stage_d1d_accounting.json` to the cent before any confirmation figure is read).
+
+**The frozen list (5b).** Tier A, the Holm family, m = 58: the 31 trials with every parameter frozen at its recorded value (each module's sha256 is in the list; the 31 IDs are the label strings of `strategy.research._d1d_accounting.ALL_TRIALS`, which D.1f imports rather than retypes); the 21 logged near-misses as event statistics with their declared definitions, direction fixed from the mined window, tested net of the 2.11-tick market cost; and Family H, six daily-bar constructions for intraday entries, class C7, fully specified (daily bar built inside the strategy from bars already seen; complete-day rule; instrument guard on every daily bar that enters the condition; 30-minute opening range needing 25 of 30 bars; breakout or fade on the first close beyond the range between 09:00 and 14:29 CT, one entry per day, fill at the next open; exit emitted on the first bar at or after 14:58 CT with the engine's forced flatten as the logged fallback; lookbacks 4, 7, 2, 61, 61, 1 complete bars; tercile cuts at q = 33.33 and 66.67 exactly, linear, over the 60 complete ranges before d-1; CLV cuts 0.2 and 0.8, inequalities exactly as tabulated; 2 micros at the size-5 slippage bucket; factories without arguments): H1 NR4 breakout, H2 NR7 breakout, H3 inside-day breakout, H4 bottom-tercile-range breakout, H5 top-tercile-range fade, H6 prior-close-location follow-through from the open. Look-ahead check per H test: a unit test that perturbs day d's bars and asserts the condition is unchanged, and perturbs day d-1's and asserts it changes as computed by hand; the fill-timing canaries; and hand-built known-answer days. Tier B: the 43 directional F and G statistics that were not near-misses, which enter the class null and never an edge claim. C6's criteria and data rule are in the list's section 3.5 for D.1g to inherit unchanged: a queue-position fill model specified and hashed in D.1g before the MBO purchase, with any book-derived parameter estimated on declared days outside the evaluation dates; full trade-date books, because C-H4 rests orders in every session; N_C6 = 181 days at the corrected per-micro unit, the LAST N_C6 confirmation-window dates on or before 2024-02-29 that are neither blackout nor degraded, never a holdout date; D.1g's queue-model C-H4 counts as a new trial (N = 59) and its dates were already read by D.1f's trade-through run, so a C6 edge claim is out of sample only in the fill model.
+
+**Decision rules (5c), fixed now.** Edge exists: Holm over the 58 one-sided Tier A p-values at family-wise 5%, then the composite screening verdict on the confirmation window (robust zero-edge gate plus both drift sub-checks; for a statistic the gate runs on its event p, R and T as for trips and the drift charge is the window-mean price change over the event's own forward interval), then the cumulative accounting at N = 58 pinned to the program's functions: DSR > 0.95 with the Sharpe variance over the 58 Tier A members' confirmation-window daily Sharpes, daily t > 3.0 one-sided, CSCV PBO < 0.5 on 8 equal contiguous blocks; the same three at N = 101 and 186 reported, not criteria. A passing member goes to the user as a D.2 discussion item and is not registered by D.1f. Null for a class: every Tier A and Tier B member has UCB95 (percentile stationary bootstrap of the per-micro daily net series through the program's own helper, mean block 5, 10,000 resamples, a fresh generator seeded 20260921 per member, np.quantile at 0.95) below ε_day and achieved null power Φ(ε_day/SE_boot − 1.645) ≥ 0.80. Anything else is inconclusive, and one inconclusive member keeps its whole class out of the null verdict; a member with zero trips or events, or a zero bootstrap standard error, is inconclusive, not null; a member meeting the null with fewer than 30 trips or events is marked "null by inactivity" and the class statement carries that label. Regime slices per calendar year are descriptive only; 2020 is included and nothing is excluded in advance or after.
+
+
+### Task 5d — adversarial review, findings and rulings
+
+Worker: fable max (`reports/stage_d1e_adversarial_review.md`, 06:23–06:50Z, 965 lines). Brief: find every way the two documents let a later stage fudge the result. It returned **55 findings: 7 BLOCKER, 23 SHOULD-FIX, 25 NOTE, verdict NOT READY**, after recomputing all 31 section-0 hashes (all match), re-deriving ε on the pinned extension file (34 holds), cross-checking the near-miss lists (match) and reading position sizes, the C-H4 session gating, the release table and the runner's code path.
+
+The lead's adjudication is in `reports/stage_d1e_adjudication.md`: **all 55 accepted, four with modifications, none rejected.** The seven blockers and what changed:
+
+| ID | Finding | Ruling and amendment |
+|---|---|---|
+| R-1 | The daily-series unit divided every trial by $2.50 as if it traded 2 micros; every trial module trades 1 micro (D-H2 and RT7 1 to 5 by rule). Every trial's null would have been tested at 68, not 34, ticks per micro per day and every trial's power row was ~4× understated. | Accepted. The unit is now per micro per trip: each round trip divided by its own contract quantity, recorded by a new additive runner field `trip_micros` (TripMicrosFixer-OpusXHigh: runner field, 4 tests, `_d1e_members.py` re-run, `daily_net_usd` byte-identical, continuity to the cent). The power run, the coverage map, N_C6 and the resolution counts were re-issued at the corrected unit and re-verified. Running the trials at 2 micros is forbidden. |
+| R-2 | Trial parameters (direction, session, hold_minutes) live in unhashed assembly files; the continuity JSON was unhashed. | Accepted: seven hashes added to section 0 and a verbatim factory column to the trial table. |
+| R-3 | Section 5.4 ordered an edit to two hashed statistics modules, and the runner cannot reach 2019–2024 without changes the list did not enumerate. | Accepted: a wrapper module calls the hashed builders with the confirmation dates (the `_d1e_event_series.py` pattern, with the 1e-9 reproduction test); the files D.1f may change are enumerated and everything else must be byte-identical to a freeze manifest. |
+| R-4 | Nothing froze the harness at run time; the continuity check covers only the train-union path. | Accepted: step 1b, a harness-freeze manifest written and committed before any quote; the list runner refuses to run on any differing hash and re-checks at completion. |
+| N-1 | E-H1 and E-H2 read a release table covering 2025-04..2026-06 only, so they cannot fire on the confirmation window; C5 was unresolvable or would be extended post hoc. | Accepted: a hashed 2019–2024 release-table module from the Federal Reserve and BLS schedule archives, built and cited before the purchase; the two strategy modules amended to accept a table argument with the default unchanged, re-hashed in a declared amendment with a train-union reproduction test. |
+| C-1 | C-H4 rests orders in every session; RTH-only MBO could not fill its ETH orders. | Accepted: D.1g buys full trade-date books ($1.00 a day mean against $0.78 RTH-only) for the N_C6 dates. |
+| D-2 | The 2019–2024 calendar had no completeness check and no freeze point; a missing entry fails silently and shifts the blackout, the flatten and the H completeness rule. | Accepted: coverage assertion in the bar builder, an observed-holiday validation over the confirmation bars before the start rule runs, immutability once the list runs. |
+
+Should-fix and note rulings of substance: the F4.4 event definition was inverted in the draft and is now the plain round-level move with the control-subtracted estimate descriptive (R-5); sample-derived thresholds are recomputed on the confirmation window as the hashed code does (R-6); the H tests may be exercised only on synthetic bars before the confirmation (R-7); the ε paragraph now pins both source files, defines "pass" and forbids recomputation (E-1); every class statement must carry its per-trade resolution, least-active member and count, and a "null by inactivity" label for members with fewer than 30 trips or events (E-2, the lead's modification: no minimum-activity threshold on the null itself, because a member that almost never trades truly cannot fund a Combine); the H specification gained an instrument guard covering every bar in the condition, a 61-bar warm-up, a fallback exit rule, exact inequalities and percentile arguments (H-1 to H-8); holdout-2 sealing is per chunk in the download call with oldest-first order and per-holdout unlock accounting (L-1 to L-3); DSR, t and PBO are pinned to the program's functions and block count (M-1); the Tier B anomaly clause is one-sided in the mined direction (M-2); D.1g's queue-model C-H4 counts as a new trial, N = 59 (M-3); zero activity is inconclusive (N-2); degraded days are traded through by trials and excluded by statistics, with the vendor's list frozen at fetch (N-3); the start rule reads bars present, all trade dates, on the parquet after the drop, with 2019-05-06 the earliest possible S (D-1); and the hashing order is list first, criteria second, both hashes to a JSON the runner checks and to this entry, with the user's commit as the anchor (V-1).
+
+After the amendments and the corrected numbers, the reviewer re-read both documents: section 15 of the review, after the amendments and the corrected numbers: 52 findings RESOLVED, 3 PARTLY (a residual "2 micros" for C-H4 in the C6 statement, the E-H amendment's conflict with section 0's invalidation rule, an unexplained "masked" in the criteria's degraded-day sentence), 0 NOT RESOLVED, and 10 NEW findings the amendments introduced (one blocker: the E-H release-table amendment could not be executed without breaking section 0, the runner's refusal or the factory column; one should-fix: the raw-symbol drop rule could remove May–June 2019 under a per-interval symbol mapping; eight notes). All thirteen were accepted and written in (adjudication addendum): section 0 carves the two E-H files out to the freeze manifest and the trial table carries both their factories verbatim; the raw symbol is the one mapped on the bar's date and any drop from 2019-05-06 on stops the run; the holdout-2 size rationale is restated at the corrected scale; D.1g's N = 59 is in the criteria; the list asks the user to commit the freeze rather than committing; data/config.py is frozen with it; C-H4 sits in the C6 statement only; H1 and H2's earlier ranges are named exempt from the instrument guard; and the ε rule names the field as tabulated. The reviewer's condition for hashing was exactly those items; they were applied before the hash.
+
+### Task 6 — `docs/NULL_CRITERIA.md`
+
+Lead only; drafted in the first session, filled and amended in the second after the Task 5d review, hashed with the confirmation list. It is the standing document every later MES stage is judged against. Contents:
+
+1. **The null statement**, per class, with every number explicit: market orders at the Stage A.1 modelled retail cost ($1.22 commission plus the time-of-day slippage table, about 2.11 ticks per round turn at one round turn a day), 2 micros, flat by the XFA cutoff, on the pre-registered confirmation window S..2024-02-29; no member has a net edge of at least ε = 34 net ticks per micro per day ($85.00 a day at 2 micros); every member's one-sided 95% upper bound on mean net daily P&L is below ε with achieved null power at least 80%. The statement is made per class, never for "MES", and a class with any inconclusive member gets none.
+2. **The C6 variant** for D.1g: resting limit orders, the queue-position fill model declared and hashed in D.1g from MBO data, commission only (the 0.98-tick passive bar), the same daily ε (the funnel's economics do not depend on how a fill happened), the N_C6 pre-declared dates; C-H4's trade-through result in D.1f is a lower bound and does not establish the C6 null.
+3. **ε with its derivation** (section below), the rule that fixes it mechanically, the per-class per-trade translation beside the 2.11 and 0.98 cost bars, and what ε does and does not mean: it is the smallest edge that would fund the Topstep funnel at 2 micros under the robust null, not the cost bar; a member can have a real edge below it; the claim is scoped to 2 micros.
+4. **The data-quality rules** (Task 4c): the start rule (V_ref = median of the 14 monthly medians of RTH one-minute volume over 2025-04..2026-05 on the research parquet; S = first trade date of the earliest extension month from which every month through 2024-02 has median RTH one-minute volume ≥ 0.25 x V_ref; 0.15 and 0.40 reported descriptively; if no month qualifies D.1f stops with that finding); roll, degraded-day and calendar handling identical to the current pipeline with the CME calendar extended to 2019–2024 from CME's published schedules before any run; the cost model unchanged, with the early-era bias stated both ways (understated costs favour finding an edge, so conservative for a null claim and NOT for a positive finding, which needs a period-appropriate cost re-check before D.2 discussion); regime slices per calendar year descriptive only, 2020 included, nothing excluded before or after.
+5. **Power and sample size** from Task 3, per class.
+6. **The inconclusive rule and the out-of-scope list** (Task 1's).
+7. **What the program may say if the null holds, and what it may not**: the bounded statement with both hashes and the descriptive resolution; never "MES has no edge", "intraday MES has no edge" or "MES is efficient", nothing about other sizes, instruments, fill types, horizons or constructions; if every class C1–C5 and C7 is null, the one aggregate sentence the document allows, with C6 pending and the structural question below ε left open where the power table says the data cannot resolve it.
+
+Path and hash: `docs/NULL_CRITERIA.md`, sha256 `6f69e318c96edf0a58956856c881ec3e1b8c68d89e1c836b3d54cfbf0e3497e2`, read-only from 2026-09-22T08:50:46Z.
+
+
+### Task 7 — decision packet
+
+Numbers first; the user chooses.
+
+**Option table**
+
+| Option | Buys | Quote | Disk | Enables | Achieved null power at ε (binding member per class) | Still inconclusive after it |
+|---|---|---|---|---|---|---|
+| 0 Nothing | — | $0 | — | — | none: the 289 mined days cannot be used for confirmation | C1–C7 |
+| A Minimal | MES ohlcv-1m 2019-05..2025-03 (71 chunks with data; the 2019-04 chunk is empty) | **$7.59** | 36 MiB, main drive | D.1f: sealing holdout-2, the start rule, the 58-test Tier A list, 43 Tier B statistics, per-class verdicts for C1–C5 and C7 | C1–C5 and C7 all reach 80% null power at ε at every start date; C3 only if S ≤ 2021-01-04 (needs 566 days) | C6 (needs order-book fills) |
+| B Complete | A + MES MBO, full trade dates (17:00–16:00 CT, because C-H4 rests orders in every session), for N_C6 = 181 days | $7.59 + $181.00 scaled from the 5-day full-day mean ($199 with the +10% the 20-day block quote showed) = **$188.59 to $206.59** | + about 33 GiB est. on disk (101 GiB billable), LARGE STORAGE | A + D.1g: the C6 variant for C-H4 | as A, plus C6: C-H4 needs 181 full trade dates for 80% null power at ε | none at ε; the structural question below ε stays open for the low-frequency classes (table below) |
+| MBO menu | full trade dates, 20 / 40 / 60 / 120 / 181 days (scaled from the 5-day full-day mean of $1.00; a 20-day block quoted whole came in 10% above the scaling) | $20.00 / $40.00 / $60.00 / $120.00 / $181.00 | 3.6 / 7.3 / 10.9 / 21.8 / 33 GiB est. | C-H4 null power at ε: 20 days 0.21; 40 days 0.32; 60 days 0.42; 120 days 0.65; 181 days 0.80 (Φ(ε√n / (SD √VIF) − 1.645) with C-H4's per-micro daily SD 190.54 ticks and VIF 0.927 from `reports/stage_d1e_power.json`); RTH-only books ($0.78 a day) cannot fill C-H4's ETH orders and are not an option | | |
+
+**Power the extension buys, per class** (days supplied under the start rule's possible outcomes vs the binding member's need; the start date S is computed in D.1f by the fixed rule and cannot be chosen):
+
+| Class | Binding member (null power) | Days needed (chosen n_b) | Days supplied 2019-05 / 2020-01 / 2021-01 / 2022-01 start | Null at ε reachable | Smallest per-trade edge excludable with the full extension (class range) |
+|---|---|---|---|---|---|
+| C1 | A-H4 rth leg | 149 | 1151 / 992 / 755 / 516 | yes at every start | 2.45 (A-H1 european-open overnight drift) to 23.62 (A-H3 weekend effect) ticks |
+| C2 | G3.RTH.5 | 193 | 1151 / 992 / 755 / 516 | yes at every start | 0.30 (G2.ETH.5) to 14.00 (G3.RTH.5) ticks |
+| C3 | F1_1_h1_RTH | 566 | 1151 / 992 / 755 / 516 | only if S ≤ 2021-01-04 | 0.02 (F1_1_h1_ETH) to 5.22 (G4.RTH.60) ticks |
+| C4 | F2_4_15min_vol_tercile_top | 171 | 1151 / 992 / 755 / 516 | yes at every start | 0.46 (D-H3 range-compression gate) to 3.27 (D-H4 overnight gap fade) ticks |
+| C5 | E-H1 scheduled macro drift | 16 | 1151 / 992 / 755 / 516 | yes at every start | 1.96 (E-H4 turn-of-month long) to 37.26 (E-H1 scheduled macro drift) ticks |
+| C6 | C-H4 passive-fill reversal | 181 | 1151 / 992 / 755 / 516 | yes at every start | 0.15 (C-H4 passive-fill reversal) to 0.15 (C-H4 passive-fill reversal) ticks |
+| C7 | H6 prior-close location follow-through | 114 | 1151 / 992 / 755 / 516 | yes at every start | 26.65 (H6 prior-close location follow-through) to 40.88 (H2 NR7 opening-range breakout) ticks |
+
+**What remains underpowered even with all available history:** none at ε. At the cost-bar scale: the 41 members trading about once a day or less (all of C5, most of C1, the daily ORB and breakout trials and statistics in C2, the H tests) cannot be resolved below 2.11 ticks per trade with any purchasable MES history; E-H1 resolves to 18.6 ticks per trade, G3.RTH.5 to 14.0, A-H3 to 11.8, F6.1 to 7.5, A-H4 rth to 6.4.
+
+**Questions the user must answer to proceed**
+1. Spend: approve Option A ($7.59), Option B ($43.63), or A now and the MBO purchase later after D.1f's result. Each needs a quote-then-approve in the D.1f/D.1g prompt with the caps in data/config.py.
+2. ε: accept ε_day = 34 net ticks per micro per day as derived (the rule is mechanical; changing it means changing the rule in docs/NULL_CRITERIA.md before D.1f, not after).
+3. Family H: accept the six declared constructions as the C7 list (any change is a new declaration under a new hash).
+4. Holdout-2 bounds 2024-04-01..2025-03-31 and the March 2024 embargo: accept, or choose a different contiguous block before D.1f downloads anything.
+5. The start rule's fraction (0.25 x V_ref): accept; the date it yields is computed in D.1f and reported with the 0.15 and 0.40 sensitivities.
+6. Whether D.1f's harness work (confirmation loader, parametrized holdout, calendar 2019–2024, F/G date-set parameter, the six H modules, the list runner) is built in a separate stage before the purchase, as the confirmation list's order of operations requires.
+
+
+### Artifacts
+
+- **Pre-registration (hashed, read-only):** `docs/NULL_CRITERIA.md` (sha256 6f69e318c96edf0a58956856c881ec3e1b8c68d89e1c836b3d54cfbf0e3497e2), `reports/stage_d1f_confirmation_list.md` (sha256 c19cbac191c497a10b5cc756e96510999f13f27c4ac1aa72593aeabf1125147c), `reports/stage_d1e_declaration_hashes.json`.
+- **Reports:** `reports/stage_d1e_coverage.md`; `reports/stage_d1e_power.json` and `.md`; `reports/stage_d1e_power_verification.md` (with `reports/_d1e_power_verify_scratch.py`); `reports/stage_d1e_quotes.json` and `.md`; `reports/stage_d1e_power_gate_cells.json` and `.md`; `reports/stage_d1e_gate_extension.json`, `.log` and `_samples.npz`; `reports/stage_d1e_members_recorded.json` and `.md`; `reports/stage_d1e_members_trials.json`; `reports/stage_d1e_members_events.json`; `reports/stage_d1e_adversarial_review.md`; `reports/stage_d1e_adjudication.md`; `reports/_d1e_power_HANDOFF.md`; `reports/stage_d1e_STATE.md`.
+- **Code:** `screening/runner.py` (three additive `ScreeningReport` fields: `trip_pnls_usd`, `daily_n_trips`, `trip_micros`; nothing else changed), `strategy/research/_d1e_members.py`, `_d1e_event_series.py`, `_d1e_gate_extension.py`, `_d1e_quotes.py`, `_d1e_power.py`, `_d1e_power_stats.py`, `_d1e_power_report.py`, `_d1e_calendar.py`.
+- **Tests:** `tests/test_screening_runner.py` (+7), `tests/test_d1e_quotes.py`, `tests/test_d1e_power.py` (10 known-answer tests).
+- **Ledger:** `ledger/databento_spend.jsonl` (+95 quote events, $0.00).
+- **Docs:** `docs/STAGES.md` (D.1e entry; D.1f and D.1g as planned stages); `CLAUDE.md` (committed separately at the user's request: two-table ETA rule, role-based agent names, cumulative row).
+- Not committed by this stage (the user commits after review): everything above except the two CLAUDE.md commits (50148c2, f1bb073).
+
+### Session cost
+
+Computed at the very end, after everything else in this entry was written. Token figures are raw counts from the transcripts (input + output + cache read + cache creation), summed per assistant message by model; they are not plan-credit percentages, which the session cannot read. Transcripts read: the first session's forked main file `0c13b8c3….jsonl` (its first 57 messages duplicate the `2df44c65….jsonl` stub, counted once) and its six worker files under `0c13b8c3…/subagents/`; this session's main file `fbadc349….jsonl` and its worker files under `fbadc349…/subagents/`.
+
+**Wall clock.** Session 1: 00:33–01:40Z, 67 min of work, ended by the machine going down. Machine down 01:40–04:31Z (2 h 51 min, not work). Session 2: 04:32–08:55Z, of which the user's CPU pause 04:57–05:46Z (49 min) and the session rate limit 07:06–08:41Z (95 min) are not work: 2 h 4 min of work. Total work: 3 h 11 min.
+
+**Final table (every task and every agent spawn; the estimate table printed at the start of session 2 put the stage end at 08:30Z from a 05:48Z resume, about 2 h 40 min of work; the actual is in the cumulative row).**
+
+| # | Task | Agent name | Model | Effort | Start–end (UTC) | Time | Tokens total / output | Status, deviations |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Session 1 lead: startup, context, planning, Task 5 and 6 drafts, coverage map begun | lead | fable | xhigh | 00:33–01:40 | 67 min | 32,530,701 / 476,385 | died with the machine; work on disk survived |
+| 2 | 2a Tabulate power-gate cells | worker-medium (haiku) | haiku | medium | 00:50–00:51 | 1.2 min | 884,660 / 9,577 | done, 120 cells |
+| 3 | 2b Gate extension script + T=1,2,4 | worker-high (opus) | opus | high | 00:51–01:13 agent; compute to 01:36 | 22.4 min agent, 47 min compute | 3,227,478 / 16,794 | compute killed by the crash two cells into T=8 |
+| 4 | 4a/4b Availability and quotes | worker-xhigh (opus) | opus | xhigh | 00:57–01:13 | 15.7 min | 7,352,811 / 53,403 | done; 95 ledger quotes, $0.00 |
+| 5 | 1b Runner fields + 31-trial re-run | worker-xhigh (opus) | opus | xhigh | 00:57–01:13 | 15.5 min | 6,937,064 / 24,647 | done; promoted from sonnet (touches screening/); its 2-micro unit assumption was the R-1 error |
+| 6 | 1a Recorded-figure extraction | worker-medium (sonnet) | sonnet | medium | 00:58–01:02 | 4.0 min | 4,754,442 / 16,802 | done |
+| 7 | 1c Event-series dump | worker-high (opus) | opus | high | 01:04–01:09 | 5.1 min | 2,940,504 / 20,595 | done; added subtask |
+| 8 | Machine down | — | — | — | 01:40–04:31 | 2 h 51 min | — | not work |
+| 9 | Session 2 lead: resume, coverage map, ε, briefs, fill-ins, adjudication, amendments, entry | lead | fable | xhigh | 04:32–08:55 | 2 h 4 min work | 91,725,033 / 1,018,950 | two pauses shown below |
+| 10 | 2b' Gate extension T=8,16,32 (background compute) | lead inline | — | — | 04:38–04:56, 05:46–06:36 | 68 min compute | — | resumed from its JSON; suspended during the CPU pause; ε unchanged |
+| 11 | 3a Power code, first pass | worker-high (opus) | opus | high | 04:47–04:59 | 12.1 min | 7,149,689 / 59,063 | paused before the run at the user's request |
+| 12 | User CPU pause | — | — | — | 04:57–05:46 | 49 min | — | not work |
+| 13 | 3a Power code resume, rulings, ε=34 run, max rule, resolution ranges | PowerCoder-OpusHigh | opus | high | 05:46–06:01 | 15.4 min | 6,354,712 / 47,286 | done; 10 tests |
+| 14 | 3b Verification of every power number | NumberVerifier-FableXHigh | fable | xhigh | 06:02–06:21 | 19.6 min | 13,413,127 / 91,171 | VERIFIED on all sections |
+| 15 | 5d Adversarial review | AdvAuditor-FableMax | fable | max | 06:23–06:50 | 27 min | 14,356,521 / 121,383 | 55 findings, NOT READY; all adjudicated |
+| 16 | R-1 fix: runner trip_micros + per-micro re-run | TripMicrosFixer-OpusXHigh | opus | xhigh | 06:57–07:06 | 9.1 min | 8,799,164 / 38,586 | done; continuity to the cent |
+| 17 | 3a Power re-run at the per-micro unit | PowerCoder-OpusHigh | opus | high | 07:07–07:10 | 2.7 min | 2,760,826 / 11,044 | done; 62 figures moved upward |
+| 18 | Session rate limit (Fable) | — | — | — | 07:06–08:41 | 95 min | — | not work; two workers cut off and resumed |
+| 19 | 3b Re-verification after the unit correction | NumberVerifier-FableXHigh | fable | xhigh | 08:41–08:46 (a 07:05–07:06 attempt was cut off by the limit, 1,294,377 tokens) | 5.5 min | 7,633,424 / 21,050 | VERIFIED on all five items |
+| 20 | 5d Re-review of the amended documents | AdvAuditor-FableMax | fable | max | 08:41–08:49 | 8.3 min | 8,543,899 / 38,622 | 52 resolved, 3 partly, 10 new; READY TO HASH after the carve-outs, which were applied |
+| 21 | Hash, entry, STAGES.md, end guardrails, cost | lead | fable | xhigh | 08:46–08:55 | 9 min | (in row 9) | done |
+| **Σ** | **Whole stage** | 7 distinct workers, 12 spawns or resumes | | | 00:33–08:55 | **3 h 11 min of work** (+ 5 h 11 min of outages and pauses) against the 05:48Z estimate of about 2 h 40 min from the resume | **220,658,432 / 2,068,745** | lead 124,255,734 (56.3%), workers 96,402,698 (43.7%) |
+
+**Tokens per model (both sessions, lead plus workers):**
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 (lead both sessions + 2 fable workers) | 14,826 | 1,770,948 | 152,636,399 | 15,074,909 | 169,497,082 |
+| claude-opus-5 (8 spawns or resumes) | 796 | 271,418 | 42,054,129 | 3,195,905 | 45,522,248 |
+| claude-sonnet-5 (1) | 102 | 16,802 | 4,508,252 | 229,286 | 4,754,442 |
+| claude-haiku-4-5 (1) | 142 | 9,577 | 700,681 | 174,260 | 884,660 |
+| **All** | 15,866 | 2,068,745 | 199,899,461 | 18,674,360 | **220,658,432** |
+
+**Per worker spawn:** rows 2 to 7 and 11 to 20 above.
+
+**Delegation share:** lead 124.3M tokens (56.3%), workers 96.4M (43.7%); by tier, fable 169.5M (76.8%: lead 124.3M, verifier 22.3M, reviewer 22.9M), opus 45.5M (20.6%), sonnet 4.8M (2.2%), haiku 0.9M (0.4%). Cache reads are 90.6% of every figure; output tokens, the part a model actually wrote, are 2.07M in all, of which the lead wrote 1.50M (72%). The two Fable workers (verification and adversarial review) cost more than all eight opus spawns together, which is the price of routing the verdict-bearing checks to the strongest model; the review's 65 findings, one of them a factor-of-four unit error the lead and two opus workers had all missed, are what that bought.

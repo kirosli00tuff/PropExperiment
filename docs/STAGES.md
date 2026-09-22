@@ -42,5 +42,16 @@ history, not here.
   their source's horizon; all 7 re-tests at the source's grid failed; the declared 28-statistic
   sweep at 5/15/30/60-minute bars admitted zero hypotheses; cumulative N = 31; shortlist
   still empty.)
+- Stage D.1e — Defining the MES null: criteria, power and data quotes. Design only; nothing bought,
+  nothing screened, N = 31. (Run 2026-09-22; see progress.md, docs/NULL_CRITERIA.md (hashed),
+  reports/stage_d1f_confirmation_list.md (hashed, read-only), reports/stage_d1e_power.json and
+  reports/stage_d1e_quotes.md. ε = 34 net ticks per micro per day from the power gate; the class null needs at most 566 days and the extension supplies 992–1,151 under a 2019–2020 start; 47 of 95 measured members resolvable below the cost bar, 48 not; second holdout 2024-04-01..2025-03-31 declared; frozen 58-test list with Family H declared and hashed.)
+- Stage D.1f — Confirmation on the extended MES history (planned). Buys the 2019-05..2025-03 ohlcv-1m
+  extension ($7.59 quoted), seals the second holdout (trade dates 2024-04-01..2025-03-31) on arrival,
+  runs the frozen 58-test Tier A list and the 43 Tier B statistics under docs/NULL_CRITERIA.md, and
+  returns per-class null / edge / inconclusive verdicts. Awaits the user's spend decision.
+- Stage D.1g — C6, passive execution (planned). Buys N_C6 = 181 full trade-date MBO days chosen by the rule in
+  the confirmation list, declares and hashes a queue-position fill model before any P&L, and applies
+  the C6 variant of the null criteria to C-H4.
 - Stage D.2 — Sealed holdout read under the pre-registered bar.
 - Stage E — Practice-account forward test, then one 50K Combine.

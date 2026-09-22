@@ -72,7 +72,7 @@ from sim.engine import (
     splice_trade_dates_from_parquet,
 )
 from sim.fill_model import PASSIVE_FILL_CAVEATS
-from strategy.interface import Strategy
+from strategy.interface import NS_PER_BAR, Strategy
 
 CANONICAL_ROLL_BLACKOUT_SESSIONS = 2
 CANONICAL_PAYOUT_PATH = "standard"
@@ -166,6 +166,18 @@ class ScreeningReport:
     # Net P&L per window date, in window order, $0 on a date with no trading (Stage D.1b):
     # the series the multiple-comparisons accounting (DSR, t-hurdle, PBO) consumes.
     daily_net_usd: tuple[float, ...] = ()
+    # Net USD per closed round trip, in ledger order (Stage D.1e): the per-trade series the
+    # power calculation needs. Same trips, same order, as ``screening.trips.measure``.
+    trip_pnls_usd: tuple[float, ...] = ()
+    # Closed round trips per window date, in window order, 0 on a date with no trading
+    # (Stage D.1e). A trip belongs to the trade date of its CLOSING fill, so these counts
+    # partition ``trip_pnls_usd`` exactly as ``daily_net_usd`` partitions ``net_pnl_usd``.
+    daily_n_trips: tuple[int, ...] = ()
+    # Position size of every closed round trip, in ledger order (Stage D.1e): the maximum
+    # absolute position, in micros, that trip ever held. Same trips, same order, as
+    # ``trip_pnls_usd``, so a per-micro series divides each trip by its OWN size instead of by
+    # one assumed size (most trials size 1 micro, but some size 1 to 5 micros by rule).
+    trip_micros: tuple[int, ...] = ()
 
     def to_dict(self) -> dict:
         out = asdict(self)
@@ -207,6 +219,64 @@ def _daily_net_usd(result, dates: Sequence[date]) -> tuple[float, ...]:
     days = daily_net_pnl(result)
     by_date = days.groupby("trade_date")["day_net_cents"].sum() / 100.0
     return tuple(float(by_date.get(d, 0.0)) for d in dates)
+
+
+def _fill_trade_date(bar_ts: np.ndarray, bar_days: np.ndarray, fill_ts_ns: int) -> date:
+    """The engine's own trade date for a fill: the ``trade_date`` column of the bar the fill
+    happened on, which is what ``sim.engine.daily_net_pnl`` attributes the fill's P&L to
+    (``DayCloseEvent.trade_date`` is the run's current ``bar.trade_date``).
+
+    A fill's ``fill_ts_ns`` is normally the fill bar's OPEN. The two forced-flatten paths that
+    close at a bar's CLOSE (``_Run.fill_at_close``: a session that ended with no flatten-window
+    decision time, and the end-of-data flatten) stamp the fill with that bar's DECISION time,
+    one bar later; both belong to that bar's trade date, the one ``close_day`` bills."""
+    for candidate in (fill_ts_ns, fill_ts_ns - NS_PER_BAR):
+        i = int(np.searchsorted(bar_ts, candidate))
+        if i < len(bar_ts) and int(bar_ts[i]) == candidate:
+            return date.fromisoformat(str(bar_days[i]))
+    raise AssertionError(f"fill at {fill_ts_ns} matches no bar in the window's frame")
+
+
+def _daily_n_trips(result, frame: pd.DataFrame, dates: Sequence[date]) -> tuple[int, ...]:
+    """Closed round trips per window date. The walk is ``trips.round_trip_pnls_usd``'s: a trip
+    is the fill run ending at ``position_after == 0``, and it lands on its closing fill's date."""
+    bar_ts = frame["ts_event"].to_numpy(dtype="int64")
+    bar_days = frame["trade_date"].to_numpy()
+    counts: dict[date, int] = {}
+    in_trip = False
+    for fill in result.events(FillEvent):
+        in_trip = True
+        if fill.position_after == 0:
+            day = _fill_trade_date(bar_ts, bar_days, fill.fill_ts_ns)
+            counts[day] = counts.get(day, 0) + 1
+            in_trip = False
+    if in_trip:
+        raise AssertionError("_daily_n_trips: a trip never closed -- engine invariant broken")
+    return tuple(counts.get(d, 0) for d in dates)
+
+
+def _trip_micros(result) -> tuple[int, ...]:
+    """Micros held by every closed round trip, in ledger order. The walk is
+    ``trips.round_trip_pnls_usd``'s, so trip i here is trip i of ``trip_pnls_usd``: a trip is the
+    fill run ending at ``position_after == 0``, and its size is the largest absolute position it
+    ever held, ``max |position_after|`` over its fills. A trip that scales in is measured at its
+    largest size, which is the divisor that turns its whole net into ticks per micro."""
+    sizes: list[int] = []
+    peak = 0
+    in_trip = False
+    for fill in result.events(FillEvent):
+        in_trip = True
+        peak = max(peak, abs(fill.position_after))
+        if fill.position_after == 0:
+            if peak == 0:
+                raise AssertionError("_trip_micros: a trip never held a position -- engine "
+                                     "invariant broken")
+            sizes.append(peak)
+            peak = 0
+            in_trip = False
+    if in_trip:
+        raise AssertionError("_trip_micros: a trip never closed -- engine invariant broken")
+    return tuple(sizes)
 
 
 # ------------------------------------------------------------------- screen ----
@@ -270,6 +340,9 @@ def screen_frame(
         verdict="pass" if (zero_edge.robust == "pass" and drift_ok) else "fail",
         reasons=tuple(reasons), caveats=tuple(caveats),
         daily_net_usd=_daily_net_usd(result, dates),
+        trip_pnls_usd=m.trip_pnls_usd,
+        daily_n_trips=_daily_n_trips(result, frame, dates),
+        trip_micros=_trip_micros(result),
     )
 
 

@@ -1135,3 +1135,232 @@ Artifacts:
 - **Tests:** `tests/test_c_h4_passive_reversal.py`, `tests/test_screening_runner.py`.
 - **Reports:** `reports/stage_d1b_family_f_declaration.md`, `reports/stage_d1b_family_f_facts.json`, `reports/stage_d1b_ch4_fold0.json`, `reports/stage_d1b_accounting.json`.
 - **Docs:** `docs/STAGES.md`, `docs/SCREENING.md` (N = 24).
+
+## 2026-09-18 — Stage D.1c: constraint audit (XFA flatten and the excluded hypothesis space)
+
+### Headline
+
+**This is a decision brief, not a decision.** Three findings change how Stage D.1b's closing option (c) ("revisit the constraint set") reads:
+
+1. **The flatten rule is encoded correctly, and it applies to every Topstep account type, including the LFA.** Topstep's help center, checked today, still says: no new positions from 15:08 CT; flat by 15:10 CT; 15 minutes before any CME early close. The holiday article names the Combine, the XFA and the LFA explicitly. **Reaching the LFA would therefore not unlock multi-day holding.** It would also remove API automation, which the LFA does not support. The premise that "moving to the LFA gives access to multi-day strategies" is false on current documentation.
+2. **None of the three other prop firms checked allows overnight holding either.** Lucid (flat by 16:45 ET), MyFundedFutures (auto-close 16:10 ET) and Tradeify (flat by 16:45 ET, from a secondary source only) all require a daily flat, and none of them exempts its live tier. Among the venues on record, only trading personal capital (IBKR) removes the constraint.
+3. **The pre-filter excluded almost nothing on horizon grounds.**
+   - Of Stage D.1's 102 pre-filter rejections, **0 were rejected mainly for being multi-day.** Horizon appears as a contributing reason in 3, and each of those 3 also had another reason that would have excluded it on its own.
+   - The constraint worked **upstream, through search scope.** All five D.1 families were defined as intraday mechanisms, and Family F declared only returns formed within one trade date. As a result, multi-day literature was searched for only when it surfaced incidentally.
+   - Among the 81 items that passed the pre-filter, **12 make a claim whose core is multi-day, and 7 make one that crosses the daily close.** Among the 41 carried forward, those figures are 6 and 5.
+   - **No near miss from D.1/D.1b failed because of the flatten.** Every one failed on cost, drift (beta), adverse selection or statistical power.
+
+`rules/xfa_rules.py` is unchanged. `REGISTRATION.md` is 0 bytes. No backtest ran, no data was requested ($0.00), and no code was written.
+
+### Guardrails, with evidence
+
+- **Sealed holdout:** `uv run python -m data.holdout status` gave `all_ok: true`, `unlocks_logged: 0` and `research_has_no_holdout_rows: true` at the start of the session and again at the end.
+- **No TopstepX API contact.** This session read only public help-center and marketing pages, fetched anonymously. `live/`, `ops/` and credentials were not touched. `live/` and `ops/` are still empty.
+- **No backtest, no engine, no screening runner.** Nothing under `sim/`, `screening/` or `strategy/` was run or edited. Databento spend was **$0.00**, and nothing was quoted.
+- **No code change.** The only files written are this entry and one line in `docs/STAGES.md`.
+
+### Delegation
+
+**None.** The prompt named Task 1 and Task 2 as candidates for delegation. I ran both inline:
+- **Task 1** needed seven page fetches, plus raw-HTML extraction so the rule text could be quoted verbatim.
+- **Task 2's** source was already in context: D.1's untruncated literature log (`all_results.json` in the D.1 session's workflow output). progress.md shows that log only in truncated form, so the table there was not enough for this task.
+
+A subagent would have had to re-derive both. **Task 3 is lead-only, as the prompt requires.**
+
+### Task 1: the flatten rule, reconfirmed against Topstep's help center (2026-09-18)
+
+**Verbatim text,** taken from the pages' raw HTML rather than a summarizer, so these are exact quotes:
+
+- *"When and What Products Can I Trade?"* (help.topstep.com article 8284206, dated 2026-07-13, the same revision `rules/xfa_rules.py` cites):
+  - "Topstep is a day trading program. All positions must be closed by 3:10 PM CT every weekday. You can resume trading at 5:00 PM CT. No swing trading."
+  - "[All open positions and pending orders] begin to automatically cancel at 3:10 PM CST. Avoid opening new positions after 3:08 PM CT — Risk Managers begin flattening at that time. It's still your responsibility to be flat by 3:10 PM CT."
+  - "If you're trading a product with an earlier daily close than 3:10 PM CT, you must exit before that product's close." The earlier-closing products are CBOT grains (1:20 PM CT) and CME livestock (1:05 PM CT). None of them affects MES.
+  - "Can I swing trade or hold positions overnight? No. All positions must be closed by 3:10 PM CT each weekday. Topstep does not permit holding positions from one session to the next."
+- *"Topstep Holiday Trading Hours"* (article 13350348, marked "Updated today"):
+  - "All account types must close positions 15 minutes before any early close."
+  - "Applies to: Trading Combine®, Express Funded Account® (XFA), Live Funded Account® (LFA)."
+- *"Live Funded Account Parameters"* (article 10657969, marked "Updated yesterday"): "The API Gateway is built for the simulated environment and isn't available on Live, so automated strategies are not possible at this time in the Live Funded Account."
+- *topstep.com/live-funded-account-rules:* "All positions MUST be closed prior to 3:10 PM CT or prior to the market close of that product, whichever is sooner."
+
+**What this means for each question the prompt asked:**
+
+| Question | Answer |
+|---|---|
+| Does the encoded 15:08 no-new / 15:10 flatten / 15-min-early rule still match? | **Yes, exactly.** The Hours article is the same 2026-07-13 revision that was read on 2026-09-16. The 2026 holiday table matches every cutoff that `data/cme_calendar.py` plus `flatten_time_ct()` produce, including Good Friday (08:15 halt → 08:00), the 12:00 halts (→ 11:45) and the 12:15 closes (→ 12:00). |
+| Does the flatten differ by stage (Combine / XFA / LFA)? | **No.** The holiday article lists all three account types by name. The LFA rules page states the same 15:10 CT close, and no page describes an LFA exemption. |
+| Is there any account type, product or exception that allows an overnight or multi-day position? | **None found.** "No swing trading" and "does not permit holding positions from one session to the next" are unqualified statements. The only product-level variation moves the close *earlier* (grains, livestock), never later. |
+
+**Discrepancies.** None of these is material. All go to Stage A.2 for confirmation on a real account:
+
+1. **The no-new-positions cutoff on early-close days is our extrapolation.** Topstep states only the close-by time (for example, 11:45 CT). The code also blocks new entries 2 minutes before that (11:43 CT), carrying over the normal-day 15:08/15:10 gap. That is stricter, not looser, so it can only cost trades.
+2. **Topstep's own text mixes "3:10 PM CST" and "3:10 PM CT".** In September, CST would literally mean 16:10 CDT. The code uses America/Chicago local time, and the "CT" reading is the one used everywhere else on the page. This looks like a typo on Topstep's side and needs confirming.
+3. **The live-only Juneteenth 2026 cutoff was 11:10 CT, against 11:45 CT for simulated accounts.** It is in the past, and XFA accounts are simulated, so the encoded 11:45 was right for the XFA. It shows that live and simulated holiday cutoffs *can* differ.
+4. **The LFA marketing page describes the auto-flatten as "about ten seconds before the trading session ends (3:10 PM CT)".** The help center says Risk Managers begin at 3:08. This is a wording inconsistency, and it concerns the LFA only.
+5. **Only the LFA follows CME's "blended trade date" protocol for the daily loss limit around holidays.** This does not affect the XFA engine.
+
+**Effect on Task 3's framing: large, in one direction.** Every Topstep stage, the LFA included, is intraday-only. So the LFA is not a path to multi-day strategies in any form.
+
+### Task 2: catalog of the excluded hypothesis space
+
+**Source:** D.1's untruncated Task 1 output (`~/.claude/projects/…/432f46d4…/d1/all_results.json`, 183 items across 5 families; the counts match progress.md's table exactly), the 24 trial docstrings under `strategy/research/`, and `reports/stage_d1b_family_f_declaration.md`.
+
+**A note on "overnight".** "Overnight" does not mean "excluded". A CME trade date runs from 17:00 CT on the prior evening to about 15:10 CT under the flatten. Most of the overnight session is therefore holdable. What is excluded is:
+- any position held across **15:10 → 17:00 CT**: the last RTH minutes, the post-close hour and the daily halt/reopen gap;
+- any position held across more than one trade date.
+
+This is why A-H1 (02:00–03:00 ET) tested its source's claim in full, while A-H4's ETH leg did not.
+
+**(a) Pre-filter rejections (D.1 Task 1): 0 of 102 rejected mainly on horizon.**
+
+| Item | Rejected mainly for | Horizon also cited? |
+|---|---|---|
+| A24 Benzinga, S&P semiannual seasonality | news/opinion, not research | yes: "semiannual/monthly … rather than session-clock" |
+| C12 Quantpedia, short-term reversal with futures | weekly cross-sectional factor across 24 mixed futures (a multi-asset factor, not equity-index) | yes: "not intraday minutes-to-hour" |
+| C17 Quantitativo, volume shocks and overnight returns | cash equity, not futures | yes: "overnight/close-to-open framing" |
+
+- The other 99 were rejected for asset class (crypto, FX, commodities, cash-equity cross-section), for being vendor or news content, or as discovery dead ends.
+- **C20** (the NY Fed overnight-drift paper, rejected in family C) was a duplicate handed to family A, where it was carried forward as A2. It was not excluded.
+- **Fraction excluded at the pre-filter because of horizon: 0/102 (0%)** as the main reason, and **3/102 (2.9%)** as a contributing reason. In none of the 3 did the horizon change the outcome.
+
+**Caveat on that number: it measures the wrong stage.**
+- The family briefs in D.1's workflow (`stage_d1.js`) scoped every search as intraday:
+  - A: "deterministic intraday periodicity";
+  - C: "minutes-to-an-hour";
+  - B and D: intraday levels and states;
+  - E: calendar events, which are the only family that did not specify a horizon.
+- The briefs never mention the flatten. The exclusion happened when the families were designed, before any source was found. Its size **cannot be counted from the log**, because searches that were never run left no entries.
+- Multi-day literature (time-series momentum, multi-day trend-following, carry, month-end flow) appears in the log only where it surfaced incidentally.
+
+**(b) Sources that passed the pre-filter but make a multi-day or cross-close claim: 19 of 81 passed, 11 of 41 carried forward.**
+
+*Core claim is multi-day (12 passed, 6 carried).* Of these, none was tested as specified:
+
+| Item | Carried | Claim | What happened to it |
+|---|---|---|---|
+| B6 Carver, breakout rule | yes | position within a 10–320 business-day range (figures come from a summarizer, [unverified]) | **never formalized.** Family B built only intraday level breaks |
+| C6 Safari & Schmidhuber (2025) | yes | S&P and other futures **revert below ~a few hours and trend from there to ~a few years** | only the minute-scale reversion was used (C-H1–H4); the multi-day trend regime was set aside |
+| C7 Carver, "very slow mean reversion" | yes | the post is about multi-year slow mean reversion; fast (2–30 min) mean reversion is a side topic | only the fast part was used (C-H4) |
+| D15 Vol targeting and trend following | yes | trend following with volatility-scaled size | only the vol-scaling part was used (D-H2) |
+| E3 Cieslak, Morse & Vissing-Jorgensen | yes | the equity premium is earned in even weeks of the FOMC cycle | **never formalized** |
+| E8 Turn-of-month, S&P futures | yes | a 4-session hold across month-end | tested only as the degraded E-H4 (see below) |
+| E7 Carchano & Pardo; E11 CME month-end flows; E13 Harvey et al., rebalancing; E14 passive reconstitution; E46, E47 calendar aggregators | no | multi-day calendar and flow effects | blocked, snippet-only or deprioritized, so never read in full |
+
+*Core claim crosses the daily close; testable only truncated (7 passed, 5 carried):*
+- **A4** Bondarenko & Muravyev, close-to-open;
+- **A6** Cooper, Cliff & Gulen, and **A7** Kelly & Clark, both close-to-open on cash equities and ETFs;
+- **A9** day-of-week effects, close-to-close;
+- **E1** Lucca & Moench, the 24-hour pre-FOMC window;
+- **E2** Kurov et al., the same window;
+- **E4** Savor & Wilson, announcement-day close-to-close returns.
+
+**(c) Trials tested in a truncated form their source does not support: 4 of 24.**
+
+| Trial | Source claim | What the harness tested | Truncation |
+|---|---|---|---|
+| **E-H1** scheduled macro drift | 24-hour pre-FOMC drift (E1) | from the trade date's 17:00 CT open to the release, about 14.5–20 hours | declared up front as a "harness-compatibility adaptation" in the docstring |
+| **E-H4** turn of month | a continuous 4-session hold (E8) | independent single-session longs on each target day | declared up front as "a meaningfully weaker claim"; the literal claim is untestable |
+| **A-H4 ETH leg** | overnight return, close to open (A4–A7) | 17:00 CT → 08:30 CT | misses 15:00 → 17:00 CT (the post-close hour plus the halt/reopen gap); **not declared** |
+| **A-H3** weekend effect | classic Monday/Friday effect measured close-to-close, so it includes the weekend gap (A9 lineage) | RTH-only Monday short / Friday long | the weekend itself is not held; reframed as RTH-only in the docstring; **the gap is not declared** |
+
+The other 20 trials are intraday by construction and fully faithful to their sources on horizon. That includes A-H1 (its window lies inside one trade date) and D-H4 (the gap is its conditioning variable; the trade itself is intraday).
+
+**(d) Family F's 57 statistics.**
+- Every return statistic was formed within one trade date; the declaration says so (line 23).
+- The only statistic that crosses days, **F2.2** daily realized-variance persistence, is non-directional and was ineligible by declaration.
+- So **Family F's null covers intraday horizons only.** It says nothing about multi-day return predictability, because it never measured any.
+
+**(e) Near misses: would removing the flatten plausibly change the verdict?**
+
+| Finding | Why it failed | Is the flatten relevant? |
+|---|---|---|
+| F1.1/F1.2 short-lag mean reversion (VR(5) 0.930 RTH, VR(60) 0.851 ETH) | worth 0.08–0.12 ticks per trade against a 2.11-tick cost | **No.** A 1–60-minute effect is not larger when held longer. Per C6, longer horizons flip to *trend*, which would be a different hypothesis, not this one rescued. |
+| C-H4 passive-fill reversal | adverse selection under the trade-through fill rule: about −$1.9 per trip gross | **No.** The bottleneck is fill realism and the missing book data. |
+| A-H4 RTH / A-H1 / A-H2 buy / A-H4 ETH (unconditional longs) | the P&L is market drift (beta); all four fail the drift benchmark in 36/36 runs | **No, for the edge question.** Holding longer captures more drift, which the drift benchmark subtracts. |
+| A-H4 ETH truncation specifically | the same drift failure | **Marginal and unmeasured.** It adds about 2 of roughly 23 session hours, for a drift its own source reports as decayed to near zero in 2021–25 (A3). |
+| B-H2 prior-day stop cascade | p = 0.425, t = 0.39 | **No.** It is an intraday mechanism. |
+| E-H1 macro drift | 31 trades in 289 days (underpowered); the drift was reported to disappear after 2016 (E2) | **Partly.** The flatten cut the window to 14.5–20 of 24 hours, but power and decay would bind first. |
+| E-H4 turn of month | 55 trades; the source reports the effect disappeared after 1990 | **Partly.** The literal test becomes possible, but power and decay remain. |
+| F3.2 / F3.3 / F4.4 / F6.1 (large but noisy, p ≥ .073) | sample size | **No.** These are intraday patterns; the bottleneck is data length. |
+
+**Summary of Task 2.**
+- **No tested near miss was killed by the flatten.** Its cost lies entirely in *untested* space: multi-day trend (C6, B6, D15), the FOMC cycle (E3), multi-session calendar and flow effects (E8, E11, E13, E14), and literal close-to-close forms of the day-of-week and FOMC claims.
+- **The strongest evidence in the log that this space matters** is C6's regime map, which places trend-following at multi-day horizons and reversion at intraday horizons. The latter is exactly the regime D.1b measured and found below cost.
+- **But C6 is a pooled regression across 24 futures, not an after-cost S&P result.** No source in the log demonstrates a multi-day MES edge net of costs.
+
+### Task 3: decision brief (lead only)
+
+**1. What the constraint actually excludes, quantified.**
+
+| Measure | Figure |
+|---|---|
+| Pre-filter rejections due mainly to horizon | **0 of 102** (3 contributing, none decisive) |
+| Passed sources with a multi-day or cross-close core claim | **19 of 81** (23%); **11 of 41** carried forward (27%) |
+| Carried-forward multi-day sources never formalized in any form | **3** (B6, D15, E3), plus the multi-day halves of C6 and C7 |
+| Trials run in truncated form | **4 of 24** (2 declared, 2 not) |
+| Near misses whose failure is attributable to the flatten | **0** |
+| Search scope excluded before any source was seen | **not countable.** Every D.1 family was scoped intraday, and the searches that were never run left no record |
+
+On the measured evidence, **the flatten did not cause any observed failure.** The premise in D.1b's closing section, that the flatten "rules out every multi-day effect in the literature", is accurate as a description of the constraint. But it is not evidence that those effects would survive costs on MES: no source in the log shows that. What the constraint cost the program is an **unexamined region** of hypothesis space, whose most relevant marker is C6. It is not a lost result.
+
+**2. What relaxing it would require: the options, as tradeoffs.**
+
+**Option A: stay on Topstep and reach the LFA.**
+- **Horizon:** no change. The LFA flattens at 15:10 CT like every other Topstep account (Task 1). It does not relax the constraint at all.
+- **Automation:** the LFA has none ("automated strategies are not possible at this time"). The program as built could not run there.
+- **Access:** the LFA is a call-up at Topstep's discretion (docs/DECISIONS.md models it as a terminal event), not a tier a trader selects.
+- **Net:** on current documentation this is **not a route to multi-day strategies.** Its only relevance is as the eventual call-up event that ends automation, which is already the modelled assumption.
+
+**Option B: a second prop firm with different flatten rules.**
+- **What is known:**
+  - The earlier session's second-firm comparison **is not stored anywhere on disk.** I searched this repo, every sibling repo under `~/Documents/GitHub/` and every saved Claude Code transcript; no file mentions Lucid, MyFundedFutures or Tradeify apart from this session's prompt.
+  - What *is* recorded, in docs/DECISIONS.md: Topstep was chosen as "the only futures prop firm with native REST/WebSocket API; Tradovate blocks API on prop accounts; Apex bans automation outright".
+- **What was checked today** (flatten only; automation policy was *not* re-researched):
+
+  | Firm | Daily flat requirement | Overnight on any tier? | Source grade |
+  |---|---|---|---|
+  | Lucid | "All positions must be closed by 4:45 PM EST, Monday through Friday"; "Swing trading is not allowed in the new LucidLive accounts" | no | help center, verbatim |
+  | MyFundedFutures | "any open positions will be automatically closed at 4:10 PM EST"; the live FAQ says the same for live accounts | no | help center, verbatim |
+  | Tradeify | flat by 4:45 PM ET on all account types, including Live | no | **secondary only**: the help center returned HTTP 403 |
+
+- **Net:** none of the three firms relaxes the horizon constraint. Lucid's and Tradeify's 16:45 ET cutoffs are 35 minutes later than Topstep's, but still before the 17:00 ET halt, so no position can cross a trade date at any of them.
+  - Firms outside these three were not examined, so this is not a claim about the whole prop-firm market.
+  - Whether any of the three permits API automation was not re-checked. The DECISIONS.md record implies that Tradovate-routed firms block it.
+
+**Option C: trade personal capital through IBKR.**
+- **Horizon:** the constraint is removed entirely. There is no flatten, MLL, consistency rule, payout cap or profit split.
+- **Capital:** it reopens the sizing problem. The prompt's figures, **a minimum of about $5,000–$6,000 against a stated pool of at most $6,000 and a preferred size under $2,500**, come from the earlier chat analysis. I could not find that analysis on disk and did not re-derive it. This session has not verified these figures.
+- **What is on record elsewhere:**
+  - HFExperiment established IBKR Canada as the only broker reachable for this operator's residency with an order-placing API, and recorded, on the operator's own statement of 2026-08-28, that a funded live IBKR account exists.
+  - Futures permissions on that account were not checked this session.
+  - MBTExperiment's `REINTRODUCTION.md` records a program rule relevant here: **a capital ceiling chosen after seeing the margin figure is "reverse-engineered, whatever the intent".** Any sizing decision should be registered on risk grounds first.
+- **The economics change in kind:**
+  - On a prop account, the downside is capped at fees and the capital is the firm's.
+  - On personal capital, the whole stake is at risk, but the upside is uncapped and unsplit.
+  - Per-trade cost (about 2.1 ticks round turn) weighs much less against a multi-day move than against an intraday one. That is the mechanism by which a longer horizon *could* help. It is also paid for in larger overnight gap risk, which has no firm-side stop.
+- **What building it would take** (not built; out of scope under the scope lock):
+  - an IBKR execution adapter;
+  - a risk layer replacing the XFA rules;
+  - a harness that can hold positions across trade dates (today the engine enforces the XFA flatten);
+  - multi-day research that carries **N = 24** forward.
+- **Data:** multi-day hypotheses are **far less powered** on the current 17.5-month history, which gives about 290 daily observations and about 60 weekly ones. A useful multi-day search would almost certainly need a longer history, which means a Databento spend decision.
+
+**Option D: stay intraday-only and treat the result as an informative negative.**
+- **What it says:** 24 trials, a declared data-native sweep and three independent statistical corrections agree. The structure robustly present in intraday 1-minute MES bars is an order of magnitude below retail micro costs, and everything large enough to trade is noise at this sample size.
+- **What it keeps:** the whole built stack stays valid: rules engine, funnel, harness, runner and sealed holdout. It needs no new venue, capital or code.
+- **What it leaves open:** it can still be combined with D.1b's option (b), new data for intraday work (order-book days outside the holdout, MNQ/NQ, a longer history), without touching the constraint.
+- **What it gives up:** it closes the multi-day region without having looked at it, so the program's negative stays scoped to "intraday, at these costs" and does not generalize beyond that.
+
+**3. This session is not choosing between these.** The questions below are the ones whose answers would decide it. They are listed in no particular order.
+
+1. **Is the goal specifically a *prop-firm* program, or a *systematic MES* program that happens to have started on a prop firm?** Options A and B keep the first; only C changes the second. On today's evidence, A and B do not relax the horizon constraint.
+2. **Is manual trading on the LFA something you would want to do at all?** On current documentation it would be manual *and* still intraday-only.
+3. **Is the IBKR capital-sizing problem still binding at today's savings?** Is the "$6,000 max / under $2,500 preferred" pool still the right frame? Following the MBTExperiment precedent, would you register a risk-based capital rule *before* seeing any margin figure?
+4. **Should the earlier second-firm and IBKR analyses be put on disk,** so the next session can re-read them instead of relying on the prompt's summary? They are not in any repository or transcript on this machine.
+5. **Is a multi-day search worth its prerequisites?** Those are: a harness change so positions can cross trade dates, a longer-history data purchase, and N = 24 carried forward. Or is the unexamined region acceptable to leave closed?
+6. **Is "intraday MES at micro-contract costs shows no findable edge" a result you would accept as the program's conclusion** if option D is chosen, or would that feel premature before D.1b's option (b), new intraday data?
+7. **Should another prop firm be examined beyond the three checked here?** Or is "no researched firm allows overnight holding" enough to set option B aside?
+
+### What this session did not do
+
+It made no code changes. It did not touch `rules/xfa_rules.py`, `live/`, `ops/` or any adapter. It ran no backtest and no hypothesis test, spent no data, did not write to `REGISTRATION.md` and made no TopstepX API contact. The holdout was never unlocked (`unlocks_logged: 0`). It makes no recommendation.
+

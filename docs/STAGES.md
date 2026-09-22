@@ -32,5 +32,9 @@ history, not here.
   reports/stage_d1b_family_f_declaration.md and reports/stage_d1b_accounting.json.
   C-H4 failed; Family F's pre-declared selection rule admitted zero hypotheses;
   cumulative N = 24; shortlist still empty.)
+- Stage D.1c — Constraint audit: the XFA flatten and the hypothesis space it
+  excludes. Decision brief only; no code, no backtest, no registration. (Run
+  2026-09-18; see progress.md. The 15:08/15:10 CT flatten is confirmed and applies
+  to the Combine, XFA and LFA alike; no researched prop firm permits overnight.)
 - Stage D.2 — Sealed holdout read under the pre-registered bar.
 - Stage E — Practice-account forward test, then one 50K Combine.

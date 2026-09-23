@@ -115,3 +115,29 @@ Delegation plan block, as it appears in each prompt:
        to disk before ending.
     7. Unattended run: no pauses to ask. Checkpoint to
        reports/<stage>_STATE.md after each task.
+
+## Launching a stage (2026-09-23)
+
+The planning chat can start a stage session on the ThinkPad itself, so the
+prompt no longer has to be pasted by hand. The order is fixed:
+
+1. The planning chat writes the prompt to docs/prompts/, updates the index,
+   commits, and sends it to the user.
+2. The user reviews it. Nothing launches without the user's go-ahead.
+3. The planning chat launches it headless from the repo, in bypass-permissions
+   mode (every new CLI session runs in auto or skip-permissions mode, per the
+   user), with the model and effort the prompt names, and logs to
+   reports/<stage>_cli.log:
+
+       setsid nohup claude -p "$(cat docs/prompts/<file>.md)" \
+         --model opus --effort xhigh --permission-mode bypassPermissions \
+         --name "<Stage X.Y title>" --output-format stream-json --verbose \
+         > reports/<stage>_cli.log 2>&1 < /dev/null &
+
+4. The session shows up in `claude agents` and in the /resume picker, so the
+   user can open it in their own terminal with `claude --resume <id>`.
+
+Ultracode is not an --effort value; a prompt that wants it says so and the
+session is launched interactively instead. The laptop must stay awake: no
+auto-suspend (already set) and lid close set to ignore
+(/etc/systemd/logind.conf.d/lid.conf).

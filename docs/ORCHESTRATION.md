@@ -59,16 +59,14 @@ file paths instead of long summaries, and only then cheaper tiers.
 
 ## Usage notes
 
-- Fable has its own weekly cap, 50% of the plan's weekly usage. The lead is
-  always Fable, so every fable worker competes with the lead for that slice.
-  This is why reviews and audits run on opus at xhigh and fable workers are
-  kept for verdict-number verification and the hinge call. A Fable lead that
-  runs out mid-stage continues on Opus; see CLAUDE.md.
-- Ultracode is available on Fable and Opus, so a lead that falls back to Opus
-  keeps it.
+- Fable has its own weekly cap, 50% of the plan's weekly usage. Since
+  2026-09-22 the lead is Opus and Fable runs only the independent and
+  adversarial checks, so that slice is spent on nothing else. If it runs
+  out mid-stage, those checks stay pending in the STATE file; see CLAUDE.md.
+- Ultracode is available on Opus and Fable.
 - Check /usage mid-session. If Fable passes about 40% of the weekly bar
-  before mid-week, run implementation-heavy stages with an Opus lead and keep
-  Fable for synthesis and verification.
+  before mid-week, keep Fable for the verdict-number checks only and move
+  other reviews to opus at xhigh for the rest of the week.
 - If a sonnet worker fails verification more than occasionally on a class of
   task, move that class to opus in CLAUDE.md's routing table.
 - Keep CLAUDE.md stable and short. A stable prompt prefix keeps cache reads
@@ -83,7 +81,7 @@ of 2026-09-21 and is mandatory.
 
     STAGE X.Y "SHORT TITLE"
 
-    Lead: Fable, <effort>. Ultracode: <on/off>.
+    Lead: Opus, <effort>. Ultracode: <on/off>.
     One paragraph on why this lead and effort fit this stage, and a separate
     line for any usage consideration.
 

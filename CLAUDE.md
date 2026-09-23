@@ -179,6 +179,25 @@ Computed at the very end, after everything else is written:
   transcripts cannot be read, say so and report time only. Never estimate
   token counts.
 
+## Compute limits (stability over speed)
+
+The ThinkPad has 14 GB of RAM, a recorded out-of-memory incident, and D.1e
+pushed it to 90% CPU before a session died with the machine. A slower run
+beats a throttled or crashed one (user instruction, 2026-09-23).
+- Parallel compute jobs: at most half the cores (use `os.cpu_count() // 2`,
+  never more than 8), and at most one heavy computation at a time across
+  the lead and all workers.
+- Run long computations at low priority (`nice -n 10`, or `os.nice(10)` at
+  the top of the script).
+- Before launching anything expected to take more than a few minutes, check
+  available memory and estimate the job's peak; if the estimate exceeds half
+  of what is available, run it in chunks.
+- Long computations are resumable: they write progress to disk as they go
+  and skip finished pieces on restart.
+- Keep heavy runs out of the AiTrader collector window (it runs about
+  15:30 to 16:00 PT on weekdays under news-collect.timer) and never kill or
+  starve that service.
+
 ## Long and unattended runs
 
 - The user is not watching. Do not stop to ask whether to continue. Run the

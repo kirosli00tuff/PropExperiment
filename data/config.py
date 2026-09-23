@@ -23,14 +23,27 @@ ENV_FILE = REPO_ROOT / ".env"
 # Other ledgers drawing on the SAME Databento account. Read-only: this repo
 # never writes to them. A missing external ledger closes the gate (fail
 # closed) rather than being read as zero spend.
+# Repointed by the Stage D.1f build lead (2026-09-23): the MLCryptoEngine repo moved to the
+# archive drive, so the old sibling path (REPO_ROOT.parent / "MLCryptoEngine" / ...) no longer
+# exists and the gate would fail closed on the D.1f purchase. This file is inside the D.1f
+# harness-freeze manifest; the path is the one Stage D.1e read as "the relocated copy".
 EXTERNAL_LEDGER_PATHS: tuple[Path, ...] = (
-    REPO_ROOT.parent / "MLCryptoEngine" / "data" / "vendor" / "spend_ledger.jsonl",
+    Path("/mnt/large-storage/Archive/GitHub/MLCryptoEngine/data/vendor/spend_ledger.jsonl"),
 )
 
 # Stage A.1 spend policy (prompt, 2026-09-16): hard ceilings, not targets.
 SESSION_CAP_USD = 15.00
 SHARED_ACCOUNT_CAP_USD = 120.00
 STAGE_A1_SESSION_ID = "stage-A.1-2026-09-16"
+
+# Stage D.1f spend policy (set by the D.1f build lead on the stage prompt's instruction,
+# 2026-09-23; frozen with the harness-freeze manifest). The caps cover the $7.59 history
+# extension (reports/stage_d1e_quotes.json) and nothing more: the order-book purchase is
+# Stage D.1g's separate decision and must not fit under them. Changing any value here means
+# re-running strategy/research/_d1f_freeze.py before the freeze commit.
+STAGE_D1F_SESSION_ID = "stage-D.1f-2026-09"
+D1F_SESSION_CAP_USD = 10.00
+D1F_REQUEST_CAP_USD = 10.00
 
 DATABENTO_KEY_ENV = "DATABENTO_API_KEY"
 DATASET = "GLBX.MDP3"

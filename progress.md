@@ -1840,3 +1840,251 @@ Computed at the very end, after everything else in this entry was written. Token
 **Per worker spawn:** rows 2 to 7 and 11 to 20 above.
 
 **Delegation share:** lead 124.3M tokens (56.3%), workers 96.4M (43.7%); by tier, fable 169.5M (76.8%: lead 124.3M, verifier 22.3M, reviewer 22.9M), opus 45.5M (20.6%), sonnet 4.8M (2.2%), haiku 0.9M (0.4%). Cache reads are 90.6% of every figure; output tokens, the part a model actually wrote, are 2.07M in all, of which the lead wrote 1.50M (72%). The two Fable workers (verification and adversarial review) cost more than all eight opus spawns together, which is the price of routing the verdict-bearing checks to the strongest model; the review's 65 findings, one of them a factor-of-four unit error the lead and two opus workers had all missed, are what that bought.
+
+## 2026-09-23 — Stage D.1f (build): harness build and freeze, no purchase
+
+**Built, tested and hash-froze every piece of the confirmation harness; bought nothing, quoted nothing, ran nothing on new data, N stays 31.** This session did steps 1 and 1b of the frozen confirmation list's order of operations (reports/stage_d1f_confirmation_list.md 1.5) and stopped. It built the confirmation-window loader and screening path, holdout-2 sealing with a seal-on-arrival puller, the 2019–2024 CME calendar with a coverage assertion and the step-4b validator, the confirmation bar build, the statistics wrapper, the six Family H modules, the 2019–2024 macro release table with the declared E-H amendment, and the list runner with its preflight. It then wrote the harness-freeze manifest: **reports/stage_d1f_harness_freeze.json, 129 files, sha256 `ba5b34d5239737cc493c360b38753573aa133963e73abf8639ba3532a4cf847a`**. The test suite went from 543 to 898 passing (355 new tests, 1 xfail unchanged). A Fable verification and a Fable max adversarial review found 0 blockers. All 8 should-fix findings were accepted and fixed before the freeze.
+
+Lead: Opus 5.5 at xhigh. Ultracode off. All times are Vancouver local (PDT), at the user's instruction during the session. The session ran 2026-09-22 23:39 to 2026-09-23 05:07 PDT. It includes a Fable session-limit pause of 3 h 12 min (01:19–04:31 PDT), which is not work.
+
+### THE RUN SESSION CANNOT START UNTIL THE USER COMMITS THE FREEZE
+
+- **Commit the freeze first.** The run session cannot start until the user commits reports/stage_d1f_harness_freeze.json together with every file it lists; that is 29 harness files not yet committed (12 modified, 17 new). The runner's git anchor refuses otherwise (review finding F4). Suggested scope: `git add -A data screening funnel strategy tests reports docs/STAGES.md progress.md`, after review. Any change to a listed file after the commit voids the run; a re-run is a new declaration under a new name.
+- **Freeze manifest sha256:** `ba5b34d5239737cc493c360b38753573aa133963e73abf8639ba3532a4cf847a`. The run prompt must quote it. The runner requires it: `OPENBLAS_NUM_THREADS=1 uv run python -m strategy.research._d1f_confirmation --step all --manifest-sha256 ba5b34d5239737cc493c360b38753573aa133963e73abf8639ba3532a4cf847a` (`--step preflight` checks without running).
+- **data/config.py D.1f spend settings:** `STAGE_D1F_SESSION_ID = "stage-D.1f-2026-09"`, `D1F_SESSION_CAP_USD = 10.00`, `D1F_REQUEST_CAP_USD = 10.00`. These cover the $7.59 history and nothing more; the order-book purchase cannot fit under them. `EXTERNAL_LEDGER_PATHS` was repointed to the archived MLCryptoEngine ledger at `/mnt/large-storage/Archive/GitHub/MLCryptoEngine/data/vendor/spend_ledger.jsonl`. The old sibling path is gone, and the gate would have failed closed on the purchase. The gate now reads $84.006048 shared, $0 this session. **data/config.py is inside the freeze: changing any of these values means re-running `uv run python -m strategy.research._d1f_freeze` before the commit, and quoting the new sha256.**
+
+### Guardrails
+
+| Check | Start (23:39 PDT) | End (05:04 PDT) |
+|---|---|---|
+| `uv run python -m data.holdout status` | holdout-1 all_ok true, unlocks_logged 0 | holdout-1 all_ok true, unlocks_logged 0; holdout-2 section present: state not_yet_sealed, 0 chunks, unlocks_logged 0 (all_ok false by design until sealed) |
+| docs/HOLDOUT2_MANIFEST.json, data/sealed/MES_holdout_v2 | absent | absent (no real sealing) |
+| REGISTRATION.md | 0 bytes | 0 bytes |
+| Declaration hashes (list c19cbac1…147c, criteria 6f69e318…97e2) | match | match; both files untouched |
+| Databento | — | **zero calls of any kind, $0.00**; ledger unchanged; every vendor path stubbed in tests |
+| H modules on real bars (R-7) | — | never; no look to log |
+| N | 31 | 31 |
+| git | clean at 9cbd815 | no commit; dirty with this stage's files only |
+| rules/, live/, ops/, sim/, TopstepX | untouched | untouched |
+
+Every modified file is on the list's allowed set (§5.8), plus data/config.py (list 1.5 NEW-5 and the stage prompt). The runner's own logic went into five `_d1f_*` modules, not the one file §5.8 names, to respect the 800-line cap. Every `_d1f_*` file is inside the manifest, and the preflight refuses any unlisted `.py` (deviation of form, logged).
+
+### Delegation record
+
+| Task | Agent | Model / effort | Outcome | Deviation |
+|---|---|---|---|---|
+| 0 Startup, plan, constants, config | lead | opus xhigh | STATE file, D.1f date constants in data/research_bars.py, spend constants | estimate table printed just after the first spawn, not before |
+| 2 Holdout-2 + puller | HoldoutSealer-OpusXHigh | worker-xhigh / opus | done | — |
+| 1 ConfirmationWindow | WindowLoader-OpusXHigh | worker-xhigh / opus | done | — |
+| 3a Calendar citations | CalendarExtractor-SonnetMed | worker-medium / sonnet | 71 rows | — |
+| 6a Release citations | ReleaseExtractor-SonnetMed | worker-medium / sonnet | 154 rows | — |
+| 5 Six H modules | HModuleCoder-OpusXHigh | worker-xhigh / opus | done | one worker for all six, not one per pair (shared mechanics, one look-ahead surface); xhigh, not high |
+| 3b Calendar code, bar build, step-4b validator | BarBuilder-OpusXHigh | worker-xhigh / opus | done | the build and validator were not separate prompt tasks but must be frozen before the purchase |
+| 4 + 6b Wrapper, release table, E-H amendment | StatsWrapper-OpusHigh | worker-high / opus | done | amendment given to the wrapper worker |
+| 7 List runner + freeze script | ListRunner-OpusXHigh | worker-xhigh / opus | done | split into five `_d1f_*` modules |
+| 8a Verification | SealVerifier-FableXHigh | worker-xhigh / fable | 0 blocker, 2 should-fix, 7 notes | — |
+| fixes 8a | FixApplier-OpusXHigh | worker-xhigh / opus | done | fixes applied BEFORE 8b so the review saw final code |
+| 8b Adversarial review | AdvAuditor-FableMax | worker-max / fable | 0 blocker, 6 should-fix, 9 notes; READY TO FREEZE on conditions | cut off by the Fable session limit 01:19 PDT, resumed with context at 04:31 |
+| fixes 8b | FreezeHardener-OpusXHigh | worker-xhigh / opus | done | — |
+| 9 Freeze, suite, entry | lead | opus xhigh | manifest, this entry | — |
+
+Concurrency never exceeded four. Fable was used exactly twice, for 8a and 8b, as the prompt specified.
+
+### What was built, and what the tests prove
+
+**Task 1, the confirmation window (list 5.1).** data/research_bars.py gained a `trade_date_class` map covering every date since MES began, with no gaps and no overlaps: confirmation, embargo-2, holdout-2, research, research embargo and holdout-1. On top of it sits `load_confirmation_bars`. It filters to 2019-05-01..2024-02-29, then re-checks every returned row, refusing holdout-1, holdout-2, embargo-2 and mined dates, and asserts max ≤ 2024-02-29 (list 5.2 iv). The research loader now also refuses holdout-2, embargo-2 and confirmation dates. `screen_candidate` accepts a `ConfirmationWindow`, built with `confirmation_window(S)`. On that path, bars come only through the confirmation loader, splices come from the confirmation parquet's metadata, and the drift path and session benchmark are recomputed on those bars in their own cache. The train-union path is byte-for-byte the old code path. funnel/null_generator.py's refusal now accepts all-research or all-confirmation frames only, never a mix. screening/drift.py needed no change. The tests cover:
+- every refusal, in both directions;
+- a synthetic 2021 parquet with a roll, screened end to end, with the benchmark and drift checked by hand;
+- E-H3 on the train union reproducing stage_d1d_accounting.json to the cent;
+- three planted bugs, all caught.
+
+**Task 2, holdout-2 sealing (list 5.2).** data/holdout.py has a second `HoldoutPaths` (data/sealed/MES_holdout_v2/, docs/HOLDOUT2_MANIFEST.json, the same unlock log and REGISTRATION.md). Sealing is per chunk, oldest first, and happens inside the download call before the next request. Before anything is removed, the round trip is proved, and the sealed blob and the plaintext are hashed. The manifest records bytes and sha256 only, with no dates or row counts. The code refuses to seal out of order, twice, or a chunk outside the 13. Holdout-2 unlocks must name "holdout 2", and unlocks are counted per holdout. `status` reports both holdouts, and holdout-1's keys are unchanged.
+
+data/pull_mes.py `--d1f-pull` buys the 71 chunks oldest first and refuses to re-buy anything in either manifest or on disk. A per-request cap is enforced in a gate subclass, because spend_gate.py is not on §5.8. The resume path decodes a found chunk once before sealing it. Interrupted seals complete through the same proof, and any sealing error stops the pull with a clear message.
+
+Byte paths: `fetch_range` writes `<target>.partial` and hard-links it to the target. databento 0.82.0 has no cache and uses no tempfiles, and a test pins that to the installed version.
+
+The tests assert all five mandatory points: no plaintext of any sealed chunk under the repo, /tmp or the client's cache, searched by content, with a positive control finding the 58 kept chunks; 13 manifest records with both hashes; verify_seal all_ok; the loader refusals; and status reporting both holdouts. The deliberately broken versions of the sealing code (14 by the worker, 6 more by the verifier) were all caught.
+
+**Task 3, the CME calendar 2019–2024 (list 5.3).** data/cme_calendar.py has 68 entries, each citing its source verbatim in `SOURCES_2019_2024`. Of those, 64 carry a CME-direct status source, 3 a secondary one and 1 is unverified; three days CME shows as normal are recorded as no-entry findings. The 2025–2026 entry lines are byte-identical to 9cbd815, checked by `ENTRIES_2025_2026_SHA256` and by the runner against the file at that commit. The whole file's hash moved from 5f24edda to d2aca685 only because the file grew. `CALENDAR_COVERAGE` now runs 2019-01-01..2026-12-31 and is asserted in `add_flags` for every built date. `data.validate.validate_calendar_step4b` implements step 4b's three checks, as a callable the run session invokes. data/build_mes_bars.py `--confirmation` does the following:
+- reads only the 58 unsealed chunks;
+- stamps the raw symbol mapped on the bar's UTC date;
+- drops only bars with no MES outright on that date, logging the drops per month and setting `stop_for_lead_decision` for any drop from 2019-05-06 on;
+- drops trade dates after 2024-02-29;
+- validates;
+- runs step 4b;
+- writes the parquet read-only with the manifest sha256 stamped in;
+- freezes the dataset-condition and symbology fetches once, and compares the degraded list with the eight declared dates.
+
+Tests: 29.
+
+**Task 4, the statistics wrapper (list 5.4).** strategy/research/_d1f_statistics.py calls the two hashed builders with any date set, exactly as `_d1e_event_series.py` does. The hashed modules were not edited. For each of the 64 directional statistics the wrapper returns per-event values, trade dates and forward intervals, plus the descriptive facts. On the 139 EDA dates it reproduces all 57 F and 28 G records, Q80, G0, F3.1, reports/stage_d1e_members_events.json and every per-event value to 1e-9.
+
+**Task 5, the six Family H modules (list 2.1 A3, 5.5).** strategy/research/h_daily_bar/ has one shared `_mechanics.DailyBarStrategy` and six thin modules; each module holds its constants, a pure `condition()` and a no-argument factory. `H_TRIALS` carries the labels exactly as the table writes them. Day d's daily bar enters the history only when a later trade date's first bar arrives. The condition and the instrument guard are evaluated on day d's 08:30 bar. Tests (50):
+- the look-ahead pair per module (day d scaled: condition unchanged; d-1 replaced: the hand-computed change);
+- a second, stronger day-d replacement that changes the tick range and CLV (verifier N1);
+- timing (OR window, fill at the next open, exit at or after 14:58, forced-exit logging);
+- the no-trade cases (early halt, incomplete day, 24 of 30 OR bars, a roll across d-1/d);
+- one known answer per module to the cent at 2 micros in the size-5 bucket.
+
+Planted bugs: 38 by the worker (every behaviour-changing one caught) and 8 by the verifier (all caught). The verifier re-derived H1 and H6 by hand to the cent: 263 and 255 cents in side costs, net 982 and 1,964 cents. **No H module ran on real bars at any time.**
+
+**Task 6, the release table and the E-H amendment (list 5.7).** strategy/research/e_calendar_event/_release_table_2019_2024.py covers 2019-05-01..2024-02-29 with 151 entries: 35 FOMC statements at 14:00 ET, 58 CPI and 58 Employment Situation releases at 08:30 ET. All are primary-grade, and each has its verbatim quote and URL. The unscheduled 2019–2020 actions are excluded and listed. Two dates carried both FOMC and CPI (2019-12-11 and 2020-06-10); the lead ruled to keep the earliest release, CPI at 08:30 (choice 6.1). Tests: 30. The declared amendment is in the next section.
+
+**Task 7, the list runner (list 5.6).** The runner is `strategy/research/_d1f_confirmation.py` plus `_d1f_preflight.py`, `_d1f_start_rule.py`, `_d1f_members.py`, `_d1f_decisions.py` and the manifest writer `_d1f_freeze.py`. It runs steps 5 to 8 (start rule, continuity, list, decisions). Each step writes once and nothing re-runs after step 8.
+
+The preflight runs before every step and again after step 8. It checks:
+- the required `--manifest-sha256` value;
+- the declaration hashes, and that the criteria embed the list's hash;
+- every manifest file, with any unlisted `.py` under the harness directories refused;
+- the git anchor over every listed path;
+- the section-0 hashes, with the E-H literals and the calendar block;
+- the build summary (stop flag, step 4b, degraded comparison, manifest stamp);
+- both holdouts clean;
+- the run-session inputs pinned at step 5 (the parquet, build summary, vendor JSON files and HOLDOUT2_MANIFEST).
+
+Every output header records the manifest sha256 and the Python and library versions. The decision rules implement 3.1–3.6 as written, plus the lead's rulings listed under open choices. Tests: 37 + 35 + 11. They cover a planted edge that passes, a zero edge that comes out null, few and zero events (inactive or inconclusive), SE = 0, one inconclusive member blocking its class, C6 staying inconclusive, every tampered hash refusing, a hand-checked bootstrap, the start rule including its stop case, the exact per-micro trip partition, forced exits counted from the ledger, and the freeze file set.
+
+Continuity for all 31 trials (step 6) is a run-session step. In this session the train-union reproduction was exercised for E-H1, E-H2 and E-H3 only, which the prompt sanctioned.
+
+**Suite:** 543 passed at the start; 898 passed and 1 xfailed at the end (224 s). The 15 leakage canaries pass. New tests per file: confirmation_window 66, holdout2 81, calendar_build 29, statistics 16, release_table 30, h_daily_bar 50, confirmation 37, preflight 35, runner_hardening 11.
+
+### The declared E-H amendment (list 5.7, NEW-1)
+
+| Module | Pre-amendment sha256 (section 0) | Post-amendment sha256 |
+|---|---|---|
+| strategy/research/e_calendar_event/h1_scheduled_macro_drift.py | 94e92ff15efe2160c5e967da6d1a415385681a43cf500505004b87b363ab25b2 | f28529f058e9a6cc63d1030f6e08ce1b78e7c11c7f89ad64aa583468e1eb7a35 |
+| strategy/research/e_calendar_event/h2_post_release_momentum.py | b2f09ab6e71dafe554c8db35c04a02f3476cb25e0f3783ca740ebffc19b5f005 | 7183d9bda56b36b9089b05b9ee02cbd9609392f29d88f14ca005fb6bb341aeca |
+
+The diff is identical in both files. One field was added: `release_table: dict[date, datetime] = field(default_factory=lambda: RELEASE_TABLE_ET, repr=False, compare=False)`. One lookup changed from `RELEASE_TABLE_ET.get(...)` to `self.release_table.get(...)`. Nothing else changed.
+
+Reason: the modules read a module-level table with no hook, so they could not fire on 2019–2024 dates (N-1). Both reproduce stage_d1d_accounting.json on the train union to the cent, under the no-argument factory and under the combined-table factory. Reverting the edit as text restores the old hash. The confirmation factories are the list's verbatim lambdas, and the post-amendment hashes are literals in the preflight and recorded in the manifest's `declared_amendments`.
+
+### Task 8: findings and rulings
+
+**8a verification (Fable xhigh, reports/stage_d1f_verification.md).** All five sealing assertions were verified against the real code paths, not the docstrings. The H1 and H6 known answers were re-derived by hand to the cent. Result: 0 blockers.
+
+| Finding | Ruling |
+|---|---|
+| D1 resume path sealed without the record-byte decode | accepted, fixed |
+| D2 interrupted seal had no automated completion | accepted, fixed (`complete_interrupted_seal`, same proof plus two stricter checks) |
+| N1 the ×1.01 scaled copy leaves tick ranges unchanged | accepted: added a stronger replacement test |
+| N2 "holdout 2" was optional in the stage argument | accepted, stricter: now required for holdout-2 |
+| N7 unclear message on a sealing error | accepted, fixed |
+| N3–N6 | noted |
+
+**8b adversarial review (Fable max, reports/stage_d1f_adversarial_review.md).** Result: 0 blockers, 6 should-fix, 9 notes. Verdict: READY TO FREEZE, provided F1–F3 are applied and F4–F6 are decided.
+
+| Finding | Ruling |
+|---|---|
+| F1 an edit plus a re-freeze passed every check | accepted: required `--manifest-sha256`; E-H hashes as literals |
+| F2 the pull and build ran unverified code | accepted: file-hash preflight before any vendor call; manifest stamp in the build |
+| F3 `strategy/research` had no `__init__.py` | accepted, broadened: an empty one added; every `*.py` under the harness directories pinned; unlisted ones refused |
+| F4 the git anchor covered the manifest only | accepted: covers every listed path |
+| F5 run-session inputs unpinned across steps | accepted: pinned at step 5, re-checked at every later step |
+| F6 H forced exits undercounted in two rare patterns (P&L unaffected) | accepted: counted from the ledger, differences flagged |
+| N5 versions not recorded | accepted |
+| N6 docs/HOLDOUT_MANIFEST.json outside the manifest | accepted |
+| N7 the frozen config pointed to a missing ledger | accepted; the lead repointed it (reverses choice 0.4) |
+| N1–N3, N8, N9 | noted |
+| N4 two fail-closed residues | carried into the checklist below |
+
+### Freeze manifest
+
+- **Path:** reports/stage_d1f_harness_freeze.json. Generated 2026-09-23 05:03:25 PDT by `uv run python -m strategy.research._d1f_freeze`.
+- **Size:** 129 files.
+- **Own sha256:** `ba5b34d5239737cc493c360b38753573aa133963e73abf8639ba3532a4cf847a`.
+- **Contents:** every `*.py` under screening/, sim/, funnel/, rules/, data/ and strategy/; sim/slippage_calibration.json; every section-0 file, including reports/power_gate.json and the E-H modules at their declared hashes; the list, the criteria and the declaration-hashes JSON; the two recorded-facts files; docs/HOLDOUT_MANIFEST.json; pyproject.toml and uv.lock.
+- **Preflight at freeze time:** it refuses only because the files are not yet committed, the build summary is missing and holdout-2 is not yet sealed. There is no hash mismatch.
+
+### What the run session must do first (checklist)
+
+1. The user reviews and commits the freeze, with the harness (above). The run prompt quotes the manifest sha256.
+2. Start and end with `uv run python -m data.holdout status` for both holdouts. Run everything with `OPENBLAS_NUM_THREADS=1` (review N5).
+3. Pull: `uv run python -m data.pull_mes --d1f-pull`. It buys oldest first, seals the 13 holdout-2 chunks on arrival, and refuses any request over $10.00 or a session over $10.00 (history quoted at $7.59). Record the holdout-2 calendar trade-date count at sealing (choice 2.1), not a count taken from the bars. The D.1f rolls and symbology fetches are free.
+4. Manual residues (review N4). If a holdout-2 chunk's decode fails, the plaintext stays at its target: inspect it, delete it deliberately and re-pull, and never seal a chunk whose decode failed without a lead decision. A truncated `.partial` left by a crash is removed by the next fetch. Both show up in `status` as `unsealed_plaintext_present`.
+5. Build: `uv run python -m data.build_mes_bars --confirmation` (exit code 7 means stop for a lead decision). Step 4b discrepancies caused by thin 2019 trading, or by the pre-2021-06-28 session (a 15:15–15:30 CT pause and a 16:15 CT close; the frozen session.py halts at 16:00) are expected risks. The list's procedure applies: correct the calendar, re-hash it into a new freeze manifest, log the change, all before step 5.
+6. The runner, with `--manifest-sha256`, runs steps 5 to 8.
+
+### Open choices the lead made on its own (the user can overturn any before committing)
+
+- **0.1** The spend constants as instructed. The per-request cap lives in data/pull_mes.py because spend_gate.py is outside §5.8.
+- **0.2** The D.1f date constants live in data/research_bars.py, not data/splits.py (not on §5.8).
+- **0.3** The research path also refuses holdout-2, embargo-2 and confirmation dates.
+- **N7 (reverses 0.4)** data/config.EXTERNAL_LEDGER_PATHS was repointed to the archived MLCryptoEngine ledger.
+- **1.1** screening/__init__.py was not changed (it is not on §5.8); the runner imports from screening.runner.
+- **2.1** The holdout-2 trade-date count at sealing comes from the calendar, never from the sealed bytes.
+- **2.2–2.4** Cosmetic adapter messages, stale line numbers in a D.1e report, and chunk-by-chunk D.2 unseals all left as they are.
+- **5.1** H readings: early_halt_ct is read from bars dated d; the CT windows count only bars dated d; d-1 is the latest complete bar before d; the exit window is [14:58, the no-new-positions time).
+- **6.1** Release collisions keep the earliest release, CPI at 08:30, on 2019-12-11 and 2020-06-10; two FOMC events are dropped.
+- **6.2** Calendar calls:
+  - 12:00 CT settlement lines are read as 12:15 CT halts, graded inferred;
+  - the Good Friday 2021 08:15 time and New Year's Day 2021 are marked unverified;
+  - there is no entry for 2020-07-02, 2021-07-02 or 2022-01-03.
+- **6.3** The raw-symbol rule reads the bar's UTC date; symbology is fetched once and frozen.
+- **6.5** Section 0's calendar line is checked through the 2025–2026 block, compared with the file at 9cbd815.
+- **7.3** F4.4 drift across the halt sums the per-minute window means over every covered clock minute, with halt minutes counted as 0; the interval starts at the crossing bar's open.
+- **8.1** The runner's interpretations, each the literal or stricter reading:
+  - statistics use their own post-exclusion dates;
+  - the anomaly test requires mean v ≥ 2.11;
+  - the class per-trade epsilon uses the median trades per day of the class's trial members;
+  - continuity also checks trip counts and daily Sharpe to 1e-6;
+  - S must be 2019-05-06 if M* is 2019-05.
+- **8.2 (c')** A Tier B sign reversal is tested on the gross series s·e, with Benjamini–Hochberg at 10%.
+- **Runner rulings (a)–(e):**
+  - PBO aligns members on the full window with 0 outside each member's own dates;
+  - at N = 101, DSR uses the 101-member Sharpe variance and PBO the 101 series; at N = 186, DSR only (the D.1d method);
+  - SE_boot uses ddof 0;
+  - each year slice is bootstrapped with a fresh generator;
+  - drift across the halt as in 7.3.
+- **8b F3 broadened**, as recorded above.
+
+Full detail is in reports/stage_d1f_build_STATE.md.
+
+### Artifacts
+
+- **Freeze:** reports/stage_d1f_harness_freeze.json, strategy/research/_d1f_freeze.py.
+- **Code:** data/research_bars.py, data/holdout.py, data/pull_mes.py, data/cme_calendar.py, data/bars.py, data/validate.py, data/build_mes_bars.py, data/config.py, screening/runner.py, funnel/null_generator.py, the two E-H modules; new: strategy/research/__init__.py (empty), strategy/research/h_daily_bar/ (8 files), strategy/research/_d1f_{confirmation,preflight,start_rule,members,decisions,statistics,freeze}.py, strategy/research/e_calendar_event/_release_table_2019_2024.py.
+- **Tests:** the nine tests/test_d1f_*.py files (355 tests).
+- **Reports:** reports/stage_d1f_build_STATE.md, reports/stage_d1f_calendar_sources.{json,md}, reports/stage_d1f_release_sources.{json,md}, reports/stage_d1f_verification.md, reports/stage_d1f_adversarial_review.md.
+- **Docs:** docs/STAGES.md (one line).
+- **Not committed:** the user commits after review.
+
+### Session cost
+
+Computed at the end from this session's transcript, `6c08762d-eea5-4ab5-95fb-7aa3c5b91a62.jsonl`, and its 12 worker files under `6c08762d…/subagents/`. For each assistant message id, the last streamed record is summed (input + output + cache read + cache creation) and grouped by model. These are raw token counts, not plan-credit percentages. The lead's figure is cut at 05:04 PDT; the entry-writing turns after that are not in it.
+
+**Wall clock.** 23:39–05:07 PDT is 5 h 28 min. Of that, the Fable session-limit pause (01:19–04:31 PDT, 3 h 12 min) is not work. **Work: 2 h 16 min**, against the initial estimate of 3 h 45 min.
+
+**Final table** (initial estimate at 23:45 PDT: end 03:25 PDT, 3 h 45 min of work)
+
+| # | Task | Agent | Model | Effort | Start–end (PDT) | Time | Tokens total / output | Status, deviations |
+|---|---|---|---|---|---|---|---|---|
+| 0 | Startup, plan, constants, config | lead | opus | xhigh | 23:39–23:47 | 8 min | (lead row) | done |
+| 1 | Holdout-2 + puller | HoldoutSealer-OpusXHigh | opus | xhigh | 23:45–00:07 | 22 min | 7,982,844 / 141,803 | done; 61 tests |
+| 2 | ConfirmationWindow | WindowLoader-OpusXHigh | opus | xhigh | 23:45–23:58 | 13 min | 6,406,788 / 68,053 | done; 66 tests |
+| 3 | Calendar citations | CalendarExtractor-SonnetMed | sonnet | medium | 23:45–00:00 | 15 min | 13,719,461 / 68,054 | done; 71 rows |
+| 4 | Release citations | ReleaseExtractor-SonnetMed | sonnet | medium | 23:46–23:52 | 6 min | 3,086,019 / 50,801 | done; 154 rows |
+| 5 | Six H modules | HModuleCoder-OpusXHigh | opus | xhigh | 23:52–00:20 | 28 min | 9,536,716 / 144,233 | done; one worker, not three |
+| 6 | Calendar code, bar build, 4b | BarBuilder-OpusXHigh | opus | xhigh | 00:01–00:27 | 26 min | 10,497,119 / 132,205 | done |
+| 7 | Wrapper, release table, amendment | StatsWrapper-OpusHigh | opus | high | 23:59–00:26 | 27 min | 13,078,503 / 139,622 | done |
+| 8 | List runner + freeze script | ListRunner-OpusXHigh | opus | xhigh | 00:27–00:51 | 24 min | 12,701,649 / 141,651 | done; five modules |
+| 9 | 8a Verification | SealVerifier-FableXHigh | fable | xhigh | 00:21–00:38 | 17 min | 3,206,735 / 70,195 | 0 blockers |
+| 10 | 8a fixes + ruling c' | FixApplier-OpusXHigh | opus | xhigh | 00:51–01:07 | 16 min | 10,379,341 / 77,883 | done |
+| 11 | 8b Adversarial review | AdvAuditor-FableMax | fable | max | 01:08–01:19, 04:31–04:39 | 19 min | 5,895,754 / 85,253 | 0 blockers; cut off by the limit, resumed |
+| 12 | Fable session-limit pause | — | — | — | 01:19–04:31 | 3 h 12 min | — | not work |
+| 13 | 8b fixes | FreezeHardener-OpusXHigh | opus | xhigh | 04:40–04:59 | 19 min | 11,115,975 / 98,305 | done |
+| 14 | Suite, freeze, guardrails, entry, cost | lead | opus | xhigh | 04:59–05:07 | 8 min | (lead row) | done |
+| L | Lead, whole session | lead | opus | xhigh | 23:39–05:04+ | — | 26,090,118 / 115,093 | orchestration, rulings, checks |
+| **Σ** | **Whole stage** | 12 worker spawns (one resumed) | | | 23:39–05:07 | **2 h 16 min of work** (+ 3 h 12 min pause) vs 3 h 45 min estimated | **133,697,022 / 1,333,151** | lead 26.1M (19.5%), workers 107.6M (80.5%) |
+
+**Tokens per model:**
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-opus-5-5 (lead + 8 workers) | 992 | 1,058,848 | 103,253,596 | 3,475,617 | 107,789,053 |
+| claude-sonnet-5 (2 workers) | 218 | 118,855 | 16,213,856 | 472,551 | 16,805,480 |
+| claude-fable-5-1 (2 workers) | 872 | 155,448 | 7,452,140 | 1,494,029 | 9,102,489 |
+| **All** | 2,082 | 1,333,151 | 126,919,592 | 5,442,197 | **133,697,022** |
+
+**Delegation share:** lead 26.1M (19.5%), workers 107.6M (80.5%). By tier: opus 107.8M (80.6%), sonnet 16.8M (12.6%), Fable 9.1M (6.8%). Fable spent **9.1M tokens, 5.4% of Stage D.1e's 169.5M**, as the prompt intended. One process note: the sonnet calendar extractor cost more than most opus coders (13.7M), because web extraction re-reads long pages. The Fable limit hit at 01:19 PDT came from the plan's shared Fable slice; this stage had drawn only about 5M Fable tokens by then.

@@ -18,8 +18,8 @@ from datetime import date, datetime, time, timedelta
 import numpy as np
 import pandas as pd
 
-from data.cme_calendar import HOLIDAYS, HolidayKind
-from data.session import CME_TZ, HALT_END, HALT_START, ct_ns
+from data.cme_calendar import HOLIDAYS, Holiday, HolidayKind
+from data.session import CME_TZ, HALT_END, HALT_START, closed_windows_range_ns, ct_ns
 
 NS_PER_MIN = 60 * 1_000_000_000
 MES_TICK_FIXED = 250_000_000
@@ -223,3 +223,155 @@ def ts_recv_ordering(ts_recv: np.ndarray) -> dict[str, int]:
 
 def ct_time(ns: int) -> time:
     return datetime.fromtimestamp(ns / 1e9, tz=CME_TZ).time()
+
+
+# ------------------------------- Stage D.1f step 4b: calendar validation (D-2) ----
+# reports/stage_d1f_confirmation_list.md 1.5 step 4b, run on the confirmation bars before step
+# 5: (1) every weekday with no bars is a listed full closure; (2) every day whose last RTH bar
+# opens before 14:59 CT is a listed early halt whose halt time equals the observed last minute
+# plus one; (3) every listed 2019-2024 entry inside the bars' date span is observed. Any
+# discrepancy fails the step; the lead decides before step 5.
+UNLISTED_CLOSURE = "weekday_without_bars_not_a_listed_full_closure"
+EARLY_STOP_NOT_LISTED = "early_stop_not_a_listed_early_halt_at_that_time"
+ENTRY_NOT_OBSERVED = "listed_entry_not_observed"
+STEP4B_ENTRY_YEARS = (2019, 2024)
+RTH_CLOSE_CT = time(15, 0)
+RTH_LAST_MINUTE_CT = time(14, 59)
+_MIDDAY_CT = time(12, 0)
+
+
+@dataclass(frozen=True)
+class CalendarDiscrepancy:
+    kind: str  # one of the three constants above
+    day: date
+    detail: str
+
+
+@dataclass(frozen=True)
+class CalendarValidation:
+    first_day: date
+    last_day: date
+    weekdays_checked: int
+    entries_checked: tuple[date, ...]
+    discrepancies: tuple[CalendarDiscrepancy, ...]
+
+    @property
+    def passed(self) -> bool:
+        return self.weekdays_checked > 0 and not self.discrepancies
+
+    def as_dict(self) -> dict:
+        return {
+            "passed": self.passed, "first_day": str(self.first_day),
+            "last_day": str(self.last_day), "weekdays_checked": self.weekdays_checked,
+            "entries_checked": [str(d) for d in self.entries_checked],
+            "discrepancies": [{"kind": d.kind, "day": str(d.day), "detail": d.detail}
+                              for d in self.discrepancies],
+        }
+
+
+def session_day(ns: int) -> date:
+    """Calendar-free trade date: the CT date, one day later from the 17:00 CT reopen, weekends
+    skipped. Holidays are deliberately NOT consulted: the calendar is what is under test."""
+    local = pd.Timestamp(ns, tz="UTC").tz_convert(CME_TZ)
+    day = local.date() + timedelta(days=int(local.time() >= HALT_END))
+    while day.weekday() >= 5:
+        day += timedelta(days=1)
+    return day
+
+
+def _listed(day: date) -> str:
+    hol = HOLIDAYS.get(day)
+    if hol is None:
+        return "no calendar entry"
+    halt = f" {hol.halt_ct:%H:%M}" if hol.halt_ct else ""
+    return f"listed {hol.kind.value}{halt} ({hol.name})"
+
+
+def _check_weekday(ts: np.ndarray, day: date) -> list[CalendarDiscrepancy]:
+    """Rules (1) and (2) for one weekday. Its session is [day-1 17:00, day 17:00) CT (Sunday
+    17:00 for a Monday), fixed by the weekly schedule alone."""
+    lo, hi = ct_ns(day - timedelta(days=1), HALT_END), ct_ns(day, HALT_END)
+    i, j = np.searchsorted(ts, [lo, hi], side="left")
+    hol: Holiday | None = HOLIDAYS.get(day)
+    if i == j:
+        if hol is not None and hol.kind is HolidayKind.FULL_CLOSURE:
+            return []
+        return [CalendarDiscrepancy(UNLISTED_CLOSURE, day,
+                                    f"no bar in the session {_fmt(lo)} .. {_fmt(hi)} CT; "
+                                    f"{_listed(day)}")]
+    k = int(np.searchsorted(ts, ct_ns(day, RTH_CLOSE_CT), side="left"))
+    last = int(ts[k - 1]) if k > i else None  # the day's last bar opening before 15:00 CT
+    if last is not None and last >= ct_ns(day, RTH_LAST_MINUTE_CT):
+        return []  # the 14:59 CT bar exists: a full RTH session
+    if (last is not None and hol is not None and hol.kind is HolidayKind.EARLY_HALT
+            and hol.halt_ct is not None and last + NS_PER_MIN == ct_ns(day, hol.halt_ct)):
+        return []
+    # A session with no bar before 15:00 CT at all (e.g. an 08:15 halt misread) is treated as
+    # a day whose last RTH bar opens before 14:59: stricter than skipping it.
+    implied = "none (no bar before 15:00 CT)" if last is None else _fmt(last + NS_PER_MIN)
+    after = int(ts[k]) if k < ts.size else None
+    return [CalendarDiscrepancy(
+        EARLY_STOP_NOT_LISTED, day,
+        f"last bar before 15:00 CT {_fmt(last)} (implied halt {implied}); {_listed(day)}; "
+        f"next bar {_fmt(after)}; {j - i} bars in the session")]
+
+
+def _observe_closure(ts: np.ndarray, day: date, starts: np.ndarray,
+                     ends: np.ndarray) -> str | None:
+    """Rule (3) for a FULL_CLOSURE: no bar from the day-1 17:00 CT reopen to the calendar's
+    reopen, and the first bar after it at exactly the reopen. The previous session's last bar
+    is NOT required to be 15:59 CT (as observe_holidays requires): before 2021-06-28 CME equity
+    futures traded to 16:15 CT, which data/session.py's fixed 16:00 halt does not model, and
+    that close belongs to the previous day, not to this entry."""
+    lo, probe = ct_ns(day - timedelta(days=1), HALT_END), ct_ns(day, _MIDDAY_CT)
+    w = int(np.searchsorted(starts, probe, side="right")) - 1
+    if w < 0 or probe >= ends[w]:
+        return "the session calendar has no closed window on this day"
+    reopen = int(ends[w])
+    i, j = np.searchsorted(ts, [lo, reopen], side="left")
+    first_after = int(ts[j]) if j < ts.size else None
+    notes = []
+    if j > i:
+        notes.append(f"{j - i} bars inside the closure {_fmt(lo)} .. {_fmt(reopen)} "
+                     f"(first {_fmt(int(ts[i]))})")
+    if first_after != reopen:
+        notes.append(f"first bar after {_fmt(first_after)} != reopen {_fmt(reopen)}")
+    return "; ".join(notes) or None
+
+
+def validate_calendar_step4b(
+    ts: np.ndarray, first: date | None = None, last: date | None = None,
+    entry_years: tuple[int, int] = STEP4B_ENTRY_YEARS,
+) -> CalendarValidation:
+    """Step 4b over bar open times ``ts`` (UTC ns). The span defaults to the calendar-free
+    session days of the first and last bar. Returns every discrepancy; ``passed`` only if
+    there is none. Rule (3) uses ``observe_holidays`` for early halts (its last-bar, no-bar and
+    reopen tests all belong to the entry) and ``_observe_closure`` for full closures."""
+    ts_sorted = np.sort(np.asarray(ts, dtype=np.int64))
+    if ts_sorted.size == 0:
+        raise ValueError("no bars: the step-4b calendar validation cannot run")
+    first = first or session_day(int(ts_sorted[0]))
+    last = last or session_day(int(ts_sorted[-1]))
+    days = [first + timedelta(days=n) for n in range((last - first).days + 1)]
+    weekdays = [d for d in days if d.weekday() < 5]
+    found = [x for d in weekdays for x in _check_weekday(ts_sorted, d)]
+
+    closed = closed_windows_range_ns(first, last)
+    starts = np.array([w[0] for w in closed], dtype=np.int64)
+    ends = np.array([w[1] for w in closed], dtype=np.int64)
+    listed = [h for d, h in sorted(HOLIDAYS.items())
+              if first <= d <= last and entry_years[0] <= d.year <= entry_years[1]]
+    halts = {o.day: o for o in observe_holidays(ts_sorted, starts, ends, first, last)}
+    for hol in listed:
+        if hol.kind is HolidayKind.EARLY_HALT:
+            obs = halts[hol.day]
+            note = None if obs.consistent else obs.note
+            label = f"early halt {obs.calendar_halt_ct}"
+        else:
+            note = _observe_closure(ts_sorted, hol.day, starts, ends)
+            label = "full closure"
+        if note:
+            found.append(CalendarDiscrepancy(ENTRY_NOT_OBSERVED, hol.day,
+                                             f"{hol.name}, {label}: {note}"))
+    return CalendarValidation(first, last, len(weekdays), tuple(h.day for h in listed),
+                              tuple(sorted(found, key=lambda x: (x.day, x.kind))))

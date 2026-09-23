@@ -109,6 +109,8 @@ class H2PostReleaseMomentum:
     range_expansion_threshold: float = RANGE_EXPANSION_THRESHOLD
     hold_minutes: int = HOLD_MINUTES
     quantity_micros: int = QUANTITY_MICROS
+    release_table: dict = field(
+        default_factory=lambda: RELEASE_TABLE_ET, repr=False, compare=False)
     _ranges: deque[float] = field(default_factory=deque)
     _current_trade_date: list[object] = field(default_factory=lambda: [None])
     _consumed_release_date: list[object] = field(default_factory=lambda: [None])
@@ -154,7 +156,7 @@ class H2PostReleaseMomentum:
                 self._ranges.append(bar_range)
                 return (market_intent(bar, side, abs(account.position_micros)),)
 
-        release_et = RELEASE_TABLE_ET.get(bar.trade_date)
+        release_et = self.release_table.get(bar.trade_date)
         flat = account.position_micros == 0 and account.pending_signed_micros == 0
         already_consumed = self._consumed_release_date[0] == bar.trade_date
         is_release_window = (

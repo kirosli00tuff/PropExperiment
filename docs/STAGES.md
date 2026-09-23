@@ -49,6 +49,9 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
   extension ($7.59 quoted), seals the second holdout (trade dates 2024-04-01..2025-03-31) on arrival,
   runs the frozen 58-test Tier A list and the 43 Tier B statistics under docs/NULL_CRITERIA.md, and
   returns per-class null / edge / inconclusive verdicts. Awaits the user's spend decision.
+  Build session run 2026-09-23 (see progress.md): harness built, tested and hash-frozen with no purchase
+  (reports/stage_d1f_harness_freeze.json, 129 files, sha256 ba5b34d5…847a; 355 new tests, 0 review blockers;
+  N = 31); the purchase and run wait for the user's freeze commit.
 - Stage D.1g — C6, passive execution (planned). Buys N_C6 = 181 full trade-date MBO days chosen by the rule in
   the confirmation list, declares and hashes a queue-position fill model before any P&L, and applies
   the C6 variant of the null criteria to C-H4.

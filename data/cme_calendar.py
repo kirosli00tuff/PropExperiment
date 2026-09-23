@@ -1,4 +1,23 @@
-"""CME Globex holiday calendar for equity index futures (MES/ES), 2025-2026.
+"""CME Globex holiday calendar for equity index futures (MES/ES), 2019-2026.
+
+2019-2024 (Stage D.1f Task 3b) comes first in ``_ENTRIES``; the 2025-2026 entry lines below
+it are byte-identical to commit 9cbd815 (``ENTRIES_2025_2026_SHA256``). Each 2019-2024 entry
+cites its source verbatim in ``SOURCES_2019_2024`` (from reports/stage_d1f_calendar_sources.json,
+71 extracted rows: 68 entries plus 3 CME-direct NORMAL days in
+``NO_ENTRY_FINDINGS_2019_2024``). 2019-2024 grades:
+- status (``evidence``): ``cme`` (a CME settlement-times PDF or clearing advisory),
+  ``secondary`` (Thanksgiving Day 2019-2021: a generic 2026 broker page), ``unverified``
+  (New Year's Day 2021: not fetched, assumed from the pattern of the other years).
+- time (``time_evidence``): holiday 12:00 CT halts are ``secondary`` (the generic 2026
+  crosstrade.io page; CME's PDFs say only that no settlement is derived); every 12:15 CT
+  early close is ``inferred`` from CME's 12:00 CT equity settlement line, the convention the
+  2025 entries use and the 2025 bars confirmed (07-03, 11-28, 12-24); Good Friday 2023 08:15
+  CT is ``secondary`` (AMP); Good Friday 2021 08:15 CT is ``unverified``.
+Every 2019-2024 entry inside the confirmation bars is tested by the step-4b validator
+(``data.validate.validate_calendar_step4b``) in the run session, before step 5; the calendar
+is immutable once step 7 starts (reports/stage_d1f_confirmation_list.md 1.5, 5.3).
+
+The notes below describe the 2025-2026 compilation (unchanged).
 
 Closes the gap documented in MLCryptoEngine's session calendar, which had no
 holiday handling. Compiled 2026-09-16 from CME Group's own publications, NOT
@@ -32,6 +51,7 @@ listed there too — notably the Good Friday 2026 close time (08:15 CT per AMP,
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import date, time
 from enum import Enum
@@ -51,8 +71,8 @@ class Holiday:
     name: str
     kind: HolidayKind
     halt_ct: time | None
-    evidence: str  # "cme" status; time grade noted in ``time_evidence``
-    time_evidence: str  # "cme" | "empirical" | "secondary" | "inferred" | "n/a"
+    evidence: str  # status grade: "cme" (all 2025-2026) | "secondary" | "unverified"
+    time_evidence: str  # "cme" | "empirical" | "secondary" | "inferred" | "unverified" | "n/a"
 
 
 def _closure(day: date, name: str) -> Holiday:
@@ -63,7 +83,113 @@ def _halt(day: date, name: str, at: time, time_evidence: str) -> Holiday:
     return Holiday(day, name, HolidayKind.EARLY_HALT, at, "cme", time_evidence)
 
 
+def _closure_graded(day: date, name: str, evidence: str) -> Holiday:
+    """A 2019-2024 closure whose status grade is not necessarily ``cme``."""
+    return Holiday(day, name, HolidayKind.FULL_CLOSURE, None, evidence, "n/a")
+
+
+def _halt_graded(day: date, name: str, at: time, evidence: str, time_evidence: str) -> Holiday:
+    """A 2019-2024 early halt with its own status and time grades."""
+    return Holiday(day, name, HolidayKind.EARLY_HALT, at, evidence, time_evidence)
+
+
 _ENTRIES: tuple[Holiday, ...] = (
+    # ---- 2019 (sources: SOURCES_2019_2024)
+    _closure_graded(date(2019, 1, 1), "New Year's Day", "cme"),
+    _halt_graded(
+        date(2019, 1, 21), "Martin Luther King Jr. Day", EARLY_HALT_NOON, "cme", "secondary"
+    ),
+    _halt_graded(date(2019, 2, 18), "Presidents Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _closure_graded(date(2019, 4, 19), "Good Friday", "cme"),
+    _halt_graded(date(2019, 5, 27), "Memorial Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(
+        date(2019, 7, 3), "Day before Independence Day", EARLY_CLOSE_1215, "cme", "inferred"
+    ),
+    _closure_graded(date(2019, 7, 4), "Independence Day", "cme"),
+    _halt_graded(date(2019, 9, 2), "Labor Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2019, 11, 28), "Thanksgiving Day", EARLY_HALT_NOON, "secondary", "secondary"),
+    _halt_graded(date(2019, 11, 29), "Day after Thanksgiving", EARLY_CLOSE_1215, "cme", "inferred"),
+    _halt_graded(date(2019, 12, 24), "Christmas Eve", EARLY_CLOSE_1215, "cme", "inferred"),
+    _closure_graded(date(2019, 12, 25), "Christmas Day", "cme"),
+    # ---- 2020 (sources: SOURCES_2019_2024)
+    _closure_graded(date(2020, 1, 1), "New Year's Day", "cme"),
+    _halt_graded(
+        date(2020, 1, 20), "Martin Luther King Jr. Day", EARLY_HALT_NOON, "cme", "secondary"
+    ),
+    _halt_graded(date(2020, 2, 17), "Presidents Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _closure_graded(date(2020, 4, 10), "Good Friday", "cme"),
+    _halt_graded(date(2020, 5, 25), "Memorial Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _closure_graded(date(2020, 7, 3), "Independence Day (observed)", "cme"),
+    _halt_graded(date(2020, 9, 7), "Labor Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2020, 11, 26), "Thanksgiving Day", EARLY_HALT_NOON, "secondary", "secondary"),
+    _halt_graded(date(2020, 11, 27), "Day after Thanksgiving", EARLY_CLOSE_1215, "cme", "inferred"),
+    _halt_graded(date(2020, 12, 24), "Christmas Eve", EARLY_CLOSE_1215, "cme", "inferred"),
+    _closure_graded(date(2020, 12, 25), "Christmas Day", "cme"),
+    # ---- 2021 (sources: SOURCES_2019_2024)
+    _closure_graded(date(2021, 1, 1), "New Year's Day", "unverified"),
+    _halt_graded(
+        date(2021, 1, 18), "Martin Luther King Jr. Day", EARLY_HALT_NOON, "cme", "secondary"
+    ),
+    _halt_graded(date(2021, 2, 15), "Presidents Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(
+        date(2021, 4, 2), "Good Friday (abbreviated, jobs report)", time(8, 15), "cme", "unverified"
+    ),
+    _halt_graded(date(2021, 5, 31), "Memorial Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _closure_graded(date(2021, 7, 5), "Independence Day (observed)", "cme"),
+    _halt_graded(date(2021, 9, 6), "Labor Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2021, 11, 25), "Thanksgiving Day", EARLY_HALT_NOON, "secondary", "secondary"),
+    _halt_graded(date(2021, 11, 26), "Day after Thanksgiving", EARLY_CLOSE_1215, "cme", "inferred"),
+    _closure_graded(date(2021, 12, 24), "Christmas Day (observed)", "cme"),
+    # ---- 2022 (sources: SOURCES_2019_2024)
+    _halt_graded(
+        date(2022, 1, 17), "Martin Luther King Jr. Day", EARLY_HALT_NOON, "cme", "secondary"
+    ),
+    _halt_graded(date(2022, 2, 21), "Presidents Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _closure_graded(date(2022, 4, 15), "Good Friday", "cme"),
+    _halt_graded(date(2022, 5, 30), "Memorial Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2022, 6, 20), "Juneteenth (observed)", EARLY_HALT_NOON, "cme", "secondary"),
+    _closure_graded(date(2022, 7, 4), "Independence Day", "cme"),
+    _halt_graded(date(2022, 9, 5), "Labor Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2022, 11, 24), "Thanksgiving Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2022, 11, 25), "Day after Thanksgiving", EARLY_CLOSE_1215, "cme", "inferred"),
+    _closure_graded(date(2022, 12, 26), "Christmas Day (observed)", "cme"),
+    # ---- 2023 (sources: SOURCES_2019_2024)
+    _closure_graded(date(2023, 1, 2), "New Year's Day (observed)", "cme"),
+    _halt_graded(
+        date(2023, 1, 16), "Martin Luther King Jr. Day", EARLY_HALT_NOON, "cme", "secondary"
+    ),
+    _halt_graded(date(2023, 2, 20), "Presidents Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(
+        date(2023, 4, 7), "Good Friday (abbreviated, jobs report)", time(8, 15), "cme", "secondary"
+    ),
+    _halt_graded(date(2023, 5, 29), "Memorial Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2023, 6, 19), "Juneteenth", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(
+        date(2023, 7, 3), "Day before Independence Day", EARLY_CLOSE_1215, "cme", "inferred"
+    ),
+    _closure_graded(date(2023, 7, 4), "Independence Day", "cme"),
+    _halt_graded(date(2023, 9, 4), "Labor Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2023, 11, 23), "Thanksgiving Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2023, 11, 24), "Day after Thanksgiving", EARLY_CLOSE_1215, "cme", "inferred"),
+    _closure_graded(date(2023, 12, 25), "Christmas Day", "cme"),
+    # ---- 2024 (sources: SOURCES_2019_2024)
+    _closure_graded(date(2024, 1, 1), "New Year's Day (observed)", "cme"),
+    _halt_graded(
+        date(2024, 1, 15), "Martin Luther King Jr. Day", EARLY_HALT_NOON, "cme", "secondary"
+    ),
+    _halt_graded(date(2024, 2, 19), "Presidents Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _closure_graded(date(2024, 3, 29), "Good Friday", "cme"),
+    _halt_graded(date(2024, 5, 27), "Memorial Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2024, 6, 19), "Juneteenth", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(
+        date(2024, 7, 3), "Day before Independence Day", EARLY_CLOSE_1215, "cme", "inferred"
+    ),
+    _closure_graded(date(2024, 7, 4), "Independence Day", "cme"),
+    _halt_graded(date(2024, 9, 2), "Labor Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2024, 11, 28), "Thanksgiving Day", EARLY_HALT_NOON, "cme", "secondary"),
+    _halt_graded(date(2024, 11, 29), "Day after Thanksgiving", EARLY_CLOSE_1215, "cme", "inferred"),
+    _halt_graded(date(2024, 12, 24), "Christmas Eve", EARLY_CLOSE_1215, "cme", "inferred"),
+    _closure_graded(date(2024, 12, 25), "Christmas Day", "cme"),
     # ---- 2025
     _closure(date(2025, 1, 1), "New Year's Day"),
     _halt(date(2025, 1, 9), "National Day of Mourning (Carter)", time(8, 30), "cme"),
@@ -104,4 +230,465 @@ _ENTRIES: tuple[Holiday, ...] = (
 )
 
 HOLIDAYS: dict[date, Holiday] = {h.day: h for h in _ENTRIES}
-CALENDAR_COVERAGE = (date(2025, 1, 1), date(2026, 12, 31))
+CALENDAR_COVERAGE = (date(2019, 1, 1), date(2026, 12, 31))
+
+
+class CalendarCoverageError(ValueError):
+    """A bar's trade date lies outside the calendar's coverage: its holidays are unknown."""
+
+
+def assert_calendar_coverage(days: Iterable[date]) -> None:
+    """Raise unless every date lies inside ``CALENDAR_COVERAGE`` (inclusive). The bar builder
+    calls this for every built trade date (reports/stage_d1f_confirmation_list.md 5.3)."""
+    first, last = CALENDAR_COVERAGE
+    outside = sorted(d for d in set(days) if not first <= d <= last)
+    if outside:
+        raise CalendarCoverageError(
+            f"{len(outside)} trade date(s) outside the CME calendar's coverage "
+            f"{first}..{last}: {outside[0]} .. {outside[-1]}; extend data/cme_calendar.py first")
+
+
+# ---- the 2025-2026 entry lines are pinned (confirmation list section 0 and 5.3) ----
+# sha256 of the 2025-2026 entry lines exactly as at commit 9cbd815 (whose whole file hashed to
+# 5f24edda...). The extended file must keep them byte-identical; the whole-file hash changes.
+ENTRIES_2025_2026_SHA256 = "8752f8370c90a5d6a105fdf9929af880355150a54f7e7196a7fa035b067b9538"
+_BLOCK_START = "    # ---- 2025\n"
+_BLOCK_END = '    _closure(date(2026, 12, 25), "Christmas Day"),\n'
+
+
+def entries_2025_2026_block(source: str) -> str:
+    """The 2025-2026 entry lines of a cme_calendar.py source text, from the ``# ---- 2025``
+    line through the 2026 Christmas Day line inclusive (their sha256 is pinned above)."""
+    if source.count(_BLOCK_START) != 1 or source.count(_BLOCK_END) != 1:
+        raise ValueError("cannot locate exactly one 2025-2026 entry block")
+    start = source.index(_BLOCK_START)
+    return source[start: source.index(_BLOCK_END) + len(_BLOCK_END)]
+
+
+# ---- 2019-2024 citations (Stage D.1f Task 3b) ----
+@dataclass(frozen=True)
+class Citation:
+    """Where a 2019-2024 entry comes from. Quotes are verbatim from the page fetched in the
+    D.1f extraction (reports/stage_d1f_calendar_sources.json); ``None`` URL = not fetched."""
+
+    status_url: str | None
+    status_quote: str
+    time_url: str | None = None
+    time_quote: str | None = None
+    note: str = ""
+
+
+_CME = "https://www.cmegroup.com/tools-information/holiday-calendar/files/"
+_CME_DAM = "https://www.cmegroup.com/content/dam/cmegroup/tools-information/holiday-calendar/files/"
+_XT = "https://crosstrade.io/blog/cme-trading-hours-2026"
+_XT_MLK = "Martin Luther King Jr. Day ... Monday: Early halt around 12:00 PM CT"
+_XT_PRESIDENTS = "Presidents Day ... Monday: Early halt around 12:00 PM CT"
+_XT_MEMORIAL = "Memorial Day ... Monday: Early halt"
+_XT_LABOR = "Labor Day ... Monday: Early halt"
+_XT_JUNETEENTH = "Juneteenth ... Early halt"
+_XT_THANKSGIVING = "Thursday: Day session closed"
+_NOTE_SETTLE_SPLIT = (
+    "Time graded inferred, not cme: the CME line is a SETTLEMENT time split by bucket; ES/MES "
+    "settle at 15:00 CT, so their early settlement is 12:00 CT, and the 12:15 CT halt follows "
+    "this file's 2025-2026 convention (12:00 CT settlement -> 12:15 CT close, confirmed in the "
+    "2025 bars on 07-03, 11-28 and 12-24). The extraction recorded 12:15 graded cme.")
+_NOTE_SETTLE_SINGLE = (
+    "Halt 12:15 CT, time graded inferred: the CME line is the 12:00 CT equity SETTLEMENT time; "
+    "the halt follows this file's 2025-2026 convention (12:00 CT settlement -> 12:15 CT close, "
+    "confirmed in the 2025 bars on 07-03, 11-28 and 12-24). The extraction recorded the "
+    "settlement time 12:00 as the halt.")
+
+SOURCES_2019_2024: dict[date, Citation] = {
+    date(2019, 1, 1): Citation(
+        _CME + "2019-new-years-advisory.pdf",
+        "Please reference the holiday processing schedule below for Tuesday, January 1st in "
+        "observance of New Year's Day. ... There will be no MOSA processing on January 1, 2019."),
+    date(2019, 1, 21): Citation(
+        _CME + "2019-mlk-day-holiday-settlement-times.pdf",
+        "Monday, January 21, 2019 Holiday No settlements for CME/CBOT/NYMEX/COMEX",
+        _XT, _XT_MLK),
+    date(2019, 2, 18): Citation(
+        _CME + "2019-presidents-day-holiday-settlement-times.pdf",
+        "Monday, February 18, 2019 Final Settlement at 5 am CT for Eurodollar and 1 Month "
+        "Eurodollar futures No other CME/CBOT/NYMEX/COMEX settlements occur",
+        _XT, _XT_PRESIDENTS),
+    date(2019, 4, 19): Citation(
+        _CME + "2019-good-friday-holiday-settlement-times.pdf",
+        "Due to the Good Friday Holiday in the U.S. there will be no settlements for CME Group "
+        "on Friday 4/19/2019"),
+    date(2019, 5, 27): Citation(
+        _CME + "2019-memorial-day-holiday-settlement-times.pdf",
+        "Note: Monday May 27, 2019 CME Group will not derive or disseminate settlement prices "
+        "for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_MEMORIAL),
+    date(2019, 7, 3): Citation(
+        _CME + "2019-fourth-of-july-holiday-settlement-times.pdf",
+        "Wednesday, July 3, 2019 Settlement Times ... Equity Products 12:00:00 CT (for futures "
+        "that currently settle at 15:00 CT) 12:15:00 CT (for futures that currently settle at "
+        "15:15 CT)",
+        _CME + "2019-fourth-of-july-holiday-settlement-times.pdf",
+        "Equity Products 12:00:00 CT (for futures that currently settle at 15:00 CT) 12:15:00 "
+        "CT (for futures that currently settle at 15:15 CT)",
+        note=_NOTE_SETTLE_SPLIT),
+    date(2019, 7, 4): Citation(
+        _CME + "2019-fourth-of-july-holiday-settlement-times.pdf",
+        "Note: Thursday, July 4, 2019 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX"),
+    date(2019, 9, 2): Citation(
+        _CME + "2019-labor-day-holiday-settlement-times.pdf",
+        "*Note: Monday, September 2, 2019 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_LABOR),
+    date(2019, 11, 28): Citation(
+        _XT,
+        "Thanksgiving - Thursday, November 26, 2026 ... Thursday: Day session closed",
+        _XT, _XT_THANKSGIVING,
+        note=(
+            "Status and time secondary (generic 2026 broker page): no CME-direct 2019 line for "
+            "the Thanksgiving Day session itself.")),
+    date(2019, 11, 29): Citation(
+        _CME + "2019-thanksgiving-holiday-settlement-times.pdf",
+        "Friday, 11/29/2019 (the day after Thanksgiving) Settlement Times ... Equity Products "
+        "12:00:00 CT (for futures that currently settle at 15:00 CT) 12:15:00 CT (for futures "
+        "that currently settle at 15:15 CT)",
+        _CME + "2019-thanksgiving-holiday-settlement-times.pdf",
+        "Equity Products 12:00:00 CT (for futures that currently settle at 15:00 CT) 12:15:00 "
+        "CT (for futures that currently settle at 15:15 CT)",
+        note=_NOTE_SETTLE_SPLIT),
+    date(2019, 12, 24): Citation(
+        _CME + "2019-christmas-holiday-settlement-times.pdf",
+        "Christmas Day (12/25/2019) Holiday Settlement Times Tuesday, 12/24/2019 ... Equity "
+        "Products 12:00:00 CT (for futures that currently settle at 15:00 CT) 12:15:00 CT (for "
+        "futures that currently settle at 15:15 CT)",
+        _CME + "2019-christmas-holiday-settlement-times.pdf",
+        "Equity Products 12:00:00 CT (for futures that currently settle at 15:00 CT) 12:15:00 "
+        "CT (for futures that currently settle at 15:15 CT)",
+        note=_NOTE_SETTLE_SPLIT),
+    date(2019, 12, 25): Citation(
+        _CME + "2019-christmas-holiday-settlement-times.pdf",
+        "Christmas Day (12/25/2019) Holiday Settlement Times"),
+    date(2020, 1, 1): Citation(
+        _CME + "2020-new-years-advisory.pdf",
+        "SUBJECT: HOLIDAY SCHEDULE – January 01, 2020 ... There will be no MOSA processing on "
+        "January 1, 2020."),
+    date(2020, 1, 20): Citation(
+        _CME + "mlk-day-holiday-settlement-times-2020.pdf",
+        "Monday, January 20, 2020 Holiday No settlements for CME/CBOT/NYMEX/COMEX",
+        _XT, _XT_MLK),
+    date(2020, 2, 17): Citation(
+        _CME + "presidents-day-holiday-settlement-times-2020.pdf",
+        "Monday, February 17, 2020 Final Settlement at 5 am CT for February Eurodollar and 1 "
+        "Month Eurodollar futures No other CME/CBOT/NYMEX/COMEX settlements occur",
+        _XT, _XT_PRESIDENTS),
+    date(2020, 4, 10): Citation(
+        _CME + "good-friday-holiday-settlement-times-2020.pdf",
+        "Due to the Good Friday Holiday in the U.S. there will be no settlements for CME Group "
+        "on Friday 4/10/2020"),
+    date(2020, 5, 25): Citation(
+        _CME + "memorial-day-holiday-settlement-times-2020.pdf",
+        "Note: Monday May 25, 2020 CME Group will not derive or disseminate settlement prices "
+        "for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_MEMORIAL),
+    date(2020, 7, 3): Citation(
+        _CME + "fourth-of-july-settlement-times-2020.pdf",
+        "Fourth of July (7/4/2020) will be observed on 7/3/2020 ... NOTE: Friday, July 3, 2020 "
+        "CME Group will not derive or disseminate settlement prices for CME, CBOT, NYMEX or "
+        "COMEX"),
+    date(2020, 9, 7): Citation(
+        _CME + "labor-day-holiday-settlement-times-2020.pdf",
+        "*Note: Monday, September 7, 2020 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_LABOR),
+    date(2020, 11, 26): Citation(
+        _XT,
+        _XT_THANKSGIVING,
+        _XT, _XT_THANKSGIVING,
+        note=(
+            "Status and time secondary (generic 2026 broker page): no CME-direct 2020 line for "
+            "the Thanksgiving Day session itself.")),
+    date(2020, 11, 27): Citation(
+        _CME + "thanksgiving-holiday-settlement-times-2020.pdf",
+        "Friday, 11/27/2020 (the day after Thanksgiving) Settlement Times ... Equity Products "
+        "12:00:00 CT",
+        _CME + "thanksgiving-holiday-settlement-times-2020.pdf", "Equity Products 12:00:00 CT",
+        note=_NOTE_SETTLE_SINGLE),
+    date(2020, 12, 24): Citation(
+        _CME + "christmas-holiday-settlement-times-2020.pdf",
+        "Thursday, 12/24/2020 ... Equity Products 12:00:00 CT (for futures that currently "
+        "settle at 15:00 CT) 12:15:00 CT (for futures that currently settle at 15:15 CT)",
+        _CME + "christmas-holiday-settlement-times-2020.pdf",
+        "Equity Products 12:00:00 CT (for futures that currently settle at 15:00 CT) 12:15:00 "
+        "CT (for futures that currently settle at 15:15 CT)",
+        note=_NOTE_SETTLE_SPLIT),
+    date(2020, 12, 25): Citation(
+        _CME + "christmas-holiday-settlement-times-2020.pdf",
+        "Christmas Day (12/25/2020) Holiday Settlement Times"),
+    date(2021, 1, 1): Citation(
+        None,
+        "[unverified]",
+        note=(
+            "[unverified] status: the 2021 New Year's advisory was not fetched; assumed from "
+            "the identical full-closure pattern of 2019, 2020, 2023 and 2024. Step 4b tests it.")),
+    date(2021, 1, 18): Citation(
+        _CME + "mlk-day-holiday-settlement-times-2021.pdf",
+        "Monday, January 18, 2021 Holiday Final Settlement at 5 am CT for January Eurodollar "
+        "and 1 Month Eurodollar futures No settlements for CME/CBOT/NYMEX/COMEX",
+        _XT, _XT_MLK),
+    date(2021, 2, 15): Citation(
+        _CME + "presidents-day-holiday-settlement-times-2021.pdf",
+        "Monday, February 15, 2021 Final Settlement at 5 am CT for February Eurodollar and 1 "
+        "Month Eurodollar futures No other CME/CBOT/NYMEX/COMEX settlements occur",
+        _XT, _XT_PRESIDENTS),
+    date(2021, 4, 2): Citation(
+        _CME + "2021-good-friday-advisory.pdf",
+        "Equities (including Bitcoin and Ether) are open for an abbreviated session on April "
+        "2, but will not be settled and will use the April 1st end of day settlement for mark "
+        "to market.",
+        "https://www.ampfutures.com/news/holiday-trading-schedule-good-friday-2021",
+        "From the CME Globex Control Center, here is the summary of KEY changes, per CME "
+        "market segment ... *Any open positions must meet Exchange Maintenance Margin 15 "
+        "Minutes before CLOSE (CST - Chicago).",
+        note=(
+            "[unverified] close time: no year-specific source gives it (AMP's 2021 page has "
+            "the schedule only as an image). 08:15 CT is the jobs-report Good Friday close of "
+            "2023 (AMP, secondary) and 2026 (bars, empirical); step 4b tests it against the "
+            "bars.")),
+    date(2021, 5, 31): Citation(
+        _CME + "memorial-day-holiday-settlement-times-2021.pdf",
+        "Note: Monday May 31, 2021 CME Group will not derive or disseminate settlement prices "
+        "for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_MEMORIAL),
+    date(2021, 7, 5): Citation(
+        _CME + "fourth-of-july-settlement-times-2021.pdf",
+        "U.S. Independence Day (7/4/2021) will be observed on 7/5/2021 ... NOTE: Monday, July "
+        "5, 2021 CME Group will not derive or disseminate settlement prices for CME, CBOT, "
+        "NYMEX or COMEX"),
+    date(2021, 9, 6): Citation(
+        _CME + "labor-day-holiday-settlement-times-2021.pdf",
+        "*Note: Monday, September 6, 2021 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_LABOR),
+    date(2021, 11, 25): Citation(
+        _XT,
+        _XT_THANKSGIVING,
+        _XT, _XT_THANKSGIVING,
+        note=(
+            "Status and time secondary (generic 2026 broker page): no CME-direct 2021 line for "
+            "the Thanksgiving Day session itself.")),
+    date(2021, 11, 26): Citation(
+        _CME + "thanksgiving-holiday-settlement-times-2021.pdf",
+        "Friday, 11/26/2021 (the day after Thanksgiving) Settlement Times ... Equity Products "
+        "12:00:00 CT",
+        _CME + "thanksgiving-holiday-settlement-times-2021.pdf", "Equity Products 12:00:00 CT",
+        note=_NOTE_SETTLE_SINGLE),
+    date(2021, 12, 24): Citation(
+        _CME + "christmas-holiday-settlement-times-2021.pdf",
+        "Christmas Day Holiday (12/25/2021) will be observed on 12/24/2021."),
+    date(2022, 1, 17): Citation(
+        _CME + "mlk-day-holiday-settlement-times-2022.pdf",
+        "Monday, January 17, 2022 Holiday Final Settlement at 5 am CT for January Eurodollar "
+        "and 1 Month Eurodollar futures No other settlements for CME/CBOT/NYMEX/COMEX will be "
+        "published on Monday January 17, 2022.",
+        _XT, _XT_MLK),
+    date(2022, 2, 21): Citation(
+        _CME + "presidents-day-holiday-settlement-times-2022.pdf",
+        "Monday February 21, 2022 CME Group will not derive or disseminate settlement prices "
+        "for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_PRESIDENTS),
+    date(2022, 4, 15): Citation(
+        _CME + "good-friday-holiday-settlement-times-2022.pdf",
+        "Note: Friday April 15, 2022 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX"),
+    date(2022, 5, 30): Citation(
+        _CME + "memorial-day-holiday-settlement-times-2022.pdf",
+        "Note: Monday May 30, 2022 CME Group will not derive or disseminate settlement prices "
+        "for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_MEMORIAL),
+    date(2022, 6, 20): Citation(
+        _CME + "juneteenth-day-holiday-settlement-times-2022.pdf",
+        "Juneteenth Holiday (6/19/2022) will be observed on 6/20/2022 ... Note: Monday June "
+        "20, 2022 CME Group will not derive or disseminate settlement prices for CME, CBOT, "
+        "NYMEX or COMEX",
+        _XT, _XT_JUNETEENTH),
+    date(2022, 7, 4): Citation(
+        _CME + "fourth-of-july-settlement-times-2022.pdf",
+        "NOTE: Note: Monday, July 4, 2022 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX"),
+    date(2022, 9, 5): Citation(
+        _CME + "labor-day-holiday-settlement-times-2022.pdf",
+        "*Note: Monday, September 5, 2022 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_LABOR),
+    date(2022, 11, 24): Citation(
+        _CME + "thanksgiving-holiday-settlement-times-2022.pdf",
+        "Note: Thursday November 24, 2022 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_THANKSGIVING),
+    date(2022, 11, 25): Citation(
+        _CME + "thanksgiving-holiday-settlement-times-2022.pdf",
+        "Friday, November 25, 2022 (the day after Thanksgiving) Settlement Times ... Equity "
+        "Products 12:00:00 CT",
+        _CME + "thanksgiving-holiday-settlement-times-2022.pdf", "Equity Products 12:00:00 CT",
+        note=_NOTE_SETTLE_SINGLE),
+    date(2022, 12, 26): Citation(
+        _CME + "christmas-holiday-settlement-times-2022.pdf",
+        "Christmas Day Holiday 12/25/2022 will be observed on 12/26/2022. ... Note: Monday "
+        "December 26, 2022 CME Group will not derive or disseminate settlement prices for CME, "
+        "CBOT, NYMEX or COMEX"),
+    date(2023, 1, 2): Citation(
+        _CME + "2023-new-years-advisory.pdf",
+        "SUBJECT: HOLIDAY SCHEDULE – New Year's Day January 2, 2023 (Observed) ... Intraday "
+        "Cycle (ITD) | No ITD Cycle | No ITD Cycle | No settle file | No SPAN file | No reports"),
+    date(2023, 1, 16): Citation(
+        _CME + "mlk-day-holiday-settlement-times-2023.pdf",
+        "Note: Monday January 16, 2023 CME Group will not derive or disseminate settlement "
+        "prices (other than the two LIBOR Settlements listed above) for CME, CBOT, NYMEX or "
+        "COMEX",
+        _XT, _XT_MLK),
+    date(2023, 2, 20): Citation(
+        _CME + "presidents-day-holiday-settlement-times-2023.pdf",
+        "Note: Monday February 20, 2023 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_PRESIDENTS),
+    date(2023, 4, 7): Citation(
+        _CME + "2023-good-friday-advisory.pdf",
+        "Equities are open for an abbreviated session on April 7th but will not be settled and "
+        "will use the April 6th end of day settlement for mark to market.",
+        "https://www.ampfutures.com/news/holiday-trading-schedule-good-friday-2023",
+        'Friday, April 7, 2023 - Early Market "CLOSE" - 8:15 am CST (Chicago)'),
+    date(2023, 5, 29): Citation(
+        _CME + "memorial-day-holiday-settlement-times-2023.pdf",
+        "Note: Monday May 29, 2023 CME Group will not derive or disseminate settlement prices "
+        "for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_MEMORIAL),
+    date(2023, 6, 19): Citation(
+        _CME + "juneteenth-day-holiday-settlement-times-2023.pdf",
+        "Note: Monday June 19, 2023 CME Group will not derive or disseminate settlement prices "
+        "(other than the two LIBOR Settlements listed above) for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_JUNETEENTH),
+    date(2023, 7, 3): Citation(
+        _CME + "fourth-of-july-settlement-times-2023.pdf",
+        "Monday, July 3, 2023 ... Equity Index Products 12:00:00 CT",
+        _CME + "fourth-of-july-settlement-times-2023.pdf", "Equity Index Products 12:00:00 CT",
+        note=_NOTE_SETTLE_SINGLE),
+    date(2023, 7, 4): Citation(
+        _CME + "fourth-of-july-settlement-times-2023.pdf",
+        "Note: Tuesday, July 4, 2023 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX"),
+    date(2023, 9, 4): Citation(
+        _CME + "labor-day-holiday-settlement-times-2023.pdf",
+        "Note: Monday, September 4, 2023 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_LABOR),
+    date(2023, 11, 23): Citation(
+        _CME + "thanksgiving-holiday-settlement-times-2023.pdf",
+        "Note: Thursday November 23, 2023 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_THANKSGIVING),
+    date(2023, 11, 24): Citation(
+        _CME + "thanksgiving-holiday-settlement-times-2023.pdf",
+        "Friday, November 24, 2023 (the day after Thanksgiving) ... Equity & Crypto Products "
+        "12:00:00 CT",
+        _CME + "thanksgiving-holiday-settlement-times-2023.pdf",
+        "Equity & Crypto Products 12:00:00 CT",
+        note=_NOTE_SETTLE_SINGLE),
+    date(2023, 12, 25): Citation(
+        _CME + "christmas-holiday-settlement-times-2023.pdf",
+        "Note: Monday December 25, 2023 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX"),
+    date(2024, 1, 1): Citation(
+        _CME + "2024-new-years-advisory.pdf",
+        "SUBJECT: HOLIDAY SCHEDULE – New Year's Day January 1, 2024 (Observed) ... Intraday "
+        "Cycle (ITD) | No ITD Cycle | No ITD Cycle | No settle file | No SPAN file | No reports"),
+    date(2024, 1, 15): Citation(
+        _CME + "mlk-day-holiday-settlement-times-2024.pdf",
+        "Note: Monday January 15, 2024 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_MLK),
+    date(2024, 2, 19): Citation(
+        _CME + "presidents-day-holiday-settlement-times-2024.pdf",
+        "Note: Monday February 19, 2024 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_PRESIDENTS),
+    date(2024, 3, 29): Citation(
+        _CME + "good-friday-holiday-settlement-times-2024.pdf",
+        "Note: Good Friday March 29, 2024 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX"),
+    date(2024, 5, 27): Citation(
+        _CME + "memorial-day-holiday-settlement-times-2024.pdf",
+        "Note: Monday May 27, 2024 CME Group will not derive or disseminate settlement prices "
+        "for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_MEMORIAL),
+    date(2024, 6, 19): Citation(
+        _CME + "juneteenth-day-settlement-times-2024.pdf",
+        "Note: Wednesday June 19, 2024 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_JUNETEENTH),
+    date(2024, 7, 3): Citation(
+        _CME_DAM + "us-independence-day-settlement-times-2024.pdf",
+        "Wednesday, July 3, 2024 ... Equity Index Products Settlement Time: 12:00:00 CT",
+        _CME_DAM + "us-independence-day-settlement-times-2024.pdf",
+        "Equity Index Products Settlement Time: 12:00:00 CT",
+        note=_NOTE_SETTLE_SINGLE),
+    date(2024, 7, 4): Citation(
+        _CME_DAM + "us-independence-day-settlement-times-2024.pdf",
+        "Note: Thursday, July 4, 2024 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX"),
+    date(2024, 9, 2): Citation(
+        _CME + "labor-day-holiday-settlement-times-2024.pdf",
+        "Note: Monday, September 2, 2024 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_LABOR),
+    date(2024, 11, 28): Citation(
+        _CME + "thanksgiving-holiday-settlement-times-2024.pdf",
+        "Note: Thursday November 28, 2024 CME Group will not derive or disseminate settlement "
+        "prices for CME, CBOT, NYMEX or COMEX",
+        _XT, _XT_THANKSGIVING),
+    date(2024, 11, 29): Citation(
+        _CME + "thanksgiving-holiday-settlement-times-2024.pdf",
+        "Friday, November 29, 2024 (the day after Thanksgiving) ... Equity & Crypto Products "
+        "Settlement Time: 12:00:00 CT",
+        _CME + "thanksgiving-holiday-settlement-times-2024.pdf",
+        "Equity & Crypto Products Settlement Time: 12:00:00 CT",
+        note=_NOTE_SETTLE_SINGLE),
+    date(2024, 12, 24): Citation(
+        _CME + "christmas-holiday-settlement-times-2024.pdf",
+        "Tuesday, December 24, 2024 ... Equity & Crypto Products Settlement Time: 12:00:00 CT",
+        _CME + "christmas-holiday-settlement-times-2024.pdf",
+        "Equity & Crypto Products Settlement Time: 12:00:00 CT",
+        note=_NOTE_SETTLE_SINGLE),
+    date(2024, 12, 25): Citation(
+        _CME + "christmas-holiday-settlement-times-2024.pdf",
+        "Christmas Day Holiday 12/25/2024 Settlement Times"),
+}
+
+# Days the extraction checked and found NORMAL (CME-direct), so they carry no entry. Kept
+# with their evidence so the absence is a recorded finding, not an oversight.
+NO_ENTRY_FINDINGS_2019_2024: dict[date, Citation] = {
+    date(2020, 7, 2): Citation(
+        _CME + "fourth-of-july-settlement-times-2020.pdf",
+        "Thursday, July 2, 2020 Settlement Times ... Equity Products Normal Settlement Times",
+        note=(
+            "NEGATIVE FINDING: in 2020 (July 4 fell on Saturday, observed Friday July 3) "
+            "equity products settled at their NORMAL time on Thursday July 2 -- no early close "
+            "that day. Included so the lead does not assume a 12:15 CT close exists for every "
+            "pre-holiday day.")),
+    date(2021, 7, 2): Citation(
+        _CME + "fourth-of-july-settlement-times-2021.pdf",
+        "Friday, July 2, 2021 Settlement Times ... Equity Products Normal Settlement Times",
+        note=(
+            "NEGATIVE FINDING: July 4, 2021 fell on a Sunday, observed Monday July 5; equities "
+            "settled NORMALLY on Friday July 2 -- no early close that day.")),
+    date(2022, 1, 3): Citation(
+        _CME + "2021-new-years-advisory.pdf",
+        "SUBJECT: HOLIDAY SCHEDULE – January 3, 2022 (New Year's Day) ... Intraday Cycle (ITD) "
+        "| Normal Processing | Normal Processing | Normal Processing | Normal Processing | "
+        "Normal Processing",
+        note=(
+            "NEGATIVE FINDING flagged for the lead's judgment: January 1, 2022 fell on a "
+            "Saturday. The CME advisory is titled for 'January 3, 2022 (New Year's Day)' but "
+            "its own processing tables show NORMAL settlement/clearing cycles for that Monday "
+            "-- i.e. CME did NOT treat Jan 3, 2022 as a closed/no-settlement day. No separate "
+            "New Year's Day closure entry is recorded for 2022; this is a candidate case for "
+            "the lead to double check against bar data.")),
+}

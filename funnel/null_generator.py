@@ -40,7 +40,14 @@ from zoneinfo import ZoneInfo
 import numpy as np
 import pandas as pd
 
-from data.splits import is_holdout_trade_date, is_research_trade_date
+from data.research_bars import (
+    CONFIRMATION,
+    EMBARGO2,
+    HOLDOUT1,
+    HOLDOUT2,
+    RESEARCH,
+    trade_date_class,
+)
 
 CT = ZoneInfo("America/Chicago")
 MES_TICK = 0.25
@@ -82,14 +89,25 @@ class SegmentTable:
         return len(self.trade_dates)
 
 
-def _refuse_non_research(trade_dates: pd.Series) -> None:
+def _refuse_outside_one_slice(trade_dates: pd.Series) -> None:
+    """R-3 (Stage D.1f): accepted only if ALL dates are research dates or ALL are
+    confirmation-window dates (``data.research_bars.trade_date_class``). Never mixed, never
+    holdout-1, holdout-2, embargo-2 or the research embargo."""
     days = sorted({str(d) for d in trade_dates.unique()})
-    held = [d for d in days if is_holdout_trade_date(date.fromisoformat(d))]
+    kind = {d: trade_date_class(date.fromisoformat(d)) for d in days}
+    held = [d for d in days if kind[d] == HOLDOUT1]
     if held:
         raise ValueError(f"holdout trade dates refused by the null generator: {held[:3]}...")
-    outside = [d for d in days if not is_research_trade_date(date.fromisoformat(d))]
+    sealed = [d for d in days if kind[d] in (HOLDOUT2, EMBARGO2)]
+    if sealed:
+        raise ValueError(f"holdout-2 / embargo-2 trade dates refused by the null generator: "
+                         f"{sealed[:3]}...")
+    outside = [d for d in days if kind[d] not in (RESEARCH, CONFIRMATION)]
     if outside:
         raise ValueError(f"non-research (embargo/out-of-range) trade dates refused: {outside[:3]}")
+    if len(set(kind.values())) > 1:
+        raise ValueError("mixed research and confirmation-window trade dates refused: a frame "
+                         f"is all research dates or all confirmation dates ({days[0]}..{days[-1]})")
 
 
 def build_segment_table(bars: pd.DataFrame, segments_per_day: int) -> SegmentTable:
@@ -99,7 +117,7 @@ def build_segment_table(bars: pd.DataFrame, segments_per_day: int) -> SegmentTab
     missing = [c for c in REQUIRED_COLUMNS if c not in bars.columns]
     if missing:
         raise ValueError(f"bars missing columns {missing}")
-    _refuse_non_research(bars["trade_date"])
+    _refuse_outside_one_slice(bars["trade_date"])
     ts = bars["ts_event"].to_numpy(np.int64)
     if len(ts) > 1 and not (np.diff(ts) > 0).all():
         raise ValueError("bars must be strictly increasing in ts_event")

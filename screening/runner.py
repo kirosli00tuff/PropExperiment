@@ -32,6 +32,16 @@ What the runner fixes, so no session has to remember it:
 ``screen_frame`` is the same pipeline on a caller-supplied frame. It exists for the
 synthetic known-answer tests; research code must not use it, because it skips the
 train-date check.
+
+Stage D.1f (reports/stage_d1f_confirmation_list.md 1.3, 5.1): ``screen_candidate`` also
+accepts a ``ConfirmationWindow`` (build it with ``confirmation_window(S)``). Its dates must
+all be confirmation dates (2019-05-01..2024-02-29: no train-union or other mined date, no
+holdout-1, holdout-2 or embargo-2 date); its bars come ONLY through
+``data.research_bars.load_confirmation_bars``; its splices come from the confirmation
+parquet's own metadata; and ``screen_frame`` recomputes the drift path and the session
+benchmark on exactly those bars. It never reads the research slice or ``_research_frame``,
+and its bars sit in their own cache, never in ``_research_frame``'s. The ScreeningWindow
+(train) path is unchanged, so the train-union continuity check still runs on it.
 """
 
 from __future__ import annotations
@@ -45,7 +55,16 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from data.research_bars import RESEARCH_SERIES_PATH, load_research_bars
+from data.research_bars import (
+    CONFIRMATION_EARLIEST_TRADE_DATE,
+    CONFIRMATION_LAST_TRADE_DATE,
+    CONFIRMATION_SERIES_PATH,
+    RESEARCH_SERIES_PATH,
+    assert_confirmation_rows,
+    load_confirmation_bars,
+    load_research_bars,
+    refuse_non_confirmation_dates,
+)
 from data.splits import walk_forward_folds
 from funnel.power_gate import POWER_GATE_JSON, screen
 from screening.drift import (
@@ -127,6 +146,51 @@ def train_union_window() -> ScreeningWindow:
     """Every date in any fold's train window (Stage D.1's 289-day accounting window)."""
     return ScreeningWindow("train_union",
                            tuple(sorted({d for f in _folds() for d in f.train_dates})))
+
+
+@dataclass(frozen=True)
+class ConfirmationWindow:
+    """Stage D.1f: trade dates of the confirmation parquet at ``path``, every one of them a
+    confirmation date (refused at construction otherwise, and again by ``screen_candidate``)."""
+
+    name: str
+    trade_dates: tuple[date, ...]
+    path: Path = CONFIRMATION_SERIES_PATH
+
+    def __post_init__(self) -> None:
+        refuse_non_confirmation_dates(self.trade_dates, f"confirmation window {self.name!r}")
+
+
+def _confirmation_frame(path: Path) -> tuple[pd.DataFrame, np.ndarray]:
+    """The confirmation bars at ``path``, loaded once per file version (resolved path, mtime,
+    size). A cache of its own: ``_research_frame`` never holds a confirmation bar."""
+    resolved = Path(path).resolve()
+    stat = resolved.stat()
+    return _load_confirmation_frame(str(resolved), stat.st_mtime_ns, stat.st_size)
+
+
+@functools.cache
+def _load_confirmation_frame(path: str, _mtime_ns: int, _size: int
+                             ) -> tuple[pd.DataFrame, np.ndarray]:
+    frame = load_confirmation_bars(BAR_COLUMNS, path=Path(path))
+    days = pd.to_datetime(frame["trade_date"].astype(str)).dt.date.to_numpy()
+    return frame, days
+
+
+def confirmation_window(start: date, *, path: Path = CONFIRMATION_SERIES_PATH
+                        ) -> ConfirmationWindow:
+    """Every trade date of the confirmation parquet from ``start`` through 2024-02-29.
+    ``start`` is S, the start rule's date (docs/NULL_CRITERIA.md 4.1); it is computed in the
+    run session, never here."""
+    if not CONFIRMATION_EARLIEST_TRADE_DATE <= start <= CONFIRMATION_LAST_TRADE_DATE:
+        raise ValueError(f"start {start} is outside the confirmation window "
+                         f"{CONFIRMATION_EARLIEST_TRADE_DATE}..{CONFIRMATION_LAST_TRADE_DATE}")
+    _, days = _confirmation_frame(path)
+    dates = tuple(sorted({d for d in days if start <= d <= CONFIRMATION_LAST_TRADE_DATE}))
+    if not dates:
+        raise ValueError(f"no confirmation bars from {start} in {path}")
+    return ConfirmationWindow(f"confirmation_{start}_{CONFIRMATION_LAST_TRADE_DATE}", dates,
+                              Path(path))
 
 
 # ------------------------------------------------------------------- report ----
@@ -346,9 +410,29 @@ def screen_frame(
     )
 
 
+def _screen_confirmation(label: str, factory: Callable[[], Strategy],
+                         window: ConfirmationWindow) -> ScreeningReport:
+    """The confirmation path: confirmation bars, confirmation splices, nothing from research."""
+    if not window.trade_dates:
+        raise ValueError("empty screening window")
+    # Re-checked here too: a frozen dataclass can still be forced past __post_init__.
+    refuse_non_confirmation_dates(window.trade_dates, f"confirmation window {window.name!r}")
+    frame, days = _confirmation_frame(window.path)
+    mask = np.isin(days, np.array(window.trade_dates, dtype=object))
+    missing = set(window.trade_dates) - set(days[mask])
+    if missing:
+        raise ValueError(f"no bars for {len(missing)} window dates, e.g. {min(missing)}")
+    bars = frame[mask].reset_index(drop=True)
+    assert_confirmation_rows(bars)
+    return screen_frame(bars, label, factory, window.name,
+                        splice_trade_dates_from_parquet(window.path))
+
+
 def screen_candidate(label: str, factory: Callable[[], Strategy],
-                     window: ScreeningWindow) -> ScreeningReport:
+                     window: ScreeningWindow | ConfirmationWindow) -> ScreeningReport:
     """THE entry point for hypothesis screening. See docs/SCREENING.md."""
+    if isinstance(window, ConfirmationWindow):
+        return _screen_confirmation(label, factory, window)
     if not window.trade_dates:
         raise ValueError("empty screening window")
     outside = sorted(set(window.trade_dates) - set(train_union_window().trade_dates))

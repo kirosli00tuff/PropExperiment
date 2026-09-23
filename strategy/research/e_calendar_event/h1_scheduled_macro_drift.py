@@ -153,6 +153,8 @@ class H1ScheduledMacroDrift:
 
     name: str = "h1_scheduled_macro_drift"
     quantity_micros: int = QUANTITY_MICROS
+    release_table: dict[date, datetime] = field(
+        default_factory=lambda: RELEASE_TABLE_ET, repr=False, compare=False)
     _current_trade_date: list[object] = field(default_factory=lambda: [None])
     _entered_for_date: list[object] = field(default_factory=lambda: [None])
     _release_ts_utc: list[object] = field(default_factory=lambda: [None])
@@ -167,7 +169,7 @@ class H1ScheduledMacroDrift:
         is_new_session = self._current_trade_date[0] != bar.trade_date
         if is_new_session:
             self._current_trade_date[0] = bar.trade_date
-            release_et = RELEASE_TABLE_ET.get(bar.trade_date)
+            release_et = self.release_table.get(bar.trade_date)
             flat = account.position_micros == 0 and account.pending_signed_micros == 0
             if release_et is not None and flat:
                 intents = (market_intent(bar, "buy", self.quantity_micros),)

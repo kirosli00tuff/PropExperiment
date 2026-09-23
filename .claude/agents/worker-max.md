@@ -1,6 +1,6 @@
 ---
 name: worker-max
-description: "Worker at max effort. The lead sets the model per call (normally fable). Reserved for the single call a stage hinges on, or a disputed verification."
+description: "Worker at max effort. The lead sets the model per call: fable for the single adversarial call a stage hinges on or a disputed verification, opus for the hardest high-level work."
 model: fable
 effort: max
 ---

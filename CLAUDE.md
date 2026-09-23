@@ -27,7 +27,8 @@ and the stage-prompt template live in docs/ORCHESTRATION.md.
 
 ## Roles
 
-The session reading this file is the LEAD. Default lead model: Fable. The lead
+The session reading this file is the LEAD. Default lead model: Opus (Opus 5.5,
+the `opus` alias). The lead
 plans, delegates, verifies and synthesizes. It does not write bulk code, parse
 logs or run long jobs itself.
 
@@ -52,18 +53,21 @@ xhigh, max. No low effort.
 | Complex extraction: joining several sources, semi-structured or messy inputs, pulling fields that need light reading comprehension (for example matching trial code to its cited source). Still no conclusions | sonnet | medium |
 | Mechanical: running an already-written script, applying an already-decided edit, test boilerplate, simple scripted transforms | sonnet | medium, or high when the step has several parts |
 | Standard coding: strategy modules to spec, harness or runner changes, debugging, test design | opus | high; xhigh when touching sim/, rules/, screening/ or data/holdout |
-| Review and audit: leakage and look-ahead audits, adversarial review of a finding, code review of statistical code, source-horizon or rule audits | opus | xhigh |
-| Independent verification of any number entering a verdict (DSR, PBO, t-stat, P&L, trial count), and statistical design the lead hands off | fable | xhigh |
-| The single call a stage hinges on, or a disputed verification | fable | max |
+| High-level work: hard reasoning, statistical design the lead hands off, research synthesis, drafting that needs judgment | opus | xhigh, or max for the hardest single pieces |
+| Independent or adversarial work: verification of any number entering a verdict (DSR, PBO, t-stat, P&L, trial count), leakage and look-ahead audits, adversarial review of a finding or a declaration, independent review of statistical code | fable | xhigh |
+| The single adversarial call a stage hinges on, or a disputed verification | fable | max |
 
-Fable budget: the lead runs on Fable, and Fable has its own weekly cap (50% of
-the plan's weekly usage). Every fable worker draws from that same slice, so
-fable workers are limited to the last two rows. Everything else that needs a
-strong model goes to opus.
+Why this split (2026-09-22): Opus 5.5 matches or beats Fable 5.1 on most
+benchmarks at lower cost, so Opus is the default for the lead and for all
+high-level work. Fable is kept for independent and adversarial checks
+because a check by a different model than the one that wrote the work
+catches errors both Opus passes would share. Fable also has its own weekly
+cap (50% of the plan's weekly usage), so nothing else routes to it. Revisit
+when a new Fable model ships.
 
 - State model and effort for every subtask in the plan before spawning.
 - Promote on failure: when a worker's output fails verification, rerun that
-  subtask one tier up (haiku, then sonnet, then opus, then fable). Never demote judgment
+  subtask one tier up (haiku, then sonnet, then opus at a higher effort). Never demote judgment
   work to save usage.
 - Haiku extracts and never interprets: the moment a result needs a
   conclusion drawn from it, that step belongs to a higher tier. Haiku output
@@ -77,7 +81,7 @@ strong model goes to opus.
   Use the four generic workers in .claude/agents/ and always pass `model`:
   `worker-medium` (effort medium), `worker-high` (effort high),
   `worker-xhigh` (effort xhigh), `worker-max` (effort max). Example:
-  subagent_type `worker-xhigh`, model `fable`. Defaults when `model` is
+  subagent_type `worker-xhigh`, model `opus`. Defaults when `model` is
   omitted: worker-medium haiku, worker-high sonnet, worker-xhigh opus,
   worker-max fable. Do not rely on the defaults.
 - Dynamic workflows: set both per agent, for example
@@ -116,9 +120,10 @@ strong model goes to opus.
 ## Verification
 
 - Every number entering a verdict (DSR, PBO, t-stat, P&L, trial count) gets an
-  independent check at fable xhigh by a worker that did not produce it. Where
-  the number came from opus-written code, the fable check also gives a second
-  model's view, which reduces correlated errors.
+  independent check at fable xhigh by a worker that did not produce it. The
+  work being checked is normally opus-written, so the fable check is a second
+  model's view, which reduces correlated errors. The same applies to
+  adversarial reviews of declarations and harness code.
 - Every citation used carries a verbatim quote from fetched full text, or is
   marked [unverified].
 
@@ -174,6 +179,6 @@ Computed at the very end, after everything else is written:
   finished tasks.
 - Usage-limit interruption: the user resumes with
   `claude --resume <session-id>`. Finished work is on disk.
-- If Fable usage runs out mid-stage, the lead continues on Opus
-  (`/model opus`). Fable-routed verification stays pending in the STATE file
-  rather than being downgraded.
+- If Fable usage runs out mid-stage, Fable-routed verification and review stay
+  pending in the STATE file rather than being downgraded to opus; the lead
+  finishes everything else and lists what is pending in the entry.

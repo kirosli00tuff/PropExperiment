@@ -1,6 +1,6 @@
 ---
 name: worker-xhigh
-description: "Worker at xhigh effort. The lead sets the model per call (sonnet, opus or fable). Default use: code touching sim/, rules/, screening/ or data/holdout, and reviews and audits, on opus; independent verification of verdict numbers on fable."
+description: "Worker at xhigh effort. The lead sets the model per call (sonnet, opus or fable). Default use: high-level work and code touching sim/, rules/, screening/ or data/holdout on opus; independent or adversarial verification, audits and reviews on fable."
 model: opus
 effort: xhigh
 ---

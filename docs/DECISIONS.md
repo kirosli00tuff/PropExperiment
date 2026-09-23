@@ -24,3 +24,6 @@
   only), sonnet, opus or fable at medium, high, xhigh or max effort. No low
   effort. Concurrency capped at 4. Rules in
   CLAUDE.md, rationale and the stage-prompt template in docs/ORCHESTRATION.md.
+- Model tiers revised (2026-09-22): Opus 5.5 is the default lead and handles
+  all high-level work; Fable is used only for independent and adversarial
+  verification, audits and reviews. See CLAUDE.md.

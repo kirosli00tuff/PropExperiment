@@ -6,7 +6,8 @@ would change the setup.
 
 ## The setup
 
-- Lead session on Fable. The lead plans, routes, verifies and synthesizes.
+- Lead session on Opus (Opus 5.5 since 2026-09-22; Fable 5.1 before that). The
+  lead plans, routes, verifies and synthesizes.
 - Workers on haiku, sonnet, opus or fable, at effort medium, high, xhigh or
   max, chosen per subtask by the lead. Low effort is not used.
 - Haiku does pure extraction; Sonnet at medium does complex extraction
@@ -22,6 +23,14 @@ would change the setup.
 - .claude/settings.json caps concurrency at 4 subagents and spawn depth at 2.
 
 ## Why
+
+- 2026-09-22 revision: Opus 5.5 matches or beats Fable 5.1 on most
+  benchmarks (Terminal-Bench 4.0 66.4% vs 55.8%, GDPval-AA 1,846 vs 1,735,
+  OSWorld 2.0 81.8% vs 80.7%, HLE 67.7% vs 65.6%) at $4/$20 per million
+  tokens, so it replaces Fable as the lead and for all high-level work. Fable
+  is kept only for independent and adversarial verification and audits, where
+  being a different model from the author is the point. Revisit when a new
+  Fable model ships. The points below are the original 2026-09-21 reasoning.
 
 - Anthropic's Fable prompting guide says Fable is more dependable at
   dispatching and sustaining parallel subagents, and recommends explicit

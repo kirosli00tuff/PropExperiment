@@ -65,6 +65,15 @@ catches errors both Opus passes would share. Fable also has its own weekly
 cap (50% of the plan's weekly usage), so nothing else routes to it. Revisit
 when a new Fable model ships.
 
+Max effort on Opus (2026-09-22): Opus 5.5 at max costs well under Fable 5.1
+at max, so max is no longer rare. Use opus max for judgment-heavy work
+where a subtle error is expensive: pre-registration drafting, statistical
+design, synthesis of mixed results, and the lead itself on stages whose
+prompt says so. Keep xhigh for coding and routine high-level work, where
+max mostly adds tokens (Opus 5.5 writes noticeably more per task at max).
+The Session cost section shows whether max paid for itself; adjust from
+those numbers.
+
 - State model and effort for every subtask in the plan before spawning.
 - Promote on failure: when a worker's output fails verification, rerun that
   subtask one tier up (haiku, then sonnet, then opus at a higher effort). Never demote judgment

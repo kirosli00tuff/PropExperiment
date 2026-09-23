@@ -1,9 +1,8 @@
 # Stages
 
 Naming convention: `Stage X.Y : Task Z` (per program ways-of-working).
-Prompts delivered in chat between BEGIN PROMPT / END PROMPT markers, not
-as files. This doc tracks stage scope only; prompt text lives in chat
-history, not here.
+This doc tracks stage scope only. The exact prompt behind every stage is in
+docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
 
 - Stage A.1 — Data + rules engine offline build. No TopstepX credentials
   required. Port Databento adapter, pull MES ohlcv-1m, validate bars,

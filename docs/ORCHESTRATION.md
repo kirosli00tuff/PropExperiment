@@ -123,7 +123,10 @@ prompt no longer has to be pasted by hand. The order is fixed:
 
 1. The planning chat writes the prompt to docs/prompts/, updates the index,
    commits, and sends it to the user.
-2. The user reviews it. Nothing launches without the user's go-ahead.
+2. The user reviews it. Nothing launches without the user's go-ahead. The
+   planning chat launches it only when the user is on mobile and asks it
+   to; at their station the user opens the CLI session themselves so they
+   can watch it.
 3. The planning chat launches it headless from the repo, in bypass-permissions
    mode (every new CLI session runs in auto or skip-permissions mode, per the
    user), with the model and effort the prompt names, and logs to

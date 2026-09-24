@@ -50,7 +50,8 @@ xhigh, max. No low effort.
 | Work | Model | Effort |
 |---|---|---|
 | Pure extraction: reading, parsing and tabulating files, logs, JSON and runner output into a fixed schema; citation metadata; file inventories. No interpretation of any kind | haiku | medium |
-| Complex extraction: joining several sources, semi-structured or messy inputs, pulling fields that need light reading comprehension (for example matching trial code to its cited source). Still no conclusions | sonnet | medium |
+| Complex extraction: joining several sources, semi-structured or messy inputs, pulling fields that need light reading comprehension (for example matching trial code to its cited source). Still no conclusions. Not literature research: see the next row | sonnet | medium |
+| Literature and web research: searching, pre-filtering, retrieving full text, verifying passages and logging sources (a stage's research readers, a liquidity or rules census from web pages) | opus | high; medium for a narrow, bounded lookup (one site, one fact list) |
 | Mechanical: running an already-written script, applying an already-decided edit, test boilerplate, simple scripted transforms | sonnet | medium, or high when the step has several parts |
 | Standard coding: strategy modules to spec, harness or runner changes, debugging, test design | opus | high; xhigh when touching sim/, rules/, screening/ or data/holdout |
 | High-level work: hard reasoning, statistical design the lead hands off, research synthesis, drafting that needs judgment | opus | xhigh, or max for the hardest single pieces |
@@ -73,6 +74,23 @@ prompt says so. Keep xhigh for coding and routine high-level work, where
 max mostly adds tokens (Opus 5.5 writes noticeably more per task at max).
 The Session cost section shows whether max paid for itself; adjust from
 those numbers.
+
+Research on opus (user decision, 2026-09-24): in Stage E.0 all four
+sonnet-medium research readers failed verification (search summaries
+logged as retrieved text, early stops on cost notices, under-querying),
+and the opus-high reruns passed. The user sees the same gap in chat.
+Research readers therefore run on opus.
+
+Web research budgets: .claude/settings.json sets
+CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION (the default is 200, which E.0
+used up by 21:05). The cap applies to the whole session, subagents
+included, and fails silently: an over-budget WebSearch returns a notice
+telling the model to continue with what it has. Any worker that sees that
+notice stops searching, writes it into its log with the time, and returns;
+it never continues from memory. The lead decides whether to fall back to
+WebFetch, curl or scholarly APIs, and the log marks every item gathered
+that way. Firecrawl credits belong to the user's Firecrawl account; when
+they run out, record it the same way and fall back.
 
 - State model and effort for every subtask in the plan before spawning.
 - Promote on failure: when a worker's output fails verification, rerun that

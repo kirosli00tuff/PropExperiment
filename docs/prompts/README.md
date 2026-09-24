@@ -16,7 +16,7 @@ From 2026-09-23 on, each new prompt is committed here before it is sent.
 | D.1d | STAGE_D.1d.md | Opus 5, ultracode | 2026-09-18 and 2026-09-21 | First run hit the weekly limit after 13 minutes; resumed on Fable xhigh |
 | D.1e | STAGE_D.1e.md | Fable 5.1, xhigh | 2026-09-22 | Final version, including the Session cost section added after launch |
 | D.1f (build) | STAGE_D.1f_build.md | Opus 5.5, xhigh | 2026-09-22 | Final version, autonomous (no startup questions) |
-| D.1f (run) | STAGE_D.1f_run.md | Opus 5.5, max | pending | Confirmation run: buy, seal, build, test the frozen list; Fable xhigh verification only |
+| D.1f (run) | STAGE_D.1f_run.md | Opus 5.5, max | 2026-09-23 | Confirmation run: buy, seal, build, test the frozen list; Fable xhigh verification only |
 
 Model names are as written in each prompt at the time. The routing rules
 that apply today are in CLAUDE.md.

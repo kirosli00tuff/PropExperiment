@@ -2088,3 +2088,283 @@ Computed at the end from this session's transcript, `6c08762d-eea5-4ab5-95fb-7aa
 | **All** | 2,082 | 1,333,151 | 126,919,592 | 5,442,197 | **133,697,022** |
 
 **Delegation share:** lead 26.1M (19.5%), workers 107.6M (80.5%). By tier: opus 107.8M (80.6%), sonnet 16.8M (12.6%), Fable 9.1M (6.8%). Fable spent **9.1M tokens, 5.4% of Stage D.1e's 169.5M**, as the prompt intended. One process note: the sonnet calendar extractor cost more than most opus coders (13.7M), because web extraction re-reads long pages. The Fable limit hit at 01:19 PDT came from the plan's shared Fable slice; this stage had drawn only about 5M Fable tokens by then.
+
+## 2026-09-23 — Stage D.1f (run): the frozen confirmation list on MES, 2020-02-03 to 2024-02-29
+
+**Bought the MES history for $7.586199 (as quoted), sealed holdout-2 on arrival (13 chunks, all_ok, 0 unlocks), corrected one calendar error through the sanctioned step-4b path, and ran the frozen list once. No member passes confirmation. Every one of the 100 members outside C6 has its one-sided 95% upper bound below ε = 34 net ticks per micro per day with achieved null power of at least 0.997, so classes C1 to C5 and C7 are null under docs/NULL_CRITERIA.md; C5 carries the "null by inactivity" label (E-H3, 16 trips); C6 stays inconclusive until Stage D.1g by design.** The start rule gave S = 2020-02-03, so the confirmation window is 2020-02-03 to 2024-02-29: 1,055 trade dates for trials and 998 post-exclusion dates for the statistics, several times what every class needed. Holm over the 58 Tier A p-values rejects nothing; the smallest one-sided p is 0.137 (E-H1), no composite verdict passes, the largest daily t is 1.13 and every DSR at N = 58 is 0.0. Step-4b calendar validation failed on the first build with 12 discrepancies, all from one cause: the 2019-2023 Independence Day sessions were listed as full closures, while CME's own Globex holiday schedules and the bars both show a 12:00 CT halt. The five entries were corrected with CME citations, the harness re-frozen (manifest ba5b34d5… → d3bd21e5…) and committed as 14c1007, and the rebuild passed step 4b. N is now 58. The independent Fable check re-computed every verdict-bearing number and found no discrepancy.
+
+Lead: Opus 5.5 at max effort. Ultracode off. All times are Vancouver local (PDT). The session ran 2026-09-23 16:34 to 18:07 PDT with no pause.
+
+### Guardrails
+
+| Check | Start (16:34 PDT) | After sealing (16:56 PDT) | End (18:04 PDT) |
+|---|---|---|---|
+| holdout-1 (`uv run python -m data.holdout status`) | all_ok true, unlocks_logged 0, research_has_no_holdout_rows true, 4 chunks sealed with plaintext absent | same | same |
+| holdout-2 | state not_yet_sealed, 0 of 13, unlocks_logged 0 (all_ok false by design) | **sealed, 13 of 13 in order, all_ok true, plaintext absent for all 13, unlocks_logged 0** | same, plus confirmation_has_no_holdout2_rows true |
+| docs/HOLDOUT_UNLOCK_LOG.md | — | +13 "SEALED holdout 2" records, no UNLOCK | same |
+| REGISTRATION.md | 0 bytes | — | 0 bytes |
+| Freeze manifest and preflight | ba5b34d5… matches; preflight refused only "build summary missing" and "holdout-2 not sealed" | — | d3bd21e5… after Task 3; the full preflight passes |
+| Databento | shared $84.006048; ledger readable at the archived MLCryptoEngine path | session $7.586199 (only the ohlcv-1m history), shared $91.592247 | unchanged |
+| git | clean at 11fe0ea (d384bfe plus the run prompt) | — | 14c1007 (Task 3: exactly 2 files); run artifacts uncommitted |
+| rules/, live/, ops/, sim/, screening/, funnel/, strategy/, TopstepX | untouched | — | untouched (git status shows nothing there) |
+| AiTrader collector window (15:15–16:15 PT) | the session began at 16:34 | — | no job in the window |
+| N | 31 | — | 58 |
+
+### Delegation record
+
+| Task | Agent | Model / effort | Outcome | Deviation from the plan |
+|---|---|---|---|---|
+| 0 Startup, preflight, plan | lead | opus max | all checks passed | — |
+| 1 Quote, pull, seal, rolls | lead ran the frozen commands | — | $7.586199; 13 chunks sealed | a free quote pass added before the pull |
+| 2 Build | lead ran the frozen command | — | step 4b failed, then passed after Task 3 | — |
+| 3 Calendar sources | CalendarChecker-OpusXHigh | worker-xhigh / opus | CME primary sources for 9 dates | — |
+| 3 Ruling, edit, re-freeze, commit | lead | opus max | 5 entries corrected; commit 14c1007 | — |
+| 4 Steps 5–8 and the probe | lead ran the frozen command | — | S 2020-02-03; continuity 33/33; list; decisions, not void | four single-step calls instead of `--step all` |
+| 5 Tabulation | ResultTabulator-SonnetMed | worker-medium / sonnet | reports/stage_d1f_run_tables.{md,json} | — |
+| 5, 6 Reading, class statements | lead | opus max | this entry | — |
+| 7 Independent verification | NumberVerifier-FableXHigh | worker-xhigh / fable | all VERIFIED, one row with notes, no discrepancy | brief also covered members near the power boundary |
+| 8 Entry, STAGES.md, Session cost | lead | opus max | this entry | — |
+
+At most two workers ran at once. Fable ran once, for Task 7, as the prompt specified, and was available when it started.
+
+### Task 1 — purchase and seal (list steps 2 and 3)
+
+- **Quote first.** A free `--d1f-quote-only` pass (16:37–16:41) priced the 71 chunks at **$7.586199** for 116,365,984 billable bytes, every chunk identical to the D.1e quote in price and bytes (ledger/databento_spend.jsonl lines 168–238, all `quote`, $0.00). The largest chunk was $0.116; no quote came near the $10.00 per-request cap.
+- **Pull.** `data.pull_mes --d1f-pull`, 16:41–16:56, exit 0: 71 chunks bought oldest first. The ledger gained lines 239–451: 71 `quote`, 71 `commit` and 71 `settle` under session stage-D.1f-2026-09, no refusal. Committed $7.586198747; settled actual $7.586198747, because delivered record bytes equalled the quoted billable bytes for every chunk. The session total is **$7.586199**; the shared total moved from $84.006048 to $91.592247.
+- **Seal.** Each of the 13 holdout-2 chunks (range=2024-03-01_2024-04-01 through range=2025-03-01_2025-04-01) was sealed by the same call that downloaded it, after the record-byte check and before the next request, in order. docs/HOLDOUT_UNLOCK_LOG.md gained 13 `SEALED holdout 2` records (plaintext and sealed sha256, the manifest sha256, the decrypt-back proof) and no UNLOCK record. docs/HOLDOUT2_MANIFEST.json holds bytes and sha256 only. After the pull, holdout-2 is sealed, 13 of 13 in order, all_ok, plaintext absent for all 13, 0 unlocks; the 58 confirmation chunks (31 MB) are the only new plaintext on disk.
+- **Holdout-2 trade dates, from the calendar at sealing (build choice 2.1):** 258 = 261 weekdays 2024-04-01..2025-03-31 minus the listed full closures 2024-07-04, 2024-12-25 and 2025-01-01. Ten early halts count as trade dates. The embargo month (March 2024) holds 20. See the D.2 items below: the 2024-07-04 entry is very likely wrong in the same way as 2019-2023, which would make the count 259.
+- **Vendor metadata.** The degraded-day warnings named exactly the eight declared dates. The roll fetch (`--d1f-rolls`, free) returned 19 quarterly MES rolls from 2019-06-17 to 2023-12-13; its one "cycle violation" is the known 'DNMH929 C35' label on instrument 7849 (list 1.1), and the build's raw-symbol drop count confirms it cost no bars.
+
+### Task 2 — the build, and Task 3 — the step-4b calendar correction
+
+**First build (16:57, exit 0).** 1,695,822 bars written read-only; trade dates 2019-05-06..2024-02-29; raw-symbol drops 0 in every month (so no stop); window drops only the 60 bars of trade date 2024-03-01; degraded list identical to the eight declared; validation 0 hard failures. **Step 4b failed with 12 discrepancies.** The build exits 0 on a step-4b failure and records it; the runner's preflight refuses on it. The failed summary is kept as reports/stage_d1f_confirmation_build_step4b_failed.json and its parquet was moved to data/processed/MES/superseded/.
+
+**Diagnosis.** All 12 come from Independence Day 2019-2023. Each of 2019-07-04, 2020-07-03 (observed), 2021-07-05 (observed), 2022-07-04 and 2023-07-04 was listed as a full closure, and each shows the same bars: a session from 17:00 CT the prior evening to an 11:59 CT last bar, nothing from 12:00, the next bar at 17:00 CT (1,007 to 1,140 bars). That is a 12:00 CT halt, which is how the verified 2025 block already records 2025-07-04 ("research first read as a full closure"). The two "July 3, 12:15" discrepancies (2019, 2023) were a knock-on: with July 4 closed, the closed window ran from 12:15 on July 3 to 17:00 on July 4 and swallowed the July 4 session. The frozen calendar had also pushed each July 4 session into the next trade date, flagged as closure bars (5,536 of the 5,539 closure-flagged bars). Neither of the two causes the prompt expected (thin 2019 trading, the pre-2021-06-28 session) produced any discrepancy. A dry run of the frozen validator with only the five entries changed in memory passed with 0 discrepancies.
+
+**Sources.** The old entries cited CME settlement-time PDFs: "CME Group will not derive or disseminate settlement prices". The file cites the same sentence as the status source for its early-halt holidays (Memorial Day 2019, for example); it says nothing about Globex hours. CalendarChecker-OpusXHigh found CME's own Globex holiday schedules for every date (reports/stage_d1f_calendar_check.md and .json; cmegroup.com refuses automated fetches, so each was read in full from a Wayback copy, and every quote was checked by script as a verbatim substring). For 2019, 2021 and 2022 the compact schedules read "Product|CLOSE|OPEN|HALT|OPEN" / "Equity |…|1200 CT / 1700 UTC|Regular @ 1700 CT / 2200 UTC" under the July 4 (or observed) date; the 2020 schedule gives Equity Products a 12:00 "Close" on Friday July 3 and a Sunday 17:00 open; the 2023 summary PDF gives EQUITIES "12:00 (PREOPEN) HALT" and "17:00 (OPEN)" on Tuesday 4 July. The July 3 12:15 CT closes in 2019 and 2023 are confirmed as listed. CME's clearing advisories add that the holiday's Globex trades carry the next trade date; the calendar keeps its existing convention for every holiday halt (the holiday as its own short trade date).
+
+**Correction (lead ruling).** The five entries became early halts at 12:00 CT, graded cme / cme; each citation keeps its settlement status quote and adds the CME time quote, the archive URL and a note. The 2019-07-03 and 2023-07-03 entries are unchanged. 2024-07-04 was not changed: it is not a step-4b discrepancy, and holdout-2 has no bars to check it against (D.2 item below). The 2025-2026 block is byte-identical (block sha256 8752f837…9538). The edited file passed the frozen validator (0 discrepancies, 54 entries observed) and `ruff check`. `strategy.research._d1f_freeze` re-wrote the manifest at 17:21: 129 files, and only data/cme_calendar.py's hash changed. **Commit 14c1007** holds exactly data/cme_calendar.py and reports/stage_d1f_harness_freeze.json, with the old and new manifest sha256 and the five dates in its message. **Old manifest ba5b34d5239737cc493c360b38753573aa133963e73abf8639ba3532a4cf847a; new manifest d3bd21e50b14c014cf854c3a239fae6d204834e4d360c1cf2b20df7a18b7a3c2**, used for every later runner call.
+
+Tests, not changed (they are outside the commit the prompt allows): tests/test_d1f_calendar_build.py::test_2019_2024_quotes_are_verbatim_from_the_extraction now fails, because it pins every citation to the build's extraction file and the five new time quotes come from the Task 3 check; test_confirmation_build_end_to_end fails in any run session, with the old calendar too, because it asserts that the real confirmation parquet does not exist. Both need a follow-up edit by the user.
+
+**Rebuild (17:22, exit 0, 21 s).** The freeze check passed under d3bd21e5…; 1,695,822 bars; **step 4b passed** (1,259 weekdays, 54 entries, 0 discrepancies); raw-symbol drops 0; only 3 closure-flagged bars remain (single bars on 2020-03-30, 03-31 and 06-30); each July 4 session is now its own trade date with a 12:00 halt; 1,248 trade dates. The runner's full preflight then passed.
+
+### Task 4 — the list run (steps 5 to 8, each run once)
+
+The steps ran as four single-step calls, not `--step all` (same code; see open choices).
+
+**Step 5, the start rule (17:23).** V_ref = 1,763.0 contracts per RTH minute, the median of the 14 monthly medians 2025-04..2026-05 (3204.5, 1890.5, 1382.5, 1248.0, 1363.5, 1373.5, 1817.0, 2659.0, 1439.0, 1702.0, 2152.0, 2653.0, 1820.0, 1709.0). Threshold 0.25 × V_ref = 440.75. Monthly medians of the extension: 2019-05 351, 06 309, 07 310, 08 611, 09 299, 10 361.5, 11 212, 12 201, 2020-01 383, 2020-02 569, and every month from 2020-02 through 2024-02 at 0.32 to 1.61 × V_ref. M* = 2020-02, **S = 2020-02-03**. Sensitivity, descriptive: 0.15 gives 2020-01-02, 0.40 gives 2020-03-02. Step 5 pinned the run inputs (parquet 82e256b4…, build summary b72e685f…, rolls, condition, symbology, HOLDOUT2_MANIFEST).
+
+**Days against the D.1e power table's needs.** Trials see 1,055 window dates (2020-02-03..2024-02-29); statistics see 998 (57 excluded: 48 roll-blackout dates and 9 trade dates with vendor-degraded bars). Needs by class (chosen n_b): C1 149, C2 193, C3 566, C4 171, C5 16, C6 181, C7 114. Every class is covered; the tightest, C3, has 1.76 times its need. The achieved null power of each binding member: A-H4 rth leg 1.0000 (SE 4.12), G3.RTH.5 1.0000 (SE 4.29), F1_1_h1_RTH 0.9998 (SE 6.50), F2_4_15min_vol_tercile_top 1.0000 (SE 4.07), E-H1 1.0000 (SE 1.05), C-H4 1.0000 (SE 5.94), H6 1.0000 (SE 2.86).
+
+**Step 6, continuity (17:23–17:25).** All 33 runs (the 31 trials, plus E-H1 and E-H2 under their confirmation factories) reproduce reports/stage_d1d_accounting.json on the 289-date train union: net P&L to the cent, trip counts exactly, daily Sharpe to 1e-6. 0 problems.
+
+**Probe (17:25–17:27).** C-H1, the most active trial, through `screen_candidate` on the confirmation window; the report was discarded unread. 70.5 s, 1.76 GB peak. It set step 7 at 3 processes.
+
+**Step 7, the list (17:27–17:46, 19 min).** 37 trials and 64 statistics on confirmation_2020-02-03_2024-02-29. Available memory never fell below 6.2 GB. The runner flagged, as designed (review F6), that the engine's ledger holds non-strategy fills the H modules' own records do not: H1 5, H2 2, H3 1, H4 2, H5 4, H6 11 (dates in reports/stage_d1f_run_STATE.md; several are the March 2020 and 2022-02-10 volatility days). P&L comes from the ledger either way; the count reported is the ledger's.
+
+**Step 8, the decisions (17:47–17:49).** The hash re-check found nothing changed: **void = false**. Outputs: reports/stage_d1f_tier_a.json, _tier_b.json, _descriptive_facts.json and _decisions.json, each stamped with the manifest sha256.
+
+### Task 5 — the result
+
+**Tier A, all 58 members** (net ticks per micro per day; trials on 1,055 dates, statistics on 998; ε = 34; bootstrap as list 3.1):
+
+| ID | Class | Kind | n (trips / events) | θ̂ (net ticks per micro per day) | UCB95 | SE_boot | Achieved null power | One-sided p | Holm (rank; reject) | Composite | Status, label |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| A-H1 european-open overnight drift | C1 | trial | 1,007 | -1.39 | 0.05 | 0.86 | 1.0000 | 0.951 | 28; no | fail | null |
+| A-H2 rth close window (buy) | C1 | trial | 972 | -3.06 | -0.57 | 1.50 | 1.0000 | 0.981 | 36; no | fail | null |
+| A-H2 rth close window (sell) | C1 | trial | 972 | -0.72 | 1.70 | 1.49 | 1.0000 | 0.680 | 12; no | fail | null |
+| A-H3 weekend effect | C1 | trial | 388 | -2.52 | 1.79 | 2.63 | 1.0000 | 0.832 | 14; no | fail | null |
+| A-H4 eth leg | C1 | trial | 1,007 | 1.08 | 6.05 | 3.04 | 1.0000 | 0.357 | 5; no | fail | null |
+| A-H4 rth leg | C1 | trial | 1,005 | 2.77 | 9.58 | 4.12 | 1.0000 | 0.248 | 2; no | fail | null |
+| B-H1 opening-range breakout (hold 5) | C2 | trial | 1,000 | -2.14 | -1.25 | 0.56 | 1.0000 | 1.000 | 43; no | fail | null |
+| B-H1 opening-range breakout (hold 75) | C2 | trial | 1,000 | -2.33 | 1.12 | 2.15 | 1.0000 | 0.856 | 17; no | fail | null |
+| B-H2 prior-day stop cascade | C2 | trial | 810 | -1.22 | 0.10 | 0.80 | 1.0000 | 0.936 | 23; no | fail | null |
+| B-H3 breakout leg | C2 | trial | 991 | -2.41 | -0.34 | 1.27 | 1.0000 | 0.969 | 31; no | fail | null |
+| B-H3 fade leg | C2 | trial | 991 | -1.41 | 0.71 | 1.28 | 1.0000 | 0.862 | 19; no | fail | null |
+| B-H4 narrow-range breakout | C2 | trial | 441 | -0.85 | 0.28 | 0.69 | 1.0000 | 0.888 | 22; no | fail | null |
+| RT1 B-H1 ORB 5-min bars (hold 1 bar) | C2 | trial | 984 | -2.47 | -1.58 | 0.55 | 1.0000 | 1.000 | 55; no | fail | null |
+| RT2 B-H1 ORB 5-min bars (hold 15 bars) | C2 | trial | 984 | -1.94 | 1.02 | 1.82 | 1.0000 | 0.859 | 18; no | fail | null |
+| RT3 B-H3 breakout leg 5-min bars | C2 | trial | 984 | -1.87 | 0.11 | 1.20 | 1.0000 | 0.939 | 24; no | fail | null |
+| RT4 B-H3 fade leg 5-min bars | C2 | trial | 984 | -1.98 | 0.00 | 1.20 | 1.0000 | 0.950 | 27; no | fail | null |
+| F6_1_overnight_range_position | C2 | statistic | 992 | 0.20 | 3.38 | 1.90 | 1.0000 | 0.461 | 7; no | fail | null |
+| F4_4_round_number_multiples_of_100 | C2 | statistic | 3,091 | -14.94 | -8.30 | 4.46 | 1.0000 | 0.998 | 39; no | fail | null |
+| F4_1_rth_open_crossing | C2 | statistic | 2,068 | -4.38 | -2.43 | 1.20 | 1.0000 | 1.000 | 51; no | fail | null |
+| G2.RTH.30 | C2 | statistic | 2,501 | -3.52 | -0.72 | 1.75 | 1.0000 | 0.975 | 33; no | fail | null |
+| G2.ETH.30 | C2 | statistic | 4,412 | -6.65 | -4.35 | 1.39 | 1.0000 | 1.000 | 53; no | fail | null |
+| G2.ETH.5 | C2 | statistic | 9,584 | -17.84 | -16.15 | 1.05 | 1.0000 | 1.000 | 54; no | fail | null |
+| G5.RTH.15 | C2 | statistic | 936 | -2.25 | -0.59 | 0.99 | 1.0000 | 0.990 | 37; no | fail | null |
+| G5.RTH.30 | C2 | statistic | 882 | -1.69 | 0.79 | 1.52 | 1.0000 | 0.869 | 21; no | fail | null |
+| G3.RTH.15 | C2 | statistic | 987 | -6.80 | -0.05 | 4.01 | 1.0000 | 0.960 | 30; no | fail | null |
+| C-H1 magnitude-conditioned reversal | C3 | trial | 149,035 | -275.97 | -267.92 | 4.90 | 1.0000 | 1.000 | 44; no | fail | null |
+| C-H2 post-spike exhaustion fade | C3 | trial | 33,126 | -64.74 | -61.37 | 2.04 | 1.0000 | 1.000 | 45; no | fail | null |
+| C-H3 close-location-value reversal | C3 | trial | 47,582 | -89.32 | -85.11 | 2.54 | 1.0000 | 1.000 | 46; no | fail | null |
+| RT5 C-H2 spike fade 5-min bars | C3 | trial | 10,614 | -21.22 | -18.82 | 1.45 | 1.0000 | 1.000 | 56; no | fail | null |
+| F3_2_bucket07_bucket08 | C3 | statistic | 962 | -1.82 | -0.28 | 0.93 | 1.0000 | 0.975 | 34; no | fail | null |
+| F3_3_opening_30min_to_close_momentum | C3 | statistic | 960 | -0.87 | 1.83 | 1.66 | 1.0000 | 0.693 | 13; no | fail | null |
+| F3_2_bucket08_bucket09 | C3 | statistic | 962 | -3.59 | -2.00 | 0.99 | 1.0000 | 1.000 | 41; no | fail | null |
+| F3_3_overnight_to_close_momentum | C3 | statistic | 963 | 1.01 | 3.70 | 1.67 | 1.0000 | 0.262 | 3; no | fail | null |
+| F3_2_bucket01_bucket02 | C3 | statistic | 992 | -3.12 | -0.48 | 1.59 | 1.0000 | 0.976 | 35; no | fail | null |
+| F3_2_bucket10_bucket11 | C3 | statistic | 963 | -1.87 | 0.03 | 1.19 | 1.0000 | 0.939 | 25; no | fail | null |
+| F3_2_bucket02_bucket03 | C3 | statistic | 995 | -2.02 | 0.05 | 1.26 | 1.0000 | 0.949 | 26; no | fail | null |
+| F3_2_bucket05_bucket06 | C3 | statistic | 993 | -1.90 | -0.23 | 1.00 | 1.0000 | 0.973 | 32; no | fail | null |
+| F3_2_bucket04_bucket05 | C3 | statistic | 994 | -2.79 | -1.14 | 1.02 | 1.0000 | 0.996 | 38; no | fail | null |
+| F3_2_bucket06_bucket07 | C3 | statistic | 992 | -1.57 | -0.09 | 0.91 | 1.0000 | 0.958 | 29; no | fail | null |
+| F3_2_bucket12_bucket13 | C3 | statistic | 963 | -0.62 | 2.11 | 1.63 | 1.0000 | 0.651 | 10; no | fail | null |
+| G1.RTH.5 | C3 | statistic | 14,779 | -35.25 | -30.51 | 2.89 | 1.0000 | 1.000 | 52; no | fail | null |
+| D-H1 trailing-vol regime gate | C4 | trial | 397 | -0.92 | -0.54 | 0.24 | 1.0000 | 1.000 | 48; no | fail | null |
+| D-H2 inverse-vol sizing | C4 | trial | 1,006 | -2.58 | -1.80 | 0.48 | 1.0000 | 1.000 | 49; no | fail | null |
+| D-H3 range-compression gate | C4 | trial | 9,817 | -24.24 | -21.63 | 1.62 | 1.0000 | 1.000 | 50; no | fail | null |
+| D-H4 overnight gap fade | C4 | trial | 568 | -1.21 | -0.58 | 0.40 | 1.0000 | 0.999 | 40; no | fail | null |
+| RT6 D-H1 daily-vol regime gate | C4 | trial | 520 | -1.36 | -0.89 | 0.29 | 1.0000 | 1.000 | 57; no | fail | null |
+| RT7 D-H2 daily-vol sizing | C4 | trial | 987 | -2.57 | -1.76 | 0.50 | 1.0000 | 1.000 | 58; no | fail | null |
+| E-H1 scheduled macro drift | C5 | trial | 112 | 1.15 | 2.83 | 1.05 | 1.0000 | 0.137 | 1; no | fail | null |
+| E-H2 post-release momentum | C5 | trial | 91 | -0.34 | 0.20 | 0.33 | 1.0000 | 0.853 | 16; no | fail | null |
+| E-H3 quarterly witching short | C5 | trial | 16 | -0.06 | 0.03 | 0.06 | 1.0000 | 0.847 | 15; no | fail | null; null by inactivity |
+| E-H4 turn-of-month long | C5 | trial | 196 | -0.61 | -0.38 | 0.15 | 1.0000 | 1.000 | 42; no | fail | null |
+| C-H4 passive-fill reversal | C6 | trial | 90,418 | -186.63 | -177.18 | 5.94 | 1.0000 | 1.000 | 47; no | fail | null; null under the pessimistic fill model |
+| H1 NR4 opening-range breakout | C7 | trial | 266 | 0.12 | 3.18 | 1.88 | 1.0000 | 0.479 | 8; no | fail | null |
+| H2 NR7 opening-range breakout | C7 | trial | 155 | -0.36 | 2.10 | 1.50 | 1.0000 | 0.595 | 9; no | fail | null |
+| H3 inside-day opening-range breakout | C7 | trial | 80 | 0.40 | 2.30 | 1.17 | 1.0000 | 0.357 | 6; no | fail | null |
+| H4 bottom-tercile prior range, breakout | C7 | trial | 336 | 1.04 | 4.14 | 1.91 | 1.0000 | 0.292 | 4; no | fail | null |
+| H5 top-tercile prior range, opening-range fade | C7 | trial | 287 | -0.94 | 2.80 | 2.24 | 1.0000 | 0.658 | 11; no | fail | null |
+| H6 prior-close location follow-through | C7 | trial | 504 | -3.17 | 1.49 | 2.86 | 1.0000 | 0.864 | 20; no | fail | null |
+
+**Holm.** m = 58, family-wise 5%: the first threshold is 0.05/58 = 0.00086 and the smallest p is 0.137 (E-H1), so Holm rejects nothing. Not one Tier A p-value is below 0.05 even before adjustment.
+
+**Edge exists: no member.** Of the five conditions of list 3.2, no member meets Holm, the composite (0 of 58 pass) or t > 3.0 (largest 1.13, E-H1), and every DSR at N = 58 is 0.0. The family PBO at N = 58 is 0.443 (70 splits, 8 blocks of 131 days), below 0.5, which is the only condition any member meets. The DSR benchmark (the expected maximum daily Sharpe under the null) is 0.791, because the frozen rule takes the population variance of the 58 daily Sharpes (0.115), which the strongly negative high-frequency members widen (C-H1 −1.77, C-H4 −1.24); the best member's daily Sharpe is 0.035. Reported alongside, not criteria: at N = 101 the Sharpe variance is 2.64, the benchmark 4.12, every DSR 0.0 and PBO 0.60; at N = 186 the benchmark is 4.46 and every DSR 0.0. **There is no D.2 discussion item, so the period-appropriate cost re-check does not arise.**
+
+**Tier B, 43 members.** All null: the largest UCB95 is 7.73 (G3.RTH.5) and the smallest achieved power 0.9977 (F4_4_round_number_multiples_of_50). **No anomaly** (BH at 10% within Tier B in direction s, with net edge ≥ 2.11 ticks per event): none is BH-significant. **One sign reversal:** F1_1_h30_ETH, whose gross move per event in the mined direction is −0.35 ticks (p = 0.0018, BH-significant at 10%); by list 2.2 it is reported as a reversal versus the mined window, not as an anomaly, and anything drawn from it needs new data and a new declaration.
+
+**Per class** (runner verdicts, pending the check below): C1 null, C2 null, C3 null, C4 null, C5 null ("null by inactivity": E-H3 quarterly witching short, 16 trips), C6 inconclusive until Stage D.1g (C-H4 labelled "null under the pessimistic fill model"), C7 null. No class has an inconclusive or blocking member.
+
+**Year slices (descriptive, list 3.6; no slice enters any verdict).** 505 member-years (2020–2024, the 2024 slice 43 days). One member-year has UCB95 ≥ 34: A-H4 rth leg in the 2024 stub (43 days, θ̂ 22.98, UCB95 38.87). The largest slice UCB95 per class: C1 38.87 (A-H4 rth leg, 2024), C2 27.87 (G3.RTH.5, 2024), C3 12.15 (F3_3_overnight_to_close_momentum, 2022), C4 16.04 (F5_1_relvol_tercile_top, 2024), C5 8.53 (E-H1, 2022), C7 22.53 (H6, 2024). Full table: reports/stage_d1f_run_tables.md, T5.
+
+**Descriptive resolution** (the smallest per-trade edge this window could rule out at 80% null power, 2.4865 × SE_boot / trades or events per own date, net ticks per trade): C1 2.25 (A-H1) to 17.80 (A-H3); C2 0.27 (G2.ETH.5) to 10.69 (G3.RTH.5); C3 0.013 (F1_1_h1_ETH) to 4.30 (F3_3_overnight_to_close_momentum); C4 0.43 (D-H3) to 2.02 (F5_1_relvol_tercile_top); C5 1.98 (E-H4) to 24.67 (E-H1); C6 0.17 (C-H4); C7 14.90 (H6) to 38.42 (H3). **52 of the 100 members outside C6 cannot be resolved below the 2.11-tick market cost bar on this window** (all of C1 and C7, 19 of 31 in C2, 18 of 40 in C3, 3 of 4 in C5; all 13 in C4 can). D.1e projected 48 of 95 at a 2019-05 start.
+
+Full tables (both tiers, classes, accounting, year slices, counts): reports/stage_d1f_run_tables.md and .json (ResultTabulator-SonnetMed; the lead checked the class block and several rows against the JSONs).
+
+### Task 6 — class statements
+
+**Status: independently verified.** NumberVerifier-FableXHigh (Fable 5.1, xhigh) re-computed every verdict-bearing number without importing the runner's decision or member modules: all VERIFIED, one row VERIFIED WITH NOTES (the DSR underflow), no DISCREPANCY (Task 7). The statements below therefore stand as the program's record.
+
+**The aggregate statement (docs/NULL_CRITERIA.md section 7, W-1; every class C1 to C5 and C7 is null):**
+
+> On trade dates 2020-02-03 to 2024-02-29, no member of any class the program tested on MES (market-order trials at their coded size, event statistics at the flat modelled round turn, Family H at 2 micros) showed a net edge of at least epsilon_day = 34 net ticks per micro per day, the smallest edge that funds the Topstep XFA funnel under the Stage B model of the 2026 rules and fee schedule at 2 micros; every member's one-sided 95% upper bound was below epsilon at >= 80% achieved null power; per class, the per-trade resolution was:
+
+| Class | Epsilon per trade at the class's confirmation-window frequency (net ticks per micro per trade) | Class frequency (median trades per window day of the class's trial members) | Least active member (count) | Largest per-trade upper bound in the class (net ticks per micro per trade) | Label | Descriptive: smallest per-trade edge the window could rule out at 80% null power (net ticks per trade, min to max) |
+|---|---|---|---|---|---|---|
+| C1 session clock (6) | 36.29 | 0.937 | A-H3 weekend effect (388 round trips) | 10.06 (A-H4 rth leg) | — | 2.25 (A-H1 european-open overnight drift) to 17.80 (A-H3 weekend effect) |
+| C2 reference levels and breakouts (31) | 36.45 | 0.933 | B-H4 narrow-range breakout (441 round trips) | 7.75 (G3.RTH.5) | — | 0.27 (G2.ETH.5) to 10.69 (G3.RTH.5) |
+| C3 short-horizon reversal and momentum at market fills (40) | 0.89 | 38.25 | G4.RTH.60 (957 events) | 3.84 (F3_3_overnight_to_close_momentum) | — | 0.013 (F1_1_h1_ETH) to 4.30 (F3_3_overnight_to_close_momentum) |
+| C4 volatility-state conditioning (13) | 46.14 | 0.737 | D-H1 trailing-vol regime gate (397 round trips) | −0.31 (F5_1_relvol_tercile_top) | — | 0.43 (D-H3 range-compression gate) to 2.02 (F5_1_relvol_tercile_top) |
+| C5 calendar and scheduled events (4) | 353.40 | 0.096 | E-H3 quarterly witching short (16 round trips) | 26.68 (E-H1 scheduled macro drift) | null by inactivity (E-H3 quarterly witching short, 16 < 30) | 1.98 (E-H4 turn-of-month long) to 24.67 (E-H1 scheduled macro drift) |
+| C7 daily-bar constructions (6) | 129.73 | 0.262 | H3 inside-day opening-range breakout (80 round trips) | 30.31 (H3 inside-day opening-range breakout) | — | 14.90 (H6 prior-close location follow-through) to 38.42 (H3 inside-day opening-range breakout) |
+
+C6 awaits Stage D.1g: C-H4 under the trade-through fill model has UCB95 −177.18 net ticks per micro per day (90,418 trips) and carries the label "null under the pessimistic fill model", which is a lower bound and does not establish the C6 null (list 3.5). The structural question below epsilon remains open where the data cannot resolve it: on this window 52 of the 100 members outside C6 cannot be resolved below the 2.11-tick market cost bar (the last column), among them every member of C1 and C7, 19 of 31 in C2, 18 of 40 in C3 and 3 of 4 in C5. Criteria: docs/NULL_CRITERIA.md, sha256 6f69e318c96edf0a58956856c881ec3e1b8c68d89e1c836b3d54cfbf0e3497e2; members and their definitions: reports/stage_d1f_confirmation_list.md, sha256 c19cbac191c497a10b5cc756e96510999f13f27c4ac1aa72593aeabf1125147c.
+
+**The per-class statements (docs/NULL_CRITERIA.md section 1, with the section 7 fields in the same sentence):**
+
+The common text, identical for every class, is quoted from section 1 with S filled in; each class's own sentence follows it in full.
+
+- **C1 (session clock: A-H1, A-H2 buy, A-H2 sell, A-H3, A-H4 eth, A-H4 rth).** For MES intraday strategies in class C1, tested on the pre-registered confirmation window (trade dates 2020-02-03 to 2024-02-29, S fixed by the start rule in docs/NULL_CRITERIA.md section 4): the trials executed through the engine with market orders at the modelled retail cost (the Stage A.1 cost model: $1.22 commission per round turn plus the time-of-day slippage table, about 2.11 ticks per round turn) at their coded contract size (1 micro for the 29 fixed-size trials, 1 to 5 by rule for D-H2 and RT7, 2 micros for Family H; C-H4, at 1 micro, is section 1.1's), the event statistics charged the flat modelled round turn of 2.11 ticks per event, all flat by the XFA cutoff: for every member of the class, a net edge of at least epsilon = 34 net ticks per micro per day ($85.00 per day at 2 micros, the smallest edge that funds the Topstep XFA funnel under the Stage B model of the 2026 rules and fee schedule at 2 micros) is rejected at one-sided 95% (the upper confidence bound on mean net daily P&L per micro is below epsilon), with achieved null power of at least 80%; per-trade resolution of the class on this window: epsilon per trade at the class's confirmation-window frequency 36.29 net ticks per micro per trade (0.937 trades per window day), least active member A-H3 weekend effect (388 closed round trips), largest per-trade upper bound in the class 10.06 net ticks per micro per trade (A-H4 rth leg). Descriptive, not a criterion: the smallest per-trade edge the window could rule out at 80% null power runs from 2.25 (A-H1) to 17.80 (A-H3) net ticks per trade.
+- **C2 (reference levels and breakouts: B-H1 hold 5, B-H1 hold 75, B-H2, B-H3 breakout, B-H3 fade, B-H4, RT1 to RT4; Tier A statistics F6_1, F4_4 x100, F4_1, G2.RTH.30, G2.ETH.30, G2.ETH.5, G5.RTH.15, G5.RTH.30, G3.RTH.15; Tier B F4_2, F4_4 x50, G2.RTH.5, G3.RTH.5, G5.RTH.5, G2.ETH.15, G2.RTH.15, G3.RTH.30, G2.ETH.60, G2.RTH.60, G3.RTH.60, G5.RTH.60).** For MES intraday strategies in class C2, tested on the pre-registered confirmation window (trade dates 2020-02-03 to 2024-02-29, S fixed by the start rule in docs/NULL_CRITERIA.md section 4): the trials executed through the engine with market orders at the modelled retail cost (the Stage A.1 cost model: $1.22 commission per round turn plus the time-of-day slippage table, about 2.11 ticks per round turn) at their coded contract size (1 micro for the 29 fixed-size trials, 1 to 5 by rule for D-H2 and RT7, 2 micros for Family H; C-H4, at 1 micro, is section 1.1's), the event statistics charged the flat modelled round turn of 2.11 ticks per event, all flat by the XFA cutoff: for every member of the class, a net edge of at least epsilon = 34 net ticks per micro per day ($85.00 per day at 2 micros, the smallest edge that funds the Topstep XFA funnel under the Stage B model of the 2026 rules and fee schedule at 2 micros) is rejected at one-sided 95% (the upper confidence bound on mean net daily P&L per micro is below epsilon), with achieved null power of at least 80%; per-trade resolution of the class on this window: epsilon per trade at the class's confirmation-window frequency 36.45 net ticks per micro per trade (0.933 trades per window day), least active member B-H4 narrow-range breakout (441 closed round trips), largest per-trade upper bound in the class 7.75 net ticks per micro per trade (G3.RTH.5). Descriptive, not a criterion: the smallest per-trade edge the window could rule out at 80% null power runs from 0.27 (G2.ETH.5) to 10.69 (G3.RTH.5) net ticks per trade.
+- **C3 (short-horizon reversal and momentum at market fills: C-H1, C-H2, C-H3, RT5; Tier A statistics F3_2 07-08, 08-09, 01-02, 10-11, 02-03, 05-06, 04-05, 06-07, 12-13, F3_3 (a) and (b), G1.RTH.5; Tier B F1_1 at five horizons for RTH and ETH, F3_2 03-04, 09-10, 11-12, G1.ETH.5, G4.RTH.5, G1.ETH.15, G1.RTH.15, G4.RTH.15, G1.ETH.30, G1.RTH.30, G4.RTH.30, G1.ETH.60, G1.RTH.60, G4.RTH.60).** For MES intraday strategies in class C3, tested on the pre-registered confirmation window (trade dates 2020-02-03 to 2024-02-29, S fixed by the start rule in docs/NULL_CRITERIA.md section 4): the trials executed through the engine with market orders at the modelled retail cost (the Stage A.1 cost model: $1.22 commission per round turn plus the time-of-day slippage table, about 2.11 ticks per round turn) at their coded contract size (1 micro for the 29 fixed-size trials, 1 to 5 by rule for D-H2 and RT7, 2 micros for Family H; C-H4, at 1 micro, is section 1.1's), the event statistics charged the flat modelled round turn of 2.11 ticks per event, all flat by the XFA cutoff: for every member of the class, a net edge of at least epsilon = 34 net ticks per micro per day ($85.00 per day at 2 micros, the smallest edge that funds the Topstep XFA funnel under the Stage B model of the 2026 rules and fee schedule at 2 micros) is rejected at one-sided 95% (the upper confidence bound on mean net daily P&L per micro is below epsilon), with achieved null power of at least 80%; per-trade resolution of the class on this window: epsilon per trade at the class's confirmation-window frequency 0.89 net ticks per micro per trade (38.25 trades per window day), least active member G4.RTH.60 (957 events), largest per-trade upper bound in the class 3.84 net ticks per micro per trade (F3_3_overnight_to_close_momentum). Descriptive, not a criterion: the smallest per-trade edge the window could rule out at 80% null power runs from 0.013 (F1_1_h1_ETH) to 4.30 (F3_3_overnight_to_close_momentum) net ticks per trade.
+- **C4 (volatility-state conditioning: D-H1, D-H2, D-H3, D-H4, RT6, RT7; Tier B F2_4 bottom and top, F5_1 bottom and top, F5_2 bottom and top, F5_3).** For MES intraday strategies in class C4, tested on the pre-registered confirmation window (trade dates 2020-02-03 to 2024-02-29, S fixed by the start rule in docs/NULL_CRITERIA.md section 4): the trials executed through the engine with market orders at the modelled retail cost (the Stage A.1 cost model: $1.22 commission per round turn plus the time-of-day slippage table, about 2.11 ticks per round turn) at their coded contract size (1 micro for the 29 fixed-size trials, 1 to 5 by rule for D-H2 and RT7, 2 micros for Family H; C-H4, at 1 micro, is section 1.1's), the event statistics charged the flat modelled round turn of 2.11 ticks per event, all flat by the XFA cutoff: for every member of the class, a net edge of at least epsilon = 34 net ticks per micro per day ($85.00 per day at 2 micros, the smallest edge that funds the Topstep XFA funnel under the Stage B model of the 2026 rules and fee schedule at 2 micros) is rejected at one-sided 95% (the upper confidence bound on mean net daily P&L per micro is below epsilon), with achieved null power of at least 80%; per-trade resolution of the class on this window: epsilon per trade at the class's confirmation-window frequency 46.14 net ticks per micro per trade (0.737 trades per window day), least active member D-H1 trailing-vol regime gate (397 closed round trips), largest per-trade upper bound in the class −0.31 net ticks per micro per trade (F5_1_relvol_tercile_top). Descriptive, not a criterion: the smallest per-trade edge the window could rule out at 80% null power runs from 0.43 (D-H3) to 2.02 (F5_1_relvol_tercile_top) net ticks per trade.
+- **C5 (calendar and scheduled events: E-H1, E-H2, E-H3, E-H4).** For MES intraday strategies in class C5, tested on the pre-registered confirmation window (trade dates 2020-02-03 to 2024-02-29, S fixed by the start rule in docs/NULL_CRITERIA.md section 4): the trials executed through the engine with market orders at the modelled retail cost (the Stage A.1 cost model: $1.22 commission per round turn plus the time-of-day slippage table, about 2.11 ticks per round turn) at their coded contract size (1 micro for the 29 fixed-size trials, 1 to 5 by rule for D-H2 and RT7, 2 micros for Family H; C-H4, at 1 micro, is section 1.1's), the event statistics charged the flat modelled round turn of 2.11 ticks per event, all flat by the XFA cutoff: for every member of the class, a net edge of at least epsilon = 34 net ticks per micro per day ($85.00 per day at 2 micros, the smallest edge that funds the Topstep XFA funnel under the Stage B model of the 2026 rules and fee schedule at 2 micros) is rejected at one-sided 95% (the upper confidence bound on mean net daily P&L per micro is below epsilon), with achieved null power of at least 80%; per-trade resolution of the class on this window: epsilon per trade at the class's confirmation-window frequency 353.40 net ticks per micro per trade (0.096 trades per window day), least active member E-H3 quarterly witching short (16 closed round trips), largest per-trade upper bound in the class 26.68 net ticks per micro per trade (E-H1 scheduled macro drift); null by inactivity (E-H3 quarterly witching short, 16 closed round trips, fewer than 30). Descriptive, not a criterion: the smallest per-trade edge the window could rule out at 80% null power runs from 1.98 (E-H4) to 24.67 (E-H1) net ticks per trade.
+- **C7 (daily-bar constructions: H1 to H6).** For MES intraday strategies in class C7, tested on the pre-registered confirmation window (trade dates 2020-02-03 to 2024-02-29, S fixed by the start rule in docs/NULL_CRITERIA.md section 4): the trials executed through the engine with market orders at the modelled retail cost (the Stage A.1 cost model: $1.22 commission per round turn plus the time-of-day slippage table, about 2.11 ticks per round turn) at their coded contract size (1 micro for the 29 fixed-size trials, 1 to 5 by rule for D-H2 and RT7, 2 micros for Family H; C-H4, at 1 micro, is section 1.1's), the event statistics charged the flat modelled round turn of 2.11 ticks per event, all flat by the XFA cutoff: for every member of the class, a net edge of at least epsilon = 34 net ticks per micro per day ($85.00 per day at 2 micros, the smallest edge that funds the Topstep XFA funnel under the Stage B model of the 2026 rules and fee schedule at 2 micros) is rejected at one-sided 95% (the upper confidence bound on mean net daily P&L per micro is below epsilon), with achieved null power of at least 80%; per-trade resolution of the class on this window: epsilon per trade at the class's confirmation-window frequency 129.73 net ticks per micro per trade (0.262 trades per window day), least active member H3 inside-day opening-range breakout (80 closed round trips), largest per-trade upper bound in the class 30.31 net ticks per micro per trade (H3 inside-day opening-range breakout). Descriptive, not a criterion: the smallest per-trade edge the window could rule out at 80% null power runs from 14.90 (H6) to 38.42 (H3) net ticks per trade.
+- **C6 (passive execution: C-H4): no statement.** Inconclusive by design until Stage D.1g (list 3.5). C-H4's trade-through result (θ̂ −186.63, UCB95 −177.18 net ticks per micro per day, 90,418 trips, label "null under the pessimistic fill model") is a lower bound and does not establish the C6 null.
+
+Each statement speaks only for the listed members, at the stated sizes, cost model and fills, on the stated window. Section 7's list of claims the program may not make applies to it in full.
+
+### Task 7 — independent verification (Fable xhigh)
+
+NumberVerifier-FableXHigh (worker-xhigh on Fable 5.1, 17:49–18:04) re-computed the verdict-bearing numbers from the output JSONs and the per-member daily series, without importing any strategy.research._d1f_* module (reports/stage_d1f_run_verification.md; scratch script reports/_d1f_run_verify_scratch.py).
+
+| Item | What was re-computed | Verdict |
+|---|---|---|
+| 1 Binding member of every class (C1 A-H4 rth leg, C2 G3.RTH.5, C3 F1_1_h1_RTH, C4 F2_4_15min_vol_tercile_top, C5 E-H1, C6 C-H4, C7 H6) | θ̂, UCB95, SE_boot, p and power by the list 3.1 method: bit-identical (max difference 0.0). An independent stationary bootstrap in the verifier's own code (seed 20260923) agrees within a 4-sd Monte Carlo tolerance (largest z 1.43). | VERIFIED |
+| 1.8 Members within 10% of either boundary | None of the 101 (largest UCB95 9.58, largest SE_boot 7.58). | VERIFIED |
+| 2 Holm | All 58 p-values, ranks and thresholds; smallest p 0.1372 against 0.05/58; rejected set empty. | VERIFIED |
+| 3 Edge record | No member has status "edge". Every Tier A member fails Holm, the composite, DSR and t, and passes only PBO (0.4429); Sharpe variance, the DSR benchmark 0.7912 and the N = 101 figures match. | VERIFIED; the DSR row VERIFIED WITH NOTES: every DSR is Φ(z) with z ≤ −24.4, exactly 0.0 in double precision |
+| 4 Start rule | V_ref 1,763, M* 2020-02, S 2020-02-03, sensitivities 2020-01-02 and 2020-03-02; all 14 reference and 58 extension monthly medians and first trade dates re-computed from the parquets, exactly; the 1,055-date window list identical. | VERIFIED |
+| 5 Class labels | The null condition for all 101 members; C1–C5 and C7 null, C6 inconclusive by list 3.5; no blocking member; E-H3 the only "null by inactivity"; every statement field (class frequency, ε per trade, least active member, largest per-trade UCB95) identical. | VERIFIED |
+| Extras | All 101 members bit-identical on every field; the 37 trial daily series rebuilt from the raw trips (max deviation 2.3e-13; sizes as list 3.1 states); Tier B anomaly BH identical. | VERIFIED |
+
+**No DISCREPANCY.** What the verifier could not or did not re-derive (its notes N4 and N5): the 64 statistics' daily series, because step 7 stores per-date sums and counts but not per-event values (taken as given; the build session's tests reproduce every recorded EDA estimate and per-event value to 1e-9 through the same wrapper), the step-6 continuity check, the composition of the 57 excluded statistic dates, the year slices, the Tier B sign-reversal test and the composite verdicts themselves. None of these can turn a null into a non-null except the statistics' series; the composites and the sign reversal bear only on edge claims and anomalies, which no member reached.
+
+### D.2 discussion items, and items carried forward
+
+- **D.2 discussion items: none.** No member passed confirmation, so there is nothing to discuss for registration and REGISTRATION.md stays 0 bytes.
+- **Holdout-2 calendar, before any D.2 read.** data/cme_calendar.py still lists 2024-07-04 as a full closure. CME's trading-hours service (ES, captured 2024-07-08, reports/stage_d1f_calendar_check.md) gives a 12:00 CT halt, the same pattern corrected here for 2019-2023. It was left alone because it is not a step-4b discrepancy and holdout-2 has no bars that may be read to check it. D.2 should correct it under its own declaration before reading holdout-2. With it corrected, holdout-2 has 259 calendar trade dates, not 258. No 2024 entry after 2024-02-29 has ever been checked against bars.
+- **D.1g.** By list 3.5, the N_C6 = 181 dates are the last 181 confirmation-window dates that are neither roll-blackout nor vendor-degraded: 2023-06-07 to 2024-02-29, the last 181 entries of the step-7 statistic dates. D.1g buys and uses them under its own declaration.
+- **Tests.** The two calendar-build tests named in Task 3 need a follow-up edit (point the verbatim test at both extraction files; skip the end-to-end guard when the real parquet exists).
+- **Calendar grades.** CME schedules now confirm the 12:15 CT closes of 2019-07-03 and 2023-07-03, still graded "inferred"; a later calendar review can upgrade them (a test pins the grade).
+
+### Open choices the lead made on its own
+
+- **R.1 A free quote pass before the pull.** `--d1f-quote-only` ran first and was compared chunk by chunk with the D.1e quotes. Reason: CLAUDE.md requires a quote logged first, and the prompt's stop rule (a quote above $7.59, an unexpected billable size) needs the total before anything is bought; the pull itself gates only per chunk.
+- **R.2 Steps 5 to 8 as four single-step calls.** This is the same code as `--step all`, which loops over the same four `run_step` calls with a fresh preflight each. Reason: each step's output is write-once, so a restarted `--step all` would refuse at step 5; single steps resume cleanly and give per-step times.
+- **R.3 Process counts.** `--processes 6` for step 6 and 3 for step 7, against the runner's default of 12. CLAUDE.md caps jobs at 8 and at half the available memory; the probe (1.76 GB peak for the heaviest member) and step 6's measured ~0.35 GB per worker put 4 workers above half of the ~10 GB available and 3 below it.
+- **R.4 The probe.** C-H1, which is not an H module (R-7), went through step 7's per-member path after step 6 had passed, and its report was discarded unread, so no confirmation figure was seen before continuity and no look was taken.
+- **R.5 The scope of Task 3.** Five entries were changed, and only those. The July 3 entries stayed as they were (confirmed by CME). 2024-07-04 was left as a full closure: it is not a step-4b discrepancy and no bars may be read to check it, so it is carried to D.2. The citations keep the build's settlement status quote and add the CME time quote with the archive URL, graded cme / cme; "empirical" is not an allowed 2019-2024 grade.
+- **R.6 The commit.** On main, exactly the two files, with this repository's attribution lines, and no push: the git anchor d384bfe and every stage commit are on main, and a branch would have left main's harness out of step with the manifest the run outputs record.
+- **R.7 Failed-build artifacts kept.** The summary was copied to reports/stage_d1f_confirmation_build_step4b_failed.json and the parquet moved to data/processed/MES/superseded/; the build refuses to overwrite an existing output, and nothing was deleted.
+- **R.8 Tests not edited.** The two failing calendar-build tests are reported, not fixed, because tests/ lies outside the commit the prompt allows.
+- **R.9 The holdout-2 count** is recorded as 258 from the calendar as it stands (build choice 2.1), with the 2024-07-04 caveat.
+- **R.10 Both statement forms.** The W-1 aggregate sentence, because all six classes are null, and each class's section-1 statement with the section-7 fields joined into the same sentence; both hashes are cited, and none of the phrasings section 7 forbids is used.
+- **R.11 The verifier's brief** covered members near the power boundary (SE_boot within 10% of ε/2.4865) as well as UCB95 near ε, since either boundary decides a member's null.
+
+### Artifacts
+
+- **Purchase and seal:** ledger/databento_spend.jsonl (+284 lines: 71 quotes, then 71 quote, commit and settle triples); docs/HOLDOUT2_MANIFEST.json (new); docs/HOLDOUT_UNLOCK_LOG.md (+13 SEALED records); data/sealed/MES_holdout_v2/ (13 sealed chunks); data/vendor/databento/GLBX.MDP3/ohlcv-1m/MES_v_0/ (the 58 confirmation chunks); data/vendor/databento/rolls/MES_{v,c}_0_2019-04-01_2024-03-01.jsonl; the dataset-condition and symbology files, frozen at fetch.
+- **Build:** data/processed/MES/ohlcv-1m_MES_v_0_2019-05-01_2024-02-29_confirmation.parquet (read-only); reports/stage_d1f_confirmation_build.json; reports/stage_d1f_confirmation_build_step4b_failed.json; data/processed/MES/superseded/ (the failed build's parquet).
+- **Task 3:** data/cme_calendar.py and reports/stage_d1f_harness_freeze.json (commit 14c1007); reports/stage_d1f_calendar_check.{md,json}.
+- **The run:** reports/stage_d1f_step5_start_rule.json, _step6_continuity.json, _step7_list_run.json, _tier_a.json, _tier_b.json, _descriptive_facts.json, _decisions.json.
+- **Tables and verification:** reports/stage_d1f_run_tables.{md,json} with reports/_d1f_run_tables.py; reports/stage_d1f_run_verification.md with reports/_d1f_run_verify_scratch.py.
+- **State:** reports/stage_d1f_run_STATE.md.
+- **Docs:** docs/STAGES.md (one line); this entry.
+- **Commits:** 14c1007 only. Everything else is uncommitted and waits for the user's review.
+
+### Session cost
+
+Computed at the end from this session's transcript (c39a9cf3-de81-44e4-96f7-c074621e99f7.jsonl) and its 3 worker files under c39a9cf3…/subagents/. For each assistant message id, the last streamed record is summed (input + output + cache read + cache creation) and grouped by model. These are raw token counts, not plan-credit percentages. The lead's figure is cut at 18:06 PDT; the entry-writing turns after that are not in it.
+
+**Wall clock.** 16:34–18:07 PDT, with no pause or outage, so all of it is work. The initial estimate (printed at 16:40 PDT) put the end at 19:40 PDT after 3 h 06 min of work, or about an hour later if Task 3 was needed. Task 3 was needed, and the stage still finished well inside the estimate: the probe-sized run took 19 min against the 48 min guessed, and steps 5, 6 and 8 took minutes.
+
+**Final table** (initial estimate at 16:40 PDT: end 19:40 PDT, 3 h 06 min of work; +1 h if Task 3 was needed)
+
+| # | Task | Agent | Model | Effort | Start–end (PDT) | Time | Tokens total / output | Status, deviations |
+|---|---|---|---|---|---|---|---|---|
+| 0 | Startup, preflight, plan | lead | opus | max | 16:34–16:37 | 3 min | (lead row) | done |
+| 1a | Free quote pass | lead (frozen command) | — | — | 16:37–16:41 | 4 min | — | done; added before the pull |
+| 1b | Pull and seal | lead (frozen command) | — | — | 16:41–16:56 | 14.5 min | — | done; $7.586199; 13 chunks sealed |
+| 1c | Rolls, holdout status | lead | — | — | 16:56–16:57 | 1 min | — | done |
+| 2 | Build | lead (frozen command) | — | — | 16:57–16:57 | 0.5 min | — | step 4b failed (12 discrepancies) |
+| 3 | Diagnosis, dry run, ruling, edit, re-freeze, commit | lead | opus | max | 16:58–17:22 | 24 min | (lead row) | done; commit 14c1007 |
+| 3w | Calendar sources | CalendarChecker-OpusXHigh | opus | xhigh | 17:00–17:17 | 17 min | 12,289,326 / 61,450 | done; 9 dates CME-sourced |
+| 2' | Rebuild, preflight | lead (frozen command) | — | — | 17:22–17:22 | 0.5 min | — | step 4b passed |
+| 4a | Step 5, the start rule | lead | — | — | 17:23–17:23 | < 1 min | — | S = 2020-02-03 |
+| 4b | Step 6, continuity | lead | — | — | 17:23–17:25 | 2 min | — | 33 of 33, 0 problems |
+| 4c | Probe | lead | — | — | 17:25–17:27 | 1 min | — | 70.5 s, 1.76 GB; set 3 processes |
+| 4d | Step 7, the list | lead (background) | — | — | 17:27–17:46 | 19 min | — | done; H forced-exit flags as designed |
+| 4e | Step 8, the decisions | lead | — | — | 17:47–17:49 | 2 min | — | not void |
+| 5w | Tabulation | ResultTabulator-SonnetMed | sonnet | medium | 17:49–17:51 | 2.3 min | 1,122,583 / 14,464 | done |
+| 7 | Independent verification | NumberVerifier-FableXHigh | fable | xhigh | 17:49–18:04 | 14.4 min | 3,336,097 / 69,985 | all VERIFIED, one row with notes, no discrepancy |
+| 5, 6 | Reading the result, class statements | lead | opus | max | 17:49–18:04 | 15 min | (lead row) | done |
+| 8 | End guardrails, entry, STAGES.md, Session cost | lead | opus | max | 18:04–18:07 | — | (lead row) | done |
+| L | Lead, whole session | lead | opus | max | 16:33–18:06+ | — | 57,875,683 / 256,838 | orchestration, commands, rulings, checks, writing |
+| **Σ** | **Whole stage** | 3 worker spawns | | | 16:34–18:07 | **all work, no pause** (estimate 3 h 06 min, +1 h with Task 3) | **74,623,689 / 402,737** | lead 57.9M (77.6%), workers 16.7M (22.4%) |
+
+**Tokens per model:**
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-opus-5-5 (lead + CalendarChecker) | 462 | 318,288 | 68,971,990 | 874,269 | 70,165,009 |
+| claude-fable-5-1 (NumberVerifier) | 866 | 69,985 | 3,037,043 | 228,203 | 3,336,097 |
+| claude-sonnet-5 (ResultTabulator) | 26 | 14,464 | 1,004,794 | 103,299 | 1,122,583 |
+| **All** | 1,354 | 402,737 | 73,013,827 | 1,205,771 | **74,623,689** |
+
+**Per worker spawn:** CalendarChecker-OpusXHigh (worker-xhigh, opus, xhigh) 12,289,326; ResultTabulator-SonnetMed (worker-medium, sonnet, medium) 1,122,583; NumberVerifier-FableXHigh (worker-xhigh, fable, xhigh) 3,336,097.
+
+**Delegation share:** lead 57.9M (77.6%), workers 16.7M (22.4%). By tier: opus 70.2M (94.0%: the lead 57.9M, CalendarChecker 12.3M), Fable 3.3M (4.5%), sonnet 1.1M (1.5%). Fable was used once, for the verification the prompt allowed: 3.3M tokens, about a third of the build session's 9.1M. The lead's share is far above the build session's 19.5%, because the work of this stage was running frozen commands and ruling on what they produced, which the prompt reserved for the lead; the lead wrote 256,838 output tokens.

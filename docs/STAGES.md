@@ -52,6 +52,7 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
   Build session run 2026-09-23 (see progress.md): harness built, tested and hash-frozen with no purchase
   (reports/stage_d1f_harness_freeze.json, 129 files, sha256 ba5b34d5…847a; 355 new tests, 0 review blockers;
   N = 31); the purchase and run wait for the user's freeze commit.
+  Run session 2026-09-23 (see progress.md): bought the history ($7.586199), sealed holdout-2 (13 chunks, all_ok), corrected the 2019–2023 Independence Day calendar entries through the step-4b path (commit 14c1007, manifest d3bd21e5…), S = 2020-02-03 (1,055 trade dates); no member passed confirmation (Holm rejects none of 58); C1–C5 and C7 null under docs/NULL_CRITERIA.md (C5 null by inactivity via E-H3), C6 awaits D.1g; independently verified with no discrepancy; N = 58.
 - Stage D.1g — C6, passive execution (planned). Buys N_C6 = 181 full trade-date MBO days chosen by the rule in
   the confirmation list, declares and hashes a queue-position fill model before any P&L, and applies
   the C6 variant of the null criteria to C-H4.

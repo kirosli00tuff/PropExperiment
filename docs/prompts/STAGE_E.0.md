@@ -18,7 +18,8 @@ research supports into a written hypothesis catalog, every member fully
 specified before any price data for the new products exists on this
 machine; (4) drafts the Stage E program design (universe, liquidity
 floor, sizing, epsilon per product, windows, holdouts, multiple-testing
-plan, cost model plan, session plan, spend plan). An independent Fable
+plan, cost model plan, session plan, spend plan, and one pre-registered
+machine-learning member per cluster). An independent Fable
 review audits the catalog and the design. Nothing is frozen, bought or
 registered here. The user reviews the catalog and the design, and Stage
 E.1 freezes them and buys the data.
@@ -378,8 +379,18 @@ carries a small fixed set of MES families as a baseline, the same set
 for every product, chosen by the lead in Task 5 (D6) and counted in N.
 Do not port all 58 D.1f members to every product.
 
-Budget per cluster: at most 15 members including the core port set,
-unless the lead logs why the research supports more. A catalog is not
+The ML member: each cluster's catalog also carries exactly one
+machine-learning member, written to the common protocol the lead sets in
+Task 5 (D15). The CatalogWriter fills in only the cluster-specific parts:
+the products, the feature list (every feature traced to a logged
+mechanism in the cluster's research log, with its availability
+timestamp), and the prediction target. It does not choose the model
+type, the tuning procedure or the trade rule; those are common to all
+eight clusters. Task 5's protocol must exist before the CatalogWriters
+write their ML entries; the lead writes D15 first.
+
+Budget per cluster: at most 15 members including the core port set and
+the ML member, unless the lead logs why the research supports more. A catalog is not
 better for being longer; every member costs power at confirmation.
 
 The lead then has CatalogAssembler-SonnetMed (worker-medium, sonnet)

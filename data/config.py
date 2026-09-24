@@ -45,6 +45,13 @@ STAGE_D1F_SESSION_ID = "stage-D.1f-2026-09"
 D1F_SESSION_CAP_USD = 10.00
 D1F_REQUEST_CAP_USD = 10.00
 
+# Stage E.0 spend policy (set by the E.0 lead on the stage prompt's instruction, 2026-09-23):
+# quotes only.
+# $0.00 caps, so the gate refuses any billable request by construction.
+STAGE_E0_SESSION_ID = "stage-E.0-2026-09-23"
+E0_SESSION_CAP_USD = 0.00
+E0_REQUEST_CAP_USD = 0.00
+
 DATABENTO_KEY_ENV = "DATABENTO_API_KEY"
 DATASET = "GLBX.MDP3"
 

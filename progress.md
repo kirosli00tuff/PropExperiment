@@ -2368,3 +2368,334 @@ Computed at the end from this session's transcript (c39a9cf3-de81-44e4-96f7-c074
 **Per worker spawn:** CalendarChecker-OpusXHigh (worker-xhigh, opus, xhigh) 12,289,326; ResultTabulator-SonnetMed (worker-medium, sonnet, medium) 1,122,583; NumberVerifier-FableXHigh (worker-xhigh, fable, xhigh) 3,336,097.
 
 **Delegation share:** lead 57.9M (77.6%), workers 16.7M (22.4%). By tier: opus 70.2M (94.0%: the lead 57.9M, CalendarChecker 12.3M), Fable 3.3M (4.5%), sonnet 1.1M (1.5%). Fable was used once, for the verification the prompt allowed: 3.3M tokens, about a third of the build session's 9.1M. The lead's share is far above the build session's 19.5%, because the work of this stage was running frozen commands and ruling on what they produced, which the prompt reserved for the lead; the lead wrote 256,838 output tokens.
+
+## 2026-09-23/24 — Stage E.0: CME universe research, hypothesis catalog and program design (no purchase, no data, no freeze)
+
+**The eight clusters of Topstep's CME universe were researched, a 61-member hypothesis catalog was written (170 confirmation trials, projected cumulative N = 228) and a draft Stage E design (D1 to D15) was proposed, all before any price data for a new product existed on this machine, for $0.00 (5,050 free quotes).** D1's liquidity floor was fixed before any census or quote output. It keeps 31 traded exposures and drops NKD, 6M and MET (MET by 0.003 of coverage). The design's staged purchase quotes at $275 to $300, against $28 of headroom under the shared cap, so the user must raise SHARED_ACCOUNT_CAP_USD and fund Databento before E.1. The independent Fable review found 0 blocking and 10 should-fix issues; all ten were fixed and one member was excluded. It re-read 46 logged passages (42 match, 0 misread, 4 unverifiable) and judged the work READY WITH FIXES. C6 is closed by the user's decision, and D.1g will not run. Three limits the plan did not foresee shaped the session:
+- every sonnet-medium research reader failed verification, so research moved to opus;
+- the session's 200 WebSearch calls ran out at about 21:05, so four clusters were researched without them;
+- two usage-limit pauses stopped the session for 6 h 47 min.
+
+Nothing is frozen, bought, registered or committed. The catalog and design are drafts for the user's review.
+
+Lead: Opus 5.5 at max effort. Ultracode off. All times are Vancouver local (PDT). The session ran from 2026-09-23 20:02 (first tool call; the prompt arrived at 19:55) to 2026-09-24 06:25. Two pauses were caused by the usage limit ("You've hit your session limit"): 21:58 to 01:10 and 02:35 to 06:10. Neither counts as work.
+
+### Guardrails
+
+| Check | Start (20:02) | After pause 1 (01:11) | After pause 2 (06:11) | End (06:22) |
+|---|---|---|---|---|
+| holdout-1 (`uv run python -m data.holdout status`) | all_ok true, unlocks_logged 0, research_has_no_holdout_rows true | all_ok, 0 | all_ok, 0 | all_ok true, unlocks_logged 0, research_has_no_holdout_rows true |
+| holdout-2 | sealed 13/13, all_ok true, unlocks_logged 0 | all_ok, 0 | all_ok, 0 | all_ok true, unlocks_logged 0, confirmation_has_no_holdout2_rows true |
+| REGISTRATION.md | 0 bytes | — | — | 0 bytes |
+| Databento ledger | 451 lines, shared $91.592247 | — | — | 5,501 lines. Lines 452-5,501 are 5,050 `quote` events under stage-E.0-2026-09-23, every `usd` 0.0, session committed $0.00, shared total unchanged at $91.592247 |
+| E.0 caps (data/config.py, appended) | `STAGE_E0_SESSION_ID = "stage-E.0-2026-09-23"`, `E0_SESSION_CAP_USD = 0.00`, `E0_REQUEST_CAP_USD = 0.00`; `SHARED_ACCOUNT_CAP_USD` unchanged at 120.00 | — | — | unchanged |
+| Data for new products | none | — | — | none: data/vendor/databento/GLBX.MDP3/ohlcv-1m/ holds only MES_v_0 |
+| MES bars, rules/, live/, ops/, sim/, screening/, funnel/, strategy/, TopstepX | untouched | — | — | untouched (`git diff --stat` shows nothing there); no TopstepX call, no credential |
+| docs/NULL_CRITERIA.md, reports/stage_d1f_confirmation_list.md | untouched | — | — | untouched |
+| git | clean at 2124910 | — | — | no commit; changes listed under Artifacts |
+
+The quote module cannot download. data/quote_universe.py installs raising guards on the client's `timeseries` and `batch` namespaces before any vendor call, and it calls only `SpendGate.quote`, never `authorize`, `commit` or `settle`. tests/test_quote_universe.py has 44 tests, all passing. They prove on a temporary ledger that the gate refuses a billable request under the $0.00 caps, and that the module source has no data call. The full suite after the change: 940 passed, 1 xfailed, and exactly the 2 known failures carried from D.1f. One side effect: data/config.py is inside the D.1f harness-freeze manifest, so `d1f_freeze_check()` now reports it as changed. D.1f is finished and D.1g will not run, so nothing depends on that manifest.
+
+### Task 1 — Topstep facts and public liquidity
+
+Topstep facts are in reports/stage_e0_topstep_facts.{md,json}: 15 pages first, then a curl-based follow-up for the star, verbatim payout and API text, holidays and lot counts. Against the constraints the stage prompt listed:
+- **Confirmed verbatim:**
+  - the 15:10 CT close and the 15:08 CT start of Risk Manager flattening;
+  - the 50K limit of 5 minis or 50 micros, with XFA scaling starting at 2 lots;
+  - limit orders fill only on trade-through: "the market has to trade through your price - not just touch it";
+  - the prohibited SIM patterns, including "Making hundreds of rapid trades to take advantage of preferential queue position in SIM" and "hundreds or thousands of trades per day, with average durations measured in seconds, not minutes";
+  - positions closed 15 minutes before any early close;
+  - payout caps of $2,000 (standard) and $3,000 (consistency) at 50K, doubled by the Daily Loss Limit option ($1,000 at 50K);
+  - a personal device only (no VPS, VPN or remote server), no sandbox, and the HFT prohibition.
+- **Differs from the prompt: news.** There is no blackout window. "Topstep doesn't require you to flatten positions during economic releases - in SIM or Funded Accounts". What is prohibited is "Purposefully trading your full Maximum Position Size directly into a scheduled major news event". One rule covers the Combine and the XFA.
+- **Differs: the stars.** MES, MNQ, M2K, MYM, M6E, M6A, 6M, MBT, MET, MCL, MGC and SIL are now starred, and MBT and MET are listed under equity futures. The star points to Topstep's "Risk Adjustments: High Risk/High Volatility" article, which sets two rules:
+  - a CPI window: "No new opening transactions permitted during the 10-minute window surrounding the release" for NQ, RTY, YM, GC, SI, HG and PL, and micros limited to 3 contracts on the 50K;
+  - discretionary volatility caps on the 50K: MCL and MGC 30; SIL and MHG 2; CL, QM, RB, HO and GC 3; SI, HG and PL 0.
+
+  **M6E and M6A are starred but named on no page, so their restriction is unresolved.**
+- **New and material:**
+  - "Live funded accounts are not allowed to trade through the ProjectX API", so the bot can run on the Combine and the XFA only.
+  - Grains trade 19:00-07:45 and 08:30-13:20 CT, with a 07:45-08:30 pause in which "No orders accepted". Livestock trade 08:30-13:05 CT.
+  - Prohibited Conduct forbids "Holding a position within 2% of a product's price lock limit". Topstep's own article (fetched by the lead) defines it as "Stop trading when % Net Change approaches the limit minus 2%", with limits calculated from the prior settlement.
+- **Not published:**
+  - a per-product restriction list keyed to the star;
+  - separate Combine and XFA news rules;
+  - the XFA scaling tiers as text (they are an image);
+  - how QM, QG and the E-micro FX contracts count against the lot limit.
+- **Commissions:** Topstep's all-in round-turn figures per product, for example MNQ $1.22, MCL $1.52 ($1.72 from 2026-10-01), ZN $2.62, 6E $4.22, GC $4.32, MGC $1.92, ZC $5.28 and MBT $2.82.
+
+The liquidity census is in reports/stage_e0_liquidity.{md,json}. The first census (sonnet) failed verification: cmegroup.com blocked this machine, and it got 9 of 50 ADV figures, all from search summaries. The opus rerun got:
+- tick specifications for 50 of 50;
+- open interest for 50 of 50, as of 22 September 2026;
+- ADV for 50 of 50 from CME's own August 2026 monthly ADV report (2026 January-August year to date), plus a 2025 full-year figure for 11.
+
+### Task 2 — free quotes (reports/stage_e0_quotes.{md,json}; data/quote_universe.py)
+
+5,050 quotes, all at $0.00, in three sets:
+- **Set A**, the history: ohlcv-1m monthly chunks from 2019-05-01 to an exclusive end of 2026-06-21, for 50 products, 4,295 quotes. The 158 failures are all months before a micro existed: MCL before 2021-06, MNG before 2023-10, MHG before 2022-04, MBT before 2021-04 and MET before 2021-11.
+- **Set B**, the spread-calibration sample: mbp-1 and tbbo for five full trade dates, 500 quotes. The dates were fixed at 20:10 PDT, before any quote, as the five D.1e sampled for MES: 2025-05-14, 2025-08-13, 2025-11-12, 2026-02-11 and 2026-04-15. They lie inside the research window and clear of both holdouts and the embargo.
+- **Set C**, the coverage proxy: ohlcv-1m over each product's declared day-session window on those dates, 250 quotes.
+
+| Cluster | ohlcv-1m 2019-05..2026-06 | mbp-1 sample | tbbo sample |
+|---|---|---|---|
+| K1 equity index (8) | $69.13 | $32.19 | $19.46 |
+| K2 rates (6) | $48.56 | $5.26 | $2.84 |
+| K3 FX (12) | $90.41 | $4.38 | $1.74 |
+| K4 energy (8) | $50.15 | $2.86 | $2.18 |
+| K5 metals (7) | $53.71 | $5.49 | $4.62 |
+| K6 ags and livestock (7) | $31.85 | $0.77 | $0.95 |
+| K7 crypto (2) | $7.28 | $1.61 | $0.40 |
+| **Universe (50)** | **$351.10** | **$52.56** | **$32.19** |
+
+The staged purchase for the 31 exposures D1 keeps (MES bars, already owned, serve as the S&P leg):
+
+| Step | Cost |
+|---|---|
+| Research window of every admissible contract | $58.42 |
+| mbp-1 calibration sample | $46.35 |
+| Confirmation plus holdout-2 history, one vehicle per exposure | $170.39 to $195.55 |
+| **Total** | **$275.16 to $300.32** |
+
+### Task 3 — research per cluster (reports/stage_e0_research_K1..K8.md; reports/stage_e0_partition.md; reports/stage_e0_source_registry.jsonl)
+
+The partition was written before dispatch at 20:15. It sets product ownership, a region per cluster, a shared append-only source registry, rules for panel sources and announcements, and routes every cross-cluster item to K8. It is recorded as having worked with minor slips: the K6 reader read one K4-region item (K6-046, crude only), and two registry lines were edited in place (K3 run 1 and K7-026). Readers used the D.1 pre-filter and citation rules, plus a retrieval standard the lead tightened at 20:32: a search summary is never retrieved text, full text is required for every passed item, and there is no effort-based stopping.
+
+| Cluster | Reader that produced the accepted log | Screened | Passed | Full text | Abstract only | Blocked / title only | [unverified] | K8 flags |
+|---|---|---|---|---|---|---|---|---|
+| K1 equity index | opus high, without WebSearch | 27 passed + 95 rejection rows | 27 | 15 | 12 | the same 12 blocked | 24 | 2 |
+| K2 rates | sonnet medium, resumed once | 21 in depth | 19 unique (22 ids) | 15 | 6 | — | 13 | 1 |
+| K3 FX | sonnet, then an opus continuation | about 90 | 45 ids | 24 | 15 | 6 title only | not counted | 4 |
+| K4 energy | opus rerun (the sonnet log is kept as _sonnet_shallow) | about 305 | 43 | 22 | 18 | 3 | 49 | 13 |
+| K5 metals | sonnet, then an opus continuation | about 200 | 31 unique | 17 | 8 | 6 | not counted | 7 |
+| K6 ags and livestock | opus high, WebSearch gone from 21:05 | about 2,300 records | 49 | 34 | 14 | 1 | 23 | 9 |
+| K7 crypto | opus high, without WebSearch | about 115 | 42 | 24 | 17 | 1 | 44 | 12 |
+| K8 cross-cluster | opus high, without WebSearch | 47 routed flags + about 650 listing lines | 7 | 5 | 3 | — | 20 | all 47 routed flags dispositioned |
+
+Every accepted log stopped on its container rule (at least 4 logged queries per container, with the last 2 empty); none reached the 60-read cap. The strongest mechanisms, in the lead's reading of the logs by evidence quality:
+- **K2:** the Treasury auction cycle's intraday V-shaped pressure around the auction (NY Fed SR 1188, verified to the page); the FOMC post-announcement response; month-end index-extension flows.
+- **K3:** the fix trades on CME futures. Krohn, Mueller and Whelan (JF 2024) find 6E around the ECB fix positive after the full spread, and 6B and 6J negative. There is also the Tokyo fix and gotobi-day evidence (Ito and Yamada). Against the London fix: the FCA's study finds the post-fix reversal gone after 2015.
+- **K4:** EIA crude and natural-gas storage announcements (Halova, Kurov and Kucher; Prokopczuk and co-authors; Gu and Kurov), an API-to-EIA predictor, and pre-release natural-gas drift. For the drift, the authors' own post-2011 null is stated.
+- **K5:** LBMA auction effects (Caminschi and Heaney, with Crain and co-authors on both sides after 2015), FOMC on gold, and hourly overreaction reversal.
+- **K6:** USDA report timing. Volatility spikes 5 to 60 minutes after in-session releases, mostly with no systematic direction. Also the soybean crush opening reversal and limit-close continuation.
+- **K7:** expiry-day settlement pressure (reversed after 2021 in a later study), 2-hour reversal and Monday trend. CME's 24/7 crypto trading since 2026-05-29 was verified from CME's own release.
+- **K1:** little beyond the MES record: a VXN band fade (abstract only) and VWAP trend-following on the Nasdaq-100 (cost-fragile). The log also records the non-survivors: a VIX-futures lead, ICT's pattern and two MNQ ML studies, all null in their own sources.
+- **K8:** thin. Flight to gold after equity crashes (abstract only) and crude to CAD, which its source calls weak evidence.
+
+### Task 4 — the hypothesis catalog (reports/stage_e0_catalog.{md,json}; reports/stage_e0_catalog_K1..K8.md)
+
+| Cluster | New | Core ports | ML | Active members | Confirmation trials | Excluded by the writer | Lead actions |
+|---|---|---|---|---|---|---|---|
+| K1 equity index | 2 | 3 | 1 | 6 | 12 | 21 | K1-predrift-01 excluded (MES's E family re-run on the Dow) |
+| K2 rates | 5 | 3 | 1 | 9 | 45 | 9 | CP2 entry window amended |
+| K3 FX | 6 | 3 | 1 | 10 | 32 | 16 | K3-ldnmom-01 narrowed from 6 exposures to EUR and JPY; K3-ldnrev-01 window fixed (review R-05) |
+| K4 energy | 5 | 3 | 1 | 9 | 20 | 19 | K4-ngrev-01 excluded (review R-06); CP2 buffer fixed |
+| K5 metals | 4 | 3 | 1 | 8 | 21 | 17 | K5-preauc-01 narrowed to gold and silver; ML fallback set |
+| K6 ags and livestock | 4 | 3 | 1 | 8 | 28 | 18 | crushgap on ZS only; limitcont on HE and LE only; K6-ovr-01 excluded |
+| K7 crypto | 3 | 3 | 1 | 7 | 7 | 18 | — |
+| K8 cross-cluster | 3 | 0 | 1 | 4 | 5 | 14 | — |
+| **Total** | **32** | **21** | **8** | **61** | **170** | **132** | 4 members excluded or removed by the lead |
+
+The confirmation trials split into 96 port trials (3 per traded exposure), 66 new-member trials and 8 ML trials. **Projected cumulative N = 58 + 170 = 228.** The 384 ML grid configurations (48 per cluster) are reported beside the ML members and counted only in the research-window accounting (D15.8).
+
+The writers' most common exclusion reasons were:
+- proprietary consensus data (analyst surveys, the API bulletin);
+- holding past 15:08 CT;
+- the trade-rate floor (lead-lag that resolves in seconds);
+- multi-leg spreads that break the 1-lot cap;
+- dependence on CME's weekend closure, which ended 2026-05-29;
+- no directional result in the evidence;
+- insufficient evidence;
+- sentiment, which is shelved.
+
+Fifteen members carry the "source-overlap" label (review R-04). Members on starred products carry the star rules. Every lead change is a bracketed note in its entry, and the original text stays visible.
+
+### Task 5 — the design draft (docs/STAGE_E_DESIGN.md and docs/NULL_CRITERIA_E.md, both DRAFT)
+
+- **D1 universe:** the rule was fixed at 20:10, before any output. An exposure is IN if its most active contract has public ADV of at least 10,000 and day-session one-minute coverage of at least 0.95. Its input period was changed at 21:02, before any ADV value was read, to CME's 2026 January-August ADV for every product; the review judged the change legitimate and verdict-neutral. Result: 31 exposures in, and NKD, 6M and MET out. The S&P exposure is a leg only.
+- **D2 vehicle and size:** risk-matched to MES at 2 micros ($360.68 of mean absolute day-session move), capped at 1 lot-equivalent under the news rule, with a risk ratio of at most 2.0. The vehicle is the candidate with the lowest cost per unit of risk, chosen in E.2 on research-window data.
+- **D3 epsilon:** min(floor($85 / (q x tick value)), the product's own funnel-derived figure, computed in E.2). If no funnel cell passes, the translated figure is used and flagged.
+- **D4 windows:** MES's calendar for every product (research 2025-04-01..2026-06-19, confirmation S..2024-02-29, embargo March 2024, holdout-2 sealed on arrival). Holdout-1 is not bought for new products. Per-product start rule; a power check, with an "inconclusive by design" label declared before the run; legs start at their own S; the union of the legs' roll blackouts is excluded.
+- **D5 multiple testing:** Tier A is set by a research-window screen (mean > 0, t >= 1.0), and the ML member takes the same screen. Holm runs within each cluster at 0.05/K; the edge conditions are unchanged from D.1f.
+- **D6 core port set:** CP1 intraday momentum (F3.3(a)), CP2 opening-range breakout (B-H1 hold 75, entries in [O+15, C), buffer of 4 ticks of the most active contract) and CP3 prior-close location (H6). The ports are literal, only the clock and the tick change, and the MES record is stated correctly in D6 (review R-02).
+- **D7 criteria:** a per-cluster statement with a per-exposure resolution table, plus the "inconclusive by design" and "source-overlap" rules. The forbidden claims now cover every asset class and account.
+- **D8 costs:** Topstep's round-turn commission plus a slippage table per 30-minute bucket from the mbp-1 sample, with a depth term. An event window, [release, release + 30 min), pays the product's largest bucket.
+- **D9 Topstep constraints:**
+  - flatten times per group (15:08; grains 13:18 and before the pause; livestock 13:03; early closes 15 minutes before);
+  - trade-through for limit orders;
+  - the floor: at most 20 entries a day, a 2-minute minimum hold, 10 minutes mean;
+  - the 1-lot cap;
+  - the event-minute fill guard;
+  - the volatility caps and the CPI window;
+  - the 2% price-limit rule, with Topstep's formula, precedence over the fill guard, and locked-market exits not filled until the market trades through (review R-08);
+  - the deployment notes: personal device, no sandbox, no API on the LFA.
+- **D10 calendars:** one per product group, with CME citations, plus the 2024-07-04 fix and the crypto regime split at 2026-05-29.
+- **D11:** the E.2 build list.
+- **D12 sessions:** E.1 (3-4 h), E.2a and E.2b (8-12 h each), then a screening and a confirmation session per cluster, in the order K4, K5, K2, K3, K6, K7, K1, K8. K1 and K7 are optional.
+- **D13 spend:** as quoted in Task 2. Proposed caps: each session's quote plus 10%, and $3.00 per request.
+- **D14 carried items:** the two failing calendar-build tests and the 2024-07-04 entry, both to be fixed in E.2.
+- **D15 ML protocol:** LightGBM regression; one vehicle with declared fallbacks; up to 12 features (5 common, 7 per cluster), each traced to a logged mechanism with its availability time; horizon from {15, 30, 60, 120}; a nested walk-forward in the research window only, over a 48-configuration grid listed in full, with purge and embargo; one refit, then frozen; trade when |y_hat| >= m x cost; one trial at confirmation.
+
+### Task 7 — C6 closed, D.1g not run (docs/DECISIONS.md, docs/STAGES.md)
+
+This is recorded as the user's decision of 2026-09-23: C6, passive execution, is closed as non-deployable on the XFA, and Stage D.1g will not run. Each reason carries its Topstep source verbatim:
+- limit orders fill only on trade-through, the model D.1f already applied to C-H4 (UCB95 −177.18 net ticks per micro per day over 90,418 trips);
+- the prohibition on exploiting queue position in SIM.
+
+The entry says plainly that this is a scope decision, not a null. docs/STAGES.md marks D.1g NOT RUN with a pointer to the decision, and adds the Stage E outline (E.0; E.1 freeze and purchase; E.2 build; then the cluster sessions, all planned). The old "Stage E — Practice-account forward test" is renumbered Stage F.
+
+### Task 6 — independent review, and Task 8 — rulings (reports/stage_e0_review.md, reports/stage_e0_review_rulings.md)
+
+CatalogAuditor-FableXHigh (Fable 5.1, xhigh; 02:27 to 06:19, with the pause excluded) returned 0 BLOCKING, 10 SHOULD FIX and 18 NOTE, verdict READY WITH FIXES. It re-read 46 passages, re-fetching 15 sources itself: 42 match, 0 misread, 4 unverifiable. It found no look-ahead, no Topstep conflict, nothing that needed price data, and no result-driven narrowing. All ten SHOULD FIX findings were ruled on:
+- R-01: the ML member's Tier A membership now has one definition.
+- R-02: the CP1 wording on MES is corrected (MES confirmed the reversal-signed F3.3 as null; the ported momentum form is untested on MES's confirmation).
+- R-03: CP1 on livestock is the first-30-minute form by the same rule text.
+- R-04: the source-overlap label is applied to 15 members, and unrecorded windows count as overlap.
+- R-05: K3-ldnrev-01 now uses the source's 10-minute pre-fix window.
+- R-06: K4-ngrev-01 is excluded; its own source contradicts its central step.
+- R-07: the K4-cp2-01 buffer is fixed.
+- R-08: locked-market exits are no longer simulated as fills.
+- R-09: every ML member declares its fallback vehicles now.
+- R-10: the stale K6 text is marked superseded.
+
+One NOTE was also acted on: D3 now has a rule for when no funnel cell passes. The review was not re-run.
+
+### Decisions the user must make before Stage E.1
+
+1. Raise SHARED_ACCOUNT_CAP_USD (to about $400 for the whole plan), fund Databento (about $33 of credit left against $275 to $300), and approve per-session caps.
+2. D1: the thresholds, and whether to re-admit MET (coverage 0.947) or NKD (whose most active hours are Tokyo's).
+3. D2: the risk target and band, the 1-lot cap, and the long bonds (ZB, UB) if they exceed the band.
+4. D3: min(translated, funnel-derived) versus the funnel figure alone.
+5. D4: leave holdout-1 unbought for new products; allow full-size bars (BTC for MBT) as a price path only if a power check fails.
+6. D5: the alpha split across clusters and the t >= 1.0 screen.
+7. D6: the three ports.
+8. D7: the "inconclusive by design" exception and the "source-overlap" rule.
+9. D8: mbp-1 only, and five dates.
+10. D9: clear or reject the unresolved star on M6E and M6A (until then they are not D2 candidates); the platinum suspension risk; whether Topstep's "Unfair technology - using software, AI ..." clause could be read against a frozen ML model.
+11. D12: whether K1 and K7 get sessions.
+12. D15: the model type, the grid, and counting each ML member as one trial.
+13. Every member's judgment parameters (thresholds, windows, holds), and the NOTEs carried to E.1 (R-15, R-24, R-28).
+14. The commit of this session's files (the planning chat commits after the review).
+
+### Delegation record
+
+| Task | Agent | Model / effort | Outcome | Deviation |
+|---|---|---|---|---|
+| 0, 3p, 5, 7, 8, entry | lead | opus max | done | — |
+| 1 | TopstepFacts-SonnetMed (+ follow-up, resumed) | sonnet medium | done; F12 follow-up found the star's referent | follow-up added |
+| 1b | LiquidityCensus-SonnetMed | sonnet medium | failed verification | promoted |
+| 1b | LiquidityCensus2-OpusHigh | opus high | accepted | promotion |
+| 2 | QuoteCoder-OpusHigh | opus high | 44 tests pass; no vendor call | — |
+| 2 run | lead (background) | — | 5,050 quotes, $0.00 | — |
+| 3 K4 | ClusterReader-K4-SonnetMed | sonnet medium | failed (shallow, search summaries) | promoted |
+| 3 K4 | ClusterReader-K4b-OpusHigh | opus high | accepted | promotion |
+| 3 K5 | ClusterReader-K5-SonnetMed | sonnet medium | partial (stopped on a cost notice) | continued on opus |
+| 3 K5 | ClusterReader-K5b-OpusHigh | opus high | accepted | promotion |
+| 3 K2 | ClusterReader-K2-SonnetMed (resumed once) | sonnet medium | accepted after resume | resumed |
+| 3 K3 | ClusterReader-K3-SonnetMed | sonnet medium | failed (under-queried) | continued on opus |
+| 3 K3 | ClusterReader-K3b-OpusHigh | opus high | accepted | promotion |
+| 3 K6, K1, K7, K8 | ClusterReader-K#-OpusHigh | opus high | all accepted; K6, K1, K7 resumed after pause 1 | routed to opus (was sonnet medium in the plan) |
+| 4 x8 | CatalogWriter-K#-OpusXHigh | opus xhigh | 8 catalogs | — |
+| 4 | CatalogAssembler-SonnetMed | sonnet medium | assembled, counts checked by script | — |
+| 6 | CatalogAuditor-FableXHigh (resumed after pause 2) | fable xhigh | READY WITH FIXES | — |
+
+At most four workers ran at once. Fable was used once, for Task 6.
+
+### Deviations from the plan, with reasons
+
+1. **Research moved from sonnet medium to opus high.** All four sonnet readers failed verification on the first pass. K4 logged search summaries as retrieved text and stopped after 12 minutes "for the time allotted at this worker's effort level". K5 and K2 stopped on the harness's informational cost notices. K3 misstated its stopping rule. Per CLAUDE.md, a sonnet worker failing "more than occasionally on a class of task" moves that class to opus. The routing table's "complex extraction: sonnet medium" line does not hold for literature research with retrieval, and CLAUDE.md should be updated for research readers (user's call).
+2. **The liquidity census was promoted to opus** after its sonnet run failed.
+3. **Tool budgets ran out.** Firecrawl credits ran out at 20:52. The session's 200 WebSearch calls ran out at about 21:05; raising it needs `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`, which was not done because the run was unattended. OpenAlex and Crossref limits were hit at about 21:17. K6, K7, K1 and K8 were researched with free scholarly APIs and curl only, so their coverage is thinner and more items are abstract-only behind SSRN and publisher blocks. **Recommendation: raise the WebSearch cap for research-heavy stages.**
+4. **Two usage-limit pauses.** Three readers and the auditor were resumed from their transcripts, and no finished work was lost.
+5. **ETA.** The estimate table was printed before the first spawn, with the research rows marked as guesses. The planned probe (K4's first container) was invalidated by the shallow run, and the research rows were re-sized from the opus reruns.
+6. **The lead fetched Topstep's 2% article itself** (one curl call) to answer a catalog question the facts file did not cover.
+7. **The lead edited catalog entries** to apply its rulings, as bracketed notes in the cluster files and in the assembled copy.
+8. **Hygiene.** Two registry lines were edited in place, against the append-only rule. Several registry DOIs and author names are wrong, with corrections in the logs. The K7 reader saved an arXiv response (ax4.xml) in the repository root; the lead moved it to the scratchpad. The lead first wrote ruling times of 06:40 to 06:50 into the notes from memory instead of the clock; they were corrected to 06:20.
+
+### Open choices the lead made on its own
+
+- O-1: the old "Stage E" forward test was renumbered Stage F.
+- O-2: the D1 thresholds, the declared day-session windows and the calibration dates (the D.1e MES dates), all fixed before any output.
+- O-3: D1's input period (2026 January-August ADV for all products).
+- O-4: the S&P exposure is closed and appears only as a leg; owned MES bars serve as that leg.
+- O-5: the core port set and its forms, and CP2's entry window and buffer.
+- O-6: the 1-lot cap drawn from the news rule, with D2 amended for it.
+- O-7: the event-minute fill guard and the event-window cost.
+- O-8: the 2% price-limit rule as Topstep defines it, its precedence over the fill guard, and locked-market exits.
+- O-9: member narrowings and exclusions on the writers' questions (K3-ldnmom-01, K5-preauc-01, three in K6, K1-predrift-01), which the review judged not result-driven.
+- O-10: a staged purchase, with holdout-1 not bought for new products.
+- O-11: D5's tiers, screen and alpha split.
+- O-12: the "source-overlap" and "inconclusive by design" rules.
+- O-13: ownership rulings (K3-001 stays in K3; K6-032 stays in K6).
+- O-14: the routing change to opus for research.
+- O-15: quote sets B and C in their stated form (both mbp-1 and tbbo; day-session windows).
+
+### Artifacts
+
+- **Design:** docs/STAGE_E_DESIGN.md and docs/NULL_CRITERIA_E.md (both new, DRAFT). docs/DECISIONS.md and docs/STAGES.md are edited (C6, Stage E outline, this session's line).
+- **Code:** data/quote_universe.py and tests/test_quote_universe.py (new); data/config.py (E.0 block appended).
+- **Ledger:** ledger/databento_spend.jsonl (+5,050 `quote` lines, $0.00).
+- **Reports:**
+  - reports/stage_e0_STATE.md
+  - reports/stage_e0_partition.md
+  - reports/stage_e0_source_registry.jsonl
+  - reports/stage_e0_topstep_facts.{md,json}
+  - reports/stage_e0_liquidity.{md,json}, and _liquidity_sonnet_failed.{md,json}
+  - reports/stage_e0_quotes.{md,json}, reports/stage_e0_quote_run.log, reports/stage_e0_symbology.json
+  - reports/stage_e0_research_K1..K8.md, and the superseded _K3_sonnet_partial, _K4_sonnet_shallow and _K5_sonnet_partial
+  - reports/stage_e0_catalog_K1..K8.md, reports/stage_e0_catalog.{md,json}
+  - reports/stage_e0_review.md, reports/stage_e0_review_rulings.md
+- **No commit.**
+
+### Session cost
+
+These figures were computed from this session's transcript (ddaec527-9d48-4509-b368-c2e3eb443675.jsonl) and its 25 worker transcripts under ddaec527…/subagents/. For each assistant message id, the last streamed record is summed (input, output, cache read and cache creation) and grouped by model. They are token counts, not plan-credit percentages, and they are cut at 06:22 PDT, so the entry-writing turns after that are not included. For comparison only, the harness's own dollar notice at 06:22 read "session total ~$511.12".
+
+**Wall clock.** The session ran 20:02 to 06:25 (10 h 23 min). The two usage-limit pauses (21:58-01:10 and 02:35-06:10, 6 h 47 min) are not work, which leaves **about 3 h 36 min of work**. The initial estimate, printed before the first spawn, was about 12 h of work ending at 08:05. Research went faster than guessed once it was on opus, and catalogs took about 20 minutes each.
+
+**Tokens per model:**
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-opus-5-5 (lead and opus workers) | 4,182 | 2,833,481 | 613,045,141 | 10,741,708 | 626,624,512 |
+| claude-sonnet-5 | 716 | 358,648 | 63,418,527 | 1,788,382 | 65,566,273 |
+| claude-fable-5-1 (auditor) | 740 | 116,141 | 9,088,467 | 1,925,724 | 11,131,072 |
+| **All** | 5,638 | 3,308,270 | 685,552,135 | 14,455,814 | **703,321,857** |
+
+**Delegation share:** lead 89.0M (12.7%), workers 614.3M (87.3%). By tier: opus 626.6M (89.1%), sonnet 65.6M (9.3%), Fable 11.1M (1.6%). The opus research readers alone used 458.7M (65% of the session): K4b 95.0M, K6 81.2M, K3b 58.1M, K7 57.7M, K5b 57.4M, K8 41.1M, K1 37.6M and Census2 30.5M. This is roughly nine times D.1f's whole session (74.6M), and its main cost is the research-on-opus routing plus heavy tool use (every fetch re-reads a growing context). Fable was used once, 11.1M.
+
+**Final table.** Worker times are the first and last records of each transcript; resumed agents show their working spans.
+
+| # | Task | Agent | Model | Effort | Start–end (PDT) | Time | Tokens total / output | Status |
+|---|---|---|---|---|---|---|---|---|
+| 0 | Startup, context, partition, D1 rule, STATE, ETA | lead | opus | max | 20:02–20:16 | 14 min | (lead row) | done |
+| 1 | Topstep facts (+ follow-up 21:52–21:56) | TopstepFacts-SonnetMed | sonnet | medium | 20:14–20:23 | 9 + 4 min | 7,110,441 / 68,628 | done |
+| 1b | Liquidity census | LiquidityCensus-SonnetMed | sonnet | medium | 20:14–20:24 | 10 min | 1,392,080 / 40,487 | failed verification |
+| 1b' | Liquidity census rerun | LiquidityCensus2-OpusHigh | opus | high | 20:31–21:00 | 29 min | 30,511,112 / 92,205 | accepted |
+| 2 | Quote module and tests | QuoteCoder-OpusHigh | opus | high | 20:15–20:27 | 12 min | 2,472,142 / 52,262 | done |
+| 2r | Probe, quote run, report | lead (background) | — | — | 20:30–21:24 | 54 min | — | done, $0.00 |
+| 3 | K4 research | ClusterReader-K4-SonnetMed | sonnet | medium | 20:15–20:28 | 13 min | 7,939,760 / 46,137 | failed |
+| 3 | K4 rerun | ClusterReader-K4b-OpusHigh | opus | high | 20:31–21:24 | 53 min | 95,021,821 / 193,252 | accepted |
+| 3 | K5 research | ClusterReader-K5-SonnetMed | sonnet | medium | 20:25–20:38 | 13 min | 10,060,924 / 37,609 | partial |
+| 3 | K5 continuation | ClusterReader-K5b-OpusHigh | opus | high | 20:50–21:27 | 37 min | 57,436,023 / 155,657 | accepted |
+| 3 | K2 research (resumed once) | ClusterReader-K2-SonnetMed | sonnet | medium | 20:25–20:50 | 25 min | 25,415,725 / 86,167 | accepted |
+| 3 | K3 research | ClusterReader-K3-SonnetMed | sonnet | medium | 20:39–20:49 | 10 min | 8,645,300 / 41,621 | failed |
+| 3 | K3 continuation | ClusterReader-K3b-OpusHigh | opus | high | 20:51–21:24 | 33 min | 58,122,615 / 150,720 | accepted |
+| 3 | K6 research | ClusterReader-K6-OpusHigh | opus | high | 21:20–21:58, 01:10–01:22 | 50 min | 81,193,424 / 176,199 | accepted |
+| 3 | K1 research | ClusterReader-K1-OpusHigh | opus | high | 21:25–21:58, 01:10–01:22 | 45 min | 37,609,843 / 126,600 | accepted |
+| 3 | K7 research | ClusterReader-K7-OpusHigh | opus | high | 21:26–21:58, 01:10–01:20 | 42 min | 57,690,230 / 163,423 | accepted |
+| 3 | K8 research | ClusterReader-K8-OpusHigh | opus | high | 01:23–01:56 | 33 min | 41,125,560 / 122,413 | accepted |
+| 4 | Catalog K2 | CatalogWriter-K2-OpusXHigh | opus | xhigh | 21:01–21:18 | 17 min | 8,270,313 / 110,178 | done |
+| 4 | Catalog K4 | CatalogWriter-K4-OpusXHigh | opus | xhigh | 21:27–21:51 | 24 min | 10,169,257 / 151,493 | done |
+| 4 | Catalog K3 | CatalogWriter-K3-OpusXHigh | opus | xhigh | 01:12–01:35 | 23 min | 8,939,246 / 141,415 | done |
+| 4 | Catalog K5 | CatalogWriter-K5-OpusXHigh | opus | xhigh | 01:20–01:42 | 22 min | 9,973,379 / 149,698 | done |
+| 4 | Catalog K6 | CatalogWriter-K6-OpusXHigh | opus | xhigh | 01:24–01:46 | 22 min | 6,098,391 / 148,021 | done |
+| 4 | Catalog K7 | CatalogWriter-K7-OpusXHigh | opus | xhigh | 01:36–01:58 | 22 min | 12,138,242 / 145,789 | done |
+| 4 | Catalog K1 | CatalogWriter-K1-OpusXHigh | opus | xhigh | 01:43–02:04 | 21 min | 12,442,425 / 131,780 | done |
+| 4 | Catalog K8 | CatalogWriter-K8-OpusXHigh | opus | xhigh | 01:57–02:20 | 23 min | 8,426,909 / 158,604 | done |
+| 4a | Assembly | CatalogAssembler-SonnetMed | sonnet | medium | 02:21–02:27 | 6 min | 5,002,043 / 37,999 | done |
+| 6 | Independent review | CatalogAuditor-FableXHigh | fable | xhigh | 02:27–02:35, 06:10–06:19 | 17 min | 11,131,072 / 116,141 | READY WITH FIXES |
+| 5, 7, 8 | Design, C6, rulings, entry | lead | opus | max | throughout; rulings 06:19–06:22; entry 06:22–06:25 | — | (lead row) | done |
+| P1 | Pause (usage limit) | — | — | — | 21:58–01:10 | 3 h 12 min | — | not work |
+| P2 | Pause (usage limit) | — | — | — | 02:35–06:10 | 3 h 35 min | — | not work |
+| L | Lead, whole session | lead | opus | max | 20:02–06:25 | — | 88,983,580 / 463,772 (to 06:22) | orchestration, design, rulings, entry |
+| **Σ** | **Whole stage** | 25 worker transcripts | | | 20:02–06:25 | **about 3 h 36 min of work** (estimate: 12 h) | **703,321,857 / 3,308,270** | lead 12.7%, workers 87.3% |

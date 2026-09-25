@@ -1,5 +1,11 @@
 # Stage E.0 hypothesis catalog, cluster K5 (metals: GC, MGC, SI, SIL, HG, MHG, PL)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K5-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U2: platinum (PL) is OUT, as a traded exposure and as a signal leg (Topstep's 50K volatility cap for PL is 0 and PL has no micro). Every statement below that makes platinum a traded exposure is struck through with a [U2] note; descriptive platinum facts (auction clock times, fees, Topstep's quoted text, question texts) are kept for the record and bind nothing. U9 (review R-28): K5-preauc-01's trial count is 2, as the 01:47 ruling set it.
+> **K5 after the decisions: 7 active members, 16 confirmation trials** (4 new + 3 core ports; 9 port + 7 new trials). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K5-OpusXHigh (Stage E.0 Task 4), 2026-09-24, from 01:23 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 
@@ -70,12 +76,12 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
 
 | Item | Value |
 |---|---|
-| Products | GC, MGC, SI, SIL, HG, MHG (COMEX); PL (NYMEX) |
-| Exposures | gold {GC, MGC}; silver {SI, SIL}; copper {HG, MHG}; platinum {PL} (partition section 1) |
-| D1 | **D1 applied: all four K5 exposures IN; platinum flagged (may be suspended).** Admissible vehicles, 2026 Jan-Aug ADV (design D1 table): gold MGC 429,702 and GC 212,764; silver SIL 134,882 and SI 83,587; copper HG 77,679 and MHG 21,803; platinum PL 22,360 |
-| Members | **8 = 4 new + 3 core ports + 1 ML member.** Budget 15, so 7 slots are unused (section 3) |
-| Trials in N (confirmation) | **22 if D2 admits all four exposures:** 12 port + 9 new + 1 ML. In general 4E + 3a_G + a_S + a_P + 1, where E is the number of admitted exposures and a_G, a_S, a_P are 1 when gold, silver or platinum is admitted (the ML member assumes gold, section 7 item 7). Each exposure of K5-preauc-01 also needs its member-level coverage check (C14) |
-| ML grid | 48 configurations, counted only in the K5 screening session's research-window accounting (D15.8) |
+| Products | GC, MGC, SI, SIL, HG, MHG (COMEX); ~~PL (NYMEX)~~ [OUT, U2] |
+| Exposures | gold {GC, MGC}; silver {SI, SIL}; copper {HG, MHG}; ~~platinum {PL}~~ [OUT, U2] (partition section 1) |
+| D1 | **D1 applied: all four K5 exposures IN; platinum flagged (may be suspended).** [U2, 2026-09-24: platinum OUT by the user's decision; three K5 exposures are traded.] Admissible vehicles, 2026 Jan-Aug ADV (design D1 table): gold MGC 429,702 and GC 212,764; silver SIL 134,882 and SI 83,587; copper HG 77,679 and MHG 21,803; platinum PL 22,360 |
+| Members | **8 = 4 new + 3 core ports + 1 ML member.** [E.1: 7 = 4 new + 3 core ports; K5-ml-01 excluded, U6.] Budget 15, so 7 slots are unused (section 3) |
+| Trials in N (confirmation) | ~~**22 if D2 admits all four exposures:** 12 port + 9 new + 1 ML.~~ [E.1. U9 (review R-28): after the 01:47 ruling put K5-preauc-01 at 2 trials the figure was 21 = 12 port + 8 new + 1 ML. After U2 and U6: **16 if D2 admits gold, silver and copper: 9 port + 7 new**; in general 4E + 3a_G + a_S, where E counts admitted exposures among gold, silver and copper. The E.0 formula follows.] In general 4E + 3a_G + a_S + a_P + 1, where E is the number of admitted exposures and a_G, a_S, a_P are 1 when gold, silver or platinum is admitted (the ML member assumes gold, section 7 item 7). Each exposure of K5-preauc-01 also needs its member-level coverage check (C14) |
+| ML grid | ~~48 configurations, counted only in the K5 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Starred products | **MGC and SIL** (Topstep F1). The star's referent is Topstep's "Risk Adjustments: High Risk/High Volatility" article (D9.8, F12.1), encoded as D9.11 and D9.12. **MGC:** volatility cap 30 contracts on the 50K account, so the 1-lot cap of 10 binds first; at most 3 contracts in an opening fill inside the CPI window. **SIL:** volatility cap 2 contracts, which binds, since D2's 1-lot cap would allow 5; the same CPI-window cap of 3; counts 0.2 lot. MHG is unstarred but the same article names it: cap 2 contracts, CPI-window cap 3 |
 | Suspension risk (D9.11) | "Silver (SI) = 0; ... Copper (HG) = 0; ... Platinum (PL) = 0" at Topstep's discretion in extreme volatility (F12.1). D2 prefers SIL and MHG whenever they are candidates. **Platinum has no micro and may be suspended in volatile periods**; every platinum trial carries that flag |
 | CPI window (D9.12) | No opening fill on GC, SI, HG or PL in [CPI - 5 min, CPI + 5 min] = [07:25, 07:35] CT (CPI 08:30 ET, C9). Such an entry is skipped for the day, not deferred. On MGC, SIL and MHG an opening fill in the window is at most 3 contracts. Only K5-cp2-01 on copper can open inside the window (C11) |
@@ -123,7 +129,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   | SIL* | 0.2 | 5 | 2 | **2** |
   | HG | 1 | 1 | 0 at Topstep's discretion | 1 (may be suspended) |
   | MHG | 0.1 | 10 | 2 | **2** |
-  | PL | 1 | 1 | 0 at Topstep's discretion | 1 (may be suspended) |
+  | ~~PL~~ [OUT, U2] | ~~1~~ | ~~1~~ | 0 (Topstep F12.1c) | — |
 
 - **C7 Ticks and fees.** Ticks are from reports/stage_e0_liquidity.json (CME contract specifications,
   fetched 2026-09-23 20:48 PDT). Round turns are Topstep F3.
@@ -279,8 +285,8 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
 
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-02: this entry's statement that the family was null on MES is corrected. MES's confirmation tested the reversal-signed F3.3 statistics (s = -1, reports/stage_d1f_confirmation_list.md) and found them null; the momentum form ported here, the literature's form, was negative on MES's mined window and is untested on MES's confirmation. The port is kept; D6 carries the corrected wording.]
 - **Cluster** K5. **Products read:** the traded exposure's own vehicle only.
-- **Traded exposures** (each a separate trial): gold {GC, MGC}, silver {SI, SIL}, copper {HG, MHG},
-  platinum {PL}. Each is traded only if D2 admits it. **Vehicle:** D2 (chosen in E.2).
+- **Traded exposures** (each a separate trial): gold {GC, MGC}, silver {SI, SIL}, copper {HG, MHG}
+  ~~, platinum {PL}~~ [U2: platinum OUT]. Each is traded only if D2 admits it. **Vehicle:** D2 (chosen in E.2).
 - **Mechanism:** port of MES Family F3.3(a), the Gao-Han-Li-Zhou / Baltussen form (class C3; D.1 log A10
   and A28; reports/stage_d1b_family_f_declaration.md F3.3), as fixed in D6 row CP1.
   - **D6 rule text, verbatim:** "Signal: sign of (close of the bar at O+29 min minus open of the trade
@@ -301,7 +307,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   | gold | 07:20 / 12:30 / 15:08 | 07:49 (known 07:50) | 11:59, 12:00 | 12:28, 12:29 | 29 min |
   | silver | 07:20 / 12:25 / 15:08 | 07:49 | 11:54, 11:55 | 12:23, 12:24 | 29 min |
   | copper | 07:10 / 12:00 / 15:08 | 07:39 | 11:29, 11:30 | 11:58, 11:59 | 29 min |
-  | platinum | 07:20 / 12:05 / 15:08 | 07:49 | 11:34, 11:35 | 12:03, 12:04 | 29 min |
+  | ~~platinum~~ [OUT, U2] | ~~07:20 / 12:05 / 15:08~~ | ~~07:49~~ | ~~11:34, 11:35~~ | ~~12:03, 12:04~~ | ~~29 min~~ |
 
   - **Holding horizon:** 29 minutes on every exposure.
   - **Session window:** the entry-to-exit rows above. Flat at least 2 h 39 min before F (gold's 12:29).
@@ -329,11 +335,11 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   9. Price limit: C13.
 - **Data needed:** ohlcv-1m of each admitted K5 vehicle over the research window 2025-04-01..2026-06-19
   and the confirmation window S_X..2024-02-29 (D4). No external data.
-- **Trials in N:** 1 per admitted exposure (at most 4).
+- **Trials in N:** 1 per admitted exposure (at most 3 after U2; E.0: at most 4).
 
 ### K5-cp2-01 (core port CP2, opening-range breakout)
 - **Cluster** K5. **Products read:** own vehicle.
-- **Exposures:** gold, silver, copper, platinum, one trial each, each traded only if D2 admits it.
+- **Exposures:** gold, silver, copper ~~, platinum~~ [U2: platinum OUT], one trial each, each traded only if D2 admits it.
   **Vehicle:** D2 (chosen in E.2).
 - **Mechanism:** port of MES B-H1 hold 75 (class C2;
   strategy/research/b_reference_breakout/h1_friction_aware_opening_range_breakout.py, hold_minutes = 75), as
@@ -353,7 +359,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   | gold | [07:20, 07:35) | opening in [07:35, 12:30) | MGC tick 0.10, so 0.40 | GC $40, MGC $4 | 07:36 / 12:30 | 13:45 |
   | silver | [07:20, 07:35) | [07:35, 12:25) | SIL tick 0.005, so 0.020 | SI $100, SIL $20 | 07:36 / 12:25 | 13:40 |
   | copper | [07:10, 07:25) | [07:25, 12:00) | HG tick 0.0005, so 0.0020 | HG $50, MHG $5 | 07:26 / 12:00 | 13:15 |
-  | platinum | [07:20, 07:35) | [07:35, 12:05) | PL tick 0.10, so 0.40 | PL $20 | 07:36 / 12:05 | 13:20 |
+  | ~~platinum~~ [OUT, U2] | ~~[07:20, 07:35)~~ | ~~[07:35, 12:05)~~ | ~~PL tick 0.10, so 0.40~~ | ~~PL $20~~ | ~~07:36 / 12:05~~ | ~~13:20~~ |
 
   - **Entry:** the first eligible bar whose close is >= OR_high + buffer buys; one whose close is <= OR_low -
     buffer sells. One entry per trade date.
@@ -382,11 +388,11 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   8. Position and volatility caps: C6.
   9. Price limit: C13.
 - **Data needed:** ohlcv-1m of the admitted vehicles, research and confirmation windows.
-- **Trials in N:** 1 per admitted exposure (at most 4).
+- **Trials in N:** 1 per admitted exposure (at most 3 after U2; E.0: at most 4).
 
 ### K5-cp3-01 (core port CP3, prior-close location)
 - **Cluster** K5. **Products read:** own vehicle.
-- **Exposures:** gold, silver, copper, platinum, each traded only if D2 admits it. **Vehicle:** D2 (chosen in
+- **Exposures:** gold, silver, copper ~~, platinum~~ [U2: platinum OUT], each traded only if D2 admits it. **Vehicle:** D2 (chosen in
   E.2).
 - **Mechanism:** port of MES H6 (class C7; reports/stage_d1f_confirmation_list.md 2.1 A3 row H6;
   strategy/research/h_daily_bar/h6_prior_close_location.py), as fixed in D6 row CP3.
@@ -409,7 +415,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   | gold | [07:20, 12:30) | 12:29 | 07:20, 07:21 | 12:28, 12:29 | 308 min |
   | silver | [07:20, 12:25) | 12:24 | 07:20, 07:21 | 12:23, 12:24 | 303 min |
   | copper | [07:10, 12:00) | 11:59 | 07:10, 07:11 | 11:58, 11:59 | 288 min |
-  | platinum | [07:20, 12:05) | 12:04 | 07:20, 07:21 | 12:03, 12:04 | 283 min |
+  | ~~platinum~~ [OUT, U2] | ~~[07:20, 12:05)~~ | ~~12:04~~ | ~~07:20, 07:21~~ | ~~12:03, 12:04~~ | ~~283 min~~ |
 
   CLV is computed with Range[d-1] > 0. CLV >= 0.8 buys; CLV <= 0.2 sells.
   - **Holding horizon:** 283-308 minutes, by exposure (table).
@@ -432,7 +438,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   8. Caps: C6.
   9. Price limit: C13.
 - **Data needed:** ohlcv-1m of the admitted vehicles, research and confirmation windows.
-- **Trials in N:** 1 per admitted exposure (at most 4).
+- **Trials in N:** 1 per admitted exposure (at most 3 after U2; E.0: at most 4).
 
 ### K5-preauc-01 (short into the LBMA auctions held outside US trading hours)
 - **Cluster** K5. **Products read:** the traded exposure's vehicle; EC-LBMA; EC-UKBH; EC-CAL.
@@ -524,10 +530,10 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   9. Price limit: C13.
   - Also C14: each window lies outside D1's coverage window, and platinum's 03:15-03:44 is the likeliest
     to fail the member-level check.
-- **Data needed:** ohlcv-1m of the gold, silver and platinum vehicles over 03:00-07:00 CT and the fills'
+- **Data needed:** ohlcv-1m of the gold and silver ~~and platinum~~ [U2: platinum OUT] vehicles over 03:00-07:00 CT and the fills'
   buckets, in the research and confirmation windows. D8 needs slippage buckets for 03:00-07:00 CT. External:
   EC-LBMA, EC-UKBH, EC-CAL.
-- **Trials in N:** 3 (one per exposure).
+- **Trials in N:** ~~3 (one per exposure)~~ 2 (gold and silver, one each, as the 01:47 ruling set it; text fixed in Stage E.1 under U9, review R-28).
 
 ### K5-pmfix-01 (gold PM auction: continuation of the auction's first two minutes)
 - **Cluster** K5. **Products read:** the gold vehicle; EC-LBMA; EC-UKBH; EC-CAL.
@@ -708,7 +714,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
 
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-04: labelled SOURCE-OVERLAP (same source and sample as K4-ovr-01, 2019-11-20 to 2020-06-03). K4-ovr-01 and K5-ovr-01 must carry one identical rule text (review R-24); E.1 checks it before hashing.]
 - **Cluster** K5. **Products read:** each traded exposure's own vehicle; EC-CAL.
-- **Traded exposures** (each a separate trial; each only if D2 admits it): gold, silver, platinum and copper.
+- **Traded exposures** (each a separate trial; each only if D2 admits it): gold, silver ~~, platinum~~ and copper [U2: platinum OUT].
   - These are the K5 exposures in the source's sample: "gold (GC), silver (SI), platinum (PL), palladium
     (PA), copper (HG)" (P-K5-029-b).
   - **Vehicle:** D2 (chosen in E.2).
@@ -737,8 +743,8 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
     energy (its [K4] passages). The judgments below are made independently, and where they coincide with
     K4's the entry says so, so that the lead can keep the source tested the same way across clusters.
 - **Decision times:** t = O + 60k for k = 1, 2, ... while t <= C (D6 rows). Gold and silver: 08:20, 09:20,
-  10:20, 11:20, 12:20 (five). Copper: 08:10, 09:10, 10:10, 11:10 (four). Platinum: 08:20, 09:20, 10:20,
-  11:20 (four).
+  10:20, 11:20, 12:20 (five). Copper: 08:10, 09:10, 10:10, 11:10 (four). ~~Platinum: 08:20, 09:20, 10:20,
+  11:20 (four).~~ [U2: platinum OUT.]
 - **Signal:** r(t) = (close of the bar at t - 1 minus open of the bar at t - 60) / open of the bar at t -
   60, the return over the hour [t - 60, t). Both bars must exist with one instrument_id.
 - **Reference set and cuts.**
@@ -755,7 +761,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
 - **Exit rule:** market intent on the bar at t + 58, filling at the open of the bar at t + 59. At most one
   position is open. The next decision's entry fills at t + 60, so positions never overlap.
 - **Holding horizon:** 59 minutes. **Session window:** gold and silver 08:20-13:19; copper 08:10-12:09;
-  platinum 08:20-12:19. Flat by F.
+  ~~platinum 08:20-12:19~~ [U2: platinum OUT]. Flat by F.
 - **Data fields read:** vehicle ohlcv-1m open, close and instrument_id (C8), all closed at or before t, and
   earlier trade dates; EC-CAL. Paid; history 2019-05 on (MHG 2022-05, C8).
 - **Order type:** market. **Sizing:** q_c.
@@ -793,10 +799,14 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   7. CPI window: the first fill is 08:10, outside it.
   8. Caps: C6. Platinum may be suspended.
   9. Price limit: C13.
-- **Data needed:** ohlcv-1m of all four admitted vehicles, research and confirmation windows.
-- **Trials in N:** 1 per admitted exposure (at most 4).
+- **Data needed:** ohlcv-1m of all ~~four~~ three [U2] admitted vehicles, research and confirmation windows.
+- **Trials in N:** 1 per admitted exposure (at most 3 after U2; E.0: at most 4).
 
 ### K5-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
+
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
 
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: the 01:47 fallback ruling (gold, then silver, then copper) governs; this entry's "No fallback is declared" is superseded; KF1-KF3 and KF5 remain gold-event features whichever metal becomes the vehicle.]
 - **Traded vehicle: the gold exposure** {GC, MGC}; the contract is chosen by D2 in E.2. [Lead ruling, 01:47 PDT, question 6: fallback order if D2 does not admit gold: silver, then copper; the features stay as written, reading silver bars (an IN exposure) whether or not silver is traded.]
@@ -1002,17 +1012,18 @@ passage or registry tag elsewhere.
 
 | Member | Exposures (max) | Grid points | Trials in N (all four admitted) |
 |---|---|---|---|
-| K5-cp1-01 | gold, silver, copper, platinum | 1 | 4 |
-| K5-cp2-01 | gold, silver, copper, platinum | 1 | 4 |
-| K5-cp3-01 | gold, silver, copper, platinum | 1 | 4 |
+| K5-cp1-01 | gold, silver, copper ~~, platinum~~ [U2] | 1 | 3 (E.0: 4) |
+| K5-cp2-01 | gold, silver, copper ~~, platinum~~ [U2] | 1 | 3 (E.0: 4) |
+| K5-cp3-01 | gold, silver, copper ~~, platinum~~ [U2] | 1 | 3 (E.0: 4) |
 | K5-preauc-01 | gold (AM), silver (platinum removed by the lead) | 1 | 2 |
 | K5-pmfix-01 | gold | 1 | 1 |
 | K5-fomc-01 | gold | 1 | 1 |
-| K5-ovr-01 | gold, silver, platinum, copper | 1 | 4 |
-| K5-ml-01 | gold (fallback silver, then copper: lead ruling) | 48 in research-window accounting only (D15.8) | 1 |
-| **Cluster total** | | | **22** = 12 port + 9 new + 1 ML. In general 4E + 3a_G + a_S + a_P + 1. Without platinum: 17. Gold only: 8 |
+| K5-ovr-01 | gold, silver ~~, platinum~~ [U2], copper | 1 | 3 (E.0: 4) |
+| ~~K5-ml-01~~ [excluded, U6] | gold (fallback silver, then copper: lead ruling) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
+| **Cluster total** | | | ~~**22** = 12 port + 9 new + 1 ML. In general 4E + 3a_G + a_S + a_P + 1. Without platinum: 17. Gold only: 8~~ [E.1: U9 (R-28) corrects the E.0 figure to 21 after the 01:47 ruling; after U2 and U6: **16** = 9 port + 7 new. In general 4E + 3a_G + a_S. Gold only: 7] |
 
 The "without platinum" figure: 3 x 3 ports + 3 ovr + 2 preauc + 1 pmfix + 1 fomc + 1 ML = 17.
+[E.1: with platinum OUT (U2) and K5-ml-01 excluded (U6): 9 + 3 + 2 + 1 + 1 = 16.]
 
 ---
 
@@ -1030,7 +1041,7 @@ The "without platinum" figure: 3 x 3 ports + 3 ovr + 2 preauc + 1 pmfix + 1 fomc
    (08:30 ET) is also among Elder's largest-impact releases for gold and silver (P-K5-014-a), but its
    schedule source was not confirmed (census.gov 404). Should E.2 source it and add it?
 3. **K5-preauc-01 rests on one abstract** (a practitioner SSRN paper, window and magnitude unverified).
-   - It costs 3 trials.
+   - It costs 3 trials. [E.1, U9 (review R-28): 2 trials after the 01:47 ruling.]
    - Platinum's window (03:15-03:44 CT, or 04:15-04:44 in 5-hour weeks) is the likeliest to fail the
      member-level coverage check (C14).
    - The lead may cut it, or keep gold and silver only.
@@ -1048,7 +1059,7 @@ The "without platinum" figure: 3 x 3 ports + 3 ovr + 2 preauc + 1 pmfix + 1 fomc
    against P-K5-006-f and P-K5-006-g).
 7. **K5-ml-01 has no fallback exposure.** Its features are gold-specific. It also needs silver bars (KF6)
    even if silver is not admitted, which E.2 must add to D13's purchase.
-8. **Platinum.**
+8. **Platinum.** [Decided by the user, U2, 2026-09-24: platinum is OUT.]
    - PL has no micro and "Platinum (PL) = 0" is possible at Topstep's discretion (D9.11). Every platinum
      trial carries the "may be suspended" flag.
    - Platinum carries 3 ports + K5-preauc-01 + K5-ovr-01 = 5 trials.

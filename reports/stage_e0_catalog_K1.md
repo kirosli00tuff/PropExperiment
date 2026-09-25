@@ -1,5 +1,11 @@
 # Stage E.0 hypothesis catalog, cluster K1 (equity index: MNQ, NQ, M2K, RTY, MYM, YM)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K1-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U3: K1 runs only if the user decides, after K7, that it is needed; its members stay in the frozen catalog so that a later K1 session is pre-registered.
+> **K1 after the decisions: 5 active members, 11 confirmation trials** (2 new + 3 core ports; 9 port + 2 new trials). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K1-OpusXHigh (Stage E.0 Task 4), 2026-09-24, from about 01:30 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 
@@ -78,7 +84,7 @@ was downloaded. Saved copies are in the session scratchpad under fetch/, not in 
 | **D1 applied: NKD out; S&P leg only** | NKD fails D1(a) (7,969) and D1(b) (0.621), so no member trades or reads it. ES and MES are closed (D1.5). MES bars, already owned, appear only as a signal leg in K1-ml-01, and only on research-window and confirmation-window dates, never holdout dates. No member trades ES or MES |
 | Members | **7 = 3 new + 3 core ports + 1 ML member.** The budget is 15 (at most 11 new), so 8 slots are unused (section 3) |
 | Trials in N (confirmation) | **13 if D2 admits all three exposures:** 9 port + 3 new + 1 ML. In general 3E + 3a_N + a_D, where E is the number of admitted exposures and a_N, a_D are 1 if the Nasdaq-100 and the Dow are admitted |
-| ML grid | 48 configurations, counted only in the K1 screening session's research-window accounting (D15.8) |
+| ML grid | ~~48 configurations, counted only in the K1 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Starred products and the rules that apply | **MNQ, M2K, MYM** are starred (F1). Their referent is Topstep's "Risk Adjustments: High Risk/High Volatility" article (F12.1), which names them, and D9.8 encodes it through D9.11 and D9.12. So, unlike M6E and M6A, they stay D2 candidates. **D9.12 CPI window:** opening transactions in [CPI - 5 min, CPI + 5 min] are limited to 3 contracts on MNQ, M2K and MYM, and are not allowed at all on NQ, RTY and YM. CPI is released at 07:30 CT, so the window is 07:25-07:35 CT. No K1 member fills before 08:31 CT, so the window never binds (checked in every entry). **D9.11:** no equity-index position figure is published. The same page says "Trading on mini-sized contracts or larger may be temporarily halted for affected products" (F12.1), a deployability risk if D2 picks NQ, RTY or YM (section 7) |
 | D2 | Every entry says "D2 (chosen in E.2)". Within each exposure, the micro and the mini quote the same index in the same tick size in points (C7), so a rule makes the same decisions on either vehicle; only size, cost and tick value differ. Every entry is **traded only if D2 admits the exposure** |
 
@@ -689,6 +695,10 @@ was downloaded. Saved copies are in the session scratchpad under fetch/, not in 
 
 ### K1-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
 
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
+
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: fallback order declared now (D1 table, 2026 Jan-Aug ADV): Nasdaq-100, then Russell 2000, then Dow; if none is admitted, no ML member. The features are unchanged (they read their named products as signals).]
 - **Traded vehicle: Nasdaq-100 exposure** {MNQ, NQ}; D2 chooses the contract in E.2.
   - **Reason:** most of the log's intraday evidence is on the Nasdaq-100:
@@ -912,7 +922,7 @@ D.1 rows the K1 log cites.
 | K1-vxnband-01 | Nasdaq-100 | 1 | 1 |
 | K1-vwap-01 | Nasdaq-100 | 1 | 1 |
 | K1-predrift-01 | EXCLUDED by the lead (02:15) | - | 0 |
-| K1-ml-01 | Nasdaq-100 (no fallback) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K1-ml-01~~ [excluded, U6] | Nasdaq-100 (no fallback) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **13** = 9 port + 3 new + 1 ML. In general 3E + 3a_N + a_D. Without the Dow: 9. Nasdaq-100 only: 6 |
 
 The cumulative program N before Stage E is 58 (design, standing inputs). K1's confirmation trials

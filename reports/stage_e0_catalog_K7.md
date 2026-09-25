@@ -1,5 +1,11 @@
 # Stage E.0 hypothesis catalog, cluster K7 (crypto: MBT traded; MET as a signal leg only)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K7-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U1: MET stays OUT; it may serve only as a signal leg under D9's member-level coverage check.
+> **K7 after the decisions: 6 active members, 6 confirmation trials** (3 new + 3 core ports; 3 port + 3 new trials). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K7-OpusXHigh (Stage E.0 Task 4), 2026-09-24, from 01:41 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 
@@ -86,7 +92,7 @@ confirm session times, methodology and data-source availability. No mechanism re
 | D2 | Vehicle "D2 (chosen in E.2)". The only candidate is MBT at q = 1 (the 1-lot-equivalent cap; Topstep "Micro Bitcoin (MBT): Capped at mini-equivalent lot sizes, not standard micro scaling", F5.4). Bitcoin is traded only if MBT's rho = r_MBT / R* <= 2.0 at q = 1 (measured in E.2). If rho > 2.0, no K7 member trades |
 | Members | **7 = 3 new + 3 core ports + 1 ML member.** The budget is 15, so 8 slots are unused (section 3). The cluster is thin, and nothing is padded |
 | Trials in N (confirmation) | **7** if D2 admits bitcoin (3 port + 3 new + 1 ML); 0 otherwise |
-| ML grid | 48 configurations, counted only in the K7 screening session's research-window accounting (D15.8) |
+| ML grid | ~~48 configurations, counted only in the K7 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Starred product | **MBT\*** (F1.9). Its referent is Topstep's "Risk Adjustments: High Risk/High Volatility" page (F12.1). That page bans MBT only in the small Challenge tiers: "In the $3K Challenge, you cannot trade MHG, MET, MBT, or SIL" (the same for the $1.5K Challenge). It sets no MBT restriction for the 50K XFA. The page's volatility caps name energies and metals only, and its CPI-window rules name other products. **For the 50K XFA the star imposes nothing beyond F5.4's mini-equivalent weighting**, so q = 1 MBT = 1 lot-equivalent. Whether a volatility halt of "mini-sized contracts or larger" could reach MBT is [unverified]; that is a deployment question, not a design one |
 | 24/7 CME crypto trading | **Verified in this task.** CME's 1 June 2026 release says 24/7 trading "went live on Friday, May 29" (2026-05-29, from 16:00 CT per the 19 Feb release). The K7 log carried this as K7-036, unverified. See the next row and C3 |
 | Effect on the windows | **Research window** 2025-04-01..2026-06-19: the program trade dates 2026-06-01..2026-06-19 (15 of about 305, the last three weeks) come after the change. From 2026-05-29 16:00 CT, the MBT data contain weekend bars and weekday 16:00-16:59 CT bars, which did not exist before. Under the program's trade-date convention (C3) none of them belongs to a program trade date, and no K7 member reads them. D2's risk measure (day session) and D8's five cost-sample dates (2025-05-14..2026-04-15) are unaffected. **Confirmation window** (S_X..2024-02-29) and **holdout-2** (2024-04..2025-03) are entirely pre-change. **Forward deployment is entirely post-change**, and TopstepX itself stays closed "Friday close 3:10 PM CT (closed till Sunday at 5:00 PM)" (F4, page read 2026-09-23). A K7 confirmation result therefore describes the pre-change regime (section 7, items 1 to 3) |
@@ -688,6 +694,10 @@ confirm session times, methodology and data-source availability. No mechanism re
 - **Trials in N:** 1.
 
 ### K7-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
+
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
 - **Traded vehicle: the bitcoin exposure {MBT}**, the contract chosen by D2 in E.2 (MBT is the only
   admissible one).
   - **Reason:** it is the only traded K7 exposure (D1), and every intraday item in the K7 log concerns
@@ -923,7 +933,7 @@ which K7-035 is a blocked stub). No `[K7]`-tagged passage exists in any other lo
 | K7-expiry-01 | bitcoin | 1 | 1 |
 | K7-rev2h-01 | bitcoin | 1 | 1 |
 | K7-montrend-01 | bitcoin | 1 | 1 |
-| K7-ml-01 | bitcoin (no fallback) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K7-ml-01~~ [excluded, U6] | bitcoin (no fallback) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **7** = 3 port + 3 new + 1 ML. **0** if D2 does not admit bitcoin |
 
 If the user re-admits MET (borderline at 0.947), ether would add 3 port trials. No new member here

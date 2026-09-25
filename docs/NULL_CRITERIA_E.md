@@ -1,6 +1,8 @@
 # Stage E null criteria
 
-STATUS: DRAFT (Stage E.0, 2026-09-23, lead). Not frozen, not hashed. It generalizes
+FROZEN by Stage E.1 on 2026-09-24, manifest reports/stage_e1_freeze.json
+
+~~STATUS: DRAFT (Stage E.0, 2026-09-23, lead). Not frozen, not hashed.~~ It generalizes
 docs/NULL_CRITERIA.md (the MES criteria, frozen, sha256
 6f69e318c96edf0a58956856c881ec3e1b8c68d89e1c836b3d54cfbf0e3497e2) from one product and seven classes
 to eight clusters and their products. docs/NULL_CRITERIA.md is not edited and stays the MES record.
@@ -71,7 +73,9 @@ the statement as not covered and does not block the others (as C6 was handled fo
   blocks, pinned to the program's functions. A passing member goes to the user as a discussion item
   for a registered final read; no cluster session registers anything.
 - ML members (D15): one trial each, tested exactly like any member with its frozen model (sha256 in
-  the list); the 48-configuration research-window grid is reported beside it.
+  the list); the 48-configuration research-window grid is reported beside it. [U6, 2026-09-24:
+  superseded; the catalog has no ML member. Rules found by the Stage E ML route are pre-registered
+  and tested as ordinary members (docs/STAGE_E_ML_DESIGN.md).]
 - Source overlap (added 2026-09-24 01:52 PDT, on CatalogWriter-K6's question 9): every member records
   its sources' data windows. A member whose supporting source's sample overlaps its confirmation
   window was chosen partly on evidence from that window, so its confirmation is not fully out of
@@ -79,7 +83,12 @@ the statement as not covered and does not block the others (as C6 was handled fo
   statement as usual, but an edge on it cannot be claimed, or discussed for a final read, unless the
   sealed holdout read (holdout-2, and holdout-1 once bought) confirms it under a registration.
   E.1 records every member's source windows before hashing; a member whose source window is not
-  recorded is treated as source-overlap (ruling on review R-04, 2026-09-24).
+  recorded is treated as source-overlap (ruling on review R-04, 2026-09-24). [E.1, 2026-09-24, audit
+  FA-06: the windows were NOT recorded in E.1 (no user decision asked for it, and recording them
+  would edit members). By this rule, every member whose entry records no source window is
+  source-overlap as frozen; reports/stage_e1_freeze_rulings.md lists the members this may cover.
+  Whether windows may be recorded later, from the research logs and before the cluster's screening
+  session reads any bar, is the user's decision.]
 
 ## 4. Data-quality rules (fixed now, applied later, never revised)
 

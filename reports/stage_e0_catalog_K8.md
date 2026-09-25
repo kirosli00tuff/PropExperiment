@@ -1,5 +1,11 @@
 # Stage E.0 hypothesis catalog, cluster K8 (cross-cluster relationships)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K8-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U3: K8 runs last.
+> **K8 after the decisions: 3 active members, 4 confirmation trials** (3 new, no ports; K8-flight-01 2, K8-oilcad-01 1, K8-wkndbtc-01 1). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K8-OpusXHigh (Stage E.0 Task 4), 2026-09-24, about 02:00-02:45 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 
@@ -69,8 +75,8 @@ CatalogWriters fetched and quoted:
 |---|---|
 | Cluster | K8, cross-cluster relationships. Each member has a signal leg in one of K1-K7 and a traded leg in another (partition section 3) |
 | Members | **4 = 3 new + 1 ML member. No core ports in K8** (K8 has no products of its own; the ports live in K1-K7). The budget is 15, so 11 slots are unused. The log is thin: 7 items passed, of which 3 are abstract-only and 2 carry no direction. Nothing is padded (section 3) |
-| Trials in N (confirmation) | **5 if D2 admits gold, CAD and the Nasdaq-100.** K8-flight-01 2 (exit grid), K8-oilcad-01 1, K8-wkndbtc-01 1, K8-ml-01 1. In general 2a_G + 2a_C + a_N, where each a is 1 if D2 admits that exposure |
-| ML grid | 48 configurations, counted only in the K8 screening session's research-window accounting (D15.8) |
+| Trials in N (confirmation) | **5 if D2 admits gold, CAD and the Nasdaq-100.** K8-flight-01 2 (exit grid), K8-oilcad-01 1, K8-wkndbtc-01 1, ~~K8-ml-01 1~~ [U6: excluded; K8 has 4 trials]. In general 2a_G + 2a_C + a_N, where each a is 1 if D2 admits that exposure |
+| ML grid | ~~48 configurations, counted only in the K8 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Traded legs used | gold {GC, MGC\*} (K5); CAD {6C} (K3); Nasdaq-100 {MNQ\*, NQ} (K1). Each is traded only if D2 admits the exposure. The vehicle is "D2 (chosen in E.2)" throughout |
 | Signal legs used | S&P 500 on MES bars (K1; a leg only, D1.5; owned, non-holdout dates). WTI crude on the crude exposure's price-path series (K4). Bitcoin on MBT bars (K7). No member reads NKD, 6M or MET |
 | Statement unit | NULL_CRITERIA_E section 8. Each member is stated under K8 only. Its eps is the traded leg's exposure's eps_X, and it enters K8's own Holm family (D5). Its window is the intersection of its legs' windows (D4) |
@@ -603,6 +609,10 @@ CatalogWriters fetched and quoted:
 
 ### K8-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
 
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
+
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: 6C only; if 6C is not admitted, no ML member (the mechanism is crude to CAD).]
 - **Traded vehicle: CAD {6C}.** Traded only if D2 admits CAD.
   - **Why CAD:** it is the exposure the K8 log supports most.
@@ -824,7 +834,7 @@ and R-K8-071.
 | K8-flight-01 HEOD | gold (K5) | S&P 500 on MES (K1) | 1 | gold eps_X | same | none |
 | K8-oilcad-01 | CAD (K3) | crude (K4) | 1 | CAD eps_X | [max(S_crude, S_CAD), 2024-02-29] | none |
 | K8-wkndbtc-01 | Nasdaq-100 (K1) | bitcoin on MBT (K7) | 1 | Nasdaq-100 eps_X | [max(S_MBT, S_Nasdaq), 2024-02-29], with S_MBT >= 2021-05-03 | **source-overlap** |
-| K8-ml-01 | CAD (K3) | crude (K4); S&P 500 on MES (K1) | 1 (48 in screening accounting) | CAD eps_X | [max(S_CAD, S_crude, 2020-02-03), 2024-02-29] | none |
+| ~~K8-ml-01~~ [excluded, U6] | CAD (K3) | crude (K4); S&P 500 on MES (K1) | 0 (E.0: 1 (48 in screening accounting)) | ~~CAD eps_X~~ | ~~[max(S_CAD, S_crude, 2020-02-03), 2024-02-29]~~ | none |
 | **K8 total** | | | **5** if D2 admits gold, CAD and the Nasdaq-100 (2a_G + 2a_C + a_N in general) | | | |
 
 **Notes:**

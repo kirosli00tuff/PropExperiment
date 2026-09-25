@@ -1,5 +1,11 @@
 # Stage E.0 hypothesis catalog, cluster K3 (FX: 6E, E7, M6E, 6A, M6A, 6B, M6B, 6C, 6J, 6S, 6N)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K3-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U7: M6E and M6A stay non-candidates for D2 until Topstep answers the user's support email (D2, D9.8).
+> **K3 after the decisions: 9 active members, 31 confirmation trials** (6 new + 3 core ports; 21 port + 10 new trials). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K3-OpusXHigh (Stage E.0 Task 4), 2026-09-24, from 01:15 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 
@@ -62,7 +68,7 @@ network was used for them.
 | **D1 applied: 6M out** | MXN (6M) fails D1(b): coverage 0.903 < 0.95. No member trades or reads it |
 | Members | **10 = 6 new + 3 core ports + 1 ML member.** Budget 15, so 5 slots are unused (section 3) |
 | Trials in N (confirmation) | **36 if D2 admits all seven exposures:** 21 port + 14 new + 1 ML. The general formula is in section 6 |
-| ML grid | 48 configurations, counted only in the K3 screening session's research-window accounting (D15.8) |
+| ML grid | ~~48 configurations, counted only in the K3 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Starred products | **M6E and M6A: restriction UNRESOLVED** (D9.8; topstep facts F12.1: "no product-specific restriction naming them was found"). Every EUR and AUD member carries the flag. M6B is not starred |
 | D2 | Vehicle "D2 (chosen in E.2)" throughout. CAD, JPY, CHF and NZD have one full-size contract each (q = 1). EUR, AUD and GBP may go to a micro (q <= 10) if the full-size contract fails rho <= 2.0. Every entry is written for the exposures its evidence names, each **traded only if D2 admits the exposure** |
 
@@ -849,6 +855,10 @@ network was used for them.
 
 ### K3-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
 
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
+
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: fallback order declared now (D1 ADV order): EUR, JPY, AUD, GBP, CAD, NZD, CHF; if none is admitted, no ML member. Features unchanged.]
 - **Traded vehicle: the EUR exposure** {6E, E7, M6E*}; the contract is chosen by D2 in E.2.
   - **Reason:** EUR is the K3 exposure the log supports most, and the most tested on CME futures:
@@ -1085,7 +1095,7 @@ This covers every passed item in reports/stage_e0_research_K3.md section 3 (K3-0
 | K3-ecbfix-01 | EUR | 1 | 1 |
 | K3-tkypre-01 | JPY | 1 | 1 |
 | K3-tkypost-01 | JPY | 1 | 1 |
-| K3-ml-01 | EUR (no fallback) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K3-ml-01~~ [excluded, U6] | EUR (no fallback) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **36** = 21 port + 14 new + 1 ML |
 
 **General formula.** With E the number of admitted exposures and a_X = 1 if exposure X is admitted

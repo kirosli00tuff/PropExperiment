@@ -1,5 +1,11 @@
 # Stage E.0 hypothesis catalog, cluster K4 (energy: CL, QM, MCL, NG, QG, MNG, RB, HO)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K4-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials.
+> **K4 after the decisions: 8 active members, 19 confirmation trials** (5 new + 3 core ports (K4-ngrev-01 excluded on review R-06); 12 port + 7 new trials). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K4-OpusXHigh (Stage E.0 Task 4), 2026-09-23, from about 21:30 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 
@@ -60,7 +66,7 @@ only to confirm release-time sources; no mechanism research was done:
 | D1 | **D1 applied: all four K4 exposures IN** (design D1 table). Admissible vehicles, 2026 Jan-Aug ADV: crude CL 1,079,857, MCL 252,100, QM 9,446; gas NG 521,792, MNG 14,942, QG 4,060; RB 206,850; HO 187,479 (the D1 table's figure) |
 | Members | 10 = 6 new + 3 core ports + 1 ML member. Budget 15, so 5 slots are unused (section 3) |
 | Trials in N (confirmation) | **21 if D2 admits all four exposures:** 12 port + 8 new + 1 ML. In general 3E + 5a_C + 3a_G + a_H, where E is the number of admitted exposures and a_C, a_G, a_H are 1 if crude, gas and ULSD are admitted (0 otherwise). Example: without RBOB and ULSD, 14 |
-| ML grid | 48 configurations, counted only in the K4 screening session's research-window accounting (D15.8) |
+| ML grid | ~~48 configurations, counted only in the K4 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Starred products | **MCL** (Topstep F1: "Micro Crude Oil (MCL)*"). Its restriction is unresolved (D9.8; topstep facts F2 "not published"). Every crude member carries the flag. CL, QM, NG, QG, MNG, RB and HO are unstarred |
 | D2 | Vehicle "D2 (chosen in E.2)" throughout. RB and HO each have one full-size contract. CL and NG may fail rho <= 2.0 at q = 1, leaving MCL/QM and MNG/QG as the vehicles. RB and HO may go untraded. Every entry is written for every exposure its evidence names, each marked **"traded only if D2 admits the exposure"** |
 
@@ -787,6 +793,10 @@ only to confirm release-time sources; no mechanism research was done:
 
 ### K4-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
 
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
+
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: fallback order declared now (D1 ADV order): WTI crude, natural gas, RBOB, ULSD; if none is admitted, no ML member. Features unchanged.]
 - **Traded vehicle: WTI crude exposure** {CL, QM, MCL}; the contract is chosen by D2 in E.2.
   - **Reason:** crude is the K4 exposure the log documents most often at intraday horizons:
@@ -1019,7 +1029,7 @@ hold NG across the storage release: one always short, the other signed by last w
 | K4-eiafade-01 | crude | 1 | 1 |
 | K4-eiamom-01 | crude | 1 | 1 |
 | K4-ovr-01 | crude, ULSD, gas | 1 | 3 |
-| K4-ml-01 | crude (no fallback) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K4-ml-01~~ [excluded, U6] | crude (no fallback) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **21** = 12 port + 8 new + 1 ML. In general 3E + 5a_C + 3a_G + a_H. Without RBOB and ULSD: 14. Crude only: 8 |
 
 ---

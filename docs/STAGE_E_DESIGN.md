@@ -1,9 +1,16 @@
 # Stage E program design
 
-**DRAFT. Nothing in this file is frozen, hashed or registered.** Written by the Stage E.0 lead
+FROZEN by Stage E.1 on 2026-09-24, manifest reports/stage_e1_freeze.json
+
+~~**DRAFT. Nothing in this file is frozen, hashed or registered.**~~ Written by the Stage E.0 lead
 (Opus 5.5, max effort) on 2026-09-23 for the user's review. Stage E.1 freezes it (with whatever
 the user changes) and buys the data. Every answer below is a proposal: the rule, the reasoning,
 the alternatives considered, and what the user must decide.
+
+**Stage E.1 (2026-09-24) applied the user's decisions U1 to U9 (docs/DECISIONS.md, entry of
+2026-09-24) to this draft.** Every edit is logged in reports/stage_e1_changes.md (old text, new
+text, decision). Changed passages carry a bracketed "[U#, 2026-09-24 ...]" note; superseded text
+stays visible, struck through or bracketed, as in Stage E.0.
 
 Written before any price, volume-by-minute or order-book data for any Stage E product existed on
 this machine. The only product data used anywhere in this file are public aggregates (contract
@@ -100,7 +107,7 @@ minute of the declared window (reports/stage_e0_quotes.json, set C).
 | K5 | gold | MGC 429,702 | yes | 1.000 | yes | IN | MGC, GC (212,764) |
 | K5 | silver | SIL 134,882 | yes | 0.990 | yes | IN | SIL, SI (83,587) |
 | K5 | copper | HG 77,679 | yes | 0.997 | yes | IN | HG, MHG (21,803) |
-| K5 | platinum | PL 22,360 | yes | 0.991 | yes | IN | PL |
+| K5 | platinum | PL 22,360 | yes | 0.991 | yes | ~~IN~~ **OUT** (user decision U2, 2026-09-24: Topstep's 50K volatility cap for PL is 0 and PL has no micro, so the bot cannot trade it) | — |
 | K6 | corn | ZC 505,663 | yes | 1.000 | yes | IN | ZC |
 | K6 | wheat | ZW 180,405 | yes | 0.990 | yes | IN | ZW |
 | K6 | soybeans | ZS 302,997 | yes | 1.000 | yes | IN | ZS |
@@ -111,18 +118,28 @@ minute of the declared window (reports/stage_e0_quotes.json, set C).
 | K7 | bitcoin | MBT 69,615 | yes | 0.996 | yes | IN | MBT |
 | K7 | ether | MET 61,082 | yes | 0.947 | NO | **OUT** (borderline) | — |
 
-**Result: 31 traded exposures, S&P 500 as a leg only, 3 exposures out (NKD, 6M, MET).** Every
+**Result, after the user's decisions of 2026-09-24: 31 traded exposures, S&P 500 as a leg only,
+4 exposures out: NKD, 6M and MET by the rule, confirmed by the user (U1), and platinum by the
+user's decision (U2).** [Stage E.1 count note: the E.0 draft read "31 traded exposures, S&P 500
+as a leg only, 3 exposures out", but the table above has 32 IN rows before U2 (K1 3, K2 6, K3 7,
+K4 4, K5 4, K6 7, K7 1; E.0's 96 port trials are 3 x 32), so E.0's 31 was a miscount; after
+platinum's removal the table has 31. The stage prompt's "30 traded exposures" repeats E.0's
+miscount; the table rows govern and the discrepancy is logged for the user.] Every
 contract of an IN exposure clears the 1,000-contract vehicle floor. Dropped exposures are not traded;
 one may serve as a signal leg only if the member-level coverage check (D9) passes for that leg in
-the member's own window. K7 is left with one traded exposure (bitcoin).
+the member's own window (U1: this holds for NKD, 6M and MET). Platinum may not serve as a signal
+leg either (U2): nothing in the catalog needs it. K7 is left with one traded exposure (bitcoin).
 
 Two results the user should look at: MET misses (b) by 0.003 (0.947); NKD fails both parts (ADV
 7,969; coverage 0.621 in the 08:30-15:00 CT window, which is not NKD's most active window, since
 Nikkei trading concentrates in Tokyo hours). The rule was fixed before these figures existed and is
-applied as written; the user may re-admit either.
+applied as written; the user may re-admit either. [U1, 2026-09-24: the user read the reasons and
+confirmed D1 as the rule gives it; NKD, 6M and MET stay OUT.]
 
 **User decides:** the two thresholds (10,000 contracts a day; 0.95 coverage); whether an exposure
 dropped by (a) only because no public figure was found should be re-checked by hand.
+[Decided 2026-09-24: U1 (D1 as the rule gives it; no exposure failed (a) for lack of a figure,
+since the 2026 January-August ADV exists for all 50 products) and U2 (platinum OUT).]
 
 ---
 
@@ -158,6 +175,11 @@ dropped by (a) only because no public figure was found should be re-checked by h
   exposure's full-size contract bars as the price path with the micro's cost model and tick
   value (same underlying, same quotes up to the multiplier), declared per exposure before any
   confirmation read (D4).
+- Starred micros M6E and M6A (user decision U7, 2026-09-24): not D2 candidates until Topstep
+  answers the user's support email about their star (drafted 2026-09-24, not yet answered;
+  D9.8). If Topstep clears them before a cluster's screening session, a vehicle amendment may be
+  written before that session reads any research-window bar, and the amendment is logged in
+  docs/DECISIONS.md.
 
 **Reasoning.** The funnel's economics (ε, the MLL and payout dynamics) were derived for a daily
 P&L distribution at MES's 2-micro scale. Matching each vehicle's typical day-session move in
@@ -177,6 +199,8 @@ from).
 
 **User decides:** the risk target (MES 2 micros); the band [0.5, 2.0]; whether exposures above the
 band (probably ZB and UB) are dropped or traded at 1 contract with their own funnel-derived ε.
+[U8, 2026-09-24: accepted as drafted (the risk target, the band and the 1-lot cap). As drafted, an
+exposure with no candidate is not traded in Stage E.]
 
 ---
 
@@ -213,6 +237,7 @@ exposure and roughly 30 traded exposures this is several hours of compute; E.2 r
 per-day figure lies within +-30% of the translated bar), declared before the run.
 
 **User decides:** whether to accept min(translated, funnel) or the funnel figure alone.
+[U8, 2026-09-24: accepted as drafted: min(translated, funnel-derived), with the no-passing-cell rule.]
 
 ---
 
@@ -220,12 +245,14 @@ per-day figure lies within +-30% of the translated bar), declared before the run
 
 **Rule (proposed): MES's calendar for every product, so that cross-product members see aligned
 windows.**
-- Research window (screening, sizing inputs, cost calibration, ML tuning): trade dates
+- Research window (screening, sizing inputs, cost calibration, ~~ML tuning~~ [U6, 2026-09-24:
+  superseded; the ML route's data partition is set in docs/STAGE_E_ML_DESIGN.md]): trade dates
   2025-04-01..2026-06-19 (the data end is 2026-06-21 00:00 UTC; holdout-1's first bar is
   2026-06-21 22:00 UTC).
 - Confirmation window: S_X..2024-02-29, S_X from the start rule below.
 - Embargo: March 2024 trade dates (inside the first sealed chunk, never built into bars).
-- Holdout-2: trade dates 2024-04-01..2025-03-31, bought in E.1 and sealed on arrival exactly as
+- Holdout-2: trade dates 2024-04-01..2025-03-31, ~~bought in E.1~~ bought per cluster in step 2
+  (D13), just before that cluster's confirmation session [U4, 2026-09-24], and sealed on arrival exactly as
   MES's was (the raw monthly chunks range=2024-03-01_2024-04-01 through
   range=2025-03-01_2025-04-01, each sealed in the download call after its byte check, oldest
   first), one sealed store per product, the same unlock log, the same REGISTRATION.md requirement.
@@ -263,6 +290,8 @@ confirmation block (more reuse of data, but every re-fit is a new look).
 
 **User decides:** whether holdout-1 for new products is left unbought (proposed) or bought and
 sealed like MES's; whether full-size bars may stand in for a short-history micro.
+[U8, 2026-09-24: accepted as drafted: holdout-1 not bought for new products; full-size bars as a
+price path only if the power check fails and the user agrees.]
 
 ---
 
@@ -272,7 +301,8 @@ sealed like MES's; whether full-size bars may stand in for a short-history micro
 - Per cluster, two tiers, as in D.1f. Tier A (edge-eligible, the Holm family): every member that
   passes the cluster's screening session's pre-declared screen on the research window. The ML member
   takes the same screen, on its nested outer-fold estimate (D15.5), and joins Tier A only if it passes
-  (ruling on review R-01, 2026-09-24: one reading, D15.10's). The screen: research-window mean net P&L > 0 and daily t >= 1.0 (per micro
+  (ruling on review R-01, 2026-09-24: one reading, D15.10's). [U6, 2026-09-24: superseded; the
+  catalog has no ML member.] The screen: research-window mean net P&L > 0 and daily t >= 1.0 (per micro
   or per contract, zeros on no-trade days). Tier B (null side only): every other member.
 - Holm within each cluster's Tier A at family-wise alpha_k = 0.05 / K, where K = the number of
   clusters with a non-empty Tier A in the program (at most 8). A Bonferroni split across clusters,
@@ -285,8 +315,17 @@ sealed like MES's; whether full-size bars may stand in for a short-history micro
   blocks. A passing member becomes a discussion item for a registered final read; nothing is
   registered by a cluster session.
 - Program accounting beside every result: cumulative N (58 before Stage E; every screened member
-  and grid point adds to it, section D15 for the ML members), DSR at N, PBO, and the per-cluster
+  and grid point adds to it, ~~section D15 for the ML members~~ [U6: the ML route counts its
+  trials as docs/STAGE_E_ML_DESIGN.md sets out]), DSR at N, PBO, and the per-cluster
   and program totals.
+- **Stage E.1 recount (after U2 and U6, 2026-09-24), from reports/stage_e0_catalog.json.** Active
+  members / confirmation trials per cluster: K1 5 / 11; K2 8 / 44; K3 9 / 31; K4 8 / 19; K5 7 / 16;
+  K6 7 / 27; K7 6 / 6; K8 3 / 4. **Total: 53 members, 158 trials** (93 port + 65 new + 0 ML).
+  Arithmetic: E.0 left 61 members and 170 trials. U6 excludes the eight ML members (-8 members,
+  -8 trials). U2 removes platinum from K5-cp1-01, K5-cp2-01, K5-cp3-01 and K5-ovr-01 (-4 trials;
+  no member is lost, since none traded platinum alone). 61 - 8 = 53 members; 170 - 8 - 4 = 158
+  trials. **Projected cumulative N = 58 + 158 = 216** (E.0: 228). The ML route's own trials are
+  not in these figures (docs/STAGE_E_ML_DESIGN.md).
 
 **Reasoning.** Eight cluster sessions will run at different times. A program-wide Holm could only
 be applied after the last one, and one cluster's p-values would change another's verdict. Splitting
@@ -302,7 +341,7 @@ now with nothing to base them on); all members in Tier A as in D.1f (with about 
 thresholds would bury a genuine edge; the screen costs nothing on the null side).
 
 **User decides:** the alpha split (equal over active clusters); the screen (t >= 1.0 on the
-research window).
+research window). [U8, 2026-09-24: accepted as drafted.]
 
 ---
 
@@ -357,14 +396,16 @@ correction logged; F from D9):**
 | gold (GC, MGC) | 07:20 | 12:30 | 15:08 |
 | silver (SI, SIL) | 07:20 | 12:25 | 15:08 |
 | copper (HG, MHG) | 07:10 | 12:00 | 15:08 |
-| platinum (PL) | 07:20 | 12:05 | 15:08 |
+| ~~platinum (PL)~~ [OUT, U2, 2026-09-24] | ~~07:20~~ | ~~12:05~~ | ~~15:08~~ |
 | grains (ZC, ZW, ZS, ZM, ZL) | 08:30 | 13:15 | 13:18 (session close 13:20) |
 | livestock (HE, LE) | 08:30 | 13:00 | 13:03 (session close 13:05) |
 | crypto (MBT, MET) | 08:30 | 15:00 | 15:08 |
 
 **Count.** Three trials per traded exposure. With about 30 traded exposures, about 90 port trials.
+[Stage E.1 count after U2: 31 traded exposures, 93 port trials.]
 
 **User decides:** the three families; whether CP1 should also carry the (b) form.
+[U8, 2026-09-24: accepted as drafted: the three ports; CP1 in the (a) form only.]
 
 ---
 
@@ -385,6 +426,7 @@ docs/NULL_CRITERIA.md, which stays frozen as the MES record. What changes and wh
   sizes, accounts or firms.
 
 **User decides:** the pre-declared "inconclusive by design" exception; the per-cluster unit.
+[U8, 2026-09-24: accepted as drafted, with the "source-overlap" rule.]
 
 ## D8. Cost model per product
 
@@ -431,6 +473,7 @@ for overnight and event-time members); more sample dates (the user may buy more;
 Task 2).
 
 **User decides:** mbp-1 alone or mbp-1 plus tbbo; five dates or more.
+[U8 and U4, 2026-09-24: mbp-1 only, the five dates; no tbbo is bought.]
 
 ## D9. The Topstep constraint set
 
@@ -513,7 +556,10 @@ brackets), and how the harness will encode each.**
    named on no page found: their restriction stays unresolved, flagged for the user (6M is out by D1).
    Ruling (01:40 PDT, on CatalogWriter-K3's question): a starred contract whose restriction is still
    unresolved at E.1 is NOT a D2 candidate unless the user clears it; EUR and AUD then trade 6E and 6A
-   at one contract.
+   at one contract. [U7, 2026-09-24: M6E and M6A stay non-candidates for D2 until Topstep answers
+   the user's support email (drafted 2026-09-24, not yet answered). If Topstep clears them before a
+   cluster's screening session, a vehicle amendment may be written before that session reads any
+   research-window bar, and the amendment is logged in docs/DECISIONS.md.]
 11. **Volatility position caps** [F12.1c]: "During extreme volatility, we may temporarily tighten
    position limits on affected products. ... Energies Restriction - RBOB Gasoline (RB) = 3/6/9;
    Heating Oil (HO) = 3/6/9; Crude Oil (CL) = 3/6/9; Micro Crude Oil (MCL) = 30/60/90; E-Mini Crude
@@ -524,13 +570,14 @@ brackets), and how the harness will encode each.**
    at most 10 (the 1-lot cap binds first), CL, QM, RB, HO and GC at most 1 (point 5 binds first).
    SI, HG and PL can be set to 0 at Topstep's discretion: D2 prefers SIL and MHG for silver and copper
    whenever they are candidates, and platinum (no micro) is flagged "may be suspended in volatile
-   periods" for the user.
+   periods" for the user. [U2, 2026-09-24: platinum is OUT for this reason: its 50K cap is 0 and it
+   has no micro, so the bot cannot trade it. Topstep's quoted text above is kept as the source.]
 12. **CPI window** [F12.1e]: "Ahead of Consumer Price Index (CPI) releases ... Minis (ES, RTY, YM, NQ,
    NKD, GC, SI, HG, PL): No new opening transactions permitted during the 10-minute window
    surrounding the release (5 minutes before, 5 minutes after). Micros (MES, M2K, MYM, MNQ, MGC, SIL,
    MHG): Opening transactions limited to 1, 3, 6, 9, and 15 contracts for the $25K, $50K, $100K,
    $150K, and $250K account sizes, respectively, during the window." Encoded: no member opens a
-   position in [CPI - 5 min, CPI + 5 min] on NQ, RTY, YM, GC, SI, HG or PL (an entry whose fill would
+   position in [CPI - 5 min, CPI + 5 min] on NQ, RTY, YM, GC, SI or HG (~~or PL~~: OUT, U2) (an entry whose fill would
    land there is skipped for the day, not deferred); on MNQ, M2K, MYM, MGC, SIL and MHG an opening
    fill in the window is at most 3 contracts. The CPI release calendar (BLS, public, with history) is a
    harness input. The restriction is stated as SIM-wide; it applies to the Combine and the XFA.
@@ -541,6 +588,8 @@ brackets), and how the harness will encode each.**
    which Topstep allows ("Custom automated strategies and bots are allowed via the TopstepX /
    ProjectX API, subject to standard platform rules" [F10.4]); the ML members are frozen models
    making at most 20 decisions a day. Flagged for the user in case Topstep reads "AI" more broadly.
+   [U6, 2026-09-24: superseded; no model is deployed or makes live decisions. The Stage E ML route
+   is a discovery tool whose findings become plain rules (docs/STAGE_E_ML_DESIGN.md).]
 10. **Deployment notes** (no effect on E.0's work): trading must originate from a personal device,
     no VPS, VPN or remote server [F10.1, verbatim in F12.2e: "The line is order transmission: your
     server can watch and record, but it cannot trade."]; no sandbox, test on a Practice account
@@ -627,7 +676,9 @@ D.1f (a manifest committed before the purchase of the confirmation history):
 6. **The screening runner, per product**: screen_candidate generalized to take the product's rules,
    costs, calendar and ε; the member-level coverage check and trade-rate floor (D9); the power
    check (D4).
-7. **The ML pipeline** (D15), with its leakage tests, before any fit.
+7. ~~**The ML pipeline** (D15), with its leakage tests, before any fit.~~ [U6, 2026-09-24:
+   replaced by the build list of the Stage E ML route, docs/STAGE_E_ML_DESIGN.md, once the user
+   has reviewed it.]
 8. **The funnel re-derivation per exposure** (D3), compute only.
 9. **Leakage canaries per product**, extended to cross-product members (a planted future bar in one
    leg must not change the other leg's decisions).
@@ -645,10 +696,16 @@ rough token scale of comparable sessions (D.1f run 75M, mostly the lead), stated
 |---|---|---|---|---|
 | 1 | E.1 freeze and first purchase | apply the user's changes; hash the catalog, this design and docs/NULL_CRITERIA_E.md; buy the research window of every admissible contract and the mbp-1 sample (D13 step 1) | 3-4 h | 30-50M |
 | 2 | E.2a build | per-product rules (D11.1), group calendars with CME citations (D10, the largest single job: 7 groups x 7 years), cost calibration (D8), data pipeline and bar builds, vehicle choice (D2), funnel re-derivation (D3, compute) | 8-12 h | 80-120M |
-| 3 | E.2b build and second purchase | generalized screening runner, ML pipeline and its leakage tests (D15), canaries, freeze manifest; buy the confirmation and holdout-2 history of the chosen vehicles, sealing holdout-2 on arrival (D13 step 2) | 8-12 h | 80-120M |
-| 4-17 | one screening and one confirmation session per cluster | screening: members through screen_candidate on the research window, ML tuning, Tier A/B, power check, list hashed. Confirmation: the list on the confirmation window, independent Fable check, statements | screening 3-5 h, confirmation 2-3 h | 40-80M each |
+| 3 | E.2b build ~~and second purchase~~ | generalized screening runner, ~~ML pipeline and its leakage tests (D15)~~ [U6: the ML route's build, docs/STAGE_E_ML_DESIGN.md], canaries, freeze manifest; ~~buy the confirmation and holdout-2 history of the chosen vehicles, sealing holdout-2 on arrival (D13 step 2)~~ [U4, 2026-09-24: step 2 is bought per cluster, just before that cluster's confirmation session] | 8-12 h | 80-120M |
+| 4-17 | one screening and one confirmation session per cluster | screening: members through screen_candidate on the research window, ~~ML tuning~~ [U6], Tier A/B, power check, list hashed. Confirmation: [U4: first the cluster's step 2 purchase, its holdout-2 chunks sealed on arrival;] the list on the confirmation window, independent Fable check, statements | screening 3-5 h, confirmation 2-3 h | 40-80M each |
 
-**Cluster order, by distance from MES's drivers:** K4 energy and K5 metals first, then K2 rates, K3 FX
+**Cluster order (user decision U3, 2026-09-24):** K2 rates first, then K4 energy, K5 metals, K3 FX,
+K6 agriculture and livestock, K7 crypto; then K1 equity-index siblings only if the user decides,
+after K7, that it is needed; K8 last (its members read other clusters' products). K1's members stay
+in the frozen catalog so that a later K1 session is pre-registered. The E.0 order in the next
+paragraph's first sentence is superseded; the rest of that paragraph stands:
+
+~~**Cluster order, by distance from MES's drivers:**~~ K4 energy and K5 metals first, then K2 rates, K3 FX
 and K6 agriculture, then K7 crypto, then K1 equity-index siblings last (closest to the closed MES
 exposure); K8 after the clusters whose products its members use. About 20 sessions in total. Each
 cluster's two sessions are independent of the others' results (D5's alpha split), so the order can
@@ -669,23 +726,35 @@ exists for them.
 
 **Proposed: buy in two steps, only what the design uses.** For the 31 traded exposures (D1), leaving
 out NKD, 6M, MET and ES (MES bars, already owned, serve as the S&P leg on non-holdout dates):
+[U2 and U4, 2026-09-24: the traded exposures are the 31 of D1 after platinum's removal (see D1's
+count note), and platinum is left out as well. Step 1 in E.1 is the research window of every
+admissible contract of those exposures (45 contracts) plus the mbp-1 sample on the five fixed
+dates, with no tbbo. Step 2 is option (b) below: each cluster's 2019-05..2025-03 history of its
+chosen vehicles is bought just before that cluster's confirmation session, with its holdout-2
+chunks sealed on arrival. The ML route's data needs (docs/STAGE_E_ML_DESIGN.md) are decided
+separately and may pull some step 2 purchases forward. Without platinum, re-summed from E.0's
+quote lines in the ledger: step 1 research window $57.00, mbp-1 $45.95 (together $102.95);
+step 2 range $164.71-189.31 (platinum's history was $6.24); total without tbbo $267.66-292.26.
+[Cents corrected on audit FA-09: the first re-sum included E.0's intraday coverage quotes.]
+The table below is E.0's, with platinum.]
 
 | Step | Session | What | Quoted |
 |---|---|---|---|
 | 1 | E.1 | research window 2025-04-01..2026-06-21 of every admissible contract (needed for D2's vehicle choice) | $58.42 |
 | 1 | E.1 | mbp-1 calibration sample, 5 dates, every admissible contract (D8) | $46.35 |
 | 1 (optional) | E.1 | tbbo sample, the cross-check | $27.58 |
-| 2 | E.2b | 2019-05..2025-03 history (confirmation window plus the 13 holdout-2 chunks, sealed on arrival) of the ONE chosen vehicle per exposure (range: cheapest to dearest contract per exposure) | $170.39-195.55 |
+| 2 | ~~E.2b~~ per cluster, before its confirmation session (U4) | 2019-05..2025-03 history (confirmation window plus the 13 holdout-2 chunks, sealed on arrival) of the ONE chosen vehicle per exposure (range: cheapest to dearest contract per exposure) | $170.39-195.55 |
 | | | **Total without tbbo** | **$275.16-300.32** |
 
 Per cluster (step 1 research + step 2 range + mbp-1): K1 $9.31 + $22.11-22.53 + $26.59; K2 $8.06 +
 $40.50 + $5.26; K3 $14.24 + $41.25-49.34 + $4.18; K4 $9.61 + $15.65-25.21 + $2.86; K5 $10.37 +
-$21.24-28.34 + $5.49; K6 $5.32 + $26.52 + $0.77; K7 $1.49 + $3.11 + $1.20. Buying everything for every
+$21.24-28.34 + $5.49 [without platinum (U2): $8.95 + $15.00-22.10 + $5.09]; K6 $5.32 + $26.52 + $0.77; K7 $1.49 + $3.11 + $1.20. Buying everything for every
 admissible contract instead would be $326.74 plus samples.
 
 **Caps (proposed).** Per session: the quote of that session's request set plus 10%, fixed in the
 prompt before any purchase (E.1: about $115, or $146 with tbbo; E.2b: the chosen vehicles' quote plus
-10%). Per request: $3.00 (the largest single request is one mbp-1 day of MNQ, about $2.7; the largest
+10%). [U4: step 2 is per cluster, so each cluster's step 2 session is capped at its own quote plus
+10%.] Per request: $3.00 (the largest single request is one mbp-1 day of MNQ, about $2.7 [E.1 correction, audit FA-05: E.0's own quotes in the ledger give MNQ mbp-1 2026-02-11 $4.14 and 2025-11-12 $3.41, above the $3.00 cap; the cap is not raised; the Stage E.1 purchase path splits such a request into contiguous time pieces, each quoted, gated and ledgered on its own];  the largest
 monthly ohlcv-1m chunk is about $0.12). The gate refuses anything above either cap, as for D.1f.
 
 **The user must act before E.1 can buy anything.** data/config.py's SHARED_ACCOUNT_CAP_USD is
@@ -693,7 +762,14 @@ $120.00 with $91.592247 already spent, so $28.41 of headroom remains; step 1 alo
 has to rise to at least about $400 for the whole plan (spent $91.59 + up to $300.32 + margin), and the
 Databento account (about $33 of credit left) needs funding. E.0 did not change any cap.
 
-**Cheaper alternatives the user can choose.** (a) Skip tbbo (already the proposal). (b) Buy each
+**[U5, 2026-09-24: the program moves to a second Databento account.]** acct-2: $125.00 of credit,
+used only by this repository; every Stage E purchase from E.1 on draws on it. acct-1: the old
+account, shared with the archived MLCryptoEngine, $91.59 spent (MLCryptoEngine's ledger plus this
+repository's lines before E.1); it is closed to new spend by this program. data/config.py carries
+both accounts with their caps (acct-1 $120.00 with the external MLCryptoEngine ledger, acct-2
+$125.00 with none), and the spend gate sums spend per account (Stage E.1 Task 5).
+
+**Cheaper alternatives the user can choose.** [U4, 2026-09-24: (a) and (b) chosen; (c) not.] (a) Skip tbbo (already the proposal). (b) Buy each
 cluster's step-2 history just before its confirmation session instead of all in E.2b: same total,
 spread over time, and nothing is bought for a cluster the program never reaches. (c) Reduce the mbp-1
 sample for the equity-index micros (MNQ's five days cost $13.46), at the price of a thinner cost model
@@ -715,6 +791,15 @@ Both failing tests were confirmed again in E.0 (full suite: 940 passed, 1 xfaile
 ---
 
 ## D15. The machine-learning member protocol (common to all eight clusters)
+
+> **SUPERSEDED (user decision U6, 2026-09-24).** This section no longer governs any Stage E member.
+> The eight K#-ml-01 entries are excluded ("excluded: superseded by the Stage E ML route (user
+> decision 2026-09-24)"), and the machine-learning work moves to a separate Stage E ML route,
+> **docs/STAGE_E_ML_DESIGN.md** (a DRAFT written in Stage E.1 for the user's review; Stage E.2
+> freezes it before any ML fit and before any research-window bar is read). The route's purpose,
+> set by the user: ML is a strategy-discovery tool. Its findings become plain rules that are
+> pre-registered and tested like any other member. No model is deployed or makes live decisions.
+> The text below stays for the record.
 
 Written first, before any CatalogWriter wrote an ML entry. The CatalogWriter of each cluster fills
 in only: the traded vehicle, the products the features read, the cluster features (with their

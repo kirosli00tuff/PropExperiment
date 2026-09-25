@@ -1,5 +1,11 @@
 # Stage E.0 hypothesis catalog, cluster K6 (agriculture and livestock: ZC, ZW, ZS, ZM, ZL, HE, LE)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K6-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials.
+> **K6 after the decisions: 7 active members, 27 confirmation trials** (4 new + 3 core ports (K6-ovr-01 excluded by the lead); 21 port + 6 new trials). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K6-OpusXHigh (Stage E.0 Task 4), 2026-09-24, from 01:29 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 
@@ -55,7 +61,7 @@ Files are saved under the session scratchpad at fetch/k6cat.
 | D2 | Each exposure has exactly one admissible contract, so D2 has no vehicle choice. It either admits the contract (rho <= 2.0 at q = 1) or drops the exposure. An admitted exposure with rho < 0.5 trades at q = 1 and is flagged "undersized". Every entry reads "Vehicle: D2 (chosen in E.2)", and every trial is **traded only if D2 admits the exposure** |
 | Members | **9 = 5 new + 3 core ports + 1 ML member.** Budget 15, so 6 slots are unused (section 3) |
 | Trials in N (confirmation) | **39 if D2 admits all seven:** 21 port + 17 new + 1 ML. In general: 4E + (a_ZS + a_ZM + a_ZL) + (a_ZC + a_ZS) + a_ZC + (a_ZW + a_ZC + a_ZS + a_ZL) + a_ZC, where E is the number of admitted exposures and a_X = 1 if X is admitted |
-| ML grid | 48 configurations, counted only in the K6 screening session's research-window accounting (D15.8) |
+| ML grid | ~~48 configurations, counted only in the K6 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Sizing | q = 1 contract in every member, which is 1 lot-equivalent: the D9.5 cap, half the 50K XFA's 2-lot maximum |
 
 ### Common conventions (apply to every entry unless the entry says otherwise)
@@ -825,6 +831,10 @@ Files are saved under the session scratchpad at fetch/k6cat.
 
 ### K6-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
 
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
+
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: fallback order declared now (D1 ADV order): ZC, ZS, ZL, ZM, ZW, LE, HE; if none is admitted, no ML member. Features unchanged. R-11 (NOTE): the first decision time that cannot trade is dropped from the decision grid by D15.3's row rule.]
 - **Traded vehicle: corn, ZC** (D2 chosen in E.2; ZC is the exposure's only contract).
   - **Reason:** corn is the K6 product the log documents most at intraday and release horizons:
@@ -1056,7 +1066,7 @@ passage elsewhere.
 | K6-wasdepre-01 | ZC, ZS | 1 | 2 |
 | K6-wasdepost-01 | ZC | 1 | 1 |
 | K6-ovr-01 | EXCLUDED by the lead (01:52) | - | 0 |
-| K6-ml-01 | ZC (no fallback) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K6-ml-01~~ [excluded, U6] | ZC (no fallback) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **39** = 21 port + 17 new + 1 ML. In general 4E + (a_ZS + a_ZM + a_ZL) + (a_ZC + a_ZS) + a_ZC + (a_ZW + a_ZC + a_ZS + a_ZL) + a_ZC. The cuts in section 7, item 7 would bring it to 28 |
 
 ---

@@ -69,7 +69,11 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     criteria (docs/NULL_CRITERIA_E.md); D1 keeps 31 exposures (NKD, 6M, MET out); $0.00 spent (5,050 free
     quotes); staged purchase quoted at $275-300, which needs the shared cap raised; Fable review READY WITH
     FIXES, all 10 should-fix findings ruled; C6 closed and D.1g not run. Awaits the user's review before E.1.
-  - Stage E.1 — freeze the catalog and design after the user's review, and buy the data (planned).
+  - Stage E.1 — freeze the catalog and design after the user's review, and buy step 1 of the data.
+    Run 2026-09-24 (see reports/E.1_RETURN.md): the user's decisions U1-U9 applied (docs/DECISIONS.md);
+    platinum OUT, the ML members superseded by a separate ML route; 53 members, 158 trials, projected
+    N = 216; Fable freeze audit READY WITH FIXES (0 blocking), all fixes ruled; design, criteria and
+    catalog FROZEN under reports/stage_e1_freeze.json.
   - Stage E.2 — build: per-product rules, costs, calendars, bar builds, sealing, the ML pipeline (planned).
   - Stage E.3 onward — one screening session and one confirmation session per cluster, in the order of
     docs/STAGE_E_DESIGN.md D12 (planned).

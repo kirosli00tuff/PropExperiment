@@ -1,5 +1,11 @@
 # Stage E.0 hypothesis catalog, cluster K2 (rates: ZT, ZF, ZN, TN, ZB, UB)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K2-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U3: K2 is the first cluster.
+> **K2 after the decisions: 8 active members, 44 confirmation trials** (5 new + 3 core ports; 18 port + 26 new trials). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K2-OpusXHigh (Stage E.0 Task 4), 2026-09-23, 21:03-21:40 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 Written before any price, bar, tick or order-book data for any K2 product existed on this machine.
@@ -26,7 +32,7 @@ reports/stage_d1b_family_f_declaration.md F3.3.
 | Exposures | six, one per tenor, each with exactly one admissible contract (partition section 1): ZT, ZF, ZN, TN, ZB, UB |
 | Members | 9 = 5 new + 3 core ports + 1 ML member (budget 15; 6 slots unused, see section 3) |
 | Trials in N (confirmation) | 45 if D2 admits all six exposures (18 port + 26 new + 1 ML). In general 3E + 4E + E_pd + 1, where E = number of admitted exposures and E_pd = admitted exposures among {ZN, ZB}. Example: without ZB and UB, 30. |
-| ML grid (research-window accounting only, D15.8) | 48 configurations, counted in the K2 screening session's research-window DSR for K2-ml-01 |
+| ML grid (research-window accounting only, D15.8) | ~~48 configurations, counted in the K2 screening session's research-window DSR for K2-ml-01~~ [superseded, U6: no ML member] |
 | Starred products | none (Topstep F1: no K2 product carries "*") |
 | D1 | **D1 is applied by the lead.** No K2 exposure is assumed IN. Every member below is written for all six. |
 | D2 | Vehicle "D2 (chosen in E.2)" throughout. Rule 13: ZB and UB may be outside D2's risk band at one contract; every entry marks them "traded only if D2 admits the exposure". The same condition applies to every K2 exposure (see C6). |
@@ -213,7 +219,9 @@ reports/stage_d1b_family_f_declaration.md F3.3.
   7. Price limit: D9.7 per E.2, as in CP1.
 - **Data needed:** ohlcv-1m of the admitted vehicles, over the research and confirmation windows.
 - **Trials in N:** 1 per admitted exposure (at most 6).
-- **Note for the lead (not a change; the text is copied unchanged):** D6's text has no
+- **Note for the lead (not a change; the text is copied unchanged):** [Superseded (review R-28,
+  applied in Stage E.1 under U9): the lead's 21:12 amendment bounds entries at C, as the
+  instantiation above states; this note predates it.] D6's text has no
   latest-entry time. On MES the gap between C (15:00) and F (15:08) was 8 minutes. On K2 it is 68
   minutes (14:00 to 15:08), so a first break after 14:00 CT can be entered here with a hold that F
   truncates. See section 7, item 1.
@@ -584,6 +592,10 @@ reports/stage_d1b_family_f_declaration.md F3.3.
 - **Trials in N:** 1 per admitted exposure (at most 6).
 
 ### K2-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
+
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
 - **Traded vehicle: ZN.**
   - **Reason:** ZN is the single K2 exposure the log documents most often:
     - K2-007 (ZN by ticker, P-K2-007-b);
@@ -742,14 +754,15 @@ Every passed item in reports/stage_e0_research_K2.md, and every `[K2]`-tagged pa
 | K2-fomcpost-01 | ZT, ZF, ZN, TN, ZB, UB | 1 | 6 |
 | K2-predrift-01 | ZN, ZB | 1 | 2 |
 | K2-monthend-01 | ZT, ZF, ZN, TN, ZB, UB | 1 | 6 |
-| K2-ml-01 | ZN (fallback ZF) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K2-ml-01~~ [excluded, U6] | ZN (fallback ZF) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **45** (18 port + 26 new + 1 ML). With E admitted exposures and E_pd admitted among {ZN, ZB}: 7E + E_pd + 1. Without ZB and UB: 30. |
 
 ---
 
 ## 7. Open items for the lead (decisions reserved to the lead; none taken here)
 
-1. **CP2 has no latest-entry time.** It is copied verbatim from D6. On K2, C = 14:00 and
+1. **CP2 has no latest-entry time.** [Superseded (review R-28, U9): the lead's 21:12 amendment
+   bounds entries at C.] It is copied verbatim from D6. On K2, C = 14:00 and
    F = 15:08, so a first break between 14:00 and 15:08 can be entered and then cut short by F.
    On MES the equivalent gap was 8 minutes. The lead decides whether the port needs a
    latest-entry time to remain the MES family.

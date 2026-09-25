@@ -1,5 +1,27 @@
 # Stage E.0 hypothesis catalog: assembled
 
+> **Stage E.1 figures (lead, 2026-09-24, after the user's decisions U1 to U9; docs/DECISIONS.md;
+> every edit in reports/stage_e1_changes.md). These govern over every figure and table below.**
+> 53 active members, 158 confirmation trials, projected cumulative N = 58 + 158 = 216.
+>
+> | Cluster | Active members | Confirmation trials | Change from E.0 |
+> |---|---|---|---|
+> | K1 | 5 (2 new + 3 ports) | 11 | K1-ml-01 excluded (U6); run only if the user decides after K7 (U3) |
+> | K2 | 8 (5 new + 3 ports) | 44 | K2-ml-01 excluded (U6); first cluster (U3) |
+> | K3 | 9 (6 new + 3 ports) | 31 | K3-ml-01 excluded (U6) |
+> | K4 | 8 (5 new + 3 ports) | 19 | K4-ml-01 excluded (U6) |
+> | K5 | 7 (4 new + 3 ports) | 16 | K5-ml-01 excluded (U6); platinum OUT (U2): -1 trial each on K5-cp1-01, K5-cp2-01, K5-cp3-01, K5-ovr-01 |
+> | K6 | 7 (4 new + 3 ports) | 27 | K6-ml-01 excluded (U6) |
+> | K7 | 6 (3 new + 3 ports) | 6 | K7-ml-01 excluded (U6) |
+> | K8 | 3 (3 new) | 4 | K8-ml-01 excluded (U6); last cluster (U3) |
+> | **Total** | **53** | **158** (93 port + 65 new + 0 ML) | |
+>
+> Arithmetic: E.0's post-review catalog had 61 members and 170 trials. U6 excludes the eight
+> K#-ml-01 members (-8 members, -8 trials). U2 removes platinum from four members (-4 trials, no
+> member lost). 61 - 8 = 53; 170 - 8 - 4 = 158; N = 58 + 158 = 216. The ML grid configurations (E.0:
+> 384) no longer exist. The per-exposure table below still lists platinum and the ML members: both
+> are superseded (reports/stage_e0_catalog.json carries the E.1 figures).
+>
 > **Post-review figures (lead, Task 8, 2026-09-24 06:21 PDT):** 61 active members, 170 confirmation trials, projected cumulative N = 58 + 170 = 228. K4-ngrev-01 excluded on review R-06; 15 members labelled SOURCE-OVERLAP on review R-04; every ruling is a bracketed note in the entry it changes (reports/stage_e0_review_rulings.md). The summary tables below were assembled before Task 8 and are superseded where they differ.
 
 2026-09-24, assembled by CatalogAssembler-SonnetMed from the eight cluster catalogs
@@ -268,6 +290,12 @@ in those three files).
 
 # Stage E.0 hypothesis catalog, cluster K1 (equity index: MNQ, NQ, M2K, RTY, MYM, YM)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K1-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U3: K1 runs only if the user decides, after K7, that it is needed; its members stay in the frozen catalog so that a later K1 session is pre-registered.
+> **K1 after the decisions: 5 active members, 11 confirmation trials** (2 new + 3 core ports; 9 port + 2 new trials). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K1-OpusXHigh (Stage E.0 Task 4), 2026-09-24, from about 01:30 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 
@@ -346,7 +374,7 @@ was downloaded. Saved copies are in the session scratchpad under fetch/, not in 
 | **D1 applied: NKD out; S&P leg only** | NKD fails D1(a) (7,969) and D1(b) (0.621), so no member trades or reads it. ES and MES are closed (D1.5). MES bars, already owned, appear only as a signal leg in K1-ml-01, and only on research-window and confirmation-window dates, never holdout dates. No member trades ES or MES |
 | Members | **7 = 3 new + 3 core ports + 1 ML member.** The budget is 15 (at most 11 new), so 8 slots are unused (section 3) |
 | Trials in N (confirmation) | **13 if D2 admits all three exposures:** 9 port + 3 new + 1 ML. In general 3E + 3a_N + a_D, where E is the number of admitted exposures and a_N, a_D are 1 if the Nasdaq-100 and the Dow are admitted |
-| ML grid | 48 configurations, counted only in the K1 screening session's research-window accounting (D15.8) |
+| ML grid | ~~48 configurations, counted only in the K1 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Starred products and the rules that apply | **MNQ, M2K, MYM** are starred (F1). Their referent is Topstep's "Risk Adjustments: High Risk/High Volatility" article (F12.1), which names them, and D9.8 encodes it through D9.11 and D9.12. So, unlike M6E and M6A, they stay D2 candidates. **D9.12 CPI window:** opening transactions in [CPI - 5 min, CPI + 5 min] are limited to 3 contracts on MNQ, M2K and MYM, and are not allowed at all on NQ, RTY and YM. CPI is released at 07:30 CT, so the window is 07:25-07:35 CT. No K1 member fills before 08:31 CT, so the window never binds (checked in every entry). **D9.11:** no equity-index position figure is published. The same page says "Trading on mini-sized contracts or larger may be temporarily halted for affected products" (F12.1), a deployability risk if D2 picks NQ, RTY or YM (section 7) |
 | D2 | Every entry says "D2 (chosen in E.2)". Within each exposure, the micro and the mini quote the same index in the same tick size in points (C7), so a rule makes the same decisions on either vehicle; only size, cost and tick value differ. Every entry is **traded only if D2 admits the exposure** |
 
@@ -957,6 +985,10 @@ was downloaded. Saved copies are in the session scratchpad under fetch/, not in 
 
 ### K1-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
 
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
+
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: fallback order declared now (D1 table, 2026 Jan-Aug ADV): Nasdaq-100, then Russell 2000, then Dow; if none is admitted, no ML member. The features are unchanged (they read their named products as signals).]
 - **Traded vehicle: Nasdaq-100 exposure** {MNQ, NQ}; D2 chooses the contract in E.2.
   - **Reason:** most of the log's intraday evidence is on the Nasdaq-100:
@@ -1180,7 +1212,7 @@ D.1 rows the K1 log cites.
 | K1-vxnband-01 | Nasdaq-100 | 1 | 1 |
 | K1-vwap-01 | Nasdaq-100 | 1 | 1 |
 | K1-predrift-01 | EXCLUDED by the lead (02:15) | - | 0 |
-| K1-ml-01 | Nasdaq-100 (no fallback) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K1-ml-01~~ [excluded, U6] | Nasdaq-100 (no fallback) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **13** = 9 port + 3 new + 1 ML. In general 3E + 3a_N + a_D. Without the Dow: 9. Nasdaq-100 only: 6 |
 
 The cumulative program N before Stage E is 58 (design, standing inputs). K1's confirmation trials
@@ -1247,6 +1279,12 @@ add up to 13.
 
 # Stage E.0 hypothesis catalog, cluster K2 (rates: ZT, ZF, ZN, TN, ZB, UB)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K2-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U3: K2 is the first cluster.
+> **K2 after the decisions: 8 active members, 44 confirmation trials** (5 new + 3 core ports; 18 port + 26 new trials). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K2-OpusXHigh (Stage E.0 Task 4), 2026-09-23, 21:03-21:40 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 Written before any price, bar, tick or order-book data for any K2 product existed on this machine.
@@ -1273,7 +1311,7 @@ reports/stage_d1b_family_f_declaration.md F3.3.
 | Exposures | six, one per tenor, each with exactly one admissible contract (partition section 1): ZT, ZF, ZN, TN, ZB, UB |
 | Members | 9 = 5 new + 3 core ports + 1 ML member (budget 15; 6 slots unused, see section 3) |
 | Trials in N (confirmation) | 45 if D2 admits all six exposures (18 port + 26 new + 1 ML). In general 3E + 4E + E_pd + 1, where E = number of admitted exposures and E_pd = admitted exposures among {ZN, ZB}. Example: without ZB and UB, 30. |
-| ML grid (research-window accounting only, D15.8) | 48 configurations, counted in the K2 screening session's research-window DSR for K2-ml-01 |
+| ML grid (research-window accounting only, D15.8) | ~~48 configurations, counted in the K2 screening session's research-window DSR for K2-ml-01~~ [superseded, U6: no ML member] |
 | Starred products | none (Topstep F1: no K2 product carries "*") |
 | D1 | **D1 is applied by the lead.** No K2 exposure is assumed IN. Every member below is written for all six. |
 | D2 | Vehicle "D2 (chosen in E.2)" throughout. Rule 13: ZB and UB may be outside D2's risk band at one contract; every entry marks them "traded only if D2 admits the exposure". The same condition applies to every K2 exposure (see C6). |
@@ -1460,7 +1498,9 @@ reports/stage_d1b_family_f_declaration.md F3.3.
   7. Price limit: D9.7 per E.2, as in CP1.
 - **Data needed:** ohlcv-1m of the admitted vehicles, over the research and confirmation windows.
 - **Trials in N:** 1 per admitted exposure (at most 6).
-- **Note for the lead (not a change; the text is copied unchanged):** D6's text has no
+- **Note for the lead (not a change; the text is copied unchanged):** [Superseded (review R-28,
+  applied in Stage E.1 under U9): the lead's 21:12 amendment bounds entries at C, as the
+  instantiation above states; this note predates it.] D6's text has no
   latest-entry time. On MES the gap between C (15:00) and F (15:08) was 8 minutes. On K2 it is 68
   minutes (14:00 to 15:08), so a first break after 14:00 CT can be entered here with a hold that F
   truncates. See section 7, item 1.
@@ -1831,6 +1871,10 @@ reports/stage_d1b_family_f_declaration.md F3.3.
 - **Trials in N:** 1 per admitted exposure (at most 6).
 
 ### K2-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
+
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
 - **Traded vehicle: ZN.**
   - **Reason:** ZN is the single K2 exposure the log documents most often:
     - K2-007 (ZN by ticker, P-K2-007-b);
@@ -1989,14 +2033,15 @@ Every passed item in reports/stage_e0_research_K2.md, and every `[K2]`-tagged pa
 | K2-fomcpost-01 | ZT, ZF, ZN, TN, ZB, UB | 1 | 6 |
 | K2-predrift-01 | ZN, ZB | 1 | 2 |
 | K2-monthend-01 | ZT, ZF, ZN, TN, ZB, UB | 1 | 6 |
-| K2-ml-01 | ZN (fallback ZF) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K2-ml-01~~ [excluded, U6] | ZN (fallback ZF) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **45** (18 port + 26 new + 1 ML). With E admitted exposures and E_pd admitted among {ZN, ZB}: 7E + E_pd + 1. Without ZB and UB: 30. |
 
 ---
 
 ## 7. Open items for the lead (decisions reserved to the lead; none taken here)
 
-1. **CP2 has no latest-entry time.** It is copied verbatim from D6. On K2, C = 14:00 and
+1. **CP2 has no latest-entry time.** [Superseded (review R-28, U9): the lead's 21:12 amendment
+   bounds entries at C.] It is copied verbatim from D6. On K2, C = 14:00 and
    F = 15:08, so a first break between 14:00 and 15:08 can be entered and then cut short by F.
    On MES the equivalent gap was 8 minutes. The lead decides whether the port needs a
    latest-entry time to remain the MES family.
@@ -2031,6 +2076,12 @@ Every passed item in reports/stage_e0_research_K2.md, and every `[K2]`-tagged pa
 # Cluster K3
 
 # Stage E.0 hypothesis catalog, cluster K3 (FX: 6E, E7, M6E, 6A, M6A, 6B, M6B, 6C, 6J, 6S, 6N)
+
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K3-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U7: M6E and M6A stay non-candidates for D2 until Topstep answers the user's support email (D2, D9.8).
+> **K3 after the decisions: 9 active members, 31 confirmation trials** (6 new + 3 core ports; 21 port + 10 new trials). Header
+> and section 6 totals below are superseded where they differ.
 
 Writer: CatalogWriter-K3-OpusXHigh (Stage E.0 Task 4), 2026-09-24, from 01:15 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
@@ -2094,7 +2145,7 @@ network was used for them.
 | **D1 applied: 6M out** | MXN (6M) fails D1(b): coverage 0.903 < 0.95. No member trades or reads it |
 | Members | **10 = 6 new + 3 core ports + 1 ML member.** Budget 15, so 5 slots are unused (section 3) |
 | Trials in N (confirmation) | **36 if D2 admits all seven exposures:** 21 port + 14 new + 1 ML. The general formula is in section 6 |
-| ML grid | 48 configurations, counted only in the K3 screening session's research-window accounting (D15.8) |
+| ML grid | ~~48 configurations, counted only in the K3 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Starred products | **M6E and M6A: restriction UNRESOLVED** (D9.8; topstep facts F12.1: "no product-specific restriction naming them was found"). Every EUR and AUD member carries the flag. M6B is not starred |
 | D2 | Vehicle "D2 (chosen in E.2)" throughout. CAD, JPY, CHF and NZD have one full-size contract each (q = 1). EUR, AUD and GBP may go to a micro (q <= 10) if the full-size contract fails rho <= 2.0. Every entry is written for the exposures its evidence names, each **traded only if D2 admits the exposure** |
 
@@ -2881,6 +2932,10 @@ network was used for them.
 
 ### K3-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
 
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
+
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: fallback order declared now (D1 ADV order): EUR, JPY, AUD, GBP, CAD, NZD, CHF; if none is admitted, no ML member. Features unchanged.]
 - **Traded vehicle: the EUR exposure** {6E, E7, M6E*}; the contract is chosen by D2 in E.2.
   - **Reason:** EUR is the K3 exposure the log supports most, and the most tested on CME futures:
@@ -3117,7 +3172,7 @@ This covers every passed item in reports/stage_e0_research_K3.md section 3 (K3-0
 | K3-ecbfix-01 | EUR | 1 | 1 |
 | K3-tkypre-01 | JPY | 1 | 1 |
 | K3-tkypost-01 | JPY | 1 | 1 |
-| K3-ml-01 | EUR (no fallback) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K3-ml-01~~ [excluded, U6] | EUR (no fallback) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **36** = 21 port + 14 new + 1 ML |
 
 **General formula.** With E the number of admitted exposures and a_X = 1 if exposure X is admitted
@@ -3204,6 +3259,12 @@ N_K3 = 3E + 5 a_EUR + 5 a_JPY + 2 a_CHF + a_GBP + a_CAD + a_NZD - (index drops f
 
 # Stage E.0 hypothesis catalog, cluster K4 (energy: CL, QM, MCL, NG, QG, MNG, RB, HO)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K4-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials.
+> **K4 after the decisions: 8 active members, 19 confirmation trials** (5 new + 3 core ports (K4-ngrev-01 excluded on review R-06); 12 port + 7 new trials). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K4-OpusXHigh (Stage E.0 Task 4), 2026-09-23, from about 21:30 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 
@@ -3264,7 +3325,7 @@ only to confirm release-time sources; no mechanism research was done:
 | D1 | **D1 applied: all four K4 exposures IN** (design D1 table). Admissible vehicles, 2026 Jan-Aug ADV: crude CL 1,079,857, MCL 252,100, QM 9,446; gas NG 521,792, MNG 14,942, QG 4,060; RB 206,850; HO 187,479 (the D1 table's figure) |
 | Members | 10 = 6 new + 3 core ports + 1 ML member. Budget 15, so 5 slots are unused (section 3) |
 | Trials in N (confirmation) | **21 if D2 admits all four exposures:** 12 port + 8 new + 1 ML. In general 3E + 5a_C + 3a_G + a_H, where E is the number of admitted exposures and a_C, a_G, a_H are 1 if crude, gas and ULSD are admitted (0 otherwise). Example: without RBOB and ULSD, 14 |
-| ML grid | 48 configurations, counted only in the K4 screening session's research-window accounting (D15.8) |
+| ML grid | ~~48 configurations, counted only in the K4 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Starred products | **MCL** (Topstep F1: "Micro Crude Oil (MCL)*"). Its restriction is unresolved (D9.8; topstep facts F2 "not published"). Every crude member carries the flag. CL, QM, NG, QG, MNG, RB and HO are unstarred |
 | D2 | Vehicle "D2 (chosen in E.2)" throughout. RB and HO each have one full-size contract. CL and NG may fail rho <= 2.0 at q = 1, leaving MCL/QM and MNG/QG as the vehicles. RB and HO may go untraded. Every entry is written for every exposure its evidence names, each marked **"traded only if D2 admits the exposure"** |
 
@@ -3991,6 +4052,10 @@ only to confirm release-time sources; no mechanism research was done:
 
 ### K4-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
 
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
+
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: fallback order declared now (D1 ADV order): WTI crude, natural gas, RBOB, ULSD; if none is admitted, no ML member. Features unchanged.]
 - **Traded vehicle: WTI crude exposure** {CL, QM, MCL}; the contract is chosen by D2 in E.2.
   - **Reason:** crude is the K4 exposure the log documents most often at intraday horizons:
@@ -4223,7 +4288,7 @@ hold NG across the storage release: one always short, the other signed by last w
 | K4-eiafade-01 | crude | 1 | 1 |
 | K4-eiamom-01 | crude | 1 | 1 |
 | K4-ovr-01 | crude, ULSD, gas | 1 | 3 |
-| K4-ml-01 | crude (no fallback) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K4-ml-01~~ [excluded, U6] | crude (no fallback) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **21** = 12 port + 8 new + 1 ML. In general 3E + 5a_C + 3a_G + a_H. Without RBOB and ULSD: 14. Crude only: 8 |
 
 ---
@@ -4289,6 +4354,12 @@ hold NG across the storage release: one always short, the other signed by last w
 # Cluster K5
 
 # Stage E.0 hypothesis catalog, cluster K5 (metals: GC, MGC, SI, SIL, HG, MHG, PL)
+
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K5-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U2: platinum (PL) is OUT, as a traded exposure and as a signal leg (Topstep's 50K volatility cap for PL is 0 and PL has no micro). Every statement below that makes platinum a traded exposure is struck through with a [U2] note; descriptive platinum facts (auction clock times, fees, Topstep's quoted text, question texts) are kept for the record and bind nothing. U9 (review R-28): K5-preauc-01's trial count is 2, as the 01:47 ruling set it.
+> **K5 after the decisions: 7 active members, 16 confirmation trials** (4 new + 3 core ports; 9 port + 7 new trials). Header
+> and section 6 totals below are superseded where they differ.
 
 Writer: CatalogWriter-K5-OpusXHigh (Stage E.0 Task 4), 2026-09-24, from 01:23 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
@@ -4360,12 +4431,12 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
 
 | Item | Value |
 |---|---|
-| Products | GC, MGC, SI, SIL, HG, MHG (COMEX); PL (NYMEX) |
-| Exposures | gold {GC, MGC}; silver {SI, SIL}; copper {HG, MHG}; platinum {PL} (partition section 1) |
-| D1 | **D1 applied: all four K5 exposures IN; platinum flagged (may be suspended).** Admissible vehicles, 2026 Jan-Aug ADV (design D1 table): gold MGC 429,702 and GC 212,764; silver SIL 134,882 and SI 83,587; copper HG 77,679 and MHG 21,803; platinum PL 22,360 |
-| Members | **8 = 4 new + 3 core ports + 1 ML member.** Budget 15, so 7 slots are unused (section 3) |
-| Trials in N (confirmation) | **22 if D2 admits all four exposures:** 12 port + 9 new + 1 ML. In general 4E + 3a_G + a_S + a_P + 1, where E is the number of admitted exposures and a_G, a_S, a_P are 1 when gold, silver or platinum is admitted (the ML member assumes gold, section 7 item 7). Each exposure of K5-preauc-01 also needs its member-level coverage check (C14) |
-| ML grid | 48 configurations, counted only in the K5 screening session's research-window accounting (D15.8) |
+| Products | GC, MGC, SI, SIL, HG, MHG (COMEX); ~~PL (NYMEX)~~ [OUT, U2] |
+| Exposures | gold {GC, MGC}; silver {SI, SIL}; copper {HG, MHG}; ~~platinum {PL}~~ [OUT, U2] (partition section 1) |
+| D1 | **D1 applied: all four K5 exposures IN; platinum flagged (may be suspended).** [U2, 2026-09-24: platinum OUT by the user's decision; three K5 exposures are traded.] Admissible vehicles, 2026 Jan-Aug ADV (design D1 table): gold MGC 429,702 and GC 212,764; silver SIL 134,882 and SI 83,587; copper HG 77,679 and MHG 21,803; platinum PL 22,360 |
+| Members | **8 = 4 new + 3 core ports + 1 ML member.** [E.1: 7 = 4 new + 3 core ports; K5-ml-01 excluded, U6.] Budget 15, so 7 slots are unused (section 3) |
+| Trials in N (confirmation) | ~~**22 if D2 admits all four exposures:** 12 port + 9 new + 1 ML.~~ [E.1. U9 (review R-28): after the 01:47 ruling put K5-preauc-01 at 2 trials the figure was 21 = 12 port + 8 new + 1 ML. After U2 and U6: **16 if D2 admits gold, silver and copper: 9 port + 7 new**; in general 4E + 3a_G + a_S, where E counts admitted exposures among gold, silver and copper. The E.0 formula follows.] In general 4E + 3a_G + a_S + a_P + 1, where E is the number of admitted exposures and a_G, a_S, a_P are 1 when gold, silver or platinum is admitted (the ML member assumes gold, section 7 item 7). Each exposure of K5-preauc-01 also needs its member-level coverage check (C14) |
+| ML grid | ~~48 configurations, counted only in the K5 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Starred products | **MGC and SIL** (Topstep F1). The star's referent is Topstep's "Risk Adjustments: High Risk/High Volatility" article (D9.8, F12.1), encoded as D9.11 and D9.12. **MGC:** volatility cap 30 contracts on the 50K account, so the 1-lot cap of 10 binds first; at most 3 contracts in an opening fill inside the CPI window. **SIL:** volatility cap 2 contracts, which binds, since D2's 1-lot cap would allow 5; the same CPI-window cap of 3; counts 0.2 lot. MHG is unstarred but the same article names it: cap 2 contracts, CPI-window cap 3 |
 | Suspension risk (D9.11) | "Silver (SI) = 0; ... Copper (HG) = 0; ... Platinum (PL) = 0" at Topstep's discretion in extreme volatility (F12.1). D2 prefers SIL and MHG whenever they are candidates. **Platinum has no micro and may be suspended in volatile periods**; every platinum trial carries that flag |
 | CPI window (D9.12) | No opening fill on GC, SI, HG or PL in [CPI - 5 min, CPI + 5 min] = [07:25, 07:35] CT (CPI 08:30 ET, C9). Such an entry is skipped for the day, not deferred. On MGC, SIL and MHG an opening fill in the window is at most 3 contracts. Only K5-cp2-01 on copper can open inside the window (C11) |
@@ -4413,7 +4484,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   | SIL* | 0.2 | 5 | 2 | **2** |
   | HG | 1 | 1 | 0 at Topstep's discretion | 1 (may be suspended) |
   | MHG | 0.1 | 10 | 2 | **2** |
-  | PL | 1 | 1 | 0 at Topstep's discretion | 1 (may be suspended) |
+  | ~~PL~~ [OUT, U2] | ~~1~~ | ~~1~~ | 0 (Topstep F12.1c) | — |
 
 - **C7 Ticks and fees.** Ticks are from reports/stage_e0_liquidity.json (CME contract specifications,
   fetched 2026-09-23 20:48 PDT). Round turns are Topstep F3.
@@ -4547,6 +4618,8 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
     net P&L per event of about (305 / k) x eps_X to reach eps_X per trade date. That is about 1 x for the
     daily members and about 30 x for K5-fomc-01 (section 7, item 4).
 - **C13 Price-limit proximity (D9.7).** Whether COMEX and NYMEX metals carried daily price limits or
+
+> [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-10: the "release residual" paragraph of C13 is superseded: since the 01:52 ruling the D9.7 exit is exempt from the fill guard (D9.7).]
   dynamic circuit breakers over 2019-2026 is not verified in E.0 (outside this task's permitted fetches).
   - E.2 builds the per-product table from CME rules, and decides with the user whether Topstep's "Holding a
     position within 2% of a product's price lock limit" [F2.1] applies to a dynamic band.
@@ -4567,8 +4640,8 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
 
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-02: this entry's statement that the family was null on MES is corrected. MES's confirmation tested the reversal-signed F3.3 statistics (s = -1, reports/stage_d1f_confirmation_list.md) and found them null; the momentum form ported here, the literature's form, was negative on MES's mined window and is untested on MES's confirmation. The port is kept; D6 carries the corrected wording.]
 - **Cluster** K5. **Products read:** the traded exposure's own vehicle only.
-- **Traded exposures** (each a separate trial): gold {GC, MGC}, silver {SI, SIL}, copper {HG, MHG},
-  platinum {PL}. Each is traded only if D2 admits it. **Vehicle:** D2 (chosen in E.2).
+- **Traded exposures** (each a separate trial): gold {GC, MGC}, silver {SI, SIL}, copper {HG, MHG}
+  ~~, platinum {PL}~~ [U2: platinum OUT]. Each is traded only if D2 admits it. **Vehicle:** D2 (chosen in E.2).
 - **Mechanism:** port of MES Family F3.3(a), the Gao-Han-Li-Zhou / Baltussen form (class C3; D.1 log A10
   and A28; reports/stage_d1b_family_f_declaration.md F3.3), as fixed in D6 row CP1.
   - **D6 rule text, verbatim:** "Signal: sign of (close of the bar at O+29 min minus open of the trade
@@ -4589,7 +4662,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   | gold | 07:20 / 12:30 / 15:08 | 07:49 (known 07:50) | 11:59, 12:00 | 12:28, 12:29 | 29 min |
   | silver | 07:20 / 12:25 / 15:08 | 07:49 | 11:54, 11:55 | 12:23, 12:24 | 29 min |
   | copper | 07:10 / 12:00 / 15:08 | 07:39 | 11:29, 11:30 | 11:58, 11:59 | 29 min |
-  | platinum | 07:20 / 12:05 / 15:08 | 07:49 | 11:34, 11:35 | 12:03, 12:04 | 29 min |
+  | ~~platinum~~ [OUT, U2] | ~~07:20 / 12:05 / 15:08~~ | ~~07:49~~ | ~~11:34, 11:35~~ | ~~12:03, 12:04~~ | ~~29 min~~ |
 
   - **Holding horizon:** 29 minutes on every exposure.
   - **Session window:** the entry-to-exit rows above. Flat at least 2 h 39 min before F (gold's 12:29).
@@ -4617,11 +4690,11 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   9. Price limit: C13.
 - **Data needed:** ohlcv-1m of each admitted K5 vehicle over the research window 2025-04-01..2026-06-19
   and the confirmation window S_X..2024-02-29 (D4). No external data.
-- **Trials in N:** 1 per admitted exposure (at most 4).
+- **Trials in N:** 1 per admitted exposure (at most 3 after U2; E.0: at most 4).
 
 ### K5-cp2-01 (core port CP2, opening-range breakout)
 - **Cluster** K5. **Products read:** own vehicle.
-- **Exposures:** gold, silver, copper, platinum, one trial each, each traded only if D2 admits it.
+- **Exposures:** gold, silver, copper ~~, platinum~~ [U2: platinum OUT], one trial each, each traded only if D2 admits it.
   **Vehicle:** D2 (chosen in E.2).
 - **Mechanism:** port of MES B-H1 hold 75 (class C2;
   strategy/research/b_reference_breakout/h1_friction_aware_opening_range_breakout.py, hold_minutes = 75), as
@@ -4641,7 +4714,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   | gold | [07:20, 07:35) | opening in [07:35, 12:30) | MGC tick 0.10, so 0.40 | GC $40, MGC $4 | 07:36 / 12:30 | 13:45 |
   | silver | [07:20, 07:35) | [07:35, 12:25) | SIL tick 0.005, so 0.020 | SI $100, SIL $20 | 07:36 / 12:25 | 13:40 |
   | copper | [07:10, 07:25) | [07:25, 12:00) | HG tick 0.0005, so 0.0020 | HG $50, MHG $5 | 07:26 / 12:00 | 13:15 |
-  | platinum | [07:20, 07:35) | [07:35, 12:05) | PL tick 0.10, so 0.40 | PL $20 | 07:36 / 12:05 | 13:20 |
+  | ~~platinum~~ [OUT, U2] | ~~[07:20, 07:35)~~ | ~~[07:35, 12:05)~~ | ~~PL tick 0.10, so 0.40~~ | ~~PL $20~~ | ~~07:36 / 12:05~~ | ~~13:20~~ |
 
   - **Entry:** the first eligible bar whose close is >= OR_high + buffer buys; one whose close is <= OR_low -
     buffer sells. One entry per trade date.
@@ -4670,11 +4743,11 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   8. Position and volatility caps: C6.
   9. Price limit: C13.
 - **Data needed:** ohlcv-1m of the admitted vehicles, research and confirmation windows.
-- **Trials in N:** 1 per admitted exposure (at most 4).
+- **Trials in N:** 1 per admitted exposure (at most 3 after U2; E.0: at most 4).
 
 ### K5-cp3-01 (core port CP3, prior-close location)
 - **Cluster** K5. **Products read:** own vehicle.
-- **Exposures:** gold, silver, copper, platinum, each traded only if D2 admits it. **Vehicle:** D2 (chosen in
+- **Exposures:** gold, silver, copper ~~, platinum~~ [U2: platinum OUT], each traded only if D2 admits it. **Vehicle:** D2 (chosen in
   E.2).
 - **Mechanism:** port of MES H6 (class C7; reports/stage_d1f_confirmation_list.md 2.1 A3 row H6;
   strategy/research/h_daily_bar/h6_prior_close_location.py), as fixed in D6 row CP3.
@@ -4697,7 +4770,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   | gold | [07:20, 12:30) | 12:29 | 07:20, 07:21 | 12:28, 12:29 | 308 min |
   | silver | [07:20, 12:25) | 12:24 | 07:20, 07:21 | 12:23, 12:24 | 303 min |
   | copper | [07:10, 12:00) | 11:59 | 07:10, 07:11 | 11:58, 11:59 | 288 min |
-  | platinum | [07:20, 12:05) | 12:04 | 07:20, 07:21 | 12:03, 12:04 | 283 min |
+  | ~~platinum~~ [OUT, U2] | ~~[07:20, 12:05)~~ | ~~12:04~~ | ~~07:20, 07:21~~ | ~~12:03, 12:04~~ | ~~283 min~~ |
 
   CLV is computed with Range[d-1] > 0. CLV >= 0.8 buys; CLV <= 0.2 sells.
   - **Holding horizon:** 283-308 minutes, by exposure (table).
@@ -4720,7 +4793,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   8. Caps: C6.
   9. Price limit: C13.
 - **Data needed:** ohlcv-1m of the admitted vehicles, research and confirmation windows.
-- **Trials in N:** 1 per admitted exposure (at most 4).
+- **Trials in N:** 1 per admitted exposure (at most 3 after U2; E.0: at most 4).
 
 ### K5-preauc-01 (short into the LBMA auctions held outside US trading hours)
 - **Cluster** K5. **Products read:** the traded exposure's vehicle; EC-LBMA; EC-UKBH; EC-CAL.
@@ -4812,10 +4885,10 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   9. Price limit: C13.
   - Also C14: each window lies outside D1's coverage window, and platinum's 03:15-03:44 is the likeliest
     to fail the member-level check.
-- **Data needed:** ohlcv-1m of the gold, silver and platinum vehicles over 03:00-07:00 CT and the fills'
+- **Data needed:** ohlcv-1m of the gold and silver ~~and platinum~~ [U2: platinum OUT] vehicles over 03:00-07:00 CT and the fills'
   buckets, in the research and confirmation windows. D8 needs slippage buckets for 03:00-07:00 CT. External:
   EC-LBMA, EC-UKBH, EC-CAL.
-- **Trials in N:** 3 (one per exposure).
+- **Trials in N:** ~~3 (one per exposure)~~ 2 (gold and silver, one each, as the 01:47 ruling set it; text fixed in Stage E.1 under U9, review R-28).
 
 ### K5-pmfix-01 (gold PM auction: continuation of the auction's first two minutes)
 - **Cluster** K5. **Products read:** the gold vehicle; EC-LBMA; EC-UKBH; EC-CAL.
@@ -4996,7 +5069,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
 
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-04: labelled SOURCE-OVERLAP (same source and sample as K4-ovr-01, 2019-11-20 to 2020-06-03). K4-ovr-01 and K5-ovr-01 must carry one identical rule text (review R-24); E.1 checks it before hashing.]
 - **Cluster** K5. **Products read:** each traded exposure's own vehicle; EC-CAL.
-- **Traded exposures** (each a separate trial; each only if D2 admits it): gold, silver, platinum and copper.
+- **Traded exposures** (each a separate trial; each only if D2 admits it): gold, silver ~~, platinum~~ and copper [U2: platinum OUT].
   - These are the K5 exposures in the source's sample: "gold (GC), silver (SI), platinum (PL), palladium
     (PA), copper (HG)" (P-K5-029-b).
   - **Vehicle:** D2 (chosen in E.2).
@@ -5025,8 +5098,8 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
     energy (its [K4] passages). The judgments below are made independently, and where they coincide with
     K4's the entry says so, so that the lead can keep the source tested the same way across clusters.
 - **Decision times:** t = O + 60k for k = 1, 2, ... while t <= C (D6 rows). Gold and silver: 08:20, 09:20,
-  10:20, 11:20, 12:20 (five). Copper: 08:10, 09:10, 10:10, 11:10 (four). Platinum: 08:20, 09:20, 10:20,
-  11:20 (four).
+  10:20, 11:20, 12:20 (five). Copper: 08:10, 09:10, 10:10, 11:10 (four). ~~Platinum: 08:20, 09:20, 10:20,
+  11:20 (four).~~ [U2: platinum OUT.]
 - **Signal:** r(t) = (close of the bar at t - 1 minus open of the bar at t - 60) / open of the bar at t -
   60, the return over the hour [t - 60, t). Both bars must exist with one instrument_id.
 - **Reference set and cuts.**
@@ -5043,7 +5116,7 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
 - **Exit rule:** market intent on the bar at t + 58, filling at the open of the bar at t + 59. At most one
   position is open. The next decision's entry fills at t + 60, so positions never overlap.
 - **Holding horizon:** 59 minutes. **Session window:** gold and silver 08:20-13:19; copper 08:10-12:09;
-  platinum 08:20-12:19. Flat by F.
+  ~~platinum 08:20-12:19~~ [U2: platinum OUT]. Flat by F.
 - **Data fields read:** vehicle ohlcv-1m open, close and instrument_id (C8), all closed at or before t, and
   earlier trade dates; EC-CAL. Paid; history 2019-05 on (MHG 2022-05, C8).
 - **Order type:** market. **Sizing:** q_c.
@@ -5081,10 +5154,14 @@ the scratchpad `fetch/` directory with a `k5_` prefix.
   7. CPI window: the first fill is 08:10, outside it.
   8. Caps: C6. Platinum may be suspended.
   9. Price limit: C13.
-- **Data needed:** ohlcv-1m of all four admitted vehicles, research and confirmation windows.
-- **Trials in N:** 1 per admitted exposure (at most 4).
+- **Data needed:** ohlcv-1m of all ~~four~~ three [U2] admitted vehicles, research and confirmation windows.
+- **Trials in N:** 1 per admitted exposure (at most 3 after U2; E.0: at most 4).
 
 ### K5-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
+
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
 
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: the 01:47 fallback ruling (gold, then silver, then copper) governs; this entry's "No fallback is declared" is superseded; KF1-KF3 and KF5 remain gold-event features whichever metal becomes the vehicle.]
 - **Traded vehicle: the gold exposure** {GC, MGC}; the contract is chosen by D2 in E.2. [Lead ruling, 01:47 PDT, question 6: fallback order if D2 does not admit gold: silver, then copper; the features stay as written, reading silver bars (an IN exposure) whether or not silver is traded.]
@@ -5290,17 +5367,18 @@ passage or registry tag elsewhere.
 
 | Member | Exposures (max) | Grid points | Trials in N (all four admitted) |
 |---|---|---|---|
-| K5-cp1-01 | gold, silver, copper, platinum | 1 | 4 |
-| K5-cp2-01 | gold, silver, copper, platinum | 1 | 4 |
-| K5-cp3-01 | gold, silver, copper, platinum | 1 | 4 |
+| K5-cp1-01 | gold, silver, copper ~~, platinum~~ [U2] | 1 | 3 (E.0: 4) |
+| K5-cp2-01 | gold, silver, copper ~~, platinum~~ [U2] | 1 | 3 (E.0: 4) |
+| K5-cp3-01 | gold, silver, copper ~~, platinum~~ [U2] | 1 | 3 (E.0: 4) |
 | K5-preauc-01 | gold (AM), silver (platinum removed by the lead) | 1 | 2 |
 | K5-pmfix-01 | gold | 1 | 1 |
 | K5-fomc-01 | gold | 1 | 1 |
-| K5-ovr-01 | gold, silver, platinum, copper | 1 | 4 |
-| K5-ml-01 | gold (fallback silver, then copper: lead ruling) | 48 in research-window accounting only (D15.8) | 1 |
-| **Cluster total** | | | **22** = 12 port + 9 new + 1 ML. In general 4E + 3a_G + a_S + a_P + 1. Without platinum: 17. Gold only: 8 |
+| K5-ovr-01 | gold, silver ~~, platinum~~ [U2], copper | 1 | 3 (E.0: 4) |
+| ~~K5-ml-01~~ [excluded, U6] | gold (fallback silver, then copper: lead ruling) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
+| **Cluster total** | | | ~~**22** = 12 port + 9 new + 1 ML. In general 4E + 3a_G + a_S + a_P + 1. Without platinum: 17. Gold only: 8~~ [E.1: U9 (R-28) corrects the E.0 figure to 21 after the 01:47 ruling; after U2 and U6: **16** = 9 port + 7 new. In general 4E + 3a_G + a_S. Gold only: 7] |
 
 The "without platinum" figure: 3 x 3 ports + 3 ovr + 2 preauc + 1 pmfix + 1 fomc + 1 ML = 17.
+[E.1: with platinum OUT (U2) and K5-ml-01 excluded (U6): 9 + 3 + 2 + 1 + 1 = 16.]
 
 ---
 
@@ -5318,7 +5396,7 @@ The "without platinum" figure: 3 x 3 ports + 3 ovr + 2 preauc + 1 pmfix + 1 fomc
    (08:30 ET) is also among Elder's largest-impact releases for gold and silver (P-K5-014-a), but its
    schedule source was not confirmed (census.gov 404). Should E.2 source it and add it?
 3. **K5-preauc-01 rests on one abstract** (a practitioner SSRN paper, window and magnitude unverified).
-   - It costs 3 trials.
+   - It costs 3 trials. [E.1, U9 (review R-28): 2 trials after the 01:47 ruling.]
    - Platinum's window (03:15-03:44 CT, or 04:15-04:44 in 5-hour weeks) is the likeliest to fail the
      member-level coverage check (C14).
    - The lead may cut it, or keep gold and silver only.
@@ -5336,7 +5414,7 @@ The "without platinum" figure: 3 x 3 ports + 3 ovr + 2 preauc + 1 pmfix + 1 fomc
    against P-K5-006-f and P-K5-006-g).
 7. **K5-ml-01 has no fallback exposure.** Its features are gold-specific. It also needs silver bars (KF6)
    even if silver is not admitted, which E.2 must add to D13's purchase.
-8. **Platinum.**
+8. **Platinum.** [Decided by the user, U2, 2026-09-24: platinum is OUT.]
    - PL has no micro and "Platinum (PL) = 0" is possible at Topstep's discretion (D9.11). Every platinum
      trial carries the "may be suspended" flag.
    - Platinum carries 3 ports + K5-preauc-01 + K5-ovr-01 = 5 trials.
@@ -5366,6 +5444,12 @@ The "without platinum" figure: 3 x 3 ports + 3 ovr + 2 preauc + 1 pmfix + 1 fomc
 # Cluster K6
 
 # Stage E.0 hypothesis catalog, cluster K6 (agriculture and livestock: ZC, ZW, ZS, ZM, ZL, HE, LE)
+
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K6-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials.
+> **K6 after the decisions: 7 active members, 27 confirmation trials** (4 new + 3 core ports (K6-ovr-01 excluded by the lead); 21 port + 6 new trials). Header
+> and section 6 totals below are superseded where they differ.
 
 Writer: CatalogWriter-K6-OpusXHigh (Stage E.0 Task 4), 2026-09-24, from 01:29 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
@@ -5422,7 +5506,7 @@ Files are saved under the session scratchpad at fetch/k6cat.
 | D2 | Each exposure has exactly one admissible contract, so D2 has no vehicle choice. It either admits the contract (rho <= 2.0 at q = 1) or drops the exposure. An admitted exposure with rho < 0.5 trades at q = 1 and is flagged "undersized". Every entry reads "Vehicle: D2 (chosen in E.2)", and every trial is **traded only if D2 admits the exposure** |
 | Members | **9 = 5 new + 3 core ports + 1 ML member.** Budget 15, so 6 slots are unused (section 3) |
 | Trials in N (confirmation) | **39 if D2 admits all seven:** 21 port + 17 new + 1 ML. In general: 4E + (a_ZS + a_ZM + a_ZL) + (a_ZC + a_ZS) + a_ZC + (a_ZW + a_ZC + a_ZS + a_ZL) + a_ZC, where E is the number of admitted exposures and a_X = 1 if X is admitted |
-| ML grid | 48 configurations, counted only in the K6 screening session's research-window accounting (D15.8) |
+| ML grid | ~~48 configurations, counted only in the K6 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Sizing | q = 1 contract in every member, which is 1 lot-equivalent: the D9.5 cap, half the 50K XFA's 2-lot maximum |
 
 ### Common conventions (apply to every entry unless the entry says otherwise)
@@ -5571,6 +5655,8 @@ Files are saved under the session scratchpad at fetch/k6cat.
     announcements significantly widen the BAS" (P-K6-021-b). Real-time releases bring "higher market
     liquidity costs" (P-K6-024-c).
 - **C13 Price-limit proximity (D9.7) in K6.**
+
+> [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-10: the "release residual" paragraph of C13 is superseded: since the 01:52 ruling the D9.7 exit is exempt from the fill guard (D9.7).]
   - All seven products carry CME daily limits (P-K6-047-a). Topstep prohibits "Holding a position
     within 2% of a product's price lock limit" (F2.1). The harness encodes it: no entry, and an
     immediate exit, while the price is within 2% of U(c, d) or D(c, d).
@@ -6190,6 +6276,10 @@ Files are saved under the session scratchpad at fetch/k6cat.
 
 ### K6-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
 
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
+
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: fallback order declared now (D1 ADV order): ZC, ZS, ZL, ZM, ZW, LE, HE; if none is admitted, no ML member. Features unchanged. R-11 (NOTE): the first decision time that cannot trade is dropped from the decision grid by D15.3's row rule.]
 - **Traded vehicle: corn, ZC** (D2 chosen in E.2; ZC is the exposure's only contract).
   - **Reason:** corn is the K6 product the log documents most at intraday and release horizons:
@@ -6421,7 +6511,7 @@ passage elsewhere.
 | K6-wasdepre-01 | ZC, ZS | 1 | 2 |
 | K6-wasdepost-01 | ZC | 1 | 1 |
 | K6-ovr-01 | EXCLUDED by the lead (01:52) | - | 0 |
-| K6-ml-01 | ZC (no fallback) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K6-ml-01~~ [excluded, U6] | ZC (no fallback) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **39** = 21 port + 17 new + 1 ML. In general 4E + (a_ZS + a_ZM + a_ZL) + (a_ZC + a_ZS) + a_ZC + (a_ZW + a_ZC + a_ZS + a_ZL) + a_ZC. The cuts in section 7, item 7 would bring it to 28 |
 
 ---
@@ -6524,6 +6614,12 @@ passage elsewhere.
 
 # Stage E.0 hypothesis catalog, cluster K7 (crypto: MBT traded; MET as a signal leg only)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K7-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U1: MET stays OUT; it may serve only as a signal leg under D9's member-level coverage check.
+> **K7 after the decisions: 6 active members, 6 confirmation trials** (3 new + 3 core ports; 3 port + 3 new trials). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K7-OpusXHigh (Stage E.0 Task 4), 2026-09-24, from 01:41 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 
@@ -6610,7 +6706,7 @@ confirm session times, methodology and data-source availability. No mechanism re
 | D2 | Vehicle "D2 (chosen in E.2)". The only candidate is MBT at q = 1 (the 1-lot-equivalent cap; Topstep "Micro Bitcoin (MBT): Capped at mini-equivalent lot sizes, not standard micro scaling", F5.4). Bitcoin is traded only if MBT's rho = r_MBT / R* <= 2.0 at q = 1 (measured in E.2). If rho > 2.0, no K7 member trades |
 | Members | **7 = 3 new + 3 core ports + 1 ML member.** The budget is 15, so 8 slots are unused (section 3). The cluster is thin, and nothing is padded |
 | Trials in N (confirmation) | **7** if D2 admits bitcoin (3 port + 3 new + 1 ML); 0 otherwise |
-| ML grid | 48 configurations, counted only in the K7 screening session's research-window accounting (D15.8) |
+| ML grid | ~~48 configurations, counted only in the K7 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Starred product | **MBT\*** (F1.9). Its referent is Topstep's "Risk Adjustments: High Risk/High Volatility" page (F12.1). That page bans MBT only in the small Challenge tiers: "In the $3K Challenge, you cannot trade MHG, MET, MBT, or SIL" (the same for the $1.5K Challenge). It sets no MBT restriction for the 50K XFA. The page's volatility caps name energies and metals only, and its CPI-window rules name other products. **For the 50K XFA the star imposes nothing beyond F5.4's mini-equivalent weighting**, so q = 1 MBT = 1 lot-equivalent. Whether a volatility halt of "mini-sized contracts or larger" could reach MBT is [unverified]; that is a deployment question, not a design one |
 | 24/7 CME crypto trading | **Verified in this task.** CME's 1 June 2026 release says 24/7 trading "went live on Friday, May 29" (2026-05-29, from 16:00 CT per the 19 Feb release). The K7 log carried this as K7-036, unverified. See the next row and C3 |
 | Effect on the windows | **Research window** 2025-04-01..2026-06-19: the program trade dates 2026-06-01..2026-06-19 (15 of about 305, the last three weeks) come after the change. From 2026-05-29 16:00 CT, the MBT data contain weekend bars and weekday 16:00-16:59 CT bars, which did not exist before. Under the program's trade-date convention (C3) none of them belongs to a program trade date, and no K7 member reads them. D2's risk measure (day session) and D8's five cost-sample dates (2025-05-14..2026-04-15) are unaffected. **Confirmation window** (S_X..2024-02-29) and **holdout-2** (2024-04..2025-03) are entirely pre-change. **Forward deployment is entirely post-change**, and TopstepX itself stays closed "Friday close 3:10 PM CT (closed till Sunday at 5:00 PM)" (F4, page read 2026-09-23). A K7 confirmation result therefore describes the pre-change regime (section 7, items 1 to 3) |
@@ -6743,6 +6839,8 @@ confirm session times, methodology and data-source availability. No mechanism re
   Monday 14:00 CT) trade outside that window, so each depends on E.2's member-level coverage check
   (>= 0.95 in its own window, D9). No fallback window is written (section 7, item 5).
 - **C13 Price-limit proximity (D9.7).** MBT carries CME price fluctuation limits. The FAQ describes a
+
+> [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-10: the "release residual" paragraph of C13 is superseded: since the 01:52 ruling the D9.7 exit is exempt from the fill guard (D9.7).]
   dynamic variant "applied in rolling 60-minute look-back periods to establish dynamic lower and upper
   price fluctuation limits" (P-K7-033-e). E.2 reads the MBT rulebook chapter and builds the limit
   table. The liquidity JSON says chapter 348; the K7 log's R-K7-061 looked for "chapter 350".
@@ -7210,6 +7308,10 @@ confirm session times, methodology and data-source availability. No mechanism re
 - **Trials in N:** 1.
 
 ### K7-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
+
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
 - **Traded vehicle: the bitcoin exposure {MBT}**, the contract chosen by D2 in E.2 (MBT is the only
   admissible one).
   - **Reason:** it is the only traded K7 exposure (D1), and every intraday item in the K7 log concerns
@@ -7445,7 +7547,7 @@ which K7-035 is a blocked stub). No `[K7]`-tagged passage exists in any other lo
 | K7-expiry-01 | bitcoin | 1 | 1 |
 | K7-rev2h-01 | bitcoin | 1 | 1 |
 | K7-montrend-01 | bitcoin | 1 | 1 |
-| K7-ml-01 | bitcoin (no fallback) | 48 in research-window accounting only (D15.8) | 1 |
+| ~~K7-ml-01~~ [excluded, U6] | bitcoin (no fallback) | ~~48 in research-window accounting only (D15.8)~~ | 0 (E.0: 1) |
 | **Cluster total** | | | **7** = 3 port + 3 new + 1 ML. **0** if D2 does not admit bitcoin |
 
 If the user re-admits MET (borderline at 0.947), ether would add 3 port trials. No new member here
@@ -7543,6 +7645,12 @@ is written for ether.
 
 # Stage E.0 hypothesis catalog, cluster K8 (cross-cluster relationships)
 
+> **[Stage E.1, 2026-09-24: the user's decisions applied (docs/DECISIONS.md, U1 to U9; every edit in
+> reports/stage_e1_changes.md).]** U6: K8-ml-01 is excluded: superseded by the Stage E ML route
+> (user decision 2026-09-24); its text stays visible below and it adds 0 trials. U3: K8 runs last.
+> **K8 after the decisions: 3 active members, 4 confirmation trials** (3 new, no ports; K8-flight-01 2, K8-oilcad-01 1, K8-wkndbtc-01 1). Header
+> and section 6 totals below are superseded where they differ.
+
 Writer: CatalogWriter-K8-OpusXHigh (Stage E.0 Task 4), 2026-09-24, about 02:00-02:45 PDT.
 Status: DRAFT declaration for the lead. Nothing here is hashed, frozen or registered.
 
@@ -7612,8 +7720,8 @@ CatalogWriters fetched and quoted:
 |---|---|
 | Cluster | K8, cross-cluster relationships. Each member has a signal leg in one of K1-K7 and a traded leg in another (partition section 3) |
 | Members | **4 = 3 new + 1 ML member. No core ports in K8** (K8 has no products of its own; the ports live in K1-K7). The budget is 15, so 11 slots are unused. The log is thin: 7 items passed, of which 3 are abstract-only and 2 carry no direction. Nothing is padded (section 3) |
-| Trials in N (confirmation) | **5 if D2 admits gold, CAD and the Nasdaq-100.** K8-flight-01 2 (exit grid), K8-oilcad-01 1, K8-wkndbtc-01 1, K8-ml-01 1. In general 2a_G + 2a_C + a_N, where each a is 1 if D2 admits that exposure |
-| ML grid | 48 configurations, counted only in the K8 screening session's research-window accounting (D15.8) |
+| Trials in N (confirmation) | **5 if D2 admits gold, CAD and the Nasdaq-100.** K8-flight-01 2 (exit grid), K8-oilcad-01 1, K8-wkndbtc-01 1, ~~K8-ml-01 1~~ [U6: excluded; K8 has 4 trials]. In general 2a_G + 2a_C + a_N, where each a is 1 if D2 admits that exposure |
+| ML grid | ~~48 configurations, counted only in the K8 screening session's research-window accounting (D15.8)~~ [superseded, U6: no ML member] |
 | Traded legs used | gold {GC, MGC\*} (K5); CAD {6C} (K3); Nasdaq-100 {MNQ\*, NQ} (K1). Each is traded only if D2 admits the exposure. The vehicle is "D2 (chosen in E.2)" throughout |
 | Signal legs used | S&P 500 on MES bars (K1; a leg only, D1.5; owned, non-holdout dates). WTI crude on the crude exposure's price-path series (K4). Bitcoin on MBT bars (K7). No member reads NKD, 6M or MET |
 | Statement unit | NULL_CRITERIA_E section 8. Each member is stated under K8 only. Its eps is the traded leg's exposure's eps_X, and it enters K8's own Holm family (D5). Its window is the intersection of its legs' windows (D4) |
@@ -7763,6 +7871,8 @@ CatalogWriters fetched and quoted:
   - The harness rule applies wherever a limit exists: no entry, and an immediate exit, beyond the stop
     level.
 - **C13 Coverage.**
+
+> [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-10: the "release residual" paragraph of C13 is superseded: since the 01:52 ruling the D9.7 exit is exempt from the fill guard (D9.7).]
   - **Traded vehicle:** D9's member-level check (ohlcv-1m coverage of at least 0.95 in the member's
     own window, on the research window), with each member's window listed in its entry.
   - **Signal leg (K8 addition, proposed; question 4):** E.2 reports, on the research window, the share
@@ -8144,6 +8254,10 @@ CatalogWriters fetched and quoted:
 
 ### K8-ml-01 (the ML member, D15; this entry fills only D15.10's fields)
 
+> **[EXCLUDED: superseded by the Stage E ML route (user decision 2026-09-24, U6). Stage E.1.
+> The text below stays visible for the record. This entry is not a Stage E member and adds 0
+> trials; the ML route (docs/STAGE_E_ML_DESIGN.md) is separate.]**
+
 > [Lead ruling on the Task 6 review, 06:20 PDT 2026-09-24: R-09: 6C only; if 6C is not admitted, no ML member (the mechanism is crude to CAD).]
 - **Traded vehicle: CAD {6C}.** Traded only if D2 admits CAD.
   - **Why CAD:** it is the exposure the K8 log supports most.
@@ -8365,7 +8479,7 @@ and R-K8-071.
 | K8-flight-01 HEOD | gold (K5) | S&P 500 on MES (K1) | 1 | gold eps_X | same | none |
 | K8-oilcad-01 | CAD (K3) | crude (K4) | 1 | CAD eps_X | [max(S_crude, S_CAD), 2024-02-29] | none |
 | K8-wkndbtc-01 | Nasdaq-100 (K1) | bitcoin on MBT (K7) | 1 | Nasdaq-100 eps_X | [max(S_MBT, S_Nasdaq), 2024-02-29], with S_MBT >= 2021-05-03 | **source-overlap** |
-| K8-ml-01 | CAD (K3) | crude (K4); S&P 500 on MES (K1) | 1 (48 in screening accounting) | CAD eps_X | [max(S_CAD, S_crude, 2020-02-03), 2024-02-29] | none |
+| ~~K8-ml-01~~ [excluded, U6] | CAD (K3) | crude (K4); S&P 500 on MES (K1) | 0 (E.0: 1 (48 in screening accounting)) | ~~CAD eps_X~~ | ~~[max(S_CAD, S_crude, 2020-02-03), 2024-02-29]~~ | none |
 | **K8 total** | | | **5** if D2 admits gold, CAD and the Nasdaq-100 (2a_G + 2a_C + a_N in general) | | | |
 
 **Notes:**

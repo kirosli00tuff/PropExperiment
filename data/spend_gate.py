@@ -28,6 +28,23 @@ exact request parameters, quoted/actual cost, and running totals. Events:
 - ``settle``  — after download. ``usd = actual - quoted`` (normally 0).
 
 The file is append-only: entries are only ever appended, never rewritten.
+
+Accounts (Stage E.1, 2026-09-24; registry in ``data.config.ACCOUNTS``). The account cap is
+per Databento account, not per repo:
+
+- every line the gate writes carries ``account`` (the gate's account id); a line with no
+  ``account`` field predates the registry and is counted as ``acct-1``
+  (``LEGACY_ACCOUNT_ID``). A line naming an account the registry does not know closes the
+  gate (``UnknownAccountError``), as does a gate built for one;
+- a gate's account spend is its account's external ledgers (if any) plus this repo's lines
+  of that account only. ``shared_spent_usd`` keeps its name and now means exactly that;
+  ``shared_cumulative_usd`` on a line is that account's running total;
+- external ledgers are read, and required, only for an account that lists them (acct-1,
+  the MLCryptoEngine ledger). acct-2 lists none, so its gate reads no external file;
+- the session cap still sums every line of the session id, whatever its account
+  (pessimistic);
+- ``SpendGate``'s default account is ``acct-1``, so every gate built before the registry
+  (Stages A.1 to E.0) behaves exactly as it did.
 """
 
 from __future__ import annotations
@@ -40,10 +57,12 @@ from typing import Any, Protocol
 
 from data.config import (
     ACCESS_DOC_PATH,
-    EXTERNAL_LEDGER_PATHS,
+    ACCOUNTS,
     LEDGER_PATH,
+    LEGACY_ACCOUNT_ID,
     SESSION_CAP_USD,
     SHARED_ACCOUNT_CAP_USD,
+    DatabentoAccount,
 )
 
 EVENTS = ("quote", "refused", "commit", "settle")
@@ -58,6 +77,10 @@ class BudgetRefusedError(RuntimeError):
 
 class ExternalLedgerUnavailableError(RuntimeError):
     """A shared-account ledger could not be read, so shared spend is unknown."""
+
+
+class UnknownAccountError(RuntimeError):
+    """An account id (a gate's, or a ledger line's) is not in data.config.ACCOUNTS."""
 
 
 class _Metadata(Protocol):
@@ -123,14 +146,41 @@ def committed_usd(entries: list[dict[str, Any]], session_id: str | None = None) 
     )
 
 
+def resolve_account(account_id: str) -> DatabentoAccount:
+    """The registry entry for ``account_id``; an unknown id fails closed."""
+    account = ACCOUNTS.get(account_id)
+    if account is None:
+        raise UnknownAccountError(
+            f"Databento account {account_id!r} is not in data.config.ACCOUNTS "
+            f"({', '.join(sorted(ACCOUNTS))}): its spend and cap are unknown, so the gate "
+            "stays closed"
+        )
+    return account
+
+
+def entry_account(entry: dict[str, Any]) -> str:
+    """The account a ledger line is charged to: its ``account`` field, else acct-1 (legacy)."""
+    account_id = entry.get("account", LEGACY_ACCOUNT_ID)
+    resolve_account(account_id)  # a line on an unknown account closes the gate
+    return account_id
+
+
+def account_committed_usd(entries: list[dict[str, Any]], account_id: str) -> float:
+    """Sum of ``usd`` over the lines charged to ``account_id`` (legacy lines are acct-1)."""
+    resolve_account(account_id)
+    return sum(float(e.get("usd", 0.0)) for e in entries if entry_account(e) == account_id)
+
+
 def decide(
     quoted_usd: float | None,
     session_spent_usd: float,
     shared_spent_usd: float,
     session_cap_usd: float = SESSION_CAP_USD,
     shared_cap_usd: float = SHARED_ACCOUNT_CAP_USD,
+    cap_label: str = "shared account cap",
 ) -> GateDecision:
-    """Pure cap arithmetic. Checked in fixed order: unpriced, session, shared."""
+    """Pure cap arithmetic. Checked in fixed order: unpriced, session, shared (account).
+    ``cap_label`` names the account cap in the refusal reason."""
     if quoted_usd is None or quoted_usd < 0:
         return GateDecision(
             False,
@@ -151,7 +201,7 @@ def decide(
     if round(shared_spent_usd + quoted_usd, USD_COMPARE_DECIMALS) > shared_cap_usd:
         return GateDecision(
             False,
-            f"shared account cap: {shared_spent_usd:.4f} spent + {quoted_usd:.4f} quoted = "
+            f"{cap_label}: {shared_spent_usd:.4f} spent + {quoted_usd:.4f} quoted = "
             f"{shared_spent_usd + quoted_usd:.4f} > shared cap {shared_cap_usd:.2f}",
             quoted_usd,
             session_spent_usd,
@@ -160,27 +210,74 @@ def decide(
     return GateDecision(True, "within both caps", quoted_usd, session_spent_usd, shared_spent_usd)
 
 
+def _account_ledgers(account: DatabentoAccount,
+                     external_ledger_paths: tuple[Path, ...] | None) -> tuple[Path, ...]:
+    """The external ledgers a gate on ``account`` reads. ``None`` takes the registry's; an
+    explicit tuple (tests, relocated copies) replaces it but may neither drop the external
+    ledgers of an account that has them nor add any to an account that has none."""
+    if external_ledger_paths is None:
+        return account.external_ledger_paths
+    paths = tuple(external_ledger_paths)
+    if account.external_ledger_paths and not paths:
+        raise ExternalLedgerUnavailableError(
+            f"account {account.account_id} requires its external ledger(s) "
+            f"{[str(p) for p in account.external_ledger_paths]}; none were given, so the "
+            "gate stays closed"
+        )
+    if paths and not account.external_ledger_paths:
+        raise ValueError(f"account {account.account_id} has no external ledger; refusing "
+                         f"external_ledger_paths={[str(p) for p in paths]}")
+    return paths
+
+
+def _account_cap(account: DatabentoAccount, shared_cap_usd: float | None) -> float:
+    """The account's registry cap, or an explicit cap that may only be tighter."""
+    if shared_cap_usd is None:
+        return account.cap_usd
+    if shared_cap_usd > account.cap_usd:
+        raise ValueError(f"cap {shared_cap_usd:.2f} is above account {account.account_id}'s "
+                         f"cap {account.cap_usd:.2f}; a gate may tighten it, never raise it")
+    return shared_cap_usd
+
+
 class SpendGate:
-    """Ledgered quote -> decide -> commit -> settle for one session."""
+    """Ledgered quote -> decide -> commit -> settle for one session on one account.
+
+    ``account`` defaults to acct-1, the legacy account, so gates built before the registry
+    keep their behaviour. ``external_ledger_paths`` and ``shared_cap_usd`` default to the
+    account's registry values (see ``_account_ledgers`` and ``_account_cap``)."""
 
     def __init__(
         self,
         session_id: str,
         ledger_path: Path = LEDGER_PATH,
-        external_ledger_paths: tuple[Path, ...] = EXTERNAL_LEDGER_PATHS,
+        external_ledger_paths: tuple[Path, ...] | None = None,
         access_doc_path: Path = ACCESS_DOC_PATH,
         session_cap_usd: float = SESSION_CAP_USD,
-        shared_cap_usd: float = SHARED_ACCOUNT_CAP_USD,
+        shared_cap_usd: float | None = None,
+        account: str = LEGACY_ACCOUNT_ID,
     ) -> None:
+        resolved = resolve_account(account)  # an unknown account fails closed here
         self.session_id = session_id
+        self.account_id = resolved.account_id
         self.ledger_path = ledger_path
-        self.external_ledger_paths = external_ledger_paths
+        self.external_ledger_paths = _account_ledgers(resolved, external_ledger_paths)
         self.access_doc_path = access_doc_path
         self.session_cap_usd = session_cap_usd
-        self.shared_cap_usd = shared_cap_usd
+        self.shared_cap_usd = _account_cap(resolved, shared_cap_usd)
+
+    @property
+    def account_cap_usd(self) -> float:
+        return self.shared_cap_usd
+
+    @property
+    def cap_label(self) -> str:
+        shared = "shared account cap" if self.external_ledger_paths else "account cap"
+        return f"{shared} {self.account_id}"
 
     # -- totals -----------------------------------------------------------
     def session_spent_usd(self) -> float:
+        """Every line of this session id, whatever its account (pessimistic)."""
         return committed_usd(read_entries(self.ledger_path), self.session_id)
 
     def external_spent_usd(self) -> float:
@@ -194,8 +291,14 @@ class SpendGate:
             total += committed_usd(read_entries(path))
         return total
 
+    def account_spent_usd(self) -> float:
+        """This account's spend: its external ledgers plus this repo's lines of the account."""
+        return self.external_spent_usd() + account_committed_usd(
+            read_entries(self.ledger_path), self.account_id)
+
     def shared_spent_usd(self) -> float:
-        return self.external_spent_usd() + committed_usd(read_entries(self.ledger_path))
+        """The name every caller already uses for the account-cap total."""
+        return self.account_spent_usd()
 
     # -- ledger -----------------------------------------------------------
     def _append(
@@ -217,6 +320,7 @@ class SpendGate:
             "ts": datetime.now(UTC).isoformat(),
             "event": event,
             "session_id": self.session_id,
+            "account": self.account_id,
             "dataset": params.dataset,
             "symbol": ",".join(params.symbols),
             "schema": params.schema,
@@ -263,6 +367,7 @@ class SpendGate:
             self.shared_spent_usd(),
             self.session_cap_usd,
             self.shared_cap_usd,
+            self.cap_label,
         )
         if decision.allowed:
             return decision
@@ -293,11 +398,12 @@ class SpendGate:
         lines = [
             f"\n### Databento request refused by spend gate — {datetime.now(UTC).isoformat()}\n",
             f"- session: `{self.session_id}`",
+            f"- Databento account: `{self.account_id}`",
             f"- quoted cost (USD): {decision.quoted_usd}",
             f"- request parameters: `{json.dumps(params.as_kwargs())}`",
             f"- session spent before: ${decision.session_spent_usd:.4f} "
             f"(cap ${self.session_cap_usd:.2f})",
-            f"- shared account spent before: ${decision.shared_spent_usd:.4f} "
+            f"- account {self.account_id} spent before: ${decision.shared_spent_usd:.4f} "
             f"(cap ${self.shared_cap_usd:.2f})",
             f"- reason stopped: {decision.reason}\n",
         ]

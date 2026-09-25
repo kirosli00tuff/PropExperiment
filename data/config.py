@@ -10,7 +10,9 @@ credential of any kind and must never grow one in Stage A.1.
 from __future__ import annotations
 
 import os
+from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATA_ROOT = REPO_ROOT / "data"
@@ -51,6 +53,49 @@ D1F_REQUEST_CAP_USD = 10.00
 STAGE_E0_SESSION_ID = "stage-E.0-2026-09-23"
 E0_SESSION_CAP_USD = 0.00
 E0_REQUEST_CAP_USD = 0.00
+
+
+# Databento account registry (Stage E.1, 2026-09-24). Spend is capped PER ACCOUNT: a gate
+# sums only the ledger lines of its own account and applies that account's cap. Every ledger
+# line the gate writes from now on carries an "account" field; a line without one predates
+# the registry and belongs to acct-1 (LEGACY_ACCOUNT_ID). An account id not listed here fails
+# closed (data.spend_gate.UnknownAccountError).
+@dataclass(frozen=True, slots=True)
+class DatabentoAccount:
+    account_id: str
+    cap_usd: float
+    # Other ledgers drawing on the same account, read-only and REQUIRED: a missing one closes
+    # the gate. Empty means this repo's ledger is the account's only spend record.
+    external_ledger_paths: tuple[Path, ...]
+    description: str
+
+
+ACCOUNT_1_ID = "acct-1"
+ACCOUNT_2_ID = "acct-2"
+LEGACY_ACCOUNT_ID = ACCOUNT_1_ID  # ledger lines with no "account" field
+ACCOUNT_2_CAP_USD = 125.00
+
+ACCOUNTS: MappingProxyType[str, DatabentoAccount] = MappingProxyType({
+    ACCOUNT_1_ID: DatabentoAccount(
+        ACCOUNT_1_ID, SHARED_ACCOUNT_CAP_USD, EXTERNAL_LEDGER_PATHS,
+        "the old account, shared with the archived MLCryptoEngine (its ledger is read)",
+    ),
+    ACCOUNT_2_ID: DatabentoAccount(
+        ACCOUNT_2_ID, ACCOUNT_2_CAP_USD, (),
+        "the Stage E.1 account, used by this repo only (no external ledger)",
+    ),
+})
+ACTIVE_ACCOUNT = ACCOUNT_2_ID
+
+# Stage E.1 spend policy (stage prompt, 2026-09-24): Stage E step 1 purchase on ACTIVE_ACCOUNT.
+STAGE_E1_SESSION_ID = "stage-E.1-2026-09-24"
+E1_REQUEST_CAP_USD = 3.00  # never raised: a request quoted above it is split in time instead
+# The E.1 lead sets E1_SESSION_CAP_USD in Task 6 from the fresh quote-only run (quote total
+# + 10%, never above E1_SESSION_CAP_MAX_USD) before any purchase. 0.00 means the gate
+# refuses every billable request until then, and `python -m data.pull_universe --buy`
+# refuses to start.
+E1_SESSION_CAP_USD = 0.00
+E1_SESSION_CAP_MAX_USD = 120.00
 
 DATABENTO_KEY_ENV = "DATABENTO_API_KEY"
 DATASET = "GLBX.MDP3"

@@ -216,6 +216,22 @@ beats a throttled or crashed one (user instruction, 2026-09-23).
   15:30 to 16:00 PT on weekdays under news-collect.timer) and never kill or
   starve that service.
 
+Overnight profile (user, 2026-09-25). When a stage prompt says it runs
+under the overnight profile, these limits replace the first and third
+bullets above; every other rule stays:
+- The machine: 20 logical CPUs, 14 GB of RAM, an NVIDIA RTX 3050 Laptop GPU
+  with 4 GB of VRAM (measured 2026-09-25).
+- CPU: at most 14 threads in total across all jobs (os.cpu_count() - 6),
+  and at most two heavy jobs at once.
+- Memory: the combined peak estimate of running jobs stays under 70% of
+  the available memory measured just before launch. Anything larger runs
+  in chunks. Memory, not CPU, is the binding limit on this machine.
+- GPU: allowed for model training. Check free VRAM with nvidia-smi before
+  launch, keep one GPU job at a time, and size batches to leave at least
+  0.5 GB of VRAM free.
+- Everything still runs at nice 10, stays resumable, and stays out of the
+  AiTrader window.
+
 ## Long and unattended runs
 
 - The user is not watching. Do not stop to ask whether to continue. Run the

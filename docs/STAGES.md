@@ -73,7 +73,8 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     Run 2026-09-24 (see reports/E.1_RETURN.md): the user's decisions U1-U9 applied (docs/DECISIONS.md);
     platinum OUT, the ML members superseded by a separate ML route; 53 members, 158 trials, projected
     N = 216; Fable freeze audit READY WITH FIXES (0 blocking), all fixes ruled; design, criteria and
-    catalog FROZEN under reports/stage_e1_freeze.json.
+    catalog FROZEN under reports/stage_e1_freeze.json; acct-2 switch; step 1 bought (904 files, $103.16 settled,
+    verified); ML route drafted (docs/STAGE_E_ML_DESIGN.md) for the user's review.
   - Stage E.2 — build: per-product rules, costs, calendars, bar builds, sealing, the ML pipeline (planned).
   - Stage E.3 onward — one screening session and one confirmation session per cluster, in the order of
     docs/STAGE_E_DESIGN.md D12 (planned).

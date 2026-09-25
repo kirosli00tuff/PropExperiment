@@ -79,7 +79,7 @@ def test_registry_holds_both_accounts_with_their_caps_and_ledgers() -> None:
     assert config.ACTIVE_ACCOUNT == "acct-2" and config.LEGACY_ACCOUNT_ID == "acct-1"
     assert config.SHARED_ACCOUNT_CAP_USD == 120.00 and config.SESSION_CAP_USD == 15.00
     assert (config.STAGE_E1_SESSION_ID, config.E1_REQUEST_CAP_USD) == ("stage-E.1-2026-09-24", 3.00)
-    assert config.E1_SESSION_CAP_USD == 0.00 and config.E1_SESSION_CAP_MAX_USD == 120.00
+    assert config.E1_SESSION_CAP_USD == 113.48 and config.E1_SESSION_CAP_MAX_USD == 120.00  # set in E.1 Task 6
     with pytest.raises(TypeError):
         config.ACCOUNTS["acct-3"] = acct2  # type: ignore[index]
 

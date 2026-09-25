@@ -2699,3 +2699,20 @@ These figures were computed from this session's transcript (ddaec527-9d48-4509-b
 | P2 | Pause (usage limit) | — | — | — | 02:35–06:10 | 3 h 35 min | — | not work |
 | L | Lead, whole session | lead | opus | max | 20:02–06:25 | — | 88,983,580 / 463,772 (to 06:22) | orchestration, design, rulings, entry |
 | **Σ** | **Whole stage** | 25 worker transcripts | | | 20:02–06:25 | **about 3 h 36 min of work** (estimate: 12 h) | **703,321,857 / 3,308,270** | lead 12.7%, workers 87.3% |
+
+## 2026-09-24 — Stage E.1: Stage E pre-registration freeze, acct-2 switch, step 1 purchase, ML route draft
+
+**The Stage E design, criteria and catalog are frozen (commit 848f331; manifest reports/stage_e1_freeze.json,
+sha256 96166eb39b85d4fdcf132092978ee85393392de52c3857dc3f64ea7281454a7c) with the user's decisions U1-U9
+applied: 53 members, 158 trials, projected N = 216. Step 1 is bought on acct-2: 904 files, $103.161113 settled
+($103.477194 committed), independently verified. The ML route is drafted (docs/STAGE_E_ML_DESIGN.md) for the
+user's review.** No price was read; both holdouts all_ok, 0 unlocks; REGISTRATION.md 0 bytes; tests 1010 passed,
+1 xfailed, the 2 known failures. The full record (guardrail evidence, results, delegation, verification, open
+choices, what E.2 needs, and the Session cost section) is reports/E.1_RETURN.md.
+
+### Session cost
+Wall clock 17:41 to 23:46 PDT (about 6 h 05 min, 4 h 55 min of it the serial purchase with 15 Wi-Fi
+stops; no usage-limit pause). Tokens (transcripts, cut at 23:42): 84,004,603 in total, 502,133 output; opus
+78,221,996 (lead 54,176,868; MLLitReader-OpusHigh 16,195,440; PurchaseCoder-OpusXHigh 7,849,688), Fable
+5,782,607 (FreezeAuditor-FableXHigh). Lead 64.5%, workers 35.5%. The per-task final table and the per-model
+table are in reports/E.1_RETURN.md, section 8.

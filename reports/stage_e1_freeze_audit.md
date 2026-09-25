@@ -392,6 +392,172 @@ files that Task 4 also hashes (outside this brief); the E.0 per-cluster figures 
 above; whether the Task 5 code's 45-root set equals the design's 45 admissible contracts root by
 root (read the count and the refusals only).
 
-## Part 2
+## Part 2: step 1 spend recomputation (Task 8)
 
-(reserved for the spend recomputation, to be written when the auditor is resumed)
+- Auditor: FreezeAuditor-FableXHigh, resumed. Start 2026-09-24 23:37 PDT, end 23:42 PDT.
+- Everything above this heading is byte-identical to the blob the freeze manifest hashes
+  (`git show 848f331:reports/stage_e1_freeze_audit.md`, 34,790 bytes; checked before and after
+  this append). Part 2 is appended as the manifest's note says.
+- Inputs: ledger/databento_spend.jsonl (9,155 lines; read only), reports/stage_e1_purchase.json
+  and .md, reports/stage_e1_quote_summary.json, data/config.py, data/spend_gate.py (field
+  semantics: `commit` lines carry `usd = quoted`, `settle` lines carry `usd = actual - quoted`
+  and `actual_usd`; a line without `account` is acct-1; the session cap sums every line of the
+  session id; the account cap sums the account's lines plus its external ledgers), the
+  MLCryptoEngine external ledger (read only), the working-tree diffs of data/config.py and
+  docs/ACCESS.md, reports/stage_e1_STATE.md rows 6a to 7. No data file was opened or decoded:
+  the disk check is `stat` only, the hash check reads bytes into sha256 and nothing else.
+- Figures below are recomputed from the ledger lines alone (scratchpad/p2_ledger.py and
+  p2_files.py; the load-bearing code is quoted).
+
+### Check 1: session totals for stage-E.1-2026-09-24
+
+```python
+entries = [json.loads(l) for l in open("ledger/databento_spend.jsonl") if l.strip()]
+sess = [e for e in entries if e.get("session_id") == "stage-E.1-2026-09-24"]
+ev = Counter(e["event"] for e in sess)
+committed = sum(float(e["usd"]) for e in sess if e["event"] == "commit")
+settled = sum(float(e["actual_usd"]) for e in sess if e["event"] == "settle")
+gate_session = sum(float(e.get("usd", 0.0)) for e in sess)   # what the gate compares to the cap
+key = lambda e: (e["request"]["symbols"][0], e["schema"], e["request"]["start"], e["request"]["end"])
+ck = Counter(key(e) for e in sess if e["event"] == "commit")
+```
+
+Output:
+
+```
+E.1 session lines: 3654 (ledger lines 5502-9155, contiguous); all 3654 carry account acct-2
+events: quote 1831, commit 907, settle 904, refused 12
+committed (sum usd on commit lines)      = 103.477193549
+settled  (sum actual_usd on settle lines) = 103.161113173 ; settle deltas (usd) sum = 0.000000000
+gate session spend (sum usd, all lines)  = 103.477193549
+distinct committed requests 904; committed twice 3: HE ohlcv-1m 2025-06 ($0.020028), LE ohlcv-1m
+  2026-01 ($0.020043), M2K mbp-1 2025-11-12 ($0.276009); usd on the duplicate commits = 0.316080
+distinct settled requests 904; settled twice 0; committed-never-settled 0; settled-without-commit 0
+settled by schema: ohlcv-1m 675 lines $57.003331; mbp-1 229 lines $46.157782; roots 45
+first E.1 line 2026-09-25T01:16:55Z (18:16:55 PDT, the quote-only run); last 06:34:08Z (23:34:08 PDT)
+```
+
+Result. Settled $103.161113 over 904 requests, equal to the report. The ledger's committed
+figure, which is what the gate counts against the session and account caps, is $103.477194:
+three requests were committed twice after a download failed on a network error and the first
+commit of each stays unsettled by design (pessimistic ledger), $0.316080 in all. The 1,831
+quote lines reconcile: 904 pieces quoted in the quote-only run + 904 in the buy run + 12 failed
+quotes (`quoted_usd: null`) + 8 over-cap quotes that were split rather than committed (per MNQ
+day: the parent and one half, in each run) + 3 re-quotes of the twice-committed requests = 1,831.
+
+### Check 2: accounts
+
+```
+acct-2 (every ledger line with account acct-2): 3654 lines, sum usd = 103.477193549
+acct-1, this repo: legacy lines (no account field) 9.474373534 + lines naming acct-1 0.000000000
+  = 9.474373534; lines naming any other account: 0
+acct-1 lines in the E.1 session: 0; E.1 lines without an account field: 0
+external MLCryptoEngine ledger (/mnt/large-storage/Archive/GitHub/MLCryptoEngine/data/vendor/
+  spend_ledger.jsonl, readable): 29 lines, sum usd = 82.117873574
+acct-1 as the gate computes it (external + this repo's acct-1 lines) = 91.592247109  (cap 120.00)
+```
+
+Result. acct-1 received no new line in E.1; its gate total is $91.592247, the "$91.59 spent"
+the design records under U5. acct-2 carries the whole session, $103.477194 committed.
+
+### Check 3: caps
+
+```
+session cap 113.48 : gate session spend 103.477194 <= 113.48   OK  (max session_cumulative_usd on any
+                     E.1 line 103.477194; the running total never decreases)
+request cap 3.00   : committed requests above 3.00 = 0; largest committed usd = 2.247100 (MNQ mbp-1
+                     2026-04-15). Largest quoted_usd on a QUOTE line = 4.140457 (the MNQ 2026-02-11
+                     parent day, split and never committed)
+acct-2 cap 125.00  : 103.477194 <= 125.00   OK   (headroom 21.522806 on the gate's figure)
+ceiling 120.00     : 113.48 <= 120.00   OK
+fresh quote        : 103.161113 x 1.10 = 113.477224 -> 113.48 (data/config.py, uncommitted);
+                     104.77 x 1.05 = 110.0085 >= 103.161113   OK
+first commit       : 2026-09-25T01:38:51Z, after the cap was set at 18:38 PDT (01:38Z); no commit
+                     while E1_SESSION_CAP_USD was 0.00
+refused lines      : 12, every one "unpriceable request (quote=None): never assumed cheap" (a
+                     ConnectionError on the quote), usd 0; every one of the 12 requests was later
+                     quoted, committed and settled on resume. The 12 matching entries are appended
+                     to docs/ACCESS.md (uncommitted, +120 lines)
+```
+
+Result. Every cap held on the gate's own (higher) figure; no committed request exceeded $3.00;
+the over-cap MNQ days were split (two days, three pieces each, largest piece $2.035424).
+
+### Check 4: append-only and order
+
+```
+first 5,501 lines vs git show d218f17 / 848f331 / b05c506 :ledger/databento_spend.jsonl : identical
+  (cmp, byte for byte; the committed 2,933,568 bytes are a prefix of the working file's 5,137,742)
+git diff --numstat HEAD -- ledger: +3654 -0 ; file ends with a newline
+timestamps: E.1 lines 0 decreasing steps; whole ledger 0 decreasing steps
+every settle has an earlier commit of the same request: yes (0 exceptions)
+every committed request: dataset GLBX.MDP3, stype_in continuous, root in the 45-root step 1 set
+  (45 of 45 roots present, none outside), schema ohlcv-1m or mbp-1, start >= 2025-04-01 and
+  end <= 2026-06-21T00:00Z (0 exceptions); symbol field equals request.symbols[0] on all lines
+```
+
+Result. No line rewritten; E.1's lines are appended in time order after the committed ledger.
+
+### Check 5: report files, settled lines, disk, hashes
+
+```
+report files 904; settled lines 904; keyed on (symbol, schema, start, end): 904 = 904, one-to-one,
+  0 files without a settled line, 0 settled lines without a file; settled_usd equal on all 904
+sum settled_usd over report files 103.161113173 = sum quoted_usd 103.161113173 = ledger settled
+on disk (stat only): 904 of 904 exist, 0 zero-size, 7,623,216,992 bytes in all; the report
+  carries no size field, so size is checked as existence and non-zero only
+data/vendor/databento/GLBX.MDP3/**/*.dbn.zst: 976 files; 72 not in the report, all under
+  ohlcv-1m/MES_v_0/ (the MES lane, pre-existing); no other file type under the tree
+sha256, random sample of 20 (seed 20260924): 20 of 20 match the report
+report per-cluster files 124+120+220+160+120+140+20 = 904; per-cluster settled sums to 103.161112
+quote summary: 900 planned requests -> 904 pieces (2 MNQ mbp-1 days split to depth 2), 0 failures,
+  per schema ohlcv-1m 675 $57.003331 and mbp-1 229 $46.157782 = the settled figures
+```
+
+Result. Every settled line has exactly one report entry and one file on disk; every report file
+has exactly one settled line; the sampled hashes match.
+
+### Check 6: disagreements with the purchase report and the STATE file
+
+1. Committed versus settled. reports/stage_e1_purchase.md and .json give "quoted = settled =
+   $103.161113" and list the three twice-committed requests, but state no session total on the
+   gate's basis. On that basis the session and the acct-2 running total are $103.477194 (the
+   ledger's own `session_cumulative_usd` and `shared_cumulative_usd` on the last line), $0.316080
+   above the settled figure. STATE row 6b says the HE duplicate "overstates spend by $0.02"; the
+   three duplicates together overstate by $0.316 (the M2K mbp-1 one is $0.276). Nothing is
+   understated and no cap is affected. The figure the next gate will apply to acct-2 is
+   $103.477194 of $125.00.
+2. `files_outside_allowed_range` in reports/stage_e1_purchase.json holds 11 paths, while
+   `allowed_range_check.files_outside_allowed_dates` is empty and the .md says "0 files outside".
+   The report's own note explains the 11 as mbp-1 files whose first ts_event precedes the request
+   start (selection by receive time). The key name misleads; the earliest and latest ts_event
+   the report gives (2025-04-01T00:00:00Z, 2026-06-20T23:59:00Z) lie inside the allowed range. I
+   did not decode any file to confirm the timestamps.
+3. No other disagreement: 904 files, 907 commits, 904 settles, 12 refusals, 15 stops, per-cluster
+   and per-product sums, the split pieces and the largest piece all agree with the ledger.
+
+### Findings (Part 2)
+
+| ID | Grade | File and line | Finding | Suggested handling |
+|---|---|---|---|---|
+| P2-01 | NOTE | reports/stage_e1_purchase.md 11-13; reports/stage_e1_STATE.md row 6b (line 85) | The gate's committed total for the session and for acct-2 is $103.477194, not the $103.161113 settled figure the report headlines; the difference is the three unsettled first commits ($0.316080), which the STATE gives as $0.02. | State both figures in the progress entry and use $103.477194 as acct-2's spent-to-date (headroom $21.52). No ledger edit. |
+| P2-02 | NOTE | reports/stage_e1_purchase.json key `files_outside_allowed_range` | Eleven paths under a key that reads as a range violation; the report's own check says 0 files outside the allowed dates. | Rename or annotate the key in the next report; nothing to change in the data. |
+| P2-03 | NOTE | data/vendor/databento/GLBX.MDP3/ohlcv-1m/MES_v_0/ (72 files) | Files on disk not in the step 1 report: the MES lane, pre-existing; MES is not a Stage E product, so the freeze-time "no Stage E product data" check was not contradicted. | None. |
+| P2-04 | NOTE | data/config.py 97-99; tests/test_pull_universe.py, tests/test_spend_gate_accounts.py; docs/ACCESS.md | The session cap in force during the purchase (113.48), the two tests pinned to it and the 12 ACCESS.md refusal entries are uncommitted. | Commit them with the purchase artifacts so the cap the ledger ran under is in history. |
+| P2-05 | NOTE | ledger lines 5502-9155 | The 12 refusals are all quote-time ConnectionErrors refused as unpriceable, each later bought on resume; the gate behaved as designed (fail closed, no commit without a price). | None. |
+
+Counts (Part 2): BLOCKING 0; SHOULD FIX 0; NOTE 5.
+
+### Verdict (Part 2)
+
+**VERIFIED.** From the ledger alone: settled $103.161113 over 904 requests (675 ohlcv-1m, 229
+mbp-1), equal to the purchase report; committed $103.477194 (907 commits, three duplicates never
+settled); acct-2 $103.477194 of $125.00, acct-1 unchanged at $91.592247 ($9.474374 this repo +
+$82.117874 external) with no new line; session cap $113.48, request cap $3.00 (largest commit
+$2.247100), ceiling $120.00 and the $110.01 fresh-quote bound all held; the committed ledger is
+a byte-for-byte prefix of the working ledger and E.1's 3,654 lines are in time order; 904 report
+files, 904 settled lines and 904 files on disk match one-to-one; 20 of 20 sampled sha256 match.
+
+Not checked: file contents (no decoding, so the report's record counts, ts_event bounds and
+instrument ids are taken as stated); file sizes against anything (the report has no size field);
+the 12 ACCESS.md entries beyond their count and session id.

@@ -423,7 +423,8 @@ def test_buy_refuses_while_the_session_cap_is_zero(tmp_path: Path) -> None:
     called: list[str] = []
     rc = pu.main(["--buy"], key_loader=lambda: called.append("key") or "k",
                  gate_factory=lambda: pu.e1_gate(ledger_path=tmp_path / "l.jsonl",
-                                                 access_doc_path=tmp_path / "A.md"),
+                                                 access_doc_path=tmp_path / "A.md",
+                                                 session_cap_usd=0.0),  # E.1 Task 6 set the real cap
                  client_factory=lambda key: called.append("client"), log=print)
     assert rc == pu.RC_REFUSED and called == []
     with pytest.raises(BudgetRefusedError):
@@ -437,7 +438,7 @@ def test_the_e1_gate_is_acct_2_with_the_e1_caps(tmp_path: Path) -> None:
     g = pu.e1_gate(ledger_path=tmp_path / "l.jsonl", access_doc_path=tmp_path / "A.md")
     assert (g.session_id, g.account_id, g.account_cap_usd) == (
         "stage-E.1-2026-09-24", "acct-2", 125.00)
-    assert (g.request_cap_usd, g.session_cap_usd, g.external_ledger_paths) == (3.00, 0.00, ())
+    assert (g.request_cap_usd, g.session_cap_usd, g.external_ledger_paths) == (3.00, 113.48, ())  # session cap set in E.1 Task 6
 
 
 # ------------------------------------------------------------------ buy ----

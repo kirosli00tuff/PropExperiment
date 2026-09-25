@@ -94,7 +94,9 @@ E1_REQUEST_CAP_USD = 3.00  # never raised: a request quoted above it is split in
 # + 10%, never above E1_SESSION_CAP_MAX_USD) before any purchase. 0.00 means the gate
 # refuses every billable request until then, and `python -m data.pull_universe --buy`
 # refuses to start.
-E1_SESSION_CAP_USD = 0.00
+# Set by the E.1 lead at 18:38 PDT 2026-09-24 from the fresh --quote-only total $103.161113
+# (reports/stage_e1_quote_summary.json): 103.161113 x 1.10 = 113.477 -> $113.48, under the $120.00 ceiling.
+E1_SESSION_CAP_USD = 113.48
 E1_SESSION_CAP_MAX_USD = 120.00
 
 DATABENTO_KEY_ENV = "DATABENTO_API_KEY"

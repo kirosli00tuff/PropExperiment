@@ -101,3 +101,57 @@
   IN rows, and the stage prompt's "30" repeats it.
   Result: 53 active members, 158 confirmation trials, projected cumulative
   N = 58 + 158 = 216 (E.0: 61, 170, 228).
+- Stage E ML route decisions (2026-09-25, the user's decisions in the planning
+  chat, accepting the planning chat's recommendations on the Stage E.1 draft
+  of docs/STAGE_E_ML_DESIGN.md; applied and recorded by the Stage E.2a lead;
+  every edit in reports/stage_e2a_ml_changes.md; frozen by Stage E.2a's
+  manifest, reports/stage_e2a_ml_freeze.json):
+  V1. M1 accepted: train, tune, normalize and distil only on
+  S_X..2024-02-29, never touch March 2024 or holdout-2, test the frozen
+  distilled rules once on the research window, holdout-2 stays the final
+  gate. The route buys the full step 2 range (2019-05..2025-03) of one
+  contract per exposure, holdout-2 sealed on arrival. Funding is pending: the
+  user will top up acct-2. No purchase in E.2a.
+  V2. M2 accepted: one pooled model per challenger across the 31 exposures,
+  evidence counted in trade dates.
+  V3. M3 accepted: LightGBM plus one small LSTM, 36 configurations in total,
+  as listed. The TCN stays dropped.
+  V4. M4 accepted: the three horizons, the feature list, the 1.5 x cost
+  stress.
+  V5. M5 accepted: depth-2 surrogate rules, at most 2 per cluster and 16 in
+  total, the block-6 pre-test.
+  V6. M6 accepted: one trial per tested rule, the route as its own family at
+  alpha 0.05 / (K + 1).
+  V7. M8 amended: the LSTM trains on this machine's NVIDIA RTX 3050 Laptop
+  GPU (4 GB VRAM, found 2026-09-25), not on the Windows PC. The Windows PC is
+  dropped from the route. Trees run on the CPU. Both follow the overnight
+  profile in CLAUDE.md. Replace M8's Windows PC text and its time estimates'
+  GPU assumptions accordingly, and state that E.2b's probe re-plans the
+  LSTM's batch size to leave at least 0.5 GB of VRAM free.
+  V8. M9 accepted: the route's buy and train sessions run after E.2b, beside
+  K2's screening, and the route's test runs once all its rules are frozen,
+  before K8.
+  V9. Also accepted from the E.1 return: F-1 (31 traded exposures, as already
+  written in the frozen D1), F-5 (K2-aucpost-01's 5-minute lag, which review
+  R-15 found supported), and FA-06 option: the source windows of the
+  source-overlap members may be recorded before any confirmation read, as a
+  separate audited amendment that can only remove a source-overlap label,
+  never add a member, change a rule, or add a label (Stage E.2a Tasks 2 and
+  11).
+  Lead's notes (Stage E.2a, for the user, not part of V1 to V9): V1 sets no
+  cap for the route's purchase (still the user's); V8 puts the route's buy
+  session after E.2b while the E.2a prompt says E.2b or later buys the older
+  history; V7 sets no compute budget. See reports/stage_e2a_ml_changes.md,
+  Q-1 to Q-3.
+  V6's effect on frozen D5 (Stage E.2a freeze ruling on audit ML-A14): D5's
+  K counts every family with a non-empty tested set, the ML route included
+  once it has a tested rule; when the route tests a rule every family, each
+  cluster's Tier A included, tests at 0.05 / (K + 1), and D5's "at most 8"
+  reads "at most 9". Recorded here; docs/STAGE_E_DESIGN.md is not edited.
+  Freeze rulings (Stage E.2a Task 4, reports/stage_e2a_ml_freeze_rulings.md):
+  the audit's 2 blocking and 14 should-fix findings were fixed within V1 to
+  V9 by bracketed notes in docs/STAGE_E_ML_DESIGN.md; new wording for the
+  user: the selection metric (ML-A01), the per-side candidate threshold
+  (ML-A02), the LSTM's 4-dimension product embedding (ML-A12), the
+  one-trade-date embargo kept (ML-A13), the primary leg (ML-A15), the
+  calendar-based block cut (ML-A03) and the 31 price-path contracts (ML-A07).

@@ -155,3 +155,13 @@
   (ML-A02), the LSTM's 4-dimension product embedding (ML-A12), the
   one-trade-date embargo kept (ML-A13), the primary leg (ML-A15), the
   calendar-based block cut (ML-A03) and the 31 price-path contracts (ML-A07).
+- Source-window amendment (2026-09-25, Stage E.2a Task 11, under the user's
+  decision V9): the sample windows of the sources behind the 37 members that
+  carried the source-overlap label by fallback were recorded
+  (reports/stage_e2a_source_windows.json) and the frozen rule applied to
+  them mechanically (reports/stage_e2a_source_window_amendment.md). Six
+  labels are removed: K2-predrift-01, K3-ldnmom-01, K3-mehedge-01,
+  K4-ngpre-01, K8-flight-01, K8-oilcad-01; the other 31 keep it. Audited
+  independently (reports/stage_e2a_declaration_audit.md, Part 2: all six
+  confirmed); rulings in reports/stage_e2a_source_window_rulings.md. No
+  member, rule or label was added and no frozen file was edited.

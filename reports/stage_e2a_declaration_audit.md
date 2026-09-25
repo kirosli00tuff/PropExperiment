@@ -499,3 +499,387 @@ within V1 to V9.
 Not done: nothing in the brief was left unfinished. I did not read reports/stage_e1_freeze_rulings.md
 or reports/stage_e1_changes.md beyond what the manifest's FA-15 note states, since no finding
 depended on them.
+
+## Part 2: source-window amendment audit (Task 11)
+
+Written 2026-09-25 06:41 PDT. Auditor: DeclarationAuditor-FableXHigh, resumed for the Task 11 brief. The auditor produced none of the work audited here (neither Task 2's records nor the amendment).
+
+### 2.0 Inputs, the hash question, method
+
+- Audited version of the amendment: reports/stage_e2a_source_window_amendment.md, sha256 `9fe401c1c156ebba38162256bf151d9888dec00e42cd24026d348d039e64f13d`. The brief named `95a040bb7d477e9dc85a17c6e8f9431690a06ebd50cb2a5c07188cd24eb98a9c`; the file on disk did not match. The lead's correction (06:35 PDT message; reports/stage_e2a_STATE.md line dated 06:35) says the earlier hash predates a one-phrase clock-time correction in the header ('about 06:35 PDT' to 'about 06:15 PDT') and nothing else changed. I could not verify the earlier version's content (it is not on disk or in git); this audit is of the version hashed above, mtime 2026-09-25 06:16:33 PDT, which the STATE file also records (finding SW-A01).
+- Task 2's evidence: reports/stage_e2a_source_windows.json (sha256 `f2442dcc07566216e29b8190efc098369524497573aeb3c06d4e3b97bb50d7f9`, which equals the hash the amendment cites) and .md; the fetched texts under the scratch directory e2a_sources/ (txt/, txtraw/, passages.json, verify.py, verify_result.json, fetchlog.jsonl). 37 members, 75 sources, 145 rows, 71 passages.
+- The rule: docs/NULL_CRITERIA_E.md section 3 (frozen, hash verified in the E.1 manifest check below); V9 (docs/DECISIONS.md, 2026-09-25); the stage prompt's Task 11 wording; the FA-06 list in reports/stage_e1_freeze_rulings.md; the six removed members' entries in reports/stage_e0_catalog_K2.md, _K3.md, _K4.md, _K8.md and their records in reports/stage_e0_catalog.json.
+- Own code (scratch fable_p3/check_amendment.py): my own verbatim check (Unicode NFKC, whitespace collapsed, substring test against every fetched text of the source), my own classification of every row from its recorded first and last period at the recorded granularity against [2019-05-06, 2024-02-29], my own recomputation of every member's label under the amendment's readings, and a parse of the amendment's table for the comparison. No web access was needed; every source's fetched text was on disk.
+
+### 2.1 Check 1: passages, periods and classifications
+
+- Verbatim: 71 of 71 passages are substrings of a fetched text of their source under the worker's per-passage keys (K3-020's second passage lives in the companion paper's text, key K3-020b; K3-025's passage is K3-023's description of it, flagged secondary). My first pass, which ignored those two keys, found 69 of 71; the two are explained, not failures (SW-A07). Neither is cited by a removed member.
+- Classification: for all 145 rows my class (overlaps, no overlap, unknown, no data sample) equals the amendment's, and my member labels equal its 'After' column for all 37 members and its 'Supporting-only' column as well; the six removed are exactly the six I compute.
+
+Every row of the six removed members (13 rows, 12 distinct sources):
+
+| Member | Source (role) | Recorded window | Passage (excerpt) | States the period? | Class | Verdict |
+|---|---|---|---|---|---|---|
+| K2-predrift-01 | K2-007 (supporting) | 2008-01-01..2014-03-31 (day) | Our second-by-second transaction data from Genesis Financial Technologies spans the period from January 1, 200... | yes | no overlap | CONFIRMED |
+| K3-ldnmom-01 | K3-017 (supporting) | 1996-02..2013-12 (month) | They begin in February 1996 for JPY, GBP, CHF, CAD, NZD, and DKK and in January, 1999 for EUR. Data for all cu... | yes | no overlap | CONFIRMED |
+| K3-ldnmom-01 | K3-002 (supporting) | 2006-01-02..2016-06-30 (day) | ICAP EBS Level 5 (or Level 2) data (proprietary data, purchased by the first author) from January 2, 2006 to J... | yes | no overlap | CONFIRMED |
+| K3-ldnmom-01 | K3-021 (supporting) | 2008-01..2014-03 (month) | 01/2010-03/2014: EURUSD, EURJPY, EURGBP, EURCHF, GBPCHF, USDJPY, USDGBP, USDCHF 01/2008-03/2014: EURSEK, AUDUS... | yes | no overlap | CONFIRMED |
+| K3-ldnmom-01 | K3-019 (other) | 2010-10-28..2017-06-14 (day) | Our sample period is approximately two and a half years from the 28 October 2010, to the 5 June 2015, and arou... | yes | no overlap | CONFIRMED |
+| K3-ldnmom-01 | K3-004 (other) | 2002..2013 (year) | The data set runs from 2002 to 2013, and all of the calculations in the analysis are expressed as an average o... | yes | no overlap | CONFIRMED |
+| K3-ldnmom-01 | K3-018 (other) | 2010-01-01..2013-12-31 (day) | Our spot data include all GBP/USD, AUD/USD and NZD/USD transactions between January 1, 2010 and December 31, 2... | yes | no overlap | CONFIRMED |
+| K3-mehedge-01 | K3-001 (supporting) | 2004-04-28..2012-12-31 (day) | These prices are available starting from April 28, 2004 and end on December 31, 2012 giving us a sample period... | yes | no overlap | CONFIRMED |
+| K3-mehedge-01 | R-K3-014 (other) | n/a (documentation, no data sample) | (none) | no sample to state (CME product case-study page, 1,121 words, no data period; checked) | no data sample | CONFIRMED |
+| K3-mehedge-01 | K3-002 (other) | 2006-01-02..2016-06-30 (day) | ICAP EBS Level 5 (or Level 2) data (proprietary data, purchased by the first author) from January 2, 2006 to J... | yes | no overlap | CONFIRMED |
+| K4-ngpre-01 | K4-001 (supporting) | 2003-03..2018-12 (month) | From Bloomberg, we obtain the daily price, trading volume and open interest series of 499 Henry Hub Natural Ga... | yes | no overlap | CONFIRMED Note: the intraday data are 'over the same sample period' (Thomson Reuters Tick History), checked in the text; the 2019 mentions are the paper's date and citations. |
+| K8-flight-01 | K8-003 (supporting) | 2007..2018 (year) | We use high-frequency intra-day gold and S&P500 data covering the period from 2007 to 2018 | yes | no overlap | CONFIRMED Abstract only; the abstract states the period. |
+| K8-oilcad-01 | K8-006 (supporting) | 2005-01-03..2009-12-31 (day) | This sample extends from 03/01/2005 to 31/12/2009. // over the period 1986-2015 | yes | no overlap | CONFIRMED Note: the text also has a daily sample 02/01/1986-31/07/2015 (Table 1), which the row omits; it lies before the window too. |
+| K8-oilcad-01 | K8-001 (supporting) | 2003-10..2017-10 (month) | The sample period for all data except the exchange rates are 2003M10 to 2017M10. The exchange rate data during... | yes | no overlap | CONFIRMED The exchange-rate series start April 2006 (same passage); the end 2017M10 is what matters. |
+
+Sample of other members' rows (30 sources, covering CP1, CP2 and CP3 chains, K2, K3, K5, K6, K7 and cross-cluster sources; each read against its recorded period):
+
+| Source | Recorded window | Passage (excerpt) | Class | Verdict |
+|---|---|---|---|---|
+| D1-A10 | 1974-12..2020-05 (month) | Our sample period covers almost 45 years from December 1974 to May 2020. | overlaps | CONFIRMED (1974-12..2020-05 overlaps, so every CP1 port keeps its label through the D6 chain) |
+| D1-A28 | 1993..2013 (year) | Based on high frequency S & P 500 exchange-traded fund (ETF) data from 1993–2013, we show an intraday momentum pattern | no overlap | CONFIRMED |
+| D1-B5 | 2021-12..2025-08 (month) | The primary dataset is 72,604 five-minute OHLCV bars for MNQ continuous front-month futures, regular trading hours only ... | overlaps | CONFIRMED (the MNQ sample (2021-12..2025-08) overlaps the confirmation window, so every CP2 port keeps its label through the D6 chain) |
+| D1-B2 | 2014..2016 (year) | The analysis uses the complete transaction audit trail for the select futures products from the beginning of 2014 until ... | no overlap | CONFIRMED |
+| D1-B3 | 2010-05-03..2010-05-06 (day) | This paper uses audit trail data during May 3-6, 2010 to examine the eco-system of the S&P 500 E-mini futures during the... | no overlap | CONFIRMED |
+| D1-B4 | 1983-03-30..2011-01-26 (day) | We apply the testing strategy presented above to a time series of U.S. crude oil futures prices obtained from Commodity ... | no overlap | CONFIRMED |
+| K1-002 | 2011-01-03..2021-12-31 (day) | the data for Dow Jones futures and Nasdaq futures (3 January 2011–31 December 2021) are from one of the top global finan... | overlaps | CONFIRMED |
+| K2-021 | 1990-01..2018 (month) | We consider data from January 1990 to the end of 2018. // The end-of-month effect is persistent over our sample period (... | no overlap | CONFIRMED |
+| K2-003 | 2016-01..2025-12 (month) | for each month from January 2016 to December 2025 | overlaps | CONFIRMED |
+| K2-005 | 2009-03..2011-06 (month) | averaged across six roll events from March 2010 through June 2011 // using the exponentially weighted rolling average of... | no overlap | CONFIRMED (the text gives two spans (six rolls from March 2010 through June 2011; a forecast history starting March 2009); the recorded window is their union, the conservative choice) |
+| K3-016 | 1999-01..2018-12 (month) | Our full sample starts in January 1999 and ends in December 2018 // Data from CME (BA100% CM E ) is daily and covers the... | no overlap | CONFIRMED (two samples in the text (the 1999-2018 quote sample and CME daily data 2009-2018); the recorded window is the wider) |
+| K3-005 | 2018..2020 (year) | by analyzing the recent historical data of the USD/JPY rate during 2018 to 2020 | overlaps | CONFIRMED (the fetched text gives only '2018 to 2020'; extended to whole years it overlaps, which keeps K3-tkypre-01 and K3-tkypost-01 labelled; a finer reading could not remove a label since 2019 and 2020 overlap the window anyway) |
+| K3-010 | 2012..2024 (year) | Using M5 Dukascopy data for spot pairs (2012–2024) and M1 Databento data for 6J CME futures (2019–2024), with a strict i... | overlaps | CONFIRMED |
+| K3-020 | 2015-02-15..2023-12-31 (day) | The sample period available for the analysis covers over 9 years, from February 15, 2015, the day in which the current m... | overlaps | CONFIRMED (the second passage is from the companion paper's text (verify key K3-020b); both papers state the same span) |
+| K3-022 | 1999-01..2013-12 (month) | Level 5 data: January 2006 to December 2013. // Level 2 data: January 1999 to December 2005. Currency pairs 'USD-JPY' | no overlap | CONFIRMED (two data levels (1999-2005 and 2006-2013); the recorded window is their union) |
+| K3-023 | 1997-01..2007-06 (month) | We employ a detailed transactions data set for the period January 1997 to the beginning of June 2007 from EBS the domina... | no overlap | CONFIRMED |
+| K3-024 | 1993-01..2005-08 (month) | The sample periods cover the period from the beginning of January 1993 to the end of August 2005 for the CHF/USD and JPY... | no overlap | CONFIRMED |
+| K5-001 | 2007-01-01..2012-12-31 (day) | The full period (Sf) covers 1 January 2007 to 31 December 2012. | no overlap | CONFIRMED |
+| K5-006 | 2008-01-01..2018-06-27 (day) | Daily prices, open interest, and the trading volume for futures contracts on silver and gold trading on the Chicago Merc... | no overlap | CONFIRMED |
+| K5-012 | 2012-02-14..2015-04-30 (day) | Our data extends from the 14th February 2012 to the 30th of April, 2015, a sample period that allows us to examine the i... | no overlap | CONFIRMED |
+| K5-028 | 2009-01-01..2020-03-31 (day) | Daily and hourly data for gold and oil over the period 01.01.2009–31.03.2020 (GMT + 3 time zone) are used. | overlaps | CONFIRMED (the worker recorded the methodology's end date (31.03.2020) over the introduction's (01.09.2019); the row overlaps either way) |
+| K6-001 | 1978-02-01..1991-07-31 (day) | A continuous series is constructed using four-month trading periods for each of the March, August, and December contract... | no overlap | CONFIRMED (the abstract says July 30, 1991 and the data section July 31; no overlap either way) |
+| K6-011 | 2009..2019 (year) | the yellow line is the average observed from 2009-2018; gray series represent the values observed in other, individual y... | overlaps | CONFIRMED (the window is read from a chart caption (2009-2019 individual years); the 2019 report lies inside the window under either reading) |
+| K6-026 | 2015..2015 (year) | The high-frequency data used in this study covers the total trading activity of 2015, amounting to 243 trading days. | no overlap | CONFIRMED |
+| K6-028 | 2013..2020 (year) | in the CME corn futures market using high-frequency data from 2013 to 2020 | overlaps | CONFIRMED |
+| K7-002 | 2019-04-01..2020-01-31 (day) | The dataset consists of minute-by-minute transaction data and covers the period from 1 April 2019 to 31 January 2020 sum... | overlaps | CONFIRMED |
+| K7-025 | 2024-03-05..2024-09-06 (day) | Table 3.20: Descriptive statistics for the event on March 5th 2024: Micro BTC futures on CME and spot BTC on Binance // ... | no overlap | CONFIRMED (the window is read from two table captions naming event dates (2024-03-05 and 2024-09-06); the study's full sample may be wider, but its member (K7-rev2h-01) keeps its label on K7-002 regardless; these dates are holdout-2 dates, as the amendment notes) |
+| K7-040 | 2015-10-08..2024-10-15 (day) | Our analysis is based on the hourly BTC data from the Gemini Data page in intervals ranging from 2015-10-08 to 2024-10-1... | overlaps | CONFIRMED |
+| K4-050 | 2010..2026 (year) | The study uses sixteen years of one-minute data (2010-2026), split into fixed exploration, confirmation, and reserve win... | overlaps | CONFIRMED |
+| R-K6-032 | 2010-01..2021-11 (month) | Using high-frequency tick data from January 2010 to November 2021, we document the presence and drivers of intraday mark... | overlaps | CONFIRMED |
+
+Every unknown row I read is unknown for a stated reason (a book not fetched, an abstract with no period, a blog with no data, a secondary description) and keeps its member's label, as the rule requires.
+
+### 2.2 Check 2: completeness of the six removed members' sources
+
+| Member | What the frozen entry cites (read in full) | Task 2's sources for it | Complete? |
+|---|---|---|---|
+| K2-predrift-01 | K2-007 (P-K2-007-a to -f); EC-ISM and EC-CAL (release calendars); 'Rule 3' (a catalog convention); the entry's own line 'the paper's sample is 2008-2014 (log)' | K2-007 | yes |
+| K3-ldnmom-01 | K3-017 (P-K3-017-a, -b, -c and 'the K3-017 block'); K3-002 (P-K3-002-b, -d); K3-021 (P-K3-021-a, -c); K3-019 (P-K3-019-a); K3-004 (P-K3-004-d); K3-018 (P-K3-018-a); EC-CAL, EC-EW, the T_L clock; the tag 'port of D.1 family C' | K3-017, K3-002, K3-021, K3-019, K3-004, K3-018 | yes |
+| K3-mehedge-01 | K3-001 (P-K3-001-a, -b, -d, -e and 'the K3-001 block'); R-K3-014 (BTIC routing, 'verbatim in the log'); K3-002 (P-K3-002-d); STOXX Ltd., Nikkei Inc. and FRED as index-data providers (no sample); EC-CAL, EC-EW; the tag 'port of D.1 family E'; the partition's 21:52 ruling | K3-001, R-K3-014, K3-002 | yes |
+| K4-ngpre-01 | K4-001 (P-K4-001-a to -f); EC-NGS and EC-CAL; Topstep F6 (the release table); the tag 'port of D.1 family E' | K4-001 | yes |
+| K8-flight-01 | K8-003 (P-K8-003-a, -b, -c); 'D15's B4 feature' (a design reference); K8 conventions C5, C6, C9, C12, C13; EC-CAL, EC-FOMC, EC-BLS; MES's S from D.1f; the entry's own 'Source window and label' line (2007 to 2018, no overlap) | K8-003 | yes |
+| K8-oilcad-01 | K8-006 (P-K8-006-a to -e and 'the K8-006 block'); K8-001 (P-K8-001-a, -b, -e, -f, -g, -h, Table 5); K4 catalog C10, K3 catalog C8; EC-CAL, EC-FOMC, EC-BLS, EC-WPSR; 'Rule 7'; the entry's own 'Source window and label' line (K8-006 2005-2009 and 1986-2015; K8-001 2003M10-2017M10; no label) | K8-006, K8-001 | yes |
+
+Items in the entries that are not literature sources and carry no data sample, and so were rightly not recorded: release and holiday calendars (EC-*), Topstep's release table (F6), catalog conventions (C5 to C13, 'Rule 3', 'Rule 7'), design references (D15's B4, D2, D6), the T_L clock, index-data providers (STOXX, Nikkei, FRED), and the program's own MES record. The classification tags 'port of D.1 family C' and 'port of D.1 family E' name a family, not a paper, and are not evidence the member was chosen on (SW-A05). Three of the six entries already carried their own source-window statement (K2-predrift-01 '2008-2014 (log)', K8-flight-01 '2007 to 2018', K8-oilcad-01 both sources), each agreeing with Task 2's record (SW-A06).
+
+### 2.3 Check 3: the readings
+
+- Widest confirmation window [2019-05-06, 2024-02-29]: faithful. The earliest S_X is 2019-05-06 (D4) and the end is frozen; a member's own window (a later S_X; for K8 the intersection, for K8-flight-01 no earlier than 2020-02-03) is inside it, so this reading can only find more overlaps, never fewer. Cannot wrongly remove a label.
+- Granularity extension (a year to its whole year, a month to its whole month): faithful and outward, so it can only add overlaps. Cannot wrongly remove.
+- 'Any of its sources' (every cited source, supporting or other): the prompt's Task 11 words; stricter than the frozen rule's 'supporting source'. It removes 6 where the supporting-only reading would remove 8 (K3-ldnrev-01 kept on K3-020's 2015-2023 sample; K5-pmfix-01 on K5-013 unknown). Cannot wrongly remove; the lead reports the narrower reading for information only, which is right.
+- Unknown keeps the label; a secondary description (K3-025) counts as unknown: faithful to the frozen rule's own fallback ('not recorded is treated as source-overlap') and conservative.
+- 'No data sample' (window_applicable false: K6-048, K6-050, R-K3-014, K3-hdr-ECB) neither keeps nor removes: faithful in my judgment. The label exists because a member 'was chosen partly on evidence from that window'; a product page, FAQ, reference guide or calendar page carries no sample and no evidence from any window, so it cannot create the overlap the rule guards against. The reading is decisive for exactly one removal, K3-mehedge-01 (R-K3-014): I read that page's text (a CME case study on BTIC exposure to the WM/Refinitiv fix; its only years are 1994, the fix's creation, and 2000, 2005, 2026 in page furniture) and confirm it has no data sample. The three other documentation rows belong to members that keep their labels on other rows. The stricter alternative, treating documentation as unknown, would keep K3-mehedge-01 labelled; recorded for the lead (SW-A04). Could this reading wrongly remove a label? Only if a source with a real sample were classified as documentation; I checked all four and none is.
+- A member loses the label only if every source is 'no overlap' or 'no data sample': the correct conjunction of the prompt's rule; my recomputation reproduces it for all 37.
+
+### 2.4 Check 4: scope
+
+- The amendment's table has 37 rows, exactly the FA-06 fallback list; every 'Before' is 'source-overlap (fallback)'; 'After' is 'not source-overlap' for 6 and 'source-overlap' for 31. The 16 members the frozen catalog already labels are absent from the table and unchanged. In reports/stage_e0_catalog.json the 37 carry source_overlap false and the 16 true, as the amendment's premise states. No member is added, no rule text is changed, no label is added.
+- No frozen file changed: every one of the 32 files in reports/stage_e1_freeze.json matches its sha256 (the freeze audit compared against its 848f331 blob). The amendment and Task 2's two files are new, untracked files.
+
+### 2.5 Findings
+
+- SW-A01. NOTE. The brief's hash for the amendment (95a040bb...) does not match the file; the lead's correction attributes the difference to a one-phrase clock-time fix in the header. Audited version: `9fe401c1c156ebba...`. Task 11's commit should name this hash. If the earlier version is ever cited, the two must be diffed, since I could not see it.
+- SW-A02. NOTE. K8-006's recorded window (2005-01-03..2009-12-31, the 5-minute Canadian sample) omits the paper's daily sample 02/01/1986-31/07/2015 (Table 1), which the frozen entry itself records ('1986-2015 for the daily data'). Both lie before the window; the class and the removal stand. Task 2's row would be more complete as 1986-01-02..2015-07-31.
+- SW-A03. NOTE. K7-025's window is read from two table captions (event dates 2024-03-05 and 2024-09-06); the study's full sample may be wider. K7-rev2h-01 keeps its label on K7-002 regardless, so nothing turns on it; the dates fall in holdout-2, as the amendment's note says.
+- SW-A04. NOTE. The 'no data sample' reading decides K3-mehedge-01's removal (R-K3-014). Verified on the text; the alternative (documentation counts as unknown) is the only reading of the frozen rule under which a seventh member would stay labelled. The lead should state the reading in the Task 11 rulings so the choice is on record.
+- SW-A05. NOTE. 'Port of D.1 family C/E' tags in K3-ldnmom-01, K3-mehedge-01 and K4-ngpre-01 are family classifications, not cited papers; the D.1 family literature is not treated as a source of these members. I agree: the entries cite it as a class label, and the mechanism evidence is the K-numbered sources recorded.
+- SW-A06. NOTE. K2-predrift-01, K8-flight-01 and K8-oilcad-01 already state their source windows in the frozen entries (and K8's two say 'no label'); FA-06's heuristic listed them anyway. The amendment's outcome agrees with the entries' own statements, so the E.1 fallback label on these three was a recording artifact, now resolved.
+- SW-A07. NOTE. My first verbatim pass reported 69 of 71 because it did not apply the worker's per-passage verify keys (K3-020b, K3-023); with them, 71 of 71. Recorded so the two numbers are not read as a disagreement.
+
+### 2.6 Verdict of Part 2
+
+- Removed members: K2-predrift-01 CONFIRMED; K3-ldnmom-01 CONFIRMED; K3-mehedge-01 CONFIRMED (on the 'no data sample' reading, SW-A04); K4-ngpre-01 CONFIRMED; K8-flight-01 CONFIRMED; K8-oilcad-01 CONFIRMED.
+- Sampled rows of other members: 30 sources CONFIRMED, with the notes in the table; all 145 row classes and all 37 labels reproduced.
+- Findings: BLOCKING 0, SHOULD FIX 0, NOTE 7 (SW-A01 to SW-A07).
+- Verdict: **the amendment is faithful to the frozen rule and V9; every removal is confirmed.** Labels whose removal I confirm: K2-predrift-01, K3-ldnmom-01, K3-mehedge-01, K4-ngpre-01, K8-flight-01, K8-oilcad-01. The other 31 keep 'source-overlap'.
+
+
+## Part 3: independent recomputation (Task 12)
+
+### 3a: sizes, vehicles, translated epsilon, costs
+
+Written 2026-09-25 06:33 PDT. Auditor: DeclarationAuditor-FableXHigh, resumed for the Task 12 brief (part 3a). The auditor produced none of the numbers checked here.
+
+#### 3a.0 Inputs, method, boundaries
+
+- Frozen inputs, sha256 verified at the start of this part against the lead's message (all four match): reports/stage_e2a_vehicles.json `1f1cafee43309617...`, reports/stage_e2a_vehicle_sizes.json `280d7e9df1953069...`, reports/stage_e2a_costs.json `f4360bb77272d033...`, reports/stage_e2a_vehicle_rule_readings.md `8c3c29dd6531782b...`.
+- Own code, under the scratchpad directory fable_p3/: sizes.py (r_c, q_c, rho_c), compare_sizes.py, choice.py (vehicle, cost per dollar of risk, translated epsilon), costs_fable.py (D8 from the raw mbp-1 files), alts.py (alternative readings), write_part3a.py (this section). None of screening/vehicles*.py, sim/calibrate_costs.py, sim/cost_rule.py, sim/cost_report*.py, sim/product_costs.py or data/build_bars*.py was imported. Used as data: the research parquets, reports/stage_e0_liquidity.json (ticks, tick values), reports/stage_e0_topstep_facts.json F3.7 and F3.6 (commissions), reports/stage_e1_purchase.json (the mbp-1 files and their sha256, each verified by my code before the file was decoded), the group calendar modules data/calendars/*.py and data/cme_calendar.py (closures, early halts, sessions, BOOKED_FORWARD, EARLY_SETTLEMENT_CT), and each parquet's metadata `rolls` record (the vendor's symbology.resolve roll events) for the roll blackout. D1's table (docs/STAGE_E_DESIGN.md) for the admissible contracts, the 31 exposures and the ADV tie rule; D6's session table; D9.5 and D9.11 caps; R* = $360.68.
+- Compute: one process, OMP_NUM_THREADS=1, nice 10, one heavy step at a time; the mbp-1 files streamed one file at a time in 1,000,000-record chunks with five int64 arrays kept per day (largest day MBT 2026-02-11, 3,580,827 records, about 170 MB of arrays). Research-window data were used only for r_c and the cost tables; no returns, charts or price summaries were computed.
+- Readings applied: R1 to R12 of the lead's readings file and rulings L-1 to L-11 as the brief says; CostCoder's R1 to R10 for the cost tables. Where the frozen text allows another reading, 3a.4 says what it would change.
+- Tolerances: sizes, exact equality of the rationals r_c, rho_c and the sum of tick moves, and of the date sets (used, and excluded by cause); choice, exact equality of status, vehicle, q_c, epsilon, candidate and preferred sets, and relative 1e-9 on the cost per dollar of risk and the one-side slippage (floating point); cost tables, 1e-9 ticks on s_b and the round turn, 0.5 s on valid seconds, exact equality of dates with quotes, medians, depth terms, fallback flags, headline bucket sets and event-window sides.
+
+#### 3a.1 r_c, q_c, rho_c for the 45 admissible contracts
+
+Every contract: the same dates used (count and list), the same exclusions by cause (roll blackout, vendor-degraded, closure or early close at or before C_X, no bar in the window), the same list of dates whose exact O_X or C_X - 1 bar was missing (R3's as-of substitution), the same vendor price factor (100 x the E.0 tick for ZC, ZW, ZS, ZL, HE, LE; 1 x elsewhere, checked on the prices), the same sum of tick moves, and identical rationals for r_c and rho_c. For non-crypto products I also asserted that every day-session bar lies on its trade date's own CT calendar day (0 exceptions); for MBT the L-10 rule was applied (bars on the trade date's own CT day only; 7 booked-forward sessions never read).
+
+| Contract | Exposure | O-C (CT) | Dates used | r_c USD (mine) | r_c USD (frozen) | Sum ticks | cap | q_c | rho_c | Exact bars missing O/C | Verdict |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| MNQ | Nasdaq-100 | 08:30-15:00 | 285 / 285 | 363.4614 | 363.4614 | 207173 / 207173 | 10 / 10 | 1 / 1 | 1.0077 / 1.0077 | 0/0 | VERIFIED |
+| NQ | Nasdaq-100 | 08:30-15:00 | 286 / 286 | 3613.0769 | 3613.0769 | 206668 / 206668 | 1 / 1 | 1 / 1 | 10.0174 / 10.0174 | 0/0 | VERIFIED |
+| RTY | Russell 2000 | 08:30-15:00 | 286 / 286 | 1060.7168 | 1060.7168 | 60673 / 60673 | 1 / 1 | 1 / 1 | 2.9409 / 2.9409 | 0/0 | VERIFIED |
+| M2K | Russell 2000 | 08:30-15:00 | 286 / 286 | 106.1346 | 106.1346 | 60709 / 60709 | 10 / 10 | 3 / 3 | 0.8828 / 0.8828 | 0/0 | VERIFIED |
+| MYM | Dow | 08:30-15:00 | 286 / 286 | 131.1486 | 131.1486 | 75017 / 75017 | 10 / 10 | 3 / 3 | 1.0908 / 1.0908 | 0/0 | VERIFIED |
+| YM | Dow | 08:30-15:00 | 286 / 286 | 1312.2727 | 1312.2727 | 75062 / 75062 | 1 / 1 | 1 / 1 | 3.6383 / 3.6383 | 0/0 | VERIFIED |
+| ZT | 2-year | 07:20-14:00 | 286 / 286 | 112.6803 | 112.6803 | 4125 / 4125 | 1 / 1 | 1 / 1 | 0.3124 / 0.3124 | 0/0 | VERIFIED |
+| ZF | 5-year | 07:20-14:00 | 286 / 286 | 135.5441 | 135.5441 | 4962 / 4962 | 1 / 1 | 1 / 1 | 0.3758 / 0.3758 | 0/0 | VERIFIED |
+| ZN | 10-year | 07:20-14:00 | 286 / 286 | 204.9279 | 204.9279 | 3751 / 3751 | 1 / 1 | 1 / 1 | 0.5682 / 0.5682 | 0/0 | VERIFIED |
+| TN | Ultra 10-year | 07:20-14:00 | 286 / 286 | 259.9432 | 259.9432 | 4758 / 4758 | 1 / 1 | 1 / 1 | 0.7207 / 0.7207 | 0/0 | VERIFIED |
+| ZB | Bond | 07:20-14:00 | 286 / 286 | 402.0979 | 402.0979 | 3680 / 3680 | 1 / 1 | 1 / 1 | 1.1148 / 1.1148 | 0/0 | VERIFIED |
+| UB | Ultra bond | 07:20-14:00 | 286 / 286 | 501.4205 | 501.4205 | 4589 / 4589 | 1 / 1 | 1 / 1 | 1.3902 / 1.3902 | 0/0 | VERIFIED |
+| 6E | EUR | 07:20-14:00 | 293 / 293 | 319.4539 | 319.4539 | 14976 / 14976 | 1 / 1 | 1 / 1 | 0.8857 / 0.8857 | 0/1 | VERIFIED |
+| M6E | EUR | 07:20-14:00 | 293 / 293 | 32.0350 | 32.0350 | 7509 / 7509 | 10 / 10 | 10 / 10 | 0.8882 / 0.8882 | 3/6 | VERIFIED |
+| E7 | EUR | 07:20-14:00 | 293 / 293 | 160.7295 | 160.7295 | 7535 / 7535 | 1 / 1 | 1 / 1 | 0.4456 / 0.4456 | 51/70 | VERIFIED |
+| 6A | AUD | 07:20-14:00 | 293 / 293 | 183.6519 | 183.6519 | 10762 / 10762 | 1 / 1 | 1 / 1 | 0.5092 / 0.5092 | 0/2 | VERIFIED |
+| M6A | AUD | 07:20-14:00 | 293 / 293 | 18.4164 | 18.4164 | 5396 / 5396 | 10 / 10 | 10 / 10 | 0.5106 / 0.5106 | 64/55 | VERIFIED |
+| 6B | GBP | 07:20-14:00 | 293 / 293 | 186.2201 | 186.2201 | 8730 / 8730 | 1 / 1 | 1 / 1 | 0.5163 / 0.5163 | 0/1 | VERIFIED |
+| M6B | GBP | 07:20-14:00 | 293 / 293 | 18.7137 | 18.7137 | 8773 / 8773 | 10 / 10 | 10 / 10 | 0.5188 / 0.5188 | 70/47 | VERIFIED |
+| 6C | CAD | 07:20-14:00 | 293 / 293 | 120.2901 | 120.2901 | 7049 / 7049 | 1 / 1 | 1 / 1 | 0.3335 / 0.3335 | 0/4 | VERIFIED |
+| 6J | JPY | 07:20-14:00 | 293 / 293 | 204.8208 | 204.8208 | 9602 / 9602 | 1 / 1 | 1 / 1 | 0.5679 / 0.5679 | 0/0 | VERIFIED |
+| 6S | CHF | 07:20-14:00 | 293 / 293 | 410.7509 | 410.7509 | 19256 / 19256 | 1 / 1 | 1 / 1 | 1.1388 / 1.1388 | 1/2 | VERIFIED |
+| 6N | NZD | 07:20-14:00 | 293 / 293 | 156.4846 | 156.4846 | 9170 / 9170 | 1 / 1 | 1 / 1 | 0.4339 / 0.4339 | 2/2 | VERIFIED |
+| CL | WTI crude | 08:00-13:30 | 256 / 256 | 918.7891 | 918.7891 | 23521 / 23521 | 1 / 1 | 1 / 1 | 2.5474 / 2.5474 | 0/0 | VERIFIED |
+| MCL | WTI crude | 08:00-13:30 | 258 / 258 | 91.5698 | 91.5698 | 23625 / 23625 | 10 / 10 | 4 / 4 | 1.0155 / 1.0155 | 0/0 | VERIFIED |
+| QM | WTI crude | 08:00-13:30 | 258 / 258 | 457.2190 | 457.2190 | 9437 / 9437 | 1 / 1 | 1 / 1 | 1.2677 / 1.2677 | 0/2 | VERIFIED |
+| NG | Henry Hub gas | 08:00-13:30 | 259 / 259 | 639.3050 | 639.3050 | 16558 / 16558 | 1 / 1 | 1 / 1 | 1.7725 / 1.7725 | 0/0 | VERIFIED |
+| MNG | Henry Hub gas | 08:00-13:30 | 262 / 262 | 65.3092 | 65.3092 | 17111 / 17111 | 10 / 10 | 6 / 6 | 1.0864 / 1.0864 | 1/1 | VERIFIED |
+| QG | Henry Hub gas | 08:00-13:30 | 262 / 262 | 159.1603 | 159.1603 | 3336 / 3336 | 1 / 1 | 1 / 1 | 0.4413 / 0.4413 | 4/22 | VERIFIED |
+| RB | RBOB | 08:00-13:30 | 241 / 241 | 1012.7925 | 1012.7925 | 58115 / 58115 | 1 / 1 | 1 / 1 | 2.8080 / 2.8080 | 0/0 | VERIFIED |
+| HO | ULSD | 08:00-13:30 | 253 / 253 | 1441.3968 | 1441.3968 | 86827 / 86827 | 1 / 1 | 1 / 1 | 3.9963 / 3.9963 | 0/0 | VERIFIED |
+| MGC | gold | 07:20-12:30 | 290 / 290 | 258.5897 | 258.5897 | 74991 / 74991 | 10 / 10 | 1 / 1 | 0.7170 / 0.7170 | 0/1 | VERIFIED |
+| GC | gold | 07:20-12:30 | 290 / 290 | 2586.9655 | 2586.9655 | 75022 / 75022 | 1 / 1 | 1 / 1 | 7.1725 / 7.1725 | 0/1 | VERIFIED |
+| SIL | silver | 07:20-12:25 | 290 / 290 | 931.0517 | 931.0517 | 54001 / 54001 | 2 / 2 | 1 / 1 | 2.5814 / 2.5814 | 0/0 | VERIFIED |
+| SI | silver | 07:20-12:25 | 290 / 290 | 4653.9655 | 4653.9655 | 53986 / 53986 | 1 / 1 | 1 / 1 | 12.9033 / 12.9033 | 0/0 | VERIFIED |
+| HG | copper | 07:10-12:00 | 290 / 290 | 1101.2931 | 1101.2931 | 25550 / 25550 | 1 / 1 | 1 / 1 | 3.0534 / 3.0534 | 0/0 | VERIFIED |
+| MHG | copper | 07:10-12:00 | 290 / 290 | 110.2155 | 110.2155 | 25570 / 25570 | 2 / 2 | 2 / 2 | 0.6112 / 0.6112 | 2/1 | VERIFIED |
+| ZC | corn | 08:30-13:15 | 271 / 271 | 158.1642 | 158.1642 | 3429 / 3429 | 1 / 1 | 1 / 1 | 0.4385 / 0.4385 | 0/0 | VERIFIED |
+| ZW | wheat | 08:30-13:15 | 277 / 277 | 234.7473 | 234.7473 | 5202 / 5202 | 1 / 1 | 1 / 1 | 0.6508 / 0.6508 | 0/0 | VERIFIED |
+| ZS | soybeans | 08:30-13:15 | 279 / 279 | 304.3907 | 304.3907 | 6794 / 6794 | 1 / 1 | 1 / 1 | 0.8439 / 0.8439 | 0/0 | VERIFIED |
+| ZM | soybean meal | 08:30-13:15 | 273 / 273 | 212.6374 | 212.6374 | 5805 / 5805 | 1 / 1 | 1 / 1 | 0.5895 / 0.5895 | 0/0 | VERIFIED |
+| ZL | soybean oil | 08:30-13:15 | 282 / 282 | 304.8298 | 304.8298 | 14327 / 14327 | 1 / 1 | 1 / 1 | 0.8452 / 0.8452 | 0/0 | VERIFIED |
+| HE | lean hogs | 08:30-13:00 | 270 / 270 | 322.9630 | 322.9630 | 8720 / 8720 | 1 / 1 | 1 / 1 | 0.8954 / 0.8954 | 0/0 | VERIFIED |
+| LE | live cattle | 08:30-13:00 | 264 / 264 | 707.1591 | 707.1591 | 18669 / 18669 | 1 / 1 | 1 / 1 | 1.9606 / 1.9606 | 0/0 | VERIFIED |
+| MBT | bitcoin | 08:30-15:00 | 260 / 260 | 120.6135 | 120.6135 | 62719 / 62719 | 1 / 1 | 1 / 1 | 0.3344 / 0.3344 | 0/0 | VERIFIED |
+
+Counts: VERIFIED 45, VERIFIED WITH NOTES 0, DISCREPANCY 0 (45 contracts).
+
+Notes on the sizes (none changes a number):
+- Roll blackout. The frozen rule (NULL_CRITERIA_E 4, D11.4: roll boundaries from symbology.resolve, never inferred from the data; blackout = the splice trade date and the two group trade dates before it, L-8) counts every vendor roll event, including flip-flops that touched no bar. Two such events exist in the window: ZC 2025-04-13 (ZCK5 to ZCN5) reversed on 04-14, and HE 2026-03-15 (HEJ6 to HEM6) reversed on 03-16; both map to a splice trade date whose bars carry one instrument throughout. My first pass, which read splices off the bars' instrument changes, kept ZC 2025-04-10/11/14 and HE 2026-03-12/13/16 and gave ZC r_c 158.1642 -> 158.9872 and HE 322.9630 -> 323.4191; neither q_c nor any band changes (ZC rho 0.4385 vs 0.4408, both undersized; HE 0.8954 vs 0.8967). The frozen reading is the faithful one; the bars-based reading is recorded here only as the alternative. Under the vendor schedule my splice dates equal the frozen ones for all 45 contracts.
+- Vendor-degraded dates: reproduced from the parquets' per-bar flag as the trade dates whose day-session bars are flagged (the lead's Q-2 answer); the prior-evening bars of the next trade date do not exclude it (for example ZN 2025-09-18, 09-25, 2026-03-17 are used, as in the frozen file).
+- The census (reports/stage_e0_liquidity.json) stores an ADV for some contracts that differs from D1's table (ZT 1,000,000 vs 1,325,938; ZF 1,800,000 vs 1,941,530; ZC 437,000 vs 505,663; SIL 48,000 vs 134,882; MBT 75,000 vs 69,615). R9's tie rule names D1's table, which I used; no cost tie occurred, so the ADV never decided anything.
+- Rounding edge: MNG's R*/r_c = 5.523 rounds to q_c = 6; under the exact-bars-only alternative (3a.4 B) it would be 5.498 and q_c = 5. MNG is not a vehicle, so nothing frozen depends on it.
+
+#### 3a.2 Vehicle choice, cost per dollar of risk and translated epsilon for the 31 exposures
+
+The cost per dollar of risk (R8) was recomputed from the frozen cost table's buckets (side_ticks per bucket, minute-weighted over [O_X, C_X), the two sides averaged, times the tick value, plus the F3.7 commission with F3.6's increase for MCL and MNG) over my own r_c; the choice by R7, R9, R10, R11; the epsilon by R12 with the tick values of the census.
+
+| Exposure | Status | Vehicle | q_c | eps_X | Deciding comparison (cost per $ of risk, mine) | Frozen (status / vehicle / q / eps) | Verdict |
+|---|---|---|---|---|---|---|---|
+| Nasdaq-100 | chosen | MNQ | 1 | 170 | lowest cost per dollar of risk among ['MNQ']: MNQ 0.00566618 | chosen / MNQ / 1 / 170 | VERIFIED |
+| Russell 2000 | chosen | M2K | 3 | 56 | lowest cost per dollar of risk among ['M2K']: M2K 0.01862724 | chosen / M2K / 3 / 56 | VERIFIED |
+| Dow | chosen | MYM | 3 | 56 | lowest cost per dollar of risk among ['MYM']: MYM 0.01518325 | chosen / MYM / 3 / 56 | VERIFIED |
+| 2-year | undersized | ZT | 1 | 10 | lowest cost per dollar of risk among ['ZT']: ZT 0.09021897 | undersized / ZT / 1 / 10 | VERIFIED |
+| 5-year | undersized | ZF | 1 | 10 | lowest cost per dollar of risk among ['ZF']: ZF 0.07481033 | undersized / ZF / 1 / 10 | VERIFIED |
+| 10-year | chosen | ZN | 1 | 5 | lowest cost per dollar of risk among ['ZN']: ZN 0.08904009 | chosen / ZN / 1 / 5 | VERIFIED |
+| Ultra 10-year | chosen | TN | 1 | 5 | lowest cost per dollar of risk among ['TN']: TN 0.07056881 | chosen / TN / 1 / 5 | VERIFIED |
+| Bond | chosen | ZB | 1 | 2 | lowest cost per dollar of risk among ['ZB']: ZB 0.08465928 | chosen / ZB / 1 / 2 | VERIFIED |
+| Ultra bond | chosen | UB | 1 | 2 | lowest cost per dollar of risk among ['UB']: UB 0.06844882 | chosen / UB / 1 / 2 | VERIFIED |
+| EUR | chosen | 6E | 1 | 13 | lowest cost per dollar of risk among ['6E']: 6E 0.03783446 | chosen / 6E / 1 / 13 | VERIFIED |
+| AUD | chosen | 6A | 1 | 17 | lowest cost per dollar of risk among ['6A']: 6A 0.05967461 | chosen / 6A / 1 / 17 | VERIFIED |
+| GBP | chosen | 6B | 1 | 13 | lowest cost per dollar of risk among ['6B', 'M6B']: 6B 0.06423688, M6B 0.11177039 | chosen / 6B / 1 / 13 | VERIFIED |
+| CAD | undersized | 6C | 1 | 17 | lowest cost per dollar of risk among ['6C']: 6C 0.08428011 | undersized / 6C / 1 / 17 | VERIFIED |
+| JPY | chosen | 6J | 1 | 13 | lowest cost per dollar of risk among ['6J']: 6J 0.05762520 | chosen / 6J / 1 / 13 | VERIFIED |
+| CHF | chosen | 6S | 1 | 13 | lowest cost per dollar of risk among ['6S']: 6S 0.04027844 | chosen / 6S / 1 / 13 | VERIFIED |
+| NZD | undersized | 6N | 1 | 17 | lowest cost per dollar of risk among ['6N']: 6N 0.07196189 | undersized / 6N / 1 / 17 | VERIFIED |
+| WTI crude | chosen | MCL | 4 | 21 | lowest cost per dollar of risk among ['MCL', 'QM']: MCL 0.03458511, QM 0.04372145 | chosen / MCL / 4 / 21 | VERIFIED |
+| Henry Hub gas | chosen | NG | 1 | 8 | lowest cost per dollar of risk among ['NG', 'MNG']: NG 0.02615376, MNG 0.08191186 | chosen / NG / 1 / 8 | VERIFIED |
+| RBOB | no candidate: not traded in Stage E | None | None | None | - | no candidate: not traded in Stage E / None / None / None | VERIFIED |
+| ULSD | no candidate: not traded in Stage E | None | None | None | - | no candidate: not traded in Stage E / None / None / None | VERIFIED |
+| gold | chosen | MGC | 1 | 85 | lowest cost per dollar of risk among ['MGC']: MGC 0.01576225 | chosen / MGC / 1 / 85 | VERIFIED |
+| silver | no candidate: not traded in Stage E | None | None | None | - | no candidate: not traded in Stage E / None / None / None | VERIFIED |
+| copper | chosen | MHG | 2 | 34 | D9.11 sentence: MHG is a candidate | chosen / MHG / 2 / 34 | VERIFIED |
+| corn | undersized | ZC | 1 | 6 | lowest cost per dollar of risk among ['ZC']: ZC 0.11264807 | undersized / ZC / 1 / 6 | VERIFIED |
+| wheat | chosen | ZW | 1 | 6 | lowest cost per dollar of risk among ['ZW']: ZW 0.07878321 | chosen / ZW / 1 / 6 | VERIFIED |
+| soybeans | chosen | ZS | 1 | 6 | lowest cost per dollar of risk among ['ZS']: ZS 0.06029396 | chosen / ZS / 1 / 6 | VERIFIED |
+| soybean meal | chosen | ZM | 1 | 8 | lowest cost per dollar of risk among ['ZM']: ZM 0.07561320 | chosen / ZM / 1 / 8 | VERIFIED |
+| soybean oil | chosen | ZL | 1 | 14 | lowest cost per dollar of risk among ['ZL']: ZL 0.04275670 | chosen / ZL / 1 / 14 | VERIFIED |
+| lean hogs | chosen | HE | 1 | 8 | lowest cost per dollar of risk among ['HE']: HE 0.05758892 | chosen / HE / 1 / 8 | VERIFIED |
+| live cattle | chosen | LE | 1 | 8 | lowest cost per dollar of risk among ['LE']: LE 0.03384317 | chosen / LE / 1 / 8 | VERIFIED |
+| bitcoin | undersized | MBT | 1 | 170 | lowest cost per dollar of risk among ['MBT']: MBT 0.03667083 | undersized / MBT / 1 / 170 | VERIFIED |
+
+Per-contract cost per dollar of risk (mine / frozen), every admissible contract:
+
+| Contract | One-side slippage ticks (mine / frozen) | Round-turn cost USD per contract | Cost per $ of risk (mine / frozen) |
+|---|---|---|---|
+| MNQ | 0.839437 / 0.839437 | 2.059437 / 2.059437 | 0.00566618 / 0.00566618 |
+| NQ | 1.177218 / 1.177218 | 15.552175 / 15.552175 | 0.00430441 / 0.00430441 |
+| RTY | 0.801588 / 0.801588 | 11.795878 / 11.795878 | 0.01112067 / 0.01112067 |
+| M2K | 0.756995 / 0.756995 | 1.976995 / 1.976995 | 0.01862724 / 0.01862724 |
+| MYM | 0.771262 / 0.771262 | 1.991262 / 1.991262 | 0.01518325 / 0.01518325 |
+| YM | 1.033686 / 1.033686 | 14.116856 / 14.116856 | 0.01075756 / 0.01075756 |
+| ZT | 0.502138 / 0.502138 | 10.165900 / 10.165900 | 0.09021897 / 0.09021897 |
+| ZF | 0.500487 / 0.500487 | 10.140102 / 10.140102 | 0.07481033 / 0.07481033 |
+| ZN | 0.500058 / 0.500058 | 18.246797 / 18.246797 | 0.08904009 / 0.08904009 |
+| TN | 0.503164 / 0.503164 | 18.343880 / 18.343880 | 0.07056881 / 0.07056881 |
+| ZB | 0.500501 / 0.500501 | 34.041318 / 34.041318 | 0.08465928 / 0.08465928 |
+| UB | 0.502426 / 0.502426 | 34.321639 / 34.321639 | 0.06844882 / 0.06844882 |
+| 6E | 0.629309 / 0.629309 | 12.086367 / 12.086367 | 0.03783446 / 0.03783446 |
+| M6E | 0.560818 / 0.560818 | 2.402045 / 2.402045 | 0.07498194 / 0.07498194 |
+| E7 | 0.637061 / 0.637061 | 10.683257 / 10.683257 | 0.06646730 / 0.06646730 |
+| 6A | 0.673935 / 0.673935 | 10.959353 / 10.959353 | 0.05967461 / 0.05967461 |
+| M6A | 0.585391 / 0.585391 | 2.170781 / 2.170781 | 0.11787229 / 0.11787229 |
+| 6B | 0.619376 / 0.619376 | 11.962201 / 11.962201 | 0.06423688 / 0.06423688 |
+| M6B | 0.873313 / 0.873313 | 2.091642 / 2.091642 | 0.11177039 / 0.11177039 |
+| 6C | 0.591806 / 0.591806 | 10.138063 / 10.138063 | 0.08428011 / 0.08428011 |
+| 6J | 0.606627 / 0.606627 | 11.802841 / 11.802841 | 0.05762520 / 0.05762520 |
+| 6S | 0.985952 / 0.985952 | 16.544402 / 16.544402 | 0.04027844 / 0.04027844 |
+| 6N | 0.704093 / 0.704093 | 11.260931 / 11.260931 | 0.07196189 / 0.07196189 |
+| CL | 0.663028 / 0.663028 | 17.280559 / 17.280559 | 0.01880797 / 0.01880797 |
+| MCL | 0.723475 / 0.723475 | 3.166950 / 3.166950 | 0.03458511 / 0.03458511 |
+| QM | 0.662811 / 0.662811 | 19.990278 / 19.990278 | 0.04372145 / 0.04372145 |
+| NG | 0.625012 / 0.625012 | 16.720232 / 16.720232 | 0.02615376 / 0.02615376 |
+| MNG | 1.714797 / 1.714797 | 5.349595 / 5.349595 | 0.08191186 / 0.08191186 |
+| QG | 0.609908 / 0.609908 | 17.267688 / 17.267688 | 0.10849243 / 0.10849243 |
+| RB | 2.278751 / 2.278751 | 23.161507 / 23.161507 | 0.02286896 / 0.02286896 |
+| HO | 4.434897 / 4.434897 | 41.273138 / 41.273138 | 0.02863413 / 0.02863413 |
+| MGC | 1.077978 / 1.077978 | 4.075956 / 4.075956 | 0.01576225 / 0.01576225 |
+| GC | 1.952113 / 1.952113 | 43.362251 / 43.362251 | 0.01676182 / 0.01676182 |
+| SIL | 1.116318 / 1.116318 | 13.883183 / 13.883183 | 0.01491129 / 0.01491129 |
+| SI | 1.682105 / 1.682105 | 88.425242 / 88.425242 | 0.01899998 / 0.01899998 |
+| HG | 1.117183 / 1.117183 | 32.249582 / 32.249582 | 0.02928338 / 0.02928338 |
+| MHG | 1.075541 / 1.075541 | 4.608852 / 4.608852 | 0.04181673 / 0.04181673 |
+| ZC | 0.501476 / 0.501476 | 17.816893 / 17.816893 | 0.11264807 / 0.11264807 |
+| ZW | 0.528566 / 0.528566 | 18.494144 / 18.494144 | 0.07878321 / 0.07878321 |
+| ZS | 0.522917 / 0.522917 | 18.352920 / 18.352920 | 0.06029396 / 0.06029396 |
+| ZM | 0.539910 / 0.539910 | 16.078192 / 16.078192 | 0.07561320 / 0.07561320 |
+| ZL | 0.646126 / 0.646126 | 13.033515 / 13.033515 | 0.04275670 / 0.04275670 |
+| HE | 0.668954 / 0.668954 | 18.599087 / 18.599087 | 0.05758892 / 0.05758892 |
+| LE | 0.935625 / 0.935625 | 23.932503 / 23.932503 | 0.03384317 / 0.03384317 |
+| MBT | 1.602996 / 1.602996 | 4.422996 / 4.422996 | 0.03667083 / 0.03667083 |
+
+Counts: VERIFIED 31, DISCREPANCY 0 (31 exposures). Result: 22 chosen, 6 undersized (ZT, ZF, 6C, 6N, ZC, MBT), 3 not traded (RBOB, ULSD, silver). The D9.11 SIL/MHG sentence binds nowhere (SIL is not a candidate at rho 2.58; MHG is copper's only candidate). R7 removes M6E (rho 0.888, preferred otherwise) and M6A (0.511); had U7 cleared them, the choice would have compared their cost per dollar of risk (0.07498 and 0.11787) with 6E's 0.03783 and 6A's 0.05967, so 6E and 6A would still win. The 22 + 6 translated epsilons equal the lead's hand-checked list in the STATE file (02:44 PDT).
+
+#### 3a.3 D8 cost tables from the raw mbp-1 files: ZN (rates), CL (energy), ZC (grains), MBT (crypto)
+
+Each of the 20 files' sha256 was checked against reports/stage_e1_purchase.json before decoding, and the record count against the manifest (all equal). Under CostCoder's readings R1 to R10 my tables reproduce the frozen ones bucket by bucket:
+
+| Product | Buckets (mine / frozen) | Day-session buckets | Headline round turn, ticks: mean [min, max] (mine) | Frozen | Event-window side ticks buy / sell (mine = frozen) | max abs diff s_b | max abs diff round turn | max abs diff valid s | Dates-with-quotes, median, depth, fallback mismatches | Verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ZN | 46 / 46 | 14 (07:00..13:30) | 1.167809 [1.167683, 1.168493] | 1.167809 [1.167683, 1.168493] | 0.501063 / 0.501063 | 1.1e-16 | 2.2e-16 | 0.0e+00 | 0, 0, 0, 0 | VERIFIED |
+| CL | 46 / 46 | 11 (08:00..13:00) | 1.728056 [1.698817, 1.768250] | 1.728056 [1.698817, 1.768250] | 1.319154 / 1.319154 | 2.2e-16 | 4.4e-16 | 0.0e+00 | 0, 0, 0, 0 | VERIFIED |
+| ZC | 36 / 36 | 10 (08:30..13:00) | 1.425413 [1.423366, 1.429576] | 1.425413 [1.423366, 1.429576] | 0.536617 / 0.536617 | 1.1e-16 | 4.4e-16 | 0.0e+00 | 0, 0, 0, 0 | VERIFIED |
+| MBT | 46 / 46 | 13 (08:30..14:30) | 8.845991 [8.554172, 9.009713] | 8.845991 [8.554172, 9.009713] | 2.613201 / 2.613201 | 4.4e-16 | 1.8e-15 | 0.0e+00 | 0, 0, 0, 0 | VERIFIED |
+
+Day-session buckets of the four products (s_b in ticks, mine / frozen; time-weighted lower median top size bid / ask; round turn in ticks, mine):
+
+| Product | Bucket (CT) | Dates with quotes | s_b mine | s_b frozen | Median bid / ask | Depth buy / sell | Round turn ticks (mine) |
+|---|---|---|---|---|---|---|---|
+| ZN | 07:00-07:30 | 5 | 0.500209 | 0.500209 | 2125 / 1975 | 0.000 / 0.000 | 1.168097 |
+| ZN | 07:30-08:00 | 5 | 0.500254 | 0.500254 | 2271 / 2065 | 0.000 / 0.000 | 1.168188 |
+| ZN | 08:00-08:30 | 5 | 0.500006 | 0.500006 | 2585 / 2436 | 0.000 / 0.000 | 1.167692 |
+| ZN | 08:30-09:00 | 5 | 0.500005 | 0.500005 | 2474 / 2818 | 0.000 / 0.000 | 1.167690 |
+| ZN | 09:00-09:30 | 5 | 0.500005 | 0.500005 | 3023 / 2864 | 0.000 / 0.000 | 1.167690 |
+| ZN | 09:30-10:00 | 5 | 0.500004 | 0.500004 | 3079 / 3133 | 0.000 / 0.000 | 1.167687 |
+| ZN | 10:00-10:30 | 5 | 0.500003 | 0.500003 | 3168 / 3168 | 0.000 / 0.000 | 1.167686 |
+| ZN | 10:30-11:00 | 5 | 0.500003 | 0.500003 | 3679 / 3792 | 0.000 / 0.000 | 1.167685 |
+| ZN | 11:00-11:30 | 5 | 0.500004 | 0.500004 | 3621 / 3482 | 0.000 / 0.000 | 1.167688 |
+| ZN | 11:30-12:00 | 5 | 0.500002 | 0.500002 | 3532 / 3459 | 0.000 / 0.000 | 1.167684 |
+| ZN | 12:00-12:30 | 5 | 0.500407 | 0.500407 | 3309 / 3051 | 0.000 / 0.000 | 1.168493 |
+| ZN | 12:30-13:00 | 5 | 0.500002 | 0.500002 | 3238 / 4267 | 0.000 / 0.000 | 1.167683 |
+| ZN | 13:00-13:30 | 5 | 0.500002 | 0.500002 | 4177 / 3829 | 0.000 / 0.000 | 1.167684 |
+| ZN | 13:30-14:00 | 5 | 0.500002 | 0.500002 | 5452 / 5307 | 0.000 / 0.000 | 1.167685 |
+| CL | 08:00-08:30 | 5 | 0.657018 | 0.657018 | 8 / 8 | 0.000 / 0.000 | 1.716035 |
+| CL | 08:30-09:00 | 5 | 0.656630 | 0.656630 | 7 / 8 | 0.000 / 0.000 | 1.715260 |
+| CL | 09:00-09:30 | 5 | 0.683125 | 0.683125 | 7 / 7 | 0.000 / 0.000 | 1.768250 |
+| CL | 09:30-10:00 | 5 | 0.672312 | 0.672312 | 7 / 7 | 0.000 / 0.000 | 1.746625 |
+| CL | 10:00-10:30 | 5 | 0.661805 | 0.661805 | 7 / 7 | 0.000 / 0.000 | 1.725611 |
+| CL | 10:30-11:00 | 5 | 0.654788 | 0.654788 | 7 / 7 | 0.000 / 0.000 | 1.711577 |
+| CL | 11:00-11:30 | 5 | 0.659178 | 0.659178 | 7 / 7 | 0.000 / 0.000 | 1.720356 |
+| CL | 11:30-12:00 | 5 | 0.653836 | 0.653836 | 7 / 7 | 0.000 / 0.000 | 1.709672 |
+| CL | 12:00-12:30 | 5 | 0.648409 | 0.648409 | 8 / 7 | 0.000 / 0.000 | 1.698817 |
+| CL | 12:30-13:00 | 5 | 0.663360 | 0.663360 | 8 / 9 | 0.000 / 0.000 | 1.728721 |
+| CL | 13:00-13:30 | 5 | 0.682846 | 0.682846 | 8 / 8 | 0.000 / 0.000 | 1.767691 |
+| ZC | 08:30-09:00 | 5 | 0.503588 | 0.503588 | 222 / 263 | 0.000 / 0.000 | 1.429576 |
+| ZC | 09:00-09:30 | 5 | 0.501383 | 0.501383 | 345 / 313 | 0.000 / 0.000 | 1.425166 |
+| ZC | 09:30-10:00 | 5 | 0.500483 | 0.500483 | 349 / 342 | 0.000 / 0.000 | 1.423366 |
+| ZC | 10:00-10:30 | 5 | 0.500757 | 0.500757 | 279 / 312 | 0.000 / 0.000 | 1.423915 |
+| ZC | 10:30-11:00 | 5 | 0.501589 | 0.501589 | 282 / 496 | 0.000 / 0.000 | 1.425578 |
+| ZC | 11:00-11:30 | 5 | 0.501173 | 0.501173 | 675 / 401 | 0.000 / 0.000 | 1.424746 |
+| ZC | 11:30-12:00 | 5 | 0.500617 | 0.500617 | 426 / 557 | 0.000 / 0.000 | 1.423634 |
+| ZC | 12:00-12:30 | 5 | 0.500997 | 0.500997 | 582 / 379 | 0.000 / 0.000 | 1.424395 |
+| ZC | 12:30-13:00 | 5 | 0.502384 | 0.502384 | 456 / 484 | 0.000 / 0.000 | 1.427167 |
+| ZC | 13:00-13:20 | 5 | 0.502096 | 0.502096 | 511 / 819 | 0.000 / 0.000 | 1.426591 |
+| MBT | 08:30-09:00 | 5 | 1.610598 | 1.610598 | 2 / 2 | 0.000 / 0.000 | 8.861195 |
+| MBT | 09:00-09:30 | 5 | 1.684857 | 1.684857 | 2 / 2 | 0.000 / 0.000 | 9.009713 |
+| MBT | 09:30-10:00 | 5 | 1.609759 | 1.609759 | 2 / 2 | 0.000 / 0.000 | 8.859518 |
+| MBT | 10:00-10:30 | 5 | 1.683378 | 1.683378 | 2 / 2 | 0.000 / 0.000 | 9.006756 |
+| MBT | 10:30-11:00 | 5 | 1.586929 | 1.586929 | 2 / 2 | 0.000 / 0.000 | 8.813859 |
+| MBT | 11:00-11:30 | 5 | 1.649719 | 1.649719 | 2 / 2 | 0.000 / 0.000 | 8.939439 |
+| MBT | 11:30-12:00 | 5 | 1.670625 | 1.670625 | 2 / 2 | 0.000 / 0.000 | 8.981251 |
+| MBT | 12:00-12:30 | 5 | 1.629880 | 1.629880 | 2 / 2 | 0.000 / 0.000 | 8.899760 |
+| MBT | 12:30-13:00 | 5 | 1.578619 | 1.578619 | 2 / 2 | 0.000 / 0.000 | 8.797239 |
+| MBT | 13:00-13:30 | 5 | 1.568411 | 1.568411 | 2 / 2 | 0.000 / 0.000 | 8.776822 |
+| MBT | 13:30-14:00 | 5 | 1.596659 | 1.596659 | 2 / 2 | 0.000 / 0.000 | 8.833317 |
+| MBT | 14:00-14:30 | 5 | 1.512424 | 1.512424 | 2 / 2 | 0.000 / 0.000 | 8.664848 |
+| MBT | 14:30-15:00 | 5 | 1.457086 | 1.457086 | 2 / 2 | 0.000 / 0.000 | 8.554172 |
+
+Counts: VERIFIED 4, DISCREPANCY 0 (4 cost tables). With q_c = 1 for all four, every depth term is zero (median top sizes are at least 1), so the depth reading (R4, R5) is exercised by these four only trivially; 3a.4 E examines it on the frozen table for the five contracts where it is non-zero. One field of CostCoder's per-date statistics, records_in_closed_time, was not reproduced: my code drops closed-time records by interval overlap without counting them; it enters no table value.
+
+#### 3a.4 Challenges to the readings: faithful to the frozen text, and what the alternative gives
+
+Vehicle readings R1 to R12 (reports/stage_e2a_vehicle_rule_readings.md):
+
+- R1 (O_X, C_X from D6; L-1 keeps D6's O where CME publishes none): faithful. D2 says the two prices are read at the exposure's D6 open and close; the calendar builders confirmed every C and no O is a settlement time. No alternative changes a number in the window (L-12's pre-2020-10-26 equity close touches no research-window date). VERIFIED.
+- R2 (dates: roll blackout, vendor-degraded, and dates with a full closure or an early halt or close at or before C_X): faithful to D2's literal formula, whose close(C_X - 1 min) does not exist on an early-close day; D2 itself names only the first two exclusions. The alternative that the MES segment table behind R* used (funnel/exposure_segments.py: a day's in-window bars end at the flatten flag, which carries early closes, so an early-close day contributes a truncated move) would keep those dates with the move to the last bar before the halt. Effect (alts.py, A): every r_c falls by 0 to 3% and no contract changes q_c or band; the nearest to the 0.5 edge are 6A n 297, r_c 181.9865, q 1, rho 0.5046 (preferred), M6A n 297, r_c 18.2424, q 10, rho 0.5058 (preferred), 6B n 297, r_c 184.5118, q 1, rho 0.5116 (preferred), M6B n 297, r_c 18.5290, q 10, rho 0.5137 (preferred), and MCL n 265, r_c 90.1849, q 4, rho 1.0002 (preferred) (q_c 4 either way). VERIFIED WITH NOTES: the reading differs from the R* precedent but moves nothing; the epsilon declaration (item 5) ties the funnel's E|m_1| to R2's dates, so the two stay consistent.
+- R3 (as-of bars: first bar at or after O_X, last bar before C_X, nearest traded minute on thin contracts): faithful to D2 read with the MES segment table's first-open/last-close convention; D2 does not say. Alternative B (exact bars only, else the date is dropped): E7 n 190, r_c 168.8487, q 1, rho 0.4681 (candidate, undersized), M6A n 187, r_c 20.4064, q 10, rho 0.5658 (preferred), M6B n 194, r_c 18.8434, q 10, rho 0.5224 (preferred), QG n 237, r_c 163.1329, q 1, rho 0.4523 (candidate, undersized), MNG n 260, r_c 65.6038, q 5, rho 0.9094 (preferred) (q_c 5 instead of 6; the only q change); no band changes and no vehicle changes (none of these is a vehicle; 6B still beats M6B and NG still beats MNG on cost). VERIFIED WITH NOTES.
+- R4 (dollars via the census tick and tick value): faithful; the vendor price scale (cents for ZC, ZW, ZS, ZL, HE, LE) was found on the prices, as bars.md and the sizes file state. VERIFIED.
+- R5 (cap_c = min(D9.5 lot cap, D9.11 50K cap)): faithful to the frozen design as a whole: D2 names D9.5 alone, but D9.11 (frozen) encodes 'every size stays within the 50K figure at all times' with SIL and MHG at most 2. Alternative (D9.5 alone): SIL cap 5, q_c still 1 (R*/r_c = 0.39), rho 2.58, not a candidate either way; MHG cap 10, q_c = round(3.27) = 3, rho 0.917, still the copper vehicle, but eps_X = floor(85 / (3 x 1.25)) = 22 instead of 34. So the R5 reading decides copper's size and epsilon; it is the reading the frozen D9.11 requires. The lead's Q-1 answer (SI and HG keep cap 1; D9.11's discretionary 0 is outside its Encoded list) changes nothing: both have rho > 3. VERIFIED.
+- R6 (round half up): D2 says round(); half-up and half-to-even differ only at an exact .5, which no R*/r_c hits (nearest: MNG 5.523, MYM 2.750, M2K 3.398). VERIFIED.
+- R7 (M6E, M6A not candidates, U7): faithful; effect shown in 3a.2. VERIFIED.
+- R8 (cost per dollar of risk = (commission + 2 x one-side slippage) / r_c, q_c cancelled; one-side slippage = the minute-weighted mean over [O_X, C_X) of s_b plus the mean of the two sides' depth terms at q_c): D2's text is '(commission_c + 2 x one-side slippage_c) / (q_c r_c) at size q_c'. Read with 'at size q_c' scaling the numerator to the position (q_c contracts pay q_c commissions), the q_c cancels and R8 is faithful and economically coherent. The literal alternative D (a per-contract numerator over the position's risk q_c r_c) divides every micro's figure by its q_c and would change two vehicles: GBP to M6B (literal 0.01118 vs 6B 0.06424; q_c 10; eps_X 13, unchanged) and Henry Hub gas to MNG (literal 0.01365 vs NG 0.02615; q_c 6; eps_X 11 instead of 8); WTI stays MCL either way. This is the single reading in the vehicle file that decides a vehicle; it was fixed in writing before any bar was read (the readings file, 00:40 PDT) and I judge it the faithful one. A second alternative F (an unweighted mean over the day-session buckets instead of minute weights) changes no vehicle (GBP 6B 0.06431 vs M6B 0.11200; WTI and Henry Hub unchanged). VERIFIED WITH NOTES (the literal-numerator alternative and its effect are recorded for the lead's rulings).
+- R9 (candidates rho <= 2.0 less R7; preferred >= 0.5; lowest R8 cost; ADV tie; the SIL/MHG sentence): faithful to D2 and D9.11; no tie occurred and the sentence never binds. VERIFIED.
+- R10 (undersized: at the cap on the lowest-cost candidate): faithful to D2; every undersized exposure has one candidate at cap 1. VERIFIED. R11 (no candidate): faithful. VERIFIED. R12 (eps = floor(85 / (q_c x tick value))): D3 exactly. VERIFIED.
+
+Lead rulings L-1 to L-11 as they touch these numbers:
+
+- L-1: see R1. L-2 (rates' 41 CME early-settlement days are not early closes; Globex trades to 16:00 CT): faithful, since close(C_X - 1 min) exists on those days. Alternative C (exclude the EARLY_SETTLEMENT_CT dates in the window): ZN n 281, r_c 202.9026, q 1, rho 0.5626 (preferred), TN n 281, r_c 257.3955, q 1, rho 0.7136 (preferred), ZT n 281, r_c 111.2100, q 1, rho 0.3083 (candidate, undersized); no q_c or band changes. VERIFIED.
+- L-3 (closure bars kept and flagged): affects no r_c (closure bars lie outside [O_X, C_X)). L-4 revised (2025-11-28 outage is not a calendar entry): 2025-11-28 is excluded for every product as vendor-degraded and, for most groups, as an early close, so the ruling moves nothing here. L-5 (FX 2025-11-27 thin trading, no calendar change): FX keeps its 16:00 CT close, so the date is used for the 11 FX contracts; treating it as an early close would drop 1 of 293 dates (well under 1% of r_c). L-6 (grains' scheduled late opens are closed windows): the late open is 08:30 CT = O_X, so the day session is intact. L-7 (metals 2026-02-25 unscheduled halt is not a calendar entry): the date is used with R3's as-of bars (GC and MGC show 1 missing C_X - 1 bar); excluding it would change r_c by about 1/290. L-8 (group-calendar roll blackout): verified above, with the flip-flop note. L-9 (MBT ends 2026-06-18) and L-10 (own CT calendar day): faithful to D4 and D6; MBT's 260 dates reproduced. L-11 (MBT expiry Fridays inside the blackout): no effect on r_c. All VERIFIED as applied; none has an alternative that changes a frozen number.
+
+CostCoder's D8 readings R1 to R10 (reports/stage_e2a_costs.md):
+
+- R1 (ts_recv event-time weighting): faithful to 'time-weighted mean'; D.1's 1-second sampling is an approximation of the same quantity. VERIFIED. R2 (pooled over the five dates' valid time): D8's 'the time-weighted mean, over the five dates' admits the per-date-mean alternative; CostCoder reports its largest effect as 0.0075 ticks (GC 04:30), far below any deciding gap in 3a.2 (the closest is WTI, MCL 0.03459 vs QM 0.04372 per dollar of risk, about 0.9 ticks of MCL slippage apart). VERIFIED WITH NOTES. R3 (quotes on a date = positive valid two-sided time; a standing book counts) and R6 (fallback per side from buckets with >= 3 dates): faithful; no bucket of any of the 45 contracts falls back, so neither reading has an effect. VERIFIED.
+- R4 (lower time-weighted median) and R5 (buy hits the ask; depth (q_c - size) / q_c per side): faithful to D8's 'time-weighted median top-of-book size on the side a market order hits'. The upper median would reduce a depth term only where the median straddles q_c; the depth term is non-zero only for M2K, M6B, MCL, MNG and MYM, and no deciding comparison in 3a.2 is within reach of it (removing MCL's 0.25-tick depth term makes MCL cheaper still; MNG's and M6B's disadvantages are 3x and 1.7x). VERIFIED.
+- R7 (event window per side = the largest final one-side slippage, s_b plus depth, over all buckets): D8's text is 'pays, per side, the largest s_b of the product's buckets instead of its own bucket's', i.e. the half-spread is replaced and the depth term is the fill's own bucket's. The two readings coincide wherever the depth term is zero (40 of 45 contracts, the four recomputed ones included) and differ for the five depth contracts: M2K 1.9531/1.9531 ticks (CostCoder) vs largest s_b 1.6198 plus the bucket's own depth (at most 0.333); M6B 1.4869/1.5869 ticks (CostCoder) vs largest s_b 0.9869 plus the bucket's own depth (at most 0.600); MCL 1.3132/1.3132 ticks (CostCoder) vs largest s_b 1.0632 plus the bucket's own depth (at most 0.250); MNG 3.2195/3.2195 ticks (CostCoder) vs largest s_b 2.5528 plus the bucket's own depth (at most 0.667); MYM 2.2079/2.5413 ticks (CostCoder) vs largest s_b 2.2079 plus the bucket's own depth (at most 0.333). CostCoder's reading is the more conservative (higher) cost. The event-window value enters no E.2a number (R8 uses the day-session buckets); it is used by E.2b's engine, where the lead should rule which reading applies. Where I read D8 differently: this is the one place. VERIFIED WITH NOTES.
+- R8 (30-minute CT clock buckets of the group's segments; partial edge buckets on their own; 1-second grace): faithful to 'per 30-minute CT bucket of its trading hours'; the partial buckets (grains 07:30-07:45 and 13:00-13:20, livestock 13:00-13:05) are an implementation choice with a negligible effect on R8's minute-weighted mean (they carry their own minutes). R9 (headline = unweighted mean over buckets overlapping [O, C)): a reporting figure only. R10 (depth at Task 9's q_c): as D8 says. VERIFIED.
+- Commissions: every frozen table's commission equals Topstep F3.7 with F3.6's 2026-10-01 increase applied to MCL ($1.72) and MNG ($1.92), as D8 requires (asserted for all 45 in choice.py). VERIFIED.
+
+#### 3a.5 Verdict of part 3a
+
+- Contracts (r_c, q_c, rho_c): VERIFIED 45, VERIFIED WITH NOTES 0, DISCREPANCY 0 of 45.
+- Exposures (choice, cost per dollar of risk, translated epsilon): VERIFIED 31, DISCREPANCY 0 of 31.
+- Cost tables from raw mbp-1: VERIFIED 4, DISCREPANCY 0 of 4 (ZN, CL, ZC, MBT).
+- Readings challenged: vehicle R1 to R12: 9 VERIFIED, 3 VERIFIED WITH NOTES (R2, R3, R8), 0 DISCREPANCY; rulings L-1 to L-11: 11 VERIFIED as applied; CostCoder R1 to R10: 8 VERIFIED, 2 VERIFIED WITH NOTES (R2, R7), 0 DISCREPANCY.
+- No DISCREPANCY. Every frozen vehicle, size and translated epsilon is reproduced exactly from the bars and the frozen cost table under the readings, and the four cost tables are reproduced from the raw books to floating-point precision. Two readings decide frozen numbers and deserve a written ruling in the return document: R8's cancelled q_c (GBP and Henry Hub gas would otherwise go to M6B and MNG) and R5's D9.11 cap (copper's q_c 2 and eps 34 rather than 3 and 22). One reading difference is deferred to E.2b: the event-window cost for the five depth contracts (CostCoder's R7 against D8's literal 'largest s_b').
+- Not done in 3a: nothing. Part 3b (the funnel epsilon) awaits its brief.

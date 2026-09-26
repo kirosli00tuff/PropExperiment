@@ -1,4 +1,4 @@
-STAGE E.2b "STAGE E BUILD, PART 2: SCREENING RUNNER, ML PIPELINE, CANARIES, STEP 2 PURCHASE PATH, WINDOWS COMPUTE BACKEND, HARNESS FREEZE (NO MEMBER RUN, NO PURCHASE)"
+STAGE E.2b "STAGE E BUILD, PART 2: SCREENING RUNNER, ML PIPELINE, CANARIES, STEP 2 PURCHASE PATH, HARNESS FREEZE (NO MEMBER RUN, NO PURCHASE)"
 
 BEGIN PROMPT - SUMMARY OF PROMPT
 
@@ -15,15 +15,11 @@ alignment (D11.5), the ML route's pipeline with every M7 leakage test
 (D11.7, docs/STAGE_E_ML_DESIGN.md M3 to M8), the canaries per product and
 across products (D11.9), and the step 2 purchase path with holdout-2
 sealing per product. It refreshes the free quotes for the step 2 history.
-It also builds the Windows compute backend the user decided on 2026-09-26
-(Task 5): ML training and every backtest run as jobs on the user's Windows
-PC, sent from this machine over SSH, with results pulled back and checked
-by hash. It then freezes the whole harness with a sha256 manifest and
-commits it, after an adversarial Fable max review. It stops there. The
-next sessions, in order: E.2c (connect and verify the Windows PC, after
-the user's manual setup steps), K2's screening session (research window
-only, needs no purchase), then the ML route's purchase and training
-(needs the user to fund acct-2), then the other clusters.
+It then freezes the whole harness with a sha256 manifest and commits it,
+after an adversarial Fable max review. It stops there. The next sessions,
+in order: K2's screening session (research window only, needs no
+purchase), then the ML route's purchase and training (needs the user to
+fund acct-2), then the other clusters.
 
 Lead: Opus 5.5, effort xhigh. Ultracode: off.
 
@@ -65,10 +61,7 @@ This stage does:
 - build the step 2 purchase path with holdout-2 sealing per product, fix
   the purchase guard to refuse by CME trade date, and run free quotes
   (Task 4)
-- build the Windows compute backend, the user's setup guide for the
-  Windows PC, and the V10 amendment that moves ML training and backtests
-  there (Task 5)
-- record the MBT holdout-1 rows found in E.2a (Task 9)
+- record the MBT holdout-1 rows found in E.2a (Task 5)
 - write the harness freeze manifest, have it reviewed, rule on the review,
   and commit the freeze (Tasks 6 to 8)
 
@@ -92,9 +85,6 @@ This stage does NOT:
   API
 - edit docs/NULL_CRITERIA.md or reports/stage_d1f_confirmation_list.md
 - write to REGISTRATION.md (it stays 0 bytes)
-- connect to, configure or run anything on the Windows PC. It is not set
-  up yet. Task 5 builds and tests the backend against this machine only
-  (SSH to localhost), and E.2c connects the real PC.
 - push. The session makes exactly the one freeze commit Task 8 names.
 
 ============================================================
@@ -154,13 +144,6 @@ CLAUDE.md invariants apply in full. This stage adds:
   the members Task 1 names.
 - Compute: the overnight profile. Check memory and free VRAM before each
   heavy job.
-- What may never go to the Windows PC, by design of the Task 5 backend:
-  sealed holdout chunks, any plaintext holdout-1 or holdout-2 or embargo
-  bar, the Databento key or any other secret, and the ledger. Purchases
-  and sealing stay on this machine. For ML training jobs, the job's data
-  root holds only the training-window store (M7.4). Research-window
-  stores for backtests sit in a separate root the training job cannot
-  read.
 - REGISTRATION.md stays 0 bytes. No TopstepX reference of any kind.
 
 Start and end checks, quoted verbatim in the return document: `git status
@@ -248,13 +231,11 @@ TASK 2: THE ML ROUTE PIPELINE AND M7 TESTS (D11.7)
     (M7.7).
   - Timed probes on synthetic data of the real size (about 450,000 rows,
     20 features, 31 products): one LightGBM configuration on one CPCV split
-    at 8 threads, and one LSTM configuration for one epoch on this
-    machine's RTX 3050, with the batch size planned by the frozen A-1 rule
-    to leave at least 0.5 GB of VRAM free. These are reference figures:
-    under V10 (Task 5) the real runs happen on the Windows PC, and E.2c
-    repeats the probes there. Write the measured times, peak memory and
-    peak VRAM to reports/stage_e2b_ml_probes.json, and the projected
-    full-run time per challenger.
+    at 8 threads, and one LSTM configuration for one epoch on the GPU, with
+    the batch size planned by the frozen A-1 rule to leave at least 0.5 GB
+    of VRAM free. Write the measured times, peak memory and peak VRAM to
+    reports/stage_e2b_ml_probes.json, and the projected full-run time per
+    challenger.
 - Done when: every M7 test passes, the probes are recorded, and nothing in
   the pipeline can read a date the frozen partition forbids.
 - Failure path: if torch cannot use the GPU, record why, run the LSTM
@@ -311,66 +292,7 @@ TASK 4: STEP 2 PURCHASE PATH AND QUOTES (NO PURCHASE)
   incomplete. No cap changes.
 
 ============================================================
-TASK 5: WINDOWS COMPUTE BACKEND (USER DECISION, 2026-09-26)
-============================================================
-
-The user decided on 2026-09-26 that ML training and every backtest
-(screening and confirmation runs) execute on the Windows PC: Ryzen 5, 32
-GB of RAM, NVIDIA RTX 2060 Super with 8 GB of VRAM, 2 TB SSD (figures as
-the user gave them, measured in E.2c). The ThinkPad keeps the Claude
-sessions, purchases, sealing, reviews and commits, and sends each job over
-SSH. The laptop stays free during the day.
-
-- Owner: WindowsBackendCoder-OpusXHigh, worker-xhigh on opus, and the lead
-  for the amendment.
-- Inputs: the Task 1 runner, the Task 2 pipeline, the Task 6 manifest
-  design, data/holdout.py, the frozen ML design M7 and M8.
-- Output:
-  - Cross-platform code: every harness and pipeline module runs on native
-    Windows Python (pathlib paths, no os.fork, multiprocessing with the
-    spawn start method, no shell-specific calls, Windows process priority
-    below normal in place of nice 10, thread limits by environment
-    variable). A static check in the tests flags Linux-only calls in
-    harness files.
-  - A job runner (ops/ is off limits, so place it at compute/remote.py)
-    that: checks the Windows checkout is at the frozen harness commit and
-    that the Task 6 preflight passes there, copies only the data a job is
-    allowed (with sha256 checks at both ends), runs the job at below-normal
-    priority, polls for completion, pulls the results and their hashes
-    back, and verifies them. It is resumable, and a job interrupted on
-    Windows restarts from its own ledger.
-  - Data rules enforced in code: a job manifest lists every file sent,
-    and the runner refuses to send any sealed chunk, any bar dated in
-    holdout-1, holdout-2 or the March 2024 embargo, the Databento key, or
-    the ledger. ML training jobs get a data root holding only the
-    training-window store. Research-window stores go to a separate root.
-    A planted forbidden file must make the runner refuse (a test).
-  - Tests against this machine: the runner exercised end to end over SSH
-    to localhost with a synthetic job, including an interrupted-and-resumed
-    run.
-  - docs/WINDOWS_SETUP.md, the user's step-by-step guide: install Git,
-    Python via uv, the NVIDIA driver, and the OpenSSH server on Windows,
-    add the ThinkPad's SSH key, clone the repository, set the power plan so
-    the PC does not sleep during overnight runs, open the firewall for SSH
-    on the home network only, and list the exact commands E.2c will run to verify
-    it. Nothing in the guide stores a secret on the Windows PC.
-  - The V10 amendment, written by the lead as
-    reports/stage_e2b_v10_amendment.md, with a docs/DECISIONS.md entry
-    dated 2026-09-26: the user moved ML training and backtests to the
-    Windows PC. M8's compute text (V7's RTX 3050) is superseded
-    operationally: the LSTM uses the RTX 2060 Super, with the frozen A-1
-    rule planning its batch size against 8 GB. No statistical choice in
-    the frozen ML design changes. M7.4's rule that research-window bars are
-    not readable by the training process is kept by the separate data
-    roots. The frozen design file is not edited. The amendment is audited
-    in Task 7.
-- Done when: the localhost tests pass, the guide exists, and the
-  amendment and its DECISIONS entry exist.
-- Failure path: anything that can only be verified on the real PC is
-  listed in the guide's E.2c checklist, never assumed to work.
-
-============================================================
-TASK 9: MBT HOLDOUT-1 ROWS (LEAD)
+TASK 5: MBT HOLDOUT-1 ROWS (LEAD)
 ============================================================
 
 - Owner: lead.
@@ -392,8 +314,7 @@ TASK 6: HARNESS FREEZE MANIFEST (LEAD)
 - Inputs: every harness file Stage E's sessions will run.
 - Output: reports/stage_e2b_harness_freeze.json: the sha256 of every file
   in rules/, sim/, screening/, funnel/, data/ (code, calendars), the ML
-  route pipeline, compute/ (the Windows backend),
-  strategy/stage_e/_template.py, the E.2a hashed tables, the V10 amendment,
+  route pipeline, strategy/stage_e/_template.py, the E.2a hashed tables,
   both earlier manifests, and pyproject.toml and uv.lock. It also records
   HEAD and the creation time. A preflight function that every later Stage
   E runner calls refuses on any mismatch.
@@ -426,10 +347,6 @@ TASK 7: ADVERSARIAL HARNESS REVIEW (FABLE MAX)
     refusal, and any way plaintext holdout bytes could persist
   - the D4 power check and the D5 screen computed differently from the
     frozen text
-  - the Windows backend: any path by which a holdout bar, an embargo bar,
-    a secret or the ledger could reach the Windows PC, any way a training
-    job could read a research-window store, results accepted without
-    their hashes, and the V10 amendment against the frozen ML design
 - Done when: every item on the brief has a finding or an explicit "none
   found" with the files read.
 - Failure path: if Fable is unavailable, stop before Task 8 as the Usage
@@ -464,10 +381,8 @@ DELEGATION PLAN
 | 2 ML pipeline, M7 tests, probes | MLPipelineCoder-OpusXHigh | opus | xhigh | parallel with 1 and 4 | leakage-critical code |
 | 3 Canaries | CanaryCoder-OpusXHigh | opus | xhigh | after 1's interface and 2's wrapper | leakage tests |
 | 4 Step 2 path, guard, quotes | PurchaseCoder2-OpusXHigh | opus | xhigh | parallel with 1 and 2 | data/ code that will spend money |
-| 5 Windows backend, guide | WindowsBackendCoder-OpusXHigh | opus | xhigh | after 1's and 2's interfaces | job and data-transfer code that guards the holdouts |
-| 5 V10 amendment | lead | opus | xhigh | with 5 | a declaration, audited in 7 |
-| 9 MBT entry | lead | opus | xhigh | after 4's guard | small, inline |
-| 6 Manifest | lead | opus | xhigh | after 1 to 5 and 9 | reserved to the lead |
+| 5 MBT entry | lead | opus | xhigh | after 4's guard | small, inline |
+| 6 Manifest | lead | opus | xhigh | after 1 to 5 | reserved to the lead |
 | 7 Harness review | HarnessAuditor-FableMax | fable | max | after 6 | the one adversarial call the stage hinges on |
 | 8 Rulings, freeze commit | lead | opus | xhigh | after 7 | reserved to the lead |
 | Return document | lead | opus | xhigh | last | reserved to the lead |
@@ -530,17 +445,14 @@ review the session. Fixed sections, in order:
    --stat` at the end, and which bars were read and why.
 3. Results per task: each artifact path, its test count and what each test
    proves, the MES regression results, the ML probe times and projected
-   run times, the canary results, the quote tables, the Windows backend's
-   tests, and the V10 amendment.
+   run times, the canary results, and the quote tables.
 4. Delegation record: one row per spawn with agent name, worker file,
    model, effort, objective, status and deviations.
 5. Verification: each review finding, the lead's ruling and the fix.
 6. Open choices: every decision the lead made on its own, with the reason.
 7. What the next session must do first: the push the planning chat owes,
-   the frozen files and hashes, the funding the user owes, the manual
-   Windows setup steps the user owes before E.2c (from
-   docs/WINDOWS_SETUP.md), and what K2's screening session needs from this
-   harness.
+   the frozen files and hashes, the funding the user owes, and what K2's
+   screening session needs from this harness.
 8. Session cost: the final ETA table (one row per task and per spawn,
    actual start and end, time taken, tokens from the transcripts, status)
    and the per-model token table, per CLAUDE.md. Never estimated.

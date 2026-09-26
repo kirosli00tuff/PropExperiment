@@ -232,6 +232,27 @@ bullets above; every other rule stays:
 - Everything still runs at nice 10, stays resumable, and stays out of the
   AiTrader window.
 
+## Context hygiene (2026-09-26)
+
+Usage is context size times steps: every step re-reads the agent's whole
+context. E.0 used 703M tokens and E.2a 800M, about 97% of it cache reads.
+- Read files by section, never whole: grep, line ranges, or a short script
+  that prints only the fields needed. Never load a large JSON, log or
+  catalog into context.
+- Keep command output short: `pytest -q`, logs to files and read only the
+  tail, scripts print summaries and counts, not rows.
+- Web research writes pages to disk first, then greps them for the passages
+  it needs. Only the quoted lines enter context. Sourced data work (CME
+  calendars, Topstep rules) counts as research: in E.2a the eight calendar
+  builders used 326M tokens, 41% of the stage.
+- Prefer several short workers with one objective each over one long
+  worker. Resume a worker with SendMessage only for a small follow-up
+  brief. A large new brief gets a fresh worker.
+- Split long stages at natural boundaries rather than running one lead for
+  many hours.
+- Keep this file lean. Rationale and history belong in
+  docs/ORCHESTRATION.md and docs/DECISIONS.md.
+
 ## Long and unattended runs
 
 - The user is not watching. Do not stop to ask whether to continue. Run the

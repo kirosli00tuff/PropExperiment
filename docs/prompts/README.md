@@ -20,7 +20,7 @@ From 2026-09-23 on, each new prompt is committed here before it is sent.
 | E.0 | STAGE_E.0.md | Opus 5.5, max | 2026-09-23 to 24 | CME universe: research per cluster, hypothesis catalog, program design draft, C6 closure; quotes only |
 | E.1 | STAGE_E.1.md | Opus 5.5, max | 2026-09-24 | Apply the user's decisions, Fable-audited freeze, Databento account switch, step 1 purchase, ML route draft; no prices read |
 | E.2a | STAGE_E.2a.md | Opus 5.5, xhigh, ultracode | 2026-09-25 to 26 | ML route freeze, source-window amendment, per-product rules, calendars, research-window bars, costs, vehicles, epsilon; overnight profile |
-| E.2b | STAGE_E.2b.md | Opus 5.5, xhigh | pending | Screening runner, ML pipeline and M7 tests, canaries, step 2 purchase path and free quotes, Fable max harness review, harness freeze; no purchase |
+| E.2b | STAGE_E.2b.md | Opus 5.5, xhigh | pending | Screening runner, ML pipeline and M7 tests, canaries, step 2 purchase path and free quotes, Windows compute backend and V10, Fable max harness review, harness freeze; no purchase |
 
 Model names are as written in each prompt at the time. The routing rules
 that apply today are in CLAUDE.md.

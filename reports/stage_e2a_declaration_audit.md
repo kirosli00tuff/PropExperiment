@@ -883,3 +883,204 @@ CostCoder's D8 readings R1 to R10 (reports/stage_e2a_costs.md):
 - Readings challenged: vehicle R1 to R12: 9 VERIFIED, 3 VERIFIED WITH NOTES (R2, R3, R8), 0 DISCREPANCY; rulings L-1 to L-11: 11 VERIFIED as applied; CostCoder R1 to R10: 8 VERIFIED, 2 VERIFIED WITH NOTES (R2, R7), 0 DISCREPANCY.
 - No DISCREPANCY. Every frozen vehicle, size and translated epsilon is reproduced exactly from the bars and the frozen cost table under the readings, and the four cost tables are reproduced from the raw books to floating-point precision. Two readings decide frozen numbers and deserve a written ruling in the return document: R8's cancelled q_c (GBP and Henry Hub gas would otherwise go to M6B and MNG) and R5's D9.11 cap (copper's q_c 2 and eps 34 rather than 3 and 22). One reading difference is deferred to E.2b: the event-window cost for the five depth contracts (CostCoder's R7 against D8's literal 'largest s_b').
 - Not done in 3a: nothing. Part 3b (the funnel epsilon) awaits its brief.
+
+### 3b: funnel epsilon
+
+Written 2026-09-26 07:19 PDT (final). Auditor: DeclarationAuditor-FableXHigh, resumed for the Task 12 part 3b brief (19:16 PDT on 11 finished exposures) and again at 06:37 PDT on 2026-09-26, when B1 was complete for all 28. The auditor produced none of the numbers checked here.
+
+#### 3b.0 Inputs, the lost brief, method, boundaries
+
+- The brief file scratchpad/brief_task12b.md named in the lead's first message no longer existed when I resumed: the machine rebooted at about 17:08 PDT on 2026-09-25 and /tmp is a tmpfs, so that scratchpad (including my Part 3a scripts) was lost. This section follows the lead's two messages (exposures; the mixed early-stop/full-length rows; the 28 operative figures; B2 checked if finished, else pending) and the stage prompt's Task 12 wording.
+- Frozen rules: reports/stage_e2a_epsilon_declaration.md (sha256 `ccdb8ec53f9015d4...`, the STATE file's ccdb8ec5...) and its addendum A-1 (`e6253be2274303f8...`, e6253be2...), both verified against the hashes the STATE file recorded before any cell used them; frozen D3, D2, NULL_CRITERIA.md 2.2; the frozen sizes and cost files of 3a; reports/funnel_null_baseline.json (MES's robust critical values); reports/stage_d1e_gate_extension.json (the 100 extension cells).
+- Compared against reports/stage_e2a_epsilon.json and .md as of 2026-09-26 07:19 PDT (B1 done for all 28; B2 as stated in 3b.6), and reports/stage_e2a_funnel/<VEHICLE>/cells.jsonl, status.json and samples/ (read only; nothing written there).
+- Own code (scratch fable_p3b/funnel_fable.py): my own segment tables from the parquets under the declaration's points 4 to 7 (D2's dates from the frozen sizes file; [O_X, C_X) on the trade date's own CT day, which for MBT's booked-forward dates is ruling L-10; not in the flatten window; first bar at or after O_X, last before C_X; T equal-count segments by np.array_split; the vendor tick, 100 x the E.0 tick for grains and livestock), my own minute cost book from the frozen cost table under point 8, my own analytic net $/day per cell, my own ascending-order replay of B1 and B2, my own early-stop rule from power_gate.verdict, and my own process pool calling the FROZEN Stage B simulator (funnel.simulator.run_one with BASE_SEED, funnel.quality_generator, funnel.null_generator.SegmentTable, funnel.power_gate.verdict). Nothing was imported from funnel/exposure_gate*.py or funnel/exposure_segments.py; the scaling of ticks to the vehicle's dollars and the size in 0.1-lot units follow the declaration's point 3 and were written independently (MYM at q_c = 3 and lot weight 0.1 exercises both).
+- Compute: two worker processes, forkserver, nice 10, OMP_NUM_THREADS=1, beside the funnel driver's 12 threads; peak well under 1 GB. Research-window bars were used for the segment moves only.
+
+#### 3b.1 Segment moves E|m_T| and per-T round-turn costs, 28 exposures
+
+Tolerance: exact equality of the day counts and of the r_c identity (rational), 1e-9 on E|m_T| (ticks) and on the per-T cost (USD).
+
+| Vehicle | Days used (mine / stored) | E|m_1| .. E|m_32| ticks (mine) | max |diff| E|m_T| | RT cost T=1..32 USD (mine) | max |diff| cost | E|m_1| x tv = r_c | Size units, money factor | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| ZT | 286 / 286 | 14.423, 9.175, 6.213, 4.322, 2.993, 2.163 | 0.0e+00 | 10.160, 10.170, 10.185, 10.175, 10.176, 10.177 | 0.0e+00 | True | 10, 0.6250 | VERIFIED |
+| ZF | 286 / 286 | 17.350, 11.108, 7.739, 5.392, 3.752, 2.662 | 0.0e+00 | 10.150, 10.145, 10.152, 10.151, 10.148, 10.149 | 0.0e+00 | True | 10, 0.6250 | VERIFIED |
+| ZN | 286 / 286 | 13.115, 8.481, 5.952, 4.121, 2.878, 2.058 | 0.0e+00 | 18.260, 18.260, 18.260, 18.260, 18.260, 18.260 | 0.0e+00 | True | 10, 1.2500 | VERIFIED |
+| TN | 286 / 286 | 16.636, 10.883, 7.510, 5.206, 3.611, 2.574 | 0.0e+00 | 18.350, 18.345, 18.350, 18.352, 18.349, 18.352 | 0.0e+00 | True | 10, 1.2500 | VERIFIED |
+| ZB | 286 / 286 | 12.867, 8.552, 5.944, 4.078, 2.879, 2.051 | 0.0e+00 | 34.080, 34.070, 34.068, 34.052, 34.053, 34.049 | 0.0e+00 | True | 10, 2.5000 | VERIFIED |
+| UB | 286 / 286 | 16.045, 10.757, 7.476, 5.208, 3.665, 2.576 | 0.0e+00 | 34.330, 34.364, 34.348, 34.332, 34.322, 34.332 | 0.0e+00 | True | 10, 2.5000 | VERIFIED |
+| MCL | 258 / 258 | 91.570, 61.752, 45.031, 33.777, 23.034, 16.220 | 0.0e+00 | 3.152, 3.151, 3.176, 3.169, 3.168, 3.169 | 0.0e+00 | True | 4, 0.8000 | VERIFIED |
+| NG | 259 / 259 | 63.931, 43.550, 30.340, 20.764, 14.643, 10.541 | 0.0e+00 | 16.520, 16.669, 16.655, 16.675, 16.685, 16.724 | 0.0e+00 | True | 10, 0.8000 | VERIFIED |
+| MGC | 290 / 290 | 258.590, 176.381, 122.438, 87.789, 62.025, 44.575 | 0.0e+00 | 4.170, 4.075, 4.058, 4.089, 4.069, 4.080 | 0.0e+00 | True | 1, 0.8000 | VERIFIED |
+| MHG | 290 / 290 | 88.172, 59.148, 41.409, 29.592, 20.691, 14.662 | 0.0e+00 | 4.775, 4.762, 4.639, 4.607, 4.617, 4.614 | 0.0e+00 | True | 2, 1.0000 | VERIFIED |
+| 6E | 293 / 293 | 51.113, 34.800, 24.160, 17.215, 11.981, 8.460 | 0.0e+00 | 12.190, 12.154, 12.150, 12.145, 12.097, 12.106 | 0.0e+00 | True | 10, 0.5000 | VERIFIED |
+| 6A | 293 / 293 | 36.730, 25.541, 18.510, 12.961, 8.923, 6.315 | 0.0e+00 | 10.989, 11.031, 11.015, 10.987, 10.990, 10.972 | 0.0e+00 | True | 10, 0.4000 | VERIFIED |
+| 6B | 293 / 293 | 29.795, 19.942, 13.962, 9.962, 7.038, 4.990 | 0.0e+00 | 11.960, 11.930, 11.956, 11.974, 11.974, 11.978 | 0.0e+00 | True | 10, 0.5000 | VERIFIED |
+| 6C | 293 / 293 | 24.058, 16.631, 12.067, 8.297, 5.708, 4.186 | 0.0e+00 | 10.000, 10.129, 10.086, 10.134, 10.140, 10.149 | 0.0e+00 | True | 10, 0.4000 | VERIFIED |
+| 6J | 293 / 293 | 32.771, 21.645, 14.543, 10.267, 7.116, 5.038 | 0.0e+00 | 11.920, 11.897, 11.833, 11.808, 11.815, 11.815 | 0.0e+00 | True | 10, 0.5000 | VERIFIED |
+| 6S | 293 / 293 | 65.720, 43.502, 29.394, 21.192, 14.887, 10.489 | 0.0e+00 | 16.419, 16.340, 16.668, 16.579, 16.569, 16.549 | 0.0e+00 | True | 10, 0.5000 | VERIFIED |
+| 6N | 293 / 293 | 31.297, 21.853, 15.416, 11.387, 7.747, 5.396 | 0.0e+00 | 11.189, 11.245, 11.325, 11.295, 11.279, 11.270 | 0.0e+00 | True | 10, 0.4000 | VERIFIED |
+| ZC | 271 / 271 | 12.653, 8.651, 5.748, 4.073, 2.879, 2.023 | 0.0e+00 | 17.860, 17.840, 17.825, 17.820, 17.823, 17.823 | 0.0e+00 | True | 10, 1.0000 | VERIFIED |
+| ZW | 277 / 277 | 18.780, 13.455, 8.847, 6.275, 4.394, 3.097 | 0.0e+00 | 18.590, 18.485, 18.532, 18.505, 18.504, 18.502 | 0.0e+00 | True | 10, 1.0000 | VERIFIED |
+| ZS | 279 / 279 | 24.351, 16.771, 11.393, 7.932, 5.620, 3.974 | 0.0e+00 | 18.470, 18.365, 18.328, 18.342, 18.351, 18.358 | 0.0e+00 | True | 10, 1.0000 | VERIFIED |
+| ZM | 273 / 273 | 21.264, 15.059, 10.317, 7.103, 4.979, 3.550 | 0.0e+00 | 16.230, 16.165, 16.128, 16.098, 16.093, 16.082 | 0.0e+00 | True | 10, 0.8000 | VERIFIED |
+| ZL | 282 / 282 | 50.805, 33.633, 23.110, 16.615, 11.573, 8.145 | 0.0e+00 | 13.190, 13.145, 13.077, 13.008, 13.023, 13.029 | 0.0e+00 | True | 10, 0.4800 | VERIFIED |
+| HE | 270 / 270 | 32.296, 22.481, 15.642, 10.797, 7.631, 5.261 | 0.0e+00 | 18.380, 18.560, 18.475, 18.580, 18.588, 18.593 | 0.0e+00 | True | 10, 0.8000 | VERIFIED |
+| LE | 264 / 264 | 70.716, 46.527, 31.875, 21.826, 15.275, 10.710 | 0.0e+00 | 23.290, 24.115, 23.913, 23.871, 23.848, 23.917 | 0.0e+00 | True | 10, 0.8000 | VERIFIED |
+| MBT | 260 / 260 | 241.227, 167.675, 111.995, 79.513, 55.376, 39.458 | 0.0e+00 | 4.630, 4.565, 4.513, 4.466, 4.444, 4.439 | 0.0e+00 | True | 10, 0.0400 | VERIFIED |
+| MNQ | 285 / 285 | 726.923, 490.282, 338.570, 227.446, 157.664, 111.825 | 0.0e+00 | 2.150, 2.095, 2.072, 2.069, 2.068, 2.066 | 0.0e+00 | True | 1, 0.4000 | VERIFIED |
+| M2K | 286 / 286 | 212.269, 145.897, 96.850, 66.574, 47.191, 33.195 | 0.0e+00 | 2.110, 2.045, 2.009, 1.994, 1.988, 1.983 | 0.0e+00 | True | 3, 0.4000 | VERIFIED |
+| MYM | 286 / 286 | 262.297, 177.323, 119.908, 83.284, 58.601, 41.768 | 0.0e+00 | 2.153, 2.067, 2.033, 2.013, 2.003, 1.998 | 0.0e+00 | True | 3, 0.4000 | VERIFIED |
+
+Counts: VERIFIED 28, DISCREPANCY 0 of 28. No day was skipped for lack of bars at any T (the declaration's 5% flag binds nowhere).
+
+#### 3b.2 Cells, the bar, the ascending order, the first pass (B1), the epsilon arithmetic
+
+The cell set is the 120 grid cells plus D.1e's 100 extension cells (220 keys, reproduced). For each exposure my analytic net $/day at q_c per cell equals the stored row's; the cells below the bar (eps_translated x q_c x tick value) match; replaying B1 in ascending order over the stored verdicts (ties evaluated together) gives exactly the stored evaluated set and the stored first pass; eps_funnel = floor(net $/day / (q_c x tick value)) and the operative epsilon = min(translated, funnel) are reproduced. Row consistency: every early-stopped row records more than 1531 failures (k_min 6469 of 8,000, recomputed from power_gate.verdict) and the verdict 'fail'; every full-length row's verdict and lower bound equal power_gate.verdict(power, 8000); every row's robust critical value equals the baseline's p80 value for its path.
+
+| Vehicle | Bar $/day | Cells below bar (mine / stored) | B1 evaluated (replay / stored) | First pass below the bar (mine = stored) | Net $/day of the pass | eps translated | eps funnel from B1 (mine / stored) | eps operative (mine / stored) | Rows early-stopped / full | Pass full-length | Rows inconsistent | Verdict |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| ZT | 78.12 | 220 / 220 | 212 / 212 | consistency|T2|p0.55|R2.0 (=) | 45.55 | 10 | 5 / 5 | 5 / 5 | 0 / 212 | True | 0 | VERIFIED |
+| ZF | 78.12 | 218 / 218 | 206 / 206 | consistency|T2|p0.6|R1.5 (=) | 50.57 | 10 | 6 / 6 | 6 / 6 | 0 / 206 | True | 0 | VERIFIED |
+| ZN | 78.12 | 208 / 208 | 194 / 194 | consistency|T1|p0.58|R1.5 (=) | 57.04 | 5 | 3 / 3 | 3 / 3 | 140 / 54 | True | 0 | VERIFIED |
+| TN | 78.12 | 194 / 194 | 168 / 168 | consistency|T2|p0.65|R1.0 (=) | 65.34 | 5 | 4 / 4 | 4 / 4 | 114 / 54 | True | 0 | VERIFIED |
+| ZB | 62.50 | 144 / 144 | 144 / 144 | none below the bar (=) | - | 2 | - (B2) | 2 / 2 | 159 / 1 | None | 0 | VERIFIED |
+| UB | 62.50 | 126 / 126 | 126 / 126 | none below the bar (=) | - | 2 | - (B2) | 2 / 2 | 143 / 1 | None | 0 | VERIFIED |
+| MCL | 84.00 | 118 / 118 | 118 / 118 | none below the bar (=) | - | 21 | - (B2) | 21 / 21 | 137 / 1 | None | 0 | VERIFIED |
+| NG | 80.00 | 81 / 81 | 81 / 81 | none below the bar (=) | - | 8 | - (B2) | 8 / 8 | 94 / 1 | None | 0 | VERIFIED |
+| MGC | 85.00 | 140 / 140 | 102 / 102 | consistency|T4|p0.66|R0.75 (=) | 71.43 | 85 | 71 / 71 | 71 / 71 | 75 / 27 | True | 0 | VERIFIED |
+| MHG | 85.00 | 198 / 198 | 176 / 176 | consistency|T2|p0.65|R1.0 (=) | 69.67 | 34 | 27 / 27 | 27 / 27 | 149 / 27 | True | 0 | VERIFIED |
+| 6E | 81.25 | 138 / 138 | 136 / 136 | consistency|T2|p0.62|R1.0 (=) | 80.09 | 13 | 12 / 12 | 12 / 12 | 135 / 1 | True | 0 | VERIFIED |
+| 6A | 85.00 | 206 / 206 | 182 / 182 | consistency|T2|p0.55|R1.5 (=) | 56.14 | 17 | 11 / 11 | 11 / 11 | 181 / 1 | True | 0 | VERIFIED |
+| 6B | 81.25 | 208 / 208 | 176 / 176 | consistency|T2|p0.55|R1.5 (=) | 52.46 | 13 | 8 / 8 | 8 / 8 | 175 / 1 | True | 0 | VERIFIED |
+| 6C | 85.00 | 218 / 218 | 206 / 206 | consistency|T1|p0.55|R2.0 (=) | 45.29 | 17 | 9 / 9 | 9 / 9 | 205 / 1 | True | 0 | VERIFIED |
+| 6J | 81.25 | 204 / 204 | 186 / 186 | consistency|T1|p0.54|R1.75 (=) | 63.17 | 13 | 10 / 10 | 10 / 10 | 185 / 1 | True | 0 | VERIFIED |
+| 6S | 81.25 | 126 / 126 | 126 / 126 | none below the bar (=) | - | 13 | - (B2) | 13 / 13 | 135 / 1 | None | 0 | VERIFIED |
+| 6N | 85.00 | 214 / 214 | 198 / 198 | consistency|T1|p0.7|R1.0 (=) | 51.41 | 17 | 10 / 10 | 10 / 10 | 197 / 1 | True | 0 | VERIFIED |
+| ZC | 75.00 | 216 / 216 | 208 / 208 | consistency|T2|p0.6|R1.5 (=) | 52.62 | 6 | 4 / 4 | 4 / 4 | 207 / 1 | True | 0 | VERIFIED |
+| ZW | 75.00 | 196 / 196 | 174 / 174 | consistency|T4|p0.55|R1.5 (=) | 61.31 | 6 | 4 / 4 | 4 / 4 | 173 / 1 | True | 0 | VERIFIED |
+| ZS | 75.00 | 158 / 158 | 154 / 154 | consistency|T1|p0.65|R1.0 (=) | 72.85 | 6 | 5 / 5 | 5 / 5 | 153 / 1 | True | 0 | VERIFIED |
+| ZM | 80.00 | 202 / 202 | 174 / 174 | consistency|T1|p0.57|R1.5 (=) | 57.56 | 8 | 5 / 5 | 5 / 5 | 173 / 1 | True | 0 | VERIFIED |
+| ZL | 84.00 | 156 / 156 | 136 / 136 | consistency|T4|p0.68|R0.75 (=) | 69.38 | 14 | 11 / 11 | 11 / 11 | 135 / 1 | True | 0 | VERIFIED |
+| HE | 80.00 | 152 / 152 | 142 / 142 | consistency|T2|p0.62|R1.0 (=) | 70.79 | 8 | 7 / 7 | 7 / 7 | 141 / 1 | True | 0 | VERIFIED |
+| LE | 80.00 | 90 / 90 | 90 / 90 | none below the bar (=) | - | 8 | - (B2) | 8 / 8 | 103 / 1 | None | 0 | VERIFIED |
+| MBT | 85.00 | 216 / 216 | 196 / 196 | consistency|T2|p0.52|R1.75 (=) | 45.37 | 170 | 90 / 90 | 90 / 90 | 195 / 1 | True | 0 | VERIFIED |
+| MNQ | 85.00 | 78 / 78 | 78 / 78 | none below the bar (=) | - | 170 | - (B2) | 170 / 170 | 83 / 1 | None | 0 | VERIFIED |
+| M2K | 84.00 | 115 / 115 | 103 / 103 | consistency|T2|p0.6|R1.0 (=) | 75.27 | 56 | 50 / 50 | 50 / 50 | 102 / 1 | True | 0 | VERIFIED |
+| MYM | 84.00 | 85 / 85 | 85 / 85 | none below the bar (=) | - | 56 | - (B2) | 56 / 56 | 86 / 1 | None | 0 | VERIFIED |
+
+Counts: VERIFIED 28, DISCREPANCY 0 of 28.
+
+#### 3b.3 Re-simulation through the frozen simulator (own generator, cost book and pool)
+
+Cells: ZT and MBT (undersized) and MGC and ZS (metals, grains): the binding cell in full and the three cells before it in ascending order; ZB (no pass below the bar): the six cells nearest the bar; MYM (no pass below the bar, q_c = 3): the three nearest the bar. Full-length cells are compared on power, verdict, lower bound, mean and quantiles, and on the stored sorted sample file bit for bit; early-stopped cells on the stop point (runs and failures, deterministic given BASE_SEED and the run index) and the verdict.
+
+| Vehicle | Cell | Runs (mine) | Stopped | Failures in prefix | Power (mine / stored) | Verdict (mine / stored) | Mean $/month (mine / stored) | Samples equal (max abs diff) | Stored stop (runs, failures) | Seconds | Verdict |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| ZT | standard|T4|p0.6|R1.5 | 8000 | - | - | 0.420750 / 0.420750 | fail / fail | 455.26 / 455.26 | True (0.0) | - | 280.8 | VERIFIED |
+| ZT | consistency|T1|p0.55|R2.0 | 8000 | - | - | 0.726750 / 0.726750 | fail / fail | 555.59 / 555.59 | True (0.0) | - | 157.8 | VERIFIED |
+| ZT | standard|T1|p0.55|R2.0 | 8000 | - | - | 0.492625 / 0.492625 | fail / fail | 550.65 / 550.65 | True (0.0) | - | 115.6 | VERIFIED |
+| ZT | consistency|T2|p0.55|R2.0 | 8000 | - | - | 0.817000 / 0.817000 | pass / pass | 713.55 / 713.55 | True (0.0) | - | 213.9 | VERIFIED |
+| MGC | consistency|T1|p0.47|R2.0 | 8000 | - | - | 0.803875 / 0.803875 | marginal / marginal | 1356.75 / 1356.75 | True (0.0) | - | 178.2 | VERIFIED |
+| MGC | standard|T1|p0.47|R2.0 | 8000 | - | - | 0.579875 / 0.579875 | fail / fail | 1013.43 / 1013.43 | True (0.0) | - | 120.2 | VERIFIED |
+| MGC | standard|T32|p0.4|R2.0 | 3450 | True | 1536 | - | fail (pass impossible) / fail | - | - | (3450, 1536) | 675.7 | VERIFIED |
+| MGC | consistency|T4|p0.66|R0.75 | 8000 | - | - | 0.845000 / 0.845000 | pass / pass | 1444.06 / 1444.06 | True (0.0) | - | 337.1 | VERIFIED |
+| ZB | consistency|T4|p0.45|R2.0 | 2750 | True | 1552 | - | fail (pass impossible) / fail | - | - | (2750, 1552) | 91.1 | VERIFIED |
+| ZB | standard|T4|p0.45|R2.0 | 2200 | True | 1539 | - | fail (pass impossible) / fail | - | - | (2200, 1539) | 61.7 | VERIFIED |
+| ZB | consistency|T1|p0.5|R1.5 | 2900 | True | 1536 | - | fail (pass impossible) / fail | - | - | (2900, 1536) | 49.5 | VERIFIED |
+| ZB | standard|T1|p0.5|R1.5 | 2250 | True | 1561 | - | fail (pass impossible) / fail | - | - | (2250, 1561) | 25.0 | VERIFIED |
+| ZB | consistency|T2|p0.62|R1.0 | 4600 | True | 1543 | - | fail (pass impossible) / fail | - | - | (4600, 1543) | 103.7 | VERIFIED |
+| ZB | standard|T2|p0.62|R1.0 | 2700 | True | 1550 | - | fail (pass impossible) / fail | - | - | (2700, 1550) | 51.9 | VERIFIED |
+| MBT | standard|T1|p0.7|R1.0 | 3850 | True | 1543 | - | fail (pass impossible) / fail | - | - | (3850, 1543) | 58.7 | VERIFIED |
+| MBT | consistency|T1|p0.6|R1.5 | 7900 | True | 1542 | - | fail (pass impossible) / fail | - | - | (7900, 1542) | 128.4 | VERIFIED |
+| MBT | standard|T1|p0.6|R1.5 | 3650 | True | 1542 | - | fail (pass impossible) / fail | - | - | (3650, 1542) | 53.1 | VERIFIED |
+| MBT | consistency|T2|p0.52|R1.75 | 8000 | - | - | 0.815250 / 0.815250 | pass / pass | 730.98 / 730.98 | True (0.0) | - | 210.7 | VERIFIED |
+| ZS | standard|T4|p0.45|R2.0 | 3300 | True | 1558 | - | fail (pass impossible) / fail | - | - | (3300, 1558) | 90.7 | VERIFIED |
+| ZS | consistency|T1|p0.47|R2.0 | 6550 | True | 1538 | - | fail (pass impossible) / fail | - | - | (6550, 1538) | 105.7 | VERIFIED |
+| ZS | standard|T1|p0.47|R2.0 | 3250 | True | 1533 | - | fail (pass impossible) / fail | - | - | (3250, 1533) | 41.0 | VERIFIED |
+| ZS | consistency|T1|p0.65|R1.0 | 8000 | - | - | 0.847875 / 0.847875 | pass / pass | 1554.37 / 1554.37 | True (0.0) | - | 148.7 | VERIFIED |
+| MYM | standard|T1|p0.5|R1.5 | 2850 | True | 1550 | - | fail (pass impossible) / fail | - | - | (2850, 1550) | 31.7 | VERIFIED |
+| MYM | consistency|T4|p0.4|R2.0 | 4900 | True | 1532 | - | fail (pass impossible) / fail | - | - | (4900, 1532) | 157.2 | VERIFIED |
+| MYM | standard|T4|p0.4|R2.0 | 3100 | True | 1543 | - | fail (pass impossible) / fail | - | - | (3100, 1543) | 74.5 | VERIFIED |
+| LE (B2) | standard|T4|p0.48|R1.5 | 4300 | True | 1537 | - | fail (pass impossible) / fail | - | - | (4300, 1537) | 41.7 | VERIFIED |
+| LE (B2) | consistency|T1|p0.6|R1.0 | 8000 | - | - | 0.810500 / 0.810500 | pass / pass | 1739.33 / 1739.33 | True (0.0) | - | 44.9 | VERIFIED |
+| MNQ (B2) | standard|T1|p0.45|R2.0 | 3750 | True | 1555 | - | fail (pass impossible) / fail | - | - | (3750, 1555) | 16.6 | VERIFIED |
+| MNQ (B2) | consistency|T16|p0.55|R1.0 | 8000 | - | - | 0.872875 / 0.872875 | pass / pass | 2005.85 / 2005.85 | True (0.0) | - | 336.4 | VERIFIED |
+| MYM (B2) | consistency|T4|p0.58|R1.0 | 8000 | - | - | 0.846125 / 0.846125 | pass / pass | 1738.15 / 1738.15 | True (0.0) | - | 99.9 | VERIFIED |
+
+Counts: VERIFIED 30, DISCREPANCY 0 of 30 cells (the '(B2)' rows, LE, MNQ and MYM's first pass above the bar and the cell before it, were added after B2 finished).
+
+#### 3b.4 The restart history and the mixed early-stopped / full-length rows
+
+- The driver ran under several starts (per-exposure status.json 'runs'): 02:53 PDT full length; 06:37 with A-1 early stop; 17:10 without `--early-stop` (the lead's logged error, cells at full length); 17:43 with it; 18:05 after the JSONDecodeError fix. Finished cells were kept per cell across the stops, so several exposures mix the two kinds (column 'Rows early-stopped / full' above); ZT and ZF are all full-length; the no-pass exposures are all early-stopped.
+- Why the mix changes no verdict: an early-stopped row is a proof that a robust pass is impossible (more than 1531 of its first n careers failed, and careers are seeded by (BASE_SEED, index) alone, so the prefix is the same in either mode); a full-length row is the exact verdict; both are 'not pass' or 'pass' by the same rule (k_min recomputed above). Every stored row of the 28 exposures satisfies its kind's check ('Rows inconsistent' 0), every binding pass is a full-length row with lower bound >= 0.80, and my ascending replay over the mixed rows reproduces every first pass and every epsilon. Step C confirms the two modes on the same cells: the re-simulated stop points and full-length samples equal the stored ones bit for bit (3b.3).
+- The 18:05 lead edit: funnel/exposure_gate_run.py wraps the drive_memory.json read in contextlib.suppress(json.JSONDecodeError) and funnel/exposure_gate_mes.py writes that file atomically (both present); the files are untracked, so I cannot diff against a prior copy. Independent evidence that the computation did not change: rows written after 18:05 (the 17 later exposures, MHG, 6E) reproduce under my own driver exactly as rows written before it (ZT, ZB).
+
+#### 3b.5 The 28 operative epsilons
+
+| Vehicle | Exposure | Status | eps translated | eps funnel (stored) | eps operative | Basis (mine) | Verdict |
+|---|---|---|---|---|---|---|---|
+| ZT | 2-year | undersized | 10 | 5 | 5 | B1 pass consistency|T2|p0.55|R2.0 at $45.55/day | VERIFIED |
+| ZF | 5-year | undersized | 10 | 6 | 6 | B1 pass consistency|T2|p0.6|R1.5 at $50.57/day | VERIFIED |
+| ZN | 10-year | chosen | 5 | 3 | 3 | B1 pass consistency|T1|p0.58|R1.5 at $57.04/day | VERIFIED |
+| TN | Ultra 10-year | chosen | 5 | 4 | 4 | B1 pass consistency|T2|p0.65|R1.0 at $65.34/day | VERIFIED |
+| ZB | Bond | chosen | 2 | 2 | 2 | no pass below the bar: operative = translated, exact; the funnel figure is B2's | VERIFIED |
+| UB | Ultra bond | chosen | 2 | 2 | 2 | no pass below the bar: operative = translated, exact; the funnel figure is B2's | VERIFIED |
+| MCL | WTI crude | chosen | 21 | 24 | 21 | no pass below the bar: operative = translated, exact; the funnel figure is B2's | VERIFIED |
+| NG | Henry Hub gas | chosen | 8 | 11 | 8 | no pass below the bar: operative = translated, exact; the funnel figure is B2's | VERIFIED |
+| MGC | gold | chosen | 85 | 71 | 71 | B1 pass consistency|T4|p0.66|R0.75 at $71.43/day | VERIFIED |
+| MHG | copper | chosen | 34 | 27 | 27 | B1 pass consistency|T2|p0.65|R1.0 at $69.67/day | VERIFIED |
+| 6E | EUR | chosen | 13 | 12 | 12 | B1 pass consistency|T2|p0.62|R1.0 at $80.09/day | VERIFIED |
+| 6A | AUD | chosen | 17 | 11 | 11 | B1 pass consistency|T2|p0.55|R1.5 at $56.14/day | VERIFIED |
+| 6B | GBP | chosen | 13 | 8 | 8 | B1 pass consistency|T2|p0.55|R1.5 at $52.46/day | VERIFIED |
+| 6C | CAD | undersized | 17 | 9 | 9 | B1 pass consistency|T1|p0.55|R2.0 at $45.29/day | VERIFIED |
+| 6J | JPY | chosen | 13 | 10 | 10 | B1 pass consistency|T1|p0.54|R1.75 at $63.17/day | VERIFIED |
+| 6S | CHF | chosen | 13 | 15 | 13 | no pass below the bar: operative = translated, exact; the funnel figure is B2's | VERIFIED |
+| 6N | NZD | undersized | 17 | 10 | 10 | B1 pass consistency|T1|p0.7|R1.0 at $51.41/day | VERIFIED |
+| ZC | corn | undersized | 6 | 4 | 4 | B1 pass consistency|T2|p0.6|R1.5 at $52.62/day | VERIFIED |
+| ZW | wheat | chosen | 6 | 4 | 4 | B1 pass consistency|T4|p0.55|R1.5 at $61.31/day | VERIFIED |
+| ZS | soybeans | chosen | 6 | 5 | 5 | B1 pass consistency|T1|p0.65|R1.0 at $72.85/day | VERIFIED |
+| ZM | soybean meal | chosen | 8 | 5 | 5 | B1 pass consistency|T1|p0.57|R1.5 at $57.56/day | VERIFIED |
+| ZL | soybean oil | chosen | 14 | 11 | 11 | B1 pass consistency|T4|p0.68|R0.75 at $69.38/day | VERIFIED |
+| HE | lean hogs | chosen | 8 | 7 | 7 | B1 pass consistency|T2|p0.62|R1.0 at $70.79/day | VERIFIED |
+| LE | live cattle | chosen | 8 | 11 | 8 | no pass below the bar: operative = translated, exact; the funnel figure is B2's | VERIFIED |
+| MBT | bitcoin | undersized | 170 | 90 | 90 | B1 pass consistency|T2|p0.52|R1.75 at $45.37/day | VERIFIED |
+| MNQ | Nasdaq-100 | chosen | 170 | 186 | 170 | no pass below the bar: operative = translated, exact; the funnel figure is B2's | VERIFIED |
+| M2K | Russell 2000 | chosen | 56 | 50 | 50 | B1 pass consistency|T2|p0.6|R1.0 at $75.27/day | VERIFIED |
+| MYM | Dow | chosen | 56 | 60 | 56 | no pass below the bar: operative = translated, exact; the funnel figure is B2's | VERIFIED |
+
+Counts: VERIFIED 28, DISCREPANCY 0 of 28 operative figures. The translated figures equal 3a's; every operative figure is min(translated, funnel) under the declaration, and for the eight no-pass exposures it is the translated bar exactly (no cell above the bar can lower a floor below it).
+
+#### 3b.6 B2: the reported funnel figure for the eight exposures with no pass below the bar
+
+| Vehicle | B2 state (stored) | Cells at/above the bar evaluated (stored) | First pass above the bar (my replay of stored rows) | eps funnel (mine / stored) | Consistent | Verdict |
+|---|---|---|---|---|---|---|
+| ZB | done | 16 | consistency|T1|p0.65|R1.0 | 2 / 2 | True and True | VERIFIED |
+| UB | done | 18 | consistency|T2|p0.62|R1.0 | 2 / 2 | True and True | VERIFIED |
+| MCL | done | 20 | consistency|T1|p0.65|R1.0 | 24 / 24 | True and True | VERIFIED |
+| NG | done | 14 | consistency|T8|p0.575|R1.0 | 11 / 11 | True and True | VERIFIED |
+| 6S | done | 10 | consistency|T4|p0.68|R0.75 | 15 / 15 | True and True | VERIFIED |
+| LE | done | 14 | consistency|T1|p0.6|R1.0 | 11 / 11 | True and True | VERIFIED |
+| MNQ | done | 6 | consistency|T16|p0.55|R1.0 | 186 / 186 | True and True | VERIFIED |
+| MYM | done | 2 | consistency|T4|p0.58|R1.0 | 60 / 60 | True and True | VERIFIED |
+
+Counts: VERIFIED 8, PENDING 0, DISCREPANCY 0 of 8 (B2 finished 07:19 PDT 2026-09-26; LE, MNQ and MYM checked after). B2 cannot change an operative figure.
+
+#### 3b.7 The declaration's readings, and what an alternative would give
+
+- 1 (MES's frozen robust critical value for every exposure): faithful to D3's 're-run the Stage B power gate', which reads that baseline; D2's sizing puts every exposure at MES's risk, so the dollar bar is comparable. A per-exposure null would change the critical value and hence which cells pass; the leniency, if any, is capped by the translated bar (operative = min). NOTE for the user, as the declaration says.
+- 3 (0.1-lot size units, money rescaled): reproduced independently for every exposure (size units and factor in 3b.1); the simulator books round(q_c x ticks x tick value in cents) exactly; MYM (q_c 3, weight 0.1, factor 0.4) and the cents-quoted ZS (vendor tick 0.25, $12.50) reproduce bit for bit in 3b.3. VERIFIED.
+- 4 ([O_X, C_X) rather than MES's [08:30, 15:08)): faithful to D2's risk window; the alternative (to F) would add the post-settlement hours to every segment and would not be D2's window. VERIFIED.
+- 5 and 6 (D2's dates and R3's endpoints; E|m_1| x tick value = r_c): reproduced exactly for all 28. VERIFIED.
+- 7 (T = 16 and 32 kept): including them can only lower eps; no T = 32 cell binds anywhere. VERIFIED.
+- 8 (cost at MES's timing, no event-window cost): faithful to D.1e's method; reproduced to 0.0 for all 28. VERIFIED.
+- 10 (undersized: min(translated, funnel)): the conservative reading; ZT, ZF, 6C, 6N, ZC and MBT take their funnel figures (5, 6, 9, 10, 4, 90), all below their translated bars. VERIFIED.
+- 11 (exact ascending evaluation, B1 then B2): my replay reproduces every B1 evaluated set and first pass; each cell's verdict depends only on its own seed, so the shortcut is exact. VERIFIED.
+- 15 (floor of the stored float): no figure lies within 1e-9 of an integer (flags false for all 28). VERIFIED.
+- 16 (BASE_SEED, 8,000 careers): my full-length re-simulations reproduce the stored samples bit for bit, which verifies the seed, the run count, the generator's RNG consumption and the money scaling together. VERIFIED.
+- A-1 (early stop): k_min = 6,469, max failures 1,531 recomputed; every stopped row exceeds it; my own early-stop driver stops at the same run and failure counts. VERIFIED.
+
+#### 3b.8 Verdict of part 3b
+
+- Segment moves and costs: VERIFIED 28 of 28. Cells, order, first pass and epsilon arithmetic: VERIFIED 28 of 28. Re-simulated cells: VERIFIED 30 of 30. Operative figures: VERIFIED 28 of 28. B2 funnel figures: VERIFIED 8, PENDING 0 of 8.
+- Findings: no DISCREPANCY. NOTE: the MES robust critical value applied to every exposure (declaration 1) is the one reading that could move which cells pass; it is capped by the translated bar and is for the user, as declared.
+- Not done: nothing.

@@ -2716,3 +2716,24 @@ stops; no usage-limit pause). Tokens (transcripts, cut at 23:42): 84,004,603 in 
 78,221,996 (lead 54,176,868; MLLitReader-OpusHigh 16,195,440; PurchaseCoder-OpusXHigh 7,849,688), Fable
 5,782,607 (FreezeAuditor-FableXHigh). Lead 64.5%, workers 35.5%. The per-task final table and the per-model
 table are in reports/E.1_RETURN.md, section 8.
+
+## 2026-09-25/26 — Stage E.2a: ML route freeze; Stage E build (rules, calendars, bars, costs, vehicles, epsilon)
+
+Lead Opus 5.5 xhigh, ultracode. **The ML route is frozen** (commit ba67073, manifest sha256
+077a57e1c00554dd0745302b247673d45ee05b805ac4bfd876f8497f7bbb1ed2; the user's V1-V9 applied, Fable's 2 blocking and
+14 should-fix findings fixed within V1-V9). **Source-window amendment** (commit 04c504f): 6 source-overlap labels
+removed, all confirmed by Fable. **Built (uncommitted, for review):** per-product rules engine, eight cited group
+calendars (the 2024-07-04 equity fix; MES holdout-2 count 258 -> 259), validated research-window bars of all 45
+contracts (MES reproduced exactly), the frozen D8 cost table, the vehicle choice (22 chosen, 6 undersized, RBOB,
+ULSD and silver not traded) and the funnel re-derivation of epsilon for the 28 traded exposures (20 below their
+translated bars). Fable reproduced every size, vehicle, cost and epsilon: 0 discrepancies. Nothing bought, no
+member run; both holdouts all_ok, 0 unlocks; REGISTRATION.md 0 bytes; tests 1891 passed, 2 skipped, 1 xfailed, 0
+failed. Pauses: a plan session limit (09-25 03:03-06:10), a clean stop (08:13-17:10, machine rebooted 17:08) and a
+pause (21:34-09-26 03:21), all on the user's side or the plan's. The full record is reports/E.2a_RETURN.md.
+
+### Session cost
+09-25 00:12 to 09-26 07:45 PDT: about 31 h 33 min elapsed, 17 h 51 min of it pauses, about 13 h 42 min of work
+(mostly the funnel's compute). Tokens from the transcripts: 799,684,249 in total, 3,348,528 output; opus
+758,000,645, Fable 37,709,062, Sonnet 3,974,542. Lead 24.9%, workers 75.1%; the calendar workflow (ultracode)
+40.8%. The per-task final table and per-model table are in reports/E.2a_RETURN.md, section 8.
+

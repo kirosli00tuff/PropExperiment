@@ -76,6 +76,10 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     catalog FROZEN under reports/stage_e1_freeze.json; acct-2 switch; step 1 bought (904 files, $103.16 settled,
     verified); ML route drafted (docs/STAGE_E_ML_DESIGN.md) for the user's review.
   - Stage E.2 — build: per-product rules, costs, calendars, bar builds, sealing, the ML pipeline (planned).
+  - Stage E.2a — ML route freeze, then the build. Run 2026-09-25/26 (see reports/E.2a_RETURN.md): ML route FROZEN
+    (commit ba67073, manifest 077a57e1...); source-window amendment removes 6 source-overlap labels (04c504f);
+    rules engine, 8 cited group calendars, bars of all 45 contracts, frozen D8 costs, vehicles (28 traded, 3 not)
+    and funnel epsilon for all 28 built and verified independently by Fable (0 discrepancies). Nothing bought.
   - Stage E.3 onward — one screening session and one confirmation session per cluster, in the order of
     docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

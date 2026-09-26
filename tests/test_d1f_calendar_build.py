@@ -152,25 +152,56 @@ def test_every_2019_2024_entry_has_a_source_and_a_grade() -> None:
     assert HOLIDAYS[date(2021, 4, 2)].time_evidence == "unverified"
 
 
+CALENDAR_CHECK = REPO_ROOT / "reports" / "stage_d1f_calendar_check.json"
+ELISION = " ... "
+
+
+def _in_order(fragments: list[str], text: str) -> bool:
+    at = 0
+    for fragment in fragments:
+        found = text.find(fragment, at) if fragment else -1
+        if found < 0:
+            return False
+        at = found + len(fragment)
+    return True
+
+
+def _verbatim_in_check(day: str, url: str, quote: str, check: dict) -> bool:
+    """D14 (Stage E.2a): a citation corrected from the D.1f calendar check quotes that file's
+    source for the same date: its url or archive_url, and every " ... "-separated fragment of
+    the quote verbatim and in order in the source's quote_verbatim."""
+    return any(url in (s["url"], s["archive_url"])
+               and _in_order(quote.split(ELISION), s["quote_verbatim"])
+               for s in check.get(day, {}).get("sources", ()))
+
+
 def test_2019_2024_quotes_are_verbatim_from_the_extraction() -> None:
     rows = {r["date"]: r for r in json.loads(EXTRACTION.read_text())}
+    check = {r["date"]: r for r in json.loads(CALENDAR_CHECK.read_text())}
     cited = {**SOURCES_2019_2024, **NO_ENTRY_FINDINGS_2019_2024}
     assert len(rows) == 71 and {d.isoformat() for d in cited} == set(rows)
     for day, cite in cited.items():
-        row = rows[day.isoformat()]
-        assert (cite.status_url, cite.status_quote) == (row["status_source_url"],
-                                                        row["status_quote"]), day
-        assert (cite.time_url, cite.time_quote) == (row["time_source_url"],
-                                                    row["time_quote"]), day
+        key = day.isoformat()
+        row = rows[key]
+        for url, quote, url_field, quote_field in (
+            (cite.status_url, cite.status_quote, "status_source_url", "status_quote"),
+            (cite.time_url, cite.time_quote, "time_source_url", "time_quote"),
+        ):
+            assert ((url, quote) == (row[url_field], row[quote_field])
+                    or _verbatim_in_check(key, url, quote, check)), (day, url_field)
 
 
 def test_judgment_calls_are_the_documented_ones() -> None:
     # 12:00 CT equity SETTLEMENT lines -> 12:15 CT close, graded inferred (2025 convention).
-    for day in (date(2019, 7, 3), date(2019, 11, 29), date(2019, 12, 24), date(2020, 11, 27),
-                date(2020, 12, 24), date(2021, 11, 26), date(2022, 11, 25), date(2023, 7, 3),
+    for day in (date(2019, 11, 29), date(2019, 12, 24), date(2020, 11, 27),
+                date(2020, 12, 24), date(2021, 11, 26), date(2022, 11, 25),
                 date(2023, 11, 24), date(2024, 7, 3), date(2024, 11, 29), date(2024, 12, 24)):
         assert HOLIDAYS[day].halt_ct == time(12, 15), day
         assert HOLIDAYS[day].time_evidence == "inferred", day
+    # Stage E.2a (design D14): CME's own Globex schedules confirm these two 12:15 CT closes.
+    for day in (date(2019, 7, 3), date(2023, 7, 3)):
+        assert HOLIDAYS[day].halt_ct == time(12, 15), day
+        assert HOLIDAYS[day].time_evidence == "cme", day
     for day in (date(2021, 4, 2), date(2023, 4, 7)):  # jobs-report Good Fridays
         assert HOLIDAYS[day].kind is HolidayKind.EARLY_HALT
         assert HOLIDAYS[day].halt_ct == time(8, 15)
@@ -306,6 +337,9 @@ def _feb24_bars() -> pd.DataFrame:
 
 
 def test_confirmation_build_end_to_end(tmp_path: Path) -> None:
+    if CONFIRMATION_SERIES_PATH.exists() or bmb.CONFIRMATION_SUMMARY_PATH.exists():
+        pytest.skip("the real D.1f confirmation parquet exists (the D.1f build ran); this "
+                    "end-to-end test asserts the pre-build state (design D14, Stage E.2a)")
     inputs = _inputs(tmp_path)
     write_rolls([ROLL_FEB24], inputs.rolls)
     seen: list = []

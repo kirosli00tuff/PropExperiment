@@ -102,8 +102,9 @@ _ENTRIES: tuple[Holiday, ...] = (
     _halt_graded(date(2019, 2, 18), "Presidents Day", EARLY_HALT_NOON, "cme", "secondary"),
     _closure_graded(date(2019, 4, 19), "Good Friday", "cme"),
     _halt_graded(date(2019, 5, 27), "Memorial Day", EARLY_HALT_NOON, "cme", "secondary"),
+    # Time upgraded to cme 2026-09-25, Stage E.2a (design D14): CME Globex schedule, 12:15 CT.
     _halt_graded(
-        date(2019, 7, 3), "Day before Independence Day", EARLY_CLOSE_1215, "cme", "inferred"
+        date(2019, 7, 3), "Day before Independence Day", EARLY_CLOSE_1215, "cme", "cme"
     ),
     # Corrected 2026-09-23, Stage D.1f run step 4b: CME Globex schedule, 12:00 CT halt.
     _halt_graded(date(2019, 7, 4), "Independence Day", EARLY_HALT_NOON, "cme", "cme"),
@@ -168,8 +169,9 @@ _ENTRIES: tuple[Holiday, ...] = (
     ),
     _halt_graded(date(2023, 5, 29), "Memorial Day", EARLY_HALT_NOON, "cme", "secondary"),
     _halt_graded(date(2023, 6, 19), "Juneteenth", EARLY_HALT_NOON, "cme", "secondary"),
+    # Time upgraded to cme 2026-09-25, Stage E.2a (design D14): CME holiday summary, 12:15 CT.
     _halt_graded(
-        date(2023, 7, 3), "Day before Independence Day", EARLY_CLOSE_1215, "cme", "inferred"
+        date(2023, 7, 3), "Day before Independence Day", EARLY_CLOSE_1215, "cme", "cme"
     ),
     # Corrected 2026-09-23, Stage D.1f run step 4b: CME Globex schedule, 12:00 CT halt.
     _halt_graded(date(2023, 7, 4), "Independence Day", EARLY_HALT_NOON, "cme", "cme"),
@@ -189,7 +191,8 @@ _ENTRIES: tuple[Holiday, ...] = (
     _halt_graded(
         date(2024, 7, 3), "Day before Independence Day", EARLY_CLOSE_1215, "cme", "inferred"
     ),
-    _closure_graded(date(2024, 7, 4), "Independence Day", "cme"),
+    # Corrected 2026-09-25, Stage E.2a (design D10, D14): CME trading-hours service, 12:00 CT halt.
+    _halt_graded(date(2024, 7, 4), "Independence Day", EARLY_HALT_NOON, "cme", "cme"),
     _halt_graded(date(2024, 9, 2), "Labor Day", EARLY_HALT_NOON, "cme", "secondary"),
     _halt_graded(date(2024, 11, 28), "Thanksgiving Day", EARLY_HALT_NOON, "cme", "secondary"),
     _halt_graded(date(2024, 11, 29), "Day after Thanksgiving", EARLY_CLOSE_1215, "cme", "inferred"),
@@ -299,6 +302,11 @@ _NOTE_SETTLE_SPLIT = (
     "settle at 15:00 CT, so their early settlement is 12:00 CT, and the 12:15 CT halt follows "
     "this file's 2025-2026 convention (12:00 CT settlement -> 12:15 CT close, confirmed in the "
     "2025 bars on 07-03, 11-28 and 12-24). The extraction recorded 12:15 graded cme.")
+_ES_HOURS_2024_07 = (
+    "https://web.archive.org/web/20240708161439/https://www.cmegroup.com/services/"
+    "trading-hours-by-product?id=316,133,425,300,58,437,22,8478,5201,10191&pageNumber=1"
+    "&pageSize=999&sortAsc=true&fromEventDate=2024-07-03&toEventDate=2024-07-05&isProtected"
+    "&_t=1720455278680")
 _NOTE_SETTLE_SINGLE = (
     "Halt 12:15 CT, time graded inferred: the CME line is the 12:00 CT equity SETTLEMENT time; "
     "the halt follows this file's 2025-2026 convention (12:00 CT settlement -> 12:15 CT close, "
@@ -333,10 +341,19 @@ SOURCES_2019_2024: dict[date, Citation] = {
         "Wednesday, July 3, 2019 Settlement Times ... Equity Products 12:00:00 CT (for futures "
         "that currently settle at 15:00 CT) 12:15:00 CT (for futures that currently settle at "
         "15:15 CT)",
-        _CME + "2019-fourth-of-july-holiday-settlement-times.pdf",
-        "Equity Products 12:00:00 CT (for futures that currently settle at 15:00 CT) 12:15:00 "
-        "CT (for futures that currently settle at 15:15 CT)",
-        note=_NOTE_SETTLE_SPLIT),
+        "https://web.archive.org/web/20220920142350/https://www.cmegroup.com/tools-information/"
+        "holiday-calendar/files/2019/2019-4th-of-july-holiday-schedule-compact.xls",
+        "Calendar Date|Wednesday July 3 |Wednesday,July 3|Thursday July 4 |Thursday July 4 into "
+        " Friday July 5 ... Product|CLOSE|OPEN|HALT|OPEN ... Equity |Early  @ 1215 CT / 1715 "
+        "UTC|Regular @ 1700 CT/ 2200 UTC",
+        note="Time upgraded from inferred to cme in Stage E.2a (2026-09-25, design D14): CME's "
+             "own Globex holiday schedule gives Equity an early CLOSE at 12:15 CT on Calendar "
+             "Date 'Wednesday July 3' and the regular 17:00 CT reopen the same evening. Original "
+             "https://www.cmegroup.com/tools-information/holiday-calendar/files/2019/"
+             "2019-4th-of-july-holiday-schedule-compact.xls, read from the Wayback copy in "
+             "time_url (cmegroup.com refuses automated fetches); found by the D.1f run's source "
+             "check (reports/stage_d1f_calendar_check.json). The status line stays the CME "
+             "settlement-times line of the build extraction."),
     date(2019, 7, 4): Citation(
         _CME + "2019-fourth-of-july-holiday-settlement-times.pdf",
         "Note: Thursday, July 4, 2019 CME Group will not derive or disseminate settlement "
@@ -639,8 +656,20 @@ SOURCES_2019_2024: dict[date, Citation] = {
     date(2023, 7, 3): Citation(
         _CME + "fourth-of-july-settlement-times-2023.pdf",
         "Monday, July 3, 2023 ... Equity Index Products 12:00:00 CT",
-        _CME + "fourth-of-july-settlement-times-2023.pdf", "Equity Index Products 12:00:00 CT",
-        note=_NOTE_SETTLE_SINGLE),
+        "https://web.archive.org/web/20230627125057/https://www.cmegroup.com/trading-hours/"
+        "files/4th-of-july-2023.pdf",
+        "PRODUCT NAME MONDAY, 3 JULY 2023 TUESDAY, 4 JULY 2023 WEDNESDAY, 5 JULY 2023 ... "
+        "EQUITIES ... TRADE DATE: MON 3 JULY ... 12:15 (CLOSED) ... TRADE DATE: WED 5 JULY ... "
+        "16:45 (PREOPEN) ... 17:00 (OPEN)",
+        note="Time upgraded from inferred to cme in Stage E.2a (2026-09-25, design D14): CME's "
+             "own 4th of July 2023 holiday summary gives the EQUITIES row, Monday 3 July column, "
+             "'TRADE DATE: MON 3 JULY 12:15 (CLOSED)' and then '16:45 (PREOPEN) 17:00 (OPEN)' "
+             "for trade date Wed 5 July (PDF layout; the summary uses the most actively traded "
+             "instrument of each asset class). Original https://www.cmegroup.com/trading-hours/"
+             "files/4th-of-july-2023.pdf, read from the Wayback copy in time_url (cmegroup.com "
+             "refuses automated fetches); found by the D.1f run's source check (reports/"
+             "stage_d1f_calendar_check.json). The status line stays the CME settlement-times "
+             "line of the build extraction."),
     date(2023, 7, 4): Citation(
         _CME + "fourth-of-july-settlement-times-2023.pdf",
         "Note: Tuesday, July 4, 2023 CME Group will not derive or disseminate settlement "
@@ -717,9 +746,33 @@ SOURCES_2019_2024: dict[date, Citation] = {
         "Equity Index Products Settlement Time: 12:00:00 CT",
         note=_NOTE_SETTLE_SINGLE),
     date(2024, 7, 4): Citation(
-        _CME_DAM + "us-independence-day-settlement-times-2024.pdf",
-        "Note: Thursday, July 4, 2024 CME Group will not derive or disseminate settlement "
-        "prices for CME, CBOT, NYMEX or COMEX"),
+        _ES_HOURS_2024_07,
+        '"globex":"ES","prodGroup":"ES","name":"E-mini S&P 500 Futures","id":133 ... '
+        '{"groupCode":"ES","eventDate":"2024-07-03","events":[{"tradingDate":"2024-07-03",'
+        '"eventTime":"12:15","marketEventType":"closed"},{"tradingDate":"2024-07-05",'
+        '"eventTime":"16:45","marketEventType":"preopen"},{"tradingDate":"2024-07-05",'
+        '"eventTime":"17:00","marketEventType":"open"}]},{"groupCode":"ES","eventDate":'
+        '"2024-07-04","events":[{"tradingDate":"2024-07-05","eventTime":"12:00",'
+        '"marketEventType":"preopen"}',
+        _ES_HOURS_2024_07,
+        '{"groupCode":"ES","eventDate":"2024-07-04","events":[{"tradingDate":"2024-07-05",'
+        '"eventTime":"12:00","marketEventType":"preopen"},{"tradingDate":"2024-07-05",'
+        '"eventTime":"17:00","marketEventType":"open"}]}',
+        note="Corrected in Stage E.2a (2026-09-25, design D10 and D14) from FULL_CLOSURE to a "
+             "12:00 CT halt, graded cme / cme from CME's trading-hours-by-product service (the "
+             "data behind cmegroup.com/trading-hours.html), record for product 133 'E-mini S&P "
+             "500 Futures' (ES), Wayback capture 2024-07-08 16:14:39 UTC, found by the D.1f "
+             "run's source check (reports/stage_d1f_calendar_check.json): Globex opened Wed "
+             "2024-07-03 17:00 CT for trade date 2024-07-05 and went to 'preopen' (the halt: "
+             "order entry, no matching) at 12:00 CT on Thu 2024-07-04, reopening at 17:00 CT. "
+             "The build extraction's status line, CME's settlement note 'Note: Thursday, July 4, "
+             "2024 CME Group will not derive or disseminate settlement prices for CME, CBOT, "
+             "NYMEX or COMEX' (" + _CME_DAM + "us-independence-day-settlement-times-2024.pdf), "
+             "says only that no settlement was derived; it was read as a full closure, the same "
+             "error the D.1f run corrected for 2019-2023. MES is not in the captured product "
+             "set; ES stands for the equity group. A holdout-2 date: never checked against bars. "
+             "CME books the holiday's Globex trades to the next trade date; this file models "
+             "every holiday halt as its own short trade date (the 2025-2026 convention)."),
     date(2024, 9, 2): Citation(
         _CME + "labor-day-holiday-settlement-times-2024.pdf",
         "Note: Monday, September 2, 2024 CME Group will not derive or disseminate settlement "

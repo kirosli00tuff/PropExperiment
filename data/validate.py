@@ -54,6 +54,7 @@ class BarValidation:
     expected_minutes: int = 0
     present_expected_minutes: int = 0
     gap_runs: list[GapRun] = field(default_factory=list)
+    tick_label: str = "0.25"  # Stage E.2a: the product's tick, for the off-grid message only
 
     @property
     def hard_failures(self) -> list[str]:
@@ -65,7 +66,7 @@ class BarValidation:
         if self.negative_volume:
             out.append(f"{self.negative_volume} negative volumes")
         if self.off_tick_prices:
-            out.append(f"{self.off_tick_prices} prices off the 0.25 tick grid")
+            out.append(f"{self.off_tick_prices} prices off the {self.tick_label} tick grid")
         if self.ohlc_inconsistent:
             out.append(f"{self.ohlc_inconsistent} bars with high/low inconsistent with open/close")
         return out
@@ -117,10 +118,13 @@ def gap_runs(expected: np.ndarray, present: np.ndarray) -> tuple[list[GapRun], n
 
 
 def validate_bars(
-    raw: pd.DataFrame, start_ns: int, end_ns: int, starts: np.ndarray, ends: np.ndarray
+    raw: pd.DataFrame, start_ns: int, end_ns: int, starts: np.ndarray, ends: np.ndarray,
+    tick_fixed: int = MES_TICK_FIXED, tick_label: str = "0.25",
 ) -> tuple[BarValidation, np.ndarray]:
+    """``tick_fixed`` / ``tick_label`` (Stage E.2a): the product's tick in Databento fixed point
+    (1e-9) and as written; the defaults are MES's 0.25, so MES's behaviour is unchanged."""
     ts = raw["ts_event"].to_numpy()
-    report = BarValidation(rows=len(raw))
+    report = BarValidation(rows=len(raw), tick_label=tick_label)
     if len(raw) == 0:
         return report, np.array([], dtype=np.int64)
     report.first_ns, report.last_ns = int(ts.min()), int(ts.max())
@@ -128,7 +132,7 @@ def validate_bars(
     report.negative_volume = int((raw["volume"] < 0).sum())
     report.zero_volume = int((raw["volume"] == 0).sum())
     prices = raw[["open_fixed", "high_fixed", "low_fixed", "close_fixed"]].to_numpy()
-    report.off_tick_prices = int((prices % MES_TICK_FIXED != 0).sum())
+    report.off_tick_prices = int((prices % tick_fixed != 0).sum())
     o, h, lo, c = prices.T
     report.ohlc_inconsistent = int(
         ((h < np.maximum(o, c)) | (lo > np.minimum(o, c)) | (lo > h)).sum()
@@ -375,3 +379,276 @@ def validate_calendar_step4b(
                                              f"{hol.name}, {label}: {note}"))
     return CalendarValidation(first, last, len(weekdays), tuple(h.day for h in listed),
                               tuple(sorted(found, key=lambda x: (x.day, x.kind))))
+
+
+# ------------------------ Stage E.2a Task 6/7: step-4b per group calendar (additive) ----
+# The same three rules as ``validate_calendar_step4b``, against a group calendar
+# (data.group_session.GroupCalendar) instead of the equity one, on the research window:
+# (1) every weekday with no bar in its regular session span is a listed full closure; (2) every
+# weekday whose last bar before the day-session close C (design D6's C for the product, from the
+# group's SessionSpec; 15:00 CT for equity, as MES's RTH close) opens before C minus one minute
+# is a listed early halt whose halt time equals the observed last minute plus one; (3) every
+# listed entry of the given years inside the window is observed (early halt: no bar inside its
+# closure, last bar at the halt minus one minute, first bar after at the reopen; full closure: no
+# bar from the day's regular session start to the reopen, first bar after at the reopen; a
+# LATE_OPENS entry: a bar at its open minute and none from its stop time to its open). A reopen
+# at or after ``data_end_ns`` cannot be observed: that part is skipped and noted, never failed.
+LATE_OPEN = "late_open"
+
+
+@dataclass(frozen=True)
+class GroupCalendarCheck:
+    group: str
+    first_day: date
+    last_day: date
+    weekdays_checked: int
+    entries_checked: tuple[tuple[date, str], ...]  # (day, kind) of every listed entry checked
+    discrepancies: tuple[CalendarDiscrepancy, ...]
+    notes: tuple[tuple[date, str], ...]  # parts of an entry that could not be observed
+    observations: tuple[dict, ...] = ()  # what the bars show on the module's watch days
+
+    @property
+    def passed(self) -> bool:
+        return self.weekdays_checked > 0 and not self.discrepancies
+
+    def as_dict(self) -> dict:
+        return {
+            "group": self.group, "passed": self.passed, "first_day": str(self.first_day),
+            "last_day": str(self.last_day), "weekdays_checked": self.weekdays_checked,
+            "entries_checked": [{"day": str(d), "kind": k} for d, k in self.entries_checked],
+            "discrepancies": [{"kind": d.kind, "day": str(d.day), "detail": d.detail}
+                              for d in self.discrepancies],
+            "notes": [{"day": str(d), "note": n} for d, n in self.notes],
+            "observations": list(self.observations),
+        }
+
+
+def _listed_in(cal, day: date) -> str:  # noqa: ANN001 — data.group_session.GroupCalendar
+    hol = cal.holidays.get(day)
+    if hol is None:
+        return "no calendar entry"
+    halt = f" {hol.halt_ct:%H:%M}" if hol.halt_ct else ""
+    return f"listed {hol.kind.value}{halt} ({hol.name})"
+
+
+def _close_for(closes: dict[date, time], day: date) -> time:
+    starts = sorted(d for d in closes if d <= day)
+    if not starts:
+        raise ValueError(f"no day-session close covers {day}")
+    return closes[starts[-1]]
+
+
+def _group_weekday(ts: np.ndarray, cal, day: date, close_ct: time  # noqa: ANN001
+                   ) -> list[CalendarDiscrepancy]:
+    from data.group_session import regular_intervals
+
+    spans = regular_intervals(cal, day)
+    lo, hi = min(s for s, _ in spans), max(e for _, e in spans)
+    i, j = np.searchsorted(ts, [lo, hi], side="left")
+    hol = cal.holidays.get(day)
+    if i == j:
+        if hol is not None and hol.kind is HolidayKind.FULL_CLOSURE:
+            return []
+        return [CalendarDiscrepancy(UNLISTED_CLOSURE, day,
+                                    f"no bar in the session {_fmt(lo)} .. {_fmt(hi)} CT; "
+                                    f"{_listed_in(cal, day)}")]
+    close_ns = ct_ns(day, close_ct)
+    k = int(np.searchsorted(ts, close_ns, side="left"))
+    last = int(ts[k - 1]) if k > i else None
+    if last is not None and last >= close_ns - NS_PER_MIN:
+        return []
+    if (last is not None and hol is not None and hol.kind is HolidayKind.EARLY_HALT
+            and hol.halt_ct is not None and last + NS_PER_MIN == ct_ns(day, hol.halt_ct)):
+        return []
+    implied = f"none (no bar before {close_ct:%H:%M} CT)" if last is None else \
+        _fmt(last + NS_PER_MIN)
+    after = int(ts[k]) if k < ts.size else None
+    return [CalendarDiscrepancy(
+        EARLY_STOP_NOT_LISTED, day,
+        f"last bar before {close_ct:%H:%M} CT {_fmt(last)} (implied halt {implied}); "
+        f"{_listed_in(cal, day)}; next bar {_fmt(after)}; {j - i} bars in the session")]
+
+
+def _window_at(starts: np.ndarray, ends: np.ndarray, probe: int) -> tuple[int, int] | None:
+    w = int(np.searchsorted(starts, probe, side="right")) - 1
+    if w < 0 or probe >= ends[w]:
+        return None
+    return int(starts[w]), int(ends[w])
+
+
+def _observe_group_halt(ts: np.ndarray, hol: Holiday, starts: np.ndarray, ends: np.ndarray,
+                        data_end_ns: int) -> tuple[str | None, str | None]:
+    """(discrepancy note, unobservable note) for a listed early halt."""
+    boundary = ct_ns(hol.day, hol.halt_ct)  # type: ignore[arg-type]
+    win = _window_at(starts, ends, boundary)
+    if win is None:
+        return "the session calendar has no closed window at the halt", None
+    w_start, w_end = win
+    i = int(np.searchsorted(ts, w_start, side="left"))
+    j = int(np.searchsorted(ts, min(w_end, data_end_ns), side="left"))
+    last_before = int(ts[i - 1]) if i > 0 else None
+    first_after = int(ts[j]) if j < ts.size else None
+    notes, skipped = [], None
+    if j > i:
+        notes.append(f"{j - i} bars inside the calendar closure (first {_fmt(int(ts[i]))})")
+    if last_before != w_start - NS_PER_MIN:
+        notes.append(f"last bar {_fmt(last_before)} != expected {_fmt(w_start - NS_PER_MIN)}")
+    if w_end >= data_end_ns:
+        skipped = f"the reopen after this halt is past the data end {_fmt(data_end_ns)}: " \
+                  "not observable"
+    elif first_after != w_end:
+        notes.append(f"first bar after {_fmt(first_after)} != reopen {_fmt(w_end)}")
+    return ("; ".join(notes) or None), skipped
+
+
+def _observe_group_closure(ts: np.ndarray, cal, day: date, starts: np.ndarray,  # noqa: ANN001
+                           ends: np.ndarray, data_end_ns: int) -> tuple[str | None, str | None]:
+    from data.group_session import regular_intervals
+
+    spans = regular_intervals(cal, day)
+    lo, probe = min(s for s, _ in spans), max(e for _, e in spans) - NS_PER_MIN
+    win = _window_at(starts, ends, probe)
+    if win is None:
+        return "the session calendar has no closed window on this day", None
+    reopen = win[1]
+    i, j = np.searchsorted(ts, [lo, min(reopen, data_end_ns)], side="left")
+    first_after = int(ts[j]) if j < ts.size else None
+    notes, skipped = [], None
+    if j > i:
+        notes.append(f"{j - i} bars inside the closure {_fmt(lo)} .. {_fmt(reopen)} "
+                     f"(first {_fmt(int(ts[i]))})")
+    if reopen >= data_end_ns:
+        skipped = f"the reopen after this closure is past the data end {_fmt(data_end_ns)}: " \
+                  "not observable"
+    elif first_after != reopen:
+        notes.append(f"first bar after {_fmt(first_after)} != reopen {_fmt(reopen)}")
+    return ("; ".join(notes) or None), skipped
+
+
+def _observe_late_open(ts: np.ndarray, entry, span_start_ns: int | None = None,  # noqa: ANN001
+                       ) -> tuple[str | None, dict]:
+    """A LATE_OPENS entry. Unscheduled (the 2025-11-28 outage; lead ruling L-4 revised: checked,
+    never a closed window): the first bar of the entry's CT calendar day must open at or after
+    ``open_ct`` (and, when the module sources a stop time, no bar may lie between the stop and
+    the reopen). Scheduled (ruling L-6, ``span_start_ns`` = the trade date's regular session
+    start): no bar from that start to ``open_ct``. Returns (discrepancy note, evidence: the last
+    bar before the open and the first at/after it)."""
+    open_ns = ct_ns(entry.day, entry.open_ct)
+    day_start = ct_ns(entry.day, time(0, 0)) if span_start_ns is None else span_start_ns
+    k = int(np.searchsorted(ts, open_ns, side="left"))
+    i = int(np.searchsorted(ts, day_start, side="left"))
+    last_before = int(ts[k - 1]) if k > 0 else None
+    first_at = int(ts[k]) if k < ts.size else None
+    notes = []
+    if k > i:
+        notes.append(f"{k - i} bars on the day before the late open {_fmt(open_ns)} "
+                     f"(first {_fmt(int(ts[i]))})")
+    if getattr(entry, "halt_from_ct", None) is not None:
+        stop = ct_ns(entry.day + timedelta(days=entry.halt_from_offset_days), entry.halt_from_ct)
+        j = int(np.searchsorted(ts, stop, side="left"))
+        if k > j:
+            notes.append(f"{k - j} bars between the stop {_fmt(stop)} and the open "
+                         f"{_fmt(open_ns)}")
+    evidence = {"day": str(entry.day), "late_open_ct": f"{entry.open_ct:%H:%M}",
+                "last_bar_before_ct": _fmt(last_before), "first_bar_at_or_after_ct": _fmt(first_at)}
+    return ("; ".join(notes) or None), evidence
+
+
+def validate_calendar_group(
+    ts: np.ndarray, cal, first: date, last: date, close_ct: dict[date, time],  # noqa: ANN001
+    *, data_end_ns: int, entry_years: tuple[int, int] = (2025, 2026),
+) -> GroupCalendarCheck:
+    """Step 4b for a group calendar over the weekdays ``first..last`` (``close_ct``: valid_from
+    -> the product's day-session close C, ``GroupCalendar.day_session_close``). Every
+    discrepancy is returned; evidence is CT minutes and bar counts only."""
+    from data.group_session import closed_windows, open_intervals, regular_intervals
+
+    ts = np.sort(np.asarray(ts, dtype=np.int64))
+    days = [first + timedelta(days=n) for n in range((last - first).days + 1)]
+    weekdays = [d for d in days if d.weekday() < 5]
+    notes: list[tuple[date, str]] = []
+    # A booked-forward day whose CME trade date lies past the window (crypto 2026-06-19 ->
+    # 2026-06-22, holdout-1; ruling L-9): its bars are not read, so rules (1)-(2) skip it.
+    skipped = {d: t for d, t in cal.booked_forward.items() if d in weekdays and t > last}
+    for day, target in sorted(skipped.items()):
+        notes.append((day, f"booked forward to {target} (outside the window): its bars are "
+                           "dropped (counted only), so rules (1)-(2) do not check this day"))
+    found = [x for d in weekdays if d not in skipped
+             for x in _group_weekday(ts, cal, d, _close_for(close_ct, d))]
+    opened = open_intervals(cal, first - timedelta(days=5), last + timedelta(days=5))
+    lo = int(opened.starts[0]) - 7 * 86_400 * 1_000_000_000
+    hi = max(int(opened.ends[-1]), data_end_ns) + 7 * 86_400 * 1_000_000_000
+    starts, ends = closed_windows(opened, lo, hi)
+    checked: list[tuple[date, str]] = []
+    late_open_evidence: list[dict] = []
+    for day, hol in sorted(cal.holidays.items()):
+        if not (first <= day <= last and entry_years[0] <= day.year <= entry_years[1]):
+            continue
+        checked.append((day, hol.kind.value))
+        if hol.kind is HolidayKind.EARLY_HALT:
+            bad, skipped = _observe_group_halt(ts, hol, starts, ends, data_end_ns)
+            label = f"early halt {hol.halt_ct:%H:%M}"
+        else:
+            bad, skipped = _observe_group_closure(ts, cal, day, starts, ends, data_end_ns)
+            label = "full closure"
+        if skipped:
+            notes.append((day, f"{hol.name}, {label}: {skipped}"))
+        if bad:
+            found.append(CalendarDiscrepancy(ENTRY_NOT_OBSERVED, day,
+                                             f"{hol.name}, {label}: {bad}"))
+    for day, entry in sorted(cal.late_opens.items()):
+        if not (first <= day <= last and entry_years[0] <= day.year <= entry_years[1]):
+            continue
+        scheduled = day in cal.scheduled_late_opens
+        checked.append((day, "scheduled_late_open" if scheduled else LATE_OPEN))
+        if scheduled and not cal.is_trade_date(day):
+            found.append(CalendarDiscrepancy(ENTRY_NOT_OBSERVED, day,
+                                             f"{entry.name}: late open on a non-trade date"))
+            continue
+        span = min(s for s, _ in regular_intervals(cal, day)) if scheduled else None
+        bad, evidence = _observe_late_open(ts, entry, span)
+        evidence["scheduled"] = scheduled
+        late_open_evidence.append(evidence)
+        if bad:
+            found.append(CalendarDiscrepancy(
+                ENTRY_NOT_OBSERVED, day,
+                f"{entry.name}, late open {entry.open_ct:%H:%M}: {bad}"))
+    for day, (offset, at) in sorted(cal.delayed_starts.items()):
+        if not first <= day <= last:
+            continue
+        checked.append((day, "delayed_start"))
+        open_ns = ct_ns(day + timedelta(days=offset), at)
+        w = int(np.searchsorted(ends, open_ns, side="right"))  # the closed window ending here
+        stop = int(starts[w - 1]) if w > 0 and int(ends[w - 1]) == open_ns else open_ns
+        i, k = np.searchsorted(ts, [stop, open_ns], side="left")
+        late_open_evidence.append({"day": str(day), "scheduled": True,
+                                   "delayed_open_ct": _fmt(open_ns),
+                                   "closed_from_ct": _fmt(stop),
+                                   "first_bar_at_or_after_ct": _fmt(int(ts[k]))
+                                   if k < ts.size else "-"})
+        if k > i:
+            found.append(CalendarDiscrepancy(
+                ENTRY_NOT_OBSERVED, day, f"delayed start {_fmt(open_ns)}: {k - i} bars between "
+                f"{_fmt(stop)} and the delayed open"))
+    observations = tuple(_observe_watch_day(ts, cal, day, note, _close_for(close_ct, day))
+                         for day, note in sorted(cal.watch_days.items()) if first <= day <= last)
+    observations += tuple({**e, "kind": LATE_OPEN} for e in late_open_evidence)
+    return GroupCalendarCheck(cal.group, first, last, len(weekdays), tuple(checked),
+                              tuple(sorted(found, key=lambda x: (x.day, x.kind))), tuple(notes),
+                              observations)
+
+
+def _observe_watch_day(ts: np.ndarray, cal, day: date, note: str,  # noqa: ANN001
+                       close_ct: time) -> dict:
+    """What the bars show on a day the calendar lists without an entry: CT minutes and bar
+    counts only (the first and last bar of the regular session span, the last bar before C)."""
+    from data.group_session import regular_intervals
+
+    spans = regular_intervals(cal, day)
+    lo, hi = min(s for s, _ in spans), max(e for _, e in spans)
+    i, j = np.searchsorted(ts, [lo, hi], side="left")
+    k = int(np.searchsorted(ts, ct_ns(day, close_ct), side="left"))
+    return {"day": str(day), "module_note": note, "bars_in_session": int(j - i),
+            "first_bar_ct": _fmt(int(ts[i])) if j > i else "-",
+            "last_bar_ct": _fmt(int(ts[j - 1])) if j > i else "-",
+            f"last_bar_before_{close_ct:%H%M}_ct": _fmt(int(ts[k - 1])) if k > i else "-"}

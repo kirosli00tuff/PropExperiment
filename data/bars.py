@@ -88,10 +88,19 @@ def is_mes_outright(symbol: str) -> bool:
     return MES_OUTRIGHT.fullmatch(symbol) is not None
 
 
+def outright_pattern(root: str) -> re.Pattern[str]:
+    """Stage E.2a: an outright of ``root`` (CME Globex raw symbol: the root, a futures month
+    letter, then the year as one digit or, for long-dated listings such as NG from mid-2025
+    (NGN25, NGF26), two digits), the MES_OUTRIGHT rule for any product."""
+    return re.compile(re.escape(root) + r"[FGHJKMNQUVXZ][0-9]{1,2}")
+
+
 def raw_symbols_on_bar_dates(
     ts: np.ndarray,
     instrument_ids: np.ndarray,
     raw_intervals: Mapping[str, Sequence[Mapping[str, Any]]],
+    outright: re.Pattern[str] = MES_OUTRIGHT,
+    outright_label: str = "MES",
 ) -> tuple[np.ndarray, list[dict[str, Any]]]:
     """Stage D.1f raw-symbol rule (reports/stage_d1f_confirmation_list.md 1.1, D-4).
 
@@ -101,7 +110,10 @@ def raw_symbols_on_bar_dates(
     instrument_id -> raw_symbol ``result``. A bar whose id maps to no MES outright that day
     gets ``""`` (the caller drops it); the second return value lists every such
     (UTC date, instrument_id) with its bar count and the symbols that DID map, so every drop is
-    logged. Two different MES outrights on one id and date raise: that is not a drop case."""
+    logged. Two different MES outrights on one id and date raise: that is not a drop case.
+
+    Stage E.2a: ``outright`` / ``outright_label`` apply the same rule to another product's
+    outrights (``outright_pattern``); the defaults are MES's, so MES's behaviour is unchanged."""
     days = np.asarray(ts, dtype=np.int64) // NS_PER_DAY
     ids = np.asarray(instrument_ids, dtype=np.int64)
     pairs, inverse, counts = np.unique(np.stack([ids, days], axis=1), axis=0,
@@ -112,10 +124,10 @@ def raw_symbols_on_bar_dates(
         day = (_EPOCH + timedelta(days=int(day_num))).isoformat()
         mapped = sorted({str(e["s"]) for e in raw_intervals.get(str(iid), [])
                          if str(e["d0"]) <= day < str(e["d1"])})
-        outrights = [s for s in mapped if is_mes_outright(s)]
+        outrights = [s for s in mapped if outright.fullmatch(s) is not None]
         if len(outrights) > 1:
-            raise ValueError(f"instrument {iid} maps to several MES outrights on {day}: "
-                             f"{outrights}")
+            raise ValueError(f"instrument {iid} maps to several {outright_label} outrights on "
+                             f"{day}: {outrights}")
         symbols.append(outrights[0] if outrights else "")
         if not outrights:
             unmapped.append({"utc_date": day, "instrument_id": int(iid), "bars": int(count),

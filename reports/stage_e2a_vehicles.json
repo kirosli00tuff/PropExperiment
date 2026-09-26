@@ -1,0 +1,5835 @@
+{
+ "stage": "E.2a",
+ "task": "9 phase 2 (vehicle choice)",
+ "rule": "docs/STAGE_E_DESIGN.md D2 (frozen), read as R1-R12 of reports/stage_e2a_vehicle_rule_readings.md",
+ "generated_utc": "2026-09-25T09:43:53.819369+00:00",
+ "generated_pdt": "2026-09-25 02:43 PDT",
+ "lead_answers": {
+  "Q-1": "accepted (02:42 PDT): SI and HG keep the D9.5 cap of 1; D9.11's 0 is discretionary and R5 lists only SIL and MHG",
+  "Q-2": "accepted (02:42 PDT): vendor-degraded trade dates as BarsCoder lists them"
+ },
+ "phase1_reproduced": {
+  "contracts": 45,
+  "fields_compared": [
+   "r_c_usd_exact",
+   "q_c",
+   "rho_c_exact",
+   "dates_used",
+   "parquet_sha256"
+  ],
+  "differences": 0
+ },
+ "stale_hash_note": "reports/stage_e2a_vehicle_sizes.json lists reports/stage_e2a_costs.json with sha256 02b3838bdc510c56483646bf12a012a5927f4dab7fb350cee21a2bea9fc38b74: the provisional table, read in phase 1 only to cross-check the vendor price factor (q_c does not depend on costs). Phase 2 uses only the frozen table, sha256 f4360bb77272d0335485a9e01c0f6fc6ab99c47d52e640d95f9cd0397296df14.",
+ "inputs_sha256": {
+  "reports/stage_e2a_costs.json": "f4360bb77272d0335485a9e01c0f6fc6ab99c47d52e640d95f9cd0397296df14",
+  "reports/stage_e2a_vehicle_sizes.json": "280d7e9df1953069448ca1762588477146a5d3c35bc53d3e9e2df50272c47325",
+  "reports/stage_e2a_vehicle_rule_readings.md": "8c3c29dd6531782b6b98d75192071977b8caebd37c48de6cab0afd1642d6b458",
+  "reports/stage_e0_liquidity.json": "28d2fdac51be883a0fc0d05e9a9ee4a0233276d3a37f49e08fd9804b0ebeb78c",
+  "reports/stage_e2a_bars.json": "cf5e49e13cbe9a47dbf57343e632da957541f3ececcf9abb2e16a4df0651b0f4",
+  "docs/STAGE_E_DESIGN.md": "615bb1e14f9072b12f6a5c6206b463fc7828989ad0a9c8e463ebb301ea55103a",
+  "data/processed/MNQ/ohlcv-1m_MNQ_v_0_2025-04-01_2026-06-19_research.parquet": "9506eace6dae2e8193947db083451766d0ed168bcfe86f1ece2d25ee845fe315",
+  "data/processed/NQ/ohlcv-1m_NQ_v_0_2025-04-01_2026-06-19_research.parquet": "5284f91e7ada8da99438975f53f8a190626c508e6ab8042a7f8c6cd140df4d6e",
+  "data/processed/RTY/ohlcv-1m_RTY_v_0_2025-04-01_2026-06-19_research.parquet": "45d340b8853595cb4c97dc11abffa4191bc2b44a0260c94adb28904fd7a9a693",
+  "data/processed/M2K/ohlcv-1m_M2K_v_0_2025-04-01_2026-06-19_research.parquet": "fb08ff51bb7c5e85208bdf567e6d09a7dec654c9c6ab47f427b5118c3852f7dc",
+  "data/processed/MYM/ohlcv-1m_MYM_v_0_2025-04-01_2026-06-19_research.parquet": "061e816d27b3a5e824abda357f21be6a6aded672558ea4ce3aeb3660d9fd09d8",
+  "data/processed/YM/ohlcv-1m_YM_v_0_2025-04-01_2026-06-19_research.parquet": "71d4f33718d5ab5ff609d4fcddfdff087413f757dbae887473111466d52f0c0f",
+  "data/processed/ZT/ohlcv-1m_ZT_v_0_2025-04-01_2026-06-19_research.parquet": "729a661b70e50e0254eb6366b90da48e526b079b4ded34c3c8752080f9d04b08",
+  "data/processed/ZF/ohlcv-1m_ZF_v_0_2025-04-01_2026-06-19_research.parquet": "12f7aba9b57d49c93370e27529677224d715559e94d5001e8a4c9b5471111d10",
+  "data/processed/ZN/ohlcv-1m_ZN_v_0_2025-04-01_2026-06-19_research.parquet": "f4a403f8641c593daac8b8ea42674233c90574181fac3a001d26c4c31e487ee0",
+  "data/processed/TN/ohlcv-1m_TN_v_0_2025-04-01_2026-06-19_research.parquet": "3d7e1affa41ab8fb3e4a2704fcf583ff75c8d1745e40fc503a9e723191a0a2df",
+  "data/processed/ZB/ohlcv-1m_ZB_v_0_2025-04-01_2026-06-19_research.parquet": "bc437fe4d7fefbd60f2f84a2d2e9b04ef0eae2672f049f62a0adb55f0dc920c0",
+  "data/processed/UB/ohlcv-1m_UB_v_0_2025-04-01_2026-06-19_research.parquet": "98c384f0d0f165be4b74917b8a16f6e6ba0e1bc642516fbf7383444da9a12369",
+  "data/processed/6E/ohlcv-1m_6E_v_0_2025-04-01_2026-06-19_research.parquet": "32738b639684cc382cc06597bb39ea9c4c7d5df0925bc40977c1e6ebc53bc8d5",
+  "data/processed/M6E/ohlcv-1m_M6E_v_0_2025-04-01_2026-06-19_research.parquet": "c1cd01a3741a5097bfdf9cbf2d250f3c0a1201bf1c7b2e86a8ddee3dac71efbb",
+  "data/processed/E7/ohlcv-1m_E7_v_0_2025-04-01_2026-06-19_research.parquet": "3c44af807c4be19346c9a6cea8f00eb75f9f234e28e327d914e4b0c33327f138",
+  "data/processed/6A/ohlcv-1m_6A_v_0_2025-04-01_2026-06-19_research.parquet": "41d579724f2e04bb5a6183fde996fe76bb05b78e44cb6cdb49f631a1caa8133b",
+  "data/processed/M6A/ohlcv-1m_M6A_v_0_2025-04-01_2026-06-19_research.parquet": "1edea024a19420cc10a73e03a2ccc0f962b122797d2a4120c21f683512dd86a1",
+  "data/processed/6B/ohlcv-1m_6B_v_0_2025-04-01_2026-06-19_research.parquet": "ec0af6afb9541f6ab8ebefe116add156416290ee4faf76a7c962dc261b428fa8",
+  "data/processed/M6B/ohlcv-1m_M6B_v_0_2025-04-01_2026-06-19_research.parquet": "3b1cacc19d3727e111f16709ce30eefada71ed4a701c36ca1d254679c6503633",
+  "data/processed/6C/ohlcv-1m_6C_v_0_2025-04-01_2026-06-19_research.parquet": "5c39143960d544c11b4fb9790e64450e98faee60cb07fe8d7e2ee4eccca52eb8",
+  "data/processed/6J/ohlcv-1m_6J_v_0_2025-04-01_2026-06-19_research.parquet": "bf8f6a218c01e05cbad48488d0d3c3e71e7076afacd2c9f12914a2f87142bbb2",
+  "data/processed/6S/ohlcv-1m_6S_v_0_2025-04-01_2026-06-19_research.parquet": "579bce49a102928240088400b4ba4d6398fe5974ef7b5dab43326a2ba1fbf27c",
+  "data/processed/6N/ohlcv-1m_6N_v_0_2025-04-01_2026-06-19_research.parquet": "d6497c80be6ef65c5d58b29152fffd6fe6dcdc4fe1ad927a0449e226810dc6e8",
+  "data/processed/CL/ohlcv-1m_CL_v_0_2025-04-01_2026-06-19_research.parquet": "589b824c8a622b1fb583c36a0226d845bd427dd2a00f2b0c659f66cbb9a08c4b",
+  "data/processed/MCL/ohlcv-1m_MCL_v_0_2025-04-01_2026-06-19_research.parquet": "6be9bb5ba95ab66515c8a4739bfcbc82894f8602619ff97ab8ee9799d2e2cd69",
+  "data/processed/QM/ohlcv-1m_QM_v_0_2025-04-01_2026-06-19_research.parquet": "c1ded239a5a836ddf545b429b2a8b1bd20e3ac00afeddae8b756f3b52a77508c",
+  "data/processed/NG/ohlcv-1m_NG_v_0_2025-04-01_2026-06-19_research.parquet": "41f1f1c8e00dbef5b5065544371cd2af25878dc1316e099781145b00c60e9648",
+  "data/processed/MNG/ohlcv-1m_MNG_v_0_2025-04-01_2026-06-19_research.parquet": "ef4b32d857d2c721ff65aaa31d03d377439b5fde0ffc1e5224f2ff8e74760767",
+  "data/processed/QG/ohlcv-1m_QG_v_0_2025-04-01_2026-06-19_research.parquet": "5d67ced9f2e7705c9d7856df4872469d46b4dd322ff8b14859db18f585657ce0",
+  "data/processed/RB/ohlcv-1m_RB_v_0_2025-04-01_2026-06-19_research.parquet": "e086852ec627240b7b44d177a7e5b1637681e886aab214f1f333031446c90be7",
+  "data/processed/HO/ohlcv-1m_HO_v_0_2025-04-01_2026-06-19_research.parquet": "a5cde179158087720c1d1f3cb210fe66934b3adadddc3d33d923023a095b6781",
+  "data/processed/MGC/ohlcv-1m_MGC_v_0_2025-04-01_2026-06-19_research.parquet": "f6bcdd63c9bfc99b1b5a358fc549fe795796209dc5f8374e752906ca75852dd2",
+  "data/processed/GC/ohlcv-1m_GC_v_0_2025-04-01_2026-06-19_research.parquet": "fa8c47a0eb2bed8860caaac7831ce9d374dddd06b0269c494c5c7602d08f9c65",
+  "data/processed/SIL/ohlcv-1m_SIL_v_0_2025-04-01_2026-06-19_research.parquet": "b1e4b093f972c9ad698f757c5f36f29a9f4e05708338869878f1de539ade6d61",
+  "data/processed/SI/ohlcv-1m_SI_v_0_2025-04-01_2026-06-19_research.parquet": "340679454cf50829ca631ca9e51ae8eb744cbe01f285f4bff1b8153c42b42d8b",
+  "data/processed/HG/ohlcv-1m_HG_v_0_2025-04-01_2026-06-19_research.parquet": "ebce30184089590ef65c800e0a45c354def557b867447c23fa995d995a6179e9",
+  "data/processed/MHG/ohlcv-1m_MHG_v_0_2025-04-01_2026-06-19_research.parquet": "4c3deb8ecd7c2b322f42b7eefc836d99e71ec8014be4fa1d254952e10543b2f8",
+  "data/processed/ZC/ohlcv-1m_ZC_v_0_2025-04-01_2026-06-19_research.parquet": "37106ebc79d7d331d1f7d8847ca329eacb95b828ca5386af3d2b39a556e0e410",
+  "data/processed/ZW/ohlcv-1m_ZW_v_0_2025-04-01_2026-06-19_research.parquet": "a9c459d94f4dacdadbb5d5ec75be31cc0c76edecfd7f1d53f45476cf84b9c55a",
+  "data/processed/ZS/ohlcv-1m_ZS_v_0_2025-04-01_2026-06-19_research.parquet": "4d159a37b36f6d354a55b685fdb1cc4310cefda246e4df8dab798c7e8e0464c8",
+  "data/processed/ZM/ohlcv-1m_ZM_v_0_2025-04-01_2026-06-19_research.parquet": "74d0b79665c9dd34b1e691fcc81adbb0669be89380dca911229e78640a9cb486",
+  "data/processed/ZL/ohlcv-1m_ZL_v_0_2025-04-01_2026-06-19_research.parquet": "4a33fdc073176e521a564d00c474be1755b761863eb3344cba154baa99340641",
+  "data/processed/HE/ohlcv-1m_HE_v_0_2025-04-01_2026-06-19_research.parquet": "7188ac519e199e6cdbe0a7bb50b5a462e16d9922a3c548c2b58d7c604f17cce6",
+  "data/processed/LE/ohlcv-1m_LE_v_0_2025-04-01_2026-06-19_research.parquet": "883b34eb75e2d79b3d6e56daf1e3dba18d89b3fd97b301a68e9e09a86255cd91",
+  "data/processed/MBT/ohlcv-1m_MBT_v_0_2025-04-01_2026-06-19_research.parquet": "78ef1710165fd3a184d84d5e544526c85b6608355178b2b62ec60550d479cf14",
+  "data/cme_calendar.py": "61218c13635ca73558fcf6ff73884e7cd6f09d5f5f5ceb0d7d7abd28ad968c89",
+  "data/calendars/equity.py": "3315e81225400add3ba2cc949117c090db0806d495879382d5f3ad02b59e041c",
+  "data/calendars/__init__.py": "a13255d8f91a806aa8c056ce2a4014d9eedfbbd969ec4e467ad8d6a295a7b86a",
+  "data/calendars/rates.py": "449c152977d21dc84721871d970960845bc3e21e603361f5d59e71841ef4df23",
+  "data/calendars/fx.py": "07bdf8c6e4363d5626e655841dbb4ffa65458cd66d5b273a069ed4e47eb746b6",
+  "data/calendars/energy.py": "ef90ef8d19df6e2d87cfeb57a224d49a5ba95c66e22cf27bee67b4741f052806",
+  "data/calendars/metals.py": "8224189e04e349ab13047b10181ed41ceb5d61567fb681726545b0a03cad58d1",
+  "data/calendars/grains.py": "a685731be437412fa8dcb9120f0f37392112d6b4d41a781db393351a38f7806f",
+  "data/calendars/livestock.py": "57727e68c448153ed018d0c0d0f03107db56d93e26da190e6d356f34e743c501",
+  "data/calendars/crypto.py": "683807b74d5fb888dcdbcb61ec816adc436a7edec4da28576ebc267a07d97227"
+ },
+ "calendar_modules_changed_since_phase1": [
+  "data/calendars/equity.py"
+ ],
+ "code_sha256": {
+  "screening/vehicles.py": "3864247b60c180c4a8799a6e223bf6f64613f073a922de9768924503b4738466",
+  "screening/vehicles_run.py": "378228a1b7d0c3211c13824395d053d3c1eb3e2db478d5cf69758e76e457db26",
+  "screening/vehicles_md.py": "09fe65adff795882b732573f2424e3e4b0809ed9535a769a1ecba4b5ecbc7f20",
+  "screening/vehicles_choice.py": "65d0f6b24acfebaa5e0125066eee7d568a482e2048618a4b97ec0ce44f2bd855",
+  "screening/vehicles_choice_md.py": "c680c556c375d68a242d9c4742e92ed2fc907a384ea900733bfed69472260868",
+  "sim/product_costs.py": "2a640c7ca7a7d83a03cb1975f6a99729462c32336c403835c1b9798203018f51"
+ },
+ "counts": {
+  "exposures": 31,
+  "contracts": 45,
+  "by_status": {
+   "chosen": [
+    "Nasdaq-100",
+    "Russell 2000",
+    "Dow",
+    "10-year",
+    "Ultra 10-year",
+    "Bond",
+    "Ultra bond",
+    "EUR",
+    "AUD",
+    "GBP",
+    "JPY",
+    "CHF",
+    "WTI crude",
+    "Henry Hub gas",
+    "gold",
+    "copper",
+    "wheat",
+    "soybeans",
+    "soybean meal",
+    "soybean oil",
+    "lean hogs",
+    "live cattle"
+   ],
+   "undersized": [
+    "2-year",
+    "5-year",
+    "CAD",
+    "NZD",
+    "corn",
+    "bitcoin"
+   ],
+   "no candidate: not traded in Stage E": [
+    "RBOB",
+    "ULSD",
+    "silver"
+   ]
+  }
+ },
+ "exposures": [
+  {
+   "exposure": "Nasdaq-100",
+   "cluster": "K1",
+   "admissible": [
+    "MNQ",
+    "NQ"
+   ],
+   "status": "chosen",
+   "vehicle": "MNQ",
+   "q_c": 1,
+   "candidates": [
+    "MNQ"
+   ],
+   "preferred": [
+    "MNQ"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: MNQ (cost per dollar of risk 0.00566618)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 170,
+   "arithmetic": [
+    "MNQ (ADV 2,363,465): r_c = $363.4614; R*/r_c = 360.68 / 363.4614 = 0.9923, round-half-up 1; q_c = min(cap 10 (D9.5), max(1, 1)) = 1; rho_c = 1 x 363.4614 / 360.68 = 1.0077: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "MNQ cost: (commission $1.22 + 2 x one-side $0.419719 [0.839437 ticks x $0.5]) / r_c $363.4614 = $2.059437 / $363.4614 = 0.00566618 per dollar of risk",
+    "NQ (ADV 593,595): r_c = $3613.0769; R*/r_c = 360.68 / 3613.0769 = 0.0998, round-half-up 0; q_c = min(cap 1 (D9.5), max(1, 0)) = 1; rho_c = 1 x 3613.0769 / 360.68 = 10.0174: rho_c > 2.0: not a candidate",
+    "NQ cost: (commission $3.78 + 2 x one-side $5.886088 [1.177218 ticks x $5.0]) / r_c $3613.0769 = $15.552175 / $3613.0769 = 0.00430441 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['MNQ']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['MNQ']",
+    "Decides: the only preferred candidate: MNQ (cost per dollar of risk 0.00566618)",
+    "eps_X = floor(85.00 / (1 x $0.5)) = floor(170.0000) = 170 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "Russell 2000",
+   "cluster": "K1",
+   "admissible": [
+    "RTY",
+    "M2K"
+   ],
+   "status": "chosen",
+   "vehicle": "M2K",
+   "q_c": 3,
+   "candidates": [
+    "M2K"
+   ],
+   "preferred": [
+    "M2K"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: M2K (cost per dollar of risk 0.01862724)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 56,
+   "arithmetic": [
+    "RTY (ADV 209,871): r_c = $1060.7168; R*/r_c = 360.68 / 1060.7168 = 0.3400, round-half-up 0; q_c = min(cap 1 (D9.5), max(1, 0)) = 1; rho_c = 1 x 1060.7168 / 360.68 = 2.9409: rho_c > 2.0: not a candidate",
+    "RTY cost: (commission $3.78 + 2 x one-side $4.007939 [0.801588 ticks x $5.0]) / r_c $1060.7168 = $11.795878 / $1060.7168 = 0.01112067 per dollar of risk",
+    "M2K (ADV 115,832): r_c = $106.1346; R*/r_c = 360.68 / 106.1346 = 3.3983, round-half-up 3; q_c = min(cap 10 (D9.5), max(1, 3)) = 3; rho_c = 3 x 106.1346 / 360.68 = 0.8828: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "M2K cost: (commission $1.22 + 2 x one-side $0.378497 [0.756995 ticks x $0.5]) / r_c $106.1346 = $1.976995 / $106.1346 = 0.01862724 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['M2K']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['M2K']",
+    "Decides: the only preferred candidate: M2K (cost per dollar of risk 0.01862724)",
+    "eps_X = floor(85.00 / (3 x $0.5)) = floor(56.6667) = 56 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "Dow",
+   "cluster": "K1",
+   "admissible": [
+    "MYM",
+    "YM"
+   ],
+   "status": "chosen",
+   "vehicle": "MYM",
+   "q_c": 3,
+   "candidates": [
+    "MYM"
+   ],
+   "preferred": [
+    "MYM"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: MYM (cost per dollar of risk 0.01518325)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 56,
+   "arithmetic": [
+    "MYM (ADV 152,686): r_c = $131.1486; R*/r_c = 360.68 / 131.1486 = 2.7502, round-half-up 3; q_c = min(cap 10 (D9.5), max(1, 3)) = 3; rho_c = 3 x 131.1486 / 360.68 = 1.0908: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "MYM cost: (commission $1.22 + 2 x one-side $0.385631 [0.771262 ticks x $0.5]) / r_c $131.1486 = $1.991262 / $131.1486 = 0.01518325 per dollar of risk",
+    "YM (ADV 108,142): r_c = $1312.2727; R*/r_c = 360.68 / 1312.2727 = 0.2749, round-half-up 0; q_c = min(cap 1 (D9.5), max(1, 0)) = 1; rho_c = 1 x 1312.2727 / 360.68 = 3.6383: rho_c > 2.0: not a candidate",
+    "YM cost: (commission $3.78 + 2 x one-side $5.168428 [1.033686 ticks x $5.0]) / r_c $1312.2727 = $14.116856 / $1312.2727 = 0.01075756 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['MYM']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['MYM']",
+    "Decides: the only preferred candidate: MYM (cost per dollar of risk 0.01518325)",
+    "eps_X = floor(85.00 / (3 x $0.5)) = floor(56.6667) = 56 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "2-year",
+   "cluster": "K2",
+   "admissible": [
+    "ZT"
+   ],
+   "status": "undersized",
+   "vehicle": "ZT",
+   "q_c": 1,
+   "candidates": [
+    "ZT"
+   ],
+   "preferred": [],
+   "excluded_by_r7": [],
+   "deciding": "R10: no candidate has rho_c >= 0.5; the only candidate: ZT (cost per dollar of risk 0.09021897)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 10,
+   "arithmetic": [
+    "ZT (ADV 1,325,938): r_c = $112.6803; R*/r_c = 360.68 / 112.6803 = 3.2009, round-half-up 3; q_c = min(cap 1 (D9.5), max(1, 3)) = 1; rho_c = 1 x 112.6803 / 360.68 = 0.3124: rho_c < 0.5: candidate, not preferred",
+    "ZT cost: (commission $2.32 + 2 x one-side $3.922950 [0.502138 ticks x $7.8125]) / r_c $112.6803 = $10.165900 / $112.6803 = 0.09021897 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['ZT']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): none",
+    "Decides: R10: no candidate has rho_c >= 0.5; the only candidate: ZT (cost per dollar of risk 0.09021897)",
+    "eps_X = floor(85.00 / (1 x $7.8125)) = floor(10.8800) = 10 net ticks per contract per day (R12)",
+    "R10: undersized, traded at the cap; its funnel-derived epsilon then governs (D2, D3)"
+   ]
+  },
+  {
+   "exposure": "5-year",
+   "cluster": "K2",
+   "admissible": [
+    "ZF"
+   ],
+   "status": "undersized",
+   "vehicle": "ZF",
+   "q_c": 1,
+   "candidates": [
+    "ZF"
+   ],
+   "preferred": [],
+   "excluded_by_r7": [],
+   "deciding": "R10: no candidate has rho_c >= 0.5; the only candidate: ZF (cost per dollar of risk 0.07481033)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 10,
+   "arithmetic": [
+    "ZF (ADV 1,941,530): r_c = $135.5441; R*/r_c = 360.68 / 135.5441 = 2.6610, round-half-up 3; q_c = min(cap 1 (D9.5), max(1, 3)) = 1; rho_c = 1 x 135.5441 / 360.68 = 0.3758: rho_c < 0.5: candidate, not preferred",
+    "ZF cost: (commission $2.32 + 2 x one-side $3.910051 [0.500487 ticks x $7.8125]) / r_c $135.5441 = $10.140102 / $135.5441 = 0.07481033 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['ZF']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): none",
+    "Decides: R10: no candidate has rho_c >= 0.5; the only candidate: ZF (cost per dollar of risk 0.07481033)",
+    "eps_X = floor(85.00 / (1 x $7.8125)) = floor(10.8800) = 10 net ticks per contract per day (R12)",
+    "R10: undersized, traded at the cap; its funnel-derived epsilon then governs (D2, D3)"
+   ]
+  },
+  {
+   "exposure": "10-year",
+   "cluster": "K2",
+   "admissible": [
+    "ZN"
+   ],
+   "status": "chosen",
+   "vehicle": "ZN",
+   "q_c": 1,
+   "candidates": [
+    "ZN"
+   ],
+   "preferred": [
+    "ZN"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: ZN (cost per dollar of risk 0.08904009)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 5,
+   "arithmetic": [
+    "ZN (ADV 2,589,058): r_c = $204.9279; R*/r_c = 360.68 / 204.9279 = 1.7600, round-half-up 2; q_c = min(cap 1 (D9.5), max(1, 2)) = 1; rho_c = 1 x 204.9279 / 360.68 = 0.5682: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "ZN cost: (commission $2.62 + 2 x one-side $7.813399 [0.500058 ticks x $15.625]) / r_c $204.9279 = $18.246797 / $204.9279 = 0.08904009 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['ZN']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['ZN']",
+    "Decides: the only preferred candidate: ZN (cost per dollar of risk 0.08904009)",
+    "eps_X = floor(85.00 / (1 x $15.625)) = floor(5.4400) = 5 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "Ultra 10-year",
+   "cluster": "K2",
+   "admissible": [
+    "TN"
+   ],
+   "status": "chosen",
+   "vehicle": "TN",
+   "q_c": 1,
+   "candidates": [
+    "TN"
+   ],
+   "preferred": [
+    "TN"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: TN (cost per dollar of risk 0.07056881)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 5,
+   "arithmetic": [
+    "TN (ADV 819,357): r_c = $259.9432; R*/r_c = 360.68 / 259.9432 = 1.3875, round-half-up 1; q_c = min(cap 1 (D9.5), max(1, 1)) = 1; rho_c = 1 x 259.9432 / 360.68 = 0.7207: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "TN cost: (commission $2.62 + 2 x one-side $7.861940 [0.503164 ticks x $15.625]) / r_c $259.9432 = $18.343880 / $259.9432 = 0.07056881 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['TN']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['TN']",
+    "Decides: the only preferred candidate: TN (cost per dollar of risk 0.07056881)",
+    "eps_X = floor(85.00 / (1 x $15.625)) = floor(5.4400) = 5 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "Bond",
+   "cluster": "K2",
+   "admissible": [
+    "ZB"
+   ],
+   "status": "chosen",
+   "vehicle": "ZB",
+   "q_c": 1,
+   "candidates": [
+    "ZB"
+   ],
+   "preferred": [
+    "ZB"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: ZB (cost per dollar of risk 0.08465928)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 2,
+   "arithmetic": [
+    "ZB (ADV 609,604): r_c = $402.0979; R*/r_c = 360.68 / 402.0979 = 0.8970, round-half-up 1; q_c = min(cap 1 (D9.5), max(1, 1)) = 1; rho_c = 1 x 402.0979 / 360.68 = 1.1148: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "ZB cost: (commission $2.76 + 2 x one-side $15.640659 [0.500501 ticks x $31.25]) / r_c $402.0979 = $34.041318 / $402.0979 = 0.08465928 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['ZB']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['ZB']",
+    "Decides: the only preferred candidate: ZB (cost per dollar of risk 0.08465928)",
+    "eps_X = floor(85.00 / (1 x $31.25)) = floor(2.7200) = 2 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "Ultra bond",
+   "cluster": "K2",
+   "admissible": [
+    "UB"
+   ],
+   "status": "chosen",
+   "vehicle": "UB",
+   "q_c": 1,
+   "candidates": [
+    "UB"
+   ],
+   "preferred": [
+    "UB"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: UB (cost per dollar of risk 0.06844882)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 2,
+   "arithmetic": [
+    "UB (ADV 505,131): r_c = $501.4205; R*/r_c = 360.68 / 501.4205 = 0.7193, round-half-up 1; q_c = min(cap 1 (D9.5), max(1, 1)) = 1; rho_c = 1 x 501.4205 / 360.68 = 1.3902: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "UB cost: (commission $2.92 + 2 x one-side $15.700819 [0.502426 ticks x $31.25]) / r_c $501.4205 = $34.321639 / $501.4205 = 0.06844882 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['UB']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['UB']",
+    "Decides: the only preferred candidate: UB (cost per dollar of risk 0.06844882)",
+    "eps_X = floor(85.00 / (1 x $31.25)) = floor(2.7200) = 2 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "EUR",
+   "cluster": "K3",
+   "admissible": [
+    "6E",
+    "M6E",
+    "E7"
+   ],
+   "status": "chosen",
+   "vehicle": "6E",
+   "q_c": 1,
+   "candidates": [
+    "6E",
+    "E7"
+   ],
+   "preferred": [
+    "6E"
+   ],
+   "excluded_by_r7": [
+    "M6E"
+   ],
+   "deciding": "the only preferred candidate: 6E (cost per dollar of risk 0.03783446)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 13,
+   "arithmetic": [
+    "6E (ADV 216,466): r_c = $319.4539; R*/r_c = 360.68 / 319.4539 = 1.1291, round-half-up 1; q_c = min(cap 1 (D9.5), max(1, 1)) = 1; rho_c = 1 x 319.4539 / 360.68 = 0.8857: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "6E cost: (commission $4.22 + 2 x one-side $3.933184 [0.629309 ticks x $6.25]) / r_c $319.4539 = $12.086367 / $319.4539 = 0.03783446 per dollar of risk",
+    "M6E (ADV 24,552): r_c = $32.0350; R*/r_c = 360.68 / 32.0350 = 11.2589, round-half-up 11; q_c = min(cap 10 (D9.5), max(1, 11)) = 10; rho_c = 10 x 32.0350 / 360.68 = 0.8882: R7 (U7): not a candidate",
+    "M6E cost: (commission $1.00 + 2 x one-side $0.701023 [0.560818 ticks x $1.25]) / r_c $32.0350 = $2.402045 / $32.0350 = 0.07498194 per dollar of risk",
+    "E7 (ADV 4,018): r_c = $160.7295; R*/r_c = 360.68 / 160.7295 = 2.2440, round-half-up 2; q_c = min(cap 1 (D9.5), max(1, 2)) = 1; rho_c = 1 x 160.7295 / 360.68 = 0.4456: rho_c < 0.5: candidate, not preferred",
+    "E7 cost: (commission $2.72 + 2 x one-side $3.981629 [0.637061 ticks x $6.25]) / r_c $160.7295 = $10.683257 / $160.7295 = 0.06646730 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['6E', 'E7']; excluded by R7: ['M6E']",
+    "Preferred (rho_c >= 0.5): ['6E']",
+    "Decides: the only preferred candidate: 6E (cost per dollar of risk 0.03783446)",
+    "eps_X = floor(85.00 / (1 x $6.25)) = floor(13.6000) = 13 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "AUD",
+   "cluster": "K3",
+   "admissible": [
+    "6A",
+    "M6A"
+   ],
+   "status": "chosen",
+   "vehicle": "6A",
+   "q_c": 1,
+   "candidates": [
+    "6A"
+   ],
+   "preferred": [
+    "6A"
+   ],
+   "excluded_by_r7": [
+    "M6A"
+   ],
+   "deciding": "the only preferred candidate: 6A (cost per dollar of risk 0.05967461)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 17,
+   "arithmetic": [
+    "6A (ADV 119,206): r_c = $183.6519; R*/r_c = 360.68 / 183.6519 = 1.9639, round-half-up 2; q_c = min(cap 1 (D9.5), max(1, 2)) = 1; rho_c = 1 x 183.6519 / 360.68 = 0.5092: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "6A cost: (commission $4.22 + 2 x one-side $3.369677 [0.673935 ticks x $5.0]) / r_c $183.6519 = $10.959353 / $183.6519 = 0.05967461 per dollar of risk",
+    "M6A (ADV 7,765): r_c = $18.4164; R*/r_c = 360.68 / 18.4164 = 19.5847, round-half-up 20; q_c = min(cap 10 (D9.5), max(1, 20)) = 10; rho_c = 10 x 18.4164 / 360.68 = 0.5106: R7 (U7): not a candidate",
+    "M6A cost: (commission $1.00 + 2 x one-side $0.585391 [0.585391 ticks x $1.0]) / r_c $18.4164 = $2.170781 / $18.4164 = 0.11787229 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['6A']; excluded by R7: ['M6A']",
+    "Preferred (rho_c >= 0.5): ['6A']",
+    "Decides: the only preferred candidate: 6A (cost per dollar of risk 0.05967461)",
+    "eps_X = floor(85.00 / (1 x $5.0)) = floor(17.0000) = 17 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "GBP",
+   "cluster": "K3",
+   "admissible": [
+    "6B",
+    "M6B"
+   ],
+   "status": "chosen",
+   "vehicle": "6B",
+   "q_c": 1,
+   "candidates": [
+    "6B",
+    "M6B"
+   ],
+   "preferred": [
+    "6B",
+    "M6B"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "lowest cost per dollar of risk: 6B 0.06423688 < M6B 0.11177039",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 13,
+   "arithmetic": [
+    "6B (ADV 103,657): r_c = $186.2201; R*/r_c = 360.68 / 186.2201 = 1.9368, round-half-up 2; q_c = min(cap 1 (D9.5), max(1, 2)) = 1; rho_c = 1 x 186.2201 / 360.68 = 0.5163: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "6B cost: (commission $4.22 + 2 x one-side $3.871100 [0.619376 ticks x $6.25]) / r_c $186.2201 = $11.962201 / $186.2201 = 0.06423688 per dollar of risk",
+    "M6B (ADV 4,290): r_c = $18.7137; R*/r_c = 360.68 / 18.7137 = 19.2735, round-half-up 19; q_c = min(cap 10 (D9.5), max(1, 19)) = 10; rho_c = 10 x 18.7137 / 360.68 = 0.5188: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "M6B cost: (commission $1.00 + 2 x one-side $0.545821 [0.873313 ticks x $0.625]) / r_c $18.7137 = $2.091642 / $18.7137 = 0.11177039 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['6B', 'M6B']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['6B', 'M6B']",
+    "Decides: lowest cost per dollar of risk: 6B 0.06423688 < M6B 0.11177039",
+    "eps_X = floor(85.00 / (1 x $6.25)) = floor(13.6000) = 13 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "CAD",
+   "cluster": "K3",
+   "admissible": [
+    "6C"
+   ],
+   "status": "undersized",
+   "vehicle": "6C",
+   "q_c": 1,
+   "candidates": [
+    "6C"
+   ],
+   "preferred": [],
+   "excluded_by_r7": [],
+   "deciding": "R10: no candidate has rho_c >= 0.5; the only candidate: 6C (cost per dollar of risk 0.08428011)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 17,
+   "arithmetic": [
+    "6C (ADV 81,946): r_c = $120.2901; R*/r_c = 360.68 / 120.2901 = 2.9984, round-half-up 3; q_c = min(cap 1 (D9.5), max(1, 3)) = 1; rho_c = 1 x 120.2901 / 360.68 = 0.3335: rho_c < 0.5: candidate, not preferred",
+    "6C cost: (commission $4.22 + 2 x one-side $2.959031 [0.591806 ticks x $5.0]) / r_c $120.2901 = $10.138063 / $120.2901 = 0.08428011 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['6C']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): none",
+    "Decides: R10: no candidate has rho_c >= 0.5; the only candidate: 6C (cost per dollar of risk 0.08428011)",
+    "eps_X = floor(85.00 / (1 x $5.0)) = floor(17.0000) = 17 net ticks per contract per day (R12)",
+    "R10: undersized, traded at the cap; its funnel-derived epsilon then governs (D2, D3)"
+   ]
+  },
+  {
+   "exposure": "JPY",
+   "cluster": "K3",
+   "admissible": [
+    "6J"
+   ],
+   "status": "chosen",
+   "vehicle": "6J",
+   "q_c": 1,
+   "candidates": [
+    "6J"
+   ],
+   "preferred": [
+    "6J"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: 6J (cost per dollar of risk 0.05762520)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 13,
+   "arithmetic": [
+    "6J (ADV 180,897): r_c = $204.8208; R*/r_c = 360.68 / 204.8208 = 1.7610, round-half-up 2; q_c = min(cap 1 (D9.5), max(1, 2)) = 1; rho_c = 1 x 204.8208 / 360.68 = 0.5679: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "6J cost: (commission $4.22 + 2 x one-side $3.791421 [0.606627 ticks x $6.25]) / r_c $204.8208 = $11.802841 / $204.8208 = 0.05762520 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['6J']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['6J']",
+    "Decides: the only preferred candidate: 6J (cost per dollar of risk 0.05762520)",
+    "eps_X = floor(85.00 / (1 x $6.25)) = floor(13.6000) = 13 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "CHF",
+   "cluster": "K3",
+   "admissible": [
+    "6S"
+   ],
+   "status": "chosen",
+   "vehicle": "6S",
+   "q_c": 1,
+   "candidates": [
+    "6S"
+   ],
+   "preferred": [
+    "6S"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: 6S (cost per dollar of risk 0.04027844)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 13,
+   "arithmetic": [
+    "6S (ADV 30,520): r_c = $410.7509; R*/r_c = 360.68 / 410.7509 = 0.8781, round-half-up 1; q_c = min(cap 1 (D9.5), max(1, 1)) = 1; rho_c = 1 x 410.7509 / 360.68 = 1.1388: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "6S cost: (commission $4.22 + 2 x one-side $6.162201 [0.985952 ticks x $6.25]) / r_c $410.7509 = $16.544402 / $410.7509 = 0.04027844 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['6S']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['6S']",
+    "Decides: the only preferred candidate: 6S (cost per dollar of risk 0.04027844)",
+    "eps_X = floor(85.00 / (1 x $6.25)) = floor(13.6000) = 13 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "NZD",
+   "cluster": "K3",
+   "admissible": [
+    "6N"
+   ],
+   "status": "undersized",
+   "vehicle": "6N",
+   "q_c": 1,
+   "candidates": [
+    "6N"
+   ],
+   "preferred": [],
+   "excluded_by_r7": [],
+   "deciding": "R10: no candidate has rho_c >= 0.5; the only candidate: 6N (cost per dollar of risk 0.07196189)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 17,
+   "arithmetic": [
+    "6N (ADV 40,801): r_c = $156.4846; R*/r_c = 360.68 / 156.4846 = 2.3049, round-half-up 2; q_c = min(cap 1 (D9.5), max(1, 2)) = 1; rho_c = 1 x 156.4846 / 360.68 = 0.4339: rho_c < 0.5: candidate, not preferred",
+    "6N cost: (commission $4.22 + 2 x one-side $3.520466 [0.704093 ticks x $5.0]) / r_c $156.4846 = $11.260931 / $156.4846 = 0.07196189 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['6N']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): none",
+    "Decides: R10: no candidate has rho_c >= 0.5; the only candidate: 6N (cost per dollar of risk 0.07196189)",
+    "eps_X = floor(85.00 / (1 x $5.0)) = floor(17.0000) = 17 net ticks per contract per day (R12)",
+    "R10: undersized, traded at the cap; its funnel-derived epsilon then governs (D2, D3)"
+   ]
+  },
+  {
+   "exposure": "WTI crude",
+   "cluster": "K4",
+   "admissible": [
+    "CL",
+    "MCL",
+    "QM"
+   ],
+   "status": "chosen",
+   "vehicle": "MCL",
+   "q_c": 4,
+   "candidates": [
+    "MCL",
+    "QM"
+   ],
+   "preferred": [
+    "MCL",
+    "QM"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "lowest cost per dollar of risk: MCL 0.03458511 < QM 0.04372145",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 21,
+   "arithmetic": [
+    "CL (ADV 1,079,857): r_c = $918.7891; R*/r_c = 360.68 / 918.7891 = 0.3926, round-half-up 0; q_c = min(cap 1 (D9.5), max(1, 0)) = 1; rho_c = 1 x 918.7891 / 360.68 = 2.5474: rho_c > 2.0: not a candidate",
+    "CL cost: (commission $4.02 + 2 x one-side $6.630279 [0.663028 ticks x $10.0]) / r_c $918.7891 = $17.280559 / $918.7891 = 0.01880797 per dollar of risk",
+    "MCL (ADV 252,100): r_c = $91.5698; R*/r_c = 360.68 / 91.5698 = 3.9389, round-half-up 4; q_c = min(cap 10 (D9.5), max(1, 4)) = 4; rho_c = 4 x 91.5698 / 360.68 = 1.0155: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "MCL cost: (commission $1.72 + 2 x one-side $0.723475 [0.723475 ticks x $1.0]) / r_c $91.5698 = $3.166950 / $91.5698 = 0.03458511 per dollar of risk",
+    "QM (ADV 9,446): r_c = $457.2190; R*/r_c = 360.68 / 457.2190 = 0.7889, round-half-up 1; q_c = min(cap 1 (D9.5), max(1, 1)) = 1; rho_c = 1 x 457.2190 / 360.68 = 1.2677: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "QM cost: (commission $3.42 + 2 x one-side $8.285139 [0.662811 ticks x $12.5]) / r_c $457.2190 = $19.990278 / $457.2190 = 0.04372145 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['MCL', 'QM']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['MCL', 'QM']",
+    "Decides: lowest cost per dollar of risk: MCL 0.03458511 < QM 0.04372145",
+    "eps_X = floor(85.00 / (4 x $1.0)) = floor(21.2500) = 21 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "Henry Hub gas",
+   "cluster": "K4",
+   "admissible": [
+    "NG",
+    "MNG",
+    "QG"
+   ],
+   "status": "chosen",
+   "vehicle": "NG",
+   "q_c": 1,
+   "candidates": [
+    "NG",
+    "MNG",
+    "QG"
+   ],
+   "preferred": [
+    "NG",
+    "MNG"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "lowest cost per dollar of risk: NG 0.02615376 < MNG 0.08191186",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 8,
+   "arithmetic": [
+    "NG (ADV 521,792): r_c = $639.3050; R*/r_c = 360.68 / 639.3050 = 0.5642, round-half-up 1; q_c = min(cap 1 (D9.5), max(1, 1)) = 1; rho_c = 1 x 639.3050 / 360.68 = 1.7725: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "NG cost: (commission $4.22 + 2 x one-side $6.250116 [0.625012 ticks x $10.0]) / r_c $639.3050 = $16.720232 / $639.3050 = 0.02615376 per dollar of risk",
+    "MNG (ADV 14,942): r_c = $65.3092; R*/r_c = 360.68 / 65.3092 = 5.5227, round-half-up 6; q_c = min(cap 10 (D9.5), max(1, 6)) = 6; rho_c = 6 x 65.3092 / 360.68 = 1.0864: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "MNG cost: (commission $1.92 + 2 x one-side $1.714797 [1.714797 ticks x $1.0]) / r_c $65.3092 = $5.349595 / $65.3092 = 0.08191186 per dollar of risk",
+    "QG (ADV 4,060): r_c = $159.1603; R*/r_c = 360.68 / 159.1603 = 2.2661, round-half-up 2; q_c = min(cap 1 (D9.5), max(1, 2)) = 1; rho_c = 1 x 159.1603 / 360.68 = 0.4413: rho_c < 0.5: candidate, not preferred",
+    "QG cost: (commission $2.02 + 2 x one-side $7.623844 [0.609908 ticks x $12.5]) / r_c $159.1603 = $17.267688 / $159.1603 = 0.10849243 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['NG', 'MNG', 'QG']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['NG', 'MNG']",
+    "Decides: lowest cost per dollar of risk: NG 0.02615376 < MNG 0.08191186",
+    "eps_X = floor(85.00 / (1 x $10.0)) = floor(8.5000) = 8 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "RBOB",
+   "cluster": "K4",
+   "admissible": [
+    "RB"
+   ],
+   "status": "no candidate: not traded in Stage E",
+   "vehicle": null,
+   "q_c": null,
+   "candidates": [],
+   "preferred": [],
+   "excluded_by_r7": [],
+   "deciding": "no admissible contract has rho_c <= 2.0 after R7",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": null,
+   "arithmetic": [
+    "RB (ADV 206,850): r_c = $1012.7925; R*/r_c = 360.68 / 1012.7925 = 0.3561, round-half-up 0; q_c = min(cap 1 (D9.5), max(1, 0)) = 1; rho_c = 1 x 1012.7925 / 360.68 = 2.8080: rho_c > 2.0: not a candidate",
+    "RB cost: (commission $4.02 + 2 x one-side $9.570754 [2.278751 ticks x $4.2]) / r_c $1012.7925 = $23.161507 / $1012.7925 = 0.02286896 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): none; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): none",
+    "Decides: no admissible contract has rho_c <= 2.0 after R7"
+   ]
+  },
+  {
+   "exposure": "ULSD",
+   "cluster": "K4",
+   "admissible": [
+    "HO"
+   ],
+   "status": "no candidate: not traded in Stage E",
+   "vehicle": null,
+   "q_c": null,
+   "candidates": [],
+   "preferred": [],
+   "excluded_by_r7": [],
+   "deciding": "no admissible contract has rho_c <= 2.0 after R7",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": null,
+   "arithmetic": [
+    "HO (ADV 187,479): r_c = $1441.3968; R*/r_c = 360.68 / 1441.3968 = 0.2502, round-half-up 0; q_c = min(cap 1 (D9.5), max(1, 0)) = 1; rho_c = 1 x 1441.3968 / 360.68 = 3.9963: rho_c > 2.0: not a candidate",
+    "HO cost: (commission $4.02 + 2 x one-side $18.626569 [4.434897 ticks x $4.2]) / r_c $1441.3968 = $41.273138 / $1441.3968 = 0.02863413 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): none; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): none",
+    "Decides: no admissible contract has rho_c <= 2.0 after R7"
+   ]
+  },
+  {
+   "exposure": "gold",
+   "cluster": "K5",
+   "admissible": [
+    "MGC",
+    "GC"
+   ],
+   "status": "chosen",
+   "vehicle": "MGC",
+   "q_c": 1,
+   "candidates": [
+    "MGC"
+   ],
+   "preferred": [
+    "MGC"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: MGC (cost per dollar of risk 0.01576225)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 85,
+   "arithmetic": [
+    "MGC (ADV 429,702): r_c = $258.5897; R*/r_c = 360.68 / 258.5897 = 1.3948, round-half-up 1; q_c = min(cap 10 (D9.5), max(1, 1)) = 1; rho_c = 1 x 258.5897 / 360.68 = 0.7170: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "MGC cost: (commission $1.92 + 2 x one-side $1.077978 [1.077978 ticks x $1.0]) / r_c $258.5897 = $4.075956 / $258.5897 = 0.01576225 per dollar of risk",
+    "GC (ADV 212,764): r_c = $2586.9655; R*/r_c = 360.68 / 2586.9655 = 0.1394, round-half-up 0; q_c = min(cap 1 (D9.5), max(1, 0)) = 1; rho_c = 1 x 2586.9655 / 360.68 = 7.1725: rho_c > 2.0: not a candidate",
+    "GC cost: (commission $4.32 + 2 x one-side $19.521125 [1.952113 ticks x $10.0]) / r_c $2586.9655 = $43.362251 / $2586.9655 = 0.01676182 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['MGC']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['MGC']",
+    "Decides: the only preferred candidate: MGC (cost per dollar of risk 0.01576225)",
+    "eps_X = floor(85.00 / (1 x $1.0)) = floor(85.0000) = 85 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "silver",
+   "cluster": "K5",
+   "admissible": [
+    "SIL",
+    "SI"
+   ],
+   "status": "no candidate: not traded in Stage E",
+   "vehicle": null,
+   "q_c": null,
+   "candidates": [],
+   "preferred": [],
+   "excluded_by_r7": [],
+   "deciding": "no admissible contract has rho_c <= 2.0 after R7",
+   "sil_mhg_sentence_binds": false,
+   "eps_X_net_ticks": null,
+   "arithmetic": [
+    "SIL (ADV 134,882): r_c = $931.0517; R*/r_c = 360.68 / 931.0517 = 0.3874, round-half-up 0; q_c = min(cap 2 (D9.11), max(1, 0)) = 1; rho_c = 1 x 931.0517 / 360.68 = 2.5814: rho_c > 2.0: not a candidate",
+    "SIL cost: (commission $2.72 + 2 x one-side $5.581591 [1.116318 ticks x $5.0]) / r_c $931.0517 = $13.883183 / $931.0517 = 0.01491129 per dollar of risk",
+    "SI (ADV 83,587): r_c = $4653.9655; R*/r_c = 360.68 / 4653.9655 = 0.0775, round-half-up 0; q_c = min(cap 1 (D9.5), max(1, 0)) = 1; rho_c = 1 x 4653.9655 / 360.68 = 12.9033: rho_c > 2.0: not a candidate",
+    "SI cost: (commission $4.32 + 2 x one-side $42.052621 [1.682105 ticks x $25.0]) / r_c $4653.9655 = $88.425242 / $4653.9655 = 0.01899998 per dollar of risk",
+    "R9 (D9.11) SIL sentence: without it the rule gives no candidate: not traded in Stage E; the sentence does not bind",
+    "Candidates (rho_c <= 2.0, less R7): none; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): none",
+    "Decides: no admissible contract has rho_c <= 2.0 after R7"
+   ]
+  },
+  {
+   "exposure": "copper",
+   "cluster": "K5",
+   "admissible": [
+    "HG",
+    "MHG"
+   ],
+   "status": "chosen",
+   "vehicle": "MHG",
+   "q_c": 2,
+   "candidates": [
+    "MHG"
+   ],
+   "preferred": [
+    "MHG"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "R9 (D9.11): MHG is a candidate (rho 0.6112), so it is the vehicle",
+   "sil_mhg_sentence_binds": false,
+   "eps_X_net_ticks": 34,
+   "arithmetic": [
+    "HG (ADV 77,679): r_c = $1101.2931; R*/r_c = 360.68 / 1101.2931 = 0.3275, round-half-up 0; q_c = min(cap 1 (D9.5), max(1, 0)) = 1; rho_c = 1 x 1101.2931 / 360.68 = 3.0534: rho_c > 2.0: not a candidate",
+    "HG cost: (commission $4.32 + 2 x one-side $13.964791 [1.117183 ticks x $12.5]) / r_c $1101.2931 = $32.249582 / $1101.2931 = 0.02928338 per dollar of risk",
+    "MHG (ADV 21,803): r_c = $110.2155; R*/r_c = 360.68 / 110.2155 = 3.2725, round-half-up 3; q_c = min(cap 2 (D9.11), max(1, 3)) = 2; rho_c = 2 x 110.2155 / 360.68 = 0.6112: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "MHG cost: (commission $1.92 + 2 x one-side $1.344426 [1.075541 ticks x $1.25]) / r_c $110.2155 = $4.608852 / $110.2155 = 0.04181673 per dollar of risk",
+    "R9 (D9.11) MHG sentence: without it the rule gives chosen MHG; the sentence does not bind",
+    "Candidates (rho_c <= 2.0, less R7): ['MHG']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['MHG']",
+    "Decides: R9 (D9.11): MHG is a candidate (rho 0.6112), so it is the vehicle",
+    "eps_X = floor(85.00 / (2 x $1.25)) = floor(34.0000) = 34 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "corn",
+   "cluster": "K6",
+   "admissible": [
+    "ZC"
+   ],
+   "status": "undersized",
+   "vehicle": "ZC",
+   "q_c": 1,
+   "candidates": [
+    "ZC"
+   ],
+   "preferred": [],
+   "excluded_by_r7": [],
+   "deciding": "R10: no candidate has rho_c >= 0.5; the only candidate: ZC (cost per dollar of risk 0.11264807)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 6,
+   "arithmetic": [
+    "ZC (ADV 505,663): r_c = $158.1642; R*/r_c = 360.68 / 158.1642 = 2.2804, round-half-up 2; q_c = min(cap 1 (D9.5), max(1, 2)) = 1; rho_c = 1 x 158.1642 / 360.68 = 0.4385: rho_c < 0.5: candidate, not preferred",
+    "ZC cost: (commission $5.28 + 2 x one-side $6.268447 [0.501476 ticks x $12.5]) / r_c $158.1642 = $17.816893 / $158.1642 = 0.11264807 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['ZC']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): none",
+    "Decides: R10: no candidate has rho_c >= 0.5; the only candidate: ZC (cost per dollar of risk 0.11264807)",
+    "eps_X = floor(85.00 / (1 x $12.5)) = floor(6.8000) = 6 net ticks per contract per day (R12)",
+    "R10: undersized, traded at the cap; its funnel-derived epsilon then governs (D2, D3)"
+   ]
+  },
+  {
+   "exposure": "wheat",
+   "cluster": "K6",
+   "admissible": [
+    "ZW"
+   ],
+   "status": "chosen",
+   "vehicle": "ZW",
+   "q_c": 1,
+   "candidates": [
+    "ZW"
+   ],
+   "preferred": [
+    "ZW"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: ZW (cost per dollar of risk 0.07878321)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 6,
+   "arithmetic": [
+    "ZW (ADV 180,405): r_c = $234.7473; R*/r_c = 360.68 / 234.7473 = 1.5365, round-half-up 2; q_c = min(cap 1 (D9.5), max(1, 2)) = 1; rho_c = 1 x 234.7473 / 360.68 = 0.6508: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "ZW cost: (commission $5.28 + 2 x one-side $6.607072 [0.528566 ticks x $12.5]) / r_c $234.7473 = $18.494144 / $234.7473 = 0.07878321 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['ZW']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['ZW']",
+    "Decides: the only preferred candidate: ZW (cost per dollar of risk 0.07878321)",
+    "eps_X = floor(85.00 / (1 x $12.5)) = floor(6.8000) = 6 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "soybeans",
+   "cluster": "K6",
+   "admissible": [
+    "ZS"
+   ],
+   "status": "chosen",
+   "vehicle": "ZS",
+   "q_c": 1,
+   "candidates": [
+    "ZS"
+   ],
+   "preferred": [
+    "ZS"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: ZS (cost per dollar of risk 0.06029396)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 6,
+   "arithmetic": [
+    "ZS (ADV 302,997): r_c = $304.3907; R*/r_c = 360.68 / 304.3907 = 1.1849, round-half-up 1; q_c = min(cap 1 (D9.5), max(1, 1)) = 1; rho_c = 1 x 304.3907 / 360.68 = 0.8439: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "ZS cost: (commission $5.28 + 2 x one-side $6.536460 [0.522917 ticks x $12.5]) / r_c $304.3907 = $18.352920 / $304.3907 = 0.06029396 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['ZS']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['ZS']",
+    "Decides: the only preferred candidate: ZS (cost per dollar of risk 0.06029396)",
+    "eps_X = floor(85.00 / (1 x $12.5)) = floor(6.8000) = 6 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "soybean meal",
+   "cluster": "K6",
+   "admissible": [
+    "ZM"
+   ],
+   "status": "chosen",
+   "vehicle": "ZM",
+   "q_c": 1,
+   "candidates": [
+    "ZM"
+   ],
+   "preferred": [
+    "ZM"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: ZM (cost per dollar of risk 0.07561320)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 8,
+   "arithmetic": [
+    "ZM (ADV 181,637): r_c = $212.6374; R*/r_c = 360.68 / 212.6374 = 1.6962, round-half-up 2; q_c = min(cap 1 (D9.5), max(1, 2)) = 1; rho_c = 1 x 212.6374 / 360.68 = 0.5895: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "ZM cost: (commission $5.28 + 2 x one-side $5.399096 [0.539910 ticks x $10.0]) / r_c $212.6374 = $16.078192 / $212.6374 = 0.07561320 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['ZM']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['ZM']",
+    "Decides: the only preferred candidate: ZM (cost per dollar of risk 0.07561320)",
+    "eps_X = floor(85.00 / (1 x $10.0)) = floor(8.5000) = 8 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "soybean oil",
+   "cluster": "K6",
+   "admissible": [
+    "ZL"
+   ],
+   "status": "chosen",
+   "vehicle": "ZL",
+   "q_c": 1,
+   "candidates": [
+    "ZL"
+   ],
+   "preferred": [
+    "ZL"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: ZL (cost per dollar of risk 0.04275670)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 14,
+   "arithmetic": [
+    "ZL (ADV 232,819): r_c = $304.8298; R*/r_c = 360.68 / 304.8298 = 1.1832, round-half-up 1; q_c = min(cap 1 (D9.5), max(1, 1)) = 1; rho_c = 1 x 304.8298 / 360.68 = 0.8452: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "ZL cost: (commission $5.28 + 2 x one-side $3.876757 [0.646126 ticks x $6.0]) / r_c $304.8298 = $13.033515 / $304.8298 = 0.04275670 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['ZL']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['ZL']",
+    "Decides: the only preferred candidate: ZL (cost per dollar of risk 0.04275670)",
+    "eps_X = floor(85.00 / (1 x $6.0)) = floor(14.1667) = 14 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "lean hogs",
+   "cluster": "K6",
+   "admissible": [
+    "HE"
+   ],
+   "status": "chosen",
+   "vehicle": "HE",
+   "q_c": 1,
+   "candidates": [
+    "HE"
+   ],
+   "preferred": [
+    "HE"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: HE (cost per dollar of risk 0.05758892)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 8,
+   "arithmetic": [
+    "HE (ADV 67,267): r_c = $322.9630; R*/r_c = 360.68 / 322.9630 = 1.1168, round-half-up 1; q_c = min(cap 1 (D9.5), max(1, 1)) = 1; rho_c = 1 x 322.9630 / 360.68 = 0.8954: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "HE cost: (commission $5.22 + 2 x one-side $6.689544 [0.668954 ticks x $10.0]) / r_c $322.9630 = $18.599087 / $322.9630 = 0.05758892 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['HE']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['HE']",
+    "Decides: the only preferred candidate: HE (cost per dollar of risk 0.05758892)",
+    "eps_X = floor(85.00 / (1 x $10.0)) = floor(8.5000) = 8 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "live cattle",
+   "cluster": "K6",
+   "admissible": [
+    "LE"
+   ],
+   "status": "chosen",
+   "vehicle": "LE",
+   "q_c": 1,
+   "candidates": [
+    "LE"
+   ],
+   "preferred": [
+    "LE"
+   ],
+   "excluded_by_r7": [],
+   "deciding": "the only preferred candidate: LE (cost per dollar of risk 0.03384317)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 8,
+   "arithmetic": [
+    "LE (ADV 68,652): r_c = $707.1591; R*/r_c = 360.68 / 707.1591 = 0.5100, round-half-up 1; q_c = min(cap 1 (D9.5), max(1, 1)) = 1; rho_c = 1 x 707.1591 / 360.68 = 1.9606: 0.5 <= rho_c <= 2.0: candidate, preferred",
+    "LE cost: (commission $5.22 + 2 x one-side $9.356252 [0.935625 ticks x $10.0]) / r_c $707.1591 = $23.932503 / $707.1591 = 0.03384317 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['LE']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): ['LE']",
+    "Decides: the only preferred candidate: LE (cost per dollar of risk 0.03384317)",
+    "eps_X = floor(85.00 / (1 x $10.0)) = floor(8.5000) = 8 net ticks per contract per day (R12)"
+   ]
+  },
+  {
+   "exposure": "bitcoin",
+   "cluster": "K7",
+   "admissible": [
+    "MBT"
+   ],
+   "status": "undersized",
+   "vehicle": "MBT",
+   "q_c": 1,
+   "candidates": [
+    "MBT"
+   ],
+   "preferred": [],
+   "excluded_by_r7": [],
+   "deciding": "R10: no candidate has rho_c >= 0.5; the only candidate: MBT (cost per dollar of risk 0.03667083)",
+   "sil_mhg_sentence_binds": null,
+   "eps_X_net_ticks": 170,
+   "arithmetic": [
+    "MBT (ADV 69,615): r_c = $120.6135; R*/r_c = 360.68 / 120.6135 = 2.9904, round-half-up 3; q_c = min(cap 1 (D9.5), max(1, 3)) = 1; rho_c = 1 x 120.6135 / 360.68 = 0.3344: rho_c < 0.5: candidate, not preferred",
+    "MBT cost: (commission $2.82 + 2 x one-side $0.801498 [1.602996 ticks x $0.5]) / r_c $120.6135 = $4.422996 / $120.6135 = 0.03667083 per dollar of risk",
+    "Candidates (rho_c <= 2.0, less R7): ['MBT']; excluded by R7: none",
+    "Preferred (rho_c >= 0.5): none",
+    "Decides: R10: no candidate has rho_c >= 0.5; the only candidate: MBT (cost per dollar of risk 0.03667083)",
+    "eps_X = floor(85.00 / (1 x $0.5)) = floor(170.0000) = 170 net ticks per contract per day (R12)",
+    "R10: undersized, traded at the cap; its funnel-derived epsilon then governs (D2, D3)"
+   ]
+  }
+ ],
+ "contracts": {
+  "MNQ": {
+   "exposure": "Nasdaq-100",
+   "O_X": "08:30",
+   "C_X": "15:00",
+   "r_c_usd": 363.4614035087719,
+   "r_c_usd_exact": "207173/570",
+   "q_c": 1,
+   "cap_c": 10,
+   "cap_source": "D9.5",
+   "rho_c": 1.0077115545879227,
+   "rho_c_exact": "1035865/1027938",
+   "tick_value_usd": "0.5",
+   "commission_rt_usd": 1.22,
+   "one_side_slippage_ticks": 0.8394370644314145,
+   "one_side_slippage_usd": 0.41971853221570726,
+   "round_turn_cost_usd_per_contract": 2.0594370644314144,
+   "cost_per_dollar_of_risk": 0.005666178154131602,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9692805184569444,
+     "sell_ticks": 0.9692805184569444,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9031496008866111,
+     "sell_ticks": 0.9031496008866111,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8567439010375,
+     "sell_ticks": 0.8567439010375,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8278767445171111,
+     "sell_ticks": 0.8278767445171111,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8193932584325,
+     "sell_ticks": 0.8193932584325,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8160155871444444,
+     "sell_ticks": 0.8160155871444444,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8191963886764444,
+     "sell_ticks": 0.8191963886764444,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8230526490144444,
+     "sell_ticks": 0.8230526490144444,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8137693820407222,
+     "sell_ticks": 0.8137693820407222,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8103806656385556,
+     "sell_ticks": 0.8103806656385556,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8197689664490555,
+     "sell_ticks": 0.8197689664490555,
+     "fallback": false
+    },
+    {
+     "bucket": "14:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8166347273845,
+     "sell_ticks": 0.8166347273845,
+     "fallback": false
+    },
+    {
+     "bucket": "14:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8174194479295556,
+     "sell_ticks": 0.8174194479295556,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "NQ": {
+   "exposure": "Nasdaq-100",
+   "O_X": "08:30",
+   "C_X": "15:00",
+   "r_c_usd": 3613.076923076923,
+   "r_c_usd_exact": "46970/13",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 10.017403025055238,
+   "rho_c_exact": "1174250/117221",
+   "tick_value_usd": "5.0",
+   "commission_rt_usd": 3.78,
+   "one_side_slippage_ticks": 1.1772175306459403,
+   "one_side_slippage_usd": 5.8860876532297,
+   "round_turn_cost_usd_per_contract": 15.552175306459402,
+   "cost_per_dollar_of_risk": 0.0043044130079619375,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.3878416796887778,
+     "sell_ticks": 1.3878416796887778,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.2798108673304445,
+     "sell_ticks": 1.2798108673304445,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.2413394832485556,
+     "sell_ticks": 1.2413394832485556,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.211547794731111,
+     "sell_ticks": 1.211547794731111,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1847715092489444,
+     "sell_ticks": 1.1847715092489444,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1775833144228889,
+     "sell_ticks": 1.1775833144228889,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1438428782227221,
+     "sell_ticks": 1.1438428782227221,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1558205161581667,
+     "sell_ticks": 1.1558205161581667,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1102755695652777,
+     "sell_ticks": 1.1102755695652777,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1096449318455,
+     "sell_ticks": 1.1096449318455,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1141276674254443,
+     "sell_ticks": 1.1141276674254443,
+     "fallback": false
+    },
+    {
+     "bucket": "14:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0911483494794445,
+     "sell_ticks": 1.0911483494794445,
+     "fallback": false
+    },
+    {
+     "bucket": "14:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0960733370299445,
+     "sell_ticks": 1.0960733370299445,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "RTY": {
+   "exposure": "Russell 2000",
+   "O_X": "08:30",
+   "C_X": "15:00",
+   "r_c_usd": 1060.7167832167831,
+   "r_c_usd_exact": "303365/286",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 2.940880512412064,
+   "rho_c_exact": "7584125/2578862",
+   "tick_value_usd": "5.0",
+   "commission_rt_usd": 3.78,
+   "one_side_slippage_ticks": 0.8015878440441025,
+   "one_side_slippage_usd": 4.007939220220512,
+   "round_turn_cost_usd_per_contract": 11.795878440441026,
+   "cost_per_dollar_of_risk": 0.011120667295060845,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8845750720601111,
+     "sell_ticks": 0.8845750720601111,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8082017082333889,
+     "sell_ticks": 0.8082017082333889,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8304242680835555,
+     "sell_ticks": 0.8304242680835555,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7977883305045556,
+     "sell_ticks": 0.7977883305045556,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7998955214517778,
+     "sell_ticks": 0.7998955214517778,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8084779019932777,
+     "sell_ticks": 0.8084779019932777,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8259892610768333,
+     "sell_ticks": 0.8259892610768333,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8138983266383889,
+     "sell_ticks": 0.8138983266383889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8003128950753889,
+     "sell_ticks": 0.8003128950753889,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7866651670950555,
+     "sell_ticks": 0.7866651670950555,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7677037648291111,
+     "sell_ticks": 0.7677037648291111,
+     "fallback": false
+    },
+    {
+     "bucket": "14:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7542252868676667,
+     "sell_ticks": 0.7542252868676667,
+     "fallback": false
+    },
+    {
+     "bucket": "14:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7424844686642222,
+     "sell_ticks": 0.7424844686642222,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "M2K": {
+   "exposure": "Russell 2000",
+   "O_X": "08:30",
+   "C_X": "15:00",
+   "r_c_usd": 106.13461538461539,
+   "r_c_usd_exact": "5519/52",
+   "q_c": 3,
+   "cap_c": 10,
+   "cap_source": "D9.5",
+   "rho_c": 0.8827876404398529,
+   "rho_c_exact": "413925/468884",
+   "tick_value_usd": "0.5",
+   "commission_rt_usd": 1.22,
+   "one_side_slippage_ticks": 0.7569945920689872,
+   "one_side_slippage_usd": 0.3784972960344936,
+   "round_turn_cost_usd_per_contract": 1.976994592068987,
+   "cost_per_dollar_of_risk": 0.018627236598584406,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8237371710776666,
+     "sell_ticks": 0.8237371710776666,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7921169425652222,
+     "sell_ticks": 0.7921169425652222,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7677567829479445,
+     "sell_ticks": 0.7677567829479445,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7486786037602777,
+     "sell_ticks": 0.7486786037602777,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7508145585716667,
+     "sell_ticks": 0.7508145585716667,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7498847485193333,
+     "sell_ticks": 0.7498847485193333,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7585324864888889,
+     "sell_ticks": 0.7585324864888889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7477368922228889,
+     "sell_ticks": 0.7477368922228889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7484132161221111,
+     "sell_ticks": 0.7484132161221111,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.752553764441,
+     "sell_ticks": 0.752553764441,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7339805083424444,
+     "sell_ticks": 0.7339805083424444,
+     "fallback": false
+    },
+    {
+     "bucket": "14:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7331449058008334,
+     "sell_ticks": 0.7331449058008334,
+     "fallback": false
+    },
+    {
+     "bucket": "14:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7335791160365556,
+     "sell_ticks": 0.7335791160365556,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "MYM": {
+   "exposure": "Dow",
+   "O_X": "08:30",
+   "C_X": "15:00",
+   "r_c_usd": 131.1486013986014,
+   "r_c_usd_exact": "75017/572",
+   "q_c": 3,
+   "cap_c": 10,
+   "cap_source": "D9.5",
+   "rho_c": 1.0908445275474221,
+   "rho_c_exact": "5626275/5157724",
+   "tick_value_usd": "0.5",
+   "commission_rt_usd": 1.22,
+   "one_side_slippage_ticks": 0.7712618722352607,
+   "one_side_slippage_usd": 0.38563093611763033,
+   "round_turn_cost_usd_per_contract": 1.9912618722352606,
+   "cost_per_dollar_of_risk": 0.01518324900913885,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8274595642691667,
+     "sell_ticks": 0.8274595642691667,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7884847402397778,
+     "sell_ticks": 0.7884847402397778,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7820005202104444,
+     "sell_ticks": 0.7820005202104444,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7885546739257222,
+     "sell_ticks": 0.7885546739257222,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7807856521486111,
+     "sell_ticks": 0.7807856521486111,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.756243938934,
+     "sell_ticks": 0.756243938934,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7598703934348889,
+     "sell_ticks": 0.7598703934348889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7576535897152777,
+     "sell_ticks": 0.7576535897152777,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7636931834195,
+     "sell_ticks": 0.7636931834195,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7603820392046666,
+     "sell_ticks": 0.7603820392046666,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7517279087246667,
+     "sell_ticks": 0.7517279087246667,
+     "fallback": false
+    },
+    {
+     "bucket": "14:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7375982052632222,
+     "sell_ticks": 0.7375982052632222,
+     "fallback": false
+    },
+    {
+     "bucket": "14:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7719499295684444,
+     "sell_ticks": 0.7719499295684444,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "YM": {
+   "exposure": "Dow",
+   "O_X": "08:30",
+   "C_X": "15:00",
+   "r_c_usd": 1312.2727272727273,
+   "r_c_usd_exact": "14435/11",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 3.6383296198090473,
+   "rho_c_exact": "360875/99187",
+   "tick_value_usd": "5.0",
+   "commission_rt_usd": 3.78,
+   "one_side_slippage_ticks": 1.0336856271266752,
+   "one_side_slippage_usd": 5.168428135633376,
+   "round_turn_cost_usd_per_contract": 14.116856271266752,
+   "cost_per_dollar_of_risk": 0.01075756279764006,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0614163006688333,
+     "sell_ticks": 1.0614163006688333,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.042896703237611,
+     "sell_ticks": 1.042896703237611,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0254362568334445,
+     "sell_ticks": 1.0254362568334445,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0156425199727221,
+     "sell_ticks": 1.0156425199727221,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0401388555736666,
+     "sell_ticks": 1.0401388555736666,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0423414406720555,
+     "sell_ticks": 1.0423414406720555,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0417859583221667,
+     "sell_ticks": 1.0417859583221667,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0438203573154445,
+     "sell_ticks": 1.0438203573154445,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0459715562732779,
+     "sell_ticks": 1.0459715562732779,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0277030071696112,
+     "sell_ticks": 1.0277030071696112,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.022591574266,
+     "sell_ticks": 1.022591574266,
+     "fallback": false
+    },
+    {
+     "bucket": "14:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0267371706528334,
+     "sell_ticks": 1.0267371706528334,
+     "fallback": false
+    },
+    {
+     "bucket": "14:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0014314516891112,
+     "sell_ticks": 1.0014314516891112,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "ZT": {
+   "exposure": "2-year",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 112.68028846153847,
+   "r_c_usd_exact": "46875/416",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.3124106921967907,
+   "rho_c_exact": "1171875/3751072",
+   "tick_value_usd": "7.8125",
+   "commission_rt_usd": 2.32,
+   "one_side_slippage_ticks": 0.5021375799333292,
+   "one_side_slippage_usd": 3.922949843229134,
+   "round_turn_cost_usd_per_contract": 10.165899686458268,
+   "cost_per_dollar_of_risk": 0.09021897108408831,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.5017241560138334,
+     "sell_ticks": 0.5017241560138334,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5056286739717778,
+     "sell_ticks": 0.5056286739717778,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5019897082475555,
+     "sell_ticks": 0.5019897082475555,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5028655294675,
+     "sell_ticks": 0.5028655294675,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5024680374818888,
+     "sell_ticks": 0.5024680374818888,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5007268438109445,
+     "sell_ticks": 0.5007268438109445,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5024480558168889,
+     "sell_ticks": 0.5024480558168889,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5025895790425,
+     "sell_ticks": 0.5025895790425,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5002347486597222,
+     "sell_ticks": 0.5002347486597222,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5020036584971667,
+     "sell_ticks": 0.5020036584971667,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5054037432714444,
+     "sell_ticks": 0.5054037432714444,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5005875432597222,
+     "sell_ticks": 0.5005875432597222,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5008841303041112,
+     "sell_ticks": 0.5008841303041112,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000960952752223,
+     "sell_ticks": 0.5000960952752223,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "ZF": {
+   "exposure": "5-year",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 135.54414335664336,
+   "r_c_usd_exact": "310125/2288",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.37580166174072127,
+   "rho_c_exact": "7753125/20630896",
+   "tick_value_usd": "7.8125",
+   "commission_rt_usd": 2.32,
+   "one_side_slippage_ticks": 0.5004865247626084,
+   "one_side_slippage_usd": 3.9100509747078775,
+   "round_turn_cost_usd_per_contract": 10.140101949415756,
+   "cost_per_dollar_of_risk": 0.07481032893273115,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.5015881898606667,
+     "sell_ticks": 0.5015881898606667,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5007062138572778,
+     "sell_ticks": 0.5007062138572778,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000943851557222,
+     "sell_ticks": 0.5000943851557222,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5001166622186111,
+     "sell_ticks": 0.5001166622186111,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5002368294829445,
+     "sell_ticks": 0.5002368294829445,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5010052333526112,
+     "sell_ticks": 0.5010052333526112,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5001058811401111,
+     "sell_ticks": 0.5001058811401111,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5001522549861112,
+     "sell_ticks": 0.5001522549861112,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5003378276183333,
+     "sell_ticks": 0.5003378276183333,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5005802886956111,
+     "sell_ticks": 0.5005802886956111,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5022625168232778,
+     "sell_ticks": 0.5022625168232778,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5001009002799445,
+     "sell_ticks": 0.5001009002799445,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5002489019873889,
+     "sell_ticks": 0.5002489019873889,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000097046166111,
+     "sell_ticks": 0.5000097046166111,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "ZN": {
+   "exposure": "10-year",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 204.9278846153846,
+   "r_c_usd_exact": "42625/208",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.5681709122085633,
+   "rho_c_exact": "1065625/1875536",
+   "tick_value_usd": "15.625",
+   "commission_rt_usd": 2.62,
+   "one_side_slippage_ticks": 0.5000575125406042,
+   "one_side_slippage_usd": 7.8133986334469405,
+   "round_turn_cost_usd_per_contract": 18.246797266893882,
+   "cost_per_dollar_of_risk": 0.08904008988888978,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.5002087499021667,
+     "sell_ticks": 0.5002087499021667,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5002538808063334,
+     "sell_ticks": 0.5002538808063334,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000059292428334,
+     "sell_ticks": 0.5000059292428334,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000048079787223,
+     "sell_ticks": 0.5000048079787223,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000048931408889,
+     "sell_ticks": 0.5000048931408889,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000037186148333,
+     "sell_ticks": 0.5000037186148333,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000028811571666,
+     "sell_ticks": 0.5000028811571666,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000027322145556,
+     "sell_ticks": 0.5000027322145556,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000038751882222,
+     "sell_ticks": 0.5000038751882222,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000021428603889,
+     "sell_ticks": 0.5000021428603889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5004065270596111,
+     "sell_ticks": 0.5004065270596111,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000015896358889,
+     "sell_ticks": 0.5000015896358889,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000019911604444,
+     "sell_ticks": 0.5000019911604444,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000022815141111,
+     "sell_ticks": 0.5000022815141111,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "TN": {
+   "exposure": "Ultra 10-year",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 259.9431818181818,
+   "r_c_usd_exact": "22875/88",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.7207030659259782,
+   "rho_c_exact": "571875/793496",
+   "tick_value_usd": "15.625",
+   "commission_rt_usd": 2.62,
+   "one_side_slippage_ticks": 0.5031641680181111,
+   "one_side_slippage_usd": 7.861940125282986,
+   "round_turn_cost_usd_per_contract": 18.343880250565974,
+   "cost_per_dollar_of_risk": 0.07056880708414451,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.5050812325597778,
+     "sell_ticks": 0.5050812325597778,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5059160265343333,
+     "sell_ticks": 0.5059160265343333,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5049257594194444,
+     "sell_ticks": 0.5049257594194444,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5038892317068889,
+     "sell_ticks": 0.5038892317068889,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5036212906061112,
+     "sell_ticks": 0.5036212906061112,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5045937104558333,
+     "sell_ticks": 0.5045937104558333,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5027790938842778,
+     "sell_ticks": 0.5027790938842778,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5027336713023889,
+     "sell_ticks": 0.5027336713023889,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5015507658703889,
+     "sell_ticks": 0.5015507658703889,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5014073126861112,
+     "sell_ticks": 0.5014073126861112,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5029216788168889,
+     "sell_ticks": 0.5029216788168889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5008956679827777,
+     "sell_ticks": 0.5008956679827777,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5018845749743334,
+     "sell_ticks": 0.5018845749743334,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5033763784817777,
+     "sell_ticks": 0.5033763784817777,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "ZB": {
+   "exposure": "Bond",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 402.0979020979021,
+   "r_c_usd_exact": "57500/143",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 1.1148328216089112,
+   "rho_c_exact": "1437500/1289431",
+   "tick_value_usd": "31.25",
+   "commission_rt_usd": 2.76,
+   "one_side_slippage_ticks": 0.5005010887067791,
+   "one_side_slippage_usd": 15.640659022086849,
+   "round_turn_cost_usd_per_contract": 34.0413180441737,
+   "cost_per_dollar_of_risk": 0.08465927791855372,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.5016267055943333,
+     "sell_ticks": 0.5016267055943333,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5014387887635,
+     "sell_ticks": 0.5014387887635,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5002832595275,
+     "sell_ticks": 0.5002832595275,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5004930863060556,
+     "sell_ticks": 0.5004930863060556,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5016672050900556,
+     "sell_ticks": 0.5016672050900556,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5002451004447223,
+     "sell_ticks": 0.5002451004447223,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5003402573363889,
+     "sell_ticks": 0.5003402573363889,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5007134150241112,
+     "sell_ticks": 0.5007134150241112,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000621115363333,
+     "sell_ticks": 0.5000621115363333,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5004376113934444,
+     "sell_ticks": 0.5004376113934444,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5004028065217222,
+     "sell_ticks": 0.5004028065217222,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000015373421111,
+     "sell_ticks": 0.5000015373421111,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000508555587778,
+     "sell_ticks": 0.5000508555587778,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5000029127142223,
+     "sell_ticks": 0.5000029127142223,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "UB": {
+   "exposure": "Ultra bond",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 501.42045454545456,
+   "r_c_usd_exact": "44125/88",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 1.3902086462943732,
+   "rho_c_exact": "1103125/793496",
+   "tick_value_usd": "31.25",
+   "commission_rt_usd": 2.92,
+   "one_side_slippage_ticks": 0.5024262183431722,
+   "one_side_slippage_usd": 15.700819323224131,
+   "round_turn_cost_usd_per_contract": 34.321638646448264,
+   "cost_per_dollar_of_risk": 0.06844882041671269,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.5040732772503889,
+     "sell_ticks": 0.5040732772503889,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5067910580929444,
+     "sell_ticks": 0.5067910580929444,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5047300188652222,
+     "sell_ticks": 0.5047300188652222,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5035601285327778,
+     "sell_ticks": 0.5035601285327778,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5016779674079445,
+     "sell_ticks": 0.5016779674079445,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5016809051901111,
+     "sell_ticks": 0.5016809051901111,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5020906609488334,
+     "sell_ticks": 0.5020906609488334,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5035228316243333,
+     "sell_ticks": 0.5035228316243333,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5015835550278889,
+     "sell_ticks": 0.5015835550278889,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5008838305536667,
+     "sell_ticks": 0.5008838305536667,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5023527419160555,
+     "sell_ticks": 0.5023527419160555,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5007237290366111,
+     "sell_ticks": 0.5007237290366111,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5012908373638889,
+     "sell_ticks": 0.5012908373638889,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5001035542652222,
+     "sell_ticks": 0.5001035542652222,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "6E": {
+   "exposure": "EUR",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 319.4539249146758,
+   "r_c_usd_exact": "93600/293",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.8856990266016296,
+   "rho_c_exact": "2340000/2641981",
+   "tick_value_usd": "6.25",
+   "commission_rt_usd": 4.22,
+   "one_side_slippage_ticks": 0.6293093671712278,
+   "one_side_slippage_usd": 3.9331835448201735,
+   "round_turn_cost_usd_per_contract": 12.086367089640348,
+   "cost_per_dollar_of_risk": 0.03783446108188698,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.6378860628071111,
+     "sell_ticks": 0.6378860628071111,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6297505171541111,
+     "sell_ticks": 0.6297505171541111,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6328870537876111,
+     "sell_ticks": 0.6328870537876111,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6094583008381111,
+     "sell_ticks": 0.6094583008381111,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.61719072338,
+     "sell_ticks": 0.61719072338,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6211531481191667,
+     "sell_ticks": 0.6211531481191667,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6198826390956111,
+     "sell_ticks": 0.6198826390956111,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6304033822924444,
+     "sell_ticks": 0.6304033822924444,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6342704124242777,
+     "sell_ticks": 0.6342704124242777,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6375346057308889,
+     "sell_ticks": 0.6375346057308889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6500826844011667,
+     "sell_ticks": 0.6500826844011667,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6215329126243333,
+     "sell_ticks": 0.6215329126243333,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6395896149009445,
+     "sell_ticks": 0.6395896149009445,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.634426879932,
+     "sell_ticks": 0.634426879932,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "M6E": {
+   "exposure": "EUR",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 32.034982935153586,
+   "r_c_usd_exact": "37545/1172",
+   "q_c": 10,
+   "cap_c": 10,
+   "cap_source": "D9.5",
+   "rho_c": 0.8881829581666182,
+   "rho_c_exact": "4693125/5283962",
+   "tick_value_usd": "1.25",
+   "commission_rt_usd": 1.0,
+   "one_side_slippage_ticks": 0.5608180634784,
+   "one_side_slippage_usd": 0.701022579348,
+   "round_turn_cost_usd_per_contract": 2.402045158696,
+   "cost_per_dollar_of_risk": 0.07498193969880708,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.564289835535,
+     "sell_ticks": 0.564289835535,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5807433970787222,
+     "sell_ticks": 0.5807433970787222,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5569626876010556,
+     "sell_ticks": 0.5569626876010556,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5624565584741111,
+     "sell_ticks": 0.5624565584741111,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5623461716927778,
+     "sell_ticks": 0.5623461716927778,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.553220019838,
+     "sell_ticks": 0.553220019838,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5664346508568889,
+     "sell_ticks": 0.5664346508568889,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5534471206170556,
+     "sell_ticks": 0.5534471206170556,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5613979358803334,
+     "sell_ticks": 0.5613979358803334,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5681335614633889,
+     "sell_ticks": 0.5681335614633889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5573971042416667,
+     "sell_ticks": 0.5573971042416667,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5588513198683334,
+     "sell_ticks": 0.5588513198683334,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5606019487104444,
+     "sell_ticks": 0.5606019487104444,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5474850915442222,
+     "sell_ticks": 0.5474850915442222,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": true
+  },
+  "E7": {
+   "exposure": "EUR",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 160.72952218430035,
+   "r_c_usd_exact": "188375/1172",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.44562915100449246,
+   "rho_c_exact": "4709375/10567924",
+   "tick_value_usd": "6.25",
+   "commission_rt_usd": 2.72,
+   "one_side_slippage_ticks": 0.6370605982986361,
+   "one_side_slippage_usd": 3.9816287393664758,
+   "round_turn_cost_usd_per_contract": 10.683257478732951,
+   "cost_per_dollar_of_risk": 0.06646730067723965,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.6671200860887778,
+     "sell_ticks": 0.6671200860887778,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6730623936407222,
+     "sell_ticks": 0.6730623936407222,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6310678383855556,
+     "sell_ticks": 0.6310678383855556,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6498133975261111,
+     "sell_ticks": 0.6498133975261111,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6430927039410556,
+     "sell_ticks": 0.6430927039410556,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6393537728186112,
+     "sell_ticks": 0.6393537728186112,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6365514476886112,
+     "sell_ticks": 0.6365514476886112,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6207428330045,
+     "sell_ticks": 0.6207428330045,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6365253278118889,
+     "sell_ticks": 0.6365253278118889,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6339162666122222,
+     "sell_ticks": 0.6339162666122222,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6231895723758889,
+     "sell_ticks": 0.6231895723758889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6332623356887223,
+     "sell_ticks": 0.6332623356887223,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6235208986613333,
+     "sell_ticks": 0.6235208986613333,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6276691604636667,
+     "sell_ticks": 0.6276691604636667,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "6A": {
+   "exposure": "AUD",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 183.6518771331058,
+   "r_c_usd_exact": "53810/293",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.5091823143315565,
+   "rho_c_exact": "1345250/2641981",
+   "tick_value_usd": "5.0",
+   "commission_rt_usd": 4.22,
+   "one_side_slippage_ticks": 0.6739353339728056,
+   "one_side_slippage_usd": 3.369676669864028,
+   "round_turn_cost_usd_per_contract": 10.959353339728056,
+   "cost_per_dollar_of_risk": 0.05967460562238097,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.6683716491177222,
+     "sell_ticks": 0.6683716491177222,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6814550130979444,
+     "sell_ticks": 0.6814550130979444,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6676609567056111,
+     "sell_ticks": 0.6676609567056111,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6777563831173333,
+     "sell_ticks": 0.6777563831173333,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.678770759629,
+     "sell_ticks": 0.678770759629,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6520872403095556,
+     "sell_ticks": 0.6520872403095556,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6566248698571666,
+     "sell_ticks": 0.6566248698571666,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6843349879515,
+     "sell_ticks": 0.6843349879515,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6725832514652778,
+     "sell_ticks": 0.6725832514652778,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6996361371403333,
+     "sell_ticks": 0.6996361371403333,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6754508047312222,
+     "sell_ticks": 0.6754508047312222,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6781984948042777,
+     "sell_ticks": 0.6781984948042777,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6747384923638889,
+     "sell_ticks": 0.6747384923638889,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6637165120917222,
+     "sell_ticks": 0.6637165120917222,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "M6A": {
+   "exposure": "AUD",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 18.41638225255973,
+   "r_c_usd_exact": "5396/293",
+   "q_c": 10,
+   "cap_c": 10,
+   "cap_source": "D9.5",
+   "rho_c": 0.5106017037972642,
+   "rho_c_exact": "19000/37211",
+   "tick_value_usd": "1.0",
+   "commission_rt_usd": 1.0,
+   "one_side_slippage_ticks": 0.5853906012512111,
+   "one_side_slippage_usd": 0.5853906012512111,
+   "round_turn_cost_usd_per_contract": 2.1707812025024222,
+   "cost_per_dollar_of_risk": 0.11787229287123975,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.5956967424174444,
+     "sell_ticks": 0.5956967424174444,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5951886051518889,
+     "sell_ticks": 0.5951886051518889,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5845141161287778,
+     "sell_ticks": 0.5845141161287778,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5823401076090555,
+     "sell_ticks": 0.5823401076090555,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5837624960661667,
+     "sell_ticks": 0.5837624960661667,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5839264097576666,
+     "sell_ticks": 0.5839264097576666,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5776941409931111,
+     "sell_ticks": 0.5776941409931111,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5974233879082222,
+     "sell_ticks": 0.5974233879082222,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5890008919006111,
+     "sell_ticks": 0.5890008919006111,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5861465742313333,
+     "sell_ticks": 0.5861465742313333,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5778380914781667,
+     "sell_ticks": 0.5778380914781667,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5777806729706667,
+     "sell_ticks": 0.5777806729706667,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5887897683646112,
+     "sell_ticks": 0.5887897683646112,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5822371733167222,
+     "sell_ticks": 0.5822371733167222,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": true
+  },
+  "6B": {
+   "exposure": "GBP",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 186.22013651877134,
+   "r_c_usd_exact": "109125/586",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.5163029181511903,
+   "rho_c_exact": "2728125/5283962",
+   "tick_value_usd": "6.25",
+   "commission_rt_usd": 4.22,
+   "one_side_slippage_ticks": 0.6193760510069667,
+   "one_side_slippage_usd": 3.8711003187935416,
+   "round_turn_cost_usd_per_contract": 11.962200637587083,
+   "cost_per_dollar_of_risk": 0.06423688039978036,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.6407835601146666,
+     "sell_ticks": 0.6407835601146666,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6484913734936667,
+     "sell_ticks": 0.6484913734936667,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6286602719595,
+     "sell_ticks": 0.6286602719595,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6161265391751111,
+     "sell_ticks": 0.6161265391751111,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6199331266458333,
+     "sell_ticks": 0.6199331266458333,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6109524261212222,
+     "sell_ticks": 0.6109524261212222,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.618753283421,
+     "sell_ticks": 0.618753283421,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6130809814882778,
+     "sell_ticks": 0.6130809814882778,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6053620814126112,
+     "sell_ticks": 0.6053620814126112,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6331633641018334,
+     "sell_ticks": 0.6331633641018334,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6213418326476111,
+     "sell_ticks": 0.6213418326476111,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6305930695109444,
+     "sell_ticks": 0.6305930695109444,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6226931324576112,
+     "sell_ticks": 0.6226931324576112,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5756013442861111,
+     "sell_ticks": 0.5756013442861111,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "M6B": {
+   "exposure": "GBP",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 18.713737201365188,
+   "r_c_usd_exact": "43865/2344",
+   "q_c": 10,
+   "cap_c": 10,
+   "cap_source": "D9.5",
+   "rho_c": 0.5188459909439167,
+   "rho_c_exact": "5483125/10567924",
+   "tick_value_usd": "0.625",
+   "commission_rt_usd": 1.0,
+   "one_side_slippage_ticks": 0.8733134303520084,
+   "one_side_slippage_usd": 0.5458208939700052,
+   "round_turn_cost_usd_per_contract": 2.09164178794001,
+   "cost_per_dollar_of_risk": 0.11177039441311716,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.8465759170228333,
+     "sell_ticks": 1.0465759170228333,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8600349140817778,
+     "sell_ticks": 1.2600349140817777,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7569172802131666,
+     "sell_ticks": 1.0569172802131668,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7493082312407222,
+     "sell_ticks": 1.0493082312407223,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.739659109636,
+     "sell_ticks": 0.739659109636,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7358983295757778,
+     "sell_ticks": 0.8358983295757778,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7469877844903889,
+     "sell_ticks": 0.7469877844903889,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7415590032388889,
+     "sell_ticks": 1.0415590032388888,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.14170676286,
+     "sell_ticks": 0.74170676286,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.146658531166611,
+     "sell_ticks": 0.7466585311666111,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7480267694995556,
+     "sell_ticks": 1.1480267694995556,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7271988112708333,
+     "sell_ticks": 0.9271988112708334,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7599897240004444,
+     "sell_ticks": 0.7599897240004444,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9247085144116667,
+     "sell_ticks": 0.8247085144116667,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "6C": {
+   "exposure": "CAD",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 120.2901023890785,
+   "r_c_usd_exact": "35245/293",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.3335092114591286,
+   "rho_c_exact": "881125/2641981",
+   "tick_value_usd": "5.0",
+   "commission_rt_usd": 4.22,
+   "one_side_slippage_ticks": 0.5918062574960931,
+   "one_side_slippage_usd": 2.959031287480465,
+   "round_turn_cost_usd_per_contract": 10.13806257496093,
+   "cost_per_dollar_of_risk": 0.08428010595725784,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.5739012898715555,
+     "sell_ticks": 0.5739012898715555,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5957439779815555,
+     "sell_ticks": 0.5957439779815555,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6123970015242778,
+     "sell_ticks": 0.6123970015242778,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5858363838743889,
+     "sell_ticks": 0.5858363838743889,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5859254401597778,
+     "sell_ticks": 0.5859254401597778,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5868420078302777,
+     "sell_ticks": 0.5868420078302777,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5974699324017778,
+     "sell_ticks": 0.5974699324017778,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6024478068713334,
+     "sell_ticks": 0.6024478068713334,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6088400506758334,
+     "sell_ticks": 0.6088400506758334,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5900803079053333,
+     "sell_ticks": 0.5900803079053333,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5768763333195,
+     "sell_ticks": 0.5768763333195,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5909649699310555,
+     "sell_ticks": 0.5909649699310555,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5829655770342778,
+     "sell_ticks": 0.5829655770342778,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5830598804813333,
+     "sell_ticks": 0.5830598804813333,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "6J": {
+   "exposure": "JPY",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 204.820819112628,
+   "r_c_usd_exact": "120025/586",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.5678740687385716,
+   "rho_c_exact": "3000625/5283962",
+   "tick_value_usd": "6.25",
+   "commission_rt_usd": 4.22,
+   "one_side_slippage_ticks": 0.6066273023309263,
+   "one_side_slippage_usd": 3.79142063956829,
+   "round_turn_cost_usd_per_contract": 11.80284127913658,
+   "cost_per_dollar_of_risk": 0.057625202995826165,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.6222260106795555,
+     "sell_ticks": 0.6222260106795555,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6259715280822777,
+     "sell_ticks": 0.6259715280822777,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6198545091553889,
+     "sell_ticks": 0.6198545091553889,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6163397010333334,
+     "sell_ticks": 0.6163397010333334,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6052211260576666,
+     "sell_ticks": 0.6052211260576666,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5908679506996111,
+     "sell_ticks": 0.5908679506996111,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5998515983067222,
+     "sell_ticks": 0.5998515983067222,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6113617754568333,
+     "sell_ticks": 0.6113617754568333,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6084754571594444,
+     "sell_ticks": 0.6084754571594444,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.602251413981,
+     "sell_ticks": 0.602251413981,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5976043875687778,
+     "sell_ticks": 0.5976043875687778,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6055313177053333,
+     "sell_ticks": 0.6055313177053333,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6016730700545555,
+     "sell_ticks": 0.6016730700545555,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5959515255915555,
+     "sell_ticks": 0.5959515255915555,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "6S": {
+   "exposure": "CHF",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 410.75085324232083,
+   "r_c_usd_exact": "120350/293",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 1.13882348131951,
+   "rho_c_exact": "3008750/2641981",
+   "tick_value_usd": "6.25",
+   "commission_rt_usd": 4.22,
+   "one_side_slippage_ticks": 0.9859521588669792,
+   "one_side_slippage_usd": 6.16220099291862,
+   "round_turn_cost_usd_per_contract": 16.54440198583724,
+   "cost_per_dollar_of_risk": 0.04027843607686175,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 1.0200708883711667,
+     "sell_ticks": 1.0200708883711667,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0655463763911666,
+     "sell_ticks": 1.0655463763911666,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0164604258793333,
+     "sell_ticks": 1.0164604258793333,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.029960532376,
+     "sell_ticks": 1.029960532376,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0396108036409444,
+     "sell_ticks": 1.0396108036409444,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.963784929021,
+     "sell_ticks": 0.963784929021,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.963053668703,
+     "sell_ticks": 0.963053668703,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9621932511531667,
+     "sell_ticks": 0.9621932511531667,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9629851382113889,
+     "sell_ticks": 0.9629851382113889,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9887562738550556,
+     "sell_ticks": 0.9887562738550556,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0111758787087777,
+     "sell_ticks": 1.0111758787087777,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9196138767037222,
+     "sell_ticks": 0.9196138767037222,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9665705989627777,
+     "sell_ticks": 0.9665705989627777,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9162934018296667,
+     "sell_ticks": 0.9162934018296667,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "6N": {
+   "exposure": "NZD",
+   "O_X": "07:20",
+   "C_X": "14:00",
+   "r_c_usd": 156.48464163822527,
+   "r_c_usd_exact": "45850/293",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.43386004668466577,
+   "rho_c_exact": "1146250/2641981",
+   "tick_value_usd": "5.0",
+   "commission_rt_usd": 4.22,
+   "one_side_slippage_ticks": 0.704093108807507,
+   "one_side_slippage_usd": 3.5204655440375348,
+   "round_turn_cost_usd_per_contract": 11.26093108807507,
+   "cost_per_dollar_of_risk": 0.07196189332183196,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 0.7022456458961112,
+     "sell_ticks": 0.7022456458961112,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7119086225852223,
+     "sell_ticks": 0.7119086225852223,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7182530613473334,
+     "sell_ticks": 0.7182530613473334,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7278319412745,
+     "sell_ticks": 0.7278319412745,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7162998809952777,
+     "sell_ticks": 0.7162998809952777,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6899310032451111,
+     "sell_ticks": 0.6899310032451111,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7282772873533889,
+     "sell_ticks": 0.7282772873533889,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7036302123821111,
+     "sell_ticks": 0.7036302123821111,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7183240454005,
+     "sell_ticks": 0.7183240454005,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7038976834637778,
+     "sell_ticks": 0.7038976834637778,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7111383290497222,
+     "sell_ticks": 0.7111383290497222,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6754823791549445,
+     "sell_ticks": 0.6754823791549445,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6936600719151667,
+     "sell_ticks": 0.6936600719151667,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.655191717301,
+     "sell_ticks": 0.655191717301,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "CL": {
+   "exposure": "WTI crude",
+   "O_X": "08:00",
+   "C_X": "13:30",
+   "r_c_usd": 918.7890625,
+   "r_c_usd_exact": "117605/128",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 2.5473801222690473,
+   "rho_c_exact": "2940125/1154176",
+   "tick_value_usd": "10.0",
+   "commission_rt_usd": 4.02,
+   "one_side_slippage_ticks": 0.6630279459739545,
+   "one_side_slippage_usd": 6.630279459739546,
+   "round_turn_cost_usd_per_contract": 17.28055891947909,
+   "cost_per_dollar_of_risk": 0.018807971954366936,
+   "day_session_buckets": [
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6570177243873889,
+     "sell_ticks": 0.6570177243873889,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6566301255820556,
+     "sell_ticks": 0.6566301255820556,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6831248305785556,
+     "sell_ticks": 0.6831248305785556,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6723123073170556,
+     "sell_ticks": 0.6723123073170556,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6618053954214445,
+     "sell_ticks": 0.6618053954214445,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6547883750357222,
+     "sell_ticks": 0.6547883750357222,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6591781126919445,
+     "sell_ticks": 0.6591781126919445,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6538358809315555,
+     "sell_ticks": 0.6538358809315555,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6484085801818333,
+     "sell_ticks": 0.6484085801818333,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6633603375868333,
+     "sell_ticks": 0.6633603375868333,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6828457359991111,
+     "sell_ticks": 0.6828457359991111,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "MCL": {
+   "exposure": "WTI crude",
+   "O_X": "08:00",
+   "C_X": "13:30",
+   "r_c_usd": 91.56976744186046,
+   "r_c_usd_exact": "7875/86",
+   "q_c": 4,
+   "cap_c": 10,
+   "cap_source": "D9.5",
+   "rho_c": 1.0155236491278747,
+   "rho_c_exact": "393750/387731",
+   "tick_value_usd": "1.0",
+   "commission_rt_usd": 1.72,
+   "one_side_slippage_ticks": 0.7234752451986263,
+   "one_side_slippage_usd": 0.7234752451986263,
+   "round_turn_cost_usd_per_contract": 3.1669504903972525,
+   "cost_per_dollar_of_risk": 0.03458511011735412,
+   "day_session_buckets": [
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7163592060133889,
+     "sell_ticks": 0.7163592060133889,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7280033694943333,
+     "sell_ticks": 0.7280033694943333,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7511148049175556,
+     "sell_ticks": 0.7511148049175556,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7415249509576111,
+     "sell_ticks": 0.7415249509576111,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.72325868396,
+     "sell_ticks": 0.72325868396,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7139784371096667,
+     "sell_ticks": 0.7139784371096667,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7265204595981111,
+     "sell_ticks": 0.7265204595981111,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7115641947483888,
+     "sell_ticks": 0.7115641947483888,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7265342569725,
+     "sell_ticks": 0.7265342569725,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.701050116352,
+     "sell_ticks": 0.701050116352,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7183192170613333,
+     "sell_ticks": 0.7183192170613333,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "QM": {
+   "exposure": "WTI crude",
+   "O_X": "08:00",
+   "C_X": "13:30",
+   "r_c_usd": 457.218992248062,
+   "r_c_usd_exact": "235925/516",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 1.2676582905846234,
+   "rho_c_exact": "5898125/4652772",
+   "tick_value_usd": "12.5",
+   "commission_rt_usd": 3.42,
+   "one_side_slippage_ticks": 0.6628111285422373,
+   "one_side_slippage_usd": 8.285139106777967,
+   "round_turn_cost_usd_per_contract": 19.990278213555936,
+   "cost_per_dollar_of_risk": 0.04372145197920891,
+   "day_session_buckets": [
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6578908730972778,
+     "sell_ticks": 0.6578908730972778,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6309494459449444,
+     "sell_ticks": 0.6309494459449444,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6566460882953888,
+     "sell_ticks": 0.6566460882953888,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7044383860923333,
+     "sell_ticks": 0.7044383860923333,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6655878027774444,
+     "sell_ticks": 0.6655878027774444,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6593107360951111,
+     "sell_ticks": 0.6593107360951111,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6388004965345,
+     "sell_ticks": 0.6388004965345,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6873829906642778,
+     "sell_ticks": 0.6873829906642778,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6533585291704445,
+     "sell_ticks": 0.6533585291704445,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.665122551399,
+     "sell_ticks": 0.665122551399,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6714345138938889,
+     "sell_ticks": 0.6714345138938889,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "NG": {
+   "exposure": "Henry Hub gas",
+   "O_X": "08:00",
+   "C_X": "13:30",
+   "r_c_usd": 639.3050193050193,
+   "r_c_usd_exact": "165580/259",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 1.772499221761726,
+   "rho_c_exact": "4139500/2335403",
+   "tick_value_usd": "10.0",
+   "commission_rt_usd": 4.22,
+   "one_side_slippage_ticks": 0.625011588970702,
+   "one_side_slippage_usd": 6.25011588970702,
+   "round_turn_cost_usd_per_contract": 16.72023177941404,
+   "cost_per_dollar_of_risk": 0.026153762718131638,
+   "day_session_buckets": [
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6234945839596111,
+     "sell_ticks": 0.6234945839596111,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6314513266843889,
+     "sell_ticks": 0.6314513266843889,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6147194398297222,
+     "sell_ticks": 0.6147194398297222,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6249581329665556,
+     "sell_ticks": 0.6249581329665556,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6043808096752777,
+     "sell_ticks": 0.6043808096752777,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6296332479138333,
+     "sell_ticks": 0.6296332479138333,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6321170965580556,
+     "sell_ticks": 0.6321170965580556,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6319985564331667,
+     "sell_ticks": 0.6319985564331667,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6269680742436666,
+     "sell_ticks": 0.6269680742436666,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6242124982971666,
+     "sell_ticks": 0.6242124982971666,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6311937121162777,
+     "sell_ticks": 0.6311937121162777,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "MNG": {
+   "exposure": "Henry Hub gas",
+   "O_X": "08:00",
+   "C_X": "13:30",
+   "r_c_usd": 65.30916030534351,
+   "r_c_usd_exact": "17111/262",
+   "q_c": 6,
+   "cap_c": 10,
+   "cap_source": "D9.5",
+   "rho_c": 1.0864338522570174,
+   "rho_c_exact": "18075/16637",
+   "tick_value_usd": "1.0",
+   "commission_rt_usd": 1.92,
+   "one_side_slippage_ticks": 1.7147973358281565,
+   "one_side_slippage_usd": 1.7147973358281565,
+   "round_turn_cost_usd_per_contract": 5.349594671656313,
+   "cost_per_dollar_of_risk": 0.08191185810145252,
+   "day_session_buckets": [
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.6720105487263333,
+     "sell_ticks": 1.6720105487263333,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.694718731026889,
+     "sell_ticks": 1.694718731026889,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.6707028158365556,
+     "sell_ticks": 1.6707028158365556,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.6798118848601666,
+     "sell_ticks": 1.6798118848601666,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.6613035160289444,
+     "sell_ticks": 1.6613035160289444,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.6965004193110556,
+     "sell_ticks": 1.6965004193110556,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.7494417613095556,
+     "sell_ticks": 1.7494417613095556,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.7398553998177222,
+     "sell_ticks": 1.7398553998177222,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.7400321477391112,
+     "sell_ticks": 1.7400321477391112,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.7174623708761112,
+     "sell_ticks": 1.7174623708761112,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.7575977652439445,
+     "sell_ticks": 1.924264431910611,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "QG": {
+   "exposure": "Henry Hub gas",
+   "O_X": "08:00",
+   "C_X": "13:30",
+   "r_c_usd": 159.16030534351145,
+   "r_c_usd_exact": "20850/131",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.4412784333578559,
+   "rho_c_exact": "521250/1181227",
+   "tick_value_usd": "12.5",
+   "commission_rt_usd": 2.02,
+   "one_side_slippage_ticks": 0.6099075056848333,
+   "one_side_slippage_usd": 7.623843821060417,
+   "round_turn_cost_usd_per_contract": 17.267687642120833,
+   "cost_per_dollar_of_risk": 0.10849242595289349,
+   "day_session_buckets": [
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.61316078404,
+     "sell_ticks": 0.61316078404,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5865341641868889,
+     "sell_ticks": 0.5865341641868889,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5884238305871111,
+     "sell_ticks": 0.5884238305871111,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6207164688533333,
+     "sell_ticks": 0.6207164688533333,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.624436181256,
+     "sell_ticks": 0.624436181256,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6105942990021667,
+     "sell_ticks": 0.6105942990021667,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6103511076482778,
+     "sell_ticks": 0.6103511076482778,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5991334532743889,
+     "sell_ticks": 0.5991334532743889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6307895408333334,
+     "sell_ticks": 0.6307895408333334,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6100669634243333,
+     "sell_ticks": 0.6100669634243333,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6147757694273334,
+     "sell_ticks": 0.6147757694273334,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "RB": {
+   "exposure": "RBOB",
+   "O_X": "08:00",
+   "C_X": "13:30",
+   "r_c_usd": 1012.792531120332,
+   "r_c_usd_exact": "244083/241",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 2.808008570257103,
+   "rho_c_exact": "6102075/2173097",
+   "tick_value_usd": "4.2",
+   "commission_rt_usd": 4.02,
+   "one_side_slippage_ticks": 2.2787508692098535,
+   "one_side_slippage_usd": 9.570753650681386,
+   "round_turn_cost_usd_per_contract": 23.16150730136277,
+   "cost_per_dollar_of_risk": 0.022868955476737125,
+   "day_session_buckets": [
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.2228133190077224,
+     "sell_ticks": 2.2228133190077224,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.310791043128167,
+     "sell_ticks": 2.310791043128167,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.4026535187819444,
+     "sell_ticks": 2.4026535187819444,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.592828035647,
+     "sell_ticks": 2.592828035647,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.2257913423769446,
+     "sell_ticks": 2.2257913423769446,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.3074559044695,
+     "sell_ticks": 2.3074559044695,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.394631036312889,
+     "sell_ticks": 2.394631036312889,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.2830287927831665,
+     "sell_ticks": 2.2830287927831665,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.0469344069033335,
+     "sell_ticks": 2.0469344069033335,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.9912057736835,
+     "sell_ticks": 1.9912057736835,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.288126388214222,
+     "sell_ticks": 2.288126388214222,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "HO": {
+   "exposure": "ULSD",
+   "O_X": "08:00",
+   "C_X": "13:30",
+   "r_c_usd": 1441.396837944664,
+   "r_c_usd_exact": "1823367/1265",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 3.9963314792743265,
+   "rho_c_exact": "9116835/2281301",
+   "tick_value_usd": "4.2",
+   "commission_rt_usd": 4.02,
+   "one_side_slippage_ticks": 4.434897357206348,
+   "one_side_slippage_usd": 18.626568900266662,
+   "round_turn_cost_usd_per_contract": 41.27313780053333,
+   "cost_per_dollar_of_risk": 0.02863412539421557,
+   "day_session_buckets": [
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 4.612370779821389,
+     "sell_ticks": 4.612370779821389,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 4.401733802340611,
+     "sell_ticks": 4.401733802340611,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 5.194085783195,
+     "sell_ticks": 5.194085783195,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 5.333582791082278,
+     "sell_ticks": 5.333582791082278,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 4.927788605306334,
+     "sell_ticks": 4.927788605306334,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 4.708379228070055,
+     "sell_ticks": 4.708379228070055,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 3.7916552890885,
+     "sell_ticks": 3.7916552890885,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 4.258570536243389,
+     "sell_ticks": 4.258570536243389,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 3.720669079346111,
+     "sell_ticks": 3.720669079346111,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 4.193120755702111,
+     "sell_ticks": 4.193120755702111,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 3.6419142790740557,
+     "sell_ticks": 3.6419142790740557,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "MGC": {
+   "exposure": "gold",
+   "O_X": "07:20",
+   "C_X": "12:30",
+   "r_c_usd": 258.5896551724138,
+   "r_c_usd_exact": "74991/290",
+   "q_c": 1,
+   "cap_c": 10,
+   "cap_source": "D9.5",
+   "rho_c": 0.7169503581357818,
+   "rho_c_exact": "374955/522986",
+   "tick_value_usd": "1.0",
+   "commission_rt_usd": 1.92,
+   "one_side_slippage_ticks": 1.0779778715160322,
+   "one_side_slippage_usd": 1.0779778715160322,
+   "round_turn_cost_usd_per_contract": 4.075955743032065,
+   "cost_per_dollar_of_risk": 0.01576225367683187,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 1.1636487479842779,
+     "sell_ticks": 1.1636487479842779,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.247216962036241,
+     "sell_ticks": 1.247216962036241,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0871056705863889,
+     "sell_ticks": 1.0871056705863889,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0814144841702777,
+     "sell_ticks": 1.0814144841702777,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0910980706522222,
+     "sell_ticks": 1.0910980706522222,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0264453952502222,
+     "sell_ticks": 1.0264453952502222,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0575456070892222,
+     "sell_ticks": 1.0575456070892222,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0290423222583334,
+     "sell_ticks": 1.0290423222583334,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0210687111803334,
+     "sell_ticks": 1.0210687111803334,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0129355737218888,
+     "sell_ticks": 1.0129355737218888,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0973489593924444,
+     "sell_ticks": 1.0973489593924444,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "GC": {
+   "exposure": "gold",
+   "O_X": "07:20",
+   "C_X": "12:30",
+   "r_c_usd": 2586.9655172413795,
+   "r_c_usd_exact": "75022/29",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 7.172467331821502,
+   "rho_c_exact": "1875550/261493",
+   "tick_value_usd": "10.0",
+   "commission_rt_usd": 4.32,
+   "one_side_slippage_ticks": 1.9521125290767813,
+   "one_side_slippage_usd": 19.521125290767813,
+   "round_turn_cost_usd_per_contract": 43.362250581535626,
+   "cost_per_dollar_of_risk": 0.01676182009096709,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 2.0775832995067223,
+     "sell_ticks": 2.0775832995067223,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.2679933651944446,
+     "sell_ticks": 2.2679933651944446,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.9757244783898888,
+     "sell_ticks": 1.9757244783898888,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.081852701805,
+     "sell_ticks": 2.081852701805,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.027535124930722,
+     "sell_ticks": 2.027535124930722,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.0100735728742776,
+     "sell_ticks": 2.0100735728742776,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 2.0095343565780555,
+     "sell_ticks": 2.0095343565780555,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.8399539373617777,
+     "sell_ticks": 1.8399539373617777,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.711650755986,
+     "sell_ticks": 1.711650755986,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.7439380721308888,
+     "sell_ticks": 1.7439380721308888,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.8110453353734444,
+     "sell_ticks": 1.8110453353734444,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "SIL": {
+   "exposure": "silver",
+   "O_X": "07:20",
+   "C_X": "12:25",
+   "r_c_usd": 931.051724137931,
+   "r_c_usd_exact": "54001/58",
+   "q_c": 1,
+   "cap_c": 2,
+   "cap_source": "D9.11",
+   "rho_c": 2.58137885144153,
+   "rho_c_exact": "1350025/522986",
+   "tick_value_usd": "5.0",
+   "commission_rt_usd": 2.72,
+   "one_side_slippage_ticks": 1.1163182861814303,
+   "one_side_slippage_usd": 5.581591430907151,
+   "round_turn_cost_usd_per_contract": 13.883182861814301,
+   "cost_per_dollar_of_risk": 0.014911290642492352,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 1.2399629381434445,
+     "sell_ticks": 1.2399629381434445,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.3567019944878267,
+     "sell_ticks": 1.3567019944878267,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1174940272146112,
+     "sell_ticks": 1.1174940272146112,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0945545849009444,
+     "sell_ticks": 1.0945545849009444,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1145385879562222,
+     "sell_ticks": 1.1145385879562222,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0933162321734444,
+     "sell_ticks": 1.0933162321734444,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0991441318470212,
+     "sell_ticks": 1.0991441318470212,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0704874075144333,
+     "sell_ticks": 1.0704874075144333,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0428603007020556,
+     "sell_ticks": 1.0428603007020556,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.036962432527389,
+     "sell_ticks": 1.036962432527389,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 25,
+     "buy_ticks": 1.0918262769673333,
+     "sell_ticks": 1.0918262769673333,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "SI": {
+   "exposure": "silver",
+   "O_X": "07:20",
+   "C_X": "12:25",
+   "r_c_usd": 4653.9655172413795,
+   "r_c_usd_exact": "134965/29",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 12.90330907519513,
+   "rho_c_exact": "3374125/261493",
+   "tick_value_usd": "25.0",
+   "commission_rt_usd": 4.32,
+   "one_side_slippage_ticks": 1.6821048452989922,
+   "one_side_slippage_usd": 42.052621132474805,
+   "round_turn_cost_usd_per_contract": 88.42524226494962,
+   "cost_per_dollar_of_risk": 0.018999977962312738,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 10,
+     "buy_ticks": 1.843944998532611,
+     "sell_ticks": 1.843944998532611,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.923218942362,
+     "sell_ticks": 1.923218942362,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.768413333964,
+     "sell_ticks": 1.768413333964,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.7802773245004444,
+     "sell_ticks": 1.7802773245004444,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.6955756160602222,
+     "sell_ticks": 1.6955756160602222,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.7265859592853334,
+     "sell_ticks": 1.7265859592853334,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.7131262602071662,
+     "sell_ticks": 1.7131262602071662,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.5574020452691157,
+     "sell_ticks": 1.5574020452691157,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.5480641078215,
+     "sell_ticks": 1.5480641078215,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.5200185767029444,
+     "sell_ticks": 1.5200185767029444,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 25,
+     "buy_ticks": 1.504882513827389,
+     "sell_ticks": 1.504882513827389,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "HG": {
+   "exposure": "copper",
+   "O_X": "07:10",
+   "C_X": "12:00",
+   "r_c_usd": 1101.2931034482758,
+   "r_c_usd_exact": "63875/58",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 3.053380013996551,
+   "rho_c_exact": "1596875/522986",
+   "tick_value_usd": "12.5",
+   "commission_rt_usd": 4.32,
+   "one_side_slippage_ticks": 1.1171832817887808,
+   "one_side_slippage_usd": 13.96479102235976,
+   "round_turn_cost_usd_per_contract": 32.24958204471952,
+   "cost_per_dollar_of_risk": 0.029283377825342186,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 20,
+     "buy_ticks": 1.2336905107955716,
+     "sell_ticks": 1.2336905107955716,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.2279896508109445,
+     "sell_ticks": 1.2279896508109445,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.193257937149,
+     "sell_ticks": 1.193257937149,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1332037599974445,
+     "sell_ticks": 1.1332037599974445,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0838507339897778,
+     "sell_ticks": 1.0838507339897778,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.068872707943111,
+     "sell_ticks": 1.068872707943111,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0896722122097777,
+     "sell_ticks": 1.0896722122097777,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0962167086282777,
+     "sell_ticks": 1.0962167086282777,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0412866285918334,
+     "sell_ticks": 1.0412866285918334,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0426277107743334,
+     "sell_ticks": 1.0426277107743334,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "MHG": {
+   "exposure": "copper",
+   "O_X": "07:10",
+   "C_X": "12:00",
+   "r_c_usd": 110.21551724137932,
+   "r_c_usd_exact": "12785/116",
+   "q_c": 2,
+   "cap_c": 2,
+   "cap_source": "D9.11",
+   "rho_c": 0.6111540270676462,
+   "rho_c_exact": "319625/522986",
+   "tick_value_usd": "1.25",
+   "commission_rt_usd": 1.92,
+   "one_side_slippage_ticks": 1.075540949480399,
+   "one_side_slippage_usd": 1.3444261868504985,
+   "round_turn_cost_usd_per_contract": 4.608852373700997,
+   "cost_per_dollar_of_risk": 0.04181672861551159,
+   "day_session_buckets": [
+    {
+     "bucket": "07:00",
+     "minutes_in_window": 20,
+     "buy_ticks": 1.2797515091436173,
+     "sell_ticks": 1.2797515091436173,
+     "fallback": false
+    },
+    {
+     "bucket": "07:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1172312158272222,
+     "sell_ticks": 1.1172312158272222,
+     "fallback": false
+    },
+    {
+     "bucket": "08:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0308335986613333,
+     "sell_ticks": 1.0308335986613333,
+     "fallback": false
+    },
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0575264767988888,
+     "sell_ticks": 1.0575264767988888,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1020144500464444,
+     "sell_ticks": 1.1020144500464444,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.1332806165293334,
+     "sell_ticks": 1.1332806165293334,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.0655635246041666,
+     "sell_ticks": 1.0655635246041666,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.041088121107111,
+     "sell_ticks": 1.041088121107111,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9762829548942777,
+     "sell_ticks": 0.9762829548942777,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.019907213746,
+     "sell_ticks": 1.019907213746,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "ZC": {
+   "exposure": "corn",
+   "O_X": "08:30",
+   "C_X": "13:15",
+   "r_c_usd": 158.16420664206643,
+   "r_c_usd_exact": "85725/542",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.4385167091107531,
+   "rho_c_exact": "16875/38482",
+   "tick_value_usd": "12.5",
+   "commission_rt_usd": 5.28,
+   "one_side_slippage_ticks": 0.5014757245398952,
+   "one_side_slippage_usd": 6.26844655674869,
+   "round_turn_cost_usd_per_contract": 17.81689311349738,
+   "cost_per_dollar_of_risk": 0.11264807311187612,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5035878509326849,
+     "sell_ticks": 0.5035878509326849,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5013830574137778,
+     "sell_ticks": 0.5013830574137778,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5004830282715556,
+     "sell_ticks": 0.5004830282715556,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5007574320123334,
+     "sell_ticks": 0.5007574320123334,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5015889970742222,
+     "sell_ticks": 0.5015889970742222,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5011729540885,
+     "sell_ticks": 0.5011729540885,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5006172430613889,
+     "sell_ticks": 0.5006172430613889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5009973152835555,
+     "sell_ticks": 0.5009973152835555,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5023837195294445,
+     "sell_ticks": 0.5023837195294445,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 15,
+     "buy_ticks": 0.5020955709230833,
+     "sell_ticks": 0.5020955709230833,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "ZW": {
+   "exposure": "wheat",
+   "O_X": "08:30",
+   "C_X": "13:15",
+   "r_c_usd": 234.74729241877256,
+   "r_c_usd_exact": "65025/277",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.6508464356736513,
+   "rho_c_exact": "1625625/2497709",
+   "tick_value_usd": "12.5",
+   "commission_rt_usd": 5.28,
+   "one_side_slippage_ticks": 0.5285657627950092,
+   "one_side_slippage_usd": 6.607072034937615,
+   "round_turn_cost_usd_per_contract": 18.49414406987523,
+   "cost_per_dollar_of_risk": 0.07878320503430125,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5380570632824346,
+     "sell_ticks": 0.5380570632824346,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5311493381340555,
+     "sell_ticks": 0.5311493381340555,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5282112482549445,
+     "sell_ticks": 0.5282112482549445,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5272786771161111,
+     "sell_ticks": 0.5272786771161111,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5233800301308333,
+     "sell_ticks": 0.5233800301308333,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5271390896633333,
+     "sell_ticks": 0.5271390896633333,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5201186727703889,
+     "sell_ticks": 0.5201186727703889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5344137916376667,
+     "sell_ticks": 0.5344137916376667,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5285552984969445,
+     "sell_ticks": 0.5285552984969445,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 15,
+     "buy_ticks": 0.52614307413175,
+     "sell_ticks": 0.52614307413175,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "ZS": {
+   "exposure": "soybeans",
+   "O_X": "08:30",
+   "C_X": "13:15",
+   "r_c_usd": 304.39068100358423,
+   "r_c_usd_exact": "84925/279",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.8439355689353006,
+   "rho_c_exact": "2123125/2515743",
+   "tick_value_usd": "12.5",
+   "commission_rt_usd": 5.28,
+   "one_side_slippage_ticks": 0.5229168084789452,
+   "one_side_slippage_usd": 6.536460105986814,
+   "round_turn_cost_usd_per_contract": 18.35292021197363,
+   "cost_per_dollar_of_risk": 0.06029396219182387,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5277515410617565,
+     "sell_ticks": 0.5277515410617565,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5272415533707222,
+     "sell_ticks": 0.5272415533707222,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.521038173892,
+     "sell_ticks": 0.521038173892,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5221166799511666,
+     "sell_ticks": 0.5221166799511666,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5188194507855556,
+     "sell_ticks": 0.5188194507855556,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5271977997293888,
+     "sell_ticks": 0.5271977997293888,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5208484976682223,
+     "sell_ticks": 0.5208484976682223,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5191518238836667,
+     "sell_ticks": 0.5191518238836667,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5199781545163333,
+     "sell_ticks": 0.5199781545163333,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 15,
+     "buy_ticks": 0.5271320113823333,
+     "sell_ticks": 0.5271320113823333,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "ZM": {
+   "exposure": "soybean meal",
+   "O_X": "08:30",
+   "C_X": "13:15",
+   "r_c_usd": 212.63736263736263,
+   "r_c_usd_exact": "19350/91",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.5895457542346751,
+   "rho_c_exact": "483750/820547",
+   "tick_value_usd": "10.0",
+   "commission_rt_usd": 5.28,
+   "one_side_slippage_ticks": 0.5399095975775481,
+   "one_side_slippage_usd": 5.39909597577548,
+   "round_turn_cost_usd_per_contract": 16.07819195155096,
+   "cost_per_dollar_of_risk": 0.07561320245949031,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5482164254712618,
+     "sell_ticks": 0.5482164254712618,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5519111263798333,
+     "sell_ticks": 0.5519111263798333,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5363662964815,
+     "sell_ticks": 0.5363662964815,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5400466787265,
+     "sell_ticks": 0.5400466787265,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5404255757135,
+     "sell_ticks": 0.5404255757135,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5340386351317777,
+     "sell_ticks": 0.5340386351317777,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5283721902066667,
+     "sell_ticks": 0.5283721902066667,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5431453308106111,
+     "sell_ticks": 0.5431453308106111,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.5339504622802222,
+     "sell_ticks": 0.5339504622802222,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 15,
+     "buy_ticks": 0.5453369115696667,
+     "sell_ticks": 0.5453369115696667,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "ZL": {
+   "exposure": "soybean oil",
+   "O_X": "08:30",
+   "C_X": "13:15",
+   "r_c_usd": 304.82978723404256,
+   "r_c_usd_exact": "14327/47",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.8451530088556132,
+   "rho_c_exact": "358175/423799",
+   "tick_value_usd": "6.0",
+   "commission_rt_usd": 5.28,
+   "one_side_slippage_ticks": 0.6461262462690993,
+   "one_side_slippage_usd": 3.876757477614596,
+   "round_turn_cost_usd_per_contract": 13.033514955229192,
+   "cost_per_dollar_of_risk": 0.04275669734737014,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6572429689738188,
+     "sell_ticks": 0.6572429689738188,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6515718838913889,
+     "sell_ticks": 0.6515718838913889,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6403885642997222,
+     "sell_ticks": 0.6403885642997222,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6389560841922778,
+     "sell_ticks": 0.6389560841922778,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6504573127359444,
+     "sell_ticks": 0.6504573127359444,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6649075425922778,
+     "sell_ticks": 0.6649075425922778,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6165962127835,
+     "sell_ticks": 0.6165962127835,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6455570677140555,
+     "sell_ticks": 0.6455570677140555,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6427279832493333,
+     "sell_ticks": 0.6427279832493333,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 15,
+     "buy_ticks": 0.65958743824825,
+     "sell_ticks": 0.65958743824825,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "HE": {
+   "exposure": "lean hogs",
+   "O_X": "08:30",
+   "C_X": "13:00",
+   "r_c_usd": 322.962962962963,
+   "r_c_usd_exact": "8720/27",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.8954279776060856,
+   "rho_c_exact": "218000/243459",
+   "tick_value_usd": "10.0",
+   "commission_rt_usd": 5.22,
+   "one_side_slippage_ticks": 0.6689543553055111,
+   "one_side_slippage_usd": 6.6895435530551115,
+   "round_turn_cost_usd_per_contract": 18.599087106110222,
+   "cost_per_dollar_of_risk": 0.05758891649827706,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.7214883966802668,
+     "sell_ticks": 0.7214883966802668,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6736876103733889,
+     "sell_ticks": 0.6736876103733889,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6607949002047778,
+     "sell_ticks": 0.6607949002047778,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6628360147737222,
+     "sell_ticks": 0.6628360147737222,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6757198401625556,
+     "sell_ticks": 0.6757198401625556,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6968863364511111,
+     "sell_ticks": 0.6968863364511111,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6558455380685555,
+     "sell_ticks": 0.6558455380685555,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6583506124676111,
+     "sell_ticks": 0.6583506124676111,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.6149799485676111,
+     "sell_ticks": 0.6149799485676111,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "LE": {
+   "exposure": "live cattle",
+   "O_X": "08:30",
+   "C_X": "13:00",
+   "r_c_usd": 707.1590909090909,
+   "r_c_usd_exact": "31115/44",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 1.9606274007682458,
+   "rho_c_exact": "6125/3124",
+   "tick_value_usd": "10.0",
+   "commission_rt_usd": 5.22,
+   "one_side_slippage_ticks": 0.9356251688330409,
+   "one_side_slippage_usd": 9.35625168833041,
+   "round_turn_cost_usd_per_contract": 23.93250337666082,
+   "cost_per_dollar_of_risk": 0.03384316723680142,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9358021355637021,
+     "sell_ticks": 0.9358021355637021,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9393680350056667,
+     "sell_ticks": 0.9393680350056667,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9004699511664445,
+     "sell_ticks": 0.9004699511664445,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.8540756746018333,
+     "sell_ticks": 0.8540756746018333,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9855359824150556,
+     "sell_ticks": 0.9855359824150556,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9382941356859444,
+     "sell_ticks": 0.9382941356859444,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9473142071113889,
+     "sell_ticks": 0.9473142071113889,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9879304366342222,
+     "sell_ticks": 0.9879304366342222,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 0.9318359613131111,
+     "sell_ticks": 0.9318359613131111,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  },
+  "MBT": {
+   "exposure": "bitcoin",
+   "O_X": "08:30",
+   "C_X": "15:00",
+   "r_c_usd": 120.61346153846154,
+   "r_c_usd_exact": "62719/520",
+   "q_c": 1,
+   "cap_c": 1,
+   "cap_source": "D9.5",
+   "rho_c": 0.33440573787973144,
+   "rho_c_exact": "313595/937768",
+   "tick_value_usd": "0.5",
+   "commission_rt_usd": 2.82,
+   "one_side_slippage_ticks": 1.6029957199399958,
+   "one_side_slippage_usd": 0.8014978599699979,
+   "round_turn_cost_usd_per_contract": 4.422995719939996,
+   "cost_per_dollar_of_risk": 0.0366708298022736,
+   "day_session_buckets": [
+    {
+     "bucket": "08:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.610597577281,
+     "sell_ticks": 1.610597577281,
+     "fallback": false
+    },
+    {
+     "bucket": "09:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.6848565959888333,
+     "sell_ticks": 1.6848565959888333,
+     "fallback": false
+    },
+    {
+     "bucket": "09:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.609759213774611,
+     "sell_ticks": 1.609759213774611,
+     "fallback": false
+    },
+    {
+     "bucket": "10:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.683377867116611,
+     "sell_ticks": 1.683377867116611,
+     "fallback": false
+    },
+    {
+     "bucket": "10:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.5869294149322777,
+     "sell_ticks": 1.5869294149322777,
+     "fallback": false
+    },
+    {
+     "bucket": "11:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.649719293591,
+     "sell_ticks": 1.649719293591,
+     "fallback": false
+    },
+    {
+     "bucket": "11:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.6706254895007222,
+     "sell_ticks": 1.6706254895007222,
+     "fallback": false
+    },
+    {
+     "bucket": "12:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.6298798877227778,
+     "sell_ticks": 1.6298798877227778,
+     "fallback": false
+    },
+    {
+     "bucket": "12:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.578619471566111,
+     "sell_ticks": 1.578619471566111,
+     "fallback": false
+    },
+    {
+     "bucket": "13:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.568411108498,
+     "sell_ticks": 1.568411108498,
+     "fallback": false
+    },
+    {
+     "bucket": "13:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.5966585034911112,
+     "sell_ticks": 1.5966585034911112,
+     "fallback": false
+    },
+    {
+     "bucket": "14:00",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.5124238854325,
+     "sell_ticks": 1.5124238854325,
+     "fallback": false
+    },
+    {
+     "bucket": "14:30",
+     "minutes_in_window": 30,
+     "buy_ticks": 1.457086050324389,
+     "sell_ticks": 1.457086050324389,
+     "fallback": false
+    }
+   ],
+   "r7_non_candidate": false
+  }
+ }
+}

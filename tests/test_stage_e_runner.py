@@ -8,7 +8,8 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import replace
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
+from fractions import Fraction
 from pathlib import Path
 from types import MappingProxyType
 
@@ -406,3 +407,123 @@ def test_oct_the_record_counts_closure_bars_per_leg(world) -> None:
     assert rec["bars"]["ZN"]["closure_bars"] == 0
     assert rec["engine"]["closure_bars_seen"] == {"ZN": 0}
     assert rec["engine"]["closure_gap_fills"] == 0
+
+
+# ------------------------------------------------ E.4 H1: the per-trial trip list ----
+ZN_TICK_USD = 15.625
+
+
+def _record_and_trips(paths: dict) -> tuple[Path, Path]:
+    record = paths["out_dir"] / "K1_K1-test-01_ZN_research.json"
+    return record, record.with_name("K1_K1-test-01_ZN_research_trips.json")
+
+
+def _exact(value: object) -> Fraction:
+    return Fraction(str(value))  # an int, or "p/q" when not a whole number of cents
+
+
+def test_e4_the_trip_list_sums_per_trade_date_to_the_records_daily_series(world) -> None:
+    paths = world()
+    _screen(paths)
+    record, trips = _record_and_trips(paths)
+    rec = json.loads(record.read_text(encoding="utf-8"))
+    doc = json.loads(trips.read_text(encoding="utf-8"))
+    assert len(doc["trips"]) == doc["n_trips"] == rec["series"]["n_trips"] == len(DAYS)
+    cents: dict[str, Fraction] = {}
+    ticks: dict[str, float] = {}
+    for t in doc["trips"]:
+        net, gross = _exact(t["net_cents"]), _exact(t["gross_cents"])
+        assert float(net) == t["net_cents_float"] and float(gross) == t["gross_cents_float"]
+        assert gross - net > 0  # the trip's commissions and slippage
+        cents[t["trade_date"]] = cents.get(t["trade_date"], Fraction(0)) + net
+        # stage_e_stats: each trip's net USD over its own contracts and the tick value, summed
+        ticks[t["trade_date"]] = (ticks.get(t["trade_date"], 0.0)
+                                  + float(net / 100) / (t["contracts"] * ZN_TICK_USD))
+    days = rec["series"]["dates"]
+    assert set(cents) <= set(days)
+    assert rec["daily_net_usd"] == [float(cents.get(d, Fraction(0)) / 100) for d in days]
+    assert rec["series"]["values"] == [ticks.get(d, 0.0) for d in days]
+
+
+def test_e4_the_trip_file_is_written_once_and_carries_the_records_sha256(world) -> None:
+    paths = world()
+    _screen(paths)
+    record, trips = _record_and_trips(paths)
+    doc = json.loads(trips.read_text(encoding="utf-8"))
+    assert doc["record_file"] == record.name
+    assert doc["record_sha256"] == hashlib.sha256(record.read_bytes()).hexdigest()
+    assert (doc["cluster"], doc["member"], doc["window"], doc["status"]) == (
+        "K1", LABEL, "research", "run")
+    before = trips.read_bytes()
+    with pytest.raises(runner.RunnerRefusal, match="written once"):
+        _screen(paths)
+    assert trips.read_bytes() == before
+    record.unlink()  # a trip file left without its record: refused before anything is written
+    with pytest.raises(runner.RunnerRefusal, match=f"{trips.name} already exists"):
+        _screen(paths)
+    assert not record.exists() and trips.read_bytes() == before
+
+
+def test_e4_a_member_excluded_before_screening_gets_an_empty_trip_list(world) -> None:
+    paths = world(skip={9 * 60 + m for m in range(0, 60, 10)})  # coverage 0.9: not run
+    rec = _screen(paths)
+    record, trips = _record_and_trips(paths)
+    doc = json.loads(trips.read_text(encoding="utf-8"))
+    assert rec["status"] == doc["status"] == "excluded_before_screening"
+    assert doc["trips"] == [] and doc["n_trips"] == 0
+    assert doc["record_sha256"] == hashlib.sha256(record.read_bytes()).hexdigest()
+
+
+def test_e4_a_refused_case_gets_an_empty_trip_list(world, monkeypatch) -> None:
+    paths = world()
+
+    def boom(*args: object, **kwargs: object) -> None:
+        raise runner.EngineRefusedCase("planted")
+
+    monkeypatch.setattr(runner, "_run_member", boom)
+    rec = _screen(paths)
+    record, trips = _record_and_trips(paths)
+    doc = json.loads(trips.read_text(encoding="utf-8"))
+    assert rec["status"] == doc["status"] == "refused_case"
+    assert doc["trips"] == [] and doc["n_trips"] == 0
+    assert doc["record_sha256"] == hashlib.sha256(record.read_bytes()).hexdigest()
+
+
+def _fill(root: str, minute: int, position_after: int, gross: int | Fraction, *,
+          qty: int = 1, locked: int = 0):  # noqa: ANN202 - an engine Fill
+    from screening.stage_e_engine import Fill
+
+    ts = int(datetime(2025, 6, 2, 14, minute, tzinfo=UTC).timestamp()) * 10**9
+    return Fill(root, ts, ts, 0, "strategy" if minute < 45 else "forced_flatten", "buy", qty,
+                100.0, 125 * qty, 50 * qty, 1.0, gross, position_after, 0, 1,
+                trade_date=date(2025, 6, 2), opening=gross == 0, locked_bars_waited=locked)
+
+
+def test_e4_trip_rows_carry_every_field_and_exact_gross_and_net_cents() -> None:
+    from screening.stage_e_engine import EngineResult
+
+    ledger = (_fill("ZN", 10, 1, 0), _fill("MES", 15, 2, 0, qty=2),
+              _fill("MES", 20, 1, 250), _fill("MES", 30, 0, Fraction(-125, 3)),
+              _fill("ZN", 40, 0, Fraction(3125, 2), locked=2),
+              _fill("ZN", 45, -1, 0), _fill("ZN", 50, 0, 1000))
+    result = EngineResult(ledger, None, 0, 0, 1, {})
+    trips = runner.extract_trips(result)
+    gross = runner.trip_gross_cents(result, trips)
+    assert gross == (Fraction(625, 3), Fraction(3125, 2), 1000)
+    rows = runner.trip_rows(trips, gross)
+    assert [r["root"] for r in rows] == ["MES", "ZN", "ZN"]
+    mes, zn, zn2 = rows
+    assert mes == {"root": "MES", "open_ts_ns": trips[0].open_ts_ns,
+                   "open_utc": "2025-06-02T14:15:00Z", "close_ts_ns": trips[0].close_ts_ns,
+                   "close_utc": "2025-06-02T14:30:00Z", "trade_date": "2025-06-02",
+                   "contracts": 2, "net_cents": "-1475/3", "net_cents_float": -1475 / 3,
+                   "gross_cents": "625/3", "gross_cents_float": 625 / 3,
+                   "close_reason": "strategy", "locked": False, "hold_minutes": 15.0}
+    assert (zn["net_cents"], zn["gross_cents"], zn["locked"], zn["hold_minutes"]) == (
+        "2425/2", "3125/2", True, 30.0)
+    assert (zn2["net_cents"], zn2["gross_cents"], zn2["close_reason"]) == (
+        650, 1000, "forced_flatten")
+    assert all(_exact(r["net_cents"]) == t.net_cents for r, t in zip(rows, trips, strict=True))
+    other = runner.extract_trips(EngineResult(ledger[:5], None, 0, 0, 1, {}))
+    with pytest.raises(AssertionError, match="extract_trips"):
+        runner.trip_gross_cents(result, other)

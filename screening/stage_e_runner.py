@@ -47,12 +47,17 @@ Per member, in order:
    only its power check undefined, recorded "power check undefined" (a question for the user).
 ``screen_cluster`` then assigns Tier A / B / excluded with stage_e_stats.assign_tiers.
 
-Records are written once (an existing file is never overwritten).
+Records are written once (an existing file is never overwritten). Beside each member record,
+``<record name>_trips.json`` (Stage E.4 H1) lists the member's round trips as extract_trips gives
+them, each with the sum of its fills' gross_realized_cents, and names the record file and the
+sha256 of its bytes; a member without an engine run lists none. Cents are exact: an int, or
+"p/q" when a value is not a whole number of cents, with its float beside it.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import re
@@ -103,6 +108,10 @@ EMPTY_WINDOW_NOTE = ("empty confirmation window: supply 0 days, so D4 labels the
                      "'inconclusive by design' (n_b > 0 exceeds 0); D4's full-size price-path "
                      "fallback (D2, D4; accepted as the user's call in U8) is the user's decision")
 RECORD_SCHEMA = "stage_e_member_record/1"
+TRIPS_SCHEMA = "stage_e_member_trips/1"
+TRIPS_SUFFIX = "_trips"
+CENTS_NOTE = ("net_cents and gross_cents are exact: an int, or 'p/q' when the value is not a "
+              "whole number of cents; *_float beside each is float(value)")
 LABEL_COVERAGE = "coverage_below_0.95"
 LABEL_MEAN_HOLD = "mean_holding_below_10min"
 LABEL_ENTRIES = "entries_above_20_per_day"
@@ -175,6 +184,51 @@ def extract_trips(result: EngineResult) -> tuple[TripRecord, ...]:
     if open_:
         raise AssertionError(f"trips never closed on {sorted(open_)} -- engine invariant broken")
     return tuple(trips)
+
+
+def trip_gross_cents(result: EngineResult, trips: Sequence[TripRecord]
+                     ) -> tuple[int | Fraction, ...]:
+    """Per trip of ``trips`` (extract_trips of this ``result``), in its order, the sum of the
+    trip's fills' gross_realized_cents (the trip list, Stage E.4 H1): extract_trips' flat-to-flat
+    grouping replayed over the same Fill events, reading nothing else and changing nothing. A
+    replay that does not give the same trips (root, open and close times) raises."""
+    open_: dict[str, tuple[int, int | Fraction]] = {}
+    out: list[tuple[str, int, int, int | Fraction]] = []
+    for f in result.events(Fill):
+        start, gross = open_.get(f.root, (f.fill_ts_ns, 0))
+        gross = gross + f.gross_realized_cents
+        if f.position_after == 0:
+            out.append((f.root, start, f.fill_ts_ns, gross))
+            open_.pop(f.root, None)
+        else:
+            open_[f.root] = (start, gross)
+    if [o[:3] for o in out] != [(t.root, t.open_ts_ns, t.close_ts_ns) for t in trips]:
+        raise AssertionError("the gross replay does not give extract_trips' trips -- the trip "
+                             "list would not match the record")
+    return tuple(o[3] for o in out)
+
+
+def _exact_cents(value: int | Fraction) -> int | str:
+    """A cents value exactly: the int when it is a whole number of cents, else "p/q"."""
+    v = Fraction(value)
+    return v.numerator if v.denominator == 1 else f"{v.numerator}/{v.denominator}"
+
+
+def _utc_iso(ts_ns: int) -> str:
+    seconds, nanos = divmod(ts_ns, 1_000_000_000)
+    stamp = datetime.fromtimestamp(seconds, UTC).strftime("%Y-%m-%dT%H:%M:%S")
+    return f"{stamp}.{nanos:09d}Z" if nanos else f"{stamp}Z"
+
+
+def trip_rows(trips: Sequence[TripRecord], gross: Sequence[int | Fraction]) -> list[dict]:
+    """The trip list's rows: every TripRecord field, its hold, and the trip's gross cents."""
+    return [{"root": t.root, "open_ts_ns": t.open_ts_ns, "open_utc": _utc_iso(t.open_ts_ns),
+             "close_ts_ns": t.close_ts_ns, "close_utc": _utc_iso(t.close_ts_ns),
+             "trade_date": t.trade_date.isoformat(), "contracts": t.contracts,
+             "net_cents": _exact_cents(t.net_cents), "net_cents_float": float(t.net_cents),
+             "gross_cents": _exact_cents(g), "gross_cents_float": float(g),
+             "close_reason": t.close_reason, "locked": t.locked, "hold_minutes": t.hold_minutes}
+            for t, g in zip(trips, gross, strict=True)]
 
 
 def daily_net_cents(result: EngineResult, trips: Sequence[TripRecord]) -> dict[date, Any]:
@@ -308,6 +362,25 @@ def write_record(record: dict, out_dir: Path, name: str) -> Path:
     return out
 
 
+def write_member_record(record: dict, trips: Sequence[dict], out_dir: Path) -> Path:
+    """The member record (write_record, unchanged) and beside it its trip list
+    ``<record name>_trips.json`` (Stage E.4 H1): the record file's name and the sha256 of the
+    bytes written for it, cluster, member, window, status and the trips. Both are written once;
+    a trip list already there refuses before the record is written."""
+    name = f"{record['cluster']}_{record['member']}_{record['window']}"
+    trips_name = f"{name}{TRIPS_SUFFIX}"
+    existing = Path(out_dir) / f"{_safe(trips_name)}.json"
+    if existing.exists():
+        raise RunnerRefusal(f"{existing} already exists; records are written once")
+    path = write_record(record, out_dir, name)
+    write_record({"schema": TRIPS_SCHEMA, "record_file": path.name,
+                  "record_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                  "cluster": record["cluster"], "member": record["member"],
+                  "window": record["window"], "status": record["status"], "cents": CENTS_NOTE,
+                  "n_trips": len(trips), "trips": list(trips)}, out_dir, trips_name)
+    return path
+
+
 # ------------------------------------------------------------------- screen ----
 def _run_member(member: Any, legs: Sequence[LegSpec], inputs: Mapping[str, LegInputs],
                 frames: Mapping[str, LegFrame], dates: Sequence[date], blackout: frozenset,
@@ -376,7 +449,7 @@ def screen_member(cluster: str, label: str, factory: Callable[[], Any] | None,
     if not all(c.passes for c in coverage.values()):
         record.update(status="excluded_before_screening", labels=[LABEL_COVERAGE], screen=None,
                       series=None, power=None)
-        write_record(record, out_dir, f"{cluster}_{label}_{window}")
+        write_member_record(record, (), out_dir)
         return record
     try:
         result = _run_member(member, legs, inputs, frames, mw.dates, mw.blackout_union, releases)
@@ -386,9 +459,10 @@ def screen_member(cluster: str, label: str, factory: Callable[[], Any] | None,
         # member-level refusal; the cluster run continues and lists it.
         record.update(status="refused_case", refusal=f"{type(exc).__name__}: {exc}", labels=[],
                       screen=None, series=None, power=None)
-        write_record(record, out_dir, f"{cluster}_{label}_{window}")
+        write_member_record(record, (), out_dir)
         return record
     trips = extract_trips(result)
+    rows = trip_rows(trips, trip_gross_cents(result, trips))  # the trip list only (E.4 H1)
     daily = daily_net_cents(result, trips)
     series = _series(label, legs, inputs, trips, mw.dates)
     rate = trade_rate(result, trips)
@@ -407,7 +481,7 @@ def screen_member(cluster: str, label: str, factory: Callable[[], Any] | None,
         daily_net_usd=[float(Fraction(daily.get(d, 0)) / 100) for d in mw.dates])
     record.update(_research_statistics(cluster, decl.ordinal, legs, series, step2_root)
                   if window == RESEARCH_WINDOW else {"screen": None, "power": None})
-    write_record(record, out_dir, f"{cluster}_{label}_{window}")
+    write_member_record(record, rows, out_dir)
     return record
 
 
@@ -516,4 +590,10 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    # C-1 (E.3 return, section 7; E.4 H1): under `python -m` this file runs as __main__, a second
+    # copy of the module, while screening.stage_e_start_dates raises screening.stage_e_runner's
+    # refusal classes. Run that module's main(), so one module object raises and catches them
+    # however the runner is launched.
+    from screening import stage_e_runner
+
+    sys.exit(stage_e_runner.main())

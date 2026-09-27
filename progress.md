@@ -2802,3 +2802,57 @@ Delegation share: lead 18.5%, workers 81.5%; by tier: Opus 96.9% (lead 18.5%, wo
 Cache reads are 96.1% of all tokens. The largest workers were the longest-lived with resumed follow-ups (RunnerCoder 77M,
 MLTestCoder 64M, PurchaseCoder2 60M); the three research sourcers together used 47M. The session cannot read the /usage
 meter; the user records it.
+
+## 2026-09-26/27 — Stage E.3: K2 rates, eight members coded, audited, frozen and screened (research window)
+
+Lead Opus 5.5 xhigh. **K2's eight active members (44 trials) are coded, Fable-audited (0 blocking, 0 should-fix, 12
+notes), frozen and screened once.** The freeze is commit a79b47e (not pushed), reports/stage_e_k2_member_freeze.json,
+sha256 8815a775e74996419b57751b1104ffa07cd4b3450eb18a9a92c6cbbd5615b7c5. On the research window (299 dates), **every
+trial fails D5's screen: Tier A is empty and all 44 are Tier B** (largest daily t 0.84, K2-aucpost-01 ZT; the ports'
+t runs from -5.34 to -0.34). The Fable recomputation found no discrepancy. The frozen `python -m` launch crashed on a
+harness double import before writing anything (C-1). The same frozen main() then ran from an import (R-T5-1). This bug
+must be fixed or avoided before K2's confirmation session. The catalog's C9 auction-XML check ran for the first time
+(340/340 agree). Program N = 58 + 44 = 102. Nothing bought, ledger unchanged. Both holdouts all_ok, 0 unlocks.
+REGISTRATION.md 0 bytes. Tests 3008 passed, 2 skipped, 1 xfailed. Next: K2's confirmation ($40.50 step 2 purchase,
+acct-2 top-up $18.98). Full record: reports/E.3_RETURN.md.
+
+### Session cost
+
+Wall clock 23:35-01:15 PDT (101 min), with no pause or outage, so all of it is work time. Per-task times are in the table, from reports/stage_e3_STATE.md and the transcripts' first and last message times. Tokens are summed from each assistant message's usage fields, deduplicated by message id, over this session's transcript and its subagent transcripts (837e1130-3b1c-4fe2-8242-94af0469e3ba.jsonl and 837e1130-3b1c-4fe2-8242-94af0469e3ba/subagents/*.jsonl), up to 01:15 PDT. The lead's figure excludes the few messages after this computation. These are token counts, not plan-credit percentages.
+
+Final ETA table:
+
+| Task / spawn | Owner | Model | Effort | Start | End | Time | Tokens | Status and deviations |
+|---|---|---|---|---|---|---|---|---|
+| 0 Startup checks, start suite (2 runs) | lead | opus | xhigh | 23:35 | 00:01 | 26 min | in lead total | done; run 1 set PYTHONPYCACHEPREFIX (3 bytecode tests failed), run 2 as E.2b = 2863 passed |
+| 1 Member specs (L-01..L-22; L-23 at 00:08) | lead | opus | xhigh | 23:40 | 23:52 | 12 min | in lead total | done |
+| 1b C9 auction XML check (added, L-02) | AuctionXmlChecker-OpusMed | opus | medium | 23:45 | 00:03 | 18 min | 2,182,157 | done; 340/340 agree |
+| 2 CP1-CP3, month-end, tests | MemberCoder-A-OpusXHigh | opus | xhigh | 23:53 | 00:11 | 18 min | 14,358,294 | done; 98 tests |
+| 2 Event members, release table, tests | MemberCoder-B-OpusXHigh | opus | xhigh | 23:53 | 00:09 | 16 min | 12,103,378 | done; 47 tests; raised the open ban (R-T2-1) |
+| 2 gate: full suite | lead | - | - | 00:11 | 00:24 | 13 min | in lead total | 3008 passed |
+| 3 Fidelity audit | MemberAuditor-FableXHigh | fable | xhigh | 00:11 | 00:29 | 17 min | 3,467,139 | done; 0 BLOCKING, 0 SHOULD FIX, 12 NOTE |
+| 4 Rulings, freeze, suite, commit a79b47e | lead | opus | xhigh | 00:28 | 00:44 | 16 min | in lead total | done; suite 3008 passed |
+| 5a Screening attempt 1 | lead (frozen CLI) | - | - | 00:43:15 | 00:43:26 | 0.2 min | in lead total | CRASHED C-1 (harness double import); nothing written |
+| 5b Screening run (R-T5-1) | lead (frozen main via import) | - | - | 00:44:56 | 00:50:39 | 6 min | in lead total | done; 44 records, 0 refused |
+| 6 Recomputation + predrift follow-up | MemberAuditor-FableXHigh | fable | xhigh | 00:50 | 01:04 | 13 min | 5,447,346 | done; no DISCREPANCY |
+| 7 End suite, end checks, return, progress, STAGES, cost | lead | opus | xhigh | 01:02 | 01:15 | 14 min | in lead total | done |
+| Lead (all lead rows) | lead | opus | xhigh | 23:35 | 01:15 | - | 46,540,067 | - |
+| **Stage total** | lead + 5 spawn records (4 agents) | - | - | 23:35 | 01:15 | **101 min**, no pauses | **84,098,381** | initial estimate about 8 h 30 min (to about 08:10); the coders and the audit ran far faster than guessed |
+
+Tokens per model:
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 938 | 1,914 | 8,179,334 | 732,299 | 8,914,485 |
+| claude-opus-5-5 | 704 | 232,651 | 73,777,596 | 1,172,945 | 75,183,896 |
+| all | 1,642 | 234,565 | 81,956,930 | 1,905,244 | 84,098,381 |
+
+Per worker spawn:
+
+- AuctionXmlChecker-OpusMed: worker-medium, opus (claude-opus-5-5), effort medium: 2,182,157 tokens (input 54, output 4,112, cache read 1,947,023, cache creation 230,968)
+- MemberAuditor-FableXHigh part 1 (Task 3): worker-xhigh, fable (claude-fable-5-1), effort xhigh: 3,467,139 tokens (input 546, output 733, cache read 3,162,923, cache creation 302,937)
+- MemberAuditor-FableXHigh part 2 (Task 6 + follow-up): worker-xhigh, fable (claude-fable-5-1), effort xhigh: 5,447,346 tokens (input 392, output 1,181, cache read 5,016,411, cache creation 429,362)
+- MemberCoder-A-OpusXHigh: worker-xhigh, opus (claude-opus-5-5), effort xhigh: 14,358,294 tokens (input 158, output 5,178, cache read 14,068,984, cache creation 283,974)
+- MemberCoder-B-OpusXHigh: worker-xhigh, opus (claude-opus-5-5), effort xhigh: 12,103,378 tokens (input 142, output 18,603, cache read 11,833,649, cache creation 250,984)
+
+Delegation share: lead 46,540,067 (55.3%), workers 37,558,314 (44.7%). By model tier: claude-fable-5-1 8,914,485 (10.6%), claude-opus-5-5 75,183,896 (89.4%). Cache reads are 97.5% of all tokens.

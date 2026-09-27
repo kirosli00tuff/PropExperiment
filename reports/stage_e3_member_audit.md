@@ -261,3 +261,210 @@ Tests that pass vacuously: none found. Every test I read asserts exact fill or i
 - My scripts: reports/stage_e3_briefs/audit/{probe_sources,recompute_month_end,recompute_releases,csv_availability,scenarios}.py (probe_sources.py's last lines fail on import path; superseded by recompute_month_end.py).
 
 # Part 2: recomputation (Task 6)
+
+Brief: reports/stage_e3_briefs/auditor_task6.md. Started 2026-09-27 00:51 PDT. Ended 2026-09-27 01:02 PDT.
+Read-only except this section and reports/stage_e3_briefs/audit/{item1_screen,replay_two,rebuild_costs,item4_counts}.py,
+item1_verdicts.json, trips_K2-cp1-01_ZN.json, trips_K2-aucpost-01_ZN.json. No runner run, no bar file opened by me (item 3's two replays
+went through the runner's own loader), nothing written under reports/stage_e3_k2_screen/.
+
+Inputs as seen: 44 member records plus K2_research_cluster.json (cluster file written 00:50 PDT); harness sha256
+cf939270f0a00be74aa29a43f0c7de964256411a9cdcebc36f22fd3bdc021a45 (preflight passed in my replay); cluster freeze sha256
+8815a775e74996419b57751b1104ffa07cd4b3450eb18a9a92c6cbbd5615b7c5 (44 members, verified); release calendar sha256 839f2437...; frozen
+tables costs f4360bb7..., epsilon 4e2c7731..., sizes 280d7e9d..., vehicles 1f1cafee...; ZN research parquet sha256
+f4a403f8641c593daac8b8ea42674233c90574181fac3a001d26c4c31e487ee0 (396,178 rows, 1 closure bar), equal in the record and in my replay.
+
+## Summary of verdicts
+
+| Item | Verdict | One line |
+|---|---|---|
+| 1 Screen figures, 44 records | VERIFIED WITH NOTES (44 of 44) | mean, sd, t and passes reproduce to 1e-9 relative for every record; series shape correct; notes: power check not run (all 44), MLL liquidations in 24 records |
+| 2 Tiers | VERIFIED (44 of 44) | all 44 Tier B: none passes, no label, coverage 0.9611..0.9986 (all >= 0.95); floor labels recomputed from trade_rate: none |
+| 3 Replay and cost rebuild, 2 trials | VERIFIED (2 of 2) | replayed series equal the records exactly; my own cost rebuild matches every fill and every day (worst relative difference 0) |
+| 4 Trade counts and fill minutes | VERIFIED WITH NOTES | every event-member count explained except 7 predrift dates (consistent with s = 0, not checkable from the records); the two replayed trials' fill minutes match the rules, one MLL liquidation aside |
+| 5 Program N | VERIFIED | 44 screened, 0 refused, N = 58 + 44 = 102; the 44 records are exactly the freeze's 44 declarations |
+
+## Item 1: the D5 screen recomputed (reports/stage_e3_briefs/audit/item1_screen.py)
+
+Method, in my own code: mean = fmean(values), sd = pstdev(values) (population), t = mean / (sd / sqrt(n)), passes = mean > 0 and t >= 1.0
+(D5 lines 302-305; the runner's t is funnel.multiple_comparisons.harvey_liu_zhu_verdict line 124, the same formula). Series shape: the
+window's trade dates recomputed from data.group_session.load_group_calendar("rates") over 2025-04-01..2026-06-19 (316 trade dates) less
+the record's exclusions (15 roll-blackout dates 2025-05-28..30, 08-27..29, 11-25..27, 2026-02-25..27, 05-27..29; UR-1 2026-06-18/19)
+= 299 dates, first 2025-04-01, last 2026-06-17; equal to series.dates in every record (one identical window_dates block across all 44).
+Non-zero days = n_trips in every record (one trip per day at most, no zero-net trip); n_days = 299 everywhere; daily_net_usd = values x
+the vehicle's tick value on every day (so every trip is one contract, q_c = 1).
+
+| Ord | Member | n_trips | mean ticks/ct/day | daily t | passes | Verdict | Notes |
+|---|---|---|---|---|---|---|---|
+| 1 | K2-cp1-01 ZT | 264 | -0.580772 | -2.327964 | no | VERIFIED WITH NOTES | power not run |
+| 2 | K2-cp1-01 ZF | 275 | -0.314140 | -1.123614 | no | VERIFIED WITH NOTES | power not run |
+| 3 | K2-cp1-01 ZN | 276 | -0.473393 | -2.554656 | no | VERIFIED WITH NOTES | power not run; MLL liquidation x1 (accounts started 2) |
+| 4 | K2-cp1-01 TN | 270 | -0.890496 | -3.689914 | no | VERIFIED WITH NOTES | power not run; MLL x2 |
+| 5 | K2-cp1-01 ZB | 272 | -0.866589 | -5.340199 | no | VERIFIED WITH NOTES | power not run; MLL x4 |
+| 6 | K2-cp1-01 UB | 276 | -1.076514 | -5.193316 | no | VERIFIED WITH NOTES | power not run; MLL x4 |
+| 7 | K2-cp2-01 ZT | 265 | -0.713846 | -1.365797 | no | VERIFIED WITH NOTES | power not run; MLL x1 |
+| 8 | K2-cp2-01 ZF | 283 | -0.212673 | -0.342713 | no | VERIFIED WITH NOTES | power not run |
+| 9 | K2-cp2-01 ZN | 278 | -0.976232 | -1.980745 | no | VERIFIED WITH NOTES | power not run; MLL x2 |
+| 10 | K2-cp2-01 TN | 286 | -0.798365 | -1.293993 | no | VERIFIED WITH NOTES | power not run; MLL x3 |
+| 11 | K2-cp2-01 ZB | 285 | -0.608458 | -1.359407 | no | VERIFIED WITH NOTES | power not run; MLL x5 |
+| 12 | K2-cp2-01 UB | 291 | -0.499264 | -0.914781 | no | VERIFIED WITH NOTES | power not run; MLL x5 |
+| 13 | K2-cp3-01 ZT | 121 | -0.378649 | -0.428015 | no | VERIFIED WITH NOTES | power not run; MLL x1 |
+| 14 | K2-cp3-01 ZF | 127 | -1.197328 | -1.173917 | no | VERIFIED WITH NOTES | power not run; MLL x3 |
+| 15 | K2-cp3-01 ZN | 131 | -0.635759 | -0.881876 | no | VERIFIED WITH NOTES | power not run; MLL x3 |
+| 16 | K2-cp3-01 TN | 136 | -1.157407 | -1.256501 | no | VERIFIED WITH NOTES | power not run; MLL x5 |
+| 17 | K2-cp3-01 ZB | 130 | -1.223253 | -1.784604 | no | VERIFIED WITH NOTES | power not run; MLL x11 |
+| 18 | K2-cp3-01 UB | 134 | -1.184508 | -1.556922 | no | VERIFIED WITH NOTES | power not run; MLL x11 |
+| 19 | K2-aucpre-01 ZT | 13 | -0.050003 | -0.523387 | no | VERIFIED WITH NOTES | power not run |
+| 20 | K2-aucpre-01 ZF | 10 | -0.163853 | -1.360682 | no | VERIFIED WITH NOTES | power not run |
+| 21 | K2-aucpre-01 ZN | 15 | +0.038363 | +0.226383 | no | VERIFIED WITH NOTES | power not run |
+| 22 | K2-aucpre-01 TN | 15 | +0.098338 | +0.397251 | no | VERIFIED WITH NOTES | power not run |
+| 23 | K2-aucpre-01 ZB | 15 | +0.038935 | +0.271226 | no | VERIFIED WITH NOTES | power not run |
+| 24 | K2-aucpre-01 UB | 15 | +0.085469 | +0.484355 | no | VERIFIED WITH NOTES | power not run |
+| 25 | K2-aucpost-01 ZT | 13 | +0.050036 | +0.839348 | no | VERIFIED WITH NOTES | power not run |
+| 26 | K2-aucpost-01 ZF | 10 | -0.060388 | -0.774136 | no | VERIFIED WITH NOTES | power not run |
+| 27 | K2-aucpost-01 ZN | 15 | -0.165683 | -2.020520 | no | VERIFIED WITH NOTES | power not run |
+| 28 | K2-aucpost-01 TN | 15 | -0.087149 | -0.811638 | no | VERIFIED WITH NOTES | power not run |
+| 29 | K2-aucpost-01 ZB | 15 | -0.162545 | -0.825379 | no | VERIFIED WITH NOTES | power not run |
+| 30 | K2-aucpost-01 UB | 15 | -0.199420 | -0.819896 | no | VERIFIED WITH NOTES | power not run; MLL x1 |
+| 31 | K2-fomcpost-01 ZT | 10 | -0.565148 | -2.055790 | no | VERIFIED WITH NOTES | power not run |
+| 32 | K2-fomcpost-01 ZF | 10 | -0.571837 | -1.989312 | no | VERIFIED WITH NOTES | power not run |
+| 33 | K2-fomcpost-01 ZN | 10 | -0.390256 | -1.992230 | no | VERIFIED WITH NOTES | power not run |
+| 34 | K2-fomcpost-01 TN | 10 | -0.417183 | -1.937702 | no | VERIFIED WITH NOTES | power not run |
+| 35 | K2-fomcpost-01 ZB | 10 | -0.253801 | -1.921874 | no | VERIFIED WITH NOTES | power not run; MLL x1 |
+| 36 | K2-fomcpost-01 UB | 10 | -0.280757 | -2.078464 | no | VERIFIED WITH NOTES | power not run; MLL x1 |
+| 37 | K2-predrift-01 ZN | 12 | -0.030205 | -0.428879 | no | VERIFIED WITH NOTES | power not run |
+| 38 | K2-predrift-01 ZB | 11 | -0.070798 | -1.241194 | no | VERIFIED WITH NOTES | power not run |
+| 39 | K2-monthend-01 ZT | 18 | +0.008744 | +0.043508 | no | VERIFIED WITH NOTES | power not run |
+| 40 | K2-monthend-01 ZF | 18 | -0.031390 | -0.125874 | no | VERIFIED WITH NOTES | power not run |
+| 41 | K2-monthend-01 ZN | 18 | -0.087075 | -0.482553 | no | VERIFIED WITH NOTES | power not run |
+| 42 | K2-monthend-01 TN | 18 | -0.114255 | -0.525601 | no | VERIFIED WITH NOTES | power not run |
+| 43 | K2-monthend-01 ZB | 18 | -0.226174 | -1.161352 | no | VERIFIED WITH NOTES | power not run; MLL x1 |
+| 44 | K2-monthend-01 UB | 18 | -0.434085 | -1.415467 | no | VERIFIED WITH NOTES | power not run; MLL x2 |
+
+(Figures are the records' values, which my recomputation matched to 1e-9 relative; full precision in item1_verdicts.json and the records.)
+
+The two notes, which apply to the recorded run and not to my recomputation:
+- **Power check not run, all 44.** Every record's `power` is `{"status": "not_run", "reason": "StartRuleMissing: no frozen S_X for [<root>]: no reports/stage_e_start_rule_<SET>.json lists ..."}`: `_research_statistics` needs the confirmation supply days (the D4 start rule S_X of the root), and no frozen start-rule file exists for the rates roots. This is the same refusal that crashed the CLI (C-1) and that the imported `main()` records by name (R-T5-1). The D5 screen and the tiers do not depend on it. The D4 power label (the "achieved null power" of the falsification condition) is therefore absent for K2 and is for the lead to carry as an open item; the runner's own tests expect exactly this recording (STATE C-1).
+- **MLL liquidations (24 records, 1 to 11 each).** The frozen engine simulates the XFA account (rules/xfa_rules.py XFA_50K: MLL $2,000 below the start balance, trailing to $0 then locked); when a member's cumulative losses reach the floor intraday, the engine liquidates the position at that bar (stage_e_engine.py check_mll lines 543-568: the worse of the bar's open and the floor-touch price), counts `mll_liquidation`, closes the day as breached, and starts a new account at the next trade date (roll_session lines 421-429, restart_on_terminal). The liquidation exit enters the series as that trip's close. For the losing port members this happens repeatedly (cp3 ZB and UB: 11 restarts in 299 days). It is the frozen harness's rule, not a recomputation matter; it explains the sub-rule holding minima in trade_rate (cp1 TN/ZB min hold 2 min, cp2 TN 6, cp3 ZN 9) and it means these series are the series of a member whose account is repeatedly stopped out and restarted, which D5's screen does not distinguish. In cp1 ZN's one case (2026-04-29, an FOMC statement day): entry sell 13:30 at 110.40625, liquidated 13:35 at 110.453125 (3 ticks against), trip net -$65.135; the day's loss itself was small, the floor was reached by the account's cumulative drift (mean -0.47 ticks/day over 13 months).
+
+## Item 2: tiers (item1_screen.py)
+
+Rule applied in my code (stage_e_stats._tier_one lines 214-238, read only): a coverage label -> "excluded" before screening (screen None);
+any other D9 label (mean_holding_below_10min, entries_above_20_per_day, hold_below_2min) -> "excluded" whatever the screen says (ruling
+OC-H), keeping its screen result; otherwise passes -> A, else B. Floor labels recomputed from each record's trade_rate: entry cap
+refusals 0 and max entries per product-day 1 everywhere; min-hold refusals 0 everywhere; mean hold >= 15 min everywhere (the minima:
+aucpre/aucpost/fomcpost/monthend fixed holds; cp1 28.6-29.0; cp2 74.8-75.9; cp3 376-398; predrift 15). Coverage ratios 0.9611 (fomcpost
+TN) to 0.9986 (cp1 ZN), all >= 0.95, all `passes: true`. So no member carries a label, none passes the screen (every mean is negative or
+t < 1.0; the highest t is aucpost ZT at 0.839), and all 44 belong in Tier B. K2_research_cluster.json: tiers.members has 44 entries, all
+`tier: "B"`, `labels: []`, note "fails the D5 screen"; not_tiered {}, refused_members {}, power_check_undefined []. Tier A is empty, so K2
+contributes no Holm family (k_from_tiers counts clusters with a non-empty Tier A). VERIFIED for all 44.
+
+## Item 3: replay of two trials and rebuild from the trips (replay_two.py, rebuild_costs.py)
+
+Replay, through the runner's own functions in the prescribed order: `harness_freeze.preflight(cf939270...)`; `load_cluster_freeze("K2")`
+and `verify_cluster_code`; `resolve_member`; `_legs_inputs`; `load_release_calendar`; `_load_frames(..., "research",
+data/processed, data/processed_step2)` (the loader verified the parquet sha256 f4a403f8... against the frozen table); `member_window`
+(299 dates, the same exclusions); `factory()`; `_run_member`; `extract_trips`; `_series`. Fresh PYTHONPYCACHEPREFIX outside the
+repository, nice 10, 00:55 PDT.
+
+Determinism: for both trials the replayed `series.values` equal the record's list exactly (float for float), the dates and n_trips are
+equal, the engine counters are equal, and the bar sha256 is equal. K2-cp1-01 ZN: 552 fills, 276 trips, counters {engine_not_a_window_date
+9, mll_liquidation 1, closure_bars_seen:ZN 1}, 2 account starts (2025-04-01 and 2026-04-30 after the 2026-04-29 breach). K2-aucpost-01 ZN:
+30 fills, 15 trips, 1 account. My own flat-to-flat pairing of the fills reproduces the runner's TripRecord list (dates and net cents).
+
+Trip lists written: reports/stage_e3_briefs/audit/trips_K2-cp1-01_ZN.json and trips_K2-aucpost-01_ZN.json (per trip: entry and exit
+fill times in CT, decision times, side, quantity, entry and exit prices, gross, commission, slippage and net cents, exit reason,
+event-window flags; plus every fill, the runner's trips, the account starts and the breach days).
+
+Rebuild in my own code (rebuild_costs.py; nothing from the runner's cost functions): commission per side = round-turn $2.62 -> 262 cents
+/ 2 = 131 cents (reports/stage_e2a_costs.json products.ZN.commission_rt_usd; rules/products.py agrees); tick value 15.625 USD = 3125/2
+cents; slippage per side = ceil(round(qty x s x 1562.5 cents, 6)) with s = the fill bar's 30-minute CT bucket's half-spread + that
+bucket's depth term (46 buckets 17:00..16:00, no fallback bucket), or, for a fill in [release, release + 30 min) of a release whose
+`products` list contains ZN (815 instants in the frozen calendar, read from the JSON), the largest half-spread of all buckets
+(0.5010625313606667, the 17:00 bucket) + the bucket's depth term (D8 as read by ruling T12-4, stage_e_frozen.py lines 12-15); gross =
+(exit ticks - entry ticks) x sign x qty x tick value, exact in Fractions; day value = sum over trips closing that trade date of
+net_usd / (contracts x 15.625).
+
+Results: K2-cp1-01 ZN: 552 fills, 0 commission or slippage mismatches against the engine's per-fill figures, 0 gross mismatches, 0
+event-window flag mismatches (no cp1 fill lies in an event window: 13:30 and 13:59 are outside every ZN release's 30 minutes), all 299
+days equal to the record within 1e-9 relative (worst difference 0). K2-aucpost-01 ZN: 30 fills, 0/0/0 mismatches, 15 event-window fills
+(every 12:05 entry lies in [12:00, 12:30) of its own auction's close; no 15:05 exit does), all 299 days equal (worst difference 0). Both
+VERIFIED. The replay is a replication for verification; the recorded run stays the only result.
+
+## Item 4: trade counts and fill minutes (item4_counts.py; the replayed trips for 4b)
+
+Event dates from the frozen tables (verified in part 1), restricted to 2025-04-01..2026-06-19, then to the 299 window dates, then less
+early-halt dates (rates calendar; the window's halts are 2025-05-26, 06-19, 07-04, 09-01, 11-27, 11-28, 12-24, 2026-01-19, 02-16,
+04-03, 05-25, 06-19). "Refused" is the record's `engine_not_a_window_date` counter (an intent on a blackout or UR-1 date).
+
+| Member | Events in window | Blackout | Halt (not blackout) | Expected | n_trips (six roots) | Refused | Verdict |
+|---|---|---|---|---|---|---|---|
+| aucpre / aucpost ZT (2Y) | 13 | 0 | 0 | 13 | 13 / 13 | 0 | VERIFIED |
+| aucpre / aucpost ZF (5Y) | 15 | 5 (2025-05-28, 08-27, 11-25, 2026-02-25, 05-27: the 5-year auctions fall in the roll blackouts) | 0 | 10 | 10 / 10 | 5 / 5 | VERIFIED |
+| aucpre / aucpost ZN, TN (10Y) | 15 | 0 | 0 | 15 | 15 / 15, 15 / 15 | 0 | VERIFIED |
+| aucpre / aucpost ZB, UB (30Y) | 15 | 0 | 0 | 15 | 15 / 15, 15 / 15 | 0 | VERIFIED |
+| fomcpost (all six) | 10 | 0 | 0 | 10 | 10 x 6 | 0 | VERIFIED |
+| predrift ZN | 15 | 0 | 0 | 15 | 12 | 0 | VERIFIED WITH NOTES: 3 dates untraded (2025-07-03, 2026-05-05, 2026-06-03) |
+| predrift ZB | 15 | 0 | 0 | 15 | 11 | 0 | VERIFIED WITH NOTES: 4 dates untraded (2025-07-03, 2025-08-05, 2026-05-05, 2026-06-03) |
+| monthend (all six) | 28 | 9 (the May, Aug, Nov, Feb and May month-ends sit in the roll blackouts; 2025-11-27 is also a halt) | 1 (2025-11-28) | 18 | 18 x 6 | 8 (ZT 7) | VERIFIED |
+
+Every event member traded on every expected date and on no other date (my per-date check of the non-zero series days against the event
+tables). The predrift shortfalls: the member trades only when s != 0; on the 7 untraded (date, root) pairs the record holds no signal, so
+the reason (s = 0, or a missing 08:30 or 08:49 bar) is not checkable from the records; s = 0 over a 19-minute window is ordinary for ZB's
+1/32 tick and plausible for ZN. Listed as unexplained in the brief's sense; a replay of the two predrift trials would settle it (not in my
+brief). Monthend ZT's 7 refusals against 8 for the other roots: one blackout month-end date without a ZT 07:20 bar or with a halt-carrying
+bar (also not checkable from the records; the date is excluded from the window either way, so no trade is affected).
+
+Ports (no fixed expectation; n of 299 window dates): cp1 264-276 trips (7-10 refused on excluded dates; the rest zero-signal or missing
+signal/entry bars), cp2 265-291 (14-16 refused; forced flattens at F on 1-2 days for ZT, ZF, TN, ZB; one D9.5a deferral each on ZN and
+ZB; one entry refused inside the flatten window on ZT and TN, an early-halt day), cp3 121-136 (CLV outside the cuts on the other days;
+4-7 refused). All consistent with the rules; the MLL liquidations (item 1 note) are the only engine exits besides F.
+
+4b, fill minutes of the two replayed trials: K2-cp1-01 ZN: 275 of 276 trips entered at 13:30 and exited at 13:59 CT (decision bars
+13:29 and 13:58; no deferred fill, no missing-bar shift in this trial); the one exception is the 2026-04-29 MLL liquidation at 13:35
+(engine rule, documented above). K2-aucpost-01 ZN: all 15 trips entered at 12:05 and exited at 15:05 CT (T_a 12:00 for every 10-year
+auction in the window, decision bars 12:04 and 15:04), no deferral. VERIFIED WITH NOTES (the liquidation).
+
+## Item 5: program N
+
+44 records, all `status: "run"` and screened; refused_members {} (0); every record's `member` is one of the freeze's 44 labels and the
+cluster file's members list equals the freeze's ordinal order (K2-cp1-01 ZT ... K2-monthend-01 UB); no record names a trial the freeze
+does not declare, and no declared trial lacks a record. N = 58 + 44 = 102. VERIFIED.
+
+## Notes for the lead
+
+- The two things a reader of the records should carry: the D4 power check is absent for all 44 (StartRuleMissing for the rates roots,
+  as in C-1), and 24 of the 44 series include MLL-liquidation exits from the frozen XFA account model (up to 11 restarts per member).
+  Neither changes a screen figure, a tier or N.
+- Every 5-year auction in the research window that fell in a roll blackout (5 of 15) is lost to aucpre/aucpost ZF by the runner's
+  exclusion, not by the members; the catalog's "15" is the pre-exclusion count.
+- Unfinished: nothing in the brief. The 7 predrift (date, root) pairs and the one monthend ZT date stay unexplained at the level the
+  records allow.
+
+## Part 2, item 4 follow-up: the untraded predrift dates (lead request, R-T6-1 conditions)
+
+01:02-01:04 PDT. Script reports/stage_e3_briefs/audit/replay_predrift.py, results predrift_followup.json. Preflight first
+(cf939270...), cluster freeze verified, the runner's own loader (bar sha256 equal to the records for ZN and ZB), fresh
+PYTHONPYCACHEPREFIX outside the repository, nice 10, nothing written under reports/stage_e3_k2_screen/, no repository file modified.
+
+Determinism: for K2-predrift-01 ZN and ZB, a plain replay's series, dates and engine counters equal the records exactly (n_trips 12 and
+11). A second replay with the member wrapped in an observer that only records and delegates (`Observer.on_minute` calls the real member's
+`on_minute` and returns its items unchanged) also equals the records exactly, so the observation changed nothing.
+
+What the member saw on each untraded ISM date (bars of CT date d at 08:30 and 08:49 CT; prices in vendor units; ZN tick 1/64, ZB tick 1/32):
+
+| Root, date | In window, ISM date | 08:30 bar: id, halt, open, close | 08:49 bar: id, halt, open, close | s = close(08:49) - open(08:30), ticks | Intent | Refusal | Cause |
+|---|---|---|---|---|---|---|---|
+| ZN 2025-07-03 | yes, yes | 42066706, none, 111.25, 111.234375 | 42066706, none, 111.265625, 111.25 | 0 | none | none | s = 0 |
+| ZN 2026-05-05 | yes, yes | 42000661, none, 110.3125, 110.3125 | 42000661, none, 110.3125, 110.3125 | 0 | none | none | s = 0 |
+| ZN 2026-06-03 | yes, yes | 42001136, none, 109.4375, 109.4375 | 42001136, none, 109.421875, 109.4375 | 0 | none | none | s = 0 |
+| ZB 2025-07-03 | yes, yes | 42144138, none, 114.40625, 114.375 | 42144138, none, 114.4375, 114.40625 | 0 | none | none | s = 0 |
+| ZB 2025-08-05 (ZB only) | yes, yes | 42144138, none, 115.625, 115.625 | 42144138, none, 115.625, 115.625 | 0 | none | none | s = 0 |
+| ZB 2026-05-05 | yes, yes | 42004655, none, 112.46875, 112.4375 | 42004655, none, 112.46875, 112.46875 | 0 | none | none | s = 0 |
+| ZB 2026-06-03 | yes, yes | 42004736, none, 112.09375, 112.09375 | 42004736, none, 112.0625, 112.09375 | 0 | none | none | s = 0 |
+
+On every one of the seven (date, root) pairs both signal bars were present and carried one instrument_id and no early_halt_ct; the
+member's recorded 08:30 open ticks matched the bar; at 08:49 the 08:49 close equalled the 08:30 open to the tick, so s = 0 and the rule's
+own clause "If s = 0, no trade" (catalog line 491) applied; the member emitted nothing and the engine recorded no intent, refusal or fill on
+those dates. No missing bar, no halt, no guard, no engine refusal and no member defect. (Note that on 2025-07-03 and 2026-06-03 the
+close-to-close difference is non-zero; the frozen rule takes the 08:30 open, and the member did.) Verdict: VERIFIED. The item 4 row for
+predrift is therefore fully explained: 15 events, 12 (ZN) and 11 (ZB) with s != 0, all traded.

@@ -83,7 +83,10 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
   - Stage E.2b — screening runner, ML pipeline, canaries, step 2 path, Windows backend, harness freeze. Run
     2026-09-26 (see reports/E.2b_RETURN.md): Stage E harness FROZEN (commit 273c27b, manifest cf939270...,
     1,032 files) after an adversarial Fable review (1 blocking, 3 should-fix, all fixed). Nothing bought.
-  - Stage E.3 onward — one screening session and one confirmation session per cluster, in the order of
-    docs/STAGE_E_DESIGN.md D12 (planned).
+  - Stage E.3 — K2 rates screening. Run 2026-09-26/27 (see reports/E.3_RETURN.md): eight members (44 trials) coded,
+    Fable-audited (0 blocking), FROZEN (commit a79b47e, cluster freeze 8815a775...) and screened once: all 44 Tier B,
+    Tier A empty; N = 102. Nothing bought.
+  - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
+    cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;
   renumbered when the CME universe program took the E label. Runs only if an edge survives.)

@@ -165,3 +165,42 @@
   independently (reports/stage_e2a_declaration_audit.md, Part 2: all six
   confirmed); rulings in reports/stage_e2a_source_window_rulings.md. No
   member, rule or label was added and no frozen file was edited.
+- Windows PC as an optional compute machine (2026-09-26, the user's decision
+  V10, recorded in Stage E.2b): ML training and backtests (screening and
+  confirmation runs) may run on the user's Windows PC when it is available
+  (Ryzen 5, 32 GB RAM, RTX 2060 Super 8 GB, 2 TB SSD, as the user gave them;
+  measured in E.2c), sent from the ThinkPad over SSH with results pulled
+  back and checked by hash. The ThinkPad stays the default and every job
+  also runs on it unchanged; it keeps the Claude sessions, purchases,
+  sealing, reviews and commits. This supersedes V7's sentence dropping the
+  PC and nothing else in M8. M8's compute text gains the PC: the ThinkPad
+  and its RTX 3050 stay the default; when the PC runs the LSTM, the frozen
+  A-1 rule plans its batch size against the RTX 2060 Super's 8 GB, and one
+  machine and one batch size are recorded for the whole LSTM grid before its
+  first fit. Every job records which machine ran it. Never sent to the PC:
+  sealed chunks, plaintext holdout-1, holdout-2 or embargo bars, the
+  Databento key or any secret, the ledger. M7.4 is kept by separate data
+  roots (the training job's root holds only the training-window store). No
+  statistical choice in the frozen ML design changes, and
+  docs/STAGE_E_ML_DESIGN.md is not edited. Amendment:
+  reports/stage_e2b_v10_amendment.md (audited in Stage E.2b Task 7); setup
+  guide: docs/WINDOWS_SETUP.md; the PC is connected and verified in E.2c.
+- MBT's holdout-1 rows inside the step 1 files (2026-09-26, recorded in
+  Stage E.2b Task 9, E.2a ruling L-9): CME books MBT's trading from
+  Thursday 2026-06-18 16:02 CT to Saturday 2026-06-20 18:59 CT (Juneteenth
+  and the 24/7 weekend) to trade date 2026-06-22, holdout-1's first trade
+  date. The 1,617 MBT bars in that span arrived inside the step 1 purchase
+  files because the purchase guard checked timestamps (the files end
+  2026-06-21 00:00 UTC), not CME trade dates. The E.2a bar builder decoded
+  them with the rest of the file and dropped them unread; they were never
+  written to any parquet and no quantity uses them. Nothing is deleted: the
+  raw step 1 files stay as bought, and raw vendor files never leave the
+  ThinkPad (V10-4). They are now refused by trade date everywhere: the
+  Stage E bar loader (tests/test_stage_e_loader.py::
+  test_mbt_rows_booked_to_holdout1_trade_date_2026_06_22_are_refused_ruling_L9),
+  the purchase guard, which now books every minute of a request to its CME
+  trade date before any vendor call (data/trade_date_guard.py; tests/
+  test_e2b_trade_date_guard.py::
+  test_mbt_request_ending_2026_06_21_is_booked_partly_to_holdout1_and_refused),
+  and the Windows backend's send-side data rules (compute/, tests/
+  test_compute_datarules.py).

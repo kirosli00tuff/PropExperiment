@@ -770,10 +770,29 @@ def _verify_holdout2(paths: HoldoutPaths) -> dict:
     return report
 
 
+def _product_holdout2_reports() -> dict:
+    """Stage E.2b (lead ruling on Q2): data.step2_seal.verify of every per-product holdout-2
+    store that exists beside MES's (manifests <HOLDOUT2_PATHS.manifest's dir>/holdout2/); {} when
+    none exists. Checksums only; decrypts nothing."""
+    from data import step2_seal  # lazy: data.step2_seal imports this module
+
+    return step2_seal.verify_all(HOLDOUT2_PATHS)
+
+
 def status_report() -> dict:
     """Holdout 1's report with its keys unchanged at the top level (so existing callers and the
-    session-start check read the same fields), plus a ``holdout_2`` section."""
-    return {**verify_seal(DEFAULT_PATHS), "holdout_2": verify_seal(HOLDOUT2_PATHS)}
+    session-start check read the same fields), plus a ``holdout_2`` section. Stage E.2b, additive:
+    ``holdout_2["products"]`` holds every per-product holdout-2 store that exists ({} when none),
+    and a product store that does not verify turns the top-level all_ok False (with none, all_ok
+    is holdout 1's, as before). The key sits inside ``holdout_2`` so that every top-level key
+    other than ``holdout_2`` stays exactly holdout 1's verify_seal (tests/test_d1f_holdout2.py)."""
+    report = {**verify_seal(DEFAULT_PATHS), "holdout_2": verify_seal(HOLDOUT2_PATHS)}
+    products = _product_holdout2_reports()
+    report["holdout_2"] = {**report["holdout_2"], "products": products}
+    if products:
+        report["all_ok"] = bool(report["all_ok"]
+                                and all(r.get("all_ok") is True for r in products.values()))
+    return report
 
 
 def main(argv: Sequence[str]) -> int:

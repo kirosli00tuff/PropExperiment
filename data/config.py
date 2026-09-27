@@ -99,6 +99,18 @@ E1_REQUEST_CAP_USD = 3.00  # never raised: a request quoted above it is split in
 E1_SESSION_CAP_USD = 113.48
 E1_SESSION_CAP_MAX_USD = 120.00
 
+# Stage E.2b spend policy (stage prompt, 2026-09-26): quotes only, the E.0 pattern. The step 2
+# quote run (data.pull_step2 --quote-only) ledgers $0.00 quote lines on ACTIVE_ACCOUNT under this
+# session id; with both caps at $0.00 the gate refuses every billable request, and
+# `python -m data.pull_step2 --buy` refuses to start. A later step 2 purchase session sets its own
+# session id and caps in a new block; nothing here is raised in E.2b.
+STAGE_E2B_SESSION_ID = "stage-E.2b-2026-09-26"
+E2B_SESSION_CAP_USD = 0.00
+E2B_REQUEST_CAP_USD = 0.00
+# The step 2 bar store (data.step2_store): its own base, separate from the research store
+# (lead ruling 2026-09-26, M7.4 and the V10 separate data roots). Git-ignored.
+STEP2_ROOT = DATA_ROOT / "processed_step2"
+
 DATABENTO_KEY_ENV = "DATABENTO_API_KEY"
 DATASET = "GLBX.MDP3"
 

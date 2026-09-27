@@ -18,6 +18,10 @@ outside the set (PL, MET, NKD, 6M, ES, MES and anything else) raises RefusedRoot
 window that overlaps the embargo and holdout 2 [2024-03-01T00:00Z, 2025-04-01T00:00Z), or
 leaves [2025-04-01T00:00Z, 2026-06-21T00:00Z], raises DateGuardError. The whole plan is
 checked before the first call, so a bad request anywhere stops the run with nothing sent.
+Stage E.2b (ruling L-9): the buy run also refuses, before any vendor call, a request whose
+minutes the product's group calendar books to a holdout trade date or cannot book
+(``check_trade_dates``, data.trade_date_guard), which refuses the E.1 plan's last chunks. The
+quote-only run is not a purchase (it delivers no bar) and still prices the E.1 plan as before.
 
 Request-cap splitting (lead decision): the request cap E1_REQUEST_CAP_USD is never raised. A
 request quoted above it is split into two contiguous halves (midpoint rounded down to the
@@ -63,6 +67,7 @@ from typing import Any
 
 from data import adapter
 from data import holdout as ho
+from data import trade_date_guard as tdg
 from data.adapter import OHLCV_1M, STYPE_CONTINUOUS
 from data.config import (
     ACTIVE_ACCOUNT,
@@ -161,6 +166,12 @@ class RefusedRootError(PullUniverseError):
 
 class DateGuardError(PullUniverseError):
     """A window outside [2025-04-01T00:00Z, 2026-06-21T00:00Z] or touching the embargo."""
+
+
+class TradeDateGuardError(DateGuardError):
+    """Stage E.2b (ruling L-9): a minute of the request is booked by the product's group
+    calendar to a holdout-1 or holdout-2 trade date, or cannot be booked at all
+    (data.trade_date_guard). Raised before any vendor call."""
 
 
 class HoldoutGuardError(PullUniverseError):
@@ -280,6 +291,27 @@ def validate_plan(requests: Iterable[PlannedRequest]) -> None:
         check_request(request)
 
 
+def check_trade_dates(request: PlannedRequest) -> None:
+    """Stage E.2b (ruling L-9): refuse a request whose minutes the product's group calendar
+    books to a holdout-1 or holdout-2 trade date, or cannot book. Step 1 never seals, so both
+    holdouts are refused. The E.1 plan itself is unchanged (``plan_requests`` still builds it),
+    but its 45 last chunks (range=2026-06-01_2026-06-21) are now refused by the buy run (the
+    quote-only run still prices them; a quote delivers no bar): MBT's books 2026-06-18
+    21:02 UTC onward to 2026-06-22, and the other calendars end at 2026-06-19 and cannot book
+    the rest of those files. Checked by the buy run for the whole
+    plan before any vendor call and again for every piece before it is quoted."""
+    p = request.params
+    try:
+        tdg.refuse_holdout_bookings(request.root, p.start, p.end)
+    except tdg.TradeDateRefused as exc:
+        raise TradeDateGuardError(str(exc)) from exc
+
+
+def validate_trade_dates(requests: Iterable[PlannedRequest]) -> None:
+    for request in requests:
+        check_trade_dates(request)
+
+
 def check_holdout(request: PlannedRequest, target: Path) -> None:
     """data.holdout's own refusals (read-only): a sealed range or a sealed target file."""
     p = request.params
@@ -381,6 +413,14 @@ def is_done(request: PlannedRequest, target: Path, settled: set[str]) -> bool:
     return False
 
 
+def _in_step1_window(name: str) -> bool:
+    """A raw file of the step 1 window. The step 2 chunks (2019-05..2025-03, data.pull_step2)
+    share the directory but are settled under their own sessions, so step 1's scan skips them."""
+    bounds = parse_target_name(name)
+    return bounds is not None and parse_utc(bounds[0]) >= WINDOW_START_UTC \
+        and parse_utc(bounds[1]) <= WINDOW_END_UTC
+
+
 def resume_scan(entries: list[dict[str, Any]], session_id: str, root: Path = VENDOR_ROOT,
                 roots: Sequence[str] = STEP1_ROOTS) -> dict[str, int]:
     """Before any vendor call: every step 1 file on disk has a settled line and every settled
@@ -394,7 +434,7 @@ def resume_scan(entries: list[dict[str, Any]], session_id: str, root: Path = VEN
         for r in roots:
             directory = root / DATASET / schema / f"{r}_v_0"
             if directory.is_dir():
-                on_disk |= {p for p in directory.iterdir() if parse_target_name(p.name)}
+                on_disk |= {p for p in directory.iterdir() if _in_step1_window(p.name)}
                 partials += [p for p in directory.iterdir() if p.name.endswith(".partial")]
     unsettled, missing = sorted(on_disk - settled_paths), sorted(settled_paths - on_disk)
     if unsettled or missing:
@@ -595,6 +635,7 @@ def acquire(request: PlannedRequest, view: Any, client: Any, gate: LockedQuoteGa
             root: Path, settled: set[str], log: Callable[[str], None]) -> list[dict[str, Any]]:
     """Skip, split or buy one request (recursively for its pieces). Raises on any problem."""
     check_request(request)
+    check_trade_dates(request)
     p = request.params
     target = target_path(p, root)
     check_holdout(request, target)
@@ -635,6 +676,7 @@ def run_buy(client: Any, gate: LockedQuoteGate, requests: list[PlannedRequest], 
         raise BudgetRefusedError(f"session cap ${gate.session_cap_usd:.2f} is not in "
                                  f"(0, {E1_SESSION_CAP_MAX_USD:.2f}]: set by the lead first")
     validate_plan(requests)
+    validate_trade_dates(requests)
     client.batch = ForbiddenNamespace()  # the buy path needs timeseries.get_range only
     entries = read_entries(gate.ledger_path)
     log(f"resume scan: {resume_scan(entries, gate.session_id, root)}")

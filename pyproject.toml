@@ -8,10 +8,31 @@ dependencies = [
     "numpy>=2.0",
     "pandas>=2.2",
     "pyarrow>=17",
+    "lightgbm==4.7.0",
+    "torch==2.14.0",
+    "scikit-learn==1.9.1",
 ]
 
 [dependency-groups]
-dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.6"]
+dev = [
+    "asyncssh>=2.24.0",
+    "pytest>=8",
+    "pytest-cov>=5",
+    "ruff>=0.6",
+]
+
+# Stage E.2b (ML route): torch comes from the PyTorch CUDA 13.0 index on linux x86_64 and
+# win_amd64 so both the ThinkPad (RTX 3050, sm_86) and the Windows PC (RTX 2060 Super, sm_75)
+# get CUDA builds. explicit = true keeps every other package on PyPI.
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu130", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,0 +1,115 @@
+{
+  "probes": {
+    "lgbm": {
+      "configs": {
+        "lgbm_nl31_md500_l21": {
+          "fit_predict_score_seconds": 4.86,
+          "fit_seconds": 3.89,
+          "model_sha256": "fd5ecaa53df1645399e6f1476f6ee6f6d041a0e1f66bf25400f9f67f20cef337",
+          "score": 0.12961638941061857
+        },
+        "lgbm_nl7_md2000_l210": {
+          "fit_predict_score_seconds": 2.56,
+          "fit_seconds": 1.94,
+          "model_sha256": "20e39a480e7f8691ed5bf8c2c8d44f5a4827c048fbb1f942cdfdab3ac28cbbce",
+          "score": 0.1680830767297539
+        }
+      },
+      "design_columns": 55,
+      "peak_ram_mib": 774.3,
+      "projection": {
+        "hours_estimate": 0.29,
+        "hours_upper_all_largest": 0.38,
+        "rule": "24 configurations x (10 splits + 1 refit); half the configurations at 31 leaves (timed: largest), half at 7 (timed: smallest); refit = 5/3 of a split fit"
+      },
+      "recorded_pdt": "2026-09-26 13:04:01 PDT",
+      "rows_total": 450000,
+      "rows_train": 224928,
+      "rows_validation": 149695,
+      "threads": 8
+    },
+    "lstm": {
+      "arch_list": [
+        "sm_75",
+        "sm_80",
+        "sm_86",
+        "sm_90",
+        "sm_100",
+        "sm_120"
+      ],
+      "batch_probe": {
+        "batch_size": 512,
+        "rule": "M8 / A-1: largest configuration (32 hidden, lookback 72), one forward and backward pass; halve 512 -> 256 -> 128 -> 64 while less than 0.5 GB of the 4 GB stays free",
+        "steps": [
+          {
+            "batch": 512,
+            "cuda_context_mib": 164.0,
+            "free_of_4gb_mib": 3794.0,
+            "leaves_0_5gb_free": true,
+            "max_memory_reserved_mib": 138.0,
+            "memory_reserved_now_mib": 138.0,
+            "nvidia_smi_process_mib": 302.0,
+            "peak_mib": 302.0
+          }
+        ],
+        "stop_to_user": false
+      },
+      "cuda_runtime": "13.0",
+      "cudnn": 92400,
+      "device": "cuda",
+      "epoch_probe": {
+        "batch_size": 512,
+        "config": {
+          "hidden": 32,
+          "lookback": 72
+        },
+        "epoch_seconds": 3.4,
+        "loss": [
+          1.0059
+        ],
+        "max_memory_reserved_mib": 138.0,
+        "model_sha256": "8fd3afdab1bd5302afe78c1effa5c847d47275a5e92d1c66fd50a27c5bef937b",
+        "rows": 224928
+      },
+      "gpu": {
+        "driver": "595.91.07",
+        "free_mib": 3759.0,
+        "name": "NVIDIA GeForce RTX 3050 4GB Laptop GPU",
+        "total_mib": 4096.0,
+        "used_mib": 15.0
+      },
+      "peak_ram_mib": 1527.6,
+      "projection": {
+        "hours_estimate": 0.7,
+        "hours_upper_all_largest": 1.06,
+        "rule": "12 configurations x 11 fits x 8 epochs; timed: one epoch of the largest configuration; lookback-24 configurations scaled by 24/72 (a guess)"
+      },
+      "recorded_pdt": "2026-09-26 13:06:31 PDT",
+      "torch": "2.14.0+cu130"
+    },
+    "versions": {
+      "arch_list": [
+        "sm_75",
+        "sm_80",
+        "sm_86",
+        "sm_90",
+        "sm_100",
+        "sm_120"
+      ],
+      "cuda_runtime": "13.0",
+      "cudnn": 92400,
+      "gpu": {
+        "driver": "595.91.07",
+        "free_mib": 3759.0,
+        "name": "NVIDIA GeForce RTX 3050 4GB Laptop GPU",
+        "total_mib": 4096.0,
+        "used_mib": 15.0
+      },
+      "lightgbm": "4.7.0",
+      "python": "3.12.13",
+      "recorded_pdt": "2026-09-26 13:03:47 PDT",
+      "sklearn": "1.9.1",
+      "torch": "2.14.0+cu130"
+    }
+  }
+}

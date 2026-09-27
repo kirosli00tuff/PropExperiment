@@ -238,3 +238,6 @@
   needed, K8 last). The order has no statistical effect (each cluster has
   its own Holm family), so the user may move K3 up at any point without
   an amendment.
+  (c) At the user's request (2026-09-27), Stage E.4 runs K4, K5 and K3 one
+  after another in one unattended session across three usage windows, each
+  cluster with its own specs, Fable audit, freeze commit, run and return.

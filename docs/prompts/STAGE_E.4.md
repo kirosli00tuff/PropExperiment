@@ -1,4 +1,4 @@
-STAGE E.4 "HARNESS FIX C-1 AND TRIP LISTS, THEN K4 ENERGY: CODE, AUDIT AND FREEZE THE EIGHT MEMBERS, AND SCREEN THEM ON THE RESEARCH WINDOW (NO PURCHASE)"
+STAGE E.4 "HARNESS FIX C-1 AND TRIP LISTS, THEN SCREEN K4 ENERGY, K5 METALS AND K3 FX ON THE RESEARCH WINDOW, ONE CLUSTER AFTER ANOTHER (NO PURCHASE)"
 
 BEGIN PROMPT - SUMMARY OF PROMPT
 
@@ -18,8 +18,20 @@ research-window release dates they time on, has an independent Fable
 worker check each module against its entry, freezes the member code by
 hash, and runs every member once through the frozen runner on the research
 window (trade dates 2025-04-01..2026-06-19). A second Fable check
-recomputes the screen figures. It stops there. K4's confirmation session
-(step 2 purchase, D4 power check, confirmation list) comes later.
+recomputes the screen figures. That is Part 1 (E.4a). Part 2 (E.4b) then
+does the same for K5, metals, and Part 3 (E.4c) for K3, FX, in the order the
+user froze (U3: K2, K4, K5, K3). Each part has its own specs, audit, cluster
+freeze commit, screening run, recomputation and return document. A part
+that fails does not stop the next one unless this prompt says so. The
+confirmation sessions (step 2 purchase, D4 power check, confirmation list)
+come later.
+
+The user runs this session unattended overnight across three usage windows
+(until about 04:10, 04:10 to 09:10, and 09:10 to 14:10 Pacific). The
+auto-retry launcher resumes it after each usage pause with "read the STATE
+file first". So the master checkpoint is reports/stage_e4_STATE.md: after
+every task it names the part, the task finished, the hashes in force and
+the next task. Each part also keeps its own STATE file.
 
 K4 trades two exposures (E.2a vehicles): WTI crude through MCL at q_c = 4
 (eps 21 ticks) and Henry Hub gas through NG at q_c = 1 (eps 8 ticks). RBOB
@@ -27,6 +39,18 @@ and ULSD have no vehicle and are not traded. Expected trials: 12 (three
 core ports on two exposures, K4-ngpre-01 on gas, K4-apipre-01,
 K4-eiafade-01 and K4-eiamom-01 on crude, K4-ovr-01 on crude and gas). The
 lead takes the count from the freeze declarations and logs any difference.
+
+K5 trades gold through MGC at q_c = 1 (eps 85 ticks) and copper through MHG
+at q_c = 2 (eps 34 ticks). Silver has no vehicle and platinum is out (U2).
+Expected trials: 11 (three ports on two exposures, K5-preauc-01 on gold,
+K5-pmfix-01 and K5-fomc-01 on gold, K5-ovr-01 on gold and copper).
+
+K3 trades EUR (6E), AUD (6A), GBP (6B), JPY (6J) and CHF (6S) at q_c = 1,
+and CAD (6C) and NZD (6N) undersized at 1 contract, screened as E.3 screened
+ZT and ZF (E.3 L-20). Expected trials: 31 (three ports on seven exposures,
+K3-ldnrev-01 on EUR, JPY and CHF, K3-ldnmom-01 on EUR and JPY,
+K3-mehedge-01 on EUR and JPY if its index histories exist, K3-ecbfix-01 on
+EUR, K3-tkypre-01 and K3-tkypost-01 on JPY).
 
 Lead: Opus 5.5, effort xhigh. Ultracode: off.
 
@@ -36,18 +60,25 @@ again: translating frozen, fully specified entries into code and running a
 frozen runner. The silent failures to guard against are a harness fix that
 changes a number, and a member module that runs cleanly but implements
 something other than its entry. CLAUDE.md routes code to opus at xhigh and
-independent checks to Fable. Ultracode stays off: two workstreams, routed
-through the worker files.
+independent checks to Fable. Ultracode stays off: at most two coding
+workstreams at a time, routed through the worker files.
 
 Usage: follows CLAUDE.md's context-hygiene rules. Read the catalog by member
-section, never whole. Fable is used by two workers:
-HarnessReviewer-FableXHigh (Task H3 only) and MemberAuditor-FableXHigh
-(Task 3, then resumed with a small brief for Task 6). If Fable is
-unavailable when Task H3 starts, do not rebuild the manifest: finish Task 2
-in parallel and stop before Task 4. Never substitute opus for a Fable
-check. Compute: the ThinkPad under the overnight profile (the Windows PC is
-not set up yet, E.2c). E.3 took 101 minutes and 84M tokens. This session is
-about half again as large.
+section, never whole. Keep the lead's context small across three parts:
+at the end of each part, write its return document and STATE file, and
+carry into the next part only the hashes in force and the next part's
+inputs. Do not re-read an earlier part's worker outputs. Fable is used by
+four workers, each fresh: HarnessReviewer-FableXHigh (Task H3 only), and
+one member auditor per cluster (MemberAuditor-K4-FableXHigh,
+MemberAuditor-K5-FableXHigh, MemberAuditor-K3-FableXHigh), each used for
+its cluster's Task 3 and resumed with a small brief for its Task 6. If
+Fable is unavailable when a Fable task is due, finish the work that needs
+no Fable check (specs, release checks, coding and unit tests for the
+remaining clusters) and stop before the next freeze. Never substitute opus
+for a Fable check. Compute: the ThinkPad under the overnight profile (the
+Windows PC is not set up yet, E.2c). E.3 (one cluster, 44 trials) took 101
+minutes and 84M tokens. Expect about 6 hours of work in total, plus the
+usage pauses.
 
 Do not stop to ask. Decide, log the choice under Open choices in the return
 document, and continue. The only stops are the ones this prompt names, a
@@ -73,6 +104,7 @@ This stage does:
 - freeze the member code with the cluster-freeze helper (Task 4)
 - run K4's members once through the frozen runner on the research window
   (Task 5) and recompute the screen figures independently (Task 6)
+- repeat Tasks 1 to 7 for K5 (Part 2) and for K3 (Part 3)
 
 This stage does NOT:
 - buy anything, or read any bar outside the research window
@@ -86,7 +118,7 @@ This stage does NOT:
   screen, tiers, coverage, labels or record format of existing files.
 - re-decide any K2 tier. The K2 regression replay is a determinism check,
   not a new result. Its files stay out of reports/stage_e3_k2_screen/.
-- re-run a K4 member after seeing its result, with any change. Each member
+- re-run a member after seeing its result, with any change. Each member
   runs once. A crash is fixed only in code the audit covered, re-audited,
   and the member re-run from scratch, and the crash is reported.
 - touch the ML route (V11 stays unapplied), any other cluster, holdout-1 or
@@ -96,7 +128,10 @@ This stage does NOT:
   reports/stage_d1f_confirmation_list.md and every E.3 record stay as they
   are.
 - write to REGISTRATION.md (it stays 0 bytes)
-- push. The session makes exactly the two commits Tasks H4 and 4 name.
+- buy index histories, or anything else. K3-mehedge-01's free index
+  histories are fetched only as Part 3 describes.
+- push. The session makes exactly four commits: the harness commit (Task
+  H4) and one cluster freeze commit per part (K4, K5, K3).
 
 ============================================================
 CONTEXT TO READ FIRST
@@ -139,7 +174,16 @@ Read by section, as CLAUDE.md's context-hygiene rules require.
    C = 13:30, F = 15:08 and CP1 to CP3), D8, D9 (the constraint set, D9.7
    price-limit proximity, the coverage check, the trade-rate floor).
 8. reports/stage_e2a_vehicles.md and reports/stage_e2a_epsilon.md, K4 rows.
-9. strategy/stage_e/_template.py, strategy/stage_e/interface.py,
+9. For Part 2: reports/stage_e0_catalog_K5.md, its header and every
+   bracketed note, the seven member sections K5-cp1-01, K5-cp2-01,
+   K5-cp3-01, K5-preauc-01, K5-pmfix-01, K5-fomc-01 and K5-ovr-01 (K5-ml-01
+   excluded, U6), its section 7 as amended, the K5 rows of the E.2a
+   vehicles and epsilon files, and the K5 edits in stage_e1_changes.md.
+   For Part 3: the same for reports/stage_e0_catalog_K3.md and its nine
+   members K3-cp1-01, K3-cp2-01, K3-cp3-01, K3-ldnrev-01, K3-ldnmom-01,
+   K3-mehedge-01, K3-ecbfix-01, K3-tkypre-01 and K3-tkypost-01 (K3-ml-01
+   excluded, U6). Read each part's files when the part starts, not before.
+10. strategy/stage_e/_template.py, strategy/stage_e/interface.py,
    screening/stage_e_freeze.py (write_cluster_freeze),
    screening/stage_e_runner.py, screening/stage_e_start_dates.py
    (`_runner()` and its eight raises), screening/harness_freeze.py (build
@@ -164,15 +208,15 @@ CLAUDE.md invariants apply in full. This stage adds:
   v4. The K2 cluster freeze (8815a775...) verifies at start and at end.
 - Research window only: 2025-04-01..2026-06-19, read by the runner. No
   script of this session opens a bar file directly.
-- One run per K4 member. The K4 member code is frozen by Task 4 before
-  Task 5 runs anything on data.
+- One run per member. Each cluster's member code is frozen by its Task 4
+  before its Task 5 runs anything on data.
 - The harness fix may change only screening/stage_e_runner.py,
   screening/stage_e_start_dates.py and tests. Any other harness file the
   fix seems to need is a stop: report it, do not edit.
 - No spend. The ledger is unchanged at the end.
 - Holdout status at start and end: both all_ok, 0 unlocks.
 - REGISTRATION.md stays 0 bytes. No TopstepX reference of any kind.
-- Web access (Task 1b only): read-only fetches of public schedule and
+- Web access (each part's Task 1b only): read-only fetches of public schedule and
   archive pages. No data API, no login, no paid source. Stay within
   CLAUDE.md's WebSearch budget rule.
 
@@ -362,7 +406,7 @@ TASK 2: CODE THE MEMBERS
 TASK 3: FIDELITY AUDIT (FABLE XHIGH)
 ============================================================
 
-- Owner: MemberAuditor-FableXHigh, worker-xhigh on fable. It wrote none of
+- Owner: MemberAuditor-K4-FableXHigh, worker-xhigh on fable. It wrote none of
   the code and is not the harness reviewer.
 - Inputs: the eight catalog sections (by section), C1 to C13, the specs,
   the release check, the modules, their tests.
@@ -423,7 +467,7 @@ TASK 5: THE SCREENING RUN (LEAD RUNS THE FROZEN COMMAND)
 TASK 6: RECOMPUTATION (FABLE RESUMED)
 ============================================================
 
-- Owner: MemberAuditor-FableXHigh, resumed with SendMessage (a small
+- Owner: MemberAuditor-K4-FableXHigh, resumed with SendMessage (a small
   brief).
 - Inputs: the runner's outputs, the frozen D5, the frozen D8 cost table.
 - Output: a second section in reports/stage_e4_member_audit.md: every
@@ -457,6 +501,91 @@ TASK 7: READ THE RESULT (LEAD)
   reported as computed.
 
 ============================================================
+PART 2 (E.4b): K5 METALS
+============================================================
+
+Start when Part 1 has ended, whatever its outcome. Harness: v4 if Task H4
+committed it, otherwise cf939270 with R-T5-1's import launch. Repeat Tasks
+1 to 7 exactly as Part 1 sets them, with these substitutions:
+
+- Files: reports/stage_e4b_member_specs.md, reports/stage_e4b_release_check.md
+  and .json, strategy/members/k5/, tests/test_e4_k5_members*.py,
+  reports/stage_e4b_member_audit.md, reports/stage_e4b_member_rulings.md,
+  the K5 cluster freeze file, reports/stage_e4b_k5_screen/,
+  reports/stage_e4b_STATE.md.
+- Workers: MemberCoder-A-OpusXHigh codes the three ports and K5-ovr-01.
+  MemberCoder-B-OpusXHigh codes K5-preauc-01, K5-pmfix-01, K5-fomc-01 and
+  the event tables. MemberAuditor-K5-FableXHigh audits and recomputes.
+  ReleaseChecker-OpusMed does Task 1b. Spawn each fresh for this part.
+- Traded: gold on MGC and copper on MHG only. No silver, no platinum
+  trial.
+- K5-ovr-01 carries the same rule text as K4-ovr-01 (E.1 F-7) with K5's
+  decision clock. Code it as its own module under k5, and have the auditor
+  confirm the two differ only in the clock.
+- Task 1b checks, for the research window: the LBMA gold AM and PM auction
+  dates and start times in CT (UK bank holidays, and the weeks when UK and
+  US clocks change on different dates), and that K5-fomc-01's FOMC
+  statement instants equal the table E.3 verified for K2.
+- Catalog section 7 items are settled by the frozen text (E.1 rulings and
+  the frozen D8 and D9). Item 1 (auction starts and the D9.5a fill guard):
+  use whatever the frozen D9 and D8 text and the E.2b release calendar
+  already do, and log the reading. Items 3 to 6: the members stay as
+  frozen, one trial per traded exposure.
+- Commit: exactly the K5 member modules, tests, specs, release check,
+  audit, rulings and cluster freeze file, message "K5 member freeze" with
+  the cluster freeze sha256 and this repository's attribution lines.
+- Program N after Part 2: Part 1's figure plus the K5 trials screened.
+  K5's confirmation purchase: MGC and MHG, $9.74 in
+  reports/stage_e2b_step2_quotes.md.
+- Return document: reports/E.4b_RETURN.md, the same eight sections.
+
+============================================================
+PART 3 (E.4c): K3 FX
+============================================================
+
+Start when Part 2 has ended. Same harness rule as Part 2. Repeat Tasks 1 to
+7 with these substitutions:
+
+- Files: the stage_e4c_ names, strategy/members/k3/,
+  tests/test_e4_k3_members*.py, reports/stage_e4c_k3_screen/,
+  reports/stage_e4c_STATE.md.
+- Workers: MemberCoder-A-OpusXHigh codes the three ports.
+  MemberCoder-B-OpusXHigh codes K3-ldnrev-01, K3-ldnmom-01, K3-ecbfix-01,
+  K3-tkypre-01, K3-tkypost-01 and the event tables. K3-mehedge-01 goes to
+  whichever coder finishes first. MemberAuditor-K3-FableXHigh audits and
+  recomputes. ReleaseChecker-OpusMed does Task 1b. Spawn each fresh for
+  this part.
+- Traded: all seven exposures. 6C and 6N are coded and screened although
+  undersized (E.3 L-20).
+- Task 1b checks, for the research window: the London 4 p.m. fix instant
+  T_L in CT on every date (UK and US clocks change on different dates),
+  the ECB reference rate instant, the Tokyo 9:55 fix instant in CT, the
+  Tokyo business-day calendar and gotobi dates (Japanese holidays), and
+  the month-end dates the members use.
+- K3-mehedge-01's index histories (E.2b open decision 10: they are not
+  GLBX data and step 2 cannot buy them). Its entry trades an exposure only
+  if its free daily index history is obtained. Task 1b's worker tries to
+  obtain each free history the entry names (the STOXX daily file for the
+  EURO STOXX 50, and the Nikkei 225 from Nikkei Inc. or FRED series
+  NIKKEI225), covering 2019-04-01..2026-06-19, saves the raw file with its
+  source URL and sha256 under data/vendor/, and checks it for gaps. The
+  member reads the monthly signal as a literal table in the cluster
+  package (E.3 L-01), each value built only from closes available before
+  its entry time. An exposure whose history cannot be obtained free is not
+  traded, as the entry says: it adds no trial, and the return names it for
+  the user. No purchase, no paid source, no login.
+- The ports read the frozen D6 FX row. Catalog section 7 items are settled
+  by the frozen text and E.1's rulings, and each reading is logged.
+- Commit: exactly the K3 member modules, tests, specs, release check, the
+  index files if obtained, audit, rulings and cluster freeze file, message
+  "K3 member freeze" with the cluster freeze sha256 and this repository's
+  attribution lines.
+- Program N after Part 3: Part 2's figure plus the K3 trials screened.
+  K3's confirmation purchase: 6E, 6A, 6B, 6C, 6J, 6S and 6N, $49.34 in
+  reports/stage_e2b_step2_quotes.md (a top-up is needed).
+- Return document: reports/E.4c_RETURN.md, the same eight sections.
+
+============================================================
 DELEGATION PLAN
 ============================================================
 
@@ -471,11 +600,13 @@ DELEGATION PLAN
 | 1b Release-date check | ReleaseChecker-OpusMed | opus | medium | parallel with 1 and H | web lookups against fixed drop rules, no judgment on results |
 | 2 Code the ports and ovr | MemberCoder-A-OpusXHigh | opus | xhigh | after 1, parallel with B | strategy code |
 | 2 Code the event members | MemberCoder-B-OpusXHigh | opus | xhigh | after 1 and 1b, parallel with A | strategy code with release instants |
-| 3 Fidelity audit | MemberAuditor-FableXHigh | fable | xhigh | after 2 | an independent model checks code against the declaration |
+| 3 Fidelity audit | MemberAuditor-K4-FableXHigh | fable | xhigh | after 2 | an independent model checks code against the declaration |
 | 4 Rulings, cluster freeze, commit | lead | opus | xhigh | after 3 and H4 | reserved to the lead |
 | 5 Screening run | lead runs the frozen command | opus | xhigh | after 4 | a frozen command, the lead watches it |
-| 6 Recomputation | MemberAuditor-FableXHigh, resumed | fable | xhigh | after 5 | every tier-deciding number gets an independent check |
-| 7 Read the result, return | lead | opus | xhigh | last | reserved to the lead |
+| 6 Recomputation | MemberAuditor-K4-FableXHigh, resumed | fable | xhigh | after 5 | every tier-deciding number gets an independent check |
+| 7 Read the result, return | lead | opus | xhigh | after 6 | reserved to the lead |
+| Part 2 (K5), Tasks 1 to 7 | as Part 1, auditor MemberAuditor-K5-FableXHigh | as Part 1 | as Part 1 | after Part 1 | same pattern, fresh workers |
+| Part 3 (K3), Tasks 1 to 7 | as Part 1, auditor MemberAuditor-K3-FableXHigh | as Part 1 | as Part 1 | after Part 2 | same pattern, fresh workers |
 
 At most 4 workers at once. Workers write files and return paths.
 
@@ -502,7 +633,7 @@ VERIFICATION
   wrote none of it.
 - The member code is audited against the frozen entries before it runs
   (Task 3), and the screen figures and tiers are recomputed after it runs
-  (Task 6), both by MemberAuditor-FableXHigh, which wrote none of it.
+  (Task 6), both by MemberAuditor-K4-FableXHigh, which wrote none of it.
 - The lead rules on every finding in writing. It never re-runs a check or
   a member to get a different answer.
 - If Fable runs out, the checks stay pending and no tier is final.
@@ -514,20 +645,23 @@ WHAT NOT TO DO
 - No harness change beyond refusal routing and the trip-list file.
 - No K2 tier re-decided, and no E.3 record touched.
 - No member rule changed from its frozen entry.
-- No RBOB or ULSD trial.
+- No RBOB, ULSD, silver or platinum trial.
 - No run before the cluster freeze commit, and one run per K4 member.
 - No bar outside the research window, and no direct bar reads.
-- No purchase, no power check, no confirmation list.
+- No purchase, no paid data, no power check, no confirmation list.
 - No edit to any other frozen file or manifest.
-- No push, and no commit beyond the two named.
+- No push, and no commit beyond the four named.
 - No write to REGISTRATION.md. No edit to docs/NULL_CRITERIA.md.
 
 ============================================================
-DELIVERABLE: ONE RETURN DOCUMENT
+DELIVERABLE: THREE RETURN DOCUMENTS
 ============================================================
 
-Write reports/E.4_RETURN.md. The planning chat reads this one file to
-review the session. Fixed sections, in order:
+Write reports/E.4_RETURN.md for Part 1 (the harness and K4),
+reports/E.4b_RETURN.md for K5 and reports/E.4c_RETURN.md for K3. The
+planning chat reads these three files to review the session. Each has
+these fixed sections, in order (Parts 2 and 3 leave the harness items
+out):
 
 1. Verdict summary, at most 200 words: the harness fix (v4 sha256 and
    commit, or reverted and why), the K2 regression result, K4 trials coded,
@@ -554,10 +688,13 @@ review the session. Fixed sections, in order:
    actual start and end, time taken, tokens from the transcripts, status)
    and the per-model token table, per CLAUDE.md. Never estimated.
 
-Also write one short dated progress.md entry that points to the return
-document, and one line in docs/STAGES.md.
+Also write one short dated progress.md entry per part that points to its
+return document, and one line per part in docs/STAGES.md. When all three
+parts are done, add a final section to reports/E.4_RETURN.md: one table of
+every screened trial across K4, K5 and K3 with its tier, and the program N
+after the session.
 
-The last thing before ending: list every open choice in section 6 of the
-return document.
+The last thing before ending each part: list every open choice in section
+6 of its return document.
 
 END PROMPT

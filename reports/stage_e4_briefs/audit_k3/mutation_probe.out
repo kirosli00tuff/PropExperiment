@@ -1,0 +1,11 @@
+ldnrev closes-not-opens: unmutated passes: True | reads OPEN instead: still passes: True
+  discriminating scenario: code gives ['sell', 'buy'] (expected sell); OPEN mutation gives ['buy', 'sell']
+ldnrev rise-sells (rev_day): unmutated True | OPEN mutation still passes: True
+ldnmom open(9:45)->close(9:47): unmutated passes: True | mutation 'entry' still passes: True
+ldnmom open(9:45)->close(9:47): unmutated passes: True | mutation 'start' still passes: False
+ldnmom open(9:45)->close(9:47): unmutated passes: True | mutation 'all' still passes: True
+  discriminating scenario: code gives ['sell', 'buy'] (expected sell); entry-OPEN mutation gives ['buy', 'sell']
+ldnrev entry fill deferred past the exit bar: intents [(datetime.date(2025, 6, 30), '10:04', True, None), (datetime.date(2025, 6, 30), '10:25', False, 'engine_min_hold'), (datetime.date(2025, 6, 30), '10:26', True, None)]
+  fills [(datetime.date(2025, 6, 30), '10:25', 'sell', 'strategy'), (datetime.date(2025, 6, 30), '10:27', 'buy', 'strategy')]
+ldnmom entry fill deferred past the exit bar: intents [(datetime.date(2025, 6, 3), '09:47', True, None), (datetime.date(2025, 6, 3), '10:07', False, 'engine_min_hold'), (datetime.date(2025, 6, 3), '10:08', True, None)]
+  fills [(datetime.date(2025, 6, 3), '10:07', 'buy', 'strategy'), (datetime.date(2025, 6, 3), '10:09', 'sell', 'strategy')]

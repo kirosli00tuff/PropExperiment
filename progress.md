@@ -2856,3 +2856,40 @@ Per worker spawn:
 - MemberCoder-B-OpusXHigh: worker-xhigh, opus (claude-opus-5-5), effort xhigh: 12,103,378 tokens (input 142, output 18,603, cache read 11,833,649, cache creation 250,984)
 
 Delegation share: lead 46,540,067 (55.3%), workers 37,558,314 (44.7%). By model tier: claude-fable-5-1 8,914,485 (10.6%), claude-opus-5-5 75,183,896 (89.4%). Cache reads are 97.5% of all tokens.
+
+## 2026-09-27 — Stage E.4a: harness v4 (C-1 fix, trip lists) and K4 energy coded, audited, frozen and screened
+
+Lead Opus 5.5 xhigh. **Harness v4 is committed (b20163a, manifest 82ae8536...).** A `python -m` launch of the runner now
+records every start-date refusal by name (C-1), and every member record gets a write-once trip list. The K2 replay through
+`python -m` matched E.3's 44 records field by field; Fable's review found 0 blocking, 0 should-fix. **K4's eight members
+(12 trials on MCL and NG) are coded, Fable-audited and frozen (e0ccf63, cluster freeze cf066cb0...).** The audit's one
+blocking finding was a release dropped on a mis-attributed Wayback capture; that release was restored (R-T3-1). **One
+run on the research window: Tier A K4-ngpre-01 NG** (mean +3.23 ticks a day, t 1.81, 50 trips; its calendar is partly
+unverified). The other 11 are Tier B. The Fable recomputation found no discrepancy. Program N = 102 + 12 = 114. Nothing
+bought, ledger unchanged. Both holdouts all_ok, 0 unlocks. REGISTRATION.md 0 bytes. Tests 3256 passed, 2 skipped, 1
+xfailed. Pauses: the user's pause with a process restart (10 min) and the usage limit (71 min). Next in this session:
+K5 (E.4b), then K3 (E.4c). Full record, including the session cost: reports/E.4_RETURN.md.
+
+## 2026-09-27 — Stage E.4b: K5 metals coded, audited, frozen and screened
+
+Lead Opus 5.5 xhigh, harness v4. **K5's seven members (11 trials on MGC and MHG) are coded, Fable-audited (0 blocking,
+1 should-fix test gap fixed) and frozen (09f1999, cluster freeze 1d0c974f...).** The LBMA auction days come from UK bank
+holidays and dated LBMA half-day notices; the FOMC dates equal E.3's table. **One run: Tier A K5-fomc-01 MGC** (8 trades,
+mean +2.35 ticks a day, t 1.85). 7 trials are Tier B. 3 are excluded under OC-H: the two MHG ports on coverage, and pmfix
+on the 10-minute mean-hold floor (one liquidation made a 0-minute trip). K5-cp3-01 MGC would pass the screen without its
+two liquidations; it is reported as computed. The Fable recomputation found no discrepancy. Program N = 114 + 9 = 123.
+Nothing bought, ledger unchanged, holdouts all_ok with 0 unlocks, REGISTRATION.md 0 bytes. Tests 3525 passed, 2 skipped,
+1 xfailed. 70 minutes, 60.1M tokens. Next in this session: K3 (E.4c). Full record: reports/E.4b_RETURN.md.
+
+## 2026-09-27 — Stage E.4c: K3 FX coded, audited, frozen and screened (the session's last part)
+
+Lead Opus 5.5 xhigh, harness v4. **K3's nine members (30 trials on 6E, 6A, 6B, 6C, 6J, 6S and 6N) are coded,
+Fable-audited (0 blocking, 2 should-fix test gaps fixed) and frozen (c5dfd5c, cluster freeze c4fb5da4...).** K3-mehedge-01
+trades JPY on the Nikkei 225, obtained free; its EUR trial was dropped because the EURO STOXX 50's free history could not be
+obtained, as the entry's rule says. **One run: Tier A K3-ldnrev-01 6E** (12 month-end trades, mean +0.28 ticks a day, t
+1.42). 26 trials are Tier B; 3 ports on 6S and 6N are excluded on coverage. The Fable recomputation found no discrepancy.
+Program N = 123 + 27 = **150**. The audit found that the frozen session rules have no Topstep holiday schedule before 2024;
+every confirmation session must settle this first. Nothing bought, ledger unchanged, holdouts all_ok with 0 unlocks,
+REGISTRATION.md 0 bytes. End suite 4043 passed, 2 skipped, 1 xfailed. **Session total (Parts 1-3):** 4 commits (harness
+v4 and three cluster freezes), 53 trials declared, 48 screened, Tier A K4-ngpre-01 NG, K5-fomc-01 MGC, K3-ldnrev-01 6E.
+Full record: reports/E.4c_RETURN.md, with the cross-cluster table at the end of reports/E.4_RETURN.md.

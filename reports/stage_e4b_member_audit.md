@@ -386,3 +386,202 @@ hash in _calendar.py equal the files' hashes; no tracked file changed during thi
 at 05:43 shows only the three files already modified before it and the untracked audit_k5/ scripts).
 
 ## Part 2: recomputation (Task 6)
+
+MemberAuditor-K5-FableXHigh, resumed with reports/stage_e4_briefs/auditor_task6_K5.md and the lead's
+message (items 0, 2 and 5 extended). Started 05:58 PDT, ended 06:08 PDT, 2026-09-27. Read-only; no
+runner, no member, no bar file. Every figure below is recomputed in my own code from the runner's recorded
+outputs (reports/stage_e4b_k5_screen/, 23 files) and the frozen tables:
+reports/stage_e4_briefs/audit_k5/recompute_screen.py (its printout recompute_screen.out) and two inline
+checks (expected coverage minutes; cp2's halt-day trips and event-window fills). The frozen definitions I
+computed against, and matched to 1e-9: series value = the sum over the date's trips of net_cents / (the
+trip's own contracts) / tick value cents, zeros on window dates without a trip (runner docstring item 5);
+t = mean / (population sd / sqrt(n)); passes = mean > 0 and t >= 1.0 (D5 lines 305-306;
+screening/stage_e_stats.py:141-168); tiers as ruling OC-H (reports/stage_e2b_task1_stats_worker.md:171-183;
+stage_e_stats._tier_one lines 215-238); trip net = gross - 192 c x contracts - slippage(open side) -
+slippage(close side), slippage per side = ceil(round(contracts x ticks x tick value cents, 6)), ticks from
+the fill's 30-minute CT bucket of reports/stage_e2a_costs.json or, inside [release, release + 30 min) of a
+release naming the product in reports/stage_e2b_release_calendar.json, the product's largest half spread
+plus the bucket's depth term (screening/stage_e_frozen.py:91-128, 278-280; stage_e_rules.py:338-345).
+
+Verdicts: items 0, 1, 3, 5 VERIFIED; items 2, 4, 6 VERIFIED WITH NOTES; no DISCREPANCY.
+
+### Item 0: the frozen files against the audited ones (VERIFIED)
+
+- reports/stage_e_k5_member_freeze.json (sha256 1d0c974f18e884e1ad073d8f6f94d7bb70ee6f43971c7f23ccacab54103b3655,
+  commit 09f1999) lists 13 files; each listed sha256 equals the file on disk, and the 11 module files'
+  hashes equal my Part 1 table entry for entry (cp1 7681195b..., cp2 aa123ffe..., cp3 24f31961..., ovr
+  d079967b..., preauc 0dcaeda8..., pmfix 4167234f..., fomc 0fb73eb1..., _calendar 8c23f8f1..., _releases
+  9b183f14..., _event_common 3c1053d9..., _port_common 832cd2ef...; both __init__.py empty). Against
+  reports/stage_e4_briefs/k5_files_pre_audit.sha256 exactly one file differs: tests/test_e4_k5_members_a.py
+  (1f453149... -> 73636c95...), the R-K5-1 test fix; the other three test files are unchanged.
+- The manifest's 11 members carry S0.2's labels, modules, factories and ordinals 1-11; the 11 records'
+  member/ordinal pairs equal them; K5_research_cluster.json lists the same 11 in that order. Every record
+  carries cluster_freeze_sha256 1d0c974f..., harness_sha256 82ae8536738ca43395f43356840c0b799a7925b7b75ddb4fc1353d3ab7491009,
+  release_calendar_sha256 839f2437..., and the frozen tables costs f4360bb7..., epsilon 4e2c7731...,
+  sizes 280d7e9d..., vehicles 1f1cafee...; the MGC bars file (429,238 rows, f6bcdd63...) and the MHG file
+  (367,105 rows, 4c3deb8e...) are the same in every record that names them.
+
+### Item 1: the screen from series.values (VERIFIED, 9 of 9; 2 records carry no screen)
+
+| Trial | n | trips | mean ticks/ct/day | sd (pop) | t daily | passes | record agrees (1e-9) |
+|---|---|---|---|---|---|---|---|
+| K5-cp1-01 MGC | 295 | 284 | -0.603695 | 79.320453 | -0.130720 | no | yes |
+| K5-cp2-01 MGC | 295 | 295 | +10.557017 | 200.218450 | +0.905624 | no | yes |
+| K5-cp3-01 MGC | 295 | 101 | +8.494508 | 183.933455 | +0.793211 | no | yes |
+| K5-cp3-01 MHG | 295 | 126 | +3.246753 | 80.211813 | +0.695219 | no | yes |
+| K5-preauc-01 MGC | 295 | 280 | +1.305220 | 62.627375 | +0.357957 | no | yes |
+| K5-pmfix-01 MGC | 295 | 278 | -9.989559 | 78.206306 | -2.193894 | no | yes |
+| K5-fomc-01 MGC | 295 | 8 | +2.349831 | 21.864171 | +1.845927 | **yes** | yes |
+| K5-ovr-01 MGC | 295 | 289 | -3.560780 | 185.067549 | -0.330465 | no | yes |
+| K5-ovr-01 MHG | 295 | 190 | -3.397708 | 48.577621 | -1.201326 | no | yes |
+
+For every run record: mean_ticks, sd_pop_ticks, t_daily and passes agree to 1e-9 relative (the largest
+relative difference is 1.7e-16); n_days = len(values) = len(dates) = len(daily_net_usd) = window_dates.n =
+295; n_trips agrees across series, screen, trade_rate and the trip list. The dates equal EC-CAL's 315
+metals trade dates 2025-04-01..2026-06-19 less the record's own exclusions (18 roll-blackout dates, which
+differ by vehicle: MGC 2025-05-28..30, 07-29..31, 11-25..27, 2026-01-28..30, 03-26..30, 05-27..29; MHG
+2025-04-24..28, 06-25..27, 08-26..28, 11-24..26, 2026-02-24..26, 04-27..29; UR-1's 2026-06-18 and 06-19;
+not_every_leg_trades empty), first 2025-04-01, last 2026-06-17; one value per date; every trip's trade
+date is a window date; non-zero dates <= n_trips (equal for the one-trip-a-day members; ovr MGC 180 of
+289 trips, MHG 134 of 190). series.values and daily_net_usd rebuild exactly from the trip lists under the
+frozen definition (9 of 9). Each trip list's record_sha256 equals its record file's sha256 and names the
+record file (11 of 11, the two excluded ones included). Power is not_run on all 9 (StartRuleMissing: no
+frozen S_X for MGC / MHG); it does not enter a tier. The two coverage-excluded records carry screen None,
+series None, power None, no engine section and 0 trips, as OC-H requires.
+
+### Item 2: tiers against D5, the coverage check, the floor and OC-H (VERIFIED WITH NOTES)
+
+OC-H (12:58 PDT 2026-09-25, reports/stage_e2b_task1_stats_worker.md:171-183; the STATE line 40 and the
+harness review line 344 say the same): "D9, read literally: Coverage below 0.95 means 'excluded before
+screening'. Mean hold below 10 minutes (floor (c)) means 'excluded before confirmation'. A breach of (a)
+... or of (b) ... is excluded the same way. `tier` therefore takes the values 'A', 'B' or 'excluded'. An
+excluded member stays in the record with its label(s) and belongs to neither Tier A nor Tier B. A
+coverage-excluded member must have screen=None ... A member excluded for (a), (b) or (c) must carry its
+computed ScreenResult ... The exclusion applies whatever the screen says." D9's floor text (docs
+lines 592-599): "(c) mean holding time over the research window of at least 10 minutes ... (c) is checked at
+screening, and a member failing it is excluded before confirmation with the reason logged."
+
+Tiers, recomputed as OC-H from each record's labels and my item 1 screen: coverage label -> excluded;
+another D9 label -> excluded; else A iff passes, else B. All 11 equal K5_research_cluster.json: Tier A
+K5-fomc-01 MGC (mean 2.3498 > 0, t 1.8459 >= 1.0); Tier B cp1 MGC, cp2 MGC, cp3 MGC, cp3 MHG, preauc MGC,
+ovr MGC, ovr MHG; excluded cp1 MHG, cp2 MHG, pmfix MGC. The cluster file's per-member screen dicts equal
+the records' screens; not_tiered, refused_members and power_check_undefined are empty.
+
+The two coverage exclusions (D9: "coverage of at least 0.95 on the research window for its vehicle";
+screening/stage_e_align.py COVERAGE_MIN = 0.95, present / expected over the member's window dates and
+declared intervals, cut to the calendar's session intervals):
+
+| Trial | present | expected | ratio | expected, recomputed from the declared windows over its 295 window dates | why the window is thin |
+|---|---|---|---|---|---|
+| K5-cp1-01 MHG | 8,952 | 9,735 | 0.91957 | 9,735 = 295 x 33 (the 17:00 evening bar, the 07:39 bar, 11:29-12:00) | the MHG 17:00 CT bar and single minutes; cp3 MHG's [07:10, 12:00) passed at 0.95760 and ovr MHG's (07:10, 12:10) at 0.95592 |
+| K5-cp2-01 MHG | 125,441 | 139,910 | 0.89658 | 139,910 = 295 x 478 less the halt-day cuts (13:30 halts 380, 11-28 395, 12-24 335, 07-04 290) | the window runs to 15:08 through the post-settlement hours (S0.12, the E.3-L-17 proxy) |
+
+Both ratios are present / expected to 1e-12 and both are below 0.95, so the label and the "excluded before
+screening" tier follow the frozen rule and OC-H. The expected counts of all 11 trials recompute exactly
+(cp1 MGC 9,705; cp2 MGC 137,058; cp3 MGC 91,420; cp3 MHG 85,550; preauc 18,290; pmfix 8,260; fomc 4,981;
+ovr MGC 106,085; ovr MHG 88,490). The present counts cannot be checked without the bar file (never
+opened); the record's own numbers are taken as they stand.
+
+The floor exclusion, K5-pmfix-01 MGC (label mean_holding_below_10min; runner floor_labels,
+screening/stage_e_runner.py:262-265: mean hold < 10 -> label): the trip list has 278 trips, 277 with
+hold_minutes exactly 10.0 (entry fill T_P + 2, exit fill T_P + 12, the rule) and one with 0.0: 2026-02-20,
+entry fill 09:02 CT (T_P + 2 on a normal week, the rule's minute), close_reason mll_liquidation at the same
+bar (open_ts = close_ts 15:02Z), gross -23,700 c, net -24,112 c (the day's value -241.12 ticks);
+counters.mll_liquidation 1, accounts_started 2. Mean hold = 2,770 / 278 = 9.9640 < 10, so the label is
+set; without that engine-closed trip the mean is 2,770 / 277 = 10.0 exactly and no label would apply.
+min_hold_minutes 0.0 is that trip; min_hold_refusals 0 (the member never attempted an early exit) and
+max entries per day 1, so floors (a) and (b) are untouched. The exclusion therefore follows the frozen
+code and OC-H's words ("the exclusion applies whatever the screen says"), and rests entirely on one XFA
+liquidation of a 10-minute rule. NOTES for the lead: (i) the reading of floor (c), whether an engine
+liquidation counts toward "the member's mean holding time", is the lead's (Part 1's K5-L-09 expected an
+engine-shortened hold to draw "a label, not a drop"; the runner docstring item 6 says a labelled member is
+"screened and labelled, never dropped"; OC-H, which the code implements, says excluded before
+confirmation); (ii) no verdict turns on it: pmfix fails the screen (mean -9.99, t -2.19) and would be
+Tier B under either reading, so the only effect is that it sits in neither tier instead of on the null
+side; (iii) the K5 label is the first floor exclusion of the program (K4 had none), so this is the first
+time OC-H's clause has applied.
+
+### Item 3: trips rebuilt from the frozen cost table, no replay (VERIFIED)
+
+For K5-cp1-01 MGC (284 trips) and K5-pmfix-01 MGC (278), and for the other seven run trials as an
+extra check (1,289 trips): every one of the 1,851 trips' net_cents equals gross_cents - 192 c x contracts
+(MGC and MHG round turn $1.92) - slippage(open side) - slippage(close side) under the frozen rule above,
+with tick values 100 c (MGC) and 125 c (MHG); contracts 1 on MGC and 2 on MHG throughout (q_c). The trip
+list carries no side; every bucket a K5 fill landed in has equal buy and sell side ticks and depth, so
+both side assignments match (0 side-determined, 0 unmatched). Event-window fills (a fill inside [release,
+release + 30 min) of a release naming the root; the calendar names MGC and MHG only at CPI and NFP 07:30,
+G.17 08:15 and FOMC 13:00): cp2 MGC 20 (18 entries at 07:36-07:52 on CPI and NFP days, 2 G.17-day
+entries at 08:17 and 08:33), fomc 8 (both fills of every trip, 13:05 and 13:15, inside the FOMC window,
+as Part 1 predicted), ovr MGC 5 (08:20 entries inside the G.17 window), all others 0, preauc and pmfix 0
+(K5-L-04: no auction row exists). Daily sums equal daily_net_usd, and divided by contracts and the tick
+value equal series.values, on every date (9 of 9). Gross P&L cannot be checked without prices;
+everything else was.
+
+### Item 4: trade counts, untraded events, fill minutes, ovr limits (VERIFIED WITH NOTES)
+
+Event reconciliation (my event sets from the frozen tables, Part 1 section 3; halts and window dates from
+EC-CAL; blackout and UR-1 dates from each record):
+
+| Member | Events in window | Trips | Untraded | Explained | Silent (no intent, no counter) |
+|---|---|---|---|---|---|
+| K5-preauc-01 MGC | 307 AM auction days | 280 | 27 | 9 EC-CAL early halts (2025-06-19, 07-04, 09-01, 11-27, 11-28, 12-24, 2026-01-19, 02-16, 06-19), 17 MGC roll-blackout dates, 1 UR-1 date (2026-06-18); engine_not_a_window_date = 15 on the 18 blackout/UR-1 dates that are not halts | 3 blackout/UR-1 dates with no intent: a missing 03:59 bar (the member's S0.6 rule), not separable from the records; no other untraded event |
+| K5-pmfix-01 MGC | 305 PM auction days (12-24 and 12-31 are not PM days) | 278 | 27 | 8 halts (the nine above less 12-24), 17 blackout dates, 1 UR-1 date; engine_not_a_window_date = 18 = every non-halt blackout/UR-1 event date | 1: 2025-07-24 (s = 0, or a missing 08:59 / 09:01 bar) |
+| K5-fomc-01 MGC | 10 statement dates | 8 | 2 | 2025-07-30 and 2026-01-28, both MGC roll-blackout dates; engine_not_a_window_date = 1 | on one of the two blackout dates the member emitted nothing (s = 0 or a missing bar); no non-blackout event untraded |
+
+No event member traded a date outside its set. Fill minutes, all 1,851 trips classified against the rule's
+fill minutes (preauc T - 30 / T - 1 and pmfix T_P + 2 / T_P + 12 from the table's own instant per date,
+so the 5-hour-week dates are checked at 05:00 / 05:29 and 10:02 / 10:12; fomc 13:05 / 13:15; cp1 12:00 /
+12:29; cp3 07:21 / 12:29 and 07:11 / 11:59; ovr the :20 or :10 entry and + 59; cp2 an eligible entry
+minute and 75 present bars): 1,821 exact (preauc 280 of 280, pmfix 277, fomc 8, cp1 283, cp2 293 entries
+in [07:36, 11:43] with 75-bar holds, cp3 MGC 98, cp3 MHG 116, ovr MGC 287, ovr MHG 179); 7 engine MLL
+liquidations (item 6); 1 D9.5a deferral (cp2 MGC 2026-03-16: the trigger bar 08:14, nominal fill 08:15 in
+the G.17 guard, filled 08:17; counters.fill_guard_deferral = 1; the 75-bar count then ran from the fill,
+exit 09:32); 22 fills one or more minutes late with no release nearby, consistent with a missing bar at
+the nominal minute and not verifiable without the bar file: cp1 MGC and cp3 MGC exits on 2026-02-25 both
+at 13:46 (nominal 12:28 / 12:29 fills, + 77 minutes: an MGC gap from 12:28 to 13:45 that day, inside the
+114 missing minutes of cp2 MGC's coverage), cp3 MHG 8 exits at 12:00 (+ 1) and 2 entries at 07:12 (+ 1),
+ovr MHG 10 exits + 1 to + 4 minutes (holds 60-63). No forced flatten, no price-limit exit, no locked
+trip. Every exit closes the whole position (one trip per entry). ovr: at most 4 entries on any day (caps
+5 on MGC, 4 on MHG), no overlapping trips, entries only at 08:20-12:20 / 08:10-11:10, no early-halt or
+non-full-session date traded, holds 59 except the liquidations and the late MHG exits. cp1 MGC's 10
+engine_flatten_window refusals are its 11:59 entries on the 10 halt days in its window (rules/sessions.py
+sets F earlier than 12:00 on those days; the port follows D6 and does not test halts, C4). cp2 MGC
+traded on 9 halt days (a port) and exited each by the 75-bar rule before F (latest halt-day exit 09:16).
+cp3 and ovr traded no halt day (their rule). ovr MGC's account_not_active 3 and ovr MHG's 1 are the
+engine's cancellations of orders after a liquidation, an engine matter. NOTES: (a) the 4 silent
+no-trades above are the members' own rule conditions (S0.6, s = 0), which the records cannot distinguish
+from a missing bar (the same note as K4's item 4); (b) the 2026-02-25 gap is worth a look by the lead in
+the bar report, since it moved two ports' exits by 77 minutes.
+
+### Item 5: program N (VERIFIED)
+
+Records with status "run" and a screen: 9 (cp1 MGC, cp2 MGC, cp3 MGC, cp3 MHG, preauc MGC, pmfix MGC,
+fomc MGC, ovr MGC, ovr MHG; pmfix is screened and labelled, so it counts). Excluded before screening, no
+screen: 2 (cp1 MHG, cp2 MHG). Refused members: 0. No record shows a trial the freeze does not declare, and
+every declared trial has a record (11 of 11). N = 114 + 9 = 123, the lead's figure. Whether the two
+coverage-excluded trials count is the lead's decision; my reading: they do not. D5's words are "every
+screened member and grid point adds to it", the D9 coverage rule says such a member "is excluded before
+screening ... it is not run", and the two records hold no series, no screen and no trip, so no statistic
+was computed and no selection on results could occur; a multiple-comparisons count of trials that yielded
+nothing to compare would overstate the family. The conservative alternative (count every frozen
+declaration) gives 125; if the lead takes it, the entry should say so, since the K4 session had no
+excluded trial and set no precedent.
+
+### Item 6: MLL liquidations (VERIFIED WITH NOTES)
+
+accounts_started - 1 equals counters.mll_liquidation and the count of trips closed mll_liquidation on all 9
+run trials: cp1 MGC 0, cp2 MGC 1 (2026-02-13, day value -306.10 ticks), cp3 MGC 2 (2025-10-22 -467.18,
+2025-12-12 -792.12), cp3 MHG 0, preauc 0, pmfix 1 (2026-02-20 -241.12, the 0.0-minute trip of item 2),
+fomc 0, ovr MGC 2 (2026-01-22 -441.09, 2026-03-23 -1,028.20), ovr MHG 1 (2025-10-10 -448.26): 7 in all,
+no locked trip. The Tier A trial, K5-fomc-01 MGC, has none, so its tier cannot depend on them. NOTE: one
+Tier B tier does. K5-cp3-01 MGC fails the screen at t +0.793; zeroing or dropping its two liquidation days
+gives mean +12.76 / +12.85 and t +1.248 (passes), so without the XFA liquidations it would be Tier A. The
+liquidations are the frozen harness's rule (the XFA MLL with a fresh account after each), so the record
+stands; the lead may want to say so in the entry. The other Tier B trials keep their verdict: cp2 MGC
++0.906 -> +0.999 (still below 1.0), ovr MGC -0.330 -> +0.141, ovr MHG -1.201 -> -0.786, pmfix -2.194 ->
+-2.045. Tier A sensitivity for the lead's verdict: fomc's 8 trade days (ticks per contract) are 2026-06-17
++318.4, 2026-04-29 +152.4, 2025-10-29 +99.4, 2025-12-10 +56.4, 2025-06-18 +44.4, 2025-05-07 +42.4,
+2026-03-18 +12.4, 2025-09-17 -32.6 (7 positive, 1 negative); without its best day the screen still passes
+(zeroed: mean 1.2705, t 1.8556; dropped: 1.2748, 1.8557; the sd falls faster than the mean), and with its
+one losing day zeroed t is 1.9411. All 8 trips filled at 13:05 and 13:15 with hold 10.0; 8 non-zero days
+of 295 (C12's low-frequency caveat; power not run for want of a frozen S_X).

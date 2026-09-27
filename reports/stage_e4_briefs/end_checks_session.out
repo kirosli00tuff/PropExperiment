@@ -1,0 +1,56 @@
+$ date
+Sun Sep 27 09:57:50 AM PDT 2026
+$ git status --short
+ M docs/STAGES.md
+ M progress.md
+ M reports/stage_e4_member_audit.md
+ M reports/stage_e4b_member_audit.md
+ M reports/stage_e4c_member_audit.md
+?? reports/E.4_RETURN.md
+?? reports/E.4b_RETURN.md
+?? reports/stage_e4_STATE.md
+?? reports/stage_e4_briefs/
+?? reports/stage_e4_coder_A.md
+?? reports/stage_e4_coder_B.md
+?? reports/stage_e4_harness_fix.md
+?? reports/stage_e4_k2_regression/
+?? reports/stage_e4_k4_screen/
+?? reports/stage_e4b_STATE.md
+?? reports/stage_e4b_coder_A.md
+?? reports/stage_e4b_coder_B.md
+?? reports/stage_e4b_k5_screen/
+?? reports/stage_e4c_STATE.md
+?? reports/stage_e4c_coder_A.md
+?? reports/stage_e4c_coder_B.md
+?? reports/stage_e4c_k3_screen/
+$ git log --oneline -3
+c5dfd5c feat: K3 member freeze (Stage E.4 Part 3), cluster freeze sha256 c4fb5da4
+09f1999 feat: K5 member freeze (Stage E.4 Part 2), cluster freeze sha256 1d0c974f
+e0ccf63 feat: K4 member freeze (Stage E.4 Part 1), cluster freeze sha256 cf066cb0
+$ wc -c REGISTRATION.md
+0 REGISTRATION.md
+$ uv run python -m data.holdout status (keys)
+holdout_1 all_ok True unlocks_logged 0 unlock_log_ok True
+holdout_2 all_ok True unlocks_logged 0 unlock_log_ok True
+$ python3 reports/stage_e2b_briefs/check_frozen.py
+reports/stage_e1_freeze.json: manifest sha256 96166eb39b85d4fdcf132092978ee85393392de52c3857dc3f64ea7281454a7c files 32/32 match
+reports/stage_e2a_ml_freeze.json: manifest sha256 077a57e1c00554dd0745302b247673d45ee05b805ac4bfd876f8497f7bbb1ed2 files 4/4 match
+OK       reports/stage_e2a_costs.json f4360bb7...df14
+OK       reports/stage_e2a_vehicle_sizes.json 280d7e9d...7325
+OK       reports/stage_e2a_vehicles.json 1f1cafee...9913
+OK       reports/stage_e2a_vehicle_rule_readings.md 8c3c29dd...b458
+OK       reports/stage_e2a_epsilon_declaration.md ccdb8ec5...8c7c
+OK       reports/stage_e2a_epsilon_declaration_addendum.md e6253be2...8d32
+OK       reports/stage_e2a_source_window_amendment.md 9fe401c1...f13d
+OK       reports/stage_e2a_epsilon.json 4e2c7731...f496
+ALL_OK
+$ PYTHONPYCACHEPREFIX=<fresh> uv run python -m screening.harness_freeze verify --expected 82ae8536738ca43395f43356840c0b799a7925b7b75ddb4fc1353d3ab7491009
+preflight OK: 82ae8536738ca43395f43356840c0b799a7925b7b75ddb4fc1353d3ab7491009
+$ cluster freezes (load_cluster_freeze + verify_cluster_code)
+K2 cluster freeze OK 8815a775e74996419b57751b1104ffa07cd4b3450eb18a9a92c6cbbd5615b7c5 44 members
+K4 cluster freeze OK cf066cb0507134e2553781f42699165b471be45ebec6b07bfb0d75680e879d1a 12 members
+K5 cluster freeze OK 1d0c974f18e884e1ad073d8f6f94d7bb70ee6f43971c7f23ccacab54103b3655 11 members
+K3 cluster freeze OK c4fb5da41d69a6be54ea07d1ab35bd2b238d1fbeafaeb3008b886f8fc6888d95 30 members
+$ ledger
+14823 ledger/databento_spend.jsonl
+02e7caa257bbee7b84d23a0394c9fae34985e884c1306fb47ea683546f15b1ed

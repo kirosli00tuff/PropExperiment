@@ -386,3 +386,143 @@ declarations match S0.2 and the coders' tmp_path freezes.
 
 ## Part 2: recomputation (Task 6)
 
+MemberAuditor-K4-FableXHigh, resumed with reports/stage_e4_briefs/auditor_task6.md. Started 04:45 PDT,
+ended 04:55 PDT, 2026-09-27. Read-only; no runner, no member, no bar file. Every figure below is recomputed
+in my own code from the runner's recorded outputs (reports/stage_e4_k4_screen/, 25 files) and the frozen
+tables: reports/stage_e4_briefs/audit/recompute_screen.py (items 1-6) and audit/fill_minutes.py (item 4's
+fill classification and the Tier A sensitivity). The frozen definitions I computed against, and matched to
+1e-9: series value = sum over the day's trips of net_cents / (the trip's own contracts) / tick value cents
+(runner docstring item 5); t = mean / (population sd / sqrt(n)); passes = mean > 0 and t >= 1.0 (D5
+lines 305-306; screening/stage_e_stats.py:141-168); tiers as stage_e_stats._tier_one (lines 215-238).
+
+Verdicts: items 0, 1, 2, 3, 5, 6 VERIFIED; item 4 VERIFIED WITH NOTES; no DISCREPANCY.
+
+### Item 0: the frozen files against the audited ones (VERIFIED)
+
+- `sha256sum -c reports/stage_e4_briefs/k4_files_pre_audit.sha256`: 14 of 17 OK; the three that differ are
+  strategy/members/k4/_releases.py, tests/test_e4_k4_members_b.py and tests/test_e4_k4_members_b_eia.py, as
+  ruling R-T3-1 records. Every other K4 module's sha256 equals both my Part 1 table and the freeze manifest
+  reports/stage_e_k4_member_freeze.json (14 files listed, cluster K4, 12 members, ordinals 1-12 in S0.2's
+  order); the manifest lists _releases.py at 35bd4730d12386f4e31f7f045d95afe9a9f7843c686899557a944bcfa68dd1f0,
+  the file's current hash.
+- The _releases.py difference, proven byte for byte: running the committed generator
+  (reports/stage_e4_briefs/gen_k4_releases.py) with the pre-ruling inputs (the 2025-07-16 entry restored to
+  SECTION11_WPSR with its original words, CHECK_SHA256 = bb1b1071..., the docstring's old drop line)
+  reproduces the audited file's sha256 exactly (7c6eb13c27482fb56816bc4cb33bca7895541787715c6f3f2da4b9755559c3bf).
+  The unified diff between that reconstruction and the frozen file has 59 lines: the docstring drop line
+  (2 lines each way), the counts line (368/316 -> 369/317), RELEASE_CHECK_SHA256 (bb1b1071... ->
+  4c71d798..., the current file's hash), the removed four-line DROPPED_WPSR entry for 2025-07-16, and 47
+  re-flow lines of the two-per-line WPSR tuple whose only semantic change is the added row
+  ("2025-07-16", "09:30", 2, True) (set difference of the parsed rows: that one row, nothing else). NGS,
+  FEDERAL_MONDAY_HOLIDAYS, NYSE_NOT_FULL, API_DROPPED_WEEKS, NGS_UNVERIFIED_IN_WINDOW and DROPPED_NGS are
+  byte-identical.
+- My independent table script (audit/recompute_tables.py, rerun at 04:47 against the amended check JSON,
+  sha256 pinned): WPSR 369 rows EQUAL (317 standard; window 62 / 56), NGS 372 EQUAL, DROPPED_WPSR == the
+  check's non-keep rows (2025-12-29, 2026-05-28), FEDERAL_MONDAY_HOLIDAYS 46 EQUAL, NYSE_NOT_FULL 84 EQUAL,
+  ENERGY_FULL_SESSIONS 1784 EQUAL; apipre 56 and eiamom 56 research-window events.
+
+### Item 1: the screen from series.values (VERIFIED, 12 of 12)
+
+| Trial | n | trips | mean ticks/ct/day | sd (pop) | t daily | passes | record agrees (1e-9) |
+|---|---|---|---|---|---|---|---|
+| K4-cp1-01 MCL | 270 | 258 | +0.799593 | 37.834782 | +0.347264 | no | yes |
+| K4-cp1-01 NG | 269 | 257 | -1.369970 | 22.230862 | -1.010720 | no | yes |
+| K4-cp2-01 MCL | 270 | 269 | -7.526361 | 74.976754 | -1.649454 | no | yes |
+| K4-cp2-01 NG | 269 | 268 | -2.490870 | 41.877065 | -0.975553 | no | yes |
+| K4-cp3-01 MCL | 270 | 105 | -0.622972 | 78.460088 | -0.130467 | no | yes |
+| K4-cp3-01 NG | 269 | 114 | -4.407602 | 64.204501 | -1.125934 | no | yes |
+| K4-ngpre-01 NG | 269 | 50 | +3.227740 | 29.180878 | +1.814163 | **yes** | yes |
+| K4-apipre-01 MCL | 270 | 46 | -1.212407 | 33.655834 | -0.591930 | no | yes |
+| K4-eiafade-01 MCL | 270 | 12 | +0.270148 | 19.654287 | +0.225853 | no | yes |
+| K4-eiamom-01 MCL | 270 | 48 | -0.535111 | 7.615000 | -1.154665 | no | yes |
+| K4-ovr-01 MCL | 270 | 275 | -1.838333 | 60.364884 | -0.500405 | no | yes |
+| K4-ovr-01 NG | 269 | 252 | -1.992097 | 31.898492 | -1.024275 | no | yes |
+
+For every record: mean_ticks, sd_pop_ticks, t_daily and passes agree to 1e-9 relative; n_days = len(values)
+= len(dates) = len(daily_net_usd) = window_dates.n; n_trips agrees across series, screen, trade_rate and
+the trip list. The dates equal EC-CAL's 315 energy trade dates 2025-04-01..2026-06-19 less the record's own
+exclusions (roll_blackout_any_leg 45 on MCL, 46 on NG; unseen_roll_UR-1 covers 2026-06-18 and 06-19, which
+are absent; not_every_leg_trades empty), first 2025-04-01, last 2026-06-16 (MCL) / 2026-06-17 (NG); one
+value per date; every non-zero date has a trip and every trip's trade date is a window date; non-zero days
+<= n_trips. series.values and daily_net_usd rebuild exactly from the trip lists under the frozen definition.
+Each trip list's record_sha256 equals its record file's sha256 (12 of 12). Coverage: every trial's ratio =
+present / expected and >= 0.95 (0.99206 eiamom to 0.99991 ngpre).
+
+### Item 2: tiers against D5 (VERIFIED)
+
+Labels are empty on all 12 (no coverage exclusion: every ratio >= 0.95; no floor label: entry_cap_refusals
+and min_hold_refusals are 0 everywhere, max entries per product-day 1, or 4 for ovr, mean hold 28.7 to 323.1
+minutes). So each tier is A iff passes: K4-ngpre-01 NG is Tier A (mean 3.2277 > 0, t 1.8142 >= 1.0), the
+other 11 are Tier B, exactly as K4_research_cluster.json says; the cluster file's per-member screen dicts
+equal the records' screens; not_tiered, refused_members and power_check_undefined are empty. Power is
+not_run on all 12 (StartRuleMissing: no frozen S_X for MCL/NG), which does not enter the tier. Note: the
+records' min_hold_minutes of 0 (cp1 MCL) and 1 (cp1 NG) are engine MLL liquidations minutes after a 13:00
+fill (2025-12-12 MCL; 2025-07-11 NG), not member exits; the frozen "hold_below_2min" label is set only on a
+refused member attempt (min_hold_refusals = 0), so no label is due.
+
+### Item 3: trips rebuilt from the frozen cost table, no replay (VERIFIED)
+
+For K4-cp1-01 MCL (258 trips) and K4-ngpre-01 NG (50), and as an extra check for the other ten (1,646
+trips), every trip's net_cents equals gross_cents - commission_rt_cents x contracts - slippage(open side)
+- slippage(close side), with slippage per side = ceil(round(contracts x ticks x tick value cents, 6)),
+ticks = the fill's 30-minute CT bucket's side_ticks from reports/stage_e2a_costs.json, or, for a fill in
+[release, release + 30 min) of a release concerning the product in reports/stage_e2b_release_calendar.json
+(WPSR, NGS and FOMC for both roots; API_WSB rows fall after F), the product's largest half-spread (MCL
+1.0632, NG 0.9928 ticks) plus the fill bucket's depth term. Commission: MCL 172 c, NG 422 c per contract
+round turn. Mismatches: 0 of 1,954 trips. Daily sums match daily_net_usd and, divided by the trip's
+contracts and the tick value, series.values, day by day (12 of 12). Event-window fills: cp1 MCL 14
+(FOMC-day 13:02 entries and 13:29 exits inside [13:00, 13:30)), ngpre NG 3 (the 09:32 entries on the
+Wednesday 12:00 ET storage days, inside the 09:30 WPSR window), eiafade 12 (every entry at T_W+15), cp2
+MCL 79 / NG 72, others 0 to 25. The trip list carries no side; every bucket a K4 fill landed in has equal
+buy and sell slippage and depth (the one asymmetric MCL bucket, 18:30, is never hit), so the side does not
+matter. Gross P&L cannot be checked without prices; everything else was.
+
+### Item 4: trade counts, untraded events, fill minutes, ovr limits (VERIFIED WITH NOTES)
+
+Event reconciliation (my event sets from the frozen tables, section 3 of Part 1 rerun after R-T3-1):
+
+| Member | Events in window | Trips | Untraded | Explained by the records | Unexplained (silent) |
+|---|---|---|---|---|---|
+| K4-ngpre-01 NG | 63 NGS rows | 50 | 13 | 12 roll-blackout dates + 1 UR-1 date (2026-06-18); engine_not_a_window_date = 13, one refusal per untraded date, so the entry bar was present on each | 0 |
+| K4-apipre-01 MCL | 56 standard weeks | 46 | 10 | 7 roll-blackout Wednesdays (engine_not_a_window_date = 6: on one of them nothing was emitted) | 3: 2025-04-02, 2025-04-23, 2026-05-06 (R_API = 0 or a missing 15:24 / 15:39 / 07:29 bar; the member is silent and the record has no counter) |
+| K4-eiafade-01 MCL | 62 rows with T_W+15 <= 13:13 | 12 | 50 | 9 roll-blackout dates (engine_not_a_window_date = 1: the threshold was met on one of them) | 41: |M| < 0.5 % (the rule's own condition; 12 trades on 53 non-blackout releases = 23 %, in line with the entry's "one release in four or five") or a missing bar; not separable from the records |
+| K4-eiamom-01 MCL | 56 standard Wednesdays not in NYSE_NOT_FULL | 48 | 8 | 7 roll-blackout Wednesdays (engine_not_a_window_date = 5) | 1: 2026-01-28 (r3 = 0 or a missing bar) |
+
+No member traded a date outside its event set. Fill minutes, all 1,954 trips classified against the rule's
+fill minutes: 1,870 exact; 34 moved by the engine's D9.5a guard (nominal fill in [release, release + 2 min)
+of a release concerning the root, actual fill at release + 2: cp1 MCL 7 and cp1 NG 10 FOMC-day 13:02
+entries; cp2 MCL 5 and NG 4 exits at 09:32 on WPSR/NGS days; ngpre NG 3 entries at 09:32 (2025-06-18,
+11-26, 12-31, as Part 1 N-2 predicted); ovr MCL 2 and NG 3 entries at 11:02 / 13:02 on 11:00 CT WPSR/NGS
+and FOMC days, with the exit still at t+59); 42 engine MLL liquidations (item 6); 1 forced flatten (cp2 MCL
+2025-09-01, Labor Day early halt, F 11:30: the port traded at 10:17 and the engine closed it at 11:30, as
+C line 85 and Part 1 say); 7 fills one or two minutes late with no release nearby (cp2 MCL 2025-09-11 +2,
+12-08 +1, 12-30 +1; cp2 NG 2025-09-19, 11-27, 2026-05-25 +1, all exits under the present-bar hold count;
+eiamom 2025-12-31 entry 14:31), consistent with a missing bar at the nominal minute and not verifiable
+without the bar file. Every exit closes the whole position (one trip per entry; contracts 4 on MCL, 1 on
+NG throughout). ovr: at most 4 entries on any day (MCL and NG), no overlapping trips, holds 59 minutes
+except the 5 D9.5a entries (57) and the MLL days. Notes: (a) the 45 silent no-trades above are the members'
+own rule conditions, which the records cannot distinguish from a missing bar; the lead may want the runner
+to count a member's silent no-trade in a later harness version; (b) 2026-05-28 (dropped from eiafade's
+table, K4-L-15) still sits in the engine's release calendar, so it moved ovr NG's 11:00 entry to 11:02 on
+that day: correct under D9.5a, which reads the frozen calendar, not the member's table.
+
+### Item 5: program N (VERIFIED)
+
+All 12 records have status "run" with a screen; refused_members and not_tiered are empty; the 12 record
+labels are exactly the freeze's 12 declarations with matching ordinals; every record carries
+cluster_freeze_sha256 cf066cb0507134e2553781f42699165b471be45ebec6b07bfb0d75680e879d1a and harness_sha256
+82ae8536738ca43395f43356840c0b799a7925b7b75ddb4fc1353d3ab7491009. Screened trials: 12. N = 102 + 12 = 114.
+
+### Item 6: MLL liquidations (VERIFIED)
+
+accounts_started - 1 equals counters.mll_liquidation and the count of trips closed mll_liquidation on all 12:
+cp1 MCL 1, cp1 NG 3, cp2 MCL 8, cp2 NG 8, cp3 MCL 3, cp3 NG 10, apipre 1, eiafade 0, eiamom 0, ngpre NG 0,
+ovr MCL 3, ovr NG 5 (42 in all; no locked trip). The Tier A trial, K4-ngpre-01 NG, has none, so its tier
+cannot depend on them. For the 11 Tier B trials, zeroing or dropping the liquidation days changes no
+verdict (the largest move is cp3 NG, t -1.13 to +0.77, still below 1.0; apipre -0.59 to +0.38; cp3 MCL
+-0.13 to +0.35; the rest stay negative or below 0.4). Tier A sensitivity for the lead's verdict: ngpre NG
+traded all three "unverifiable" storage dates (2025-05-01 -376.51 USD, 05-29 +563.49, 06-18 -20.47);
+zeroing them gives mean 3.1658, t 1.7971; dropping them 3.2015, t 1.7972; zeroing the three D9.5a-deferred
+days 3.2469, t 1.8251; without its best day (2026-02-05, +150.35 ticks) 2.6788, t 1.5767. 28 positive and 22
+negative trade days. The screen passes under each variant.
+

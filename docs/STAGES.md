@@ -86,6 +86,16 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
   - Stage E.3 — K2 rates screening. Run 2026-09-26/27 (see reports/E.3_RETURN.md): eight members (44 trials) coded,
     Fable-audited (0 blocking), FROZEN (commit a79b47e, cluster freeze 8815a775...) and screened once: all 44 Tier B,
     Tier A empty; N = 102. Nothing bought.
+  - Stage E.4a — harness v4 and K4 energy screening. Run 2026-09-27 (see reports/E.4_RETURN.md): harness v4 FROZEN
+    (commit b20163a, manifest 82ae8536...: C-1 fixed, per-trial trip lists; K2 replay identical); K4's eight members
+    (12 trials) coded, Fable-audited, FROZEN (commit e0ccf63, cluster freeze cf066cb0...) and screened once: Tier A
+    K4-ngpre-01 NG, 11 Tier B; N = 114. Nothing bought.
+  - Stage E.4b — K5 metals screening. Run 2026-09-27 (see reports/E.4b_RETURN.md): seven members (11 trials) coded,
+    Fable-audited, FROZEN (commit 09f1999, cluster freeze 1d0c974f...) and screened once: Tier A K5-fomc-01 MGC, 7 Tier B,
+    3 excluded (two MHG ports on coverage, pmfix on the mean-hold floor); N = 123. Nothing bought.
+  - Stage E.4c — K3 FX screening. Run 2026-09-27 (see reports/E.4c_RETURN.md): nine members (30 trials; K3-mehedge-01 on
+    EUR not traded, no free index history) coded, Fable-audited, FROZEN (commit c5dfd5c, cluster freeze c4fb5da4...) and
+    screened once: Tier A K3-ldnrev-01 6E, 26 Tier B, 3 excluded on coverage; N = 150. Nothing bought.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

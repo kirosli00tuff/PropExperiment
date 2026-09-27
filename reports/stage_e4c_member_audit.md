@@ -375,3 +375,115 @@ NOTE:
   mehedge trial adds nothing to N (never screened). The lead's N accounting should say so.
 
 ## Part 2: recomputation (Task 6)
+
+Auditor: MemberAuditor-K3-FableXHigh (resumed). Brief: reports/stage_e4_briefs/auditor_task6_K3.md plus the lead's
+items (item 0; item 3 on K3-cp1-01 6E and K3-ldnmom-01 6J; item 5 with N = 123 + the trials actually screened). Started
+09:49, ended 09:57 PDT, 2026-09-27. Read-only: the runner's recorded outputs in reports/stage_e4c_k3_screen/ (61 files),
+the frozen tables and the K3 literal tables; no bar file opened, nothing replayed, no member run. My code:
+reports/stage_e4_briefs/audit_k3/recompute_screen.py (output recompute_screen.out).
+
+Verdicts: item 0 VERIFIED, 1 VERIFIED, 2 VERIFIED WITH NOTES, 3 VERIFIED (gross unverifiable without prices, as the
+brief allows), 4 VERIFIED WITH NOTES, 5 VERIFIED, 6 VERIFIED WITH NOTES. No DISCREPANCY.
+
+### Item 0: the frozen files and the run's provenance (VERIFIED)
+
+- reports/stage_e_k3_member_freeze.json sha256 c4fb5da41d69a6be54ea07d1ab35bd2b238d1fbeafaeb3008b886f8fc6888d95; 30
+  members, ordinals 1-30 in the S0.2 order; its 16 files (the 15 of strategy/members/k3/ plus the empty
+  strategy/members/__init__.py) each equal the file on disk now and the hash I audited in Part 1 (section 0's table).
+  Against reports/stage_e4_briefs/k3_files_pre_audit.sha256 exactly one file differs, tests/test_e4_k3_members_b_ldn.py
+  (now 45cfdc68..., ruling R-K3-1); no member module changed.
+- Every one of the 30 records carries cluster_freeze_sha256 c4fb5da4..., harness_sha256 82ae8536..., release calendar
+  839f2437..., and the same four frozen-table hashes (costs f4360bb7..., epsilon 4e2c7731..., sizes 280d7e9d...,
+  vehicles 1f1cafee...); one bar file per root across all records (7 roots). The record labels equal the freeze's labels
+  and K3_research_cluster.json lists the 30 in freeze order. Run window 09:45:57-09:49:18 per the STATE file.
+
+### Item 1: the screen from series.values (VERIFIED)
+
+For each of the 27 run records: series.dates equal the 299 research trade dates that remain after the record's own
+exclusions (EC-CAL fx 316 trade dates 2025-04-01..2026-06-19 minus 15 roll-blackout dates and the two UR-1 dates
+2026-06-18 and 06-19; the exclusion set is identical on all 30 records; window_dates.n = n_days = len(daily_net_usd) =
+299); one value per date; the non-zero days are a subset of the trip dates and fewer than n_trips; n_trips equals the
+trip list's length. Mean, population sd, t = mean / (sd / sqrt(299)) and passes (mean > 0 and t >= 1.0), recomputed in
+my code, equal the record's screen on all 27 to 1e-9 relative (no mismatch). Tier A's figures: K3-ldnrev-01 6E mean
++0.2842 ticks, t +1.422, 12 trips.
+
+### Item 2: tiers against D5 and OC-H (VERIFIED WITH NOTES)
+
+Tiers recomputed from each record's labels and my item 1 screen: coverage label -> "excluded"; any other D9 label ->
+"excluded"; otherwise A if the screen passes, else B. Result A 1 (K3-ldnrev-01 6E), B 26, excluded 3, equal to
+K3_research_cluster.json member by member (labels too); not_tiered, refused_members and power_check_undefined are
+empty. The three exclusions, checked against the frozen D9 check and OC-H: K3-cp1-01 6N ratio 0.9209 (present 8,987 of
+9,759), K3-cp1-01 6S 0.9373 (9,147 / 9,759), K3-cp2-01 6N 0.9461 (131,719 / 139,225); each ratio equals
+present / expected, is below 0.95 with passes false, and the record has status excluded_before_screening, label
+coverage_below_0.95 only, screen None, series None, power None, no engine section, and a trip list with 0 trips; the
+tier is "excluded" (neither A nor B), as OC-H requires. Every run record has ratio >= 0.95 (lowest 0.9571, cp1 6B).
+Notes: (a) `expected` is identical across the roots of one member (cp1 9,759; cp2 139,225; cp3 119,165; ecbfix
+252,554; ldnmom 12,537; ldnrev 19,098; mehedge 35,239; tkypost 109,434; tkypre 43,953), so it is a property of the
+declared windows and the window dates and the exclusion is the root's own bar coverage; I did not recompute `expected`
+itself (stage_e_align._expected_ranges intersects the windows with the calendar's open intervals; not re-derived here).
+(b) No floor label on any run record: at most 2 entries per product-day (ecbfix), every member exit at least 2 minutes
+after its fill (min-hold refusals 0, entry-cap refusals 0), mean holds from 15.0 minutes (ldnrev) upwards. The shortest
+holds on record (2 to 9 minutes: tkypost 2026-03-27, cp1 6C 2025-11-11, ldnmom 6J 2025-08-01, cp1 6A, cp3 6B, cp3 6J
+twice) are all MLL liquidations by the engine, not member exits, so D9.3(b) is not touched.
+
+### Item 3: two daily series rebuilt from the trip lists and the frozen cost table (VERIFIED)
+
+Method (my code, no replay): per trip, net = gross_cents - 2 x 211 cents (the 4.22 USD round turn split per side) -
+slippage per side, where slippage per side = ceil(round(qty x ticks x 625, 6)) cents with ticks = the fill's 30-minute
+CT bucket's side_ticks (from reports/stage_e2a_costs.json directly, 46 buckets per product, none fallback), or the
+product's largest half-spread plus the bucket's depth term when the fill lies in [release, release + 30 min) of a
+release row naming the product (NFP and FOMC for 6E and 6J in the frozen calendar); then summed per trade date, divided
+by 100 for daily_net_usd and by 625 x q_c (q_c = 1) for series.values. The trip list carries no side, but the 6E and 6J
+tables are side-symmetric (depth 0 at q_c = 1, buy = sell in every bucket), so the side cannot change a cost.
+- K3-cp1-01 6E: 284 trips; net rebuilt exactly on 284/284; event-window fills 0; daily_net_usd equal on 299/299 days;
+  series.values equal on 299/299 (1e-12); record_sha256 in the trip list equals the record file's sha256. All 284 trips
+  open 13:30 and close 13:59 CT, reason strategy (both clock regimes: the port's clock is CT). On FOMC days the 13:30
+  fill lies exactly at release + 30 min and pays the mean cost: the harness's D8 window is half-open, [release,
+  release + 30 min), which settles catalog section 7 item 9's boundary question (the harness's choice, as specs
+  section 1-3 says).
+- K3-ldnmom-01 6J: 237 trips; net rebuilt exactly on 237/237; event-window fills 0; daily_net_usd 299/299;
+  series.values 299/299; record_sha256 equal; 236 strategy closes and one MLL liquidation (2025-08-01, 09:48 to 09:53).
+- Gross per trip cannot be checked without prices; everything else in the chain (costs, sums, units, dates) is.
+
+### Item 4: trade counts of the event members against their tables, and fill minutes (VERIFIED WITH NOTES)
+
+Event sets in the research window from the frozen tables (Part 1 section 4), intersected with each record's window
+(the 299 dates); per trip the nominal fill minutes from the date's T_L / T_E / T_T row. No trip lies off any event set.
+
+| Trial | Events in research / in window (outside: cause) | Traded dates / trips | Untraded in-window events and the explanation | Fill minutes |
+|---|---|---|---|---|
+| K3-ldnrev-01 6E | 13 / 13 | 12 / 12 | 1: 2025-09-30 (no refusal counter; a zero signal M = 0 or a missing signal or entry bar, not separable without bars) | 12 nominal (T_L+5 / T_L+20; 2025-10-31 at 11:05 / 11:20) |
+| K3-ldnrev-01 6J | 13 / 13 | 13 / 13 | none | 13 nominal |
+| K3-ldnrev-01 6S | 13 / 13 | 13 / 13 | none | 13 nominal |
+| K3-ldnmom-01 6E | 298 / 282 (16 outside: 15 roll blackout, 1 UR-1) | 254 / 254 | 28: zero signal or missing bar (the leg's coverage gap is 5 minutes in the whole window, so nearly all are S = 0); the 15 engine_not_a_window_date refusals are intents emitted on roll-blackout dates, refused by name as designed | 253 nominal, 1 MLL (2026-01-15 closed 10:03) |
+| K3-ldnmom-01 6J | 298 / 282 (16 outside) | 237 / 237 | 45: zero signal or missing bar (coverage gap 60 minutes); 12 blackout refusals | 236 nominal, 1 MLL |
+| K3-mehedge-01 6J | 13 / 13 | 13 / 13 | none | 13 nominal (T_L-60 / T_L-3) |
+| K3-ecbfix-01 6E | 299 / 283 (16 outside) | 283 / 561 | none untraded; 5 dates with leg 1 only (2025-04-03, 04-10, 04-11, 04-24, 05-19): leg 1 closed by an MLL liquidation, so no leg 2 (S0.7, K3-L-12); 2 further liquidations closed leg 2 (05-05, 05-08); 15 blackout refusals | 551 nominal (01:00 / T_E / T_E+1 / 15:05, 08:15-08:16 in the mismatch weeks), 7 MLL, 3 leg-2 closes at 15:06 (a missing bar at the exit; F 15:08 not reached) |
+| K3-tkypre-01 6J | 63 / 61 (2 outside: roll blackout) | 52 / 52 | 9 (2025-06-10, 09-05, 09-10, 11-25, 12-10, 2026-02-25, 02-27, 2026-06-05, 06-10): no refusal and no signal, so the only rule-consistent cause is a missing 17:29 CT entry bar (C4; the coverage gap is 1,622 evening minutes), not observable without bars | 50 nominal (17:30 / T_T), 2 opened 17:31 (missing 17:30 bar; deferred fill) |
+| K3-tkypost-01 6J | 284 / 269 (15 outside: 14 blackout, 1 UR-1) | 269 / 269 | none | 264 nominal (T_T+1 / 01:00), 3 MLL, 2 closed 01:01 (missing bar) |
+
+Every deviation from the nominal minute is one of the documented kinds (missing bar, MLL); no D9.5a deferral occurred
+on an event member (no fix instant is a release row); no forced flatten at F on an event member. On the ports the
+counters show the K3-L-11 dates as Part 1's N-2 predicted: cp1's 13:29 entry refused in the flatten window (3-7 per
+root), cp3 and cp2 6C flattened at F (1-5 forced_flatten per root). Untraded events are explained except that a zero
+signal cannot be told from a missing bar without the bars (ldnrev 6E once, ldnmom 28 and 45) and tkypre's nine are
+inferred, not observed.
+
+### Item 5: program N (VERIFIED)
+
+Records with status "run" and a screen: 27. Excluded before screening: 3 (the coverage exclusions above). Refused: 0
+(refused_members empty; "K3 research: 30 members, 0 refused"). Every record's label is one of the freeze's 30
+declarations; no undeclared trial appears; the dropped EUR mehedge trial has no record. N = 123 + 27 = 150 (the three
+coverage-excluded trials were never screened and the EUR trial never existed as a declaration).
+
+### Item 6: MLL liquidations (VERIFIED WITH NOTES)
+
+62 liquidations across 20 of the 27 screened trials; per trial the count equals accounts_started - 1, the engine
+counter mll_liquidation and the number of trips with close_reason mll_liquidation (cp1 6A/6B/6C 1 each; cp2 6A 3, 6B 2,
+6C 1, 6E 4, 6J 3, 6S 7; cp3 6A 4, 6B 2, 6C 2, 6E 4, 6J 6, 6N 3, 6S 6; ecbfix 7; ldnmom 6E 1, 6J 1; tkypost 3). The Tier A
+trial K3-ldnrev-01 6E has none (accounts_started 1, no counter), as have ldnrev 6J and 6S, mehedge, tkypre and cp1
+6E/6J. Sensitivity (my re-screen with each liquidation trip's net removed from its day): no Tier B trial passes without
+its liquidations (the two that turn positive stay far below t 1.0: K3-ecbfix-01 6E mean +1.18, t +0.25; K3-cp3-01 6S
+mean +0.93, t +0.27). No tier depends on a liquidation. Note for the verdict: the liquidations are large for cp3 6S
+(-1,012 ticks over 6), ecbfix (-1,192 over 7) and cp3 6J (-696 over 6), so those trials' Tier B means are partly the
+XFA floor's, not the rule's; the tier is unchanged either way.

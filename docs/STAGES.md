@@ -80,6 +80,9 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     (commit ba67073, manifest 077a57e1...); source-window amendment removes 6 source-overlap labels (04c504f);
     rules engine, 8 cited group calendars, bars of all 45 contracts, frozen D8 costs, vehicles (28 traded, 3 not)
     and funnel epsilon for all 28 built and verified independently by Fable (0 discrepancies). Nothing bought.
+  - Stage E.2b — screening runner, ML pipeline, canaries, step 2 path, Windows backend, harness freeze. Run
+    2026-09-26 (see reports/E.2b_RETURN.md): Stage E harness FROZEN (commit 273c27b, manifest cf939270...,
+    1,032 files) after an adversarial Fable review (1 blocking, 3 should-fix, all fixed). Nothing bought.
   - Stage E.3 onward — one screening session and one confirmation session per cluster, in the order of
     docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

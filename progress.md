@@ -2737,3 +2737,68 @@ pause (21:34-09-26 03:21), all on the user's side or the plan's. The full record
 758,000,645, Fable 37,709,062, Sonnet 3,974,542. Lead 24.9%, workers 75.1%; the calendar workflow (ultracode)
 40.8%. The per-task final table and per-model table are in reports/E.2a_RETURN.md, section 8.
 
+## 2026-09-26 — Stage E.2b: screening runner, ML pipeline, canaries, step 2 path, Windows backend, harness freeze
+
+Lead Opus 5.5 xhigh. **The Stage E harness is frozen**: commit 273c27b (not pushed), manifest
+reports/stage_e2b_harness_freeze.json, sha256 cf939270f0a00be74aa29a43f0c7de964256411a9cdcebc36f22fd3bdc021a45
+(1,032 files). Built: the generalized screening runner and cross-product alignment (MES C1, C2, C4 reproduced bit for
+bit), the D4 power check, D5 screen and tiers, Holm, the start rule and start-date builder, the member template and
+cluster code freeze; the ML route pipeline with every M7 test and its test side (probes: LightGBM 0.3 h, LSTM 0.7 h
+projected on the RTX 3050); canaries for every group, cross-product and the ML wrapper; the trade-date purchase guard,
+the step 2 path with per-product holdout-2 sealing and the step 2 store; the Windows backend (localhost only), its guide
+and the V10 amendment; the release calendar (2,609 instants). Fable max review: no look-ahead, leakage or holdout
+exposure; 1 blocking and 3 should-fix findings, all fixed (reports/stage_e2b_harness_rulings.md). Not built: the non-MES
+composite verdict (OC-Q). Nothing bought: quotes only ($0.00 ledger lines); ML route $189.31 (acct-2 top-up $167.79, cap
+to at least $292.79), K2's confirmation $40.50 (top-up $18.98). Both holdouts all_ok, 0 unlocks; REGISTRATION.md 0 bytes;
+tests 2863 passed, 2 skipped, 1 xfailed. K2's screening session is unblocked. Full record: reports/E.2b_RETURN.md.
+
+### Session cost
+
+Wall clock 12:33-19:40 PDT (7 h 07 min), including one pause: the plan's session usage limit, about 15:07-16:40
+(1 h 33 min; HTTP 429 "resets 4:40pm"), which stopped CanaryCoder and ReleaseSourcerCommodity mid-task; both were resumed
+from their transcripts. Work time 5 h 34 min. The initial estimate was about 8 h 30 min before the scope grew (the release
+calendar, the start-date builder and the ML test side were added by rulings OC-J, OC-K, OC-L). Tokens are from this
+session's transcripts (the lead's .jsonl and 14 subagent .jsonl files, each assistant message counted once by message id;
+script reports/stage_e2b_briefs/token_accounting.py), taken at 19:31; the lead's last minutes of writing are not included.
+
+**Final table.** Times are first and last transcript entries, with the active segments from the STATE file.
+
+| Task / spawn | Agent | Worker file | Model | Effort | Active segments (PDT) | Active time | Tokens | Status and deviations |
+|---|---|---|---|---|---|---|---|---|
+| 0 Startup, checks, briefs, interfaces | lead | - | opus | xhigh | 12:33-12:45 | 12 min | in the lead's total | done |
+| 1 runner core; OC-T; F-1 | RunnerCoder-OpusXHigh | worker-xhigh | opus | xhigh | 12:43-13:33, 16:51-17:00, 18:27-18:33 | 1 h 05 | 77,444,246 | done; ZN schema read (no rows) |
+| 1 statistics; OC-I; F-4 | ScreenStatsCoder-OpusXHigh | worker-xhigh | opus | xhigh | 12:43-13:08, 18:26-18:27 | 27 min | 16,184,829 | done |
+| 2 ML pipeline, probes | MLPipelineCoder-OpusXHigh | worker-xhigh | opus | xhigh | 12:43-13:32 | 49 min | 30,323,714 | done; scikit-learn pinned (ML-A11) |
+| 4 step 2 path, quotes; OC-R | PurchaseCoder2-OpusXHigh | worker-xhigh | opus | xhigh | 12:43-14:37, 16:43-17:41 | 2 h 52 | 60,054,084 | done |
+| 5 Windows backend, guide | WindowsBackendCoder-OpusXHigh | worker-xhigh | opus | xhigh | 13:08-13:59 | 51 min | 33,519,097 | done; export commit without ledger/ |
+| release names (OC-J) | ReleaseNamesExtractor-SonnetMed | worker-medium | sonnet | medium | 13:35-13:51 | 16 min | 8,757,586 | done |
+| NFP, CPI, FOMC instants | ReleaseSourcerMacro-OpusHigh | worker-high | opus | high | 13:35-13:44 | 9 min | 4,896,274 | done |
+| EIA, USDA instants | ReleaseSourcerCommodity-OpusHigh | worker-high | opus | high | 13:44-15:07, 16:43-16:55 | 1 h 35 | 27,345,884 | done after the pause; 365 [unverified] |
+| ML test side (OC-L); OC-P, RT-4; review fixes | MLTestCoder-OpusXHigh | worker-xhigh | opus | xhigh | 13:52-14:45, 16:47-16:52, 18:26-18:44 | 1 h 16 | 64,181,458 | done |
+| named releases | ReleaseSourcerNamed-OpusHigh | worker-high | opus | high | 14:01-14:27 | 26 min | 14,439,648 | done |
+| start dates (OC-K); OC-S; F-3 | InputsCoder-OpusXHigh | worker-xhigh | opus | xhigh | 14:27-14:49, 16:43-16:47, 18:26-18:34 | 34 min | 25,786,753 | done |
+| 3 canaries | CanaryCoder-OpusXHigh | worker-xhigh | opus | xhigh | 14:35-15:07, 16:43-16:56 | 45 min | 31,798,723 | done after the pause; finding C-1 |
+| calendar assembly | CalendarAssembler-OpusXHigh | worker-xhigh | opus | xhigh | 16:52-17:11 | 19 min | 14,776,022 | done |
+| 7 adversarial review | HarnessAuditor-FableMax | worker-max | fable | max | 17:56-18:24 | 28 min | 7,001,014 | done |
+| 5L V10 amendment, DECISIONS | lead | - | opus | xhigh | 12:45-12:48 | 3 min | lead | done |
+| 9 MBT entry | lead | - | opus | xhigh | 14:34-14:36 | 2 min | lead | done |
+| 6 manifest builder, tests, v1 | lead | - | opus | xhigh | 16:48-16:56, 17:56 | 10 min | lead | done |
+| integration: static fix, full suite | lead | - | opus | xhigh | 13:59-14:01, 17:01-17:04, 17:42-17:56 | 19 min | lead | done |
+| 8 rulings, preflight fixes, suites, v2, v3, commit | lead | - | opus | xhigh | 18:24-19:16 | 52 min | lead | done; v3 for the compute test fixture |
+| end checks, return, progress, cost | lead | - | opus | xhigh | 19:16-19:40 | 24 min | lead | done |
+| PAUSE (usage limit) | - | - | - | - | 15:07-16:40 | 1 h 33 (excluded) | - | - |
+| **Stage total** | lead + 14 workers | | | | 12:33-19:40 | **5 h 34 work** (7 h 07 wall) vs about 8 h 30 estimated | **511,214,353** | lead 94,705,021 (18.5%), workers 416,509,332 (81.5%) |
+
+**Tokens per model:**
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-opus-5-5 | 3,588 | 2,596,716 | 476,395,094 | 16,460,355 | 495,455,753 |
+| claude-fable-5-1 | 612 | 108,119 | 6,304,637 | 587,646 | 7,001,014 |
+| claude-sonnet-5 | 124 | 46,403 | 8,491,786 | 219,273 | 8,757,586 |
+| all | | | | | 511,214,353 |
+
+Delegation share: lead 18.5%, workers 81.5%; by tier: Opus 96.9% (lead 18.5%, workers 78.4%), Fable 1.4%, Sonnet 1.7%.
+Cache reads are 96.1% of all tokens. The largest workers were the longest-lived with resumed follow-ups (RunnerCoder 77M,
+MLTestCoder 64M, PurchaseCoder2 60M); the three research sourcers together used 47M. The session cannot read the /usage
+meter; the user records it.

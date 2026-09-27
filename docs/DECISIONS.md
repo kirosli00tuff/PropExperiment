@@ -204,3 +204,25 @@
   test_mbt_request_ending_2026_06_21_is_booked_partly_to_holdout1_and_refused),
   and the Windows backend's send-side data rules (compute/, tests/
   test_compute_datarules.py).
+
+- 2026-09-26 (user, planning chat): V11. The ML route's feature F17
+  (docs/STAGE_E_ML_DESIGN.md M4: sigma_X,d over its own median) uses a
+  20-trade-date median in place of the frozen 120. Reason (E.2b return,
+  decision 7): holdout-2 is sealed and ends the day before the research
+  window starts, so a 120-date median leaves about 160 of the research
+  window's roughly 300 dates without route rows, and a route rule would be
+  tested on about half the window. With 20 dates the warm-up is about 40
+  dates. Nothing else in the frozen ML design changes. Status: decided,
+  not yet applied. The ML route's first session applies it before any fit,
+  as a logged amendment to the frozen design and the harness manifest
+  (ml_route/constants.py F17_MEDIAN_DATES), audited by Fable, with a new
+  harness manifest sha256.
+- 2026-09-26 (user, planning chat): V12. ML route compute. The user prefers
+  the Windows PC (RTX 2060 Super 8 GB, 32 GB RAM) for ML training once
+  E.2c has connected and verified it. The user allocates 8 to 10 hours of
+  overnight time per run: every ML training session either finishes inside
+  that window or stops cleanly at a checkpoint (the resumable per
+  configuration and fold ledgers of M7 and V10) and resumes in the next
+  window with no work lost or repeated. Each session estimates its run
+  time from the E.2b and E.2c probes before starting and plans the work
+  into windows. The ThinkPad remains the fallback machine.

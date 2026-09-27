@@ -22,7 +22,8 @@ From 2026-09-23 on, each new prompt is committed here before it is sent.
 | E.2a | STAGE_E.2a.md | Opus 5.5, xhigh, ultracode | 2026-09-25 to 26 | ML route freeze, source-window amendment, per-product rules, calendars, research-window bars, costs, vehicles, epsilon; overnight profile |
 | E.2b | STAGE_E.2b.md | Opus 5.5, xhigh | 2026-09-26 | Screening runner, ML pipeline and M7 tests, canaries, step 2 purchase path and free quotes, Windows compute backend and V10, Fable max harness review, harness freeze; no purchase |
 | E.3 | STAGE_E.3.md | Opus 5.5, xhigh | 2026-09-26 to 27 | K2 rates: code, Fable-audit and freeze the eight members, screen them on the research window; no purchase |
-| E.4 | STAGE_E.4.md | Opus 5.5, xhigh | 2026-09-27 | Harness fix C-1 and trip lists (K2 regression, Fable review, manifest v4), then K4 energy, K5 metals and K3 FX in turn: release-date checks, code, Fable-audit and freeze each cluster's members, screen on the research window; one unattended overnight run; no purchase |
+| E.4 | STAGE_E.4.md | Opus 5.5, xhigh | 2026-09-27 (01:54-10:05) | Harness fix C-1 and trip lists (K2 regression, Fable review, manifest v4), then K4 energy, K5 metals and K3 FX in turn: release-date checks, code, Fable-audit and freeze each cluster's members, screen on the research window; one unattended overnight run; no purchase |
+| E.5 | STAGE_E.5.md | Opus 5.5, xhigh | 2026-09-27 | K4 and K5 confirmation: harness v5 (pre-2024 holidays, verdict code) and v6 (spend caps), step 2 purchase with holdout-2 sealed, start rules, power checks, NGS C9 check, hashed lists, one confirmation run per cluster, Fable recomputation |
 
 Model names are as written in each prompt at the time. The routing rules
 that apply today are in CLAUDE.md.

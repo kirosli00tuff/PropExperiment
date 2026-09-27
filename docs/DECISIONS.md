@@ -241,3 +241,20 @@
   (c) At the user's request (2026-09-27), Stage E.4 runs K4, K5 and K3 one
   after another in one unattended session across three usage windows, each
   cluster with its own specs, Fable audit, freeze commit, run and return.
+- 2026-09-27 (user, planning chat): V14. Before any Stage E confirmation
+  read. (a) OC-Q: the composite verdict for an exposure X is D.1f's
+  procedure (the robust zero-edge gate plus both drift sub-checks) run with
+  X's own research-window bars, X's frozen D8 cost table, X's vehicle at
+  q_c and eps_X in place of MES's. It is built, Fable-reviewed and frozen
+  only if a trial passes Holm, DSR, daily t > 3.0 and PBO. Until then such
+  a trial reads "edge candidate, composite pending", never "edge".
+  (b) Holm K = 9 (the maximum) for every Holm run until every cluster and
+  the ML route have been screened. The edge chain's t > 3.0 is stricter
+  than 0.05 / 9, so nothing is lost.
+  (c) Planning chat ruling, open to the user before E.5's first list hash:
+  where a cluster's Tier A has one member, DSR's Sharpe variance is taken
+  over all of the cluster's confirmation-window daily Sharpes (Tier A and
+  Tier B), since a one-member variance is undefined.
+  (d) The user approved the step 2 purchases for K4 (MCL, NG, $11.46
+  quoted) and K5 (MGC, MHG, $9.74 quoted) on acct-2. K3's confirmation
+  ($49.34, needs a top-up) is deferred.

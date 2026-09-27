@@ -226,3 +226,15 @@
   window with no work lost or repeated. Each session estimates its run
   time from the E.2b and E.2c probes before starting and plans the work
   into windows. The ThinkPad remains the fallback machine.
+- 2026-09-27 (planning chat, on the user's go-ahead for the E.4 prompt): V13. Harness fix and cluster order.
+  (a) Stage E.4 fixes harness bug C-1 (E.3 return, section 7: under
+  `python -m` the runner loads twice and start-date refusals escape) and
+  adds a per-trial trip list to the runner's output. Nothing else in the
+  harness changes. The change is proven numerically inert by a replay of
+  K2's 44 frozen trials, reviewed by Fable, and frozen as harness manifest
+  v4. K2's tiers stand as E.3 computed them. Later purchase sessions that
+  edit data/config.py write the version after v4.
+  (b) The cluster order stays U3 (K2, K4, K5, K3, K6, K7, then K1 if
+  needed, K8 last). The order has no statistical effect (each cluster has
+  its own Holm family), so the user may move K3 up at any point without
+  an amendment.

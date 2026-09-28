@@ -2893,3 +2893,68 @@ every confirmation session must settle this first. Nothing bought, ledger unchan
 REGISTRATION.md 0 bytes. End suite 4043 passed, 2 skipped, 1 xfailed. **Session total (Parts 1-3):** 4 commits (harness
 v4 and three cluster freezes), 53 trials declared, 48 screened, Tier A K4-ngpre-01 NG, K5-fomc-01 MGC, K3-ldnrev-01 6E.
 Full record: reports/E.4c_RETURN.md, with the cross-cluster table at the end of reports/E.4_RETURN.md.
+
+## 2026-09-27 — Stage E.5: harness v5 and v6, the K4 and K5 step 2 purchase, K4 confirmed null, K5 stopped before its list
+
+Lead Opus 5.5 xhigh. **Harness v5** (2c0bfe0, ba925a97...) adds the 2019-2023 Topstep holiday rows (48 rows derived from the
+equity calendar; July 3 unsettled), the confirmation-verdict module and the E.5 spend block. Fable review: 0 blocking, 2 should-fix,
+both fixed. **v6** (ce3cb66, 9a8ebe73...) sets the caps. **Bought** MCL, NG, MGC and MHG step 2 history for $21.196568, exactly the
+fresh quote; all 52 holdout-2 chunks sealed on arrival, 0 unlocks. acct-2 has $0.33 left. S_X: MCL 2021-07-12, NG 2019-05-06, MHG
+2022-06-01; **MGC none (empty window)**. Five of 252 NGS dates dropped from K4-ngpre-01's table by C9 (41d6adf; freeze 7abcde17...).
+K4 list 22388c6b... (4161032), run once. **K4 is null:** all 12 trials have UCB95 < eps_X at power >= 0.96. The Tier A trial
+K4-ngpre-01 NG has theta -0.08 ticks/day and p 0.54, so it fails Holm (no edge). Fable recomputed every figure with no discrepancy.
+**K5 stopped before its list:** six of its eight tiered trials (Tier A K5-fomc-01 among them) have supply 0, and GC bars as MGC's
+price path (U8) are the user's decision. The machine crashed at 13:50 and the user paused 13:58-17:35; nothing was lost. Full
+record: reports/E.5_RETURN.md.
+
+**Session cost.** Wall clock 12:23-19:43 PDT (7 h 20 min), 3 h 40 min of work after excluding a 3-minute crash and the user's 3 h 37 min pause.
+Tokens (transcripts): 146,528,258 in all; lead 88,519,108 (60%), workers 58,009,150 (40%); opus 139,187,627, fable 7,340,631.
+
+**Final ETA table** (PDT; tokens from the transcripts; pauses shown as their own rows and excluded from the work total):
+
+| Task | Owner | Model | Effort | Start | End | Time | Tokens | Status and deviations |
+|---|---|---|---|---|---|---|---|---|
+| 0 Startup, start suite | lead | opus | xhigh | 12:23 | 12:37 | 14 min | in lead | done |
+| A1 Inventory, plan, rulings | lead | opus | xhigh | 12:27 | 12:37 | 10 min | in lead | done |
+| A2 Change set (+ 2 follow-ups) | HarnessBuilder-OpusXHigh | opus | xhigh | 12:36 | 13:41 | 65 min | 37,076,657 | done; K3 stop point ruled (R-A2-1) |
+| C3 NGS check (started during Part A) | ReleaseChecker-OpusMed | opus | medium | 12:36 | 13:26 | 50 min | 8,593,252 | done; moved ahead of B2 |
+| A3 Replays (b720c5aa), suite | lead | opus | xhigh | 13:13 | 13:28 | 15 min | in lead | done |
+| A3 Review | HarnessReviewer-FableXHigh | fable | xhigh | 13:18 | 13:37 | 19 min | 3,101,653 | done |
+| A4 Fixes, v5 manifest, v5 replays | lead | opus | xhigh | 13:33 | 13:50 | 17 min | in lead | done |
+| PAUSE: machine crash | - | - | - | 13:50 | 13:53 | 3 min | - | excluded |
+| A4 Suite (stopped for the pause) | lead | - | - | 13:54 | 13:58 | 4 min | in lead | stopped, rerun |
+| PAUSE: user (usage) | - | - | - | 13:58 | 17:35 | 217 min | - | excluded |
+| A4 Resume checks, suite, v5 commit 2c0bfe0 | lead | opus | xhigh | 17:35 | 17:53 | 18 min | in lead | done |
+| B1 Quote, caps, v6 commit ce3cb66 | lead | opus | xhigh | 17:53 | 18:13 | 20 min | in lead | done |
+| B2 Buy K4, buy K5, status, bars, report | lead | opus | xhigh | 18:13 | 18:52 | 39 min | in lead | done; $21.196568 = quote |
+| C1 Start rules K4, K5 | lead | opus | xhigh | 18:52 | 18:53 | 1 min | in lead | done; S_MGC empty |
+| C2 Power re-runs K4, K5 | lead | opus | xhigh | 18:54 | 19:00 | 6 min | in lead | done; R-D-1 (K5 stopped) |
+| C3 Table amendment | MemberCoder-OpusXHigh | opus | xhigh | 18:59 | 19:07 | 8 min | 4,998,610 | done |
+| C3 Freeze, audit Part 1, commit 41d6adf | lead + ConfirmAuditor-K4-FableXHigh | opus / fable | xhigh | 19:05 | 19:14 | 9 min | auditor below | done |
+| C4 K4 list, commit 4161032 | lead | opus | xhigh | 19:14 | 19:15 | 1 min | in lead | done |
+| C5 K4 run (once), verdicts | lead | opus | xhigh | 19:15 | 19:23 | 8 min | in lead | done: null |
+| C6 Recomputation (Part 2) | ConfirmAuditor-K4-FableXHigh | fable | xhigh | 19:23 | 19:31 | 8 min | 4,238,978 (Parts 1 and 2) | done: no discrepancy |
+| Part D K5 (C4-C6) | - | - | - | - | - | - | - | not run (R-D-1); ConfirmAuditor-K5 not spawned |
+| End suite, end checks, return, cost | lead | opus | xhigh | 19:23 | 19:43 | 20 min | in lead | done |
+| **Stage** | | | | 12:23 | 19:43 | **7 h 20 min wall, 3 h 40 min of work excluding the 3 h 40 min of pauses** | **146,528,258** (lead 88,519,108, 60%; workers 58,009,150, 40%) | estimate was about 9 h of work to 21:30 (22:45 with the table amendment); K5 stopped at C2, which removed about 1.5 h |
+
+**Tokens per model** (the lead transcript b56ee083's .jsonl, which also holds the two resumed sessions' messages, plus every worker
+transcript under its subagents/ folder, from 12:00 PDT to the end; messages de-duplicated by message and request id;
+reports/stage_e5_briefs/cost.out; the lead's last messages after the count are not included):
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 1,322 | 3,670 | 6,656,181 | 679,458 | 7,340,631 |
+| claude-opus-5-5 | 1,090 | 278,565 | 136,021,295 | 2,886,677 | 139,187,627 |
+| all | 2,412 | 282,235 | 142,677,476 | 3,566,135 | 146,528,258 |
+
+**Per worker spawn:**
+- MemberCoder-OpusXHigh (worker-xhigh, opus, xhigh; C3 table amendment): 4,998,610 tokens, 18:59-19:07
+- ConfirmAuditor-K4-FableXHigh (worker-xhigh, fable, xhigh; C3 audit Part 1 + C6 recomputation Part 2): 4,238,978 tokens, 19:08-19:31
+- HarnessReviewer-FableXHigh (worker-xhigh, fable, xhigh; A3 review): 3,101,653 tokens, 13:18-13:37
+- HarnessBuilder-OpusXHigh (worker-xhigh, opus, xhigh; A2 change set + 2 follow-ups): 37,076,657 tokens, 12:36-13:41
+- ReleaseChecker-OpusMed (worker-medium, opus, medium; C3 NGS check): 8,593,252 tokens, 12:36-13:26
+
+**Delegation share:** lead 60.4%, workers 39.6%; by tier opus 95.0%, fable 5.0%. About 97% of all tokens are
+cache reads, as in E.0 and E.2a. These are token counts, not plan-credit percentages; the /usage meter is the user's to read.
+

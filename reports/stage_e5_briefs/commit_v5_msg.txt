@@ -1,0 +1,26 @@
+feat: harness v5 (Stage E.5 A4), pre-2024 holidays and confirmation verdicts
+
+Harness manifest v5: reports/stage_e2b_harness_freeze.json, 1,037 files, sha256
+ba925a97854efdc61a8a20641af10cc0de0be472a634dcb3b8bd637259bba0cd (v4 82ae8536... is refused from here).
+
+- rules/sessions.py: Topstep holiday rows for trade dates 2019-05-01..2023-12-31, derived by Rule H-1
+  (the frozen equity calendar: full closure -> markets closed, early halt h -> close-by h minus the
+  year's lead), 48 rows, lead 30 minutes for 2019-2023 (L-E5-2); every July 3 unsettled and listed,
+  not guessed. Validation: the rule reproduces 35 of the 36 published rows in its domain, the four
+  exceptions named in the test. day_rule unchanged for every date from 2024-01-01 on.
+- screening/stage_e_verdict.py (new): NULL_CRITERIA_E section 3 on the runner's confirmation records
+  and the hashed list; D.1f's pinned functions restated on funnel/ with equality tests (L-E5-4);
+  seed 20260923 + ordinal, Holm K = 9 (V14 b), DSR variance switch (V14 c), PBO switch (L-E5-3),
+  source-overlap gate, inconclusive-by-design and OC-H exclusions, "edge candidate, composite
+  pending" (V14 a).
+- data/config.py: the E.5 spend block (stage-E.5-2026-09-27, caps 0.00) and the active step 2
+  purchase policy; data/pull_step2.py: step2_gate reads it (lead ruling L-E5-1).
+- Tests: holidays, verdict (known answers, equality, refusals), step 2 gate; K3's table pins made
+  exact against v5 (R-A2-1, review SF-2).
+- Replays via python -m under v5: K4 25/25 and K5 23/23 files equal E.4's apart from the harness
+  sha256, timestamps and the trip files' record sha256.
+- Review (HarnessReviewer-FableXHigh): 0 BLOCKING, 2 SHOULD FIX (fixed), 10 NOTE; rulings in
+  reports/stage_e5_harness_rulings.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_012WBA8doU1Ss8Xw7t79ujuB

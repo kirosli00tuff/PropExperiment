@@ -1,0 +1,118 @@
+$ date
+Sun Sep 27 07:39:44 PM PDT 2026
+$ git status --short
+ M docs/HOLDOUT_UNLOCK_LOG.md
+ M docs/STAGES.md
+ M ledger/databento_spend.jsonl
+ M reports/stage_e5_k4_audit.md
+?? docs/holdout2/
+?? reports/E.5_RETURN.md
+?? reports/stage_e5_STATE.md
+?? reports/stage_e5_briefs/A2_harness_builder.md
+?? reports/stage_e5_briefs/A3_harness_reviewer.md
+?? reports/stage_e5_briefs/C3_confirm_auditor_k4.md
+?? reports/stage_e5_briefs/C3_member_coder.md
+?? reports/stage_e5_briefs/C3_release_checker.md
+?? reports/stage_e5_briefs/C6_confirm_auditor_k4.md
+?? reports/stage_e5_briefs/a3_compare.py
+?? reports/stage_e5_briefs/a3_replay.log
+?? reports/stage_e5_briefs/a3_replay_v5.log
+?? reports/stage_e5_briefs/audit_k4_part2/
+?? reports/stage_e5_briefs/audit_k4_research/
+?? reports/stage_e5_briefs/audit_k4_scratch/
+?? reports/stage_e5_briefs/b1_quote.log
+?? reports/stage_e5_briefs/b1_quote.sh
+?? reports/stage_e5_briefs/b2_bars.log
+?? reports/stage_e5_briefs/b2_buy_k4.log
+?? reports/stage_e5_briefs/b2_buy_k5.log
+?? reports/stage_e5_briefs/b2_status.json
+?? reports/stage_e5_briefs/build_list.py
+?? reports/stage_e5_briefs/c1_start.log
+?? reports/stage_e5_briefs/c2_compare_k4.md
+?? reports/stage_e5_briefs/c2_compare_k5.md
+?? reports/stage_e5_briefs/c2_power_run.log
+?? reports/stage_e5_briefs/c5_k4_run.log
+?? reports/stage_e5_briefs/c5_k4_verdict.log
+?? reports/stage_e5_briefs/commit_v5_msg.txt
+?? reports/stage_e5_briefs/end_checks.out
+?? reports/stage_e5_briefs/progress_entry.md
+?? reports/stage_e5_briefs/pytest_a3.out
+?? reports/stage_e5_briefs/pytest_a4.out
+?? reports/stage_e5_briefs/pytest_end.out
+?? reports/stage_e5_briefs/pytest_start.out
+?? reports/stage_e5_briefs/resume_checks.out
+?? reports/stage_e5_briefs/return_tables.md
+?? reports/stage_e5_briefs/review_scratch/
+?? reports/stage_e5_briefs/start_checks.out
+?? reports/stage_e5_briefs/start_checks.sh
+?? reports/stage_e5_harness_change.md
+?? reports/stage_e5_k4_confirmation/
+?? reports/stage_e5_k4_verdicts.json
+?? reports/stage_e5_k4_verdicts.md
+?? reports/stage_e5_k5_start_power.json
+?? reports/stage_e5_k5_start_power.md
+?? reports/stage_e5_power_k4/
+?? reports/stage_e5_power_k5/
+?? reports/stage_e5_purchase.md
+?? reports/stage_e5_replay_k4/
+?? reports/stage_e5_replay_k4_v5/
+?? reports/stage_e5_replay_k5/
+?? reports/stage_e5_replay_k5_v5/
+?? reports/stage_e5_step2_quotes.json
+?? reports/stage_e5_step2_quotes.md
+?? reports/stage_e_start_rule_K5.json
+?? reports/step2/
+$ git log --oneline -3
+4161032 docs: K4 confirmation list (Stage E.5 C4), sha256 22388c6b
+41d6adf feat: K4 C9 table amendment (Stage E.5 C3), cluster freeze sha256 7abcde17
+ce3cb66 feat: harness v6, E.5 spend caps (sha256 9a8ebe73)
+$ wc -c REGISTRATION.md
+0 REGISTRATION.md
+$ uv run python -m data.holdout status (keys)
+holdout_1 all_ok True unlocks_logged 0 unlock_log_ok True
+holdout_2 all_ok True unlocks_logged 0 unlock_log_ok True
+$ python3 reports/stage_e2b_briefs/check_frozen.py
+reports/stage_e1_freeze.json: manifest sha256 96166eb39b85d4fdcf132092978ee85393392de52c3857dc3f64ea7281454a7c files 32/32 match
+reports/stage_e2a_ml_freeze.json: manifest sha256 077a57e1c00554dd0745302b247673d45ee05b805ac4bfd876f8497f7bbb1ed2 files 4/4 match
+ALL_OK
+$ PYTHONPYCACHEPREFIX=<fresh> uv run python -m screening.harness_freeze verify --expected 9a8ebe7364beb7980eaea923888e06c2da253b7ff8ce2ce771b55045caf22f87
+preflight OK: 9a8ebe7364beb7980eaea923888e06c2da253b7ff8ce2ce771b55045caf22f87
+$ cluster freezes (load_cluster_freeze + verify_cluster_code)
+K2 cluster freeze OK 8815a775e74996419b57751b1104ffa07cd4b3450eb18a9a92c6cbbd5615b7c5 44 members
+K4 cluster freeze OK 7abcde1705440e97efcf1ce255d979213eed9840f03a8383f2784a74f5f1534a 12 members
+K5 cluster freeze OK 1d0c974f18e884e1ad073d8f6f94d7bb70ee6f43971c7f23ccacab54103b3655 11 members
+K3 cluster freeze OK c4fb5da41d69a6be54ea07d1ab35bd2b238d1fbeafaeb3008b886f8fc6888d95 30 members
+$ ledger
+17400 ledger/databento_spend.jsonl
+0b5466c4366ca9eaba7e10525545631c83e97c1184a7e745d5ed8ad47a9fe957
+$ acct-2 position (pull_step2.account_position on the step 2 gate; reads the ledger only)
+stage-E.5-2026-09-27 {'account': 'acct-2', 'account_cap_usd': 125.0, 'account_credit_usd': 125.0, 'spent_usd': 124.673761, 'cap_headroom_usd': 0.326239, 'credit_left_usd': 0.326239}
+$ python -m data.pull_step2 --status (MCL NG MGC MHG)
+roots in status: 45 ; states: ['not_bought', 'sealed']
+MCL {"holdout": "holdout 2", "product": "MCL", "product_matches": true, "state": "sealed", "chunks_expected": 13, "chunks_sealed": 13, "sealed_in_order": true, "raw_files": {"range=2024-03-01_2024-04-01.dbn.zst": {"sealed_ok": true, "plaintext_absent": true}, "range=2024-04-01_2024-05-01.dbn.zst": {"sealed_ok": true, "plaintext_absent": true}, "range=2024-05-01_2024-06-01.dbn.zst": {"sealed_ok": true,
+NG {"holdout": "holdout 2", "product": "NG", "product_matches": true, "state": "sealed", "chunks_expected": 13, "chunks_sealed": 13, "sealed_in_order": true, "raw_files": {"range=2024-03-01_2024-04-01.dbn.zst": {"sealed_ok": true, "plaintext_absent": true}, "range=2024-04-01_2024-05-01.dbn.zst": {"sealed_ok": true, "plaintext_absent": true}, "range=2024-05-01_2024-06-01.dbn.zst": {"sealed_ok": true, 
+MGC {"holdout": "holdout 2", "product": "MGC", "product_matches": true, "state": "sealed", "chunks_expected": 13, "chunks_sealed": 13, "sealed_in_order": true, "raw_files": {"range=2024-03-01_2024-04-01.dbn.zst": {"sealed_ok": true, "plaintext_absent": true}, "range=2024-04-01_2024-05-01.dbn.zst": {"sealed_ok": true, "plaintext_absent": true}, "range=2024-05-01_2024-06-01.dbn.zst": {"sealed_ok": true,
+MHG {"holdout": "holdout 2", "product": "MHG", "product_matches": true, "state": "sealed", "chunks_expected": 13, "chunks_sealed": 13, "sealed_in_order": true, "raw_files": {"range=2024-03-01_2024-04-01.dbn.zst": {"sealed_ok": true, "plaintext_absent": true}, "range=2024-04-01_2024-05-01.dbn.zst": {"sealed_ok": true, "plaintext_absent": true}, "range=2024-05-01_2024-06-01.dbn.zst": {"sealed_ok": true,
+$ ls reports/step2/ data/processed_step2/
+bars_MCL.json
+bars_MGC.json
+bars_MHG.json
+bars_NG.json
+purchase_MCL.json
+purchase_MGC.json
+purchase_MHG.json
+purchase_NG.json
+MCL
+MGC
+MHG
+NG
+$ git diff --stat
+ docs/HOLDOUT_UNLOCK_LOG.md   |  416 +++++++
+ docs/STAGES.md               |    3 +
+ ledger/databento_spend.jsonl | 2577 ++++++++++++++++++++++++++++++++++++++++++
+ reports/stage_e5_k4_audit.md |   68 ++
+ 4 files changed, 3064 insertions(+)
+$ git diff --stat -- ledger/
+ ledger/databento_spend.jsonl | 2577 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 2577 insertions(+)
+$ python -m data.holdout status (per-product holdout-2 stores)

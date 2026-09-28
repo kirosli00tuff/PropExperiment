@@ -1,0 +1,63 @@
+$ date
+Sun Sep 27 05:36:28 PM PDT 2026
+$ git status --short
+ M data/config.py
+ M data/pull_step2.py
+ M reports/stage_e2b_harness_freeze.json
+ M rules/sessions.py
+ M tests/test_e2a_rules.py
+ M tests/test_e2b_pull_step2.py
+ M tests/test_e4_k3_members_b.py
+?? reports/stage_e5_STATE.md
+?? reports/stage_e5_briefs/
+?? reports/stage_e5_harness_change.md
+?? reports/stage_e5_harness_plan.md
+?? reports/stage_e5_harness_review.md
+?? reports/stage_e5_harness_rulings.md
+?? reports/stage_e5_ngs_check.json
+?? reports/stage_e5_ngs_check.md
+?? reports/stage_e5_replay_k4.md
+?? reports/stage_e5_replay_k4/
+?? reports/stage_e5_replay_k4_v5.md
+?? reports/stage_e5_replay_k4_v5/
+?? reports/stage_e5_replay_k5.md
+?? reports/stage_e5_replay_k5/
+?? reports/stage_e5_replay_k5_v5.md
+?? reports/stage_e5_replay_k5_v5/
+?? screening/stage_e_verdict.py
+?? tests/test_stage_e_sessions_holidays.py
+?? tests/test_stage_e_verdict.py
+$ git log --oneline -3
+ff59c69 docs: Stage E.5 prompt (K4 and K5 confirmation) and V14
+7c2cec3 docs: Stage E.4 results, K4 K5 K3 screened, 3 Tier A of 48 screened, N = 150
+c5dfd5c feat: K3 member freeze (Stage E.4 Part 3), cluster freeze sha256 c4fb5da4
+$ wc -c REGISTRATION.md
+0 REGISTRATION.md
+$ uv run python -m data.holdout status (keys)
+holdout_1 all_ok True unlocks_logged 0 unlock_log_ok True
+holdout_2 all_ok True unlocks_logged 0 unlock_log_ok True
+$ python3 reports/stage_e2b_briefs/check_frozen.py
+reports/stage_e1_freeze.json: manifest sha256 96166eb39b85d4fdcf132092978ee85393392de52c3857dc3f64ea7281454a7c files 32/32 match
+reports/stage_e2a_ml_freeze.json: manifest sha256 077a57e1c00554dd0745302b247673d45ee05b805ac4bfd876f8497f7bbb1ed2 files 4/4 match
+ALL_OK
+$ PYTHONPYCACHEPREFIX=<fresh> uv run python -m screening.harness_freeze verify --expected ba925a97854efdc61a8a20641af10cc0de0be472a634dcb3b8bd637259bba0cd
+preflight OK: ba925a97854efdc61a8a20641af10cc0de0be472a634dcb3b8bd637259bba0cd
+$ cluster freezes (load_cluster_freeze + verify_cluster_code)
+K2 cluster freeze OK 8815a775e74996419b57751b1104ffa07cd4b3450eb18a9a92c6cbbd5615b7c5 44 members
+K4 cluster freeze OK cf066cb0507134e2553781f42699165b471be45ebec6b07bfb0d75680e879d1a 12 members
+K5 cluster freeze OK 1d0c974f18e884e1ad073d8f6f94d7bb70ee6f43971c7f23ccacab54103b3655 11 members
+K3 cluster freeze OK c4fb5da41d69a6be54ea07d1ab35bd2b238d1fbeafaeb3008b886f8fc6888d95 30 members
+$ ledger
+14823 ledger/databento_spend.jsonl
+02e7caa257bbee7b84d23a0394c9fae34985e884c1306fb47ea683546f15b1ed
+$ acct-2 position (pull_step2.account_position on the step 2 gate; reads the ledger only)
+stage-E.5-2026-09-27 {'account': 'acct-2', 'account_cap_usd': 125.0, 'account_credit_usd': 125.0, 'spent_usd': 103.477194, 'cap_headroom_usd': 21.522806, 'credit_left_usd': 21.522806}
+$ python -m data.pull_step2 --status (MCL NG MGC MHG)
+roots in status: 45 ; states: ['not_bought']
+MCL {"state": "not_bought"}
+NG {"state": "not_bought"}
+MGC {"state": "not_bought"}
+MHG {"state": "not_bought"}
+$ ls reports/step2/ data/processed_step2/
+ls: cannot access 'reports/step2/': No such file or directory
+ls: cannot access 'data/processed_step2/': No such file or directory

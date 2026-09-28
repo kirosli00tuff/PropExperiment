@@ -423,3 +423,145 @@ What I could not do: verify the tick history (finding 2) and Cboe's publication 
 evidence, since this brief allows no web access; run the freeze itself (Task 4 is the lead's).
 
 ## Part 2: recomputation (Task 6)
+
+Auditor: MemberAuditor-K1-FableXHigh (resumed). Brief: reports/stage_e7_briefs/auditor_task6_K1.md. Started 03:08 PDT
+2026-09-28, ended 03:17 PDT. Inputs: the runner's 23 files in reports/stage_e7_k1_screen/ (11 records, 11 trip lists,
+the cluster file), reports/stage_e_k1_member_freeze.json, the frozen cost table reports/stage_e2a_costs.json, the frozen
+release calendar reports/stage_e2b_release_calendar.json, the member tables strategy/members/k1/_calendar.py and _vxn.py
+(through vxnband.vxn_for / in_regime and _event_common), specs section 9, the rulings, reports/stage_e7_STATE.md and
+reports/stage_e7_briefs/t5_run.log. No bar file was opened, no member or runner was run. My code:
+reports/stage_e7_briefs/audit_k1/auditor_part2.py, results in auditor_part2.json (03:14-03:16 PDT). Holdout status at the
+end (03:17): all_ok true, unlocks_logged 0.
+
+**Verdicts: items 0, 1, 2, 3, 5 VERIFIED; items 4 and 6 VERIFIED WITH NOTES; no DISCREPANCY.** All 11 trials fail the D5
+screen and are Tier B; Tier A is empty; N = 156 + 11 = 167.
+
+### Item 0. The frozen files: VERIFIED
+
+- reports/stage_e_k1_member_freeze.json sha256 = cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2 (the
+  lead's value); schema stage_e_member_freeze/1, created 2026-09-28T09:47:48Z (02:47 PDT), 11 members with ordinals
+  1..11, labels, modules, factories and one traded leg each exactly as specs S0.2 and my Part 1 dry run.
+- Every one of the freeze's 11 files (strategy/members/__init__.py, strategy/members/k1/__init__.py and the nine K1
+  modules) has the freeze's sha256 and byte count on disk now; the nine K1 modules and k1/__init__.py equal the hashes I
+  recorded at 02:09 before Part 1 (auditor_sha256_at_start.txt), so no member module changed after the audit.
+  strategy/members/__init__.py (0 bytes, e3b0c442...) was not in my Part 1 list; it equals the freeze.
+- The seven test files: five unchanged since Part 1; tests/test_k1_members_vwap.py (now d7ad2167...) and
+  tests/test_k1_members_vxnband.py (now 7337fc5a...) changed, which is exactly the test-only fix of R-T3-1 and R-T3-4
+  (reports/stage_e7_member_rulings.md; STATE: "only tests/test_k1_members_vwap.py and _vxnband.py changed"; the commit
+  9113abd file list agrees). Tests are not part of the cluster freeze.
+- Every record carries cluster_freeze_sha256 cf48f514... and harness_sha256 9a8ebe73... (the --harness-sha256 the
+  t5 log shows); every trip list's record_sha256 equals the sha256 of its record file on disk (11 of 11).
+
+### Item 1. The screen recomputed from series.values: VERIFIED
+
+For each of the 11 records, in my own code: mean = fmean(values), sd = population sd, t = mean / (sd / sqrt(n)),
+passes = mean > 0 and t >= 1.0. Every mean, sd_pop and t equals the record's screen to better than 1e-9 relative and
+every passes flag agrees (all False). n = 299 for every trial; series.dates equal the EC-CAL equity trade dates of
+2025-04-01..2026-06-19 (316) less the record's exclusions (15 roll-blackout dates: 2025-06-16/17/18, 09-16/17/18,
+12-16/17/18, 2026-03-17/18/19, 06-15/16/17; 2 UR-1 dates: 2026-06-18/19) = 299, first 2025-04-01, last 2026-06-12.
+Non-zero days equal the number of distinct trip dates for every trial (a value is zero exactly on the dates without a
+trip), and the series rebuilt from the trip lists as the sum over trips closing on d of net_cents / (contracts x 50)
+equals series.values to 1.4e-12 (float summation order); daily_net_usd rebuilt as the sum of net_cents / 100 equals the
+record exactly on every date. n_trips agrees between screen, series and trip list for all 11.
+
+| Trial | n_trips | mean ticks/ct/day | sd_pop | t | passes |
+|---|---|---|---|---|---|
+| K1-cp1-01 MNQ | 284 | 4.4725 | 232.10 | 0.3332 | no |
+| K1-cp1-01 M2K | 285 | -2.9538 | 52.37 | -0.9752 | no |
+| K1-cp1-01 MYM | 286 | -8.2648 | 78.45 | -1.8217 | no |
+| K1-cp2-01 MNQ | 296 | -8.4855 | 500.75 | -0.2930 | no |
+| K1-cp2-01 M2K | 297 | 2.8543 | 134.85 | 0.3660 | no |
+| K1-cp2-01 MYM | 295 | -10.7871 | 174.20 | -1.0708 | no |
+| K1-cp3-01 MNQ | 118 | 10.3082 | 625.67 | 0.2849 | no |
+| K1-cp3-01 M2K | 140 | -14.1300 | 189.81 | -1.2873 | no |
+| K1-cp3-01 MYM | 131 | -16.1497 | 229.30 | -1.2179 | no |
+| K1-vxnband-01 MNQ | 25 | -11.5237 | 257.25 | -0.7746 | no |
+| K1-vwap-01 MNQ | 3502 | -56.3758 | 874.31 | -1.1150 | no |
+
+(my recomputed values; they equal the records' to 1e-9)
+
+### Item 2. Tiers against D5 and OC-H: VERIFIED
+
+K1_research_cluster.json tiers all 11 members B with note "fails the D5 screen", labels [] each, not_tiered {},
+refused_members {}, power_check_undefined []. In my code: tier = "excluded" if any D9 label (coverage_below_0.95,
+mean_holding_below_10min, entries_above_20_per_day, hold_below_2min), else "A" if passes else "B": B for all 11. Labels
+recomputed from each record's coverage and trade_rate as the runner's floor_labels does (coverage ratio < 0.95;
+entry_cap_refusals or max entries > 20; min_hold_refusals; mean hold < 10 min): none for any trial (coverage 0.9996 to
+1.0; max entries per day 1 for the ports and vxnband and 20 for vwap, never above; 0 entry-cap and 0 min-hold refusals;
+mean holds 28.9 / 74.1-74.8 / 369.8-374.4 / 29.6 / 28.9 minutes). The tier entries' screen dicts equal the records'
+screens. No floor label enters, so no OC-H exclusion applies. Note (no defect): the runner's hold_below_2min label is
+driven by engine min-hold refusals, not by the trip list's minimum hold, so the 0-1 minute trips that MLL liquidations
+produce (cp1 MYM, cp3 M2K, cp3 MYM, vwap) do not label; those closes are the engine's, not the member's, which is the
+OC-H reading. Power: not_run (StartRuleMissing) on every record, as the STATE file says; it does not enter a tier.
+
+### Item 3. Costs rebuilt from the trip lists and the frozen cost table: VERIFIED
+
+For K1-cp2-01 MNQ (296 trips) and K1-vwap-01 MNQ (3,502 trips), in my own code from reports/stage_e2a_costs.json (MNQ:
+calibrated, 46 buckets, no fallback bucket, commission 122 cents round turn so 61 per side, tick value 50 cents, largest
+half-spread over the buckets 1.48588 ticks) and the release calendar's MNQ instants (FOMC, ISM_SERVICES, NFP, CPI; 53
+instants in the window): per fill, slippage ticks = the fill instant's 30-minute CT bucket's side_ticks (its half-spread
+plus depth term), or, when the instant lies in [release, release + 30 min) of an MNQ release, or the close is a D9.7
+price_limit_exit (forced event), the largest half-spread plus that bucket's depth term; cents = ceil(round(qty x ticks x
+50, 6)); net = gross - 2 x 61 x qty - slippage(open) - slippage(close). The trip list records no side, so both side
+assignments (long: buy then sell; short: sell then buy) were tried: **every one of the 296 + 3,502 trips' net_cents
+equals my value under both assignments** (MNQ's buy and sell slippage are equal in every bucket the trips touch, so the
+side does not matter), none unmatched. 5 cp2 trips and 47 vwap trips have a fill inside an event window or a forced
+event (the 13:00 FOMC and 09:00 ISM windows; the D9.5a-deferred 09:02 / 13:02 fills sit inside them), and their net
+matches only with the event-window cost, which pins D8's rule as the runner applied it. The two trials' daily series
+and daily_net_usd rebuilt from these nets match the records day by day (item 1). Gross P&L cannot be checked without
+prices (the trip list holds no fill prices); everything else was checked. All net_cents and gross_cents are whole cents
+(no 'p/q' values).
+
+### Item 4. Trade counts and fill minutes: VERIFIED WITH NOTES
+
+**K1-vxnband-01 MNQ.** Window dates 299, of which 287 are in EQUITY_FULL_SESSIONS; V (VXN_CLOSE of the EC-CAL trade date
+before d, via the frozen table) exists and is in regime (V < 20 or V >= 30) on 97 of them (the research window's VXN
+mostly sat between 20 and 30). The 25 trips fall on 25 distinct eligible dates (13 with V >= 30, 12 with V < 20); no
+trip on any other date; at most one trip a date. Every entry fill is in [08:31, 14:29] and every exit fill by 14:59; 24
+holds are exactly 30 minutes (entry fill to exit fill), the 25th (2025-04-09, entry 12:05, V 39.56) is 21 minutes and
+ended by the engine's MLL liquidation at 12:26 (close_reason mll_liquidation); no D9.5a deviation occurred. The engine
+counters show no refusal of any kind (only mll_liquidation 1), so the 72 eligible dates without a trip are member-side
+outcomes (no breach of the band, a missing scan bar, an instrument change or the C_prev guard); the runner records no
+per-date member decision and the bars cannot be opened here, so these 72 cannot be attributed further. NOTE.
+**K1-vwap-01 MNQ.** 3,502 trips on 286 dates, all EQUITY_FULL_SESSIONS dates inside the window; at most 20 trips a date
+(61 dates hit exactly 20, none above); every hold >= 2 minutes except 5 trips ended by MLL liquidation (the engine's
+close, 0-1 minutes); first entry fill 08:31, last close fill 14:59, no member exit after 14:59; 23 reversal pairs filled
+at 09:02 or 13:02 (D9.5a). Counters: fill_guard_deferral 10, price_limit_exit 4, price_limit_zone_no_entry 9,
+account_not_active 104 (intents after an MLL breach, refused until the next account), engine_not_a_window_date 320
+(intents on the 17 excluded dates), engine_price_limit_reference_unavailable 20 (see the note below).
+**The ports.** At most one trip a date for all nine. CP1: every entry fill 14:30, every exit 14:59 by strategy except 4
+MLL liquidations (M2K 2026-01-30 14:45; MNQ 2026-01-30 14:46; MYM 2025-05-02 14:30 and 2025-12-10 14:51). CP3: every
+entry fill 08:31, every strategy exit 14:59; the 24 other closes are 6 price_limit_exit (D9.7) and 18 MLL liquidations,
+all in April 2025 and on single later dates. CP2: entry fills in [08:46, 15:00] (D9.5a-deferred 09:02 fills present);
+holds of exactly 75 minutes on every strategy close on MNQ (100% bar coverage); on M2K (4 trips) and MYM (2 trips) the
+strategy close came 76 to 86 minutes after the fill on the early-halt dates 2025-05-26, 07-04, 09-01 and 11-27, which
+is E.3-L-07's count of present bars on thin holiday sessions (M2K's window coverage is 45 minutes short, MYM's 18; MNQ,
+with no missing minute, shows no such case); the remaining CP2 deviations are 4 price_limit_exit and 9 MLL closes. No
+forced_flatten close occurred on any trial. Nothing is unexplained.
+Note (harness, not a member or a finding against the run): the first window date 2025-04-01 is untradeable for CP2 and
+vwap (engine_price_limit_reference_unavailable: 1 per CP2 trial, 20 for vwap), because the runner feeds the window's own
+bars only and the D9.7 prior-settlement proxy needs a bar of the previous trade date; CP1 has no first bar and CP3 and
+vxnband are in warm-up on that date anyway. One window date of 299; the same harness behaviour applied to earlier
+clusters.
+
+### Item 5. Program N: VERIFIED
+
+11 records with status "run" and a screen; refused_members {}, not_tiered {}; every record's member is one of the
+freeze's 11 declared labels and every declared label has a record; no undeclared trial. N = 156 + 11 = 167 (K1-L-16).
+
+### Item 6. MLL liquidations: VERIFIED WITH NOTES
+
+Per trial, accounts_started - 1 equals the mll_liquidation counter and the number of trips closed by mll_liquidation:
+cp1 MNQ 1, M2K 1, MYM 2; cp2 MNQ 2, M2K 0, MYM 5; cp3 MNQ 4, M2K 6, MYM 8; vxnband 1; vwap 8 (the STATE line's
+1,1,2,2,0,5,4,6,8,1,8 in the runner's order). The tiers stand as the frozen harness computes them. Sensitivity, as a
+bound only (the counterfactual without a liquidation is unknowable without bars): setting the MLL-closed trips' P&L to
+zero leaves every trial failing except **K1-cp3-01 MNQ, whose four MLL-closed trips total -$5,443.56 (2025-04-07,
+04-09, 04-14 and 09-05); with them zeroed its series would have mean 46.72 ticks and t 1.56 and would pass the screen.**
+So that one Tier B verdict rests on days the engine's MLL floor closed; the liquidations are the XFA account model
+applied as frozen (positions held through the April 2025 sessions breached the floor), and zeroing them is not a
+better estimate of the member (held to 14:59 those trips could have lost more or less). K1-vxnband-01's single MLL trip
+(-$1,802.56 on 2025-04-09) carries most of its negative mean (zeroed: mean 0.53, t 0.06, still failing). No other tier
+moves. NOTE for the lead's read (Task 7).
+
+Unfinished: none within the brief. Gross P&L is not checkable from the recorded outputs (no prices), and the 72
+eligible vxnband dates without a trip cannot be attributed to a cause without bars.

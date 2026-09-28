@@ -102,6 +102,9 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
   - Stage E.6 — K7 bitcoin screening. Run 2026-09-27 (see reports/E.6_RETURN.md): six members (6 trials) coded, Fable-audited,
     FROZEN (commit d661eb6, cluster freeze 46cae308...) and screened once: all six Tier B, Tier A empty (K7-expiry-01 not traded:
     every research expiry day in a roll blackout); N = 156. Nothing bought.
+  - Stage E.7 — K1 equity-index screening. Run 2026-09-28 (see reports/E.7_RETURN.md): five members (11 trials on MNQ, M2K,
+    MYM) coded, Fable-audited, FROZEN (commit 9113abd, cluster freeze cf48f514...) and screened once: all eleven Tier B, Tier A
+    empty (K1-cp3-01 MNQ's Tier B rests on four MLL-liquidated days); VXN read free from Cboe; N = 167. Nothing bought.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

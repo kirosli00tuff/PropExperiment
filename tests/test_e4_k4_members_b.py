@@ -6,8 +6,9 @@ synthetic kit.
 Synthetic bars only. Each rule is pinned on hand-built cases run through the real Stage E engine
 (screening.stage_e_engine.run_engine under StageERules, built by the canary kit's rules_for), with
 direct calls where the engine cannot reach a case (a None bar). The pin tests read the two frozen
-JSON sources the tables were generated from; no bar file is read, no runner is run, and no freeze
-is written into the repository (the freeze test writes under tmp_path).
+JSON sources the tables were generated from, and Stage E.5's NGS check (Task C3: the five
+confirmation-window NGS drops of ruling R-C3-1); no bar file is read, no runner is run, and no
+freeze is written into the repository (the freeze test writes under tmp_path).
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import re
 import shutil
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
@@ -67,6 +69,11 @@ CHECK_JSON = REPO / "reports" / "stage_e4_release_check.json"
 GENERATOR = REPO / "reports" / "stage_e4_briefs" / "gen_k4_releases.py"
 CALENDAR_SHA256 = "839f2437bedbeb7b3423d7058a9955a0d4ccd1aebc4b01c62be624ab11d7bcb8"
 CHECK_SHA256 = "4c71d7985c3471a86cbbd88b613b9a2f81d1b08f7aa60eb442f3c77834a04896"  # R-T3-1
+# Stage E.5 Task C3: the confirmation-window NGS check and the generator applying its drops.
+E5_CHECK_JSON = REPO / "reports" / "stage_e5_ngs_check.json"
+E5_GENERATOR = REPO / "reports" / "stage_e5_briefs" / "gen_k4_releases_e5.py"
+E5_CHECK_SHA256 = "ddfecb3e1575dc817aaeebc0f8795ebcbbbd10e78b4a936ec8b454d277706b44"
+S_NG = ("2019-05-06", "2024-02-29")  # the E.5 confirmation window for NGS
 # (module, factory, root, S0.2 ordinal)
 DECLS: tuple[tuple[ModuleType, str, str, int], ...] = (
     (ngpre, "make_ng", "NG", 7), (apipre, "make_mcl", "MCL", 8), (eiafade, "make_mcl", "MCL", 9),
@@ -236,6 +243,12 @@ def _ct_of(instant_utc: str) -> datetime:
 SECTION_11_WPSR_DROPS = ("2025-12-29", "2026-05-28")  # 2025-07-16 restored (R-T3-1)
 SECTION_11_NGS_DROPS = ("2025-12-29",)
 SECTION_11_NGS_UNVERIFIABLE = ("2025-05-01", "2025-05-29", "2025-06-18")
+# Ruling R-C3-1 (C9's first drop rule): the E.5 check's drop_actual_differs rows.
+E5_NGS_DROPS = ("2019-12-26", "2020-01-02", "2020-11-12", "2021-01-21", "2023-11-09")
+# sha256 of the 21 source lines holding the 63 research-window NGS rows (2025-04-03..2026-06-18),
+# joined by "\n", as the Stage E.4 module wrote them (before the E.5 amendment).
+RESEARCH_WINDOW_NGS_LINES_SHA256 = (
+    "d1a4ccf4cb541d25bd0a446e408323fa0daa23c63e066ad9ad616d557fcc3746")
 
 
 def test_both_sources_have_the_pinned_sha256() -> None:
@@ -278,7 +291,7 @@ def test_wpsr_table_is_every_calendar_row_less_the_drops_with_t_w_in_ct() -> Non
 
 
 def test_ngs_table_is_every_calendar_row_less_the_drop_with_t_n_in_ct() -> None:
-    dropped = {d for d, _ in tables.DROPPED_NGS}
+    dropped = {d for d, _ in tables.DROPPED_NGS} | {d for d, _ in tables.DROPPED_NGS_CONFIRMATION}
     expected = []
     for r in _json(CALENDAR_JSON)["releases"]:
         if r["release"] != "NGS" or r["date"] in dropped:
@@ -287,8 +300,90 @@ def test_ngs_table_is_every_calendar_row_less_the_drop_with_t_n_in_ct() -> None:
         assert local.date().isoformat() == r["date"]
         expected.append((r["date"], f"{local:%H:%M}"))
     assert tuple(sorted(expected)) == tables.NGS
-    assert len(tables.NGS) == 373 - 1 and {t for _, t in tables.NGS} == {"09:30", "11:00"}
+    assert len(tables.NGS) == 373 - 1 - 5 and {t for _, t in tables.NGS} == {"09:30", "11:00"}
     assert len([d for d, _ in tables.NGS if "2025-04-01" <= d <= "2026-06-19"]) == 63
+
+
+def test_the_e5_check_has_the_pinned_sha256_and_window() -> None:
+    assert _sha(E5_CHECK_JSON) == E5_CHECK_SHA256 == tables.E5_NGS_CHECK_SHA256
+    assert tuple(_json(E5_CHECK_JSON)["window"]) == S_NG == tables.CONFIRMATION_CHECK_WINDOW
+    assert S_NG[1] < tables.RESEARCH_CHECK_WINDOW[0]  # the two windows do not overlap
+
+
+def test_the_e5_drops_are_the_e5_checks_drop_verdicts_on_or_after_s_ng() -> None:
+    rows = _json(E5_CHECK_JSON)["ngs"]
+    assert {r["verdict"] for r in rows} == {"keep", "drop_actual_differs"}  # nothing else
+    calendar = sorted((r["date"], r["time_local"]) for r in _json(CALENDAR_JSON)["releases"]
+                      if r["release"] == "NGS" and S_NG[0] <= r["date"] <= S_NG[1])
+    assert sorted((r["date"], r["time_et"]) for r in rows) == calendar and len(calendar) == 252
+    drops = {r["date"]: r for r in rows
+             if r["verdict"] == "drop_actual_differs" and r["date"] >= S_NG[0]}
+    confirmation = tables.DROPPED_NGS_CONFIRMATION
+    assert tuple(d for d, _ in confirmation) == tuple(sorted(drops)) == E5_NGS_DROPS
+    for day, reason in confirmation:
+        assert reason == f"drop_actual_differs: {drops[day]['reason']}", day
+    ngs_days = {d for d, _ in tables.NGS}
+    assert not ngs_days & set(E5_NGS_DROPS)
+    assert not {d for d, _ in tables.DROPPED_NGS} & set(E5_NGS_DROPS)
+    fridays = {r["actual_date"] for r in drops.values() if r["actual_date"] is not None}
+    assert len(fridays) == 4 and not fridays & ngs_days  # a drop only: no Friday row is added
+    assert not {date.fromisoformat(d) for d in E5_NGS_DROPS} & set(ngpre.schedule(tables.NGS))
+
+
+def _block(text: str, name: str) -> str:
+    """The literal `name: ... = (...)` block of a generated module (a one-line `()` included)."""
+    start = text.index(f"\n{name}: ") + 1
+    line_end = text.index("\n", start)
+    if text[start:line_end].endswith("= ()"):
+        return text[start:line_end + 1]
+    return text[start:text.index("\n)\n", start) + 3]
+
+
+def test_research_window_ngs_rows_are_unchanged_by_the_e5_drops() -> None:
+    e4_dropped = {d for d, _ in tables.DROPPED_NGS}
+    research = sorted((r["date"], f"{_ct_of(r['instant_utc']):%H:%M}")
+                      for r in _json(CALENDAR_JSON)["releases"]
+                      if r["release"] == "NGS" and r["date"] not in e4_dropped
+                      and "2025-04-01" <= r["date"] <= "2026-06-19")
+    assert len(research) == 63
+    assert tuple(row for row in tables.NGS if "2025-04-01" <= row[0] <= "2026-06-19") == tuple(
+        research)
+    lines = _block((K4_DIR / "_releases.py").read_text(encoding="utf-8"), "NGS").split("\n")
+    window = [ln for ln in lines if "2025-04-01" <= ln.strip()[2:12] <= "2026-06-19"]
+    assert len(window) == 21 and sum(ln.count("(") for ln in window) == 63
+    assert hashlib.sha256("\n".join(window).encode()).hexdigest() == (
+        RESEARCH_WINDOW_NGS_LINES_SHA256)
+
+
+def _generators() -> tuple[ModuleType, ModuleType]:
+    mods = []
+    for name, path in (("gen_k4_releases", GENERATOR), ("gen_k4_releases_e5", E5_GENERATOR)):
+        spec = importlib.util.spec_from_file_location(name, path)
+        assert spec is not None and spec.loader is not None
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        mods.append(mod)
+    return mods[0], mods[1]
+
+
+def test_the_e5_amendment_removes_the_five_ngs_rows_and_nothing_else() -> None:
+    gen, e5 = _generators()
+    e4_text = e5.e4_text(gen, _json(CALENDAR_JSON), _json(CHECK_JSON))
+    text = (K4_DIR / "_releases.py").read_text(encoding="utf-8")
+    for name in ("DROPPED_WPSR", "DROPPED_NGS", "API_DROPPED_WEEKS", "NGS_UNVERIFIED_IN_WINDOW",
+                 "WPSR", "FEDERAL_MONDAY_HOLIDAYS", "NYSE_NOT_FULL"):
+        assert _block(text, name) == _block(e4_text, name), name  # byte-identical
+    old, new = _block(e4_text, "NGS").split("\n"), _block(text, "NGS").split("\n")
+    assert len(old) == len(new)  # no line lost every row
+    literals = [f'("{d}", "09:30"),' for d in E5_NGS_DROPS]  # all five at 09:30 CT
+    changed = [(o, n) for o, n in zip(old, new, strict=True) if o != n]
+    assert len(changed) == 4  # 2019-12-26 and 2020-01-02 share a line
+    for o, n in changed:
+        items = re.findall(r'\("\d{4}-\d\d-\d\d", "\d\d:\d\d"\),', o)
+        assert o == "    " + " ".join(items)
+        assert n == "    " + " ".join(x for x in items if x not in literals)
+    assert all(any(lit in o for o, _ in changed) for lit in literals)
+    assert not any(lit in text for lit in literals)
 
 
 def test_unverifiable_storage_releases_are_kept_and_labelled() -> None:
@@ -328,10 +423,7 @@ def test_nyse_not_full_is_every_closure_and_early_close_of_the_check() -> None:
 
 
 def test_the_module_is_exactly_the_generators_output() -> None:
-    spec = importlib.util.spec_from_file_location("gen_k4_releases", GENERATOR)
-    assert spec is not None and spec.loader is not None
-    gen = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(gen)
+    gen, e5 = _generators()
     calendar, check = _json(CALENDAR_JSON), _json(CHECK_JSON)
     gen.check_window_rows(calendar, check)
     dropped_wpsr = gen.drops(check, "WPSR", gen.SECTION11_WPSR)
@@ -340,7 +432,9 @@ def test_the_module_is_exactly_the_generators_output() -> None:
                       gen.ngs_rows(calendar, {d for d, _ in dropped_ngs}), dropped_wpsr,
                       dropped_ngs, gen.api_dropped(check), gen.federal_mondays(check),
                       gen.nyse_not_full(check), gen.unverified_ngs(check), check["window"])
-    assert (K4_DIR / "_releases.py").read_text(encoding="utf-8") == text
+    assert e5.e4_text(gen, calendar, check) == text  # the Stage E.4 module, rendered as before
+    amended = e5.amend(gen, calendar, check, _json(E5_CHECK_JSON))  # plus the E.5 drops (C3)
+    assert (K4_DIR / "_releases.py").read_text(encoding="utf-8") == amended
 
 
 # ---------------------------------------------------------------- declarations ----

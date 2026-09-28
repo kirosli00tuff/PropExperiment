@@ -1,0 +1,33 @@
+$ date
+Sun Sep 27 09:22:43 PM PDT 2026
+$ git status --short
+?? reports/stage_e6_briefs/
+$ git log --oneline -3
+3eb50c1 docs: split screening into E.6 (K7), E.7 (K6) and E.8 (K1), one cluster per session
+4f9dfe0 docs: README, About this project section
+5e5a737 docs: CLAUDE.md, Scrapling as the page-fetch fallback before Firecrawl
+$ wc -c REGISTRATION.md
+0 REGISTRATION.md
+$ uv run python -m data.holdout status (keys)
+holdout_1 all_ok True unlocks_logged 0 unlock_log_ok True
+holdout_2 all_ok True unlocks_logged 0 unlock_log_ok True
+$ python3 reports/stage_e2b_briefs/check_frozen.py
+reports/stage_e1_freeze.json: manifest sha256 96166eb39b85d4fdcf132092978ee85393392de52c3857dc3f64ea7281454a7c files 32/32 match
+reports/stage_e2a_ml_freeze.json: manifest sha256 077a57e1c00554dd0745302b247673d45ee05b805ac4bfd876f8497f7bbb1ed2 files 4/4 match
+ALL_OK
+$ PYTHONPYCACHEPREFIX=<fresh> uv run python -m screening.harness_freeze verify --expected 9a8ebe7364beb7980eaea923888e06c2da253b7ff8ce2ce771b55045caf22f87
+preflight OK: 9a8ebe7364beb7980eaea923888e06c2da253b7ff8ce2ce771b55045caf22f87
+$ cluster freezes (load_cluster_freeze + verify_cluster_code)
+K2 cluster freeze OK 8815a775e74996419b57751b1104ffa07cd4b3450eb18a9a92c6cbbd5615b7c5 44 members
+K4 cluster freeze OK 7abcde1705440e97efcf1ce255d979213eed9840f03a8383f2784a74f5f1534a 12 members
+K5 cluster freeze OK 1d0c974f18e884e1ad073d8f6f94d7bb70ee6f43971c7f23ccacab54103b3655 11 members
+K3 cluster freeze OK c4fb5da41d69a6be54ea07d1ab35bd2b238d1fbeafaeb3008b886f8fc6888d95 30 members
+K7 no freeze: ClusterFreezeError
+$ ledger
+17400 ledger/databento_spend.jsonl
+0b5466c4366ca9eaba7e10525545631c83e97c1184a7e745d5ed8ad47a9fe957
+$ acct-2 position (pull_step2.account_position on the step 2 gate; reads the ledger only)
+stage-E.5-2026-09-27 {'account': 'acct-2', 'account_cap_usd': 125.0, 'account_credit_usd': 125.0, 'spent_usd': 124.673761, 'cap_headroom_usd': 0.326239, 'credit_left_usd': 0.326239}
+$ python -m data.pull_step2 --status (MBT)
+roots in status: 45 ; states: ['not_bought', 'sealed']
+MBT {"state": "not_bought"}

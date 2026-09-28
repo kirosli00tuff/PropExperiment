@@ -99,6 +99,9 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
   - Stage E.5 — K4 and K5 confirmation. Run 2026-09-27 (see reports/E.5_RETURN.md): harness v5 (2c0bfe0) and v6 (ce3cb66),
     step 2 history of MCL, NG, MGC, MHG bought ($21.20) with holdout-2 sealed; K4 list hashed (4161032) and confirmed once: NULL
     (Tier A K4-ngpre-01 fails Holm); K5 stopped before its list (MGC's confirmation window is empty; U8 is the user's decision).
+  - Stage E.6 — K7 bitcoin screening. Run 2026-09-27 (see reports/E.6_RETURN.md): six members (6 trials) coded, Fable-audited,
+    FROZEN (commit d661eb6, cluster freeze 46cae308...) and screened once: all six Tier B, Tier A empty (K7-expiry-01 not traded:
+    every research expiry day in a roll blackout); N = 156. Nothing bought.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

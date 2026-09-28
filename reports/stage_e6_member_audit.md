@@ -488,3 +488,165 @@ NOTE
   widen a rule. The lead should expect this when reading the runner's coverage output.
 
 ## Part 2: recomputation (Task 6)
+
+Auditor: MemberAuditor-K7-FableXHigh, resumed. Brief: reports/stage_e6_briefs/auditor_task6_K7.md.
+Started 23:07 PDT, ended 23:15 PDT 2026-09-27. Inputs: the runner's 13 files in reports/stage_e6_k7_screen/
+(run 23:04:45-23:06:28 PDT, exit 0, "K7 research: 6 members, 0 refused", reports/stage_e6_briefs/t5_run.log;
+commit d661eb6; cluster freeze reports/stage_e_k7_member_freeze.json sha256 46cae308...), the frozen D5
+(docs/STAGE_E_DESIGN.md 298-345), the frozen cost table reports/stage_e2a_costs.json (MBT), the release
+calendar reports/stage_e2b_release_calendar.json (sha256 839f2437..., the one every record names), the K7
+tables (strategy/members/k7/_calendar.py) and the crypto calendar. No bar file was read, nothing was replayed
+or re-run. My code: reports/stage_e6_briefs/audit_k7/recompute_screen.py (output recompute_screen.out) and
+the per-trip pass recompute_screen_trips.out. Every check is against the runner's recorded outputs and the
+frozen tables only.
+
+Preliminary: the frozen member files equal the audited ones. The freeze manifest's 10 member-file hashes
+(strategy/members/k7/*.py) equal reports/stage_e6_briefs/k7_files_pre_audit.sha256; the manifest also hashes the
+harness's empty strategy/members/__init__.py. Of the 17 pre-audit hashes, 15 still match; the two that differ
+are tests/test_k7_members_events_rev2h.py and tests/test_k7_members_events_montrend.py, the R-T3-1 test fix
+(the ec-end-close survivor of Part 1 F-1), which the lead names as the only post-audit change. Every record
+carries harness 9a8ebe73..., cluster freeze 46cae308..., release calendar 839f2437... and the frozen table
+hashes (costs f4360bb7..., epsilon 4e2c7731..., sizes 280d7e9d..., vehicles 1f1cafee...).
+
+### Item 1: screen recomputation. VERIFIED
+
+For every record: mean = sum/n, population sd (ddof 0), t = mean / (sd / sqrt(n)), passes = mean > 0 and
+t >= 1.0, computed from series.values in my code; all agree with the record's screen to 1e-9 relative
+(mean_ticks, sd_pop_ticks, t_daily, passes, n_days, n_trips).
+
+| Trial | n | mean (ticks/ct/day) | sd_pop | t_daily | passes | trips | non-zero days |
+|---|---|---|---|---|---|---|---|
+| K7-cp1-01 MBT | 265 | -7.460981132 | 67.863181341 | -1.789718238 | False | 261 | 261 |
+| K7-cp2-01 MBT | 265 | -14.378490566 | 173.341478565 | -1.350310787 | False | 263 | 263 |
+| K7-cp3-01 MBT | 265 | -3.119698113 | 196.319714228 | -0.258685207 | False | 101 | 101 |
+| K7-expiry-01 MBT | 265 | 0.0 | 0.0 | undefined (None) | False | 0 | 0 |
+| K7-rev2h-01 MBT | 265 | -28.919849057 | 206.054831362 | -2.284736695 | False | 384 | 259 |
+| K7-montrend-01 MBT | 265 | -4.725962264 | 174.294781907 | -0.441396415 | False | 466 | 44 |
+
+Series shape: each record's 265 dates equal the crypto trade dates in [2025-04-01, 2026-06-17] less the
+record's own exclusions (roll_blackout_any_leg 42 dates, unseen_roll_UR-1 2026-06-18; not_every_leg_trades
+empty), and no trade date beyond 2026-06-17 is left out except those (2026-06-19 is booked forward). Non-zero
+days <= trips in every record. For all six, series.values[d] equals the sum of that date's trip net_cents /
+(q_c x 50 cents) and daily_net_usd[d] equals the sum / 100, day by day (zeros on no-trade days); every trip's
+trade_date is a window date and every trip is 1 contract. Each trips file's record_sha256 equals the sha256 of
+its record file (6 of 6). K7-expiry-01: sd = 0 with mean 0, so t is undefined and the screen fails on
+mean > 0, as D5 and screening/stage_e_stats.py:151-155 read it.
+
+### Item 2: tiers. VERIFIED
+
+Rule applied in my code: a D9 label or coverage < 0.95 excludes; else Tier A if the screen passes, Tier B
+otherwise (D5; OC-H for labelled members). All six records carry labels [] and coverage passes (cp1 0.998503,
+cp2 0.996895, cp3 0.996880, expiry 0.974527, rev2h 0.996746, montrend 0.959578; all >= 0.95), none passes the
+screen, so all six are Tier B. K7_research_cluster.json: six Tier B, each with note "fails the D5 screen" and a
+screen block identical to its record's; not_tiered {}, refused_members {}, power_check_undefined []; members
+list equals the freeze's six labels in ordinal order. No floor label enters (trade_rate: entry_cap_refusals 0
+and min_hold_refusals 0 in every record; max entries per product day 1, 1, 1, 0, 2, 15; min hold 29, 31, 388,
+-, 32, 58 minutes). Power: status not_run for all six ("StartRuleMissing: no frozen S_X for MBT"), which does
+not enter a tier. Note: montrend's coverage passes by 0.0096 (Part 1 F-9: the window is measured on every
+research date, weekday overnights included).
+
+### Item 3: cost rebuild from the trip lists. VERIFIED (gross not checkable)
+
+My rebuild, no replay: for each trip net = gross - 282 cents commission (round turn, $2.82) - slippage per
+side, where a side's slippage in ticks is the frozen table's side_ticks of the 30-minute CT bucket of the
+fill's bar-open instant (46 MBT buckets, 17:00 to 15:30), or, when the fill lies in [release, release + 30 min)
+of an MBT release (NFP, CPI, PPI 07:30 CT, FOMC 13:00 CT; 52 rows in the window), the product's largest
+half-spread (2.6132 ticks) plus that bucket's depth term; cents = ceil(round(slip x 50, 6)) per side (the
+frozen harness's rounding, screening/stage_e_frozen.py:278-280). A trip's side is not recorded, so both
+candidates (long: buy then sell; short: sell then buy) were computed; MBT's table is symmetric in every bucket
+(buy = sell, depth 0), so they coincide.
+- K7-cp2-01 MBT: 263 trips, 263 exact net matches, 0 mismatches; 0 fills inside a D8 event window (the one
+  13:00 entry fill, 2025-09-15, is not an FOMC day; no cp2 fill met [13:00, 13:30) on the 10 FOMC days);
+  rebuilt daily series and daily_net_usd equal the record day by day; close reasons strategy 262,
+  mll_liquidation 1; locked 0.
+- K7-montrend-01 MBT (it has 466 trips, so rev2h was not substituted): 466 exact matches, 0 mismatches;
+  0 fills in an event window (its fills are at hh:00-hh:03, never in [07:30, 08:00)); the Sunday-evening
+  fills use the overnight buckets 17:30-23:30 and Monday's 00:00-14:00; rebuilt series and daily_net_usd equal
+  the record; close reasons strategy 466; locked 0.
+- gross_cents cannot be checked without prices (no bar file is read); everything else was checked.
+
+### Item 4: trade counts and fill minutes. VERIFIED WITH NOTES
+
+K7-expiry-01 MBT (0 trips; counters {engine_not_a_window_date: 5}). The 14 research-window MBTX rows by the
+rule, date by date:
+
+| Date | T_exp | Member-eligible | Why untraded |
+|---|---|---|---|
+| 2025-04-25 | 10:00 | yes | roll blackout |
+| 2025-05-30 | 10:00 | yes | roll blackout |
+| 2025-06-27 | 10:00 | yes | roll blackout |
+| 2025-07-25 | 10:00 | yes | roll blackout |
+| 2025-08-29 | 10:00 | yes | roll blackout |
+| 2025-09-26 | 10:00 | yes | roll blackout |
+| 2025-10-31 | 11:00 | yes | roll blackout |
+| 2025-11-28 | 10:00 | no | early halt 13:45 (not a full session), vendor-degraded; also roll blackout |
+| 2025-12-24 | 10:00 | no | dropped by R-1b-1 (not in MBTX); early halt 12:45; also roll blackout |
+| 2026-01-30 | 10:00 | yes | roll blackout |
+| 2026-02-27 | 10:00 | yes | roll blackout |
+| 2026-03-27 | 11:00 | yes | roll blackout |
+| 2026-04-24 | 10:00 | yes | roll blackout |
+| 2026-05-29 | 10:00 | yes | roll blackout |
+| (2025-12-26) | 10:00 | no | CME's date, not added by R-1b-1; also roll blackout |
+
+All 12 member-eligible dates are in the record's roll_blackout_any_leg list (E.2a L-11; Task 1b item E).
+screening/stage_e_align.py removes blackout dates from the window before the engine runs, and the engine's
+_opening_refusal tests "not a window date" before "roll blackout", so every intent on those dates is refused
+as engine_not_a_window_date (never as engine_roll_blackout); no trade was possible on any of the 12. The
+counter is 5, not 12: on 5 dates the member emitted its BUY on the bar at T_exp - 301 min and was refused by
+name; on the other 7 it emitted nothing, which under the audited code (expiry.py:102-104) happens only when
+that exact bar (04:59 or 05:59 CT) is absent from the delivered bars (the record's minutes equal its bars,
+407,393, so every present bar minute was stepped). The runner's outputs do not name the 7 dates (no per-date
+intent ledger is written), so I cannot list them; a plausible reason is that MBT.v.0 holds the expiring
+contract on its last morning (E.2a L-11), when its 05:00 CT minutes are thin, but that is a hypothesis, not a
+check. Expected 0 trades (K7-L-05) confirmed.
+
+K7-montrend-01 MBT: 466 trips on 44 dates = exactly the window's eligible Mondays (57 research Mondays in
+CRYPTO_FULL_SESSIONS less VENDOR_DEGRADED, of which 13 are roll-blackout Mondays: 2025-04-28, 06-02, 06-30,
+07-28, 09-29, 11-03, 12-01, 12-29, 2026-02-02, 03-02, 03-30, 04-27, 06-01; 57 - 13 = 44); every eligible
+Monday has trips, no trip lies on another date; at most 15 entries a day (<= 20). Fill minutes: 457 entries at
+hh:01 and 9 at hh:02/hh:03 (a missing hh:01 bar: the intent on the t bar fills at the next present bar);
+437 exits at hh:00 or 14:00 and 29 at hh:01/hh:02 (a missing decision-time bar, or a missing t - 1 bar with
+the flatten sent on the first later bar); every shifted fill is at a decision hour (Sunday 18-23, Monday
+00-13) or the 14:00 final exit; 381 consecutive (hh:00 exit, hh:01 entry) pairs show C2's flatten-then-entry
+sequence; no two trips overlap; earliest entry Sunday 18:01; every Monday's last trip ends at 14:0x except
+2026-06-08, which ends earlier (flat at the last decision, no final exit needed). The 248
+engine_not_a_window_date refusals are its intents on the 13 blackout Mondays (<= 13 x 20 = 260). Nothing
+unexplained. The 38 shifted fills (4.1% of 932) match the 4.0% of missing minutes in its coverage window.
+
+K7-rev2h-01 MBT: 384 trips on 259 dates = every eligible window date (300 research entry dates less the
+blackout dates and UR-1); 125 dates with 2 trips, 134 with 1 (128 held through both blocks, hold 239
+minutes; 4 with a single block; 2 MLL); never more than 2 a day. Fills: 383 entries at 10:31 or 12:31 and one
+at 10:32 (2026-04-28: the 10:31 bar missing); 380 exits at 12:30 or 14:30, two at 12:31 (2025-06-03 and
+2026-05-01: the 12:30 bar missing, the flatten filled at 12:31 and, S0.6, no B2 entry that day), one at 11:03
+and one at 14:13 (MLL liquidations, 2025-10-17 and 2026-02-23). Holds 119 (251), 239 (128), 118 and 120 (the
+two shifted days), 32 and 222 (the liquidations). The 56 refusals are intents on non-window dates (<= 43 x 2);
+account_not_active 1 is the intent after a liquidation before the account restarted. Nothing unexplained.
+
+Ports: K7-cp1-01 261 trips, all entries at 14:30 and exits at 14:59, one a day; K7-cp3-01 101 trips, all
+08:31 / 14:59; K7-cp2-01 263 trips, entries in [08:46, 13:00] (rule [08:46, 15:00]), 257 holds of 75 minutes,
+4 of 76 and 1 of 81 (missing bars inside the 75-present-bar count), one MLL liquidation (2026-02-03, 31
+minutes). No trip in any record overlaps another; no locked trips; every trip is 1 contract on a window date.
+
+### Item 5: program N. VERIFIED
+
+Six records with status "run" and a screen: the six labels the freeze declares, in ordinals 1-6; no refused
+member, none excluded before screening, no record for an undeclared trial, 13 files (6 records, 6 trip lists,
+1 cluster file). By the lead's pre-declared rule (specs K7-L-05, a trial counts when the runner writes its
+screen record), N = 150 + 6 = 156. K7-expiry-01 counts although it made no trade (its record has status
+"run" and a screen).
+
+### Item 6: MLL liquidations. VERIFIED
+
+accounts_started - 1 equals the mll_liquidation counter in every record: cp1 0, cp2 1, cp3 0, expiry 0, rev2h
+2, montrend 0. The liquidation-closed trips: cp2 2026-02-03 (net -4,848 cents), rev2h 2025-10-17 (-12,195)
+and 2026-02-23 (-17,938). No tier can depend on them: with those days set to 0 the screens still fail (cp2
+mean -14.01, t -1.32; rev2h mean -26.65, t -2.12), and to reach t = 1.0 cp2 would need about +6,600 ticks
+($3,300, a 30% MBT move) on one day and rev2h about +11,000 ticks over two days. Every screen here fails on
+mean > 0 by a wide margin; the liquidations change the sign of nothing.
+
+### Verdicts
+
+Item 1 VERIFIED; item 2 VERIFIED; item 3 VERIFIED (gross_cents not checkable without prices, stated); item 4
+VERIFIED WITH NOTES (the 7 expiry dates without an emitted intent cannot be named from the outputs; every
+other untraded date and every deviating fill minute is explained); item 5 VERIFIED (N = 156); item 6 VERIFIED.
+No DISCREPANCY.

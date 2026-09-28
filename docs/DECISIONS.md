@@ -263,5 +263,6 @@
   now instead of "only if needed" (U3). K8, the cross-market cluster, runs
   alone in its own session afterwards, because its members differ in kind
   from the single-product clusters.
-  Launch split (user, 2026-09-27): E.6 runs K7 alone before the
-  2026-09-30 weekly reset, then K6 and K1 after it, from the same prompt.
+  Amended by the user, 2026-09-27 21:18: one cluster per session. E.6
+  screens K7 alone (before the 2026-09-30 weekly reset), E.7 screens K6,
+  and E.8 screens K1. K8 follows on its own.

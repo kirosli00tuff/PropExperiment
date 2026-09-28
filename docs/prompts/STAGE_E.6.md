@@ -18,8 +18,22 @@ prompt says so. K8, the cross-market cluster, is not in this session: the
 user runs it on its own later. Confirmations come later too.
 
 Decision in force: docs/DECISIONS.md V15 (the user, 2026-09-27): K1 is
-screened now, after K6 and K7, instead of "only if needed" (U3). K8 runs
+screened now with K6 and K7, instead of "only if needed" (U3). K8 runs
 alone in its own session.
+
+LAUNCH RULE (the user, 2026-09-27). This prompt is launched twice, to fit
+the weekly usage limit that resets 2026-09-30 02:00 Pacific. At Task 0,
+run `TZ=America/Vancouver date` and read reports/stage_e6_STATE.md if it
+exists.
+- First launch (before the reset): run Part 2 (K7) only, using Part 1's
+  task text with Part 2's substitutions, then write E.6b_RETURN.md and
+  stop. Do not start Part 1 or Part 3.
+- Second launch (on or after the reset): skip every part the STATE file
+  marks done, then run Part 1 (K6), then Part 3 (K1).
+Program N accumulates in run order (K7, then K6, then K1), each part
+starting from the figure after the previous screened part (150 before
+this stage). The cross-cluster final section is written when all three
+parts are done.
 
 Traded exposures (reports/stage_e2a_vehicles.md), expected trials:
 - K6: ZW, ZS, ZM, ZL, HE, LE at q_c = 1, and ZC undersized at 1 contract
@@ -106,8 +120,8 @@ This stage does NOT:
 - edit any frozen file or manifest, docs/NULL_CRITERIA.md,
   docs/NULL_CRITERIA_E.md or any earlier stage's records
 - write to REGISTRATION.md (it stays 0 bytes)
-- push. The session makes exactly three commits, one cluster freeze
-  commit per part.
+- push. The two launches make exactly three commits in total, one
+  cluster freeze commit per part.
 
 ============================================================
 CONTEXT TO READ FIRST
@@ -186,7 +200,7 @@ TASK 0: STARTUP
 - Output: reports/stage_e6_STATE.md and the estimate ETA table.
 - Done when: the start checks pass, HEAD is the commit holding this prompt
   or a descendant with a clean tree, and the runner's preflight accepts
-  v6.
+  v6. The launch (first or second) is named in the STATE file.
 - Failure path: any mismatch or refusal stops the session with a named
   refusal.
 
@@ -290,8 +304,9 @@ TASK 6: RECOMPUTATION (FABLE RESUMED)
 
 TASK 7: READ THE RESULT (LEAD)
 - Output: in reports/E.6a_RETURN.md, per trial: trips, screen figures,
-  labels, MLL liquidations and tier, the program N after the part (150
-  plus the trials screened, counted as E.4 counted), and what K6's
+  labels, MLL liquidations and tier, the program N after the part (the
+  figure after K7
+  in run order, counted as E.4 counted), and what K6's
   confirmation would need (the step 2 quote for its vehicles from
   reports/stage_e2b_step2_quotes.md, and the top-up, since acct-2 holds
   $0.33).
@@ -301,8 +316,8 @@ TASK 7: READ THE RESULT (LEAD)
 PART 2 (E.6b): K7 BITCOIN
 ============================================================
 
-Start when Part 1 has ended, whatever its outcome. Repeat Tasks 1 to 7 with
-these substitutions:
+In the first launch, this part runs alone (see LAUNCH RULE). Repeat
+Tasks 1 to 7 with these substitutions:
 - Files: the stage_e6b_ names, strategy/members/k7/,
   tests/test_e6_k7_members*.py, reports/stage_e6b_k7_screen/,
   reports/stage_e6b_STATE.md, reports/E.6b_RETURN.md.
@@ -315,14 +330,15 @@ these substitutions:
   (UK and US clock changes), the Sunday-evening session opens
   K7-montrend-01 reads, and that no MBT bar booked to a trade date on or
   after 2026-06-22 reaches the members (the E.2a L-9 guard).
-- Commit message "K7 member freeze". Program N: Part 1's figure plus the
-  K7 trials screened.
+- Commit message "K7 member freeze". Program N: 150 plus the K7 trials
+  screened.
 
 ============================================================
 PART 3 (E.6c): K1 EQUITY INDEX
 ============================================================
 
-Start when Part 2 has ended. Repeat Tasks 1 to 7 with these substitutions:
+Start when Part 1 has ended, in the second launch. Repeat Tasks 1 to 7
+with these substitutions:
 - Files: the stage_e6c_ names, strategy/members/k1/,
   tests/test_e6_k1_members*.py, reports/stage_e6c_k1_screen/,
   reports/stage_e6c_STATE.md, reports/E.6c_RETURN.md.
@@ -342,8 +358,8 @@ Start when Part 2 has ended. Repeat Tasks 1 to 7 with these substitutions:
   check the CPI release instants in the research window that D9's CPI
   window applies to MNQ, M2K and MYM.
 - K1-vxnband-01 is labelled source-overlap (E.0 R-04). Record it.
-- Commit message "K1 member freeze". Program N: Part 2's figure plus the
-  K1 trials screened.
+- Commit message "K1 member freeze". Program N: the figure after Part 1
+  plus the K1 trials screened.
 - When all three parts are done, add a final section to
   reports/E.6a_RETURN.md: one table of every trial across K6, K7 and K1
   with its status and tier, the per-cluster counts (declared, screened,
@@ -365,8 +381,8 @@ DELEGATION PLAN
 | 5 Screening run | lead runs the frozen command | opus | xhigh | after 4 | a frozen command, the lead watches it |
 | 6 Recomputation | MemberAuditor-Kx-FableXHigh, resumed | fable | xhigh | after 5 | every tier-deciding number gets an independent check |
 | 7 Read the result, return | lead | opus | xhigh | after 6 | reserved to the lead |
-| Part 2 (K7), Tasks 1 to 7 | as Part 1, fresh workers | as Part 1 | as Part 1 | after Part 1 | same pattern |
-| Part 3 (K1), Tasks 1 to 7 | as Part 1, fresh workers | as Part 1 | as Part 1 | after Part 2 | same pattern |
+| Part 2 (K7), Tasks 1 to 7 | as Part 1, fresh workers | as Part 1 | as Part 1 | first launch, alone | same pattern |
+| Part 3 (K1), Tasks 1 to 7 | as Part 1, fresh workers | as Part 1 | as Part 1 | second launch, after Part 1 | same pattern |
 
 At most 4 workers at once. Workers write files and return paths.
 

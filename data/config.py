@@ -115,9 +115,14 @@ STEP2_ROOT = DATA_ROOT / "processed_step2"
 # ACTIVE_ACCOUNT (acct-2). The E.5 lead sets both caps in Task B1 from the fresh quote before any
 # purchase; 0.00 means the gate refuses every billable request until then, and
 # `python -m data.pull_step2 --buy` refuses to start.
+# Set by the E.5 lead at 18:12 PDT 2026-09-27 from the fresh --quote-only run (set clusters-legs, 1905
+# chunks, 0 failed; reports/stage_e5_step2_quotes.json): K4 (MCL, NG) $11.455464 + K5 (MGC, MHG)
+# $9.741104 = $21.196568; x 1.10 = $23.316225, above acct-2's headroom $125.00 - $103.477194 =
+# $21.522806, so the session cap is the headroom in whole cents, $21.52 (never above it). Request cap:
+# D13's $3.00 per request (the largest chunk quoted is $0.1157). ACCOUNT_2_CAP_USD is not raised.
 STAGE_E5_SESSION_ID = "stage-E.5-2026-09-27"
-E5_SESSION_CAP_USD = 0.00
-E5_REQUEST_CAP_USD = 0.00
+E5_SESSION_CAP_USD = 21.52
+E5_REQUEST_CAP_USD = 3.00
 
 # The active step 2 purchase policy: the three names data.pull_step2.step2_gate reads. A later
 # purchase session adds its own block above and repoints these three (a config-only edit, as the

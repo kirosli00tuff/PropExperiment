@@ -258,3 +258,8 @@
   (d) The user approved the step 2 purchases for K4 (MCL, NG, $11.46
   quoted) and K5 (MGC, MHG, $9.74 quoted) on acct-2. K3's confirmation
   ($49.34, needs a top-up) is deferred.
+- 2026-09-27 (user, planning chat): V15. Cluster order after E.5. K6, K7
+  and K1 are screened together in Stage E.6, in that order. K1 is screened
+  now instead of "only if needed" (U3). K8, the cross-market cluster, runs
+  alone in its own session afterwards, because its members differ in kind
+  from the single-product clusters.

@@ -1,0 +1,513 @@
+{
+ "schema": "stage_e_confirmation_list/1",
+ "cluster": "K4",
+ "stage": "E.5",
+ "created_pdt": "2026-09-27T19:15:28-07:00",
+ "harness_sha256": "9a8ebe7364beb7980eaea923888e06c2da253b7ff8ce2ce771b55045caf22f87",
+ "cluster_freeze_sha256": "7abcde1705440e97efcf1ce255d979213eed9840f03a8383f2784a74f5f1534a",
+ "k_holm": 9,
+ "program_n": 150,
+ "bootstrap": {
+  "seed_base": 20260923,
+  "resamples": 10000,
+  "mean_block": 5.0,
+  "ucb_quantile": 0.95
+ },
+ "start_dates": {
+  "MCL": "2021-07-12",
+  "NG": "2019-05-06"
+ },
+ "confirmation_window": {
+  "MCL": [
+   "2021-07-12",
+   "2024-02-29"
+  ],
+  "NG": [
+   "2019-05-06",
+   "2024-02-29"
+  ]
+ },
+ "rules": {
+  "null": "NULL_CRITERIA_E 3: UCB95 < eps_X and Phi(eps_X / SE_boot - 1.645) >= 0.80; zero trips or SE_boot = 0 inconclusive; < 30 closed trips 'null by inactivity'; a trial labelled 'inconclusive by design' is not covered; OC-H-excluded trials are listed, not run, not covered (L-E5-5).",
+  "edge_chain": "D5 with V14: Holm over the Tier A one-sided p at 0.05 / K, K = 9 (V14 b); composite verdict pending, not built unless the rest passes (V14 a); DSR > 0.95 at program N with the Sharpe variance over Tier A, or over every run trial of the cluster when Tier A has one member (V14 c); daily t > 3.0 one-sided; CSCV PBO < 0.5 on 8 contiguous blocks over Tier A, or over every run trial when Tier A has one member (L-E5-3), aligned on the union of the run trials' window dates, zeros off each trial's dates.",
+  "wording": "A trial passing Holm, DSR, t and PBO reads 'edge candidate, composite pending', never 'edge'; a source-overlap trial adds 'no edge claim without a registered holdout read'.",
+  "code": "screening/stage_e_verdict.py under the harness sha256 above; one confirmation run per cluster."
+ },
+ "ngs_unverifiable_in_confirmation_window": [],
+ "inputs": {
+  "reports/stage_e5_power_k4/K4_K4-cp1-01_MCL_research.json": "230d2df677455a83d5a4888a94d4c1b6992f1007b428603c1a67c348ca4f1b61",
+  "reports/stage_e5_power_k4/K4_K4-cp1-01_NG_research.json": "35fec585b9e805fb46b44e7394e61ae7addd3ad14c7b53bc4ff6afc680d44a79",
+  "reports/stage_e5_power_k4/K4_K4-cp2-01_MCL_research.json": "965e1f5d42a5235225e0f2c6192c257cd2819a0d71c284b96a84814dfcb4f60f",
+  "reports/stage_e5_power_k4/K4_K4-cp2-01_NG_research.json": "967ce75f7b0cd327ccecc4abc551f76ad9c70b07bc806de4d7a7b103798c077f",
+  "reports/stage_e5_power_k4/K4_K4-cp3-01_MCL_research.json": "18d831bd16cfc97aa725b916183d06d120817c79fe0124ba1e38e342e0ca6fa9",
+  "reports/stage_e5_power_k4/K4_K4-cp3-01_NG_research.json": "0df3063d987740e62bb8e029d0f6316f906d00d2b21f7f2a7427a683ccf52e8c",
+  "reports/stage_e5_power_k4/K4_K4-ngpre-01_NG_research.json": "937cd2b14ee3248b52f0de56646ae07d3f3e245295dab6af02ea0db51163b787",
+  "reports/stage_e5_power_k4/K4_K4-apipre-01_MCL_research.json": "255b1a4b1bc9e3652d97d7e06251a761e6f67e3241bf8894b5b86da2f7a1bc35",
+  "reports/stage_e5_power_k4/K4_K4-eiafade-01_MCL_research.json": "9a7ead6980acb455adcc91c5f6f9e0cba53aae3318c6f5a7af026419c792092c",
+  "reports/stage_e5_power_k4/K4_K4-eiamom-01_MCL_research.json": "94a1d2d7719a2a756b328d6aaf24cf90f5cc3b671ae1d1eff3b14e3b7d9206ca",
+  "reports/stage_e5_power_k4/K4_K4-ovr-01_MCL_research.json": "8022ad861b5671444aca7dc1ab245351ded7197824f2ec66d686938978349dc2",
+  "reports/stage_e5_power_k4/K4_K4-ovr-01_NG_research.json": "bc361e001ddeb7f3d08ac245e8d22a9f06b03e0fbf2933de870bdc9b0e72daae",
+  "docs/NULL_CRITERIA_E.md": "b27ca69cf8f3ec411c0bc174b50c277e8b769e38f38581af171022ea3bef0cdd",
+  "docs/STAGE_E_DESIGN.md": "615bb1e14f9072b12f6a5c6206b463fc7828989ad0a9c8e463ebb301ea55103a",
+  "docs/DECISIONS.md": "1676d18b622802bf609dcb7994216642f93668044434ddc62bd271b823d0308c",
+  "reports/stage_e5_harness_plan.md": "11d234bb2a8ace9a83c0fb06ab108051fcf95594b79b77b0acf7dedee0029630",
+  "reports/stage_e2a_source_window_amendment.md": "9fe401c1c156ebba38162256bf151d9888dec00e42cd24026d348d039e64f13d",
+  "reports/stage_e2a_epsilon.json": "4e2c773182a23e7d073305ca4eb0134d3b3ac554ccc8215730bc1e194eaff496",
+  "reports/stage_e_start_rule_K4.json": "523f2e25a7f5855901856c3b17a0eaf9fb8ddd1135526b03f80814f26bd34a6b",
+  "reports/stage_e5_ngs_check.json": "ddfecb3e1575dc817aaeebc0f8795ebcbbbd10e78b4a936ec8b454d277706b44"
+ },
+ "trials": [
+  {
+   "ordinal": 1,
+   "member": "K4-cp1-01 MCL",
+   "vehicle": "MCL",
+   "legs": [
+    "MCL"
+   ],
+   "q_c": 4,
+   "eps_ticks": 21,
+   "eps_usd_per_day_at_q": 84.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260924,
+   "power": {
+    "status": "run",
+    "supply_days": 586,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 27,
+    "n_b_analytic": 27,
+    "n_b_sim": 28.15101710124499,
+    "n_a_chosen": 69,
+    "research_days": 270,
+    "mean_ticks": 0.7995925925925949,
+    "sd_day_ticks": 37.90504174639869,
+    "vif_boot": 1.2955604882073608,
+    "seed": 20260923,
+    "flags": []
+   },
+   "s_x": {
+    "MCL": "2021-07-12"
+   }
+  },
+  {
+   "ordinal": 2,
+   "member": "K4-cp1-01 NG",
+   "vehicle": "NG",
+   "legs": [
+    "NG"
+   ],
+   "q_c": 1,
+   "eps_ticks": 8,
+   "eps_usd_per_day_at_q": 80.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260925,
+   "power": {
+    "status": "run",
+    "supply_days": 1070,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 58,
+    "n_b_analytic": 58,
+    "n_b_sim": 58.33726134833058,
+    "n_a_chosen": 153,
+    "research_days": 269,
+    "mean_ticks": -1.3699702602230497,
+    "sd_day_ticks": 22.272298374766685,
+    "vif_boot": 1.204948444267731,
+    "seed": 20260924,
+    "flags": []
+   },
+   "s_x": {
+    "NG": "2019-05-06"
+   }
+  },
+  {
+   "ordinal": 3,
+   "member": "K4-cp2-01 MCL",
+   "vehicle": "MCL",
+   "legs": [
+    "MCL"
+   ],
+   "q_c": 4,
+   "eps_ticks": 21,
+   "eps_usd_per_day_at_q": 84.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260926,
+   "power": {
+    "status": "run",
+    "supply_days": 586,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 49,
+    "n_b_analytic": 49,
+    "n_b_sim": 42.81544902934002,
+    "n_a_chosen": 129,
+    "research_days": 270,
+    "mean_ticks": -7.526361111111112,
+    "sd_day_ticks": 75.1159867142783,
+    "vif_boot": 0.6134474993875606,
+    "seed": 20260925,
+    "flags": []
+   },
+   "s_x": {
+    "MCL": "2021-07-12"
+   }
+  },
+  {
+   "ordinal": 4,
+   "member": "K4-cp2-01 NG",
+   "vehicle": "NG",
+   "legs": [
+    "NG"
+   ],
+   "q_c": 1,
+   "eps_ticks": 8,
+   "eps_usd_per_day_at_q": 80.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260927,
+   "power": {
+    "status": "run",
+    "supply_days": 1070,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 130,
+    "n_b_analytic": 130,
+    "n_b_sim": 137.4207941746729,
+    "n_a_chosen": 343,
+    "research_days": 269,
+    "mean_ticks": -2.4908698884758373,
+    "sd_day_ticks": 41.955121482527076,
+    "vif_boot": 0.7632614441071995,
+    "seed": 20260926,
+    "flags": []
+   },
+   "s_x": {
+    "NG": "2019-05-06"
+   }
+  },
+  {
+   "ordinal": 5,
+   "member": "K4-cp3-01 MCL",
+   "vehicle": "MCL",
+   "legs": [
+    "MCL"
+   ],
+   "q_c": 4,
+   "eps_ticks": 21,
+   "eps_usd_per_day_at_q": 84.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260928,
+   "power": {
+    "status": "run",
+    "supply_days": 586,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 97,
+    "n_b_analytic": 97,
+    "n_b_sim": 102.73996590637168,
+    "n_a_chosen": 255,
+    "research_days": 270,
+    "mean_ticks": -0.6229722222222243,
+    "sd_day_ticks": 78.60578887546615,
+    "vif_boot": 1.114190451251021,
+    "seed": 20260927,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "MCL": "2021-07-12"
+   }
+  },
+  {
+   "ordinal": 6,
+   "member": "K4-cp3-01 NG",
+   "vehicle": "NG",
+   "legs": [
+    "NG"
+   ],
+   "q_c": 1,
+   "eps_ticks": 8,
+   "eps_usd_per_day_at_q": 80.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260929,
+   "power": {
+    "status": "run",
+    "supply_days": 1070,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 209,
+    "n_b_analytic": 209,
+    "n_b_sim": 195.15738546013583,
+    "n_a_chosen": 550,
+    "research_days": 269,
+    "mean_ticks": -4.40760223048327,
+    "sd_day_ticks": 64.32417375644555,
+    "vif_boot": 0.5207449251294385,
+    "seed": 20260928,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "NG": "2019-05-06"
+   }
+  },
+  {
+   "ordinal": 7,
+   "member": "K4-ngpre-01 NG",
+   "vehicle": "NG",
+   "legs": [
+    "NG"
+   ],
+   "q_c": 1,
+   "eps_ticks": 8,
+   "eps_usd_per_day_at_q": 80.0,
+   "tier": "A",
+   "run": true,
+   "labels": [
+    "calendar partly unverified"
+   ],
+   "bootstrap_seed": 20260930,
+   "power": {
+    "status": "run",
+    "supply_days": 1070,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 94,
+    "n_b_analytic": 94,
+    "n_b_sim": 100.65878415618367,
+    "n_a_chosen": 248,
+    "research_days": 269,
+    "mean_ticks": 3.2277397769516725,
+    "sd_day_ticks": 29.235269506770823,
+    "vif_boot": 1.1371406298615667,
+    "seed": 20260929,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "NG": "2019-05-06"
+   }
+  },
+  {
+   "ordinal": 8,
+   "member": "K4-apipre-01 MCL",
+   "vehicle": "MCL",
+   "legs": [
+    "MCL"
+   ],
+   "q_c": 4,
+   "eps_ticks": 21,
+   "eps_usd_per_day_at_q": 84.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260931,
+   "power": {
+    "status": "run",
+    "supply_days": 586,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 15,
+    "n_b_analytic": 15,
+    "n_b_sim": 10.0,
+    "n_a_chosen": 39,
+    "research_days": 270,
+    "mean_ticks": -1.2124074074074078,
+    "sd_day_ticks": 33.71833346772698,
+    "vif_boot": 0.9127932854165604,
+    "seed": 20260930,
+    "flags": [
+     "zero_variance_draws",
+     "sim_smaller_ignored_a",
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "MCL": "2021-07-12"
+   }
+  },
+  {
+   "ordinal": 9,
+   "member": "K4-eiafade-01 MCL",
+   "vehicle": "MCL",
+   "legs": [
+    "MCL"
+   ],
+   "q_c": 4,
+   "eps_ticks": 21,
+   "eps_usd_per_day_at_q": 84.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260932,
+   "power": {
+    "status": "run",
+    "supply_days": 586,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 5,
+    "n_b_analytic": 5,
+    "n_b_sim": 5.0,
+    "n_a_chosen": 13,
+    "research_days": 270,
+    "mean_ticks": 0.27014814814814825,
+    "sd_day_ticks": 19.690784900941487,
+    "vif_boot": 0.9023315351171699,
+    "seed": 20260931,
+    "flags": [
+     "zero_variance_draws",
+     "sim_censored_below_grid_a",
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "MCL": "2021-07-12"
+   }
+  },
+  {
+   "ordinal": 10,
+   "member": "K4-eiamom-01 MCL",
+   "vehicle": "MCL",
+   "legs": [
+    "MCL"
+   ],
+   "q_c": 4,
+   "eps_ticks": 21,
+   "eps_usd_per_day_at_q": 84.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260933,
+   "power": {
+    "status": "run",
+    "supply_days": 586,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 1,
+    "n_b_analytic": 1,
+    "n_b_sim": 2.0,
+    "n_a_chosen": 2,
+    "research_days": 270,
+    "mean_ticks": -0.5351111111111112,
+    "sd_day_ticks": 7.6291414365078065,
+    "vif_boot": 0.9162032381736,
+    "seed": 20260932,
+    "flags": [
+     "zero_variance_draws",
+     "sim_censored_below_grid_a",
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "MCL": "2021-07-12"
+   }
+  },
+  {
+   "ordinal": 11,
+   "member": "K4-ovr-01 MCL",
+   "vehicle": "MCL",
+   "legs": [
+    "MCL"
+   ],
+   "q_c": 4,
+   "eps_ticks": 21,
+   "eps_usd_per_day_at_q": 84.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260934,
+   "power": {
+    "status": "run",
+    "supply_days": 586,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 53,
+    "n_b_analytic": 53,
+    "n_b_sim": 49.32649019466527,
+    "n_a_chosen": 139,
+    "research_days": 270,
+    "mean_ticks": -1.8383333333333318,
+    "sd_day_ticks": 60.47698267794943,
+    "vif_boot": 1.0202230647078305,
+    "seed": 20260933,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "MCL": "2021-07-12"
+   }
+  },
+  {
+   "ordinal": 12,
+   "member": "K4-ovr-01 NG",
+   "vehicle": "NG",
+   "legs": [
+    "NG"
+   ],
+   "q_c": 1,
+   "eps_ticks": 8,
+   "eps_usd_per_day_at_q": 80.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260935,
+   "power": {
+    "status": "run",
+    "supply_days": 1070,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 91,
+    "n_b_analytic": 91,
+    "n_b_sim": 91.56762708171435,
+    "n_a_chosen": 239,
+    "research_days": 269,
+    "mean_ticks": -1.992096654275093,
+    "sd_day_ticks": 31.957948996303323,
+    "vif_boot": 0.9182400783933851,
+    "seed": 20260934,
+    "flags": []
+   },
+   "s_x": {
+    "NG": "2019-05-06"
+   }
+  }
+ ]
+}

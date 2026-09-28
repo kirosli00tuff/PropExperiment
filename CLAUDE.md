@@ -92,6 +92,19 @@ WebFetch, curl or scholarly APIs, and the log marks every item gathered
 that way. Firecrawl credits belong to the user's Firecrawl account; when
 they run out, record it the same way and fall back.
 
+Page-fetch fallback (user, 2026-09-27): Scrapling is installed on the
+ThinkPad as a uv tool (`scrapling` on PATH, in its own environment, never
+added to this project's dependencies). When WebFetch fails on a page (a
+403, a block, a JavaScript-rendered page, a Wayback outage), the worker
+falls back in this order: `scrapling extract get <url> <file>`, then
+`scrapling extract fetch <url> <file>`. `scrapling extract stealthy-fetch`
+is used only on sites whose terms allow automated access. Scrapling never
+stands in for a paid, key-gated or login-only source. Every page used as
+evidence is saved raw under the stage's briefs folder, its URL, UTC fetch
+time and sha256 go in the log, and it is read by grep, as the
+context-hygiene rules require. Scrapling is the default fallback. Firecrawl
+is used only when Scrapling fails.
+
 - State model and effort for every subtask in the plan before spawning.
 - Promote on failure: when a worker's output fails verification, rerun that
   subtask one tier up (haiku, then sonnet, then opus at a higher effort). Never demote judgment

@@ -247,7 +247,8 @@ def test_cpi_window_refuses_naive_timestamps() -> None:
 
 # ========================================================= flatten (D9.1) ====
 REGULAR = _cal()
-WED = date(2021, 3, 10)  # no Topstep schedule year, no calendar entry in the synthetic maps
+WED = date(2021, 3, 10)  # no Topstep row, no calendar entry in the synthetic maps
+NO_LEAD_WED = date(2027, 3, 10)  # a Wednesday in a year with no Topstep lead (published or derived)
 
 
 @pytest.mark.parametrize(
@@ -272,9 +273,12 @@ def test_regular_flatten_time_per_group(root, f) -> None:
      ("NQ", "equity", time(15, 15), time(15, 0))],
 )
 def test_early_close_flatten_is_the_close_minus_15(root, group, halt, f) -> None:
-    cal = _cal(**{group: {WED: _halt(WED, halt)}})
-    assert S.flatten_time_ct(root, WED, cal) == f
-    at_f = datetime.combine(WED, f, tzinfo=CT)
+    # D9.1 alone needs a year with no Topstep lead: since Stage E.5 (harness v5) 2019-2023 carry
+    # the derived 30-minute lead (tests/test_stage_e_sessions_holidays.py pins that case).
+    cal = _cal(**{group: {NO_LEAD_WED: _halt(NO_LEAD_WED, halt)}})
+    assert NO_LEAD_WED.year not in S.TOPSTEP_EARLY_CLOSE_LEAD
+    assert S.flatten_time_ct(root, NO_LEAD_WED, cal) == f
+    at_f = datetime.combine(NO_LEAD_WED, f, tzinfo=CT)
     assert S.required_flatten(root, 2, at_f, cal, NO_LATE).side == "sell"
     before = at_f - timedelta(minutes=1)
     assert S.required_flatten(root, 2, before, cal, NO_LATE) is None

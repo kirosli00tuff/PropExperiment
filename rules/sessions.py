@@ -19,11 +19,23 @@ Topstep's own published holiday schedule binds too (brief item 6b): F on such a 
 earliest of the regular F, the CME early close minus 15 minutes, and Topstep's published
 close-by time, and a date Topstep lists as "Markets closed" has no trading. Topstep's schedules
 (help.topstep.com, quoted verbatim in reports/stage_e2a_rules.md) were retrieved for 2024, 2025
-and 2026. In 2024 and 2025 Topstep required Funded Accounts to close "30 minutes before the early
-close"; from 2026 its article says 15 minutes. For an early-halt date that Topstep's schedule of
-that year does not list, the year's published lead applies as well (30 minutes in 2024-2025).
-For 2019-2023 no Topstep schedule was retrieved: F is D9.1's rule alone, and those dates are
-flagged (``TOPSTEP_SCHEDULE_YEARS``).
+and 2026 (``TOPSTEP_SCHEDULE_YEARS``). In 2024 and 2025 Topstep required Funded Accounts to close
+"30 minutes before the early close"; from 2026 its article says 15 minutes. For an early-halt date
+that Topstep's schedule of that year does not list, the year's lead applies as well (30 minutes in
+2019-2025, 15 in 2026).
+For 2019-2023 no Topstep schedule was retrieved. Stage E.5 (harness v5; reports/
+stage_e5_harness_plan.md 3a) DERIVES the rows for trade dates 2019-05-01..2023-12-31
+(``TOPSTEP_DERIVED_YEARS``) by Rule H-1, the rule that reproduces the published 2024-2026 rows
+from the frozen equity calendar: each weekday data.cme_calendar.HOLIDAYS lists is "markets
+closed" (FULL_CLOSURE) or has close-by = the equity halt minus the year's lead (EARLY_HALT), the
+lead being 30 minutes, the earliest published one (lead ruling L-E5-2). The derived rows carry the
+source id ``topstep_derived_e5_equity_calendar``. Dates the rule does not settle get no row and
+are listed in ``TOPSTEP_UNSETTLED_DATES`` with the reason: every July 3 (the one date the rule
+does not reproduce in the published years); on them F is D9.1 plus the year's lead on the group's
+own calendar, as on 2025-07-03. The rows cover trade dates 2019-05-01..2023-12-31 only, but the
+2019-2023 lead (``TOPSTEP_EARLY_CLOSE_LEAD``) is keyed by calendar year and so applies to whole
+years: it also moves the equity F on 2019-01-21 and 2019-02-18 (halt 12:00: 11:45 to 11:30),
+before any store's first bar (2019-05-06).
 
 Weekends: TopstepX is closed from Friday's F to Sunday's reopen (F4.1).
 Scheduled late opens (grains' LATE_OPENS without a halt time, lead ruling L-6): no evening
@@ -81,12 +93,75 @@ class TopstepHoliday:
 _TS_2024 = "topstep_8284222_2024"  # help.topstep.com/en/articles/8284222, capture 2024-01-05/10-14
 _TS_2025 = "topstep_8284222_2025"  # same article, captures 2025-03-16 and 2025-10-17
 _TS_2026 = "topstep_13350348_2026"  # help.topstep.com/en/articles/13350348, 2026-02-19, 2026-09-25
-_1130, _1145, _1200 = time(11, 30), time(11, 45), time(12, 0)
+_TS_DERIVED = "topstep_derived_e5_equity_calendar"  # Rule H-1 (Stage E.5), not a Topstep article
+_0745, _1130, _1145, _1200 = time(7, 45), time(11, 30), time(11, 45), time(12, 0)
 _CLOSED = None
 
 TOPSTEP_HOLIDAYS: dict[date, TopstepHoliday] = {
     h.day: h
     for h in (
+        # 2019-05-01..2023-12-31: DERIVED, not published (Stage E.5, harness v5; reports/
+        # stage_e5_harness_plan.md 3a). Rule H-1: for each weekday D that the frozen equity
+        # calendar (data.cme_calendar.HOLIDAYS) lists, FULL_CLOSURE -> markets closed, EARLY_HALT
+        # at h -> close-by h minus the year's lead. The lead for 2019-2023 is 30 minutes, the
+        # earliest published lead (lead ruling L-E5-2). Applied to 2024-2026 with each year's
+        # published lead, the rule reproduces every published row but four: 2024-07-03 (published
+        # 11:30, rule 11:45), and three rule dates Topstep did not publish (2024-01-01, before the
+        # 2024 article's first row; 2025-01-09, the unscheduled day of mourning; 2025-07-03,
+        # omitted). Unsettled, so written as no row (TOPSTEP_UNSETTLED_DATES): every July 3 the
+        # equity calendar lists (2019-07-03, 2020-07-03, 2023-07-03), and any date whose equity
+        # entry is not an ordinary holiday (none in 2019-05..2023-12: every other entry names a
+        # holiday, qualifier such as "(observed)" aside, that the equity calendar carries on a
+        # date Topstep published in 2024-2026). tests/test_stage_e_sessions_holidays.py
+        # re-derives these rows from the calendar and checks the four exceptions by name.
+        TopstepHoliday(date(2019, 5, 27), _1130, _TS_DERIVED),  # Memorial Day
+        TopstepHoliday(date(2019, 7, 4), _1130, _TS_DERIVED),  # Independence Day
+        TopstepHoliday(date(2019, 9, 2), _1130, _TS_DERIVED),  # Labor Day
+        TopstepHoliday(date(2019, 11, 28), _1130, _TS_DERIVED),  # Thanksgiving Day
+        TopstepHoliday(date(2019, 11, 29), _1145, _TS_DERIVED),  # Day after Thanksgiving
+        TopstepHoliday(date(2019, 12, 24), _1145, _TS_DERIVED),  # Christmas Eve
+        TopstepHoliday(date(2019, 12, 25), _CLOSED, _TS_DERIVED),  # Christmas Day
+        TopstepHoliday(date(2020, 1, 1), _CLOSED, _TS_DERIVED),  # New Year's Day
+        TopstepHoliday(date(2020, 1, 20), _1130, _TS_DERIVED),  # Martin Luther King Jr. Day
+        TopstepHoliday(date(2020, 2, 17), _1130, _TS_DERIVED),  # Presidents Day
+        TopstepHoliday(date(2020, 4, 10), _CLOSED, _TS_DERIVED),  # Good Friday
+        TopstepHoliday(date(2020, 5, 25), _1130, _TS_DERIVED),  # Memorial Day
+        TopstepHoliday(date(2020, 9, 7), _1130, _TS_DERIVED),  # Labor Day
+        TopstepHoliday(date(2020, 11, 26), _1130, _TS_DERIVED),  # Thanksgiving Day
+        TopstepHoliday(date(2020, 11, 27), _1145, _TS_DERIVED),  # Day after Thanksgiving
+        TopstepHoliday(date(2020, 12, 24), _1145, _TS_DERIVED),  # Christmas Eve
+        TopstepHoliday(date(2020, 12, 25), _CLOSED, _TS_DERIVED),  # Christmas Day
+        TopstepHoliday(date(2021, 1, 1), _CLOSED, _TS_DERIVED),  # New Year's Day
+        TopstepHoliday(date(2021, 1, 18), _1130, _TS_DERIVED),  # Martin Luther King Jr. Day
+        TopstepHoliday(date(2021, 2, 15), _1130, _TS_DERIVED),  # Presidents Day
+        TopstepHoliday(date(2021, 4, 2), _0745, _TS_DERIVED),  # Good Friday, abbreviated
+        TopstepHoliday(date(2021, 5, 31), _1130, _TS_DERIVED),  # Memorial Day
+        TopstepHoliday(date(2021, 7, 5), _1130, _TS_DERIVED),  # Independence Day (observed)
+        TopstepHoliday(date(2021, 9, 6), _1130, _TS_DERIVED),  # Labor Day
+        TopstepHoliday(date(2021, 11, 25), _1130, _TS_DERIVED),  # Thanksgiving Day
+        TopstepHoliday(date(2021, 11, 26), _1145, _TS_DERIVED),  # Day after Thanksgiving
+        TopstepHoliday(date(2021, 12, 24), _CLOSED, _TS_DERIVED),  # Christmas Day (observed)
+        TopstepHoliday(date(2022, 1, 17), _1130, _TS_DERIVED),  # Martin Luther King Jr. Day
+        TopstepHoliday(date(2022, 2, 21), _1130, _TS_DERIVED),  # Presidents Day
+        TopstepHoliday(date(2022, 4, 15), _CLOSED, _TS_DERIVED),  # Good Friday
+        TopstepHoliday(date(2022, 5, 30), _1130, _TS_DERIVED),  # Memorial Day
+        TopstepHoliday(date(2022, 6, 20), _1130, _TS_DERIVED),  # Juneteenth (observed)
+        TopstepHoliday(date(2022, 7, 4), _1130, _TS_DERIVED),  # Independence Day
+        TopstepHoliday(date(2022, 9, 5), _1130, _TS_DERIVED),  # Labor Day
+        TopstepHoliday(date(2022, 11, 24), _1130, _TS_DERIVED),  # Thanksgiving Day
+        TopstepHoliday(date(2022, 11, 25), _1145, _TS_DERIVED),  # Day after Thanksgiving
+        TopstepHoliday(date(2022, 12, 26), _CLOSED, _TS_DERIVED),  # Christmas Day (observed)
+        TopstepHoliday(date(2023, 1, 2), _CLOSED, _TS_DERIVED),  # New Year's Day (observed)
+        TopstepHoliday(date(2023, 1, 16), _1130, _TS_DERIVED),  # Martin Luther King Jr. Day
+        TopstepHoliday(date(2023, 2, 20), _1130, _TS_DERIVED),  # Presidents Day
+        TopstepHoliday(date(2023, 4, 7), _0745, _TS_DERIVED),  # Good Friday, abbreviated
+        TopstepHoliday(date(2023, 5, 29), _1130, _TS_DERIVED),  # Memorial Day
+        TopstepHoliday(date(2023, 6, 19), _1130, _TS_DERIVED),  # Juneteenth
+        TopstepHoliday(date(2023, 7, 4), _1130, _TS_DERIVED),  # Independence Day
+        TopstepHoliday(date(2023, 9, 4), _1130, _TS_DERIVED),  # Labor Day
+        TopstepHoliday(date(2023, 11, 23), _1130, _TS_DERIVED),  # Thanksgiving Day
+        TopstepHoliday(date(2023, 11, 24), _1145, _TS_DERIVED),  # Day after Thanksgiving
+        TopstepHoliday(date(2023, 12, 25), _CLOSED, _TS_DERIVED),  # Christmas Day
         # 2024: "Topstep requires traders in Funded Accounts to close all positions 30 minutes
         # before the early close."
         TopstepHoliday(date(2024, 1, 15), _1130, _TS_2024),
@@ -130,11 +205,28 @@ TOPSTEP_HOLIDAYS: dict[date, TopstepHoliday] = {
         TopstepHoliday(date(2027, 1, 1), _CLOSED, _TS_2026),
     )
 }
-# Topstep's published lead before an early close, per calendar year of its schedule.
+# Topstep's lead before an early close, per calendar year: published for 2024-2026; for the
+# derived years 2019-2023 the earliest published lead, 30 minutes (lead ruling L-E5-2).
 TOPSTEP_EARLY_CLOSE_LEAD: dict[int, timedelta] = {
+    2019: timedelta(minutes=30), 2020: timedelta(minutes=30), 2021: timedelta(minutes=30),
+    2022: timedelta(minutes=30), 2023: timedelta(minutes=30),
     2024: timedelta(minutes=30), 2025: timedelta(minutes=30), 2026: timedelta(minutes=15),
 }
-TOPSTEP_SCHEDULE_YEARS: frozenset[int] = frozenset(TOPSTEP_EARLY_CLOSE_LEAD)
+# The years of a Topstep schedule the program holds (published articles), and the years whose
+# rows are derived by Rule H-1 (trade dates 2019-05-01..2023-12-31 only).
+TOPSTEP_SCHEDULE_YEARS: frozenset[int] = frozenset({2024, 2025, 2026})
+TOPSTEP_DERIVED_YEARS: frozenset[int] = frozenset(range(2019, 2024))
+TOPSTEP_DERIVED_FIRST = date(2019, 5, 1)
+TOPSTEP_DERIVED_LAST = date(2023, 12, 31)
+# Dates in the derived span that Rule H-1 does not settle: no row is written; F on them is D9.1
+# plus the year's lead on the group's own calendar (as on 2025-07-03, which Topstep omitted).
+_JULY_3 = ("July 3: the one date Rule H-1 does not reproduce in the published years (2024-07-03 "
+           "published 11:30 against the rule's 11:45; 2025-07-03 not published)")
+TOPSTEP_UNSETTLED_DATES: tuple[tuple[date, str], ...] = (
+    (date(2019, 7, 3), _JULY_3),  # equity: Day before Independence Day, halt 12:15
+    (date(2020, 7, 3), _JULY_3),  # equity: Independence Day (observed), halt 12:00
+    (date(2023, 7, 3), _JULY_3),  # equity: Day before Independence Day, halt 12:15
+)
 
 
 # ------------------------------------------------------------------ calendars ----

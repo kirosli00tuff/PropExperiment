@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import ast
 import calendar as pycal
+import difflib
 import hashlib
 import importlib.util
 import json
@@ -335,31 +336,81 @@ C9_1100_RANGES = (  # catalog C9, the computed weekday ranges at 11:00 CT
 
 
 # --------------------------------------------------------------------- table pins ----
+# Lead ruling R-A2-1 and review SF-2 (Stage E.5): K3's frozen tables were generated under the v4
+# rules/sessions.py, whose sha256 _calendar.SOURCE_SHA256 pins; harness v5 changed that file and
+# moves exactly 14 frozen full FX sessions to an 11:30 CT flatten (K3's confirmation session
+# decides). The three tests below pin v5 exactly and fail on any other drift.
+V4_SESSIONS_SHA256 = "d9a7fcfe6724f066ad709ee1dd2b8bab322e74837f7524555c3608c069d83c13"
+V5_SESSIONS_SHA256 = "beb9501d6235299cd716868a8c14cf1df1b3cc71fa0b58c4e9780e9035b07d28"
+V5_FLATTENED_FX_DATES = (
+    "2022-01-17", "2022-02-21", "2022-05-30", "2022-06-20", "2022-07-04", "2022-09-05",
+    "2022-11-24", "2023-01-16", "2023-02-20", "2023-05-29", "2023-06-19", "2023-07-04",
+    "2023-09-04", "2023-11-23")
+
+
 def test_every_source_file_has_the_pinned_sha256() -> None:
     assert _sha(CHECK_JSON) == CHECK_SHA256
     pinned = dict(cal_tables.SOURCE_SHA256)
     assert set(pinned) == {"data/calendars/fx.py", "rules/sessions.py",
                            "reports/stage_e4c_release_check.json"}
+    assert pinned["rules/sessions.py"] == V4_SESSIONS_SHA256  # K3's frozen pin (R-A2-1)
     for rel, sha in pinned.items():
-        assert _sha(REPO / rel) == sha, rel
+        # R-A2-1, review SF-2: rules/sessions.py must be exactly the harness v5 file
+        expected = V5_SESSIONS_SHA256 if rel == "rules/sessions.py" else sha
+        assert _sha(REPO / rel) == expected, rel
     assert dict(clocks.SOURCE_SHA256) == {"reports/stage_e4c_release_check.json": CHECK_SHA256}
     assert cal_tables.EC_CAL_COVERAGE == ("2019-05-01", "2026-06-19")  # K4-L-13
     assert cal_tables.TOKYO_RANGE == clocks.CLOCK_RANGE == ("2019-04-01", "2026-06-19")  # K3-L-01
 
 
+def _module_values(text: str) -> dict[str, Any]:
+    namespace: dict[str, Any] = {}
+    exec(compile(text, "<k3 table module>", "exec"), namespace)  # a data-only module
+    return {k: v for k, v in namespace.items() if not k.startswith("__") and k != "annotations"}
+
+
+_V5_TABLE_LINE = re.compile(r'^\s*("\d{4}-\d{2}-\d{2}",?\s*)+$|^# .*\(\d+ dates\)$')
+
+
 def test_both_modules_are_exactly_the_generators_output() -> None:
+    """Under v5 (R-A2-1, review SF-2) _clocks.py regenerates exactly; _calendar.py differs in
+    exactly three names, all from the 14 dates: FX_FULL_SESSIONS loses them, FX_EARLY_F_DATES
+    (the generator's complement list) gains them, and SOURCE_SHA256 carries the v5 sessions
+    sha256. Every other value, and every other line of text, is equal."""
     spec = importlib.util.spec_from_file_location("gen_k3_tables", GENERATOR)
     assert spec is not None and spec.loader is not None
     gen = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(gen)
     texts = gen.build()
-    assert set(texts) == {"strategy/members/k3/_calendar.py", "strategy/members/k3/_clocks.py"}
-    for rel, text in texts.items():
-        assert (REPO / rel).read_text(encoding="utf-8") == text, rel
+    cal_rel, clocks_rel = "strategy/members/k3/_calendar.py", "strategy/members/k3/_clocks.py"
+    assert set(texts) == {cal_rel, clocks_rel}
+    assert (REPO / clocks_rel).read_text(encoding="utf-8") == texts[clocks_rel]
+    frozen_text = (REPO / cal_rel).read_text(encoding="utf-8")
+    frozen, regenerated = _module_values(frozen_text), _module_values(texts[cal_rel])
+    changed = {k for k in frozen.keys() | regenerated.keys() if frozen.get(k) != regenerated.get(k)}
+    assert changed == {"FX_FULL_SESSIONS", "FX_EARLY_F_DATES", "SOURCE_SHA256"}
+    flattened = set(V5_FLATTENED_FX_DATES)
+    assert flattened <= set(frozen["FX_FULL_SESSIONS"])
+    assert regenerated["FX_FULL_SESSIONS"] == tuple(d for d in frozen["FX_FULL_SESSIONS"]
+                                                    if d not in flattened)
+    assert regenerated["FX_EARLY_F_DATES"] == tuple(sorted(frozen["FX_EARLY_F_DATES"]
+                                                           + V5_FLATTENED_FX_DATES))
+    assert dict(regenerated["SOURCE_SHA256"]) == {**dict(frozen["SOURCE_SHA256"]),
+                                                  "rules/sessions.py": V5_SESSIONS_SHA256}
+    diff = [line[1:] for line in difflib.unified_diff(frozen_text.splitlines(),
+                                                      texts[cal_rel].splitlines(), lineterm="",
+                                                      n=0)
+            if line[:1] in "+-" and not line.startswith(("+++", "---"))]
+    other = [line for line in diff if not (_V5_TABLE_LINE.match(line)
+                                           or V4_SESSIONS_SHA256 in line
+                                           or V5_SESSIONS_SHA256 in line)]
+    assert diff and other == []
 
 
 def test_fx_full_sessions_are_ec_cal_dates_without_halt_and_with_the_regular_f() -> None:
-    """K3-L-11: no early_halt_ct AND the engine's F = 15:08 CT for every K3 root."""
+    """K3-L-11: no early_halt_ct AND the engine's F = 15:08 CT for every K3 root. Under v5 it
+    holds for every frozen date but the 14 of R-A2-1 (review SF-2), which the engine now
+    flattens early."""
     cal = load_group_calendar("fx")
     assert tuple(cal.coverage) == (date(2019, 5, 1), date(2026, 6, 19))
     full, removed = [], []
@@ -368,8 +419,11 @@ def test_fx_full_sessions_are_ec_cal_dates_without_halt_and_with_the_regular_f()
             continue
         fs = {sessions.flatten_time_ct(r, d) for r in K3_ROOTS}
         (full if fs == {time(15, 8)} else removed).append(d.isoformat())
-    assert tuple(full) == cal_tables.FX_FULL_SESSIONS and len(full) == 1797
-    assert tuple(removed) == cal_tables.FX_EARLY_F_DATES == EARLY_F_DATES
+    flattened = set(V5_FLATTENED_FX_DATES)
+    assert tuple(full) == tuple(d for d in cal_tables.FX_FULL_SESSIONS if d not in flattened)
+    assert len(cal_tables.FX_FULL_SESSIONS) == 1797 and len(full) == 1797 - 14
+    assert tuple(removed) == tuple(sorted(cal_tables.FX_EARLY_F_DATES + V5_FLATTENED_FX_DATES))
+    assert cal_tables.FX_EARLY_F_DATES == EARLY_F_DATES
     # the specs' named US holidays are among the removed dates (K3-L-11)
     assert {"2025-09-01", "2025-11-27", "2026-01-19", "2026-02-16", "2026-05-25"} <= set(removed)
     window = [d for d in full if RESEARCH[0].isoformat() <= d <= RESEARCH[1].isoformat()]
@@ -379,6 +433,17 @@ def test_fx_full_sessions_are_ec_cal_dates_without_halt_and_with_the_regular_f()
     assert len(trade_dates_between(cal, *RESEARCH)) == 316
     assert len(window) == 316 - 5 - 7  # the research window's halts and early-F dates
 
+
+def test_v5_flattens_exactly_14_frozen_full_fx_sessions_all_before_2024() -> None:
+    """R-A2-1: the frozen FX_FULL_SESSIONS dates whose v5 F for 6E is not the regular 15:08 are
+    exactly the 14 derived-row dates, every one before 2024-01-01."""
+    changed = tuple(d for d in cal_tables.FX_FULL_SESSIONS
+                    if sessions.flatten_time_ct("6E", date.fromisoformat(d)) != time(15, 8))
+    assert changed == V5_FLATTENED_FX_DATES
+    for d in map(date.fromisoformat, changed):
+        row = sessions.TOPSTEP_HOLIDAYS[d]
+        assert row.source == "topstep_derived_e5_equity_calendar" and d < date(2024, 1, 1)
+        assert sessions.flatten_time_ct("6E", d) == row.close_by_ct == time(11, 30)
 
 def test_month_ends_are_the_last_ec_cal_date_of_each_covered_month() -> None:
     cal = load_group_calendar("fx")

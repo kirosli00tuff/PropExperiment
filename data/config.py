@@ -111,6 +111,21 @@ E2B_REQUEST_CAP_USD = 0.00
 # (lead ruling 2026-09-26, M7.4 and the V10 separate data roots). Git-ignored.
 STEP2_ROOT = DATA_ROOT / "processed_step2"
 
+# Stage E.5 spend policy (stage prompt, 2026-09-27): the step 2 purchase of K4 and K5 on
+# ACTIVE_ACCOUNT (acct-2). The E.5 lead sets both caps in Task B1 from the fresh quote before any
+# purchase; 0.00 means the gate refuses every billable request until then, and
+# `python -m data.pull_step2 --buy` refuses to start.
+STAGE_E5_SESSION_ID = "stage-E.5-2026-09-27"
+E5_SESSION_CAP_USD = 0.00
+E5_REQUEST_CAP_USD = 0.00
+
+# The active step 2 purchase policy: the three names data.pull_step2.step2_gate reads. A later
+# purchase session adds its own block above and repoints these three (a config-only edit, as the
+# E.2b design intended); the blocks of earlier sessions stay as they were.
+STEP2_PURCHASE_SESSION_ID = STAGE_E5_SESSION_ID
+STEP2_SESSION_CAP_USD = E5_SESSION_CAP_USD
+STEP2_REQUEST_CAP_USD = E5_REQUEST_CAP_USD
+
 DATABENTO_KEY_ENV = "DATABENTO_API_KEY"
 DATASET = "GLBX.MDP3"
 

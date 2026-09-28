@@ -33,10 +33,12 @@ ruling L-9): no minute booked to a holdout-1 trade date, and no minute booked to
 trade date unless the chunk is one of the 13 sealing chunks. The whole plan is checked first.
 
 Buy flow per chunk (``run_buy``): harness preflight (screening.harness_freeze.preflight with the
-required expected sha256) FIRST, then the caps: the gate is STAGE_E2B_SESSION_ID on acct-2
-(ACTIVE_ACCOUNT, cap ACCOUNT_2_CAP_USD), and with the E.2b caps at $0.00 the buy refuses to start
-(a later purchase session sets its own session id and caps). Then quote -> authorize (session
-cap, request cap, the account's cap; no splitting: a chunk over the request cap is refused) ->
+required expected sha256) FIRST, then the caps: the gate is the active step 2 purchase policy of
+data/config.py (STEP2_PURCHASE_SESSION_ID with STEP2_SESSION_CAP_USD and STEP2_REQUEST_CAP_USD; a
+purchase session sets its own block there and repoints the three) on acct-2 (ACTIVE_ACCOUNT, cap
+ACCOUNT_2_CAP_USD), and with the session's caps at $0.00 the buy refuses to start. Then quote ->
+authorize (session cap, request cap, the account's cap; no splitting: a chunk over the request cap
+is refused) ->
 commit -> download to .partial -> os.link -> read-only -> record-byte check -> settle -> for a
 holdout-2 chunk, seal. A holdout-2 chunk never leaves plaintext behind: a failure after the
 download (byte check, settle or seal) removes the plaintext before the error is raised, and a
@@ -81,10 +83,10 @@ from data.adapter import OHLCV_1M, STYPE_CONTINUOUS
 from data.config import (
     ACTIVE_ACCOUNT,
     DATASET,
-    E2B_REQUEST_CAP_USD,
-    E2B_SESSION_CAP_USD,
     REPO_ROOT,
-    STAGE_E2B_SESSION_ID,
+    STEP2_PURCHASE_SESSION_ID,
+    STEP2_REQUEST_CAP_USD,
+    STEP2_SESSION_CAP_USD,
     VENDOR_ROOT,
     MissingSecretError,
     require_databento_key,
@@ -367,11 +369,13 @@ def roots_for(ml_route: bool, cluster: str | None, vehicles_path: Path = VEHICLE
 
 # ------------------------------------------------------------------ gate ----
 def step2_gate(**overrides: Any) -> LockedQuoteGate:
-    """STAGE_E2B_SESSION_ID on acct-2 (its cap ACCOUNT_2_CAP_USD) with the E.2b caps ($0.00).
+    """The active step 2 purchase policy of data/config.py: STEP2_PURCHASE_SESSION_ID on acct-2
+    (its cap ACCOUNT_2_CAP_USD) with STEP2_SESSION_CAP_USD and STEP2_REQUEST_CAP_USD (from Stage
+    E.5 they point at the E.5 block: STAGE_E5_SESSION_ID and its caps).
     ``overrides`` are for tests (tmp ledgers, test caps); the CLI passes none."""
-    kwargs = {"session_cap_usd": E2B_SESSION_CAP_USD, "request_cap_usd": E2B_REQUEST_CAP_USD,
+    kwargs = {"session_cap_usd": STEP2_SESSION_CAP_USD, "request_cap_usd": STEP2_REQUEST_CAP_USD,
               "account": ACTIVE_ACCOUNT, **overrides}
-    return LockedQuoteGate(STAGE_E2B_SESSION_ID, **kwargs)
+    return LockedQuoteGate(STEP2_PURCHASE_SESSION_ID, **kwargs)
 
 
 def banner(gate: LockedQuoteGate) -> str:
@@ -387,8 +391,8 @@ def require_buy_caps(gate: LockedQuoteGate) -> None:
     if not (gate.session_cap_usd > 0.0 and gate.request_cap_usd > 0.0):
         raise Step2CapError(
             f"step 2 buy refused: session cap ${gate.session_cap_usd:.2f}, request cap "
-            f"${gate.request_cap_usd:.2f}. Stage E.2b is quotes only; a purchase session sets "
-            "its own caps in data/config.py first")
+            f"${gate.request_cap_usd:.2f} ({gate.session_id}). A purchase session sets its own "
+            "caps in data/config.py first")
 
 
 # ------------------------------------------------------------ quote-only ----

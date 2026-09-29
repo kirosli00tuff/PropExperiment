@@ -267,3 +267,43 @@
   screens K7 alone (before the 2026-09-30 weekly reset), E.7 screens K1
   (swapped forward by the user, 2026-09-28, to fit the weekly limit), and
   E.8 screens K6 after the reset. K8 follows on its own.
+- 2026-09-28 (user, planning chat): Phidias Propfirm researched as a
+  candidate venue with overnight holding, updating the D.1c constraint
+  audit finding that no researched firm permitted it. Result: real but
+  blocked, not adopted.
+  - Phidias's Premium tier is a genuine swing account: no same-day
+    flatten, positions held overnight and over weekends, EOD trailing
+    drawdown as the sole loss mechanism. Platform is Rithmic (also
+    Tradovate, DeepCharts); Rithmic itself supports algo execution
+    generally, but that is infrastructure capability, not Phidias policy.
+  - Phidias's Terms of Use ("Prohibition of automated trading and High
+    frequency trading") ban robots and fully automated algorithms
+    outright, with one exception: "semi-automated software, provided the
+    User actively monitors and manually adjusts all operations." The TOU
+    gives no technical definition of "semi-automated," no mention of
+    alert/confirmation systems (Telegram or otherwise), and no worked
+    example of compliant vs. non-compliant software.
+  - Candidate design floated by the user if semi-automation reads
+    permissively enough: the strategy generates a signal, a Telegram bot
+    pushes it to the user, the user taps to confirm, and only that
+    human action triggers order submission (e.g. via the Rithmic
+    connection, one order at a time, no unattended loop). This is
+    UNCONFIRMED against Phidias's actual reading of their own terms.
+    Before any build time goes into it: (a) ask Phidias support in
+    writing whether a bot-generates / human-confirms-via-Telegram flow
+    qualifies as semi-automated, and get the answer in writing; (b)
+    do not build the Telegram bot, or any execution path, until that
+    answer is in hand. A firm can revoke a funded account retroactively
+    for a terms violation, so this is a compliance question first and an
+    engineering question second.
+  - No dedicated API product, sandbox, or demo API is documented on
+    Phidias's side (checked 2026-09-28: rules page, swing-allowed page,
+    accounts/platforms page, TOU). Automation, if permitted at all, rides
+    on whichever retail platform (Rithmic/Tradovate/DeepCharts) the human
+    is clicking in.
+  - Venue decision unchanged: TopstepX/ProjectX stays the primary venue
+    (`docs/DECISIONS.md`, top entry). Phidias is recorded as researched,
+    not selected. Revisit only after the written compliance answer, and
+    only as an addition, not a replacement, since Phidias's evaluation
+    and split structure differ from TopstepX's and would need its own
+    scope decision.

@@ -307,3 +307,25 @@
     only as an addition, not a replacement, since Phidias's evaluation
     and split structure differ from TopstepX's and would need its own
     scope decision.
+- 2026-09-28 (user, planning chat): V16. K8 cross-market rules, decided
+  before any K8 bar is read. (a) Roll days: the frozen design rule stands.
+  A trade date is dropped if it is a roll-blackout date of any leg the
+  member reads, signal legs included (D4's union). The K8 catalog wording
+  that signal-leg rolls are "not excluded" yields to D4. (b) A signal leg
+  on a root with no D6 session record reads its micro twin: ES reads MES
+  (so an S&P leg starts 2020-02-03, D4) and BTC reads MBT. No purchase and
+  no harness change. A leg on NKD, MET or 6M is refused by name. (c) Crude
+  signal legs read MCL (S_X 2021-07-12). Full-size CL bars are declared as
+  the price path only if D4's power check fails and the user agrees then
+  (U8). Each ruling is checked against the K8 member texts before the K8
+  prompt is written.
+- 2026-09-28 (user, planning chat): V17. Order of work after Stage E's
+  screening. First E.8 (K6), then K8 alone, then the ML route (its
+  purchase uses acct-1's remaining room first, then a top-up of acct-2).
+  Only after those: a narrow research run on low-frequency, full-session
+  holds (rare-condition entries, large per-trade targets, several products
+  to reach enough trading days), and after that, if a base rule shows an
+  edge, a test of an LLM as a bounded per-trade filter (take, skip or half
+  size) against the base rule, on post-cutoff data or live paper trading.
+  The LLM filter would revisit the "deployed bot runs plain rules"
+  decision and needs Topstep's answer on its AI clause first.

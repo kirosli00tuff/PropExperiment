@@ -26,7 +26,8 @@ From 2026-09-23 on, each new prompt is committed here before it is sent.
 | E.5 | STAGE_E.5.md | Opus 5.5, xhigh | 2026-09-27 | K4 and K5 confirmation: harness v5 (pre-2024 holidays, verdict code) and v6 (spend caps), step 2 purchase with holdout-2 sealed, start rules, power checks, NGS C9 check, hashed lists, one confirmation run per cluster, Fable recomputation |
 | E.6 | STAGE_E.6.md | Opus 5.5, xhigh | before the 2026-09-30 reset | K7 bitcoin alone: event checks, code, Fable-audit and freeze six members, screen on the research window; no purchase |
 | E.7 | STAGE_E.7.md | Opus 5.5, xhigh | 2026-09-28, before the weekly reset | K1 equity index alone: free VXN history, CPI instants, code, Fable-audit and freeze five members, screen; no purchase |
-| E.8 | STAGE_E.8.md | Opus 5.5, xhigh | after the 2026-09-30 reset | K6 grains, oilseeds and livestock alone: WASDE and limit checks, code, Fable-audit and freeze seven members, screen; no purchase |
+| E.8 | STAGE_E.8.md | Opus 5.5, xhigh | 2026-09-30 to 10-01 | K6 grains, oilseeds and livestock alone: WASDE and limit checks, code, Fable-audit and freeze seven members, screen; no purchase |
+| E.9 | STAGE_E.9.md | Opus 5.5, xhigh | 2026-10-01 | K8 cross-market alone: legs per V16, event and clock checks, code, Fable-audit (cross-leg look-ahead) and freeze three members, screen four trials; no purchase |
 
 Model names are as written in each prompt at the time. The routing rules
 that apply today are in CLAUDE.md.

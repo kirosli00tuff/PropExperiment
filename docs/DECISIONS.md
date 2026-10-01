@@ -329,3 +329,12 @@
   size) against the base rule, on post-cutoff data or live paper trading.
   The LLM filter would revisit the "deployed bot runs plain rules"
   decision and needs Topstep's answer on its AI clause first.
+- 2026-10-01 (planning chat, for the user): V18. Lesson from E.8, for
+  future designs only. D5's screen (mean > 0 and daily t >= 1.0) passes a
+  series with a single positive trade automatically, since one positive
+  day among n gives t = sqrt(n / (n - 1)), just above 1.0, whatever its
+  size (K6-limitcont-01 HE, Tier A on one trip). D5 stays frozen for the
+  clusters already screened and for K8. The ML route's own screen and any
+  later research run must state a minimum trade count before a pass
+  counts, set before any data is read. K6's confirmation is not planned:
+  its only Tier A trial rests on one trade.

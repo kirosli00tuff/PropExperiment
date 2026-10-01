@@ -449,3 +449,161 @@ coverage check clips a day -1 interval to the calendar's sessions, so a late ope
 
 ## Part 2: recomputation (Task 6)
 
+Auditor: MemberAuditor-K6-FableXHigh, resumed with reports/stage_e8_briefs/auditor_task6_K6.md. Started 2026-10-01
+02:14 PDT, ended 02:24 PDT. Inputs: the runner's records and trip lists in reports/stage_e8_k6_screen/ (run
+02:10:25-02:12:46 PDT, "K6 research: 27 members, 0 refused", reports/stage_e8_briefs/t5_run.log), the cluster
+freeze reports/stage_e_k6_member_freeze.json, the frozen tables (costs, vehicles, release calendar) through the
+harness loaders, the member tables (_calendar.py, _wasde.py, _limits.py) and rules.products. No bar file was
+opened, nothing was replayed, no repository copy was made. Scripts: reports/stage_e8_briefs/audit_k6/
+recompute_screen.py (items 1, 2, 4, 5, 6) and rebuild_costs.py (item 3). Verdicts: VERIFIED 4 (items 0, 1, 3,
+5), VERIFIED WITH NOTES 3 (items 2, 4, 6), DISCREPANCY 0.
+
+### Item 0. The frozen files: VERIFIED
+
+The cluster freeze lists 14 files (strategy/members/__init__.py and the 13 under strategy/members/k6/). Each
+file's sha256 now equals the freeze's entry, and the 13 K6 entries equal the hashes audited in Part 1 (section
+0 table); no K6 file exists outside the freeze. Commit 0a14a9a354a8d56bbed8836f25f3727ab714e31a ("feat: K6
+member freeze (Stage E.8), cluster freeze sha256 a6f8b497", 02:10:12 PDT) adds the 26 member and test files;
+the pre-audit hash list verifies again at the end (21 OK). reports/stage_e8_member_rulings.md line 5 states
+"No member file and no test file changed after the audit: all 21 files equal", which the hashes confirm.
+Every record carries cluster_freeze_sha256 and harness_sha256 9a8ebe73...; each trip list's record_sha256
+equals the sha256 of its record file (27 of 27, checked in recompute_screen.py).
+
+### Item 1. The screen, recomputed: VERIFIED
+
+For all 27 records: mean = sum(values) / n, population sd, t = mean / (sd / sqrt n), passes = mean > 0 and
+t >= 1.0, recomputed from series.values in my own code; each equals the record's mean_ticks, sd_pop_ticks,
+t_daily and passes to 1e-9 relative, and n_days = len(values) = window_dates.n = len(daily_net_usd). The dates
+of every record equal the group's EC-CAL trade dates (GRAIN_TRADE_DATES or LIVESTOCK_TRADE_DATES) in [first,
+last] less the record's exclusions (roll_blackout_any_leg and unseen_roll_UR-1; not_every_leg_trades is empty
+everywhere), one value per date, zeros on dates without a trip; the per-date sum of the trip list's net_cents
+equals daily_net_usd x 100 and, divided by the tick value (ZC/ZW/ZS 1250, ZM/HE/LE 1000, ZL 600 cents) and
+contracts (1), equals series.values on every date; the set of non-zero days equals the set of trip dates for
+every record. Windows: 2025-04-01 to 2026-06-17 (ZC, ZM, ZL, HE, LE; UR-1 excludes 2026-06-18) or
+2026-06-15 (ZW, ZS, whose last window dates fall in a roll blackout); n_days 264 (crushgap, the union of three
+legs' blackouts) to 287 (ZL).
+
+| Trial | n_days | trips | mean ticks | t | passes |
+|---|---|---|---|---|---|
+| K6-cp1-01 ZC / ZW / ZS / ZM / ZL / HE / LE | 276 / 283 / 285 / 278 / 287 / 273 / 266 | 265 / 269 / 280 / 270 / 271 / 255 / 197 | -1.393 / -1.393 / -2.530 / -1.413 / -1.136 / -1.737 / -1.691 | -6.01 / -4.33 / -5.76 / -3.82 / -1.24 / -3.72 / -1.70 | no x 7 |
+| K6-cp2-01 ZC / ZW / ZS / ZM / ZL / HE / LE | 276 / 283 / 285 / 278 / 287 / 273 / 266 | 247 / 265 / 272 / 262 / 276 / 249 / 232 | -1.237 / -1.550 / -1.942 / -3.296 / -0.548 / -3.628 / -4.291 | -2.41 / -2.01 / -1.80 / -3.46 / -0.26 / -3.05 / -1.71 | no x 7 |
+| K6-cp3-01 ZC / ZW / ZS / ZM / ZL / HE / LE | 276 / 283 / 285 / 278 / 287 / 273 / 266 | 135 / 131 / 136 / 119 / 143 / 115 / 112 | -0.685 / -0.079 / -0.562 / +0.472 / -1.935 / -2.470 / +1.534 | -1.12 / -0.08 / -0.47 / +0.49 / -0.72 / -1.59 / +0.57 | no x 7 |
+| K6-crushgap-01 ZS | 264 | 137 | -3.481 | -2.71 | no |
+| K6-limitcont-01 HE | 273 | 1 | +0.1869 | +1.0018 | yes |
+| K6-limitcont-01 LE | 266 | 0 | 0.0 | undefined (sd 0) | no |
+| K6-wasdepre-01 ZC / ZS | 276 / 285 | 12 / 13 | -0.473 / -0.741 | -1.31 / -1.29 | no |
+| K6-wasdepost-01 ZC | 276 | 13 | -0.178 | -0.75 | no |
+
+K6-limitcont-01 LE (0 trips): every value is 0, so mean 0.0 and sd 0.0; `screen` takes its "sd = 0 and mean
+<= 0" branch (t_daily null, passes false; stage_e_stats.py lines 158-160), the record's screen says exactly that,
+and `_tier_one` puts it in Tier B ("fails the D5 screen"). It is not in not_tiered or power_check_undefined.
+(ScreenUndefined is raised only for sd = 0 with mean > 0, which no record has.)
+
+### Item 2. The tiers against D5 and OC-H: VERIFIED WITH NOTES
+
+Every record has status run, no labels and coverage >= 0.95 on every leg (lowest: HE 0.9934 on the limitcont
+and cp2/cp3 HE records), so by D5 and OC-H the tier is A when passes is true and B otherwise: 26 B, 1 A
+(K6-limitcont-01 HE), which is what K6_research_cluster.json holds (not_tiered and refused_members empty,
+power_check_undefined empty, tier labels equal the records' labels).
+
+Arithmetic of the Tier A trial. One positive day x among n - 1 zeros gives mean x/n and population variance
+x^2 (n-1)/n^2, so t = (x/n) / ((x/n) sqrt(n-1) / sqrt n) = sqrt(n / (n-1)), independent of x: for n = 273,
+1.0018365488, which is the record's t_daily to 10 digits. The runner's figure is therefore correct and, for
+any single positive day, passes is true whatever the gain. Nothing in the frozen D5 text (lines 298-312:
+"research-window mean net P&L > 0 and daily t >= 1.0 (per micro or per contract, zeros on no-trade days)")
+or in OC-H (coverage below 0.95 or a D9 floor label) excludes a one-trip series; the trial's mean hold is 99
+minutes, with no entry-cap or min-hold refusal, so no floor label applies. Confirmed: the lead's reading holds.
+Notes for the lead's judgement, not discrepancies: (a) D5's rationale ("an edge at eps would show t of roughly 5
+or more on 300 research days") presumes a series that trades, and the screen as frozen cannot fail any
+one-trip series with a positive net, so Tier A here says only "one profitable trade"; (b) the one trip
+(2025-04-07, entry 08:45, closed 10:24 by the engine's price_limit_exit, gross +53 ticks = $530, net $510.34)
+is consistent with the rule (a limit close on 2025-04-04 read through the proxy; the direction and the
+settlement cannot be checked without prices); (c) the power check is "not_run" on all 27 records
+("StartRuleMissing: no frozen S_X for [root]"), the lead's matter.
+
+### Item 3. Costs rebuilt from the trip lists, no replay: VERIFIED
+
+rebuild_costs.py, for K6-cp2-01 ZC (247 trips) and K6-limitcont-01 HE (1 trip): per fill, commission = half
+the round turn (ZC 264, HE 261 cents); slippage ticks = the frozen bucket's half-spread + depth at the fill
+bar's CT minute (depth is 0.0 in every ZC and HE bucket, so the fill side, which the trip list does not
+carry, cannot change the figure), or the product's largest half-spread + depth (ZC 0.536617, HE 0.721488
+ticks) when the fill lies in D8's event window [release, release + 30 min) of a release whose products include
+the root, or is D9.7's forced exit (force_event); slippage cents = ceil(round(qty x ticks x tick value, 6));
+net = gross - the two fills' costs. Result: 247 of 247 and 1 of 1 trip nets equal the trip list's net_cents
+exactly; the per-date sums equal daily_net_usd and series.values on all 276 and 273 dates; both record_sha256
+values equal their record files. My event-window test (built from the calendar JSON's products and
+instant_utc) agreed with the harness loader's `in_event_window` on every fill. Event-cost fills: ZC 8 (entries
+2025-06-12 11:23, 2025-11-14 11:02 and 2025-12-09 11:07 inside the WASDE window; the 2026-04-09 exit deferred
+to 11:02; the 2026-06-17 entry 13:15 and forced flatten 13:18 inside the FOMC window; the 2025-12-10 forced
+flatten 13:18, FOMC; the 2026-01-12 MLL liquidation at 11:00, the WASDE release minute); HE 1 (the D9.7 exit).
+Forced flattens at 13:18 fall in the 13:00 bucket [13:00, 13:20), the 2025-12-24 halt-day flatten at 11:45 in
+the 11:30 bucket; no bucket was missing. Gross cannot be checked without prices (said so; everything else is).
+Note: the 2026-01-12 ZC MLL liquidation filled at 11:00, the release minute, because D9.5a's fill guard applies
+to strategy orders only (admit_fill); that is the engine's design (an MLL breach cannot wait), not a member matter.
+
+### Item 4. Trade counts against the event tables and the rules: VERIFIED WITH NOTES
+
+- K6-wasdepre-01 ZC, ZS and K6-wasdepost-01 ZC. The 14 research-window WASDE dates (none dropped, R-1b-1) are
+  all GRAIN_FULL_SESSIONS. For ZC, 2025-04-10 is in the window's roll-blackout exclusions, leaving 13 event
+  dates; the member still emitted its intent there and the engine refused it by name (counter
+  engine_not_a_window_date 1 on both ZC records). Trips: wasdepost ZC 13 of 13 (entries all 11:15, exits 13:14
+  x 12 and one price_limit_exit at 12:09); wasdepre ZC 12 of 13, no trip on 2025-12-09; wasdepre ZS (no
+  exclusion) 13 of 14, no trip on 2026-03-10; entries all 10:30, exits 11:15 x 12 each, plus one ZS MLL
+  liquidation at 11:09 (2026-01-12 is not involved; the date is in the trip list). No trip on any non-WASDE
+  date, none on a non-full-session date, one entry per date. The two event dates without a trip are not
+  explained by the counters (no refusal was recorded, so the member emitted no intent): a zero drift, a
+  missing 08:30 or 10:29 bar, or two instrument_ids. Circumstantial: on 2025-12-09 the other ZC trials traded
+  (cp1 12:45, cp2 11:07, wasdepost 11:15) and on 2026-03-10 the other ZS trials traded (cp1, cp2 09:43, cp3 and
+  crushgap 08:31), and coverage is 0.9998 / 0.9999, so Dr = 0 is the likely cause; it cannot be confirmed
+  without prices.
+- K6-limitcont-01 HE: the one trip (2025-04-07) is on a LIVESTOCK_FULL_SESSIONS date, d-1 2025-04-04, d-2
+  04-03, d-3 04-02 >= the window's first date 04-01 (N-9 satisfied: the fourth livestock trade date of the
+  window), no dropped HE date; entry fill 08:45, exit 10:24 by price_limit_exit (documented engine exit).
+  K6-limitcont-01 LE: 0 trips, no counters; the 12 window dates whose d-1 or d-2 is a dropped LE date
+  (R-1b-2) are 2026-06-02, 03, 04, 05, 08, 09, 10, 11, 12, 15, 16, 17 (all in the window), on which the
+  member cannot trade by design.
+- K6-crushgap-01 ZS: 137 trips, all on GRAIN_FULL_SESSIONS dates, entries all 08:31, strategy exits all 13:14
+  (129), 7 MLL liquidations and 1 price_limit_exit; legs in the record ZS, ZM, ZL with positions on ZS only.
+- The ports: at most one entry per trade date on every record (max_entries_per_product_day 1, no date with two
+  trips). CP1: every entry fill 12:45 (grains) / 12:30 (livestock), every strategy exit 13:14 / 12:59; the
+  other exits are price_limit_exit or mll_liquidation. CP3: every entry 08:31, every strategy exit 13:14 /
+  12:59. CP2: 1,662 strategy exits across the seven roots, 1,556 with a 75-minute hold and 106 with 76 to 88
+  minutes (HE 48, ZW 33, ZM 15, LE 6, ZC 2, ZS 2); 75 is the rule when every bar is present, and the member
+  counts present bars (E.3-L-07; Part 1 mutant A-C2-03 and the coders' "a missing bar inside the hold moves
+  the exit one bar" tests), so each longer hold is one missing bar per extra minute inside the hold, or a
+  D9.5a deferral; the deferrals are accounted for exactly: fill_guard_deferral counters ZC 2, ZS 1, others 0,
+  and the fills at a release + 2 minutes are ZC 2025-11-14 (entry 11:02) and 2026-04-09 (exit 11:02, hold 76),
+  ZS 2025-08-12 (entry 11:02). The missing-bar explanation of the other longer holds is consistent with the
+  thin products (HE coverage 0.9934) but cannot be verified without bars: listed as unexplained in the strict
+  sense. No CP2 entry fill before 08:46 or after 13:15 (the 2026-06-17 ZC entry at 13:15 is the last eligible
+  bar's fill, held to the 13:18 flatten). Halt and late-open dates: CP1 and CP3 have no trip on 2025-11-28 or
+  2025-12-24 (no 12:44 bar; the halt label); CP2 traded both (a port, no C4), with the engine's flatten at
+  11:45 where it was still in (ZM and ZS on 11-28, ZC on 12-24); the ports traded the late opens 2025-12-26
+  and 2026-01-02 at the regular minutes; no new member traded a non-full-session date.
+
+### Item 5. Program N: VERIFIED
+
+27 records, all status "run" with a screen; 0 refused_case, 0 excluded_before_screening; the 27 members equal
+the freeze's 27 declarations (no undeclared record, no declaration without a record). N = 167 + 27 = 194 by
+the pre-declared rule (K6-L-17).
+
+### Item 6. MLL liquidations: VERIFIED WITH NOTES
+
+MLL-closed trips (close_reason mll_liquidation) per trial equal the counter mll_liquidation on all 27 records:
+cp1 HE 2, LE 2, ZC 2, ZL 1, ZM 1, ZS 4, ZW 1; cp2 HE 6, LE 10, ZC 2, ZL 3, ZM 5, ZS 5, ZW 3; cp3 HE 5, LE 4,
+ZC 2, ZL 4, ZM 1, ZS 3, ZW 1; crushgap 7; wasdepre ZS 1; limitcont HE 0, LE 0; wasdepre ZC 0; wasdepost 0.
+accounts_started - 1 equals that count on 25 records and exceeds it by one on K6-cp1-01 ZM (3 accounts, 1
+liquidation) and ZW (3, 1): the engine restarts an account at the next session roll whenever the status is
+not ACTIVE (stage_e_engine.py lines 423-426), so a breach realised on an ordinary closing fill restarts the
+account without a liquidation fill; those two trips stay complete trips in the lists. Not a discrepancy, but
+"accounts_started - 1" over-counts liquidations by one on those two trials. Tier dependence: the Tier A trial
+(limitcont HE) has no MLL event and one account, so its tier cannot depend on them. For every Tier B trial the
+mean with the MLL-closed trips removed (their net set to zero, a bound: the day's other outcome is unknown)
+stays below the screen: the only positive-mean Tier B trials, K6-cp3-01 LE (+1.53 -> +2.37, t 0.57 -> 0.89)
+and ZM (+0.47 -> +0.56, t 0.49 -> 0.59), still fail t >= 1.0; the closest negative means, cp3 ZW (-0.079 ->
+-0.024), cp2 ZL (-0.548 -> -0.118), cp3 ZL (-1.935 -> -0.358) and wasdepre ZS (-0.741 -> -0.364), stay
+negative. No tier depends on the MLL liquidations.
+
+Closing checks (02:24 PDT): pre-audit hashes 21 OK; holdout all_ok true, unlocks_logged 0; scratchpad 191 MB
+(no repository copy for Part 2).
+

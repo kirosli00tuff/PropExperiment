@@ -1,0 +1,41 @@
+$ date
+Wed Sep 30 11:57:03 PM PDT 2026
+$ git status --short
+?? reports/stage_e8_briefs/
+$ git log --oneline -3
+2e22522 docs: DECISIONS V16 (K8 rules) and V17 (order of work after screening)
+2dfaaf7 docs: log Phidias Propfirm as researched, blocked venue candidate
+880bfc7 docs: Stage E.7 results, K1 screened, all 11 trials Tier B, N = 167
+$ wc -c REGISTRATION.md
+0 REGISTRATION.md
+$ uv run python -m data.holdout status (keys)
+holdout_1 all_ok True unlocks_logged 0 unlock_log_ok True
+holdout_2 all_ok True unlocks_logged 0 unlock_log_ok True
+$ python3 reports/stage_e2b_briefs/check_frozen.py
+reports/stage_e1_freeze.json: manifest sha256 96166eb39b85d4fdcf132092978ee85393392de52c3857dc3f64ea7281454a7c files 32/32 match
+reports/stage_e2a_ml_freeze.json: manifest sha256 077a57e1c00554dd0745302b247673d45ee05b805ac4bfd876f8497f7bbb1ed2 files 4/4 match
+ALL_OK
+$ PYTHONPYCACHEPREFIX=<fresh> uv run python -m screening.harness_freeze verify --expected 9a8ebe7364beb7980eaea923888e06c2da253b7ff8ce2ce771b55045caf22f87
+preflight OK: 9a8ebe7364beb7980eaea923888e06c2da253b7ff8ce2ce771b55045caf22f87
+$ cluster freezes (load_cluster_freeze + verify_cluster_code)
+K2 cluster freeze OK 8815a775e74996419b57751b1104ffa07cd4b3450eb18a9a92c6cbbd5615b7c5 44 members
+K4 cluster freeze OK 7abcde1705440e97efcf1ce255d979213eed9840f03a8383f2784a74f5f1534a 12 members
+K5 cluster freeze OK 1d0c974f18e884e1ad073d8f6f94d7bb70ee6f43971c7f23ccacab54103b3655 11 members
+K3 cluster freeze OK c4fb5da41d69a6be54ea07d1ab35bd2b238d1fbeafaeb3008b886f8fc6888d95 30 members
+K7 cluster freeze OK 46cae3082ae17cfd2a0e731cba27f6cc5dd2bdb94bb757d7ae48c684a5449462 6 members
+K1 cluster freeze OK cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2 11 members
+K6 no freeze: ClusterFreezeError
+$ ledger
+17400 ledger/databento_spend.jsonl
+0b5466c4366ca9eaba7e10525545631c83e97c1184a7e745d5ed8ad47a9fe957
+$ acct-2 position (pull_step2.account_position on the step 2 gate; reads the ledger only)
+stage-E.5-2026-09-27 {'account': 'acct-2', 'account_cap_usd': 125.0, 'account_credit_usd': 125.0, 'spent_usd': 124.673761, 'cap_headroom_usd': 0.326239, 'credit_left_usd': 0.326239}
+$ python -m data.pull_step2 --status (ZC ZW ZS ZM ZL HE LE)
+roots in status: 45 ; states: ['not_bought', 'sealed']
+ZC {"state": "not_bought"}
+ZW {"state": "not_bought"}
+ZS {"state": "not_bought"}
+ZM {"state": "not_bought"}
+ZL {"state": "not_bought"}
+HE {"state": "not_bought"}
+LE {"state": "not_bought"}

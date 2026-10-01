@@ -3067,3 +3067,59 @@ Delegation share: lead 35.1%, workers 64.9%; by model opus 87.0%, fable 13.0%. C
 note: E.4-E.6 kept each message's first usage record, which understates output tokens; with that method this session's
 output would read about 166k instead of 720k (cache reads unchanged). These are token counts, not plan-credit percentages;
 the /usage meter is the user's to record.
+
+## 2026-10-01 — Stage E.8: K6 grains, oilseeds and livestock coded, audited, frozen and screened (no purchase)
+
+Lead Opus 5.5 xhigh. Seven K6 members, 27 trials (the three core ports on ZC, ZW, ZS, ZM, ZL, HE and LE at q_c 1;
+K6-crushgap-01 on ZS with ZM and ZL as signal legs; K6-limitcont-01 on HE and LE; K6-wasdepre-01 on ZC and ZS;
+K6-wasdepost-01 on ZC), specified from the frozen catalog, coded by two opus coders, audited by Fable (0 blocking, 0
+should-fix, 11 notes), **frozen (0a14a9a, cluster freeze a6f8b497...)** and run once on the research window (27 run, 0
+refused). **Tier A: K6-limitcont-01 HE alone, on a single trade** (2025-04-07, +$510 net; t = sqrt(273/272) = 1.002, which
+any one positive day reaches); the other 26 are Tier B (best cp3 LE +1.53 ticks/day, t 0.57); K6-limitcont-01 LE did not
+trade. The Fable recomputation found no discrepancy. All 14 research-window WASDE releases kept; the frozen LE limit
+($0.0725) contradicts CME's $0.0850 on 2026-06-01..06-18, so those dates are dropped for limitcont LE (the harness's D9.7 is
+stricter there; flagged). limitcont reads the D9.7 settlement proxy and the initial limit (no official settlements or
+expanded table frozen; flagged). An auditor scratch copy of data/ filled /tmp once; removed, nothing lost. **Program N =
+194.** A K6 confirmation would need ZC..LE step 2 ($26.52 quoted) and a top-up of about $26.19. Full record:
+reports/E.8_RETURN.md.
+
+**Session cost.** **Wall clock** 2026-09-30 23:57 to 2026-10-01 02:31 PDT (2 h 34 min), all of it work: no pause, no usage-limit wait, no
+crash. First estimate 4 h 25 min (to about 04:25; the prompt expected about 2 h), revised at 00:25 to about 03:50 as Task 1
+and Task 1b came in early; the audit (28 min) and the run (3 min) came in shorter still. The five full suites (12 minutes
+each) overlap worker time except the Task 4 suite. The gate suite's first run (01:28-01:37) died when the auditor's scratch
+copy of data/ filled the RAM-backed /tmp; it is a work row with a deviation, not a pause.
+
+**Final ETA table** (PDT; tokens from the transcripts; no pause rows, since none occurred):
+
+| Task | Owner | Model | Effort | Start | End | Time | Tokens | Status and deviations |
+|---|---|---|---|---|---|---|---|---|
+| 0 Startup checks (start suite to 00:09) | lead | opus | xhigh | 23:57 | 00:09 | 12 min | in lead | done; suite = E.7's end |
+| 1 Member specs (section 10 at 00:18) | lead | opus | xhigh | 23:58 | 00:19 | 21 min | in lead | done |
+| 1b Event and limit checks | ReleaseChecker-OpusMed | opus | medium | 00:06 | 00:17 | 11 min | 8,725,689 | done; 1 limit period dropped (R-1b-2) |
+| 2A Ports and crushgap | MemberCoder-A-OpusXHigh | opus | xhigh | 00:19 | 01:28 | 69 min | 22,366,723 | done |
+| 2B limitcont, WASDE members, tables | MemberCoder-B-OpusXHigh | opus | xhigh | 00:19 | 00:53 | 34 min | 20,920,813 | done; its .md write refused, saved by the lead |
+| 2g Gate suite, first run | lead | - | - | 01:28 | 01:37 | 9 min | in lead | failed: /tmp full (the auditor's data/ copy) |
+| 2g Gate suite, re-run | lead | - | - | 01:38 | 01:50 | 12 min | in lead | 5373 passed |
+| 3 Fidelity audit | MemberAuditor-K6-FableXHigh | fable | xhigh | 01:28 | 01:56 | 28 min | 14,803,740 (Parts 1 and 2) | 0 blocking, 0 should-fix, 11 notes; tmpfs incident |
+| 4 Rulings, freeze, suite, commit 0a14a9a | lead | opus | xhigh | 01:56 | 02:10 | 14 min | in lead | done; no code change |
+| 5 Screening run | lead | opus | xhigh | 02:10 | 02:13 | 3 min | in lead | 27 run, 0 refused |
+| 6 Recomputation | MemberAuditor-K6-FableXHigh (resumed) | fable | xhigh | 02:13 | 02:26 | 13 min | above | no discrepancy |
+| 7 Result, return, end suite (02:15-02:27), end checks, cost, progress | lead | opus | xhigh | 02:13 | 02:31 | 18 min | in lead | done |
+| **Stage** | | | | 23:57 | 02:31 | **2 h 34 min wall and work** | **129,692,592** (lead 62,875,627, 48.5%; workers 66,816,965, 51.5%) | first estimate 4 h 25 min; the prompt expected about 2 h |
+
+**Tokens per model** (the lead transcript 94d6572b's .jsonl plus every worker transcript under its subagents/ folder; each
+assistant message counted once by message id, from its LAST usage record; reports/stage_e8_briefs/cost.py, cost.out; the
+lead's last messages after the count, about 02:30-02:35, are not included):
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 1,100 | 177,175 | 13,651,766 | 973,699 | 14,803,740 |
+| claude-opus-5-5 | 884 | 631,921 | 111,543,180 | 2,712,867 | 114,888,852 |
+| all | 1,984 | 809,096 | 125,194,946 | 3,686,566 | 129,692,592 |
+
+Per worker spawn: ReleaseChecker-OpusMed (worker-medium, opus, medium) 8,725,689; MemberCoder-A-OpusXHigh (worker-xhigh,
+opus, xhigh) 22,366,723; MemberCoder-B-OpusXHigh (worker-xhigh, opus, xhigh) 20,920,813; MemberAuditor-K6-FableXHigh
+(worker-xhigh, fable, xhigh, Parts 1 and 2) 14,803,740. Lead (opus, xhigh) 62,875,627.
+
+Delegation share: lead 48.5%, workers 51.5%; by model opus 88.6%, fable 11.4%. Cache reads are 96.5% of all tokens. These
+are token counts, not plan-credit percentages; the /usage meter is the user's to record.

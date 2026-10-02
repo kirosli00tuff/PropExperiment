@@ -8,7 +8,7 @@ would change the setup.
 
 - Lead session on Opus (Opus 5.5 since 2026-09-22; Fable 5.1 before that). The
   lead plans, routes, verifies and synthesizes.
-- Workers on haiku, sonnet, opus or fable, at effort medium, high, xhigh or
+- Workers on haiku, sonnet (Sonnet 5.5 since 2026-10-01; Sonnet 5 before), opus or fable, at effort medium, high, xhigh or
   max, chosen per subtask by the lead. Low effort is not used.
 - Haiku does pure extraction; Sonnet at medium does complex extraction
   (2026-09-21 revision): reading, parsing and

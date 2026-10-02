@@ -45,7 +45,10 @@ The lead keeps these for itself and never delegates them:
 
 Route by decision complexity and silent-failure risk, not by task label.
 Worker models: haiku, sonnet, opus, fable. Worker efforts: medium, high,
-xhigh, max. No low effort.
+xhigh, max. No low effort. The `sonnet` alias means Sonnet 5.5
+(claude-sonnet-5-5, pinned in .claude/settings.json by
+ANTHROPIC_DEFAULT_SONNET_MODEL since 2026-10-01, user). Earlier returns'
+token tables show claude-sonnet-5, the model before it.
 
 | Work | Model | Effort |
 |---|---|---|

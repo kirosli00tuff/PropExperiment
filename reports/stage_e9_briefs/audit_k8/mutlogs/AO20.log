@@ -1,0 +1,89 @@
+........................................................................ [ 34%]
+.....................................................FF...F..........F.. [ 68%]
+...............F.................................................        [100%]
+=================================== FAILURES ===================================
+___________________ test_threshold_is_inclusive_at_exactly_2 ___________________
+
+    def test_threshold_is_inclusive_at_exactly_2() -> None:
+        assert oilcad.passes_threshold(0.5, 0.25)  # z = 2.0 exactly
+>       assert oilcad.passes_threshold(-0.5, 0.25)
+E       assert False
+E        +  where False = <function passes_threshold at 0x722d48d7cae0>(-0.5, 0.25)
+E        +    where <function passes_threshold at 0x722d48d7cae0> = oilcad.passes_threshold
+
+tests/test_k8_members_oilcad.py:419: AssertionError
+______________________ test_z_exactly_2_trades_end_to_end ______________________
+
+    def test_z_exactly_2_trades_end_to_end() -> None:
+        """STANDARD: s = u/2; a +1 step from B is r = u, z = 2.0 exactly: a buy; -1 a sell."""
+        assert entries(DAY, {"10:05": 1}) == [("10:04", "buy")]
+>       assert entries(DAY, {"10:05": -1}) == [("10:04", "sell")]
+E       AssertionError: assert [] == [('10:04', 'sell')]
+E         
+E         Right contains one more item: ('10:04', 'sell')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:429: AssertionError
+________________ test_sign_buys_on_z_above_zero_and_sells_below ________________
+
+    def test_sign_buys_on_z_above_zero_and_sells_below() -> None:
+>       assert entries(DAY, {"09:05": 2, "10:05": -2}) == [("09:04", "buy"), ("10:04", "sell")]
+E       AssertionError: assert [('09:04', 'buy')] == [('09:04', 'b...:04', 'sell')]
+E         
+E         Right contains one more item: ('10:04', 'sell')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:456: AssertionError
+______________ test_a_previous_dates_t_minus_6_bar_is_never_used _______________
+
+    def test_a_previous_dates_t_minus_6_bar_is_never_used() -> None:
+        """d's 08:59 MCL bar is missing; the previous date's 08:59 bar carries d's instrument_id and
+        a level 10 ticks below: r_09:05 stays undefined (no stale value), so no entry at 09:05.
+        Control: d's own 08:59 bar at that level is read (a sell at 09:00, a buy at 09:05).
+        References (5, 5, 45) x 20, n ~ 1100."""
+        rich = ((5, 5, 45),) * 20
+        refs = refs_of(DAY)
+    
+        def scenario(own: bool) -> list[tuple[str, str]]:
+            bars = [rb for rb in ref_bars(refs, rich) if not (
+                rb[1].trade_date == refs[-1] and ct(rb[1].ts_event_ns).time() == time(8, 59))]
+            bars.append(mk_bar("MCL", refs[-1], hm(8, 59), B_MCL - 10))
+            bars += trade_bars(DAY, mcl_skip=[] if own else [hm(8, 59)],
+                               mcl_extra=[(hm(8, 59), B_MCL - 10)] if own else [])
+            if own:
+                bars = [rb for rb in bars if not (
+                    rb[1].trade_date == DAY and rb[0] == "MCL" and rb[1].close == price("MCL", B_MCL)
+                    and ct(rb[1].ts_event_ns).time() == time(8, 59))]
+            out = drive(mk(), sorted(bars, key=lambda rb: rb[1].ts_event_ns))
+            return [(i[1], i[3]) for i in out]
+    
+        assert scenario(own=False) == []
+>       assert scenario(own=True) == [("08:59", "sell"), ("09:04", "buy")]  # r_09:00 < 0, r_09:05 > 0
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert [('09:04', 'buy')] == [('08:59', 's...9:04', 'buy')]
+E         
+E         At index 0 diff: ('09:04', 'buy') != ('08:59', 'sell')
+E         Right contains one more item: ('09:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:567: AssertionError
+____________________________ test_engine_sell_side _____________________________
+
+    def test_engine_sell_side() -> None:
+>       assert fills(run_day({"09:05": -2})) == [(DAY, "09:05", "6C", "sell", "strategy"),
+                                                 (DAY, "09:20", "6C", "buy", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '09:05', '6C', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:706: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_threshold_is_inclusive_at_exactly_2
+FAILED tests/test_k8_members_oilcad.py::test_z_exactly_2_trades_end_to_end - ...
+FAILED tests/test_k8_members_oilcad.py::test_sign_buys_on_z_above_zero_and_sells_below
+FAILED tests/test_k8_members_oilcad.py::test_a_previous_dates_t_minus_6_bar_is_never_used
+FAILED tests/test_k8_members_oilcad.py::test_engine_sell_side - AssertionErro...
+5 failed, 204 passed in 3.69s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO20.py as strategy.members.k8.oilcad

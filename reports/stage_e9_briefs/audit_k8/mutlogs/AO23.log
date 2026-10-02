@@ -1,0 +1,39 @@
+........................................................................ [ 34%]
+.....................................................................F.. [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+______________ test_a_previous_dates_t_minus_6_bar_is_never_used _______________
+
+    def test_a_previous_dates_t_minus_6_bar_is_never_used() -> None:
+        """d's 08:59 MCL bar is missing; the previous date's 08:59 bar carries d's instrument_id and
+        a level 10 ticks below: r_09:05 stays undefined (no stale value), so no entry at 09:05.
+        Control: d's own 08:59 bar at that level is read (a sell at 09:00, a buy at 09:05).
+        References (5, 5, 45) x 20, n ~ 1100."""
+        rich = ((5, 5, 45),) * 20
+        refs = refs_of(DAY)
+    
+        def scenario(own: bool) -> list[tuple[str, str]]:
+            bars = [rb for rb in ref_bars(refs, rich) if not (
+                rb[1].trade_date == refs[-1] and ct(rb[1].ts_event_ns).time() == time(8, 59))]
+            bars.append(mk_bar("MCL", refs[-1], hm(8, 59), B_MCL - 10))
+            bars += trade_bars(DAY, mcl_skip=[] if own else [hm(8, 59)],
+                               mcl_extra=[(hm(8, 59), B_MCL - 10)] if own else [])
+            if own:
+                bars = [rb for rb in bars if not (
+                    rb[1].trade_date == DAY and rb[0] == "MCL" and rb[1].close == price("MCL", B_MCL)
+                    and ct(rb[1].ts_event_ns).time() == time(8, 59))]
+            out = drive(mk(), sorted(bars, key=lambda rb: rb[1].ts_event_ns))
+            return [(i[1], i[3]) for i in out]
+    
+>       assert scenario(own=False) == []
+E       AssertionError: assert [('09:04', 'buy')] == []
+E         
+E         Left contains one more item: ('09:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:566: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_a_previous_dates_t_minus_6_bar_is_never_used
+1 failed, 208 passed in 3.64s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO23.py as strategy.members.k8.oilcad

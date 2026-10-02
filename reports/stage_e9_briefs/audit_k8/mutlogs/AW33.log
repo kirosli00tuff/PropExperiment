@@ -1,0 +1,289 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+...............................FFFF.F...FF.....FFFFF.....FFFFFFFF        [100%]
+=================================== FAILURES ===================================
+_____________ test_buy_on_the_sunday_17_59_view_when_p_s_above_p_f _____________
+
+    def test_buy_on_the_sunday_17_59_view_when_p_s_above_p_f() -> None:
+>       assert entries(week(MON, 0, 10)) == [(sunday_of(MON), "17:59", "buy")]
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == [(datetime.da...7:59', 'buy')]
+E         
+E         At index 0 diff: (datetime.date(2025, 6, 1), '17:59', 'sell') != (datetime.date(2025, 6, 1), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:167: AssertionError
+_________________________ test_sell_when_p_s_below_p_f _________________________
+
+    def test_sell_when_p_s_below_p_f() -> None:
+>       assert entries(week(MON, 10, 0)) == [(sunday_of(MON), "17:59", "sell")]
+E       AssertionError: assert [(datetime.da...7:59', 'buy')] == [(datetime.da...:59', 'sell')]
+E         
+E         At index 0 diff: (datetime.date(2025, 6, 1), '17:59', 'buy') != (datetime.date(2025, 6, 1), '17:59', 'sell')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:171: AssertionError
+___________________________ test_g_zero_is_no_trade ____________________________
+
+    def test_g_zero_is_no_trade() -> None:
+>       assert entries(week(MON, 4, 4)) == []
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 6, 1), '17:59', 'sell')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:175: AssertionError
+__________________________ test_one_tick_moves_trade ___________________________
+
+    def test_one_tick_moves_trade() -> None:
+>       assert entries(week(MON, 0, 1)) == [(sunday_of(MON), "17:59", "buy")]
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == [(datetime.da...7:59', 'buy')]
+E         
+E         At index 0 diff: (datetime.date(2025, 6, 1), '17:59', 'sell') != (datetime.date(2025, 6, 1), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:179: AssertionError
+_____________ test_friday_14_59_missing_14_58_and_15_00_never_used _____________
+
+    def test_friday_14_59_missing_14_58_and_15_00_never_used() -> None:
+>       assert entries(week(MON, 0, 10, mbt_skip=[(-3, hm(14, 59))])) == []
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 6, 1), '17:59', 'sell')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:189: AssertionError
+__________________ test_one_instrument_id_across_p_f_and_p_s ___________________
+
+    def test_one_instrument_id_across_p_f_and_p_s() -> None:
+        assert entries(week(MON, 0, 10, ids={(-1, hm(17, 59)): 778})) == []
+>       assert entries(week(MON, 0, 10, ids={(-3, hm(14, 59)): 776})) == []
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 6, 1), '17:59', 'sell')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:206: AssertionError
+_______ test_p_f_comes_from_ct_date_d_minus_3_only_never_a_stale_friday ________
+
+    def test_p_f_comes_from_ct_date_d_minus_3_only_never_a_stale_friday() -> None:
+        """The Friday 2025-06-06 14:59 MBT bar exists; the Friday 2025-06-13 one is missing: the
+        Monday 2025-06-16 does not trade on the stale Friday."""
+        d = date(2025, 6, 16)
+        stale = mk_bar("MBT", date(2025, 6, 6), hm(14, 59), B_MBT)
+>       assert entries([stale, *week(d, 0, 10, mbt_skip=[(-3, hm(14, 59))])]) == []
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 6, 15), '17:59', 'sell')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:214: AssertionError
+______________ test_both_regimes_read_the_same_two_bars[monday0] _______________
+
+monday = datetime.date(2026, 5, 18)
+
+    @pytest.mark.parametrize("monday", [MON_BEFORE, MON_AFTER])
+    def test_both_regimes_read_the_same_two_bars(monday: date) -> None:
+>       assert entries(week(monday, 0, 10)) == [(sunday_of(monday), "17:59", "buy")]
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == [(datetime.da...7:59', 'buy')]
+E         
+E         At index 0 diff: (datetime.date(2026, 5, 17), '17:59', 'sell') != (datetime.date(2026, 5, 17), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:246: AssertionError
+______________ test_both_regimes_read_the_same_two_bars[monday1] _______________
+
+monday = datetime.date(2026, 6, 8)
+
+    @pytest.mark.parametrize("monday", [MON_BEFORE, MON_AFTER])
+    def test_both_regimes_read_the_same_two_bars(monday: date) -> None:
+>       assert entries(week(monday, 0, 10)) == [(sunday_of(monday), "17:59", "buy")]
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == [(datetime.da...7:59', 'buy')]
+E         
+E         At index 0 diff: (datetime.date(2026, 6, 7), '17:59', 'sell') != (datetime.date(2026, 6, 7), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:246: AssertionError
+________ test_after_the_change_saturday_and_sunday_bars_never_stand_in _________
+
+    def test_after_the_change_saturday_and_sunday_bars_never_stand_in() -> None:
+        """MON_AFTER: the Friday 14:59 bar missing, Saturday and Sunday 14:59 bars (trade_date d)
+        present: no trade; the Sunday 17:59 bar missing, Saturday and Friday 17:59 bars present:
+        no trade."""
+>       assert entries(week(MON_AFTER, 0, 10, mbt_skip=[(-3, hm(14, 59))])) == []
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == []
+E         
+E         Left contains one more item: (datetime.date(2026, 6, 7), '17:59', 'sell')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:254: AssertionError
+________ test_a_saturday_mnq_bar_booked_to_monday_is_not_the_entry_bar _________
+
+    def test_a_saturday_mnq_bar_booked_to_monday_is_not_the_entry_bar() -> None:
+        """MON_AFTER: a synthetic MNQ bar at Saturday 17:59 carrying trade_date d, next to the MBT
+        Saturday 17:59 bar (booked to d after the change): the entry is still only the Sunday one."""
+        sat = MON_AFTER - timedelta(days=2)
+        extra = mk_bar("MNQ", sat, hm(17, 59), B_MNQ, trade_day=MON_AFTER)
+>       assert entries([*week(MON_AFTER, 0, 10), extra]) == [(sunday_of(MON_AFTER), "17:59", "buy")]
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == [(datetime.da...7:59', 'buy')]
+E         
+E         At index 0 diff: (datetime.date(2026, 6, 7), '17:59', 'sell') != (datetime.date(2026, 6, 7), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:263: AssertionError
+___________________ test_c6_tests_the_mnq_sunday_18_00_fill ____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x784a30b0eff0>
+
+    def test_c6_tests_the_mnq_sunday_18_00_fill(monkeypatch: pytest.MonkeyPatch) -> None:
+        calls: list[tuple[str, int]] = []
+    
+        def spy(root: str, t_ns: int) -> bool:
+            calls.append((root, t_ns))
+            return False
+    
+        monkeypatch.setattr(wkndbtc, "in_guard", spy)
+>       assert entries(week(MON, 0, 10)) == [(sunday_of(MON), "17:59", "buy")]
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == [(datetime.da...7:59', 'buy')]
+E         
+E         At index 0 diff: (datetime.date(2025, 6, 1), '17:59', 'sell') != (datetime.date(2025, 6, 1), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:275: AssertionError
+______________ test_exit_at_monday_14_58_resent_while_not_pending ______________
+
+    def test_exit_at_monday_14_58_resent_while_not_pending() -> None:
+        """The member's entry on the Sunday 17:59 view, then a position from 18:00: no exit before
+        14:58 Monday; exits on 14:58 and (refused, not pending) 14:59; pending from 15:00."""
+        acct = _acct(ns_at(sunday_of(MON), hm(18, 0)), 1, pend_from=ns_at(MON, hm(15, 0)))
+        out = entries(week(MON, 0, 10), acct)
+>       assert out == [(sunday_of(MON), "17:59", "buy"), (MON, "14:58", "sell"),
+                       (MON, "14:59", "sell")]
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == [(datetime.da...:59', 'sell')]
+E         
+E         At index 0 diff: (datetime.date(2025, 6, 1), '17:59', 'sell') != (datetime.date(2025, 6, 1), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:312: AssertionError
+____ test_exit_of_a_short_buys_and_a_missing_exit_bar_goes_to_the_next_bar _____
+
+    def test_exit_of_a_short_buys_and_a_missing_exit_bar_goes_to_the_next_bar() -> None:
+        acct = _acct(ns_at(sunday_of(MON), hm(18, 0)), -1, pend_from=ns_at(MON, hm(15, 0)))
+        out = entries(week(MON, 10, 0, mnq_skip=[(0, hm(14, 58))]), acct)
+>       assert out == [(sunday_of(MON), "17:59", "sell"), (MON, "14:59", "buy")]
+E       AssertionError: assert [(datetime.da...4:59', 'buy')] == [(datetime.da...4:59', 'buy')]
+E         
+E         At index 0 diff: (datetime.date(2025, 6, 1), '17:59', 'buy') != (datetime.date(2025, 6, 1), '17:59', 'sell')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:319: AssertionError
+__________________ test_every_exit_closes_the_whole_position ___________________
+
+    def test_every_exit_closes_the_whole_position() -> None:
+        acct = _acct(ns_at(sunday_of(MON), hm(18, 0)), 2, pend_from=ns_at(MON, hm(14, 59)))
+        out = entries_any_qty(week(MON, 0, 10), acct)
+>       assert out == [(sunday_of(MON), "17:59", "buy", 1), (MON, "14:58", "sell", 2)]
+E       AssertionError: assert [(datetime.da...', 'sell', 2)] == [(datetime.da...', 'sell', 2)]
+E         
+E         At index 0 diff: (datetime.date(2025, 6, 1), '17:59', 'sell', 1) != (datetime.date(2025, 6, 1), '17:59', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:325: AssertionError
+_________ test_engine_fills_mnq_at_sunday_18_00_and_exits_monday_14_59 _________
+
+    def test_engine_fills_mnq_at_sunday_18_00_and_exits_monday_14_59() -> None:
+        res = run_week(MON)
+>       assert fills(res) == [(sunday_of(MON), "18:00", "MNQ", "buy", "strategy"),
+                              (MON, "14:59", "MNQ", "sell", "strategy")]
+E       AssertionError: assert [(datetime.da..., 'strategy')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 0 diff: (datetime.date(2025, 6, 1), '18:00', 'MNQ', 'sell', 'strategy') != (datetime.date(2025, 6, 1), '18:00', 'MNQ', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:343: AssertionError
+_________________ test_engine_sell_side_after_the_24_7_change __________________
+
+    def test_engine_sell_side_after_the_24_7_change() -> None:
+        res = run_week(MON_AFTER, 10, 0)
+>       assert fills(res) == [(sunday_of(MON_AFTER), "18:00", "MNQ", "sell", "strategy"),
+                              (MON_AFTER, "14:59", "MNQ", "buy", "strategy")]
+E       AssertionError: assert [(datetime.da..., 'strategy')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 0 diff: (datetime.date(2026, 6, 7), '18:00', 'MNQ', 'buy', 'strategy') != (datetime.date(2026, 6, 7), '18:00', 'MNQ', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:352: AssertionError
+__________ test_engine_missing_exit_bar_exits_on_the_first_later_bar ___________
+
+    def test_engine_missing_exit_bar_exits_on_the_first_later_bar() -> None:
+        res = run_week(MON, mnq_skip=[(0, hm(14, 58))])
+>       assert fills(res) == [(sunday_of(MON), "18:00", "MNQ", "buy", "strategy"),
+                              (MON, "15:00", "MNQ", "sell", "strategy")]
+E       AssertionError: assert [(datetime.da..., 'strategy')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 0 diff: (datetime.date(2025, 6, 1), '18:00', 'MNQ', 'sell', 'strategy') != (datetime.date(2025, 6, 1), '18:00', 'MNQ', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:358: AssertionError
+_________ test_engine_refuses_on_a_signal_leg_roll_blackout_date_only __________
+
+    def test_engine_refuses_on_a_signal_leg_roll_blackout_date_only() -> None:
+        """V16(a) end to end: an MBT roll blackout on the Monday (MNQ clean). The runner's rules
+        (member_window) drop the date: the open is refused as outside the window; kept in the
+        window with the union as blackout: engine_roll_blackout; no blackout: it fills."""
+        m = mk()
+        bars = sorted(week(MON), key=lambda rb: rb[1].ts_event_ns)
+        rules, mw = runner_rules(m, bars, {"MBT": [MON]})
+        assert MON not in mw.dates and MON in mw.blackout_union
+        res = engine(m, bars, rules)
+        assert fills(res) == [] and refusals(res) == ["engine_not_a_window_date"]
+        res = engine(mk(), bars, rules_of(m, [MON], blackout=mw.blackout_union))
+        assert fills(res) == [] and refusals(res) == ["engine_roll_blackout"]
+        clean, mw2 = runner_rules(m, bars, {})
+        assert MON in mw2.dates
+>       assert fills(engine(mk(), bars, clean))[0] == (sunday_of(MON), "18:00", "MNQ", "buy",
+                                                      "strategy")
+E       AssertionError: assert (datetime.dat...', 'strategy') == (datetime.dat...', 'strategy')
+E         
+E         At index 3 diff: 'sell' != 'buy'
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:376: AssertionError
+____ test_engine_a_friday_mbt_roll_blackout_alone_does_not_block_the_monday ____
+
+    def test_engine_a_friday_mbt_roll_blackout_alone_does_not_block_the_monday() -> None:
+        """K8-L-12: d - 3 a roll-blackout date of MBT but d not: the engine allows the trade (the
+        instrument_id test covers a contract change)."""
+        m = mk()
+        bars = sorted(week(MON), key=lambda rb: rb[1].ts_event_ns)
+        res = engine(m, bars, rules_of(m, [MON], blackout=[MON - timedelta(days=3)]))
+>       assert fills(res)[0] == (sunday_of(MON), "18:00", "MNQ", "buy", "strategy")
+E       AssertionError: assert (datetime.dat...', 'strategy') == (datetime.dat...', 'strategy')
+E         
+E         At index 3 diff: 'sell' != 'buy'
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:386: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_wkndbtc.py::test_buy_on_the_sunday_17_59_view_when_p_s_above_p_f
+FAILED tests/test_k8_members_wkndbtc.py::test_sell_when_p_s_below_p_f - Asser...
+FAILED tests/test_k8_members_wkndbtc.py::test_g_zero_is_no_trade - AssertionE...
+FAILED tests/test_k8_members_wkndbtc.py::test_one_tick_moves_trade - Assertio...
+FAILED tests/test_k8_members_wkndbtc.py::test_friday_14_59_missing_14_58_and_15_00_never_used
+FAILED tests/test_k8_members_wkndbtc.py::test_one_instrument_id_across_p_f_and_p_s
+FAILED tests/test_k8_members_wkndbtc.py::test_p_f_comes_from_ct_date_d_minus_3_only_never_a_stale_friday
+FAILED tests/test_k8_members_wkndbtc.py::test_both_regimes_read_the_same_two_bars[monday0]
+FAILED tests/test_k8_members_wkndbtc.py::test_both_regimes_read_the_same_two_bars[monday1]
+FAILED tests/test_k8_members_wkndbtc.py::test_after_the_change_saturday_and_sunday_bars_never_stand_in
+FAILED tests/test_k8_members_wkndbtc.py::test_a_saturday_mnq_bar_booked_to_monday_is_not_the_entry_bar
+FAILED tests/test_k8_members_wkndbtc.py::test_c6_tests_the_mnq_sunday_18_00_fill
+FAILED tests/test_k8_members_wkndbtc.py::test_exit_at_monday_14_58_resent_while_not_pending
+FAILED tests/test_k8_members_wkndbtc.py::test_exit_of_a_short_buys_and_a_missing_exit_bar_goes_to_the_next_bar
+FAILED tests/test_k8_members_wkndbtc.py::test_every_exit_closes_the_whole_position
+FAILED tests/test_k8_members_wkndbtc.py::test_engine_fills_mnq_at_sunday_18_00_and_exits_monday_14_59
+FAILED tests/test_k8_members_wkndbtc.py::test_engine_sell_side_after_the_24_7_change
+FAILED tests/test_k8_members_wkndbtc.py::test_engine_missing_exit_bar_exits_on_the_first_later_bar
+FAILED tests/test_k8_members_wkndbtc.py::test_engine_refuses_on_a_signal_leg_roll_blackout_date_only
+FAILED tests/test_k8_members_wkndbtc.py::test_engine_a_friday_mbt_roll_blackout_alone_does_not_block_the_monday
+20 failed, 189 passed in 6.67s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AW33.py as strategy.members.k8.wkndbtc

@@ -1,0 +1,24 @@
+..................................F..................................... [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+__________________ test_declarations_names_legs_and_factories __________________
+
+    def test_declarations_names_legs_and_factories() -> None:
+        h30, heod = flight.make_h30(), flight.make_heod()
+        assert isinstance(h30, StageEMember) and isinstance(heod, StageEMember)
+        assert (h30.name, heod.name) == ("K8-flight-01 H30 MGC", "K8-flight-01 HEOD MGC")
+        for m in (h30, heod):
+            assert m.legs == (LegSpec("MGC", True), LegSpec("MES", False))
+        assert flight.make_h30() is not flight.make_h30()
+        assert sorted(n for n in vars(flight) if n.startswith("make_")) == ["make_h30", "make_heod"]
+>       with pytest.raises(ValueError, match="variant"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_k8_members_flight.py:188: Failed
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_declarations_names_legs_and_factories
+1 failed, 208 passed in 8.37s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF57.py as strategy.members.k8.flight

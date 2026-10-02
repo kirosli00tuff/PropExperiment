@@ -3123,3 +3123,61 @@ opus, xhigh) 22,366,723; MemberCoder-B-OpusXHigh (worker-xhigh, opus, xhigh) 20,
 
 Delegation share: lead 48.5%, workers 51.5%; by model opus 88.6%, fable 11.4%. Cache reads are 96.5% of all tokens. These
 are token counts, not plan-credit percentages; the /usage meter is the user's to record.
+
+
+## 2026-10-02 — Stage E.9: K8 cross-market coded, audited, frozen and screened (no purchase)
+
+Lead Opus 5.5 xhigh. Three K8 members, 4 trials, each one traded leg at q_c 1 with one signal leg (K8-flight-01 H30 and
+HEOD on MGC reading MES; K8-oilcad-01 on 6C reading MCL; K8-wkndbtc-01 on MNQ reading MBT), specified from the frozen
+catalog under V16 (the engine applies every leg's roll blackouts; every leg's coverage checked), coded by two opus
+coders, audited by Fable (0 blocking, 0 should-fix, 8 notes), **frozen (558a5dc, cluster freeze 99f5a6ce...)** and run
+once on the research window (4 run, 0 refused). **Tier A: flight HEOD (55 trips, +10.68 ticks/day, t 1.395) and wkndbtc
+(39 trips, +28.97, t 1.072); Tier B: flight H30 (t 0.976) and oilcad (552 trips, t -5.91; its gross is about zero, so
+cost decides).** Both passes are thin: wkndbtc's t is 0.781 without 2026-06-08, its only trade after bitcoin's 24/7
+change; HEOD's is 1.085 without its best day, 0.751 without two. The Fable recomputation found no discrepancy. C6's skip
+set equals the frozen release calendar (two WPSR rows E.4 dropped are kept). **Program N = 198.** Every cluster is now
+screened; the ML route is next (V17). A K8 confirmation would need 6C, MNQ and MBT step 2 ($17.75 quoted) and a top-up
+of about $17.42; HEOD alone needs no purchase, but no start rule is frozen yet for MES, 6C, MNQ or MBT. Full record:
+reports/E.9_RETURN.md.
+
+**Session cost.** **Wall clock** 2026-10-01 22:12 to 2026-10-02 00:42 PDT (2 h 30 min), of which **one pause, 00:04-00:23 (19 min)**: the
+session exited by accident and was resumed by the user ("resume please accidentally exited"); the end suite running at
+the time died at about 50% and was re-run. **Work time 2 h 11 min.** First estimate 3 h 25 min (to about 01:37; the prompt
+expected about 1.5 h), revised at 23:10 to about 00:50 as the coders finished 50 minutes early; the screen took 1 minute
+and the recomputation 8.
+
+**Final ETA table** (PDT; tokens from the transcripts):
+
+| Task | Owner | Model | Effort | Start | End | Time | Tokens | Status and deviations |
+|---|---|---|---|---|---|---|---|---|
+| 0 Startup checks (start suite to 22:26) | lead | opus | xhigh | 22:12 | 22:26 | 14 min | in lead | done; suite = E.8's end |
+| 1 Member specs (section 7 at 22:33) | lead | opus | xhigh | 22:21 | 22:33 | 12 min | in lead | done |
+| 1b Event checks | ReleaseChecker-OpusMed | opus | medium | 22:20 | 22:31 | 11 min | 10,204,160 | done; MES blackouts unverifiable pre-run |
+| 2A Tables and flight | MemberCoder-A-OpusXHigh | opus | xhigh | 22:28 | 23:09 | 41 min | 20,290,233 | done; spawned before 1b returned |
+| 2B oilcad and wkndbtc | MemberCoder-B-OpusXHigh | opus | xhigh | 22:32 | 23:09 | 37 min | 14,813,091 | done; .md write refused, saved by the lead; stray files deleted |
+| 2g Gate suite | lead | - | - | 23:09 | 23:21 | 12 min | in lead | 5582 passed |
+| 3 Fidelity audit | MemberAuditor-K8-FableXHigh | fable | xhigh | 23:09 | 23:37 | 28 min | 11,285,770 (Parts 1 and 2) | 0 blocking, 0 should-fix, 8 notes |
+| 4 Rulings, freeze, suite, commit 558a5dc | lead | opus | xhigh | 23:37 | 23:53 | 16 min | in lead | done; no code change |
+| 5 Screening run | lead | opus | xhigh | 23:53 | 23:54 | 1 min | in lead | 4 run, 0 refused |
+| 6 Recomputation | MemberAuditor-K8-FableXHigh (resumed) | fable | xhigh | 23:55 | 00:03 | 8 min | above | no discrepancy |
+| 7a Result, return draft, first end suite (died at 50%) | lead | opus | xhigh | 23:54 | 00:04 | 10 min | in lead | interrupted by the exit |
+| Pause (accidental exit and resume) | - | - | - | 00:04 | 00:23 | 19 min | - | excluded from work |
+| 7b Return, end suite re-run (00:24-00:38), end checks, cost, progress | lead | opus | xhigh | 00:23 | 00:42 | 19 min | in lead | done |
+| **Stage** | | | | 22:12 | 00:42 | **2 h 30 min wall, 2 h 11 min work** | **99,814,881** (lead 43,221,627, 43.3%; workers 56,593,254, 56.7%) | first estimate 3 h 25 min; the prompt expected about 1.5 h |
+
+**Tokens per model** (the lead transcript 20d17daf's .jsonl, which the resumed session kept writing to, plus every worker
+transcript under its subagents/ folder; reports/stage_e9_briefs/cost.py, output cost.out; counted at 00:38, so the last
+few lead steps after it are not in the table):
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-opus-5-5 | 786 | 573,924 | 86,658,681 | 1,295,720 | 88,529,111 |
+| claude-fable-5-1 | 1,004 | 161,926 | 10,240,730 | 882,110 | 11,285,770 |
+| all | 1,790 | 735,850 | 96,899,411 | 2,177,830 | 99,814,881 |
+
+Per worker spawn: worker-medium opus medium (ReleaseChecker) 10,204,160; worker-xhigh opus xhigh (MemberCoder-A)
+20,290,233; worker-xhigh opus xhigh (MemberCoder-B) 14,813,091; worker-xhigh fable xhigh (MemberAuditor, both parts)
+11,285,770. Delegation share: lead 43.3%, workers 56.7%; by model tier opus 88.7% (lead 43.3%, workers 45.4%), fable
+11.3%. Cache reads are 97.1% of the total. E.8 used 129.7M tokens for 27 trials; E.9 used 99.8M for 4 (two-leg members,
+four test files per coder, and the extra cross-leg audit items). These are token counts, not plan-credit percentages; the
+/usage meter is the user's to record.

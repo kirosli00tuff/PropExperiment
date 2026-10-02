@@ -1,0 +1,23 @@
+........................................................................ [ 34%]
+...................................................................F.... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+___________________ test_mcl_bar_arriving_late_is_never_used ___________________
+
+    def test_mcl_bar_arriving_late_is_never_used() -> None:
+        """MCL has no bar at 09:04 and a bar one minute later (09:05) at the 09:04 level: never a
+        forward fill or a late substitute, so no entry at 09:05 or 09:10."""
+        late = [(hm(9, 5), B_MCL + 2)]
+        out = entries(DAY, {"09:05": 2, "09:10": 2}, mcl_skip=[hm(9, 4)], mcl_extra=late)
+>       assert out == []
+E       AssertionError: assert [('09:05', 'buy')] == []
+E         
+E         Left contains one more item: ('09:05', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:538: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_mcl_bar_arriving_late_is_never_used
+1 failed, 208 passed in 6.69s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO43.py as strategy.members.k8.oilcad

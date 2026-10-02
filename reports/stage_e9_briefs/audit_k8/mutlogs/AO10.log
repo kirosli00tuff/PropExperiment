@@ -1,0 +1,22 @@
+........................................................................ [ 34%]
+.....................................................F.................. [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+___________________ test_threshold_is_inclusive_at_exactly_2 ___________________
+
+    def test_threshold_is_inclusive_at_exactly_2() -> None:
+        assert oilcad.passes_threshold(0.5, 0.25)  # z = 2.0 exactly
+        assert oilcad.passes_threshold(-0.5, 0.25)
+        below = 0.49999999999999994  # the float just below 0.5
+        assert 0.5 - below > 0
+>       assert not oilcad.passes_threshold(below, 0.25)
+E       assert not True
+E        +  where True = <function passes_threshold at 0x7356bd2a0ae0>(0.49999999999999994, 0.25)
+E        +    where <function passes_threshold at 0x7356bd2a0ae0> = oilcad.passes_threshold
+
+tests/test_k8_members_oilcad.py:422: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_threshold_is_inclusive_at_exactly_2
+1 failed, 208 passed in 3.62s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO10.py as strategy.members.k8.oilcad

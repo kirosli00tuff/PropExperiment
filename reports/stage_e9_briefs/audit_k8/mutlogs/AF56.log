@@ -1,0 +1,37 @@
+.......................................FF............................... [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_____________________ test_k1_reads_the_0829_and_0834_bars _____________________
+
+    def test_k1_reads_the_0829_and_0834_bars() -> None:
+        member = ready()
+        assert entries(feed(member, DAY, dip_path({1: 5}))) == buy_at(hm(8, 34))
+        member = ready()  # the 08:29 bar missing: r_1 undefined, no trigger at 08:35
+>       assert entries(feed(member, DAY, dip_path({1: 5}), mes_skip={0})) == []
+E       AssertionError: assert [(514, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (514, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:236: AssertionError
+________________ test_a_bar_at_0830_is_not_the_start_bar_of_k1 _________________
+
+    def test_a_bar_at_0830_is_not_the_start_bar_of_k1() -> None:
+        member = ready()
+        call(member, DAY, hm(8, 30), mes_bar=mes(DAY, hm(8, 30), B))  # 08:29 missing
+        out = call(member, DAY, hm(8, 34), mes_bar=mes(DAY, hm(8, 34), B - 5),
+                   mgc_bar=mgc(DAY, hm(8, 34)))
+>       assert out == []
+E       AssertionError: assert [LegIntent(ro...tl_bars=None)] == []
+E         
+E         Left contains one more item: LegIntent(root='MGC', side='buy', quantity=1, ts_utc=datetime.datetime(2025, 6, 17, 13, 35, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:244: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_k1_reads_the_0829_and_0834_bars
+FAILED tests/test_k8_members_flight.py::test_a_bar_at_0830_is_not_the_start_bar_of_k1
+2 failed, 207 passed in 7.83s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF56.py as strategy.members.k8.flight

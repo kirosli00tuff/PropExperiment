@@ -1,0 +1,44 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+...................................................FF............        [100%]
+=================================== FAILURES ===================================
+___________________ test_c6_tests_the_mnq_sunday_18_00_fill ____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73b57cb3d580>
+
+    def test_c6_tests_the_mnq_sunday_18_00_fill(monkeypatch: pytest.MonkeyPatch) -> None:
+        calls: list[tuple[str, int]] = []
+    
+        def spy(root: str, t_ns: int) -> bool:
+            calls.append((root, t_ns))
+            return False
+    
+        monkeypatch.setattr(wkndbtc, "in_guard", spy)
+        assert entries(week(MON, 0, 10)) == [(sunday_of(MON), "17:59", "buy")]
+>       assert calls == [("MNQ", ns_at(sunday_of(MON), hm(18, 0)))]
+E       AssertionError: assert [('MNQ', 1748818740000000000)] == [('MNQ', 1748818800000000000)]
+E         
+E         At index 0 diff: ('MNQ', 1748818740000000000) != ('MNQ', 1748818800000000000)
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:276: AssertionError
+__________________ test_c6_skips_a_guarded_sunday_18_00_fill ___________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73b57cb3f2f0>
+
+    def test_c6_skips_a_guarded_sunday_18_00_fill(monkeypatch: pytest.MonkeyPatch) -> None:
+        sunday_fill = ns_at(sunday_of(MON), hm(18, 0))
+        monkeypatch.setattr(wkndbtc, "in_guard", lambda root, t_ns: t_ns == sunday_fill)
+>       assert entries(week(MON, 0, 10)) == []
+E       AssertionError: assert [(datetime.da...7:59', 'buy')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 6, 1), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:282: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_wkndbtc.py::test_c6_tests_the_mnq_sunday_18_00_fill
+FAILED tests/test_k8_members_wkndbtc.py::test_c6_skips_a_guarded_sunday_18_00_fill
+2 failed, 207 passed in 3.76s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AW20.py as strategy.members.k8.wkndbtc

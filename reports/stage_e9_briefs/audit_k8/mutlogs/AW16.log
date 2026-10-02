@@ -1,0 +1,24 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+..................................................F..............        [100%]
+=================================== FAILURES ===================================
+________ test_a_saturday_mnq_bar_booked_to_monday_is_not_the_entry_bar _________
+
+    def test_a_saturday_mnq_bar_booked_to_monday_is_not_the_entry_bar() -> None:
+        """MON_AFTER: a synthetic MNQ bar at Saturday 17:59 carrying trade_date d, next to the MBT
+        Saturday 17:59 bar (booked to d after the change): the entry is still only the Sunday one."""
+        sat = MON_AFTER - timedelta(days=2)
+        extra = mk_bar("MNQ", sat, hm(17, 59), B_MNQ, trade_day=MON_AFTER)
+>       assert entries([*week(MON_AFTER, 0, 10), extra]) == [(sunday_of(MON_AFTER), "17:59", "buy")]
+E       AssertionError: assert [(datetime.da...7:59', 'buy')] == [(datetime.da...7:59', 'buy')]
+E         
+E         At index 0 diff: (datetime.date(2026, 6, 6), '17:59', 'sell') != (datetime.date(2026, 6, 7), '17:59', 'buy')
+E         Left contains one more item: (datetime.date(2026, 6, 7), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:263: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_wkndbtc.py::test_a_saturday_mnq_bar_booked_to_monday_is_not_the_entry_bar
+1 failed, 208 passed in 3.76s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AW16.py as strategy.members.k8.wkndbtc

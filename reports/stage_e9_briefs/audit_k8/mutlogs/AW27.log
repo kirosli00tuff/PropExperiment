@@ -1,0 +1,42 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+.......................................................FF........        [100%]
+=================================== FAILURES ===================================
+________ test_no_entry_while_a_position_or_a_pending_order_exists[0-1] _________
+
+position = 0, pending = 1
+
+    @pytest.mark.parametrize("position,pending", [(1, 0), (-1, 0), (0, 1), (0, -1)])
+    def test_no_entry_while_a_position_or_a_pending_order_exists(position: int, pending: int
+                                                                ) -> None:
+        acct = _acct(ns_at(sunday_of(MON), hm(17, 0)), position, pending)
+        out = entries(week(MON, 0, 10), acct)
+>       assert [e for e in out if e[1] == "17:59"] == []
+E       AssertionError: assert [(datetime.da...7:59', 'buy')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 6, 1), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:304: AssertionError
+________ test_no_entry_while_a_position_or_a_pending_order_exists[0--1] ________
+
+position = 0, pending = -1
+
+    @pytest.mark.parametrize("position,pending", [(1, 0), (-1, 0), (0, 1), (0, -1)])
+    def test_no_entry_while_a_position_or_a_pending_order_exists(position: int, pending: int
+                                                                ) -> None:
+        acct = _acct(ns_at(sunday_of(MON), hm(17, 0)), position, pending)
+        out = entries(week(MON, 0, 10), acct)
+>       assert [e for e in out if e[1] == "17:59"] == []
+E       AssertionError: assert [(datetime.da...7:59', 'buy')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 6, 1), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:304: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_wkndbtc.py::test_no_entry_while_a_position_or_a_pending_order_exists[0-1]
+FAILED tests/test_k8_members_wkndbtc.py::test_no_entry_while_a_position_or_a_pending_order_exists[0--1]
+2 failed, 207 passed in 3.61s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AW27.py as strategy.members.k8.wkndbtc

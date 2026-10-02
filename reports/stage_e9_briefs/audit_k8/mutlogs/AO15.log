@@ -1,0 +1,72 @@
+........................................................................ [ 34%]
+.................................................F....F.....F........... [ 68%]
+........................F........................................        [100%]
+=================================== FAILURES ===================================
+______________ test_block_return_requires_a_positive_denominator _______________
+
+    def test_block_return_requires_a_positive_denominator() -> None:
+        assert oilcad.block_return(5, 0) is None
+        assert oilcad.block_return(5, -1) is None
+>       assert oilcad.block_return(6001, 6000) == 1 / 6000
+E       assert 0.00016663889351774705 == (1 / 6000)
+E        +  where 0.00016663889351774705 = <function block_return at 0x7c7973f509a0>(6001, 6000)
+E        +    where <function block_return at 0x7c7973f509a0> = oilcad.block_return
+
+tests/test_k8_members_oilcad.py:385: AssertionError
+______________________ test_z_exactly_2_trades_end_to_end ______________________
+
+    def test_z_exactly_2_trades_end_to_end() -> None:
+        """STANDARD: s = u/2; a +1 step from B is r = u, z = 2.0 exactly: a buy; -1 a sell."""
+>       assert entries(DAY, {"10:05": 1}) == [("10:04", "buy")]
+E       AssertionError: assert [] == [('10:04', 'buy')]
+E         
+E         Right contains one more item: ('10:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:428: AssertionError
+____________ test_reference_dates_are_the_20_previous_oilcad_dates _____________
+
+    def test_reference_dates_are_the_20_previous_oilcad_dates() -> None:
+        """WPSR_DAY's references skip 2025-06-19 and 2025-07-04 (not OILCAD dates). Wild MCL values
+        on those two weekdays and on the date before the oldest reference (2025-06-09) must not
+        enter s(d): with them, z = 2.0 exactly would fall below 2."""
+        day = date(2025, 7, 10)  # a non-WPSR day whose references contain both holidays
+        refs = refs_of(day)
+        assert date(2025, 6, 19) not in refs and date(2025, 7, 4) not in refs
+        assert refs[0] == date(2025, 6, 10) and refs[-1] == WPSR_DAY
+        oldest = previous_dates(OILCAD_DATES, refs[0], 1)[0]
+        wild = ((16, 16, 0),)  # 32 values of |r| = u > s: they would raise s
+        bars = (ref_bars((oldest,), wild) + ref_bars(refs[:10], STANDARD[:10])
+                + ref_bars((date(2025, 6, 19),), wild) + ref_bars(refs[10:], STANDARD[10:])
+                + ref_bars((date(2025, 7, 4),), wild) + trade_bars(day, {"10:05": 1}))
+        bars = sorted(bars, key=lambda rb: rb[1].ts_event_ns)
+        out = drive(mk(), bars)
+>       assert [(i[0], i[1], i[3]) for i in out] == [(day, "10:04", "buy")]
+E       AssertionError: assert [] == [(datetime.da...0:04', 'buy')]
+E         
+E         Right contains one more item: (datetime.date(2025, 7, 10), '10:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:480: AssertionError
+_______________ test_reference_dates_include_roll_blackout_dates _______________
+
+    def test_reference_dates_include_roll_blackout_dates() -> None:
+        """K8-L-04: a reference date that is a roll-blackout date still gives its values (the bars
+        are delivered; only opens are refused there): with one blackout reference date, z = 2.0
+        still trades."""
+        m = mk()
+        bars = oil_bars(DAY, {"10:05": 1})
+        rules = rules_of(m, [DAY, *refs_of(DAY)], blackout=[refs_of(DAY)[3]])
+>       assert fills(engine(m, bars, rules))[0] == (DAY, "10:05", "6C", "buy", "strategy")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_k8_members_oilcad.py:791: IndexError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_block_return_requires_a_positive_denominator
+FAILED tests/test_k8_members_oilcad.py::test_z_exactly_2_trades_end_to_end - ...
+FAILED tests/test_k8_members_oilcad.py::test_reference_dates_are_the_20_previous_oilcad_dates
+FAILED tests/test_k8_members_oilcad.py::test_reference_dates_include_roll_blackout_dates
+4 failed, 205 passed in 3.64s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO15.py as strategy.members.k8.oilcad

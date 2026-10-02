@@ -1,0 +1,21 @@
+........................................................................ [ 34%]
+...F.................................................................... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_____ test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day _____
+
+    def test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day() -> None:
+        member = ready(FOMC)  # C6 first: the 13:00 trigger is skipped, its missing bar is moot
+        out = feed(member, FOMC, dip_path({54: 5, 55: 10}), mgc_skip={54})
+>       assert entries(out) == buy_at(hm(13, 4))
+E       AssertionError: assert [] == [(784, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (784, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:134: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight_exits.py::test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day
+1 failed, 208 passed in 8.18s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF53.py as strategy.members.k8.flight

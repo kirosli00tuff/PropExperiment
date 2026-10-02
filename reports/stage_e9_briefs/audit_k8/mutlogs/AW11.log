@@ -1,0 +1,33 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+...........................................F..F..................        [100%]
+=================================== FAILURES ===================================
+_________________ test_excluded_mondays_do_not_trade[monday0] __________________
+
+monday = datetime.date(2025, 5, 26)
+
+    @pytest.mark.parametrize("monday", [HOLIDAY_MON, AFTER_GOOD_FRIDAY, AFTER_HALT_FRIDAY])
+    def test_excluded_mondays_do_not_trade(monday: date) -> None:
+>       assert entries(week(monday, 0, 10)) == []
+E       AssertionError: assert [(datetime.da...7:59', 'buy')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 5, 25), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:233: AssertionError
+_______________ test_is_trade_monday_needs_both_d_and_d_minus_3 ________________
+
+    def test_is_trade_monday_needs_both_d_and_d_minus_3() -> None:
+        assert wkndbtc.is_trade_monday(MON)
+>       assert not wkndbtc.is_trade_monday(HOLIDAY_MON)
+E       assert not True
+E        +  where True = <function is_trade_monday at 0x728f33d71d00>(datetime.date(2025, 5, 26))
+E        +    where <function is_trade_monday at 0x728f33d71d00> = wkndbtc.is_trade_monday
+
+tests/test_k8_members_wkndbtc.py:238: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_wkndbtc.py::test_excluded_mondays_do_not_trade[monday0]
+FAILED tests/test_k8_members_wkndbtc.py::test_is_trade_monday_needs_both_d_and_d_minus_3
+2 failed, 207 passed in 3.66s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AW11.py as strategy.members.k8.wkndbtc

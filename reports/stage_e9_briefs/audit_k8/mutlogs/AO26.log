@@ -1,0 +1,23 @@
+........................................................................ [ 34%]
+..............................................................F......... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+___________ test_too_few_reference_dates_at_the_table_start_no_trade ___________
+
+    def test_too_few_reference_dates_at_the_table_start_no_trade() -> None:
+        day = OILCAD_DATES[19]  # only 19 OILCAD dates before it
+        assert len(previous_dates(OILCAD_DATES, day, 20)) == 19
+        rich = ((5, 5, 45),) * 19  # n = 1045, s > 0: only the reference count blocks the trade
+        bars = ref_bars(OILCAD_DATES[:19], rich) + trade_bars(day, {"10:05": 50})
+>       assert drive(mk(), sorted(bars, key=lambda rb: rb[1].ts_event_ns)) == []
+E       AssertionError: assert [(datetime.da...C', 'buy', 1)] == []
+E         
+E         Left contains one more item: (datetime.date(2019, 5, 29), '10:04', '6C', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:503: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_too_few_reference_dates_at_the_table_start_no_trade
+1 failed, 208 passed in 3.71s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO26.py as strategy.members.k8.oilcad

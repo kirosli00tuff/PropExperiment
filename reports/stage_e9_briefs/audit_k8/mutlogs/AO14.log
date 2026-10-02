@@ -1,0 +1,66 @@
+........................................................................ [ 34%]
+.................................................FF..................... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+______________ test_block_return_requires_a_positive_denominator _______________
+
+    def test_block_return_requires_a_positive_denominator() -> None:
+>       assert oilcad.block_return(5, 0) is None
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:383: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+c1 = 5, c6 = 0
+
+    def block_return(c1: int, c6: int) -> float | None:
+        """r_t = (c1 - c6) / c6 from integer ticks as a Python float; None when c6 <= 0 (C10)."""
+        if c6 <= 0:
+            return None
+>       return (c1 - c6) / c6
+               ^^^^^^^^^^^^^^
+E       ZeroDivisionError: division by zero
+
+strategy/members/k8/oilcad.py:105: ZeroDivisionError
+___________ test_a_zero_mcl_close_at_t_minus_6_leaves_r_t_undefined ____________
+
+    def test_a_zero_mcl_close_at_t_minus_6_leaves_r_t_undefined() -> None:
+        """The 07:59 close is 0 (c6 of t = 08:05, the c1 of no block): no entry at 08:05 despite
+        the move; 08:10 still trades."""
+        bars = oil_bars(DAY, {"08:05": 2, "08:10": 2})
+        bars = [rb for rb in bars if not (rb[0] == "MCL" and rb[1].trade_date == DAY
+                                          and ct(rb[1].ts_event_ns).time() == time(7, 59))]
+        bars.append(mk_bar("MCL", DAY, hm(7, 59), 0))
+>       out = drive(mk(), sorted(bars, key=lambda rb: rb[1].ts_event_ns))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:396: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:127: in drive
+    for item in member.on_minute(view, flat if acct is None else acct(ts)):
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+strategy/members/k8/oilcad.py:218: in on_minute
+    signal = self._signal(view)
+             ^^^^^^^^^^^^^^^^^^
+strategy/members/k8/oilcad.py:192: in _signal
+    r = block_return(close, first[0])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+c1 = 6002, c6 = 0
+
+    def block_return(c1: int, c6: int) -> float | None:
+        """r_t = (c1 - c6) / c6 from integer ticks as a Python float; None when c6 <= 0 (C10)."""
+        if c6 <= 0:
+            return None
+>       return (c1 - c6) / c6
+               ^^^^^^^^^^^^^^
+E       ZeroDivisionError: division by zero
+
+strategy/members/k8/oilcad.py:105: ZeroDivisionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_block_return_requires_a_positive_denominator
+FAILED tests/test_k8_members_oilcad.py::test_a_zero_mcl_close_at_t_minus_6_leaves_r_t_undefined
+2 failed, 207 passed in 3.65s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO14.py as strategy.members.k8.oilcad

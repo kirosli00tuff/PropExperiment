@@ -1,0 +1,39 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+...........................F..............F......................        [100%]
+=================================== FAILURES ===================================
+________ test_research_window_mondays_and_no_mnq_guard_at_sunday_18_00 _________
+
+    def test_research_window_mondays_and_no_mnq_guard_at_sunday_18_00() -> None:
+        """54 eligible Mondays in the research window (spec section 7); no MNQ guard instant meets
+        a Sunday 18:00 fill or the Monday 14:59 exit fill (S0.10)."""
+        mondays = [d for d in WKNDBTC_DATES if date(2025, 4, 1) <= d <= date(2026, 6, 19)
+                   and wkndbtc.is_trade_monday(d)]
+>       assert len(mondays) == 54
+E       assert 167 == 54
+E        +  where 167 = len([datetime.date(2025, 4, 3), datetime.date(2025, 4, 4), datetime.date(2025, 4, 7), datetime.date(2025, 4, 10), datetime.date(2025, 4, 11), datetime.date(2025, 4, 14), ...])
+
+tests/test_k8_members_wkndbtc.py:133: AssertionError
+________________________ test_a_non_monday_never_trades ________________________
+
+    def test_a_non_monday_never_trades() -> None:
+        """Thursday 2025-06-05: d - 3 = Monday 2025-06-02 is in WKNDBTC_DATES; the MBT 14:59 bar of
+        that Monday and the MBT and MNQ 17:59 bars of Wednesday (trade_date Thursday) exist with a
+        move: no trade."""
+        d, dm3, dm1 = date(2025, 6, 5), date(2025, 6, 2), date(2025, 6, 4)
+        bars = [mk_bar("MBT", dm3, hm(14, 59), B_MBT),
+                mk_bar("MBT", dm1, hm(17, 59), B_MBT + 10, trade_day=d),
+                *(mk_bar("MNQ", dm1, m, B_MNQ, trade_day=d) for m in range(hm(17, 55), hm(18, 5)))]
+>       assert entries(bars) == []
+E       AssertionError: assert [(datetime.da...7:59', 'buy')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 6, 4), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:226: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_wkndbtc.py::test_research_window_mondays_and_no_mnq_guard_at_sunday_18_00
+FAILED tests/test_k8_members_wkndbtc.py::test_a_non_monday_never_trades - Ass...
+2 failed, 207 passed in 4.00s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AW10.py as strategy.members.k8.wkndbtc

@@ -1,0 +1,67 @@
+........................................................................ [ 34%]
+.................FF........F............................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+___________________ test_h30_exit_is_capped_at_1504[74-904] ____________________
+
+k = 74, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+        enter(member, k)
+        t_k = end_bar(k) + 1
+>       assert sells(hold(member, t_k, exit_bar)) == [exit_bar]
+E       assert [] == [904]
+E         
+E         Right contains one more item: 904
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:229: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[77-904] ____________________
+
+k = 77, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+        enter(member, k)
+        t_k = end_bar(k) + 1
+>       assert sells(hold(member, t_k, exit_bar)) == [exit_bar]
+E       assert [] == [904]
+E         
+E         Right contains one more item: 904
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:229: AssertionError
+_________________ test_the_last_fill_is_1505_for_both_variants _________________
+
+    def test_the_last_fill_is_1505_for_both_variants() -> None:
+        for variant in ("H30", "HEOD"):
+            member = ready_as(variant)
+            out = feed(member, DAY, dip_path({76: 5}))  # entry bar 14:49, fill 14:50
+            assert entries(out) == buy_at(hm(14, 49))
+>           assert sells(hold(member, hm(14, 50), hm(15, 4))) == [hm(15, 4)]
+E           assert [] == [904]
+E             
+E             Right contains one more item: 904
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:284: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[74-904]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[77-904]
+FAILED tests/test_k8_members_flight_exits.py::test_the_last_fill_is_1505_for_both_variants
+3 failed, 206 passed in 3.60s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF40.py as strategy.members.k8.flight

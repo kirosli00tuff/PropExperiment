@@ -1,0 +1,68 @@
+...................................F..F..F.............................. [ 34%]
+............................F........................................... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_________________ test_trading_windows_are_the_s0_12_intervals _________________
+
+    def test_trading_windows_are_the_s0_12_intervals() -> None:
+        for m in (flight.make_h30(), flight.make_heod()):
+>           assert m.trading_windows == {"MGC": (TradingInterval(time(8, 34), time(15, 6)),),
+                                         "MES": (TradingInterval(time(8, 29), time(14, 55)),)}
+E           AssertionError: assert {'MGC': (Trad...set_days=0),)} == {'MGC': (Trad...set_days=0),)}
+E             
+E             Omitting 1 identical items, use -vv to show
+E             Differing items:
+E             {'MES': (TradingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(15, 0), start_offset_days=0, end_offset_days=0),)} != {'MES': (TradingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)}
+E             Use -v to get more diff
+
+tests/test_k8_members_flight.py:194: AssertionError
+_____________ test_decision_times_are_0835_to_1455_every_5_minutes _____________
+
+    def test_decision_times_are_0835_to_1455_every_5_minutes() -> None:
+        times = decision_times()
+>       assert len(times) == 77 and times[0] == time(8, 35) and times[-1] == time(14, 55)
+E       assert (78 == 77)
+E        +  where 78 = len((datetime.time(8, 35), datetime.time(8, 40), datetime.time(8, 45), datetime.time(8, 50), datetime.time(8, 55), datetime.time(9, 0), ...))
+
+tests/test_k8_members_flight.py:226: AssertionError
+________ test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500 ________
+
+    def test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500() -> None:
+        member = ready()
+        assert entries(feed(member, DAY, dip_path({77: 5}))) == buy_at(hm(14, 54))
+        member = ready()
+        feed(member, DAY, dip_path())
+        out = call(member, DAY, hm(14, 59), mes_bar=mes(DAY, hm(14, 59), B - 50),
+                   mgc_bar=mgc(DAY, hm(14, 59)))
+>       assert out == []  # 14:54 -> 14:59 would be a block ending 15:00: none
+        ^^^^^^^^^^^^^^^^
+E       AssertionError: assert [LegIntent(ro...tl_bars=None)] == []
+E         
+E         Left contains one more item: LegIntent(root='MGC', side='buy', quantity=1, ts_utc=datetime.datetime(2025, 6, 17, 20, 0, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:259: AssertionError
+_____________________ test_no_entry_from_a_view_after_1454 _____________________
+
+    def test_no_entry_from_a_view_after_1454() -> None:
+        member = ready()
+        feed(member, DAY, dip_path())  # no trigger through 14:54
+        for minute in range(hm(14, 55), hm(15, 30)):  # deep MES dips on every later minute
+            got = call(member, DAY, minute, mes_bar=mes(DAY, minute, 20000 - 80 - minute % 7),
+                       mgc_bar=mgc(DAY, minute))
+>           assert got == [], minute
+E           AssertionError: 899
+E           assert [LegIntent(ro...tl_bars=None)] == []
+E             
+E             Left contains one more item: LegIntent(root='MGC', side='buy', quantity=1, ts_utc=datetime.datetime(2025, 6, 17, 20, 0, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:297: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_trading_windows_are_the_s0_12_intervals
+FAILED tests/test_k8_members_flight.py::test_decision_times_are_0835_to_1455_every_5_minutes
+FAILED tests/test_k8_members_flight.py::test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500
+FAILED tests/test_k8_members_flight_exits.py::test_no_entry_from_a_view_after_1454
+4 failed, 205 passed in 3.74s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF03.py as strategy.members.k8.flight

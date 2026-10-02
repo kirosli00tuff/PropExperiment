@@ -1,0 +1,27 @@
+................................................................F....... [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+______ test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade ______
+
+    def test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade() -> None:
+        """The run starts on FLIGHT_DATES[0] (2019-05-01): the 20th date has 19 reference dates
+        (n = 1,463, all after the first bar) and does not trade; the 21st does."""
+        member = flight.make_h30()
+        for i, ref in enumerate(FLIGHT_DATES[:19]):
+            dip = {10: DIPS[i]} if i < len(DIPS) else {}
+            assert entries(feed(member, ref, dip_path(dip))) == [], ref
+        twentieth, twenty_first = FLIGHT_DATES[19], FLIGHT_DATES[20]
+        assert len(reference_dates(twentieth)) == 19
+>       assert entries(feed(member, twentieth, dip_path({3: 50}))) == []
+E       AssertionError: assert [(524, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:446: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade
+1 failed, 208 passed in 3.61s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF29.py as strategy.members.k8.flight

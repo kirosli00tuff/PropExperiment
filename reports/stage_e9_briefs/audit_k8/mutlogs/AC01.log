@@ -1,0 +1,2059 @@
+.......................F...............FF...............FF.F....F.F..... [ 34%]
+..............................FFFFFFFF.F....FFFFF.F...FFFFFFFFF.FFFFFFFF [ 68%]
+FFFFFFFFFF....FFFFFFFFFFF........................................        [100%]
+=================================== FAILURES ===================================
+_________ test_previous_dates_are_the_k_most_recent_strictly_before_d __________
+
+    def test_previous_dates_are_the_k_most_recent_strictly_before_d() -> None:
+        days = (date(2025, 1, 2), date(2025, 1, 3), date(2025, 1, 6), date(2025, 1, 7))
+        prev = cal.previous_dates
+>       assert prev(days, date(2025, 1, 7), 2) == (date(2025, 1, 3), date(2025, 1, 6))
+E       assert (datetime.dat...e(2025, 1, 7)) == (datetime.dat...e(2025, 1, 6))
+E         
+E         At index 0 diff: datetime.date(2025, 1, 6) != datetime.date(2025, 1, 3)
+E         Use -v to get more diff
+
+tests/test_k8_members_tables.py:241: AssertionError
+_____________________ test_k1_reads_the_0829_and_0834_bars _____________________
+
+    def test_k1_reads_the_0829_and_0834_bars() -> None:
+        member = ready()
+        assert entries(feed(member, DAY, dip_path({1: 5}))) == buy_at(hm(8, 34))
+        member = ready()  # the 08:29 bar missing: r_1 undefined, no trigger at 08:35
+>       assert entries(feed(member, DAY, dip_path({1: 5}), mes_skip={0})) == []
+E       AssertionError: assert [(514, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (514, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:236: AssertionError
+________________ test_a_bar_at_0830_is_not_the_start_bar_of_k1 _________________
+
+    def test_a_bar_at_0830_is_not_the_start_bar_of_k1() -> None:
+        member = ready()
+        call(member, DAY, hm(8, 30), mes_bar=mes(DAY, hm(8, 30), B))  # 08:29 missing
+        out = call(member, DAY, hm(8, 34), mes_bar=mes(DAY, hm(8, 34), B - 5),
+                   mgc_bar=mgc(DAY, hm(8, 34)))
+>       assert out == []
+E       AssertionError: assert [LegIntent(ro...tl_bars=None)] == []
+E         
+E         Left contains one more item: LegIntent(root='MGC', side='buy', quantity=1, ts_utc=datetime.datetime(2025, 6, 17, 13, 35, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:244: AssertionError
+_______________ test_member_n_1199_is_no_trade_and_n_1200_trades _______________
+
+    def test_member_n_1199_is_no_trade_and_n_1200_trades() -> None:
+        member = ready(values=[59] + [60] * 19)
+        assert entries(feed(member, DAY, dip_path({3: 50}))) == []
+        member = ready(values=60)  # n = 1,200: Q = -5/B
+>       assert entries(feed(member, DAY, dip_path({3: 5}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:354: AssertionError
+________________________ test_member_m_at_1201_and_1540 ________________________
+
+    def test_member_m_at_1201_and_1540() -> None:
+        member = ready(values=[61] + [60] * 19)  # n = 1,201: m = 7, Q = -4/B
+>       assert entries(feed(member, DAY, dip_path({3: 4}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:361: AssertionError
+_____________ test_undefined_reference_computations_are_not_values _____________
+
+    def test_undefined_reference_computations_are_not_values() -> None:
+        """n = 19 x 77 = 1,463, m = 8: Q = -3/B from the dips -10..-2; counting the undefined -50/B
+        would give -4/B."""
+>       assert entries(feed(_undefined_first_reference(), DAY, dip_path({3: 3}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:392: AssertionError
+______ test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade ______
+
+    def test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade() -> None:
+        """The run starts on FLIGHT_DATES[0] (2019-05-01): the 20th date has 19 reference dates
+        (n = 1,463, all after the first bar) and does not trade; the 21st does."""
+        member = flight.make_h30()
+        for i, ref in enumerate(FLIGHT_DATES[:19]):
+            dip = {10: DIPS[i]} if i < len(DIPS) else {}
+            assert entries(feed(member, ref, dip_path(dip))) == [], ref
+        twentieth, twenty_first = FLIGHT_DATES[19], FLIGHT_DATES[20]
+>       assert len(reference_dates(twentieth)) == 19
+E       assert 20 == 19
+E        +  where 20 = len((datetime.date(2019, 5, 1), datetime.date(2019, 5, 2), datetime.date(2019, 5, 3), datetime.date(2019, 5, 6), datetime.date(2019, 5, 7), datetime.date(2019, 5, 8), ...))
+E        +    where (datetime.date(2019, 5, 1), datetime.date(2019, 5, 2), datetime.date(2019, 5, 3), datetime.date(2019, 5, 6), datetime.date(2019, 5, 7), datetime.date(2019, 5, 8), ...) = reference_dates(datetime.date(2019, 5, 29))
+
+tests/test_k8_members_flight.py:445: AssertionError
+____________ test_reference_dates_are_the_20_flight_dates_before_d _____________
+
+    def test_reference_dates_are_the_20_flight_dates_before_d() -> None:
+        d = date(2025, 12, 1)
+        refs = reference_dates(d)
+>       assert len(refs) == 20 and refs[-1] == date(2025, 11, 26)
+E       assert (20 == 20 and datetime.date(2025, 12, 1) == datetime.date(2025, 11, 26))
+E        +  where 20 = len((datetime.date(2025, 10, 31), datetime.date(2025, 11, 3), datetime.date(2025, 11, 4), datetime.date(2025, 11, 5), datetime.date(2025, 11, 6), datetime.date(2025, 11, 7), ...))
+E        +  and   datetime.date(2025, 11, 26) = date(2025, 11, 26)
+
+tests/test_k8_members_flight.py:462: AssertionError
+__________ test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30 ___________
+
+    def test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30() -> None:
+>       res = run(flight.make_h30(), frames())
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_engine.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_engine.py:89: in run
+    return run_engine(frame_map, member, LEGS, rules or rules_for(LEGS, WINDOW))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+screening/stage_e_engine.py:683: in run_engine
+    for ts, bars in iter_minutes({leg.root: frames[leg.root] for leg in legs}, feeds):
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+frames = {'MGC':                 ts_event    open  ...  gap_before_minutes  vendor_degraded_day
+0    1750167000000000000  3000....       False
+1945  1750190040000000000  5000.0  ...                   0                False
+
+[1946 rows x 16 columns]}
+make_bar = {'MGC': <function product_bar_iterator.<locals>.iterate at 0x71f465c4f2e0>, 'MES': <function product_bar_iterator.<locals>.iterate at 0x71f465c4f880>}
+
+    def iter_minutes(frames: Mapping[str, pd.DataFrame], make_bar: Mapping[str, Any]
+                     ) -> Iterator[tuple[int, dict[str, Bar]]]:
+        """The shared UTC minute grid (D11.5): every minute at which any leg has a bar, ascending,
+        with the legs that have a bar there. Nothing is forward filled: a leg without a bar at a
+        minute is simply absent from that minute's mapping."""
+        arrays = {r: f["ts_event"].to_numpy(dtype="int64") for r, f in frames.items()}
+        for r, arr in arrays.items():
+            if len(arr) > 1 and not bool(np.all(arr[1:] > arr[:-1])):
+>               raise EngineInvariantError(f"{r}: bars are not strictly increasing in time")
+E               screening.stage_e_engine.EngineInvariantError: MES: bars are not strictly increasing in time
+
+screening/stage_e_engine.py:247: EngineInvariantError
+_____________ test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505 _____________
+
+    def test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505() -> None:
+>       res = run(flight.make_heod(), frames())
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_engine.py:132: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_engine.py:89: in run
+    return run_engine(frame_map, member, LEGS, rules or rules_for(LEGS, WINDOW))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+screening/stage_e_engine.py:683: in run_engine
+    for ts, bars in iter_minutes({leg.root: frames[leg.root] for leg in legs}, feeds):
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+frames = {'MGC':                 ts_event    open  ...  gap_before_minutes  vendor_degraded_day
+0    1750167000000000000  3000....       False
+1945  1750190040000000000  5000.0  ...                   0                False
+
+[1946 rows x 16 columns]}
+make_bar = {'MGC': <function product_bar_iterator.<locals>.iterate at 0x71f465c4fa60>, 'MES': <function product_bar_iterator.<locals>.iterate at 0x71f465c4fd80>}
+
+    def iter_minutes(frames: Mapping[str, pd.DataFrame], make_bar: Mapping[str, Any]
+                     ) -> Iterator[tuple[int, dict[str, Bar]]]:
+        """The shared UTC minute grid (D11.5): every minute at which any leg has a bar, ascending,
+        with the legs that have a bar there. Nothing is forward filled: a leg without a bar at a
+        minute is simply absent from that minute's mapping."""
+        arrays = {r: f["ts_event"].to_numpy(dtype="int64") for r, f in frames.items()}
+        for r, arr in arrays.items():
+            if len(arr) > 1 and not bool(np.all(arr[1:] > arr[:-1])):
+>               raise EngineInvariantError(f"{r}: bars are not strictly increasing in time")
+E               screening.stage_e_engine.EngineInvariantError: MES: bars are not strictly increasing in time
+
+screening/stage_e_engine.py:247: EngineInvariantError
+____ test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill ____
+
+    def test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill() -> None:
+        frame_map = frames()
+        mgc = frame_map["MGC"]
+        t_k = int(datetime.combine(DAY, time(8, 45), tzinfo=CT).timestamp()) * NS
+        frame_map["MGC"] = mgc[mgc["ts_event"] != t_k].reset_index(drop=True)
+>       res = run(flight.make_h30(), frame_map)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_engine.py:143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_engine.py:89: in run
+    return run_engine(frame_map, member, LEGS, rules or rules_for(LEGS, WINDOW))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+screening/stage_e_engine.py:683: in run_engine
+    for ts, bars in iter_minutes({leg.root: frames[leg.root] for leg in legs}, feeds):
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+frames = {'MGC':                 ts_event    open  ...  gap_before_minutes  vendor_degraded_day
+0    1750167000000000000  3000....       False
+1945  1750190040000000000  5000.0  ...                   0                False
+
+[1946 rows x 16 columns]}
+make_bar = {'MGC': <function product_bar_iterator.<locals>.iterate at 0x71f46653b380>, 'MES': <function product_bar_iterator.<locals>.iterate at 0x71f465c4c0e0>}
+
+    def iter_minutes(frames: Mapping[str, pd.DataFrame], make_bar: Mapping[str, Any]
+                     ) -> Iterator[tuple[int, dict[str, Bar]]]:
+        """The shared UTC minute grid (D11.5): every minute at which any leg has a bar, ascending,
+        with the legs that have a bar there. Nothing is forward filled: a leg without a bar at a
+        minute is simply absent from that minute's mapping."""
+        arrays = {r: f["ts_event"].to_numpy(dtype="int64") for r, f in frames.items()}
+        for r, arr in arrays.items():
+            if len(arr) > 1 and not bool(np.all(arr[1:] > arr[:-1])):
+>               raise EngineInvariantError(f"{r}: bars are not strictly increasing in time")
+E               screening.stage_e_engine.EngineInvariantError: MES: bars are not strictly increasing in time
+
+screening/stage_e_engine.py:247: EngineInvariantError
+_ test_a_missing_mes_bar_at_tk_minus_1_the_engine_refuses_and_the_member_never_asks _
+
+    def test_a_missing_mes_bar_at_tk_minus_1_the_engine_refuses_and_the_member_never_asks() -> None:
+        frame_map = frames(mes_skip={end_bar(DIP_K)})
+>       res = run(flight.make_h30(), frame_map)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_engine.py:151: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_engine.py:89: in run
+    return run_engine(frame_map, member, LEGS, rules or rules_for(LEGS, WINDOW))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+screening/stage_e_engine.py:683: in run_engine
+    for ts, bars in iter_minutes({leg.root: frames[leg.root] for leg in legs}, feeds):
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+frames = {'MGC':                 ts_event    open  ...  gap_before_minutes  vendor_degraded_day
+0    1750167000000000000  3000....       False
+1944  1750190040000000000  5000.0  ...                   0                False
+
+[1945 rows x 16 columns]}
+make_bar = {'MGC': <function product_bar_iterator.<locals>.iterate at 0x71f465c4e2a0>, 'MES': <function product_bar_iterator.<locals>.iterate at 0x71f465c4fd80>}
+
+    def iter_minutes(frames: Mapping[str, pd.DataFrame], make_bar: Mapping[str, Any]
+                     ) -> Iterator[tuple[int, dict[str, Bar]]]:
+        """The shared UTC minute grid (D11.5): every minute at which any leg has a bar, ascending,
+        with the legs that have a bar there. Nothing is forward filled: a leg without a bar at a
+        minute is simply absent from that minute's mapping."""
+        arrays = {r: f["ts_event"].to_numpy(dtype="int64") for r, f in frames.items()}
+        for r, arr in arrays.items():
+            if len(arr) > 1 and not bool(np.all(arr[1:] > arr[:-1])):
+>               raise EngineInvariantError(f"{r}: bars are not strictly increasing in time")
+E               screening.stage_e_engine.EngineInvariantError: MES: bars are not strictly increasing in time
+
+screening/stage_e_engine.py:247: EngineInvariantError
+______ test_a_roll_blackout_of_the_signal_leg_only_blocks_the_entry_v16a _______
+
+    def test_a_roll_blackout_of_the_signal_leg_only_blocks_the_entry_v16a() -> None:
+        frame_map = frames()
+        rules, mw = runner_rules(frame_map, mes_blackout={DAY})
+        assert DAY in mw.excluded["roll_blackout_any_leg"] and DAY not in mw.dates
+        assert DAY in mw.blackout_union
+>       res = run(flight.make_h30(), frame_map, rules)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_engine.py:164: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_engine.py:89: in run
+    return run_engine(frame_map, member, LEGS, rules or rules_for(LEGS, WINDOW))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+screening/stage_e_engine.py:683: in run_engine
+    for ts, bars in iter_minutes({leg.root: frames[leg.root] for leg in legs}, feeds):
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+frames = {'MGC':                 ts_event    open  ...  gap_before_minutes  vendor_degraded_day
+0    1750167000000000000  3000....       False
+1945  1750190040000000000  5000.0  ...                   0                False
+
+[1946 rows x 16 columns]}
+make_bar = {'MGC': <function product_bar_iterator.<locals>.iterate at 0x71f465c4c0e0>, 'MES': <function product_bar_iterator.<locals>.iterate at 0x71f465c4c360>}
+
+    def iter_minutes(frames: Mapping[str, pd.DataFrame], make_bar: Mapping[str, Any]
+                     ) -> Iterator[tuple[int, dict[str, Bar]]]:
+        """The shared UTC minute grid (D11.5): every minute at which any leg has a bar, ascending,
+        with the legs that have a bar there. Nothing is forward filled: a leg without a bar at a
+        minute is simply absent from that minute's mapping."""
+        arrays = {r: f["ts_event"].to_numpy(dtype="int64") for r, f in frames.items()}
+        for r, arr in arrays.items():
+            if len(arr) > 1 and not bool(np.all(arr[1:] > arr[:-1])):
+>               raise EngineInvariantError(f"{r}: bars are not strictly increasing in time")
+E               screening.stage_e_engine.EngineInvariantError: MES: bars are not strictly increasing in time
+
+screening/stage_e_engine.py:247: EngineInvariantError
+_______ test_the_engine_names_the_roll_blackout_when_d_is_a_window_date ________
+
+    def test_the_engine_names_the_roll_blackout_when_d_is_a_window_date() -> None:
+        frame_map = frames()
+        inputs = {leg.root: leg_inputs(leg.root, traded=leg.traded) for leg in LEGS}
+        rules = StageERules(inputs, frozenset(WINDOW), frozenset({DAY}), NO_RELEASES)
+>       res = run(flight.make_h30(), frame_map, rules)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_engine.py:173: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_engine.py:89: in run
+    return run_engine(frame_map, member, LEGS, rules or rules_for(LEGS, WINDOW))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+screening/stage_e_engine.py:683: in run_engine
+    for ts, bars in iter_minutes({leg.root: frames[leg.root] for leg in legs}, feeds):
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+frames = {'MGC':                 ts_event    open  ...  gap_before_minutes  vendor_degraded_day
+0    1750167000000000000  3000....       False
+1945  1750190040000000000  5000.0  ...                   0                False
+
+[1946 rows x 16 columns]}
+make_bar = {'MGC': <function product_bar_iterator.<locals>.iterate at 0x71f465e50c20>, 'MES': <function product_bar_iterator.<locals>.iterate at 0x71f465e50fe0>}
+
+    def iter_minutes(frames: Mapping[str, pd.DataFrame], make_bar: Mapping[str, Any]
+                     ) -> Iterator[tuple[int, dict[str, Bar]]]:
+        """The shared UTC minute grid (D11.5): every minute at which any leg has a bar, ascending,
+        with the legs that have a bar there. Nothing is forward filled: a leg without a bar at a
+        minute is simply absent from that minute's mapping."""
+        arrays = {r: f["ts_event"].to_numpy(dtype="int64") for r, f in frames.items()}
+        for r, arr in arrays.items():
+            if len(arr) > 1 and not bool(np.all(arr[1:] > arr[:-1])):
+>               raise EngineInvariantError(f"{r}: bars are not strictly increasing in time")
+E               screening.stage_e_engine.EngineInvariantError: MES: bars are not strictly increasing in time
+
+screening/stage_e_engine.py:247: EngineInvariantError
+____________ test_control_without_a_blackout_the_runner_rules_fill _____________
+
+    def test_control_without_a_blackout_the_runner_rules_fill() -> None:
+        frame_map = frames()
+        rules, mw = runner_rules(frame_map)
+        assert DAY in mw.dates and not mw.blackout_union
+>       res = run(flight.make_h30(), frame_map, rules)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_engine.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_engine.py:89: in run
+    return run_engine(frame_map, member, LEGS, rules or rules_for(LEGS, WINDOW))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+screening/stage_e_engine.py:683: in run_engine
+    for ts, bars in iter_minutes({leg.root: frames[leg.root] for leg in legs}, feeds):
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+frames = {'MGC':                 ts_event    open  ...  gap_before_minutes  vendor_degraded_day
+0    1750167000000000000  3000....       False
+1945  1750190040000000000  5000.0  ...                   0                False
+
+[1946 rows x 16 columns]}
+make_bar = {'MGC': <function product_bar_iterator.<locals>.iterate at 0x71f465c4c0e0>, 'MES': <function product_bar_iterator.<locals>.iterate at 0x71f465e50b80>}
+
+    def iter_minutes(frames: Mapping[str, pd.DataFrame], make_bar: Mapping[str, Any]
+                     ) -> Iterator[tuple[int, dict[str, Bar]]]:
+        """The shared UTC minute grid (D11.5): every minute at which any leg has a bar, ascending,
+        with the legs that have a bar there. Nothing is forward filled: a leg without a bar at a
+        minute is simply absent from that minute's mapping."""
+        arrays = {r: f["ts_event"].to_numpy(dtype="int64") for r, f in frames.items()}
+        for r, arr in arrays.items():
+            if len(arr) > 1 and not bool(np.all(arr[1:] > arr[:-1])):
+>               raise EngineInvariantError(f"{r}: bars are not strictly increasing in time")
+E               screening.stage_e_engine.EngineInvariantError: MES: bars are not strictly increasing in time
+
+screening/stage_e_engine.py:247: EngineInvariantError
+__________________ test_the_member_is_a_fresh_object_per_run ___________________
+
+    def test_the_member_is_a_fresh_object_per_run() -> None:
+        first, second = flight.make_h30(), flight.make_h30()
+        assert isinstance(first, FlightToGold) and first is not second
+>       run(first, frames())
+
+tests/test_k8_members_flight_engine.py:189: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_engine.py:89: in run
+    return run_engine(frame_map, member, LEGS, rules or rules_for(LEGS, WINDOW))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+screening/stage_e_engine.py:683: in run_engine
+    for ts, bars in iter_minutes({leg.root: frames[leg.root] for leg in legs}, feeds):
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+frames = {'MGC':                 ts_event    open  ...  gap_before_minutes  vendor_degraded_day
+0    1750167000000000000  3000....       False
+1945  1750190040000000000  5000.0  ...                   0                False
+
+[1946 rows x 16 columns]}
+make_bar = {'MGC': <function product_bar_iterator.<locals>.iterate at 0x71f465e51120>, 'MES': <function product_bar_iterator.<locals>.iterate at 0x71f465e511c0>}
+
+    def iter_minutes(frames: Mapping[str, pd.DataFrame], make_bar: Mapping[str, Any]
+                     ) -> Iterator[tuple[int, dict[str, Bar]]]:
+        """The shared UTC minute grid (D11.5): every minute at which any leg has a bar, ascending,
+        with the legs that have a bar there. Nothing is forward filled: a leg without a bar at a
+        minute is simply absent from that minute's mapping."""
+        arrays = {r: f["ts_event"].to_numpy(dtype="int64") for r, f in frames.items()}
+        for r, arr in arrays.items():
+            if len(arr) > 1 and not bool(np.all(arr[1:] > arr[:-1])):
+>               raise EngineInvariantError(f"{r}: bars are not strictly increasing in time")
+E               screening.stage_e_engine.EngineInvariantError: MES: bars are not strictly increasing in time
+
+screening/stage_e_engine.py:247: EngineInvariantError
+____________________ test_scenario_dates_are_calendar_facts ____________________
+
+    def test_scenario_dates_are_calendar_facts() -> None:
+        oil = set(OILCAD_DATES)
+        for d in (WPSR_DAY, FOMC_DAY, HOLIDAY_WPSR_DAY, DROPPED_WPSR_DAY, PLAIN_DAY):
+            assert d in oil
+        assert in_guard("6C", ns_at(WPSR_DAY, hm(9, 30)))
+        assert not in_guard("6C", ns_at(WPSR_DAY, hm(9, 35)))
+        assert in_guard("6C", ns_at(FOMC_DAY, hm(13, 0)))
+        assert in_guard("6C", ns_at(HOLIDAY_WPSR_DAY, hm(11, 0)))
+        assert in_guard("6C", ns_at(DROPPED_WPSR_DAY, hm(11, 0)))
+        assert not any(in_guard("6C", ns_at(PLAIN_DAY, t)) for t in DECISIONS)
+        # 2025-06-19 and 2025-07-04 are not OILCAD dates; WPSR_DAY's 20 reference dates skip them
+        assert date(2025, 6, 19) not in oil and date(2025, 7, 4) not in oil
+>       assert refs_of(WPSR_DAY)[0] == date(2025, 6, 9) and refs_of(WPSR_DAY)[-1] == PLAIN_DAY
+E       assert (datetime.date(2025, 6, 10) == datetime.date(2025, 6, 9))
+E        +  where datetime.date(2025, 6, 9) = date(2025, 6, 9)
+
+tests/test_k8_members_oilcad.py:318: AssertionError
+_____________________ test_first_and_last_decisions_trade ______________________
+
+    def test_first_and_last_decisions_trade() -> None:
+>       assert entries(DAY, {"08:05": 2, "13:25": 2}) == [("08:04", "buy"), ("13:24", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:355: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f4663dba80>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f4663dba80> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+__________________________ test_no_decision_at_08_00 ___________________________
+
+    def test_no_decision_at_08_00() -> None:
+        """A big MCL move 07:54 -> 07:59 with a 6C bar at 07:59: 08:00 is not a decision time."""
+>       assert entries(DAY, mcl_extra=[(hm(7, 54), B_MCL - 3)]) == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:360: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f46599d5c0>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f46599d5c0> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+__________________________ test_no_decision_at_13_30 ___________________________
+
+    def test_no_decision_at_13_30() -> None:
+        """A big MCL move 13:24 -> 13:29 with a 6C bar at 13:29: 13:30 is not a decision time."""
+>       assert entries(DAY, mcl_extra=[(hm(13, 29), B_MCL + 3)]) == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:365: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f4664b0240>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f4664b0240> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+____________ test_r_t_reads_the_mcl_bars_at_t_minus_1_and_t_minus_6 ____________
+
+    def test_r_t_reads_the_mcl_bars_at_t_minus_1_and_t_minus_6() -> None:
+        """t = 08:05: closes of 07:59 (B) and 08:04 (B + 2): a buy. Decoy bars 08:00..08:03 at
+        B + 6 (a sell if 08:00 were t - 5) and 07:58 at B + 6 (a sell against 08:04 if it were
+        t - 7) are never read."""
+        decoys = [(m, B_MCL + 6) for m in (hm(7, 58), *range(hm(8, 0), hm(8, 4)))]
+>       assert entries(DAY, {"08:05": 2}, mcl_extra=decoys) == [("08:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:373: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465dfb480>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465dfb480> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+_________________ test_the_entry_is_on_the_6c_bar_at_t_minus_1 _________________
+
+    def test_the_entry_is_on_the_6c_bar_at_t_minus_1() -> None:
+        """A big move at t = 09:05 is acted on at the 09:04 view only."""
+>       assert entries(DAY, {"09:05": 2}) == [("09:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:378: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f466441780>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f466441780> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+___________ test_a_zero_mcl_close_at_t_minus_6_leaves_r_t_undefined ____________
+
+    def test_a_zero_mcl_close_at_t_minus_6_leaves_r_t_undefined() -> None:
+        """The 07:59 close is 0 (c6 of t = 08:05, the c1 of no block): no entry at 08:05 despite
+        the move; 08:10 still trades."""
+        bars = oil_bars(DAY, {"08:05": 2, "08:10": 2})
+        bars = [rb for rb in bars if not (rb[0] == "MCL" and rb[1].trade_date == DAY
+                                          and ct(rb[1].ts_event_ns).time() == time(7, 59))]
+        bars.append(mk_bar("MCL", DAY, hm(7, 59), 0))
+>       out = drive(mk(), sorted(bars, key=lambda rb: rb[1].ts_event_ns))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:396: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979840000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979840000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f46614b340>(1751979840000000000, {})
+E            +    where <built-in method get of dict object at 0x71f46614b340> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979840000000000 = Bar(ts_event_ns=1751979840000000000, open=60.02, high=60.02, low=60.02, close=60.02, volume=10, instrument_id=777, raw...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+______________________ test_z_exactly_2_trades_end_to_end ______________________
+
+    def test_z_exactly_2_trades_end_to_end() -> None:
+        """STANDARD: s = u/2; a +1 step from B is r = u, z = 2.0 exactly: a buy; -1 a sell."""
+>       assert entries(DAY, {"10:05": 1}) == [("10:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:428: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f4663dc9c0>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f4663dc9c0> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+______________ test_ddof_1_end_to_end_just_below_2_does_not_trade ______________
+
+    def test_ddof_1_end_to_end_just_below_2_does_not_trade() -> None:
+        """On base B + 1 a +1 step is r = 1/6001: z = 1.99967 with ddof 1 (no trade); ddof 0 would
+        give 2.00067 (a trade)."""
+        values = ref_values(STANDARD)
+        r = (B_MCL + 2 - (B_MCL + 1)) / (B_MCL + 1)
+        assert abs(r / statistics.stdev(values)) < 2.0 <= abs(r / statistics.pstdev(values))
+>       assert entries(DAY, {"10:05": 1}, base=B_MCL + 1) == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:438: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f4663ce9c0>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f4663ce9c0> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.01, high=60.01, low=60.01, close=60.01, volume=10, instrument_id=777, raw...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+____________________ test_n_1000_trades_and_n_999_does_not _____________________
+
+    def test_n_1000_trades_and_n_999_does_not() -> None:
+        n1000 = STANDARD[:-1] + ((6, 6, 36),)  # one zero fewer: n = 1000
+        n999 = STANDARD[:-1] + ((6, 6, 35),)  # n = 999
+        assert len(ref_values(n1000)) == 1000 and len(ref_values(n999)) == 999
+>       assert entries(DAY, {"10:05": 2}, specs=n1000) == [("10:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:446: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465d03940>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465d03940> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+_______________________ test_zero_scale_is_no_trade_on_d _______________________
+
+    def test_zero_scale_is_no_trade_on_d() -> None:
+        flat = ((0, 0, 65),) * 20
+>       assert entries(DAY, {"10:05": 50}, specs=flat) == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:452: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f466098b40>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f466098b40> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+________________ test_sign_buys_on_z_above_zero_and_sells_below ________________
+
+    def test_sign_buys_on_z_above_zero_and_sells_below() -> None:
+>       assert entries(DAY, {"09:05": 2, "10:05": -2}) == [("09:04", "buy"), ("10:04", "sell")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:456: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465d02700>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465d02700> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+________________________ test_small_moves_do_not_trade _________________________
+
+    def test_small_moves_do_not_trade() -> None:
+>       assert entries(DAY, {"09:05": 0}) == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:460: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f466068980>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f466068980> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+____________ test_reference_dates_are_the_20_previous_oilcad_dates _____________
+
+    def test_reference_dates_are_the_20_previous_oilcad_dates() -> None:
+        """WPSR_DAY's references skip 2025-06-19 and 2025-07-04 (not OILCAD dates). Wild MCL values
+        on those two weekdays and on the date before the oldest reference (2025-06-09) must not
+        enter s(d): with them, z = 2.0 exactly would fall below 2."""
+        day = date(2025, 7, 10)  # a non-WPSR day whose references contain both holidays
+        refs = refs_of(day)
+        assert date(2025, 6, 19) not in refs and date(2025, 7, 4) not in refs
+>       assert refs[0] == date(2025, 6, 10) and refs[-1] == WPSR_DAY
+E       assert (datetime.date(2025, 6, 11) == datetime.date(2025, 6, 10))
+E        +  where datetime.date(2025, 6, 10) = date(2025, 6, 10)
+
+tests/test_k8_members_oilcad.py:472: AssertionError
+_____________ test_warm_up_20th_eligible_date_no_trade_21st_trades _____________
+
+    def test_warm_up_20th_eligible_date_no_trade_21st_trades() -> None:
+        """The run starts on S[0]. S[0]..S[18] each give 55 values; S[19] and S[20] carry a big
+        move. On S[19] the references start one date before the run (warm-up: no trade, though
+        n = 1045 and z ~ 7); on S[20] they are S[0]..S[19]: a trade."""
+        start = OILCAD_DATES.index(date(2025, 8, 4))
+        s = OILCAD_DATES[start:start + 21]
+        warm = ((5, 5, 45),) * 19
+        assert len(ref_values(warm)) == 1045
+        bars = (ref_bars(s[:19], warm) + trade_bars(s[19], {"10:05": 3})
+                + trade_bars(s[20], {"10:05": 10}))
+        bars = sorted(bars, key=lambda rb: rb[1].ts_event_ns)
+        out = drive(mk(), bars)
+>       assert [(i[0], i[1], i[3]) for i in out] == [(s[20], "10:04", "buy")]
+E       AssertionError: assert [(datetime.da...0:04', 'buy')] == [(datetime.da...0:04', 'buy')]
+E         
+E         At index 0 diff: (datetime.date(2025, 8, 29), '10:04', 'buy') != (datetime.date(2025, 9, 2), '10:04', 'buy')
+E         Left contains one more item: (datetime.date(2025, 9, 2), '10:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:495: AssertionError
+___________ test_too_few_reference_dates_at_the_table_start_no_trade ___________
+
+    def test_too_few_reference_dates_at_the_table_start_no_trade() -> None:
+        day = OILCAD_DATES[19]  # only 19 OILCAD dates before it
+>       assert len(previous_dates(OILCAD_DATES, day, 20)) == 19
+E       assert 20 == 19
+E        +  where 20 = len((datetime.date(2019, 5, 1), datetime.date(2019, 5, 2), datetime.date(2019, 5, 3), datetime.date(2019, 5, 6), datetime.date(2019, 5, 7), datetime.date(2019, 5, 8), ...))
+E        +    where (datetime.date(2019, 5, 1), datetime.date(2019, 5, 2), datetime.date(2019, 5, 3), datetime.date(2019, 5, 6), datetime.date(2019, 5, 7), datetime.date(2019, 5, 8), ...) = previous_dates((datetime.date(2019, 5, 1), datetime.date(2019, 5, 2), datetime.date(2019, 5, 3), datetime.date(2019, 5, 6), datetime.date(2019, 5, 7), datetime.date(2019, 5, 8), ...), datetime.date(2019, 5, 29), 20)
+
+tests/test_k8_members_oilcad.py:500: AssertionError
+______ test_mcl_roll_inside_a_block_no_entry_at_t_later_decisions_proceed ______
+
+    def test_mcl_roll_inside_a_block_no_entry_at_t_later_decisions_proceed() -> None:
+        """08:59 carries id 777 and 09:04 id 778: r_09:05 undefined (no entry at 09:05, though
+        the move is big); 09:04 and 09:09 both 778: r_09:10 defined, a buy."""
+        ids = {m: 778 for m in POINTS if m >= hm(9, 4)}
+>       assert entries(DAY, {"09:05": 2, "09:10": 2}, mcl_ids=ids) == [("09:09", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:519: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465ca7b00>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465ca7b00> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+_________________ test_missing_6c_entry_bar_blocks_that_t_only _________________
+
+    def test_missing_6c_entry_bar_blocks_that_t_only() -> None:
+>       assert entries(DAY, {"09:05": 2, "09:10": 2}, cad_skip=[hm(9, 4)]) == [("09:09", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:524: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465bf9340>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465bf9340> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+________ test_missing_mcl_bar_at_t_minus_1_blocks_t_and_the_next_block _________
+
+    def test_missing_mcl_bar_at_t_minus_1_blocks_t_and_the_next_block() -> None:
+        """09:04 missing: r_09:05 (09:04 is c1) and r_09:10 (09:04 is c6) undefined."""
+>       out = entries(DAY, {"09:05": 2, "09:10": 2, "09:15": 2}, mcl_skip=[hm(9, 4)])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:529: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f46644e740>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f46644e740> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+___________________ test_mcl_bar_arriving_late_is_never_used ___________________
+
+    def test_mcl_bar_arriving_late_is_never_used() -> None:
+        """MCL has no bar at 09:04 and a bar one minute later (09:05) at the 09:04 level: never a
+        forward fill or a late substitute, so no entry at 09:05 or 09:10."""
+        late = [(hm(9, 5), B_MCL + 2)]
+>       out = entries(DAY, {"09:05": 2, "09:10": 2}, mcl_skip=[hm(9, 4)], mcl_extra=late)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:537: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465bf8700>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465bf8700> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+__________________ test_missing_mcl_bar_at_t_minus_6_blocks_t __________________
+
+    def test_missing_mcl_bar_at_t_minus_6_blocks_t() -> None:
+>       assert entries(DAY, {"09:05": 2}, mcl_skip=[hm(8, 59)]) == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:542: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f466073b40>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f466073b40> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+______________ test_a_previous_dates_t_minus_6_bar_is_never_used _______________
+
+    def test_a_previous_dates_t_minus_6_bar_is_never_used() -> None:
+        """d's 08:59 MCL bar is missing; the previous date's 08:59 bar carries d's instrument_id and
+        a level 10 ticks below: r_09:05 stays undefined (no stale value), so no entry at 09:05.
+        Control: d's own 08:59 bar at that level is read (a sell at 09:00, a buy at 09:05).
+        References (5, 5, 45) x 20, n ~ 1100."""
+        rich = ((5, 5, 45),) * 20
+        refs = refs_of(DAY)
+    
+        def scenario(own: bool) -> list[tuple[str, str]]:
+            bars = [rb for rb in ref_bars(refs, rich) if not (
+                rb[1].trade_date == refs[-1] and ct(rb[1].ts_event_ns).time() == time(8, 59))]
+            bars.append(mk_bar("MCL", refs[-1], hm(8, 59), B_MCL - 10))
+            bars += trade_bars(DAY, mcl_skip=[] if own else [hm(8, 59)],
+                               mcl_extra=[(hm(8, 59), B_MCL - 10)] if own else [])
+            if own:
+                bars = [rb for rb in bars if not (
+                    rb[1].trade_date == DAY and rb[0] == "MCL" and rb[1].close == price("MCL", B_MCL)
+                    and ct(rb[1].ts_event_ns).time() == time(8, 59))]
+            out = drive(mk(), sorted(bars, key=lambda rb: rb[1].ts_event_ns))
+            return [(i[1], i[3]) for i in out]
+    
+>       assert scenario(own=False) == []
+               ^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:566: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:563: in scenario
+    out = drive(mk(), sorted(bars, key=lambda rb: rb[1].ts_event_ns))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f4662dae80>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f4662dae80> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+___________ test_bars_are_identified_by_ct_date_not_trade_date_alone ___________
+
+    def test_bars_are_identified_by_ct_date_not_trade_date_alone() -> None:
+        """K7-L-01: a 6C bar opening 09:04 on CT date d + 1 but carrying trade_date d is not the 6C
+        bar at 09:04 of d: d's references are complete and d + 1's MCL block is a big move, yet no
+        entry."""
+        day = DAY
+        nxt = OILCAD_DATES[OILCAD_DATES.index(day) + 1]
+        bars = oil_bars(day, cad_to=hm(9, 0)) + [
+            rb for rb in trade_bars(nxt, {"09:05": 2}) if rb[0] == "MCL"]
+        wrong = mk_bar("6C", nxt, hm(9, 4), B_CAD, trade_day=day)
+>       out = drive(mk(), sorted([*bars, wrong], key=lambda rb: rb[1].ts_event_ns))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:579: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f466314540>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f466314540> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+_______________ test_an_mcl_bar_is_read_on_its_own_ct_date_only ________________
+
+    def test_an_mcl_bar_is_read_on_its_own_ct_date_only() -> None:
+        """S0.4: d's 09:04 MCL bar is missing; an MCL bar opening 09:04 on CT date d + 1 but
+        labelled trade_date d (with a big move over d's 08:59) is not d's bar at 09:04, so it closes
+        no block, and the 6C bar of d + 1 at 09:04 gets no entry."""
+        day = DAY
+        nxt = OILCAD_DATES[OILCAD_DATES.index(day) + 1]
+        wrong = mk_bar("MCL", nxt, hm(9, 4), B_MCL + 10, trade_day=day)
+        cad = [mk_bar("6C", nxt, m, B_CAD) for m in range(hm(9, 0), hm(9, 10))]
+        bars = oil_bars(day, mcl_skip=[hm(9, 4)], cad_to=hm(9, 0)) + [wrong, *cad]
+>       assert drive(mk(), sorted(bars, key=lambda rb: rb[1].ts_event_ns)) == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:596: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465eced00>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465eced00> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+__________ test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35 ___________
+
+    def test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35() -> None:
+>       assert entries(WPSR_DAY, {"09:30": 2, "09:35": 2}) == [("09:34", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:601: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749560340000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1752065940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1752065940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f46622aec0>(1752065940000000000, {})
+E            +    where <built-in method get of dict object at 0x71f46622aec0> = {1749560340000000000: {'MCL': Bar(ts_event_ns=1749560340000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1752065940000000000 = Bar(ts_event_ns=1752065940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+_________________ test_09_30_on_a_non_wpsr_date_is_not_skipped _________________
+
+    def test_09_30_on_a_non_wpsr_date_is_not_skipped() -> None:
+>       assert entries(PLAIN_DAY, {"09:30": 2}) == [("09:29", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:605: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465e904c0>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465e904c0> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+_____________________ test_c6_skips_13_00_on_an_fomc_date ______________________
+
+    def test_c6_skips_13_00_on_an_fomc_date() -> None:
+>       assert entries(FOMC_DAY, {"13:00": 2, "13:05": 2}) == [("13:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:609: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1751461140000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1753880340000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1753880340000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465d03980>(1753880340000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465d03980> = {1751461140000000000: {'MCL': Bar(ts_event_ns=1751461140000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1753880340000000000 = Bar(ts_event_ns=1753880340000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+_ test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row __
+
+    def test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row() -> None:
+>       assert entries(HOLIDAY_WPSR_DAY, {"11:00": 2, "11:05": 2}) == [("11:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:613: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1754571540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1756990740000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1756990740000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465fb4140>(1756990740000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465fb4140> = {1754571540000000000: {'MCL': Bar(ts_event_ns=1754571540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1756990740000000000 = Bar(ts_event_ns=1756990740000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+________________ test_c6_tests_the_fill_minute_t_on_the_6c_root ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71f465f8b650>
+
+    def test_c6_tests_the_fill_minute_t_on_the_6c_root(monkeypatch: pytest.MonkeyPatch) -> None:
+        calls: list[tuple[str, int]] = []
+    
+        def spy(root: str, t_ns: int) -> bool:
+            calls.append((root, t_ns))
+            return False
+    
+        monkeypatch.setattr(oilcad, "in_guard", spy)
+>       assert entries(DAY, {"09:05": 2}) == [("09:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:625: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465be3b40>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465be3b40> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+_____________ test_a_skipped_decision_leaves_later_decisions_alone _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71f46635c200>
+
+    def test_a_skipped_decision_leaves_later_decisions_alone(monkeypatch: pytest.MonkeyPatch
+                                                             ) -> None:
+        monkeypatch.setattr(oilcad, "in_guard", lambda root, t_ns: True)
+>       assert entries(DAY, {"09:05": 2, "09:10": 2}) == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:632: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = None
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465b803c0>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465b803c0> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+________ test_no_entry_while_a_position_or_a_pending_order_exists[1-0] _________
+
+position = 1, pending = 0
+
+    @pytest.mark.parametrize("position,pending", [(1, 0), (-1, 0), (0, 1), (0, -1)])
+    def test_no_entry_while_a_position_or_a_pending_order_exists(position: int, pending: int
+                                                                ) -> None:
+        acct = _acct_from(ns_at(DAY, hm(9, 4)), position=0, pending=pending)
+        if position:  # a position seen first at 09:04 (T_e = 09:04): no entry, and no exit yet
+            acct = _acct_from(ns_at(DAY, hm(9, 4)), position=position)
+>       out = entries(DAY, {"09:05": 2}, acct=acct, cad_to=hm(9, 10))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:650: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = <function _acct_from.<locals>.<lambda> at 0x71f4659bfe20>
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f46594dd80>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f46594dd80> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+________ test_no_entry_while_a_position_or_a_pending_order_exists[-1-0] ________
+
+position = -1, pending = 0
+
+    @pytest.mark.parametrize("position,pending", [(1, 0), (-1, 0), (0, 1), (0, -1)])
+    def test_no_entry_while_a_position_or_a_pending_order_exists(position: int, pending: int
+                                                                ) -> None:
+        acct = _acct_from(ns_at(DAY, hm(9, 4)), position=0, pending=pending)
+        if position:  # a position seen first at 09:04 (T_e = 09:04): no entry, and no exit yet
+            acct = _acct_from(ns_at(DAY, hm(9, 4)), position=position)
+>       out = entries(DAY, {"09:05": 2}, acct=acct, cad_to=hm(9, 10))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:650: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = <function _acct_from.<locals>.<lambda> at 0x71f46636d300>
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465bec380>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465bec380> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+________ test_no_entry_while_a_position_or_a_pending_order_exists[0-1] _________
+
+position = 0, pending = 1
+
+    @pytest.mark.parametrize("position,pending", [(1, 0), (-1, 0), (0, 1), (0, -1)])
+    def test_no_entry_while_a_position_or_a_pending_order_exists(position: int, pending: int
+                                                                ) -> None:
+        acct = _acct_from(ns_at(DAY, hm(9, 4)), position=0, pending=pending)
+        if position:  # a position seen first at 09:04 (T_e = 09:04): no entry, and no exit yet
+            acct = _acct_from(ns_at(DAY, hm(9, 4)), position=position)
+>       out = entries(DAY, {"09:05": 2}, acct=acct, cad_to=hm(9, 10))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:650: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = <function _acct_from.<locals>.<lambda> at 0x71f465e50d60>
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f466590b00>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f466590b00> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+________ test_no_entry_while_a_position_or_a_pending_order_exists[0--1] ________
+
+position = 0, pending = -1
+
+    @pytest.mark.parametrize("position,pending", [(1, 0), (-1, 0), (0, 1), (0, -1)])
+    def test_no_entry_while_a_position_or_a_pending_order_exists(position: int, pending: int
+                                                                ) -> None:
+        acct = _acct_from(ns_at(DAY, hm(9, 4)), position=0, pending=pending)
+        if position:  # a position seen first at 09:04 (T_e = 09:04): no entry, and no exit yet
+            acct = _acct_from(ns_at(DAY, hm(9, 4)), position=position)
+>       out = entries(DAY, {"09:05": 2}, acct=acct, cad_to=hm(9, 10))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:650: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = OilCad(root='6C', name='K8-oilcad-01 6C', legs=(LegSpec(root='6C', traded=True), LegSpec(root='MCL', traded=False)), t...radingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)})
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+acct = <function _acct_from.<locals>.<lambda> at 0x71f465ebfe20>
+
+    def drive(member: Any, bars: Sequence[RootBar], acct: AccountFn | None = None) -> list[Intent]:
+        """Direct calls, one per minute holding any bar, in time order; every leg's key is present
+        (None: no bar). ``acct(ts_ns)`` gives the account per view (default: flat)."""
+        roots = tuple(leg.root for leg in member.legs)
+        traded = tuple(leg.root for leg in member.legs if leg.traded)
+        by_ts: dict[int, dict[str, Bar]] = {}
+        for root, b in bars:
+>           assert root in roots and root not in by_ts.get(b.ts_event_ns, {})
+E           AssertionError: assert ('MCL' in ('6C', 'MCL') and 'MCL' not in {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)})
+E            +  where {'MCL': Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, r...arly_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)} = <built-in method get of dict object at 0x71f465cae0c0>(1751979540000000000, {})
+E            +    where <built-in method get of dict object at 0x71f465cae0c0> = {1749473940000000000: {'MCL': Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)}, ...}.get
+E            +    and   1751979540000000000 = Bar(ts_event_ns=1751979540000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=777, raw_sym...early_halt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False).ts_event_ns
+
+tests/test_k8_members_oilcad.py:121: AssertionError
+___ test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position ____
+
+    def test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position() -> None:
+>       res = run_day({"09:05": 2})
+              ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:698: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:694: in run_day
+    return engine(m, bars, rules, frozenset(ns_at(DAY, x) for x in flatten_at))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_k8_members_oilcad.py:165: in engine
+    frames = {leg.root: frame_of(leg.root, bars, flatten_at) for leg in member.legs}
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = 'MCL'
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+flatten_at = frozenset()
+
+    def frame_of(root: str, bars: Sequence[RootBar], flatten_at: frozenset[int] = frozenset()
+                 ) -> pd.DataFrame:
+        """The engine frame of ``root``'s bars; session flags from rules/sessions.py, plus a bar
+        flatten flag on the bars opening at ``flatten_at`` (UTC ns; an engine closure)."""
+        rows = []
+        for r, b in bars:
+            if r != root:
+                continue
+            state = sessions.session_state(root, ct(b.ts_event_ns).astimezone(UTC))
+            forced = b.ts_event_ns in flatten_at
+            rows.append({
+                "ts_event": b.ts_event_ns, "open": b.close, "high": b.close, "low": b.close,
+                "close": b.close, "volume": 10, "instrument_id": b.instrument_id,
+                "raw_symbol": b.raw_symbol, "trade_date": b.trade_date.isoformat(),
+                "in_flatten_window": bool(state.must_be_flat) or forced,
+                "in_no_new_positions_window": bool(not state.can_open),
+                "early_halt_ct": "", "in_scheduled_closure": False, "is_roll_session": False,
+                "gap_before_minutes": 0, "vendor_degraded_day": False})
+        out = pd.DataFrame(rows).sort_values("ts_event", ignore_index=True)
+>       assert out["ts_event"].is_unique
+E       assert False
+E        +  where False = 0       1749473940000000000\n1       1749474240000000000\n2       1749474540000000000\n3       1749474840000000000\n4     ... 1751998440000000000\n1315    1751998740000000000\n1316    1751999040000000000\nName: ts_event, Length: 1317, dtype: int64.is_unique
+
+tests/test_k8_members_oilcad.py:153: AssertionError
+____________________________ test_engine_sell_side _____________________________
+
+    def test_engine_sell_side() -> None:
+>       assert fills(run_day({"09:05": -2})) == [(DAY, "09:05", "6C", "sell", "strategy"),
+                     ^^^^^^^^^^^^^^^^^^^^^^
+                                                 (DAY, "09:20", "6C", "buy", "strategy")]
+
+tests/test_k8_members_oilcad.py:706: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:694: in run_day
+    return engine(m, bars, rules, frozenset(ns_at(DAY, x) for x in flatten_at))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_k8_members_oilcad.py:165: in engine
+    frames = {leg.root: frame_of(leg.root, bars, flatten_at) for leg in member.legs}
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = 'MCL'
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+flatten_at = frozenset()
+
+    def frame_of(root: str, bars: Sequence[RootBar], flatten_at: frozenset[int] = frozenset()
+                 ) -> pd.DataFrame:
+        """The engine frame of ``root``'s bars; session flags from rules/sessions.py, plus a bar
+        flatten flag on the bars opening at ``flatten_at`` (UTC ns; an engine closure)."""
+        rows = []
+        for r, b in bars:
+            if r != root:
+                continue
+            state = sessions.session_state(root, ct(b.ts_event_ns).astimezone(UTC))
+            forced = b.ts_event_ns in flatten_at
+            rows.append({
+                "ts_event": b.ts_event_ns, "open": b.close, "high": b.close, "low": b.close,
+                "close": b.close, "volume": 10, "instrument_id": b.instrument_id,
+                "raw_symbol": b.raw_symbol, "trade_date": b.trade_date.isoformat(),
+                "in_flatten_window": bool(state.must_be_flat) or forced,
+                "in_no_new_positions_window": bool(not state.can_open),
+                "early_halt_ct": "", "in_scheduled_closure": False, "is_roll_session": False,
+                "gap_before_minutes": 0, "vendor_degraded_day": False})
+        out = pd.DataFrame(rows).sort_values("ts_event", ignore_index=True)
+>       assert out["ts_event"].is_unique
+E       assert False
+E        +  where False = 0       1749473940000000000\n1       1749474240000000000\n2       1749474540000000000\n3       1749474840000000000\n4     ... 1751998440000000000\n1315    1751998740000000000\n1316    1751999040000000000\nName: ts_event, Length: 1317, dtype: int64.is_unique
+
+tests/test_k8_members_oilcad.py:153: AssertionError
+______ test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing ______
+
+    def test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing() -> None:
+>       res = run_day({"09:05": 2}, cad_skip=[hm(9, 5)])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:711: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:694: in run_day
+    return engine(m, bars, rules, frozenset(ns_at(DAY, x) for x in flatten_at))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_k8_members_oilcad.py:165: in engine
+    frames = {leg.root: frame_of(leg.root, bars, flatten_at) for leg in member.legs}
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = 'MCL'
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+flatten_at = frozenset()
+
+    def frame_of(root: str, bars: Sequence[RootBar], flatten_at: frozenset[int] = frozenset()
+                 ) -> pd.DataFrame:
+        """The engine frame of ``root``'s bars; session flags from rules/sessions.py, plus a bar
+        flatten flag on the bars opening at ``flatten_at`` (UTC ns; an engine closure)."""
+        rows = []
+        for r, b in bars:
+            if r != root:
+                continue
+            state = sessions.session_state(root, ct(b.ts_event_ns).astimezone(UTC))
+            forced = b.ts_event_ns in flatten_at
+            rows.append({
+                "ts_event": b.ts_event_ns, "open": b.close, "high": b.close, "low": b.close,
+                "close": b.close, "volume": 10, "instrument_id": b.instrument_id,
+                "raw_symbol": b.raw_symbol, "trade_date": b.trade_date.isoformat(),
+                "in_flatten_window": bool(state.must_be_flat) or forced,
+                "in_no_new_positions_window": bool(not state.can_open),
+                "early_halt_ct": "", "in_scheduled_closure": False, "is_roll_session": False,
+                "gap_before_minutes": 0, "vendor_degraded_day": False})
+        out = pd.DataFrame(rows).sort_values("ts_event", ignore_index=True)
+>       assert out["ts_event"].is_unique
+E       assert False
+E        +  where False = 0       1749473940000000000\n1       1749474240000000000\n2       1749474540000000000\n3       1749474840000000000\n4     ... 1751998440000000000\n1315    1751998740000000000\n1316    1751999040000000000\nName: ts_event, Length: 1317, dtype: int64.is_unique
+
+tests/test_k8_members_oilcad.py:153: AssertionError
+__________ test_engine_missing_exit_bar_exits_on_the_first_later_bar ___________
+
+    def test_engine_missing_exit_bar_exits_on_the_first_later_bar() -> None:
+>       res = run_day({"09:05": 2}, cad_skip=[hm(9, 19)])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:717: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:694: in run_day
+    return engine(m, bars, rules, frozenset(ns_at(DAY, x) for x in flatten_at))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_k8_members_oilcad.py:165: in engine
+    frames = {leg.root: frame_of(leg.root, bars, flatten_at) for leg in member.legs}
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = 'MCL'
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+flatten_at = frozenset()
+
+    def frame_of(root: str, bars: Sequence[RootBar], flatten_at: frozenset[int] = frozenset()
+                 ) -> pd.DataFrame:
+        """The engine frame of ``root``'s bars; session flags from rules/sessions.py, plus a bar
+        flatten flag on the bars opening at ``flatten_at`` (UTC ns; an engine closure)."""
+        rows = []
+        for r, b in bars:
+            if r != root:
+                continue
+            state = sessions.session_state(root, ct(b.ts_event_ns).astimezone(UTC))
+            forced = b.ts_event_ns in flatten_at
+            rows.append({
+                "ts_event": b.ts_event_ns, "open": b.close, "high": b.close, "low": b.close,
+                "close": b.close, "volume": 10, "instrument_id": b.instrument_id,
+                "raw_symbol": b.raw_symbol, "trade_date": b.trade_date.isoformat(),
+                "in_flatten_window": bool(state.must_be_flat) or forced,
+                "in_no_new_positions_window": bool(not state.can_open),
+                "early_halt_ct": "", "in_scheduled_closure": False, "is_roll_session": False,
+                "gap_before_minutes": 0, "vendor_degraded_day": False})
+        out = pd.DataFrame(rows).sort_values("ts_event", ignore_index=True)
+>       assert out["ts_event"].is_unique
+E       assert False
+E        +  where False = 0       1749473940000000000\n1       1749474240000000000\n2       1749474540000000000\n3       1749474840000000000\n4     ... 1751998440000000000\n1315    1751998740000000000\n1316    1751999040000000000\nName: ts_event, Length: 1317, dtype: int64.is_unique
+
+tests/test_k8_members_oilcad.py:153: AssertionError
+___ test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20 ____
+
+    def test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20() -> None:
+        """Big moves at 09:05, 09:20 (= t_e + 15, decided on the exit's 09:19 view: no entry) and
+        09:25 (= t_e + 20: an entry)."""
+>       res = run_day({"09:05": 2, "09:20": 2, "09:25": 2})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:725: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:694: in run_day
+    return engine(m, bars, rules, frozenset(ns_at(DAY, x) for x in flatten_at))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_k8_members_oilcad.py:165: in engine
+    frames = {leg.root: frame_of(leg.root, bars, flatten_at) for leg in member.legs}
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = 'MCL'
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+flatten_at = frozenset()
+
+    def frame_of(root: str, bars: Sequence[RootBar], flatten_at: frozenset[int] = frozenset()
+                 ) -> pd.DataFrame:
+        """The engine frame of ``root``'s bars; session flags from rules/sessions.py, plus a bar
+        flatten flag on the bars opening at ``flatten_at`` (UTC ns; an engine closure)."""
+        rows = []
+        for r, b in bars:
+            if r != root:
+                continue
+            state = sessions.session_state(root, ct(b.ts_event_ns).astimezone(UTC))
+            forced = b.ts_event_ns in flatten_at
+            rows.append({
+                "ts_event": b.ts_event_ns, "open": b.close, "high": b.close, "low": b.close,
+                "close": b.close, "volume": 10, "instrument_id": b.instrument_id,
+                "raw_symbol": b.raw_symbol, "trade_date": b.trade_date.isoformat(),
+                "in_flatten_window": bool(state.must_be_flat) or forced,
+                "in_no_new_positions_window": bool(not state.can_open),
+                "early_halt_ct": "", "in_scheduled_closure": False, "is_roll_session": False,
+                "gap_before_minutes": 0, "vendor_degraded_day": False})
+        out = pd.DataFrame(rows).sort_values("ts_event", ignore_index=True)
+>       assert out["ts_event"].is_unique
+E       assert False
+E        +  where False = 0       1749473940000000000\n1       1749474240000000000\n2       1749474540000000000\n3       1749474840000000000\n4     ... 1751998440000000000\n1315    1751998740000000000\n1316    1751999040000000000\nName: ts_event, Length: 1317, dtype: int64.is_unique
+
+tests/test_k8_members_oilcad.py:153: AssertionError
+______ test_engine_late_fill_holds_the_position_through_the_next_decision ______
+
+    def test_engine_late_fill_holds_the_position_through_the_next_decision() -> None:
+        """6C bars 09:05..09:08 missing: the 09:05 entry fills at 09:09 (T_e = 09:09), so the 09:10
+        decision (its 09:09 view) sees a position: no entry; the exit fills at 09:24."""
+>       res = run_day({"09:05": 2, "09:10": 2}, cad_skip=list(range(hm(9, 5), hm(9, 9))))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:735: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:694: in run_day
+    return engine(m, bars, rules, frozenset(ns_at(DAY, x) for x in flatten_at))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_k8_members_oilcad.py:165: in engine
+    frames = {leg.root: frame_of(leg.root, bars, flatten_at) for leg in member.legs}
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = 'MCL'
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+flatten_at = frozenset()
+
+    def frame_of(root: str, bars: Sequence[RootBar], flatten_at: frozenset[int] = frozenset()
+                 ) -> pd.DataFrame:
+        """The engine frame of ``root``'s bars; session flags from rules/sessions.py, plus a bar
+        flatten flag on the bars opening at ``flatten_at`` (UTC ns; an engine closure)."""
+        rows = []
+        for r, b in bars:
+            if r != root:
+                continue
+            state = sessions.session_state(root, ct(b.ts_event_ns).astimezone(UTC))
+            forced = b.ts_event_ns in flatten_at
+            rows.append({
+                "ts_event": b.ts_event_ns, "open": b.close, "high": b.close, "low": b.close,
+                "close": b.close, "volume": 10, "instrument_id": b.instrument_id,
+                "raw_symbol": b.raw_symbol, "trade_date": b.trade_date.isoformat(),
+                "in_flatten_window": bool(state.must_be_flat) or forced,
+                "in_no_new_positions_window": bool(not state.can_open),
+                "early_halt_ct": "", "in_scheduled_closure": False, "is_roll_session": False,
+                "gap_before_minutes": 0, "vendor_degraded_day": False})
+        out = pd.DataFrame(rows).sort_values("ts_event", ignore_index=True)
+>       assert out["ts_event"].is_unique
+E       assert False
+E        +  where False = 0       1749473940000000000\n1       1749474240000000000\n2       1749474540000000000\n3       1749474840000000000\n4     ... 1751998440000000000\n1315    1751998740000000000\n1316    1751999040000000000\nName: ts_event, Length: 1317, dtype: int64.is_unique
+
+tests/test_k8_members_oilcad.py:153: AssertionError
+____ test_engine_closure_leaves_the_account_flat_and_later_decisions_apply _____
+
+    def test_engine_closure_leaves_the_account_flat_and_later_decisions_apply() -> None:
+        """A bar flatten flag on the 09:10 6C bar: the engine closes at 09:11; the member sends no
+        exit; the 09:20 decision enters again and exits at 09:35."""
+>       res = run_day({"09:05": 2, "09:20": 2}, flatten_at=[hm(9, 10)])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:743: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:694: in run_day
+    return engine(m, bars, rules, frozenset(ns_at(DAY, x) for x in flatten_at))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_k8_members_oilcad.py:165: in engine
+    frames = {leg.root: frame_of(leg.root, bars, flatten_at) for leg in member.legs}
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = 'MCL'
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+flatten_at = frozenset({1751983800000000000})
+
+    def frame_of(root: str, bars: Sequence[RootBar], flatten_at: frozenset[int] = frozenset()
+                 ) -> pd.DataFrame:
+        """The engine frame of ``root``'s bars; session flags from rules/sessions.py, plus a bar
+        flatten flag on the bars opening at ``flatten_at`` (UTC ns; an engine closure)."""
+        rows = []
+        for r, b in bars:
+            if r != root:
+                continue
+            state = sessions.session_state(root, ct(b.ts_event_ns).astimezone(UTC))
+            forced = b.ts_event_ns in flatten_at
+            rows.append({
+                "ts_event": b.ts_event_ns, "open": b.close, "high": b.close, "low": b.close,
+                "close": b.close, "volume": 10, "instrument_id": b.instrument_id,
+                "raw_symbol": b.raw_symbol, "trade_date": b.trade_date.isoformat(),
+                "in_flatten_window": bool(state.must_be_flat) or forced,
+                "in_no_new_positions_window": bool(not state.can_open),
+                "early_halt_ct": "", "in_scheduled_closure": False, "is_roll_session": False,
+                "gap_before_minutes": 0, "vendor_degraded_day": False})
+        out = pd.DataFrame(rows).sort_values("ts_event", ignore_index=True)
+>       assert out["ts_event"].is_unique
+E       assert False
+E        +  where False = 0       1749473940000000000\n1       1749474240000000000\n2       1749474540000000000\n3       1749474840000000000\n4     ... 1751998440000000000\n1315    1751998740000000000\n1316    1751999040000000000\nName: ts_event, Length: 1317, dtype: int64.is_unique
+
+tests/test_k8_members_oilcad.py:153: AssertionError
+___________________ test_engine_nothing_after_the_13_40_fill ___________________
+
+    def test_engine_nothing_after_the_13_40_fill() -> None:
+>       res = run_day({"13:25": 2}, mcl_extra=[(hm(13, 29), B_MCL + 10)], cad_to=hm(14, 30))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:751: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:694: in run_day
+    return engine(m, bars, rules, frozenset(ns_at(DAY, x) for x in flatten_at))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_k8_members_oilcad.py:165: in engine
+    frames = {leg.root: frame_of(leg.root, bars, flatten_at) for leg in member.legs}
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = 'MCL'
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+flatten_at = frozenset()
+
+    def frame_of(root: str, bars: Sequence[RootBar], flatten_at: frozenset[int] = frozenset()
+                 ) -> pd.DataFrame:
+        """The engine frame of ``root``'s bars; session flags from rules/sessions.py, plus a bar
+        flatten flag on the bars opening at ``flatten_at`` (UTC ns; an engine closure)."""
+        rows = []
+        for r, b in bars:
+            if r != root:
+                continue
+            state = sessions.session_state(root, ct(b.ts_event_ns).astimezone(UTC))
+            forced = b.ts_event_ns in flatten_at
+            rows.append({
+                "ts_event": b.ts_event_ns, "open": b.close, "high": b.close, "low": b.close,
+                "close": b.close, "volume": 10, "instrument_id": b.instrument_id,
+                "raw_symbol": b.raw_symbol, "trade_date": b.trade_date.isoformat(),
+                "in_flatten_window": bool(state.must_be_flat) or forced,
+                "in_no_new_positions_window": bool(not state.can_open),
+                "early_halt_ct": "", "in_scheduled_closure": False, "is_roll_session": False,
+                "gap_before_minutes": 0, "vendor_degraded_day": False})
+        out = pd.DataFrame(rows).sort_values("ts_event", ignore_index=True)
+>       assert out["ts_event"].is_unique
+E       assert False
+E        +  where False = 0       1749473940000000000\n1       1749474240000000000\n2       1749474540000000000\n3       1749474840000000000\n4     ... 1751998740000000000\n1316    1751999040000000000\n1317    1751999340000000000\nName: ts_event, Length: 1318, dtype: int64.is_unique
+
+tests/test_k8_members_oilcad.py:153: AssertionError
+_________ test_engine_refuses_on_a_signal_leg_roll_blackout_date_only __________
+
+    def test_engine_refuses_on_a_signal_leg_roll_blackout_date_only() -> None:
+        """V16(a) end to end: an MCL roll blackout on the trade date (6C clean). With the rules the
+        runner builds (member_window: the union removes the date) the open is refused as outside
+        the window; with the date kept in the window and the union as blackout, by name
+        engine_roll_blackout; with no blackout it fills."""
+        m = mk()
+        bars = oil_bars(DAY, {"09:05": 2})
+>       rules, mw = runner_rules(m, bars, {"MCL": [DAY]})
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:764: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:180: in runner_rules
+    frames = {leg.root: leg_frame(leg.root, bars, blackouts.get(leg.root, ()))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_k8_members_oilcad.py:171: in leg_frame
+    f = frame_of(root, bars)
+        ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = 'MCL'
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+flatten_at = frozenset()
+
+    def frame_of(root: str, bars: Sequence[RootBar], flatten_at: frozenset[int] = frozenset()
+                 ) -> pd.DataFrame:
+        """The engine frame of ``root``'s bars; session flags from rules/sessions.py, plus a bar
+        flatten flag on the bars opening at ``flatten_at`` (UTC ns; an engine closure)."""
+        rows = []
+        for r, b in bars:
+            if r != root:
+                continue
+            state = sessions.session_state(root, ct(b.ts_event_ns).astimezone(UTC))
+            forced = b.ts_event_ns in flatten_at
+            rows.append({
+                "ts_event": b.ts_event_ns, "open": b.close, "high": b.close, "low": b.close,
+                "close": b.close, "volume": 10, "instrument_id": b.instrument_id,
+                "raw_symbol": b.raw_symbol, "trade_date": b.trade_date.isoformat(),
+                "in_flatten_window": bool(state.must_be_flat) or forced,
+                "in_no_new_positions_window": bool(not state.can_open),
+                "early_halt_ct": "", "in_scheduled_closure": False, "is_roll_session": False,
+                "gap_before_minutes": 0, "vendor_degraded_day": False})
+        out = pd.DataFrame(rows).sort_values("ts_event", ignore_index=True)
+>       assert out["ts_event"].is_unique
+E       assert False
+E        +  where False = 0       1749473940000000000\n1       1749474240000000000\n2       1749474540000000000\n3       1749474840000000000\n4     ... 1751998440000000000\n1315    1751998740000000000\n1316    1751999040000000000\nName: ts_event, Length: 1317, dtype: int64.is_unique
+
+tests/test_k8_members_oilcad.py:153: AssertionError
+_________________ test_engine_a_6c_roll_blackout_also_refuses __________________
+
+    def test_engine_a_6c_roll_blackout_also_refuses() -> None:
+        m = mk()
+        bars = oil_bars(DAY, {"09:05": 2})
+>       rules, mw = runner_rules(m, bars, {"6C": [DAY]})
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:779: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:180: in runner_rules
+    frames = {leg.root: leg_frame(leg.root, bars, blackouts.get(leg.root, ()))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_k8_members_oilcad.py:171: in leg_frame
+    f = frame_of(root, bars)
+        ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = 'MCL'
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+flatten_at = frozenset()
+
+    def frame_of(root: str, bars: Sequence[RootBar], flatten_at: frozenset[int] = frozenset()
+                 ) -> pd.DataFrame:
+        """The engine frame of ``root``'s bars; session flags from rules/sessions.py, plus a bar
+        flatten flag on the bars opening at ``flatten_at`` (UTC ns; an engine closure)."""
+        rows = []
+        for r, b in bars:
+            if r != root:
+                continue
+            state = sessions.session_state(root, ct(b.ts_event_ns).astimezone(UTC))
+            forced = b.ts_event_ns in flatten_at
+            rows.append({
+                "ts_event": b.ts_event_ns, "open": b.close, "high": b.close, "low": b.close,
+                "close": b.close, "volume": 10, "instrument_id": b.instrument_id,
+                "raw_symbol": b.raw_symbol, "trade_date": b.trade_date.isoformat(),
+                "in_flatten_window": bool(state.must_be_flat) or forced,
+                "in_no_new_positions_window": bool(not state.can_open),
+                "early_halt_ct": "", "in_scheduled_closure": False, "is_roll_session": False,
+                "gap_before_minutes": 0, "vendor_degraded_day": False})
+        out = pd.DataFrame(rows).sort_values("ts_event", ignore_index=True)
+>       assert out["ts_event"].is_unique
+E       assert False
+E        +  where False = 0       1749473940000000000\n1       1749474240000000000\n2       1749474540000000000\n3       1749474840000000000\n4     ... 1751998440000000000\n1315    1751998740000000000\n1316    1751999040000000000\nName: ts_event, Length: 1317, dtype: int64.is_unique
+
+tests/test_k8_members_oilcad.py:153: AssertionError
+_______________ test_reference_dates_include_roll_blackout_dates _______________
+
+    def test_reference_dates_include_roll_blackout_dates() -> None:
+        """K8-L-04: a reference date that is a roll-blackout date still gives its values (the bars
+        are delivered; only opens are refused there): with one blackout reference date, z = 2.0
+        still trades."""
+        m = mk()
+        bars = oil_bars(DAY, {"10:05": 1})
+        rules = rules_of(m, [DAY, *refs_of(DAY)], blackout=[refs_of(DAY)[3]])
+>       assert fills(engine(m, bars, rules))[0] == (DAY, "10:05", "6C", "buy", "strategy")
+                     ^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:791: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:165: in engine
+    frames = {leg.root: frame_of(leg.root, bars, flatten_at) for leg in member.legs}
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = 'MCL'
+bars = [('MCL', Bar(ts_event_ns=1749473940000000000, open=60.0, high=60.0, low=60.0, close=60.0, volume=10, instrument_id=1, ...alt_ct=None, in_scheduled_closure=False, is_roll_session=False, gap_before_minutes=0, vendor_degraded_day=False)), ...]
+flatten_at = frozenset()
+
+    def frame_of(root: str, bars: Sequence[RootBar], flatten_at: frozenset[int] = frozenset()
+                 ) -> pd.DataFrame:
+        """The engine frame of ``root``'s bars; session flags from rules/sessions.py, plus a bar
+        flatten flag on the bars opening at ``flatten_at`` (UTC ns; an engine closure)."""
+        rows = []
+        for r, b in bars:
+            if r != root:
+                continue
+            state = sessions.session_state(root, ct(b.ts_event_ns).astimezone(UTC))
+            forced = b.ts_event_ns in flatten_at
+            rows.append({
+                "ts_event": b.ts_event_ns, "open": b.close, "high": b.close, "low": b.close,
+                "close": b.close, "volume": 10, "instrument_id": b.instrument_id,
+                "raw_symbol": b.raw_symbol, "trade_date": b.trade_date.isoformat(),
+                "in_flatten_window": bool(state.must_be_flat) or forced,
+                "in_no_new_positions_window": bool(not state.can_open),
+                "early_halt_ct": "", "in_scheduled_closure": False, "is_roll_session": False,
+                "gap_before_minutes": 0, "vendor_degraded_day": False})
+        out = pd.DataFrame(rows).sort_values("ts_event", ignore_index=True)
+>       assert out["ts_event"].is_unique
+E       assert False
+E        +  where False = 0       1749473940000000000\n1       1749474240000000000\n2       1749474540000000000\n3       1749474840000000000\n4     ... 1751998440000000000\n1315    1751998740000000000\n1316    1751999040000000000\nName: ts_event, Length: 1317, dtype: int64.is_unique
+
+tests/test_k8_members_oilcad.py:153: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_tables.py::test_previous_dates_are_the_k_most_recent_strictly_before_d
+FAILED tests/test_k8_members_flight.py::test_k1_reads_the_0829_and_0834_bars
+FAILED tests/test_k8_members_flight.py::test_a_bar_at_0830_is_not_the_start_bar_of_k1
+FAILED tests/test_k8_members_flight.py::test_member_n_1199_is_no_trade_and_n_1200_trades
+FAILED tests/test_k8_members_flight.py::test_member_m_at_1201_and_1540 - Asse...
+FAILED tests/test_k8_members_flight.py::test_undefined_reference_computations_are_not_values
+FAILED tests/test_k8_members_flight.py::test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade
+FAILED tests/test_k8_members_flight.py::test_reference_dates_are_the_20_flight_dates_before_d
+FAILED tests/test_k8_members_flight_engine.py::test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30
+FAILED tests/test_k8_members_flight_engine.py::test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505
+FAILED tests/test_k8_members_flight_engine.py::test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill
+FAILED tests/test_k8_members_flight_engine.py::test_a_missing_mes_bar_at_tk_minus_1_the_engine_refuses_and_the_member_never_asks
+FAILED tests/test_k8_members_flight_engine.py::test_a_roll_blackout_of_the_signal_leg_only_blocks_the_entry_v16a
+FAILED tests/test_k8_members_flight_engine.py::test_the_engine_names_the_roll_blackout_when_d_is_a_window_date
+FAILED tests/test_k8_members_flight_engine.py::test_control_without_a_blackout_the_runner_rules_fill
+FAILED tests/test_k8_members_flight_engine.py::test_the_member_is_a_fresh_object_per_run
+FAILED tests/test_k8_members_oilcad.py::test_scenario_dates_are_calendar_facts
+FAILED tests/test_k8_members_oilcad.py::test_first_and_last_decisions_trade
+FAILED tests/test_k8_members_oilcad.py::test_no_decision_at_08_00 - Assertion...
+FAILED tests/test_k8_members_oilcad.py::test_no_decision_at_13_30 - Assertion...
+FAILED tests/test_k8_members_oilcad.py::test_r_t_reads_the_mcl_bars_at_t_minus_1_and_t_minus_6
+FAILED tests/test_k8_members_oilcad.py::test_the_entry_is_on_the_6c_bar_at_t_minus_1
+FAILED tests/test_k8_members_oilcad.py::test_a_zero_mcl_close_at_t_minus_6_leaves_r_t_undefined
+FAILED tests/test_k8_members_oilcad.py::test_z_exactly_2_trades_end_to_end - ...
+FAILED tests/test_k8_members_oilcad.py::test_ddof_1_end_to_end_just_below_2_does_not_trade
+FAILED tests/test_k8_members_oilcad.py::test_n_1000_trades_and_n_999_does_not
+FAILED tests/test_k8_members_oilcad.py::test_zero_scale_is_no_trade_on_d - As...
+FAILED tests/test_k8_members_oilcad.py::test_sign_buys_on_z_above_zero_and_sells_below
+FAILED tests/test_k8_members_oilcad.py::test_small_moves_do_not_trade - Asser...
+FAILED tests/test_k8_members_oilcad.py::test_reference_dates_are_the_20_previous_oilcad_dates
+FAILED tests/test_k8_members_oilcad.py::test_warm_up_20th_eligible_date_no_trade_21st_trades
+FAILED tests/test_k8_members_oilcad.py::test_too_few_reference_dates_at_the_table_start_no_trade
+FAILED tests/test_k8_members_oilcad.py::test_mcl_roll_inside_a_block_no_entry_at_t_later_decisions_proceed
+FAILED tests/test_k8_members_oilcad.py::test_missing_6c_entry_bar_blocks_that_t_only
+FAILED tests/test_k8_members_oilcad.py::test_missing_mcl_bar_at_t_minus_1_blocks_t_and_the_next_block
+FAILED tests/test_k8_members_oilcad.py::test_mcl_bar_arriving_late_is_never_used
+FAILED tests/test_k8_members_oilcad.py::test_missing_mcl_bar_at_t_minus_6_blocks_t
+FAILED tests/test_k8_members_oilcad.py::test_a_previous_dates_t_minus_6_bar_is_never_used
+FAILED tests/test_k8_members_oilcad.py::test_bars_are_identified_by_ct_date_not_trade_date_alone
+FAILED tests/test_k8_members_oilcad.py::test_an_mcl_bar_is_read_on_its_own_ct_date_only
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35
+FAILED tests/test_k8_members_oilcad.py::test_09_30_on_a_non_wpsr_date_is_not_skipped
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_13_00_on_an_fomc_date
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row
+FAILED tests/test_k8_members_oilcad.py::test_c6_tests_the_fill_minute_t_on_the_6c_root
+FAILED tests/test_k8_members_oilcad.py::test_a_skipped_decision_leaves_later_decisions_alone
+FAILED tests/test_k8_members_oilcad.py::test_no_entry_while_a_position_or_a_pending_order_exists[1-0]
+FAILED tests/test_k8_members_oilcad.py::test_no_entry_while_a_position_or_a_pending_order_exists[-1-0]
+FAILED tests/test_k8_members_oilcad.py::test_no_entry_while_a_position_or_a_pending_order_exists[0-1]
+FAILED tests/test_k8_members_oilcad.py::test_no_entry_while_a_position_or_a_pending_order_exists[0--1]
+FAILED tests/test_k8_members_oilcad.py::test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position
+FAILED tests/test_k8_members_oilcad.py::test_engine_sell_side - assert False
+FAILED tests/test_k8_members_oilcad.py::test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing
+FAILED tests/test_k8_members_oilcad.py::test_engine_missing_exit_bar_exits_on_the_first_later_bar
+FAILED tests/test_k8_members_oilcad.py::test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20
+FAILED tests/test_k8_members_oilcad.py::test_engine_late_fill_holds_the_position_through_the_next_decision
+FAILED tests/test_k8_members_oilcad.py::test_engine_closure_leaves_the_account_flat_and_later_decisions_apply
+FAILED tests/test_k8_members_oilcad.py::test_engine_nothing_after_the_13_40_fill
+FAILED tests/test_k8_members_oilcad.py::test_engine_refuses_on_a_signal_leg_roll_blackout_date_only
+FAILED tests/test_k8_members_oilcad.py::test_engine_a_6c_roll_blackout_also_refuses
+FAILED tests/test_k8_members_oilcad.py::test_reference_dates_include_roll_blackout_dates
+61 failed, 148 passed in 4.37s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AC01.py as strategy.members.k8._calendar

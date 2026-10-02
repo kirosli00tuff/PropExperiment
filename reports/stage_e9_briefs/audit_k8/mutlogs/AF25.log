@@ -1,0 +1,34 @@
+..............................................F............F............ [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+____ test_an_mes_roll_inside_a_block_is_no_trigger_and_later_blocks_trigger ____
+
+    def test_an_mes_roll_inside_a_block_is_no_trigger_and_later_blocks_trigger() -> None:
+        member = ready()
+        ids = {i: MES_ID + 1 for i in range(3, 78)}  # the id changes between the bars of block 3
+>       assert entries(feed(member, DAY, dip_path({3: 5}), ids=ids)) == []
+E       AssertionError: assert [(524, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:297: AssertionError
+_____________ test_undefined_reference_computations_are_not_values _____________
+
+    def test_undefined_reference_computations_are_not_values() -> None:
+        """n = 19 x 77 = 1,463, m = 8: Q = -3/B from the dips -10..-2; counting the undefined -50/B
+        would give -4/B."""
+>       assert entries(feed(_undefined_first_reference(), DAY, dip_path({3: 3}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:392: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_an_mes_roll_inside_a_block_is_no_trigger_and_later_blocks_trigger
+FAILED tests/test_k8_members_flight.py::test_undefined_reference_computations_are_not_values
+2 failed, 207 passed in 3.60s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF25.py as strategy.members.k8.flight

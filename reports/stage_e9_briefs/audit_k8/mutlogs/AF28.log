@@ -1,0 +1,26 @@
+..............................................................F......... [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_________ test_warm_up_the_20th_date_does_not_trade_and_the_21st_does __________
+
+    def test_warm_up_the_20th_date_does_not_trade_and_the_21st_does() -> None:
+        refs = reference_dates(DAY)
+        member = flight.make_h30()  # the run's first bar is on refs[1]: refs[1..19] and DAY
+        for i, ref in enumerate(refs[1:], start=1):
+            dip = {10: DIPS[i]} if i < len(DIPS) else {}
+            out = feed(member, ref, dip_path({**dip, 3: 50} if ref == refs[-1] else dip))
+>           assert entries(out) == [], ref  # eligible dates 1..19 of the run: warm-up
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: datetime.date(2025, 6, 16)
+E           assert [(524, 'MGC', 'buy', 1)] == []
+E             
+E             Left contains one more item: (524, 'MGC', 'buy', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight.py:425: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_warm_up_the_20th_date_does_not_trade_and_the_21st_does
+1 failed, 208 passed in 3.75s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF28.py as strategy.members.k8.flight

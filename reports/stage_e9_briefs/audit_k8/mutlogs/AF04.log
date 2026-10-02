@@ -1,0 +1,75 @@
+...................................F..F..F.............................. [ 34%]
+..................F..................................................... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_________________ test_trading_windows_are_the_s0_12_intervals _________________
+
+    def test_trading_windows_are_the_s0_12_intervals() -> None:
+        for m in (flight.make_h30(), flight.make_heod()):
+>           assert m.trading_windows == {"MGC": (TradingInterval(time(8, 34), time(15, 6)),),
+                                         "MES": (TradingInterval(time(8, 29), time(14, 55)),)}
+E           AssertionError: assert {'MGC': (Trad...set_days=0),)} == {'MGC': (Trad...set_days=0),)}
+E             
+E             Omitting 1 identical items, use -vv to show
+E             Differing items:
+E             {'MES': (TradingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 50), start_offset_days=0, end_offset_days=0),)} != {'MES': (TradingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)}
+E             Use -v to get more diff
+
+tests/test_k8_members_flight.py:194: AssertionError
+_____________ test_decision_times_are_0835_to_1455_every_5_minutes _____________
+
+    def test_decision_times_are_0835_to_1455_every_5_minutes() -> None:
+        times = decision_times()
+>       assert len(times) == 77 and times[0] == time(8, 35) and times[-1] == time(14, 55)
+E       assert (76 == 77)
+E        +  where 76 = len((datetime.time(8, 35), datetime.time(8, 40), datetime.time(8, 45), datetime.time(8, 50), datetime.time(8, 55), datetime.time(9, 0), ...))
+
+tests/test_k8_members_flight.py:226: AssertionError
+________ test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500 ________
+
+    def test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500() -> None:
+        member = ready()
+>       assert entries(feed(member, DAY, dip_path({77: 5}))) == buy_at(hm(14, 54))
+E       AssertionError: assert [] == [(894, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (894, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:254: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[77-904] ____________________
+
+k = 77, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+>       enter(member, k)
+
+tests/test_k8_members_flight_exits.py:227: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 50), start_offset_days=0, end_offset_days=0),)})
+k = 77, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(894, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (894, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_trading_windows_are_the_s0_12_intervals
+FAILED tests/test_k8_members_flight.py::test_decision_times_are_0835_to_1455_every_5_minutes
+FAILED tests/test_k8_members_flight.py::test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[77-904]
+4 failed, 205 passed in 3.70s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF04.py as strategy.members.k8.flight

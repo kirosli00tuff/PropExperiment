@@ -1,0 +1,439 @@
+........................................................................ [ 34%]
+............................................F..FF.F...FFF.F.F...FFF...F. [ 68%]
+FFFFFF........FFFFFFFFF.F........................................        [100%]
+=================================== FAILURES ===================================
+_____________________ test_first_and_last_decisions_trade ______________________
+
+    def test_first_and_last_decisions_trade() -> None:
+>       assert entries(DAY, {"08:05": 2, "13:25": 2}) == [("08:04", "buy"), ("13:24", "buy")]
+E       AssertionError: assert [] == [('08:04', 'b...3:24', 'buy')]
+E         
+E         Right contains 2 more items, first extra item: ('08:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:355: AssertionError
+____________ test_r_t_reads_the_mcl_bars_at_t_minus_1_and_t_minus_6 ____________
+
+    def test_r_t_reads_the_mcl_bars_at_t_minus_1_and_t_minus_6() -> None:
+        """t = 08:05: closes of 07:59 (B) and 08:04 (B + 2): a buy. Decoy bars 08:00..08:03 at
+        B + 6 (a sell if 08:00 were t - 5) and 07:58 at B + 6 (a sell against 08:04 if it were
+        t - 7) are never read."""
+        decoys = [(m, B_MCL + 6) for m in (hm(7, 58), *range(hm(8, 0), hm(8, 4)))]
+>       assert entries(DAY, {"08:05": 2}, mcl_extra=decoys) == [("08:04", "buy")]
+E       AssertionError: assert [] == [('08:04', 'buy')]
+E         
+E         Right contains one more item: ('08:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:373: AssertionError
+_________________ test_the_entry_is_on_the_6c_bar_at_t_minus_1 _________________
+
+    def test_the_entry_is_on_the_6c_bar_at_t_minus_1() -> None:
+        """A big move at t = 09:05 is acted on at the 09:04 view only."""
+>       assert entries(DAY, {"09:05": 2}) == [("09:04", "buy")]
+E       AssertionError: assert [] == [('09:04', 'buy')]
+E         
+E         Right contains one more item: ('09:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:378: AssertionError
+___________ test_a_zero_mcl_close_at_t_minus_6_leaves_r_t_undefined ____________
+
+    def test_a_zero_mcl_close_at_t_minus_6_leaves_r_t_undefined() -> None:
+        """The 07:59 close is 0 (c6 of t = 08:05, the c1 of no block): no entry at 08:05 despite
+        the move; 08:10 still trades."""
+        bars = oil_bars(DAY, {"08:05": 2, "08:10": 2})
+        bars = [rb for rb in bars if not (rb[0] == "MCL" and rb[1].trade_date == DAY
+                                          and ct(rb[1].ts_event_ns).time() == time(7, 59))]
+        bars.append(mk_bar("MCL", DAY, hm(7, 59), 0))
+        out = drive(mk(), sorted(bars, key=lambda rb: rb[1].ts_event_ns))
+>       assert [(i[1], i[3]) for i in out] == [("08:09", "buy")]
+E       AssertionError: assert [] == [('08:09', 'buy')]
+E         
+E         Right contains one more item: ('08:09', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:397: AssertionError
+______________________ test_z_exactly_2_trades_end_to_end ______________________
+
+    def test_z_exactly_2_trades_end_to_end() -> None:
+        """STANDARD: s = u/2; a +1 step from B is r = u, z = 2.0 exactly: a buy; -1 a sell."""
+>       assert entries(DAY, {"10:05": 1}) == [("10:04", "buy")]
+E       AssertionError: assert [] == [('10:04', 'buy')]
+E         
+E         Right contains one more item: ('10:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:428: AssertionError
+______________ test_ddof_1_end_to_end_just_below_2_does_not_trade ______________
+
+    def test_ddof_1_end_to_end_just_below_2_does_not_trade() -> None:
+        """On base B + 1 a +1 step is r = 1/6001: z = 1.99967 with ddof 1 (no trade); ddof 0 would
+        give 2.00067 (a trade)."""
+        values = ref_values(STANDARD)
+        r = (B_MCL + 2 - (B_MCL + 1)) / (B_MCL + 1)
+        assert abs(r / statistics.stdev(values)) < 2.0 <= abs(r / statistics.pstdev(values))
+        assert entries(DAY, {"10:05": 1}, base=B_MCL + 1) == []
+>       assert entries(DAY, {"10:05": 2}, base=B_MCL + 1) == [("10:04", "buy")]  # control
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert [] == [('10:04', 'buy')]
+E         
+E         Right contains one more item: ('10:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:439: AssertionError
+____________________ test_n_1000_trades_and_n_999_does_not _____________________
+
+    def test_n_1000_trades_and_n_999_does_not() -> None:
+        n1000 = STANDARD[:-1] + ((6, 6, 36),)  # one zero fewer: n = 1000
+        n999 = STANDARD[:-1] + ((6, 6, 35),)  # n = 999
+        assert len(ref_values(n1000)) == 1000 and len(ref_values(n999)) == 999
+>       assert entries(DAY, {"10:05": 2}, specs=n1000) == [("10:04", "buy")]
+E       AssertionError: assert [] == [('10:04', 'buy')]
+E         
+E         Right contains one more item: ('10:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:446: AssertionError
+________________ test_sign_buys_on_z_above_zero_and_sells_below ________________
+
+    def test_sign_buys_on_z_above_zero_and_sells_below() -> None:
+>       assert entries(DAY, {"09:05": 2, "10:05": -2}) == [("09:04", "buy"), ("10:04", "sell")]
+E       AssertionError: assert [] == [('09:04', 'b...:04', 'sell')]
+E         
+E         Right contains 2 more items, first extra item: ('09:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:456: AssertionError
+____________ test_reference_dates_are_the_20_previous_oilcad_dates _____________
+
+    def test_reference_dates_are_the_20_previous_oilcad_dates() -> None:
+        """WPSR_DAY's references skip 2025-06-19 and 2025-07-04 (not OILCAD dates). Wild MCL values
+        on those two weekdays and on the date before the oldest reference (2025-06-09) must not
+        enter s(d): with them, z = 2.0 exactly would fall below 2."""
+        day = date(2025, 7, 10)  # a non-WPSR day whose references contain both holidays
+        refs = refs_of(day)
+        assert date(2025, 6, 19) not in refs and date(2025, 7, 4) not in refs
+        assert refs[0] == date(2025, 6, 10) and refs[-1] == WPSR_DAY
+        oldest = previous_dates(OILCAD_DATES, refs[0], 1)[0]
+        wild = ((16, 16, 0),)  # 32 values of |r| = u > s: they would raise s
+        bars = (ref_bars((oldest,), wild) + ref_bars(refs[:10], STANDARD[:10])
+                + ref_bars((date(2025, 6, 19),), wild) + ref_bars(refs[10:], STANDARD[10:])
+                + ref_bars((date(2025, 7, 4),), wild) + trade_bars(day, {"10:05": 1}))
+        bars = sorted(bars, key=lambda rb: rb[1].ts_event_ns)
+        out = drive(mk(), bars)
+>       assert [(i[0], i[1], i[3]) for i in out] == [(day, "10:04", "buy")]
+E       AssertionError: assert [] == [(datetime.da...0:04', 'buy')]
+E         
+E         Right contains one more item: (datetime.date(2025, 7, 10), '10:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:480: AssertionError
+______ test_mcl_roll_inside_a_block_no_entry_at_t_later_decisions_proceed ______
+
+    def test_mcl_roll_inside_a_block_no_entry_at_t_later_decisions_proceed() -> None:
+        """08:59 carries id 777 and 09:04 id 778: r_09:05 undefined (no entry at 09:05, though
+        the move is big); 09:04 and 09:09 both 778: r_09:10 defined, a buy."""
+        ids = {m: 778 for m in POINTS if m >= hm(9, 4)}
+>       assert entries(DAY, {"09:05": 2, "09:10": 2}, mcl_ids=ids) == [("09:09", "buy")]
+E       AssertionError: assert [] == [('09:09', 'buy')]
+E         
+E         Right contains one more item: ('09:09', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:519: AssertionError
+_________________ test_missing_6c_entry_bar_blocks_that_t_only _________________
+
+    def test_missing_6c_entry_bar_blocks_that_t_only() -> None:
+>       assert entries(DAY, {"09:05": 2, "09:10": 2}, cad_skip=[hm(9, 4)]) == [("09:09", "buy")]
+E       AssertionError: assert [] == [('09:09', 'buy')]
+E         
+E         Right contains one more item: ('09:09', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:524: AssertionError
+________ test_missing_mcl_bar_at_t_minus_1_blocks_t_and_the_next_block _________
+
+    def test_missing_mcl_bar_at_t_minus_1_blocks_t_and_the_next_block() -> None:
+        """09:04 missing: r_09:05 (09:04 is c1) and r_09:10 (09:04 is c6) undefined."""
+        out = entries(DAY, {"09:05": 2, "09:10": 2, "09:15": 2}, mcl_skip=[hm(9, 4)])
+>       assert out == [("09:14", "buy")]
+E       AssertionError: assert [] == [('09:14', 'buy')]
+E         
+E         Right contains one more item: ('09:14', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:530: AssertionError
+___________ test_bars_are_identified_by_ct_date_not_trade_date_alone ___________
+
+    def test_bars_are_identified_by_ct_date_not_trade_date_alone() -> None:
+        """K7-L-01: a 6C bar opening 09:04 on CT date d + 1 but carrying trade_date d is not the 6C
+        bar at 09:04 of d: d's references are complete and d + 1's MCL block is a big move, yet no
+        entry."""
+        day = DAY
+        nxt = OILCAD_DATES[OILCAD_DATES.index(day) + 1]
+        bars = oil_bars(day, cad_to=hm(9, 0)) + [
+            rb for rb in trade_bars(nxt, {"09:05": 2}) if rb[0] == "MCL"]
+        wrong = mk_bar("6C", nxt, hm(9, 4), B_CAD, trade_day=day)
+        out = drive(mk(), sorted([*bars, wrong], key=lambda rb: rb[1].ts_event_ns))
+        assert out == []
+        right = mk_bar("6C", day, hm(9, 4), B_CAD)  # control: the same move on d itself trades
+        bars_d = oil_bars(day, {"09:05": 2}, cad_to=hm(9, 0))
+        out = drive(mk(), sorted([*bars_d, right], key=lambda rb: rb[1].ts_event_ns))
+>       assert [(i[0], i[1], i[3]) for i in out] == [(day, "09:04", "buy")]
+E       AssertionError: assert [] == [(datetime.da...9:04', 'buy')]
+E         
+E         Right contains one more item: (datetime.date(2025, 7, 8), '09:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:584: AssertionError
+__________ test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35 ___________
+
+    def test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35() -> None:
+>       assert entries(WPSR_DAY, {"09:30": 2, "09:35": 2}) == [("09:34", "buy")]
+E       AssertionError: assert [] == [('09:34', 'buy')]
+E         
+E         Right contains one more item: ('09:34', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:601: AssertionError
+_________________ test_09_30_on_a_non_wpsr_date_is_not_skipped _________________
+
+    def test_09_30_on_a_non_wpsr_date_is_not_skipped() -> None:
+>       assert entries(PLAIN_DAY, {"09:30": 2}) == [("09:29", "buy")]
+E       AssertionError: assert [] == [('09:29', 'buy')]
+E         
+E         Right contains one more item: ('09:29', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:605: AssertionError
+_____________________ test_c6_skips_13_00_on_an_fomc_date ______________________
+
+    def test_c6_skips_13_00_on_an_fomc_date() -> None:
+>       assert entries(FOMC_DAY, {"13:00": 2, "13:05": 2}) == [("13:04", "buy")]
+E       AssertionError: assert [] == [('13:04', 'buy')]
+E         
+E         Right contains one more item: ('13:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:609: AssertionError
+_ test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row __
+
+    def test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row() -> None:
+>       assert entries(HOLIDAY_WPSR_DAY, {"11:00": 2, "11:05": 2}) == [("11:04", "buy")]
+E       AssertionError: assert [] == [('11:04', 'buy')]
+E         
+E         Right contains one more item: ('11:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:613: AssertionError
+________________ test_c6_tests_the_fill_minute_t_on_the_6c_root ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x72fc0c4fca70>
+
+    def test_c6_tests_the_fill_minute_t_on_the_6c_root(monkeypatch: pytest.MonkeyPatch) -> None:
+        calls: list[tuple[str, int]] = []
+    
+        def spy(root: str, t_ns: int) -> bool:
+            calls.append((root, t_ns))
+            return False
+    
+        monkeypatch.setattr(oilcad, "in_guard", spy)
+>       assert entries(DAY, {"09:05": 2}) == [("09:04", "buy")]
+E       AssertionError: assert [] == [('09:04', 'buy')]
+E         
+E         Right contains one more item: ('09:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:625: AssertionError
+_____________ test_a_skipped_decision_leaves_later_decisions_alone _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x72fc07e5c890>
+
+    def test_a_skipped_decision_leaves_later_decisions_alone(monkeypatch: pytest.MonkeyPatch
+                                                             ) -> None:
+        monkeypatch.setattr(oilcad, "in_guard", lambda root, t_ns: True)
+        assert entries(DAY, {"09:05": 2, "09:10": 2}) == []
+        monkeypatch.setattr(oilcad, "in_guard",
+                            lambda root, t_ns: t_ns == ns_at(DAY, hm(9, 5)))
+>       assert entries(DAY, {"09:05": 2, "09:10": 2}) == [("09:09", "buy")]
+E       AssertionError: assert [] == [('09:09', 'buy')]
+E         
+E         Right contains one more item: ('09:09', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:635: AssertionError
+___ test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position ____
+
+    def test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position() -> None:
+        res = run_day({"09:05": 2})
+>       assert fills(res) == [(DAY, "09:05", "6C", "buy", "strategy"),
+                              (DAY, "09:20", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '09:05', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:699: AssertionError
+____________________________ test_engine_sell_side _____________________________
+
+    def test_engine_sell_side() -> None:
+>       assert fills(run_day({"09:05": -2})) == [(DAY, "09:05", "6C", "sell", "strategy"),
+                                                 (DAY, "09:20", "6C", "buy", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '09:05', '6C', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:706: AssertionError
+______ test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing ______
+
+    def test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing() -> None:
+        res = run_day({"09:05": 2}, cad_skip=[hm(9, 5)])
+>       assert fills(res) == [(DAY, "09:06", "6C", "buy", "strategy"),
+                              (DAY, "09:21", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '09:06', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:712: AssertionError
+__________ test_engine_missing_exit_bar_exits_on_the_first_later_bar ___________
+
+    def test_engine_missing_exit_bar_exits_on_the_first_later_bar() -> None:
+        res = run_day({"09:05": 2}, cad_skip=[hm(9, 19)])
+>       assert fills(res) == [(DAY, "09:05", "6C", "buy", "strategy"),
+                              (DAY, "09:21", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '09:05', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:718: AssertionError
+___ test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20 ____
+
+    def test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20() -> None:
+        """Big moves at 09:05, 09:20 (= t_e + 15, decided on the exit's 09:19 view: no entry) and
+        09:25 (= t_e + 20: an entry)."""
+        res = run_day({"09:05": 2, "09:20": 2, "09:25": 2})
+>       assert fills(res) == [(DAY, "09:05", "6C", "buy", "strategy"),
+                              (DAY, "09:20", "6C", "sell", "strategy"),
+                              (DAY, "09:25", "6C", "buy", "strategy"),
+                              (DAY, "09:40", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 4 more items, first extra item: (datetime.date(2025, 7, 8), '09:05', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:726: AssertionError
+______ test_engine_late_fill_holds_the_position_through_the_next_decision ______
+
+    def test_engine_late_fill_holds_the_position_through_the_next_decision() -> None:
+        """6C bars 09:05..09:08 missing: the 09:05 entry fills at 09:09 (T_e = 09:09), so the 09:10
+        decision (its 09:09 view) sees a position: no entry; the exit fills at 09:24."""
+        res = run_day({"09:05": 2, "09:10": 2}, cad_skip=list(range(hm(9, 5), hm(9, 9))))
+>       assert fills(res) == [(DAY, "09:09", "6C", "buy", "strategy"),
+                              (DAY, "09:24", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '09:09', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:736: AssertionError
+____ test_engine_closure_leaves_the_account_flat_and_later_decisions_apply _____
+
+    def test_engine_closure_leaves_the_account_flat_and_later_decisions_apply() -> None:
+        """A bar flatten flag on the 09:10 6C bar: the engine closes at 09:11; the member sends no
+        exit; the 09:20 decision enters again and exits at 09:35."""
+        res = run_day({"09:05": 2, "09:20": 2}, flatten_at=[hm(9, 10)])
+>       assert fills(res) == [(DAY, "09:05", "6C", "buy", "strategy"),
+                              (DAY, "09:11", "6C", "sell", "forced_flatten"),
+                              (DAY, "09:20", "6C", "buy", "strategy"),
+                              (DAY, "09:35", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 4 more items, first extra item: (datetime.date(2025, 7, 8), '09:05', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:744: AssertionError
+___________________ test_engine_nothing_after_the_13_40_fill ___________________
+
+    def test_engine_nothing_after_the_13_40_fill() -> None:
+        res = run_day({"13:25": 2}, mcl_extra=[(hm(13, 29), B_MCL + 10)], cad_to=hm(14, 30))
+>       assert fills(res) == [(DAY, "13:25", "6C", "buy", "strategy"),
+                              (DAY, "13:40", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '13:25', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:752: AssertionError
+_________ test_engine_refuses_on_a_signal_leg_roll_blackout_date_only __________
+
+    def test_engine_refuses_on_a_signal_leg_roll_blackout_date_only() -> None:
+        """V16(a) end to end: an MCL roll blackout on the trade date (6C clean). With the rules the
+        runner builds (member_window: the union removes the date) the open is refused as outside
+        the window; with the date kept in the window and the union as blackout, by name
+        engine_roll_blackout; with no blackout it fills."""
+        m = mk()
+        bars = oil_bars(DAY, {"09:05": 2})
+        rules, mw = runner_rules(m, bars, {"MCL": [DAY]})
+        assert DAY not in mw.dates and DAY in mw.blackout_union
+        assert DAY in mw.excluded["roll_blackout_any_leg"]
+        res = engine(m, bars, rules)
+>       assert fills(res) == [] and refusals(res) == ["engine_not_a_window_date"]
+E       AssertionError: assert ([] == []
+E         
+E         Use -v to get more diff and [] == ['engine_not_a_window_date']
+E         
+E         Right contains one more item: 'engine_not_a_window_date'
+E         Use -v to get more diff)
+
+tests/test_k8_members_oilcad.py:768: AssertionError
+_______________ test_reference_dates_include_roll_blackout_dates _______________
+
+    def test_reference_dates_include_roll_blackout_dates() -> None:
+        """K8-L-04: a reference date that is a roll-blackout date still gives its values (the bars
+        are delivered; only opens are refused there): with one blackout reference date, z = 2.0
+        still trades."""
+        m = mk()
+        bars = oil_bars(DAY, {"10:05": 1})
+        rules = rules_of(m, [DAY, *refs_of(DAY)], blackout=[refs_of(DAY)[3]])
+>       assert fills(engine(m, bars, rules))[0] == (DAY, "10:05", "6C", "buy", "strategy")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_k8_members_oilcad.py:791: IndexError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_first_and_last_decisions_trade
+FAILED tests/test_k8_members_oilcad.py::test_r_t_reads_the_mcl_bars_at_t_minus_1_and_t_minus_6
+FAILED tests/test_k8_members_oilcad.py::test_the_entry_is_on_the_6c_bar_at_t_minus_1
+FAILED tests/test_k8_members_oilcad.py::test_a_zero_mcl_close_at_t_minus_6_leaves_r_t_undefined
+FAILED tests/test_k8_members_oilcad.py::test_z_exactly_2_trades_end_to_end - ...
+FAILED tests/test_k8_members_oilcad.py::test_ddof_1_end_to_end_just_below_2_does_not_trade
+FAILED tests/test_k8_members_oilcad.py::test_n_1000_trades_and_n_999_does_not
+FAILED tests/test_k8_members_oilcad.py::test_sign_buys_on_z_above_zero_and_sells_below
+FAILED tests/test_k8_members_oilcad.py::test_reference_dates_are_the_20_previous_oilcad_dates
+FAILED tests/test_k8_members_oilcad.py::test_mcl_roll_inside_a_block_no_entry_at_t_later_decisions_proceed
+FAILED tests/test_k8_members_oilcad.py::test_missing_6c_entry_bar_blocks_that_t_only
+FAILED tests/test_k8_members_oilcad.py::test_missing_mcl_bar_at_t_minus_1_blocks_t_and_the_next_block
+FAILED tests/test_k8_members_oilcad.py::test_bars_are_identified_by_ct_date_not_trade_date_alone
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35
+FAILED tests/test_k8_members_oilcad.py::test_09_30_on_a_non_wpsr_date_is_not_skipped
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_13_00_on_an_fomc_date
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row
+FAILED tests/test_k8_members_oilcad.py::test_c6_tests_the_fill_minute_t_on_the_6c_root
+FAILED tests/test_k8_members_oilcad.py::test_a_skipped_decision_leaves_later_decisions_alone
+FAILED tests/test_k8_members_oilcad.py::test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position
+FAILED tests/test_k8_members_oilcad.py::test_engine_sell_side - AssertionErro...
+FAILED tests/test_k8_members_oilcad.py::test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing
+FAILED tests/test_k8_members_oilcad.py::test_engine_missing_exit_bar_exits_on_the_first_later_bar
+FAILED tests/test_k8_members_oilcad.py::test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20
+FAILED tests/test_k8_members_oilcad.py::test_engine_late_fill_holds_the_position_through_the_next_decision
+FAILED tests/test_k8_members_oilcad.py::test_engine_closure_leaves_the_account_flat_and_later_decisions_apply
+FAILED tests/test_k8_members_oilcad.py::test_engine_nothing_after_the_13_40_fill
+FAILED tests/test_k8_members_oilcad.py::test_engine_refuses_on_a_signal_leg_roll_blackout_date_only
+FAILED tests/test_k8_members_oilcad.py::test_reference_dates_include_roll_blackout_dates
+29 failed, 180 passed in 3.74s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO24.py as strategy.members.k8.oilcad

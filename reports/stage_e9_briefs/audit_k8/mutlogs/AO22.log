@@ -1,0 +1,27 @@
+........................................................................ [ 34%]
+.......................................................................F [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_______________ test_an_mcl_bar_is_read_on_its_own_ct_date_only ________________
+
+    def test_an_mcl_bar_is_read_on_its_own_ct_date_only() -> None:
+        """S0.4: d's 09:04 MCL bar is missing; an MCL bar opening 09:04 on CT date d + 1 but
+        labelled trade_date d (with a big move over d's 08:59) is not d's bar at 09:04, so it closes
+        no block, and the 6C bar of d + 1 at 09:04 gets no entry."""
+        day = DAY
+        nxt = OILCAD_DATES[OILCAD_DATES.index(day) + 1]
+        wrong = mk_bar("MCL", nxt, hm(9, 4), B_MCL + 10, trade_day=day)
+        cad = [mk_bar("6C", nxt, m, B_CAD) for m in range(hm(9, 0), hm(9, 10))]
+        bars = oil_bars(day, mcl_skip=[hm(9, 4)], cad_to=hm(9, 0)) + [wrong, *cad]
+>       assert drive(mk(), sorted(bars, key=lambda rb: rb[1].ts_event_ns)) == []
+E       AssertionError: assert [(datetime.da...C', 'buy', 1)] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 7, 9), '09:04', '6C', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:596: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_an_mcl_bar_is_read_on_its_own_ct_date_only
+1 failed, 208 passed in 3.62s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO22.py as strategy.members.k8.oilcad

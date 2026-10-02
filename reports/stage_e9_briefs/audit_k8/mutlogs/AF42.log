@@ -1,0 +1,38 @@
+......................................................................F. [ 34%]
+........................F............................................... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_______ test_a_second_trigger_while_long_and_after_the_exit_does_nothing _______
+
+    def test_a_second_trigger_while_long_and_after_the_exit_does_nothing() -> None:
+        member = ready()
+        enter(member, 3)
+        out = hold(member, hm(8, 45), hm(9, 20), pending={hm(9, 15): -1})
+>       assert sells(out) == [hm(9, 14), hm(9, 16), hm(9, 17), hm(9, 18), hm(9, 19), hm(9, 20)]
+E       assert [554, 555, 55...558, 559, ...] == [554, 556, 557, 558, 559, 560]
+E         
+E         At index 1 diff: 555 != 556
+E         Left contains one more item: 560
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:93: AssertionError
+______ test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated ______
+
+    def test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated() -> None:
+        member = ready_as("H30")
+        enter(member, 3)
+        out = hold(member, hm(8, 45), hm(9, 18), pending={hm(9, 15): -1, hm(9, 16): -1})
+>       assert sells(out) == [hm(9, 14), hm(9, 17), hm(9, 18)]
+E       assert [554, 555, 556, 557, 558] == [554, 557, 558]
+E         
+E         At index 1 diff: 555 != 557
+E         Left contains 2 more items, first extra item: 557
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:258: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight_exits.py::test_a_second_trigger_while_long_and_after_the_exit_does_nothing
+FAILED tests/test_k8_members_flight_exits.py::test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated
+2 failed, 207 passed in 3.61s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF42.py as strategy.members.k8.flight

@@ -1,0 +1,65 @@
+.F...........................F.......................................... [ 34%]
+......F................................................................. [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_________________ test_releases_source_is_the_frozen_calendar __________________
+
+    @needs_calendar_json
+    def test_releases_source_is_the_frozen_calendar() -> None:
+        assert _sha(CALENDAR_JSON) == CALENDAR_SHA256
+        assert (rel.RELEASE_CALENDAR, rel.RELEASE_CALENDAR_SHA256) == (CALENDAR_JSON, CALENDAR_SHA256)
+        assert rel.TABLE_RANGE == ("2019-05-01", "2026-06-19")
+>       assert rel.GUARD_ROOTS == ("MGC", "6C", "MNQ") and rel.GUARD_SECONDS == 120
+E       AssertionError: assert (('MGC', '6C', 'MNQ') == ('MGC', '6C', 'MNQ')
+E         
+E         Use -v to get more diff and 180 == 120)
+E        +  where 180 = rel.GUARD_SECONDS
+
+tests/test_k8_members_tables.py:149: AssertionError
+_____________________________ test_in_guard_edges ______________________________
+
+    def test_in_guard_edges() -> None:
+        """R and R + 60 s guarded; R + 120 s and R - 60 s not (integer ns, both ends)."""
+        for root in ("MGC", "6C", "MNQ"):
+            for r in (rel.GUARD_INSTANTS[root][0], rel.GUARD_INSTANTS[root][-1]):
+                ns = r * NS
+                assert rel.in_guard(root, ns) and rel.in_guard(root, ns + 60 * NS)
+                assert rel.in_guard(root, ns + 120 * NS - 1)
+>               assert not rel.in_guard(root, ns + 120 * NS)
+E               AssertionError: assert not True
+E                +  where True = <function in_guard at 0x71e5d5a01300>('MGC', (1556733600000000000 + (120 * 1000000000)))
+E                +    where <function in_guard at 0x71e5d5a01300> = rel.in_guard
+
+tests/test_k8_members_tables.py:301: AssertionError
+____ test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[658-True] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71e5d599c3b0>
+guard_minute = 658, entered = True
+
+    @pytest.mark.parametrize(("guard_minute", "entered"), [
+        (hm(10, 59), False),  # t = 11:00 in [10:59, 11:01)
+        (hm(11, 0), False),  # t = R
+        (hm(10, 58), True),  # t = R + 120 s: not guarded
+        (hm(11, 1), True),  # t < R
+    ])
+    def test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min(
+            monkeypatch: pytest.MonkeyPatch, guard_minute: int, entered: bool) -> None:
+        """k = 30: decision t = 11:00, the entry bar 10:59. A guard [R, R + 2 min) holding 11:00
+        skips the trigger; the 11:05 trigger then enters."""
+        guard_at(monkeypatch, DAY, guard_minute)
+        member = ready()
+        out = feed(member, DAY, dip_path({30: 5, 31: 10}))
+>       assert entries(out) == buy_at(hm(10, 59) if entered else hm(11, 4))
+E       AssertionError: assert [(664, 'MGC', 'buy', 1)] == [(659, 'MGC', 'buy', 1)]
+E         
+E         At index 0 diff: (664, 'MGC', 'buy', 1) != (659, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:150: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_tables.py::test_releases_source_is_the_frozen_calendar
+FAILED tests/test_k8_members_tables.py::test_in_guard_edges - AssertionError:...
+FAILED tests/test_k8_members_flight_exits.py::test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[658-True]
+3 failed, 206 passed in 4.45s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AR02.py as strategy.members.k8._releases

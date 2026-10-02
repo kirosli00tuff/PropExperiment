@@ -1,0 +1,23 @@
+........................................................................ [ 34%]
+...............................................................F........ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+________________ test_a_date_outside_oilcad_dates_never_trades _________________
+
+    def test_a_date_outside_oilcad_dates_never_trades() -> None:
+        """2025-07-04 (not an OILCAD date) with synthetic bars and a big move: no trade."""
+        day = date(2025, 7, 4)
+        refs = previous_dates(OILCAD_DATES, day, 20)
+        bars = ref_bars(refs, STANDARD) + trade_bars(day, {"10:05": 5})
+>       assert drive(mk(), bars) == []
+E       AssertionError: assert [(datetime.da...C', 'buy', 1)] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 7, 4), '10:04', '6C', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:511: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_a_date_outside_oilcad_dates_never_trades
+1 failed, 208 passed in 3.67s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO35.py as strategy.members.k8.oilcad

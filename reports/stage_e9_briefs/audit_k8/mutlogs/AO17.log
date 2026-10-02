@@ -1,0 +1,36 @@
+........................................................................ [ 34%]
+....................................................F...F............... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+________ test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation ________
+
+    def test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation() -> None:
+        assert oilcad.scale([0.25, -0.25] * 499 + [0.0]) is None  # n = 999
+>       assert oilcad.scale([0.25, -0.25] * 500) == pytest.approx(0.2501250, rel=1e-6)  # n = 1000
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert None == 0.250125 ± 2.5e-07
+E         
+E         comparison failed
+E         Obtained: None
+E         Expected: 0.250125 ± 2.5e-07
+
+tests/test_k8_members_oilcad.py:413: AssertionError
+____________________ test_n_1000_trades_and_n_999_does_not _____________________
+
+    def test_n_1000_trades_and_n_999_does_not() -> None:
+        n1000 = STANDARD[:-1] + ((6, 6, 36),)  # one zero fewer: n = 1000
+        n999 = STANDARD[:-1] + ((6, 6, 35),)  # n = 999
+        assert len(ref_values(n1000)) == 1000 and len(ref_values(n999)) == 999
+>       assert entries(DAY, {"10:05": 2}, specs=n1000) == [("10:04", "buy")]
+E       AssertionError: assert [] == [('10:04', 'buy')]
+E         
+E         Right contains one more item: ('10:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:446: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation
+FAILED tests/test_k8_members_oilcad.py::test_n_1000_trades_and_n_999_does_not
+2 failed, 207 passed in 3.67s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO17.py as strategy.members.k8.oilcad

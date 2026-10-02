@@ -1,0 +1,136 @@
+......................................................................F. [ 34%]
+.............F.F...F....F.F...F.F....................................... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_______ test_a_second_trigger_while_long_and_after_the_exit_does_nothing _______
+
+    def test_a_second_trigger_while_long_and_after_the_exit_does_nothing() -> None:
+        member = ready()
+        enter(member, 3)
+        out = hold(member, hm(8, 45), hm(9, 20), pending={hm(9, 15): -1})
+>       assert sells(out) == [hm(9, 14), hm(9, 16), hm(9, 17), hm(9, 18), hm(9, 19), hm(9, 20)]
+E       assert [556, 557, 558, 559, 560] == [554, 556, 557, 558, 559, 560]
+E         
+E         At index 0 diff: 556 != 554
+E         Right contains one more item: 560
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:93: AssertionError
+________________ test_h30_exit_is_sent_on_the_bar_at_te_plus_29 ________________
+
+    def test_h30_exit_is_sent_on_the_bar_at_te_plus_29() -> None:
+        member = ready_as("H30")
+        enter(member, 3)  # entry bar 08:44, fill at 08:45 = T_e
+>       assert sells(hold(member, hm(8, 45), hm(9, 14))) == [hm(9, 14)]
+E       assert [] == [554]
+E         
+E         Right contains one more item: 554
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:210: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[72-899] ____________________
+
+k = 72, exit_bar = 899
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+        enter(member, k)
+        t_k = end_bar(k) + 1
+>       assert sells(hold(member, t_k, exit_bar)) == [exit_bar]
+E       assert [] == [899]
+E         
+E         Right contains one more item: 899
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:229: AssertionError
+___________ test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit ____________
+
+    def test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit() -> None:
+        member = ready_as("H30")
+        enter(member, 3)  # entry bar 08:44; no MGC bar at 08:45: the engine fills at 08:46
+        got = call(member, DAY, hm(8, 45), mes_bar=mes(DAY, hm(8, 45)), mgc_bar=None, position=0,
+                   pending=1)
+        assert got == []
+>       assert sells(hold(member, hm(8, 46), hm(9, 15))) == [hm(9, 15)]
+E       assert [] == [555]
+E         
+E         Right contains one more item: 555
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:238: AssertionError
+______ test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated ______
+
+    def test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated() -> None:
+        member = ready_as("H30")
+        enter(member, 3)
+        out = hold(member, hm(8, 45), hm(9, 18), pending={hm(9, 15): -1, hm(9, 16): -1})
+>       assert sells(out) == [hm(9, 14), hm(9, 17), hm(9, 18)]
+E       assert [557, 558] == [554, 557, 558]
+E         
+E         At index 0 diff: 557 != 554
+E         Right contains one more item: 558
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:258: AssertionError
+__________________________ test_t_e_resets_when_flat ___________________________
+
+    def test_t_e_resets_when_flat() -> None:
+        """After the exit fills, a later position (impossible on real bars: one entry a day) would
+        count its own T_e: the member keeps no stale exit time."""
+        member = ready_as("H30")
+        enter(member, 3)
+        hold(member, hm(8, 45), hm(9, 15), pending={hm(9, 15): -1})
+        hold(member, hm(9, 16), hm(9, 20), flat_from=hm(9, 16))
+>       assert sells(hold(member, hm(10, 0), hm(10, 29))) == [hm(10, 29)]
+E       assert [] == [629]
+E         
+E         Right contains one more item: 629
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:275: AssertionError
+__________ test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30 ___________
+
+    def test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30() -> None:
+        res = run(flight.make_h30(), frames())
+>       assert fills(res) == [("MGC", "08:45", "buy", 1, "strategy"),
+                              ("MGC", "09:15", "sell", 1, "strategy")]
+E       AssertionError: assert [('MGC', '08:..., 'strategy')] == [('MGC', '08:..., 'strategy')]
+E         
+E         At index 1 diff: ('MGC', '09:16', 'sell', 1, 'strategy') != ('MGC', '09:15', 'sell', 1, 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:126: AssertionError
+____ test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill ____
+
+    def test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill() -> None:
+        frame_map = frames()
+        mgc = frame_map["MGC"]
+        t_k = int(datetime.combine(DAY, time(8, 45), tzinfo=CT).timestamp()) * NS
+        frame_map["MGC"] = mgc[mgc["ts_event"] != t_k].reset_index(drop=True)
+        res = run(flight.make_h30(), frame_map)
+>       assert fills(res) == [("MGC", "08:46", "buy", 1, "strategy"),
+                              ("MGC", "09:16", "sell", 1, "strategy")]
+E       AssertionError: assert [('MGC', '08:..., 'strategy')] == [('MGC', '08:..., 'strategy')]
+E         
+E         At index 1 diff: ('MGC', '09:17', 'sell', 1, 'strategy') != ('MGC', '09:16', 'sell', 1, 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:144: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight_exits.py::test_a_second_trigger_while_long_and_after_the_exit_does_nothing
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_sent_on_the_bar_at_te_plus_29
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[72-899]
+FAILED tests/test_k8_members_flight_exits.py::test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit
+FAILED tests/test_k8_members_flight_exits.py::test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated
+FAILED tests/test_k8_members_flight_exits.py::test_t_e_resets_when_flat - ass...
+FAILED tests/test_k8_members_flight_engine.py::test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30
+FAILED tests/test_k8_members_flight_engine.py::test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill
+8 failed, 201 passed in 3.62s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF15.py as strategy.members.k8.flight

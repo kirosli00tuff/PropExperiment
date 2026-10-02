@@ -1,0 +1,101 @@
+........................................................................ [ 34%]
+..............F.......FF.F.....F........................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+__________________ test_heod_exit_is_sent_on_the_bar_at_1504 ___________________
+
+    def test_heod_exit_is_sent_on_the_bar_at_1504() -> None:
+        member = ready_as("HEOD")
+        enter(member, 3)
+>       assert sells(hold(member, hm(8, 45), hm(15, 4))) == [hm(15, 4)]
+E       assert [554, 555, 55...558, 559, ...] == [904]
+E         
+E         At index 0 diff: 554 != 904
+E         Left contains 350 more items, first extra item: 555
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:216: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing2-905] _
+
+variant = 'HEOD', missing = {904}, sent = 905
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+        enter(member, 3)
+>       assert sells(hold(member, hm(8, 45), sent, missing=missing)) == [sent]
+E       assert [554, 555, 55...558, 559, ...] == [905]
+E         
+E         At index 0 diff: 554 != 905
+E         Left contains 350 more items, first extra item: 555
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:251: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing3-906] _
+
+variant = 'HEOD', missing = {904, 905}, sent = 906
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+        enter(member, 3)
+>       assert sells(hold(member, hm(8, 45), sent, missing=missing)) == [sent]
+E       assert [554, 555, 55...558, 559, ...] == [906]
+E         
+E         At index 0 diff: 554 != 906
+E         Left contains 350 more items, first extra item: 555
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:251: AssertionError
+_________________ test_an_engine_closed_position_gets_no_exit __________________
+
+    def test_an_engine_closed_position_gets_no_exit() -> None:
+        member = ready_as("HEOD")
+        enter(member, 3)
+        out = hold(member, hm(8, 45), hm(15, 10), flat_from=hm(10, 0))  # D9.7 exit at 10:00
+>       assert out == {}
+E       AssertionError: assert {554: [LegInt...s=None)], ...} == {}
+E         
+E         Left contains 46 more items:
+E         {554: [LegIntent(root='MGC',
+E                          side='sell',
+E                          quantity=1,
+E                          ts_utc=datetime.datetime(2025, 6, 17, 14, 15, tzinfo=datetime.timezone.utc),
+E                          limit_price=None,...
+E         
+E         ...Full output truncated (272 lines hidden), use '-vv' to show
+
+tests/test_k8_members_flight_exits.py:265: AssertionError
+_____________ test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505 _____________
+
+    def test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505() -> None:
+        res = run(flight.make_heod(), frames())
+>       assert fills(res) == [("MGC", "08:45", "buy", 1, "strategy"),
+                              ("MGC", "15:05", "sell", 1, "strategy")]
+E       AssertionError: assert [('MGC', '08:..., 'strategy')] == [('MGC', '08:..., 'strategy')]
+E         
+E         At index 1 diff: ('MGC', '09:15', 'sell', 1, 'strategy') != ('MGC', '15:05', 'sell', 1, 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:133: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight_exits.py::test_heod_exit_is_sent_on_the_bar_at_1504
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing2-905]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing3-906]
+FAILED tests/test_k8_members_flight_exits.py::test_an_engine_closed_position_gets_no_exit
+FAILED tests/test_k8_members_flight_engine.py::test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505
+5 failed, 204 passed in 3.65s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF39.py as strategy.members.k8.flight

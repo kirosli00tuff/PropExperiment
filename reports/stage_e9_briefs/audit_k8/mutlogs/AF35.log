@@ -1,0 +1,23 @@
+........................................................................ [ 34%]
+F....................................................................... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+________________ test_no_entry_while_an_order_is_pending_on_mgc ________________
+
+    def test_no_entry_while_an_order_is_pending_on_mgc() -> None:
+        member = ready()
+        feed(member, DAY, dip_path(n_values=2))
+        got = call(member, DAY, end_bar(3), mes_bar=mes(DAY, end_bar(3), 20000 - 5),
+                   mgc_bar=mgc(DAY, end_bar(3)), pending=1)
+>       assert got == []
+E       AssertionError: assert [LegIntent(ro...tl_bars=None)] == []
+E         
+E         Left contains one more item: LegIntent(root='MGC', side='buy', quantity=1, ts_utc=datetime.datetime(2025, 6, 17, 13, 45, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:114: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight_exits.py::test_no_entry_while_an_order_is_pending_on_mgc
+1 failed, 208 passed in 3.66s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF35.py as strategy.members.k8.flight

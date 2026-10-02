@@ -1,0 +1,187 @@
+........................................................................ [ 34%]
+.........................................F.............................. [ 68%]
+..........FFF.FFF.FFFF...F.......................................        [100%]
+=================================== FAILURES ===================================
+________________________ test_trading_windows_are_s0_12 ________________________
+
+    def test_trading_windows_are_s0_12() -> None:
+>       assert mk().trading_windows == {
+            "6C": (TradingInterval(time(8, 4), time(13, 41)),),
+            "MCL": (TradingInterval(time(7, 59), time(13, 25)),),
+        }
+E       AssertionError: assert {'6C': (Tradi...set_days=0),)} == {'6C': (Tradi...set_days=0),)}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'6C': (TradingInterval(start_ct=datetime.time(8, 4), end_ct=datetime.time(13, 42), start_offset_days=0, end_offset_days=0),)} != {'6C': (TradingInterval(start_ct=datetime.time(8, 4), end_ct=datetime.time(13, 41), start_offset_days=0, end_offset_days=0),)}
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:334: AssertionError
+____ test_exit_on_the_first_6c_bar_at_t_e_plus_14_resent_while_not_pending _____
+
+    def test_exit_on_the_first_6c_bar_at_t_e_plus_14_resent_while_not_pending() -> None:
+        """T_e = 09:05 (the account first shows +1 there): no exit before 09:19; an exit intent on
+        09:19 and, refused (still not pending), again on 09:20; pending at 09:21: nothing."""
+        pend_from = ns_at(DAY, hm(9, 21))
+        held, pend = account(("6C",), 1), account(("6C",), 1, -1)
+        flat = account(("6C",))
+    
+        def acct(ts: int) -> MemberAccountView:
+            if ts < ns_at(DAY, hm(9, 5)):
+                return flat
+            return pend if ts >= pend_from else held
+    
+        out = drive(mk(), trade_bars(DAY, cad_to=hm(9, 25)), acct)
+>       assert [(i[1], i[3], i[4]) for i in out] == [("09:19", "sell", 1), ("09:20", "sell", 1)]
+E       AssertionError: assert [('09:20', 'sell', 1)] == [('09:19', 's...', 'sell', 1)]
+E         
+E         At index 0 diff: ('09:20', 'sell', 1) != ('09:19', 'sell', 1)
+E         Right contains one more item: ('09:20', 'sell', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:667: AssertionError
+_________________ test_exit_of_a_short_buys_the_whole_position _________________
+
+    def test_exit_of_a_short_buys_the_whole_position() -> None:
+        acct = _acct_from(ns_at(DAY, hm(9, 5)), position=-1)
+        out = drive(mk(), trade_bars(DAY, cad_to=hm(9, 19)), acct)
+>       assert [(i[1], i[3], i[4]) for i in out] == [("09:19", "buy", 1)]
+E       AssertionError: assert [] == [('09:19', 'buy', 1)]
+E         
+E         Right contains one more item: ('09:19', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:673: AssertionError
+__________________ test_every_exit_closes_the_whole_position ___________________
+
+    def test_every_exit_closes_the_whole_position() -> None:
+        acct = _acct_from(ns_at(DAY, hm(9, 5)), position=2)
+        out = drive(mk(), trade_bars(DAY, cad_to=hm(9, 19)), acct)
+>       assert [(i[1], i[3], i[4]) for i in out] == [("09:19", "sell", 2)]
+E       AssertionError: assert [] == [('09:19', 'sell', 2)]
+E         
+E         Right contains one more item: ('09:19', 'sell', 2)
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:679: AssertionError
+___ test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position ____
+
+    def test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position() -> None:
+        res = run_day({"09:05": 2})
+>       assert fills(res) == [(DAY, "09:05", "6C", "buy", "strategy"),
+                              (DAY, "09:20", "6C", "sell", "strategy")]
+E       AssertionError: assert [(datetime.da..., 'strategy')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 1 diff: (datetime.date(2025, 7, 8), '09:21', '6C', 'sell', 'strategy') != (datetime.date(2025, 7, 8), '09:20', '6C', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:699: AssertionError
+____________________________ test_engine_sell_side _____________________________
+
+    def test_engine_sell_side() -> None:
+>       assert fills(run_day({"09:05": -2})) == [(DAY, "09:05", "6C", "sell", "strategy"),
+                                                 (DAY, "09:20", "6C", "buy", "strategy")]
+E       AssertionError: assert [(datetime.da..., 'strategy')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 1 diff: (datetime.date(2025, 7, 8), '09:21', '6C', 'buy', 'strategy') != (datetime.date(2025, 7, 8), '09:20', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:706: AssertionError
+______ test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing ______
+
+    def test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing() -> None:
+        res = run_day({"09:05": 2}, cad_skip=[hm(9, 5)])
+>       assert fills(res) == [(DAY, "09:06", "6C", "buy", "strategy"),
+                              (DAY, "09:21", "6C", "sell", "strategy")]
+E       AssertionError: assert [(datetime.da..., 'strategy')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 1 diff: (datetime.date(2025, 7, 8), '09:22', '6C', 'sell', 'strategy') != (datetime.date(2025, 7, 8), '09:21', '6C', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:712: AssertionError
+___ test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20 ____
+
+    def test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20() -> None:
+        """Big moves at 09:05, 09:20 (= t_e + 15, decided on the exit's 09:19 view: no entry) and
+        09:25 (= t_e + 20: an entry)."""
+        res = run_day({"09:05": 2, "09:20": 2, "09:25": 2})
+>       assert fills(res) == [(DAY, "09:05", "6C", "buy", "strategy"),
+                              (DAY, "09:20", "6C", "sell", "strategy"),
+                              (DAY, "09:25", "6C", "buy", "strategy"),
+                              (DAY, "09:40", "6C", "sell", "strategy")]
+E       AssertionError: assert [(datetime.da..., 'strategy')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 1 diff: (datetime.date(2025, 7, 8), '09:21', '6C', 'sell', 'strategy') != (datetime.date(2025, 7, 8), '09:20', '6C', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:726: AssertionError
+______ test_engine_late_fill_holds_the_position_through_the_next_decision ______
+
+    def test_engine_late_fill_holds_the_position_through_the_next_decision() -> None:
+        """6C bars 09:05..09:08 missing: the 09:05 entry fills at 09:09 (T_e = 09:09), so the 09:10
+        decision (its 09:09 view) sees a position: no entry; the exit fills at 09:24."""
+        res = run_day({"09:05": 2, "09:10": 2}, cad_skip=list(range(hm(9, 5), hm(9, 9))))
+>       assert fills(res) == [(DAY, "09:09", "6C", "buy", "strategy"),
+                              (DAY, "09:24", "6C", "sell", "strategy")]
+E       AssertionError: assert [(datetime.da..., 'strategy')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 1 diff: (datetime.date(2025, 7, 8), '09:25', '6C', 'sell', 'strategy') != (datetime.date(2025, 7, 8), '09:24', '6C', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:736: AssertionError
+____ test_engine_closure_leaves_the_account_flat_and_later_decisions_apply _____
+
+    def test_engine_closure_leaves_the_account_flat_and_later_decisions_apply() -> None:
+        """A bar flatten flag on the 09:10 6C bar: the engine closes at 09:11; the member sends no
+        exit; the 09:20 decision enters again and exits at 09:35."""
+        res = run_day({"09:05": 2, "09:20": 2}, flatten_at=[hm(9, 10)])
+>       assert fills(res) == [(DAY, "09:05", "6C", "buy", "strategy"),
+                              (DAY, "09:11", "6C", "sell", "forced_flatten"),
+                              (DAY, "09:20", "6C", "buy", "strategy"),
+                              (DAY, "09:35", "6C", "sell", "strategy")]
+E       AssertionError: assert [(datetime.da..., 'strategy')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 3 diff: (datetime.date(2025, 7, 8), '09:36', '6C', 'sell', 'strategy') != (datetime.date(2025, 7, 8), '09:35', '6C', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:744: AssertionError
+___________________ test_engine_nothing_after_the_13_40_fill ___________________
+
+    def test_engine_nothing_after_the_13_40_fill() -> None:
+        res = run_day({"13:25": 2}, mcl_extra=[(hm(13, 29), B_MCL + 10)], cad_to=hm(14, 30))
+>       assert fills(res) == [(DAY, "13:25", "6C", "buy", "strategy"),
+                              (DAY, "13:40", "6C", "sell", "strategy")]
+E       AssertionError: assert [(datetime.da..., 'strategy')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 1 diff: (datetime.date(2025, 7, 8), '13:41', '6C', 'sell', 'strategy') != (datetime.date(2025, 7, 8), '13:40', '6C', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:752: AssertionError
+_____________________ test_shift_helper_moves_a_clock_time _____________________
+
+    def test_shift_helper_moves_a_clock_time() -> None:
+        assert oilcad.shift(time(8, 5), -6) == time(7, 59)
+        assert oilcad.shift(time(13, 25), 16) == time(13, 41)
+>       assert timedelta(minutes=oilcad.EXIT_AFTER_FILL_MIN) == timedelta(minutes=14)
+E       assert datetime.timedelta(seconds=900) == datetime.timedelta(seconds=840)
+E        +  where datetime.timedelta(seconds=900) = timedelta(minutes=15)
+E        +    where 15 = oilcad.EXIT_AFTER_FILL_MIN
+E        +  and   datetime.timedelta(seconds=840) = timedelta(minutes=14)
+
+tests/test_k8_members_oilcad.py:797: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_trading_windows_are_s0_12 - Asse...
+FAILED tests/test_k8_members_oilcad.py::test_exit_on_the_first_6c_bar_at_t_e_plus_14_resent_while_not_pending
+FAILED tests/test_k8_members_oilcad.py::test_exit_of_a_short_buys_the_whole_position
+FAILED tests/test_k8_members_oilcad.py::test_every_exit_closes_the_whole_position
+FAILED tests/test_k8_members_oilcad.py::test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position
+FAILED tests/test_k8_members_oilcad.py::test_engine_sell_side - AssertionErro...
+FAILED tests/test_k8_members_oilcad.py::test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing
+FAILED tests/test_k8_members_oilcad.py::test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20
+FAILED tests/test_k8_members_oilcad.py::test_engine_late_fill_holds_the_position_through_the_next_decision
+FAILED tests/test_k8_members_oilcad.py::test_engine_closure_leaves_the_account_flat_and_later_decisions_apply
+FAILED tests/test_k8_members_oilcad.py::test_engine_nothing_after_the_13_40_fill
+FAILED tests/test_k8_members_oilcad.py::test_shift_helper_moves_a_clock_time
+12 failed, 197 passed in 3.75s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO13.py as strategy.members.k8.oilcad

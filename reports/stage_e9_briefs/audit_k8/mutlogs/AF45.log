@@ -1,0 +1,526 @@
+......................................................................F. [ 34%]
+.............FFFFFFFFFFFF.FF..FFF....................................... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_______ test_a_second_trigger_while_long_and_after_the_exit_does_nothing _______
+
+    def test_a_second_trigger_while_long_and_after_the_exit_does_nothing() -> None:
+        member = ready()
+        enter(member, 3)
+        out = hold(member, hm(8, 45), hm(9, 20), pending={hm(9, 15): -1})
+>       assert sells(out) == [hm(9, 14), hm(9, 16), hm(9, 17), hm(9, 18), hm(9, 19), hm(9, 20)]
+               ^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:93: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {554: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 14, 15, tzinfo=datetime.ti...2, ts_utc=datetime.datetime(2025, 6, 17, 14, 19, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)], ...}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 554
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+________________ test_h30_exit_is_sent_on_the_bar_at_te_plus_29 ________________
+
+    def test_h30_exit_is_sent_on_the_bar_at_te_plus_29() -> None:
+        member = ready_as("H30")
+        enter(member, 3)  # entry bar 08:44, fill at 08:45 = T_e
+>       assert sells(hold(member, hm(8, 45), hm(9, 14))) == [hm(9, 14)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:210: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {554: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 14, 15, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 554
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+__________________ test_heod_exit_is_sent_on_the_bar_at_1504 ___________________
+
+    def test_heod_exit_is_sent_on_the_bar_at_1504() -> None:
+        member = ready_as("HEOD")
+        enter(member, 3)
+>       assert sells(hold(member, hm(8, 45), hm(15, 4))) == [hm(15, 4)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:216: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {904: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 20, 5, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 904
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[72-899] ____________________
+
+k = 72, exit_bar = 899
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+        enter(member, k)
+        t_k = end_bar(k) + 1
+>       assert sells(hold(member, t_k, exit_bar)) == [exit_bar]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:229: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {899: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 20, 0, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 899
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[73-904] ____________________
+
+k = 73, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+        enter(member, k)
+        t_k = end_bar(k) + 1
+>       assert sells(hold(member, t_k, exit_bar)) == [exit_bar]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:229: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {904: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 20, 5, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 904
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[74-904] ____________________
+
+k = 74, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+        enter(member, k)
+        t_k = end_bar(k) + 1
+>       assert sells(hold(member, t_k, exit_bar)) == [exit_bar]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:229: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {904: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 20, 5, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 904
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[77-904] ____________________
+
+k = 77, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+        enter(member, k)
+        t_k = end_bar(k) + 1
+>       assert sells(hold(member, t_k, exit_bar)) == [exit_bar]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:229: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {904: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 20, 5, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 904
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+___________ test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit ____________
+
+    def test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit() -> None:
+        member = ready_as("H30")
+        enter(member, 3)  # entry bar 08:44; no MGC bar at 08:45: the engine fills at 08:46
+        got = call(member, DAY, hm(8, 45), mes_bar=mes(DAY, hm(8, 45)), mgc_bar=None, position=0,
+                   pending=1)
+        assert got == []
+>       assert sells(hold(member, hm(8, 46), hm(9, 15))) == [hm(9, 15)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {555: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 14, 16, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 555
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing0-555] _
+
+variant = 'H30', missing = {554}, sent = 555
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+        enter(member, 3)
+>       assert sells(hold(member, hm(8, 45), sent, missing=missing)) == [sent]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:251: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {555: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 14, 16, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 555
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing1-557] _
+
+variant = 'H30', missing = {554, 555, 556}, sent = 557
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+        enter(member, 3)
+>       assert sells(hold(member, hm(8, 45), sent, missing=missing)) == [sent]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:251: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {557: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 14, 18, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 557
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing2-905] _
+
+variant = 'HEOD', missing = {904}, sent = 905
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+        enter(member, 3)
+>       assert sells(hold(member, hm(8, 45), sent, missing=missing)) == [sent]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:251: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {905: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 20, 6, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 905
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing3-906] _
+
+variant = 'HEOD', missing = {904, 905}, sent = 906
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+        enter(member, 3)
+>       assert sells(hold(member, hm(8, 45), sent, missing=missing)) == [sent]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:251: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {906: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 20, 7, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 906
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+______ test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated ______
+
+    def test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated() -> None:
+        member = ready_as("H30")
+        enter(member, 3)
+        out = hold(member, hm(8, 45), hm(9, 18), pending={hm(9, 15): -1, hm(9, 16): -1})
+>       assert sells(out) == [hm(9, 14), hm(9, 17), hm(9, 18)]
+               ^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:258: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {554: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 14, 15, tzinfo=datetime.ti...tity=2, ts_utc=datetime.datetime(2025, 6, 17, 14, 19, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 554
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+__________________________ test_t_e_resets_when_flat ___________________________
+
+    def test_t_e_resets_when_flat() -> None:
+        """After the exit fills, a later position (impossible on real bars: one entry a day) would
+        count its own T_e: the member keeps no stale exit time."""
+        member = ready_as("H30")
+        enter(member, 3)
+        hold(member, hm(8, 45), hm(9, 15), pending={hm(9, 15): -1})
+        hold(member, hm(9, 16), hm(9, 20), flat_from=hm(9, 16))
+>       assert sells(hold(member, hm(10, 0), hm(10, 29))) == [hm(10, 29)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:275: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {629: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 15, 30, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 629
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+_________________ test_the_last_fill_is_1505_for_both_variants _________________
+
+    def test_the_last_fill_is_1505_for_both_variants() -> None:
+        for variant in ("H30", "HEOD"):
+            member = ready_as(variant)
+            out = feed(member, DAY, dip_path({76: 5}))  # entry bar 14:49, fill 14:50
+            assert entries(out) == buy_at(hm(14, 49))
+>           assert sells(hold(member, hm(14, 50), hm(15, 4))) == [hm(15, 4)]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:284: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = {904: [LegIntent(root='MGC', side='sell', quantity=2, ts_utc=datetime.datetime(2025, 6, 17, 20, 5, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)]}
+
+    def sells(out: Out) -> list[int]:
+        """The minutes of the exit intents (sell 1 MGC)."""
+        found = []
+        for minute, got in sorted(out.items()):
+>           assert [(i.root, i.side, i.quantity) for i in got] == [("MGC", "sell", 1)], minute
+E           AssertionError: 904
+E           assert [('MGC', 'sell', 2)] == [('MGC', 'sell', 1)]
+E             
+E             At index 0 diff: ('MGC', 'sell', 2) != ('MGC', 'sell', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:73: AssertionError
+__________ test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30 ___________
+
+    def test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30() -> None:
+        res = run(flight.make_h30(), frames())
+>       assert fills(res) == [("MGC", "08:45", "buy", 1, "strategy"),
+                              ("MGC", "09:15", "sell", 1, "strategy")]
+E       AssertionError: assert [('MGC', '08:...rategy'), ...] == [('MGC', '08:..., 'strategy')]
+E         
+E         At index 1 diff: ('MGC', '09:15', 'sell', 2, 'strategy') != ('MGC', '09:15', 'sell', 1, 'strategy')
+E         Left contains 19 more items, first extra item: ('MGC', '09:17', 'buy', 2, 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:126: AssertionError
+_____________ test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505 _____________
+
+    def test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505() -> None:
+        res = run(flight.make_heod(), frames())
+>       assert fills(res) == [("MGC", "08:45", "buy", 1, "strategy"),
+                              ("MGC", "15:05", "sell", 1, "strategy")]
+E       AssertionError: assert [('MGC', '08:...ced_flatten')] == [('MGC', '08:..., 'strategy')]
+E         
+E         At index 1 diff: ('MGC', '15:08', 'sell', 1, 'forced_flatten') != ('MGC', '15:05', 'sell', 1, 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:133: AssertionError
+____ test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill ____
+
+    def test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill() -> None:
+        frame_map = frames()
+        mgc = frame_map["MGC"]
+        t_k = int(datetime.combine(DAY, time(8, 45), tzinfo=CT).timestamp()) * NS
+        frame_map["MGC"] = mgc[mgc["ts_event"] != t_k].reset_index(drop=True)
+        res = run(flight.make_h30(), frame_map)
+>       assert fills(res) == [("MGC", "08:46", "buy", 1, "strategy"),
+                              ("MGC", "09:16", "sell", 1, "strategy")]
+E       AssertionError: assert [('MGC', '08:...rategy'), ...] == [('MGC', '08:..., 'strategy')]
+E         
+E         At index 1 diff: ('MGC', '09:16', 'sell', 2, 'strategy') != ('MGC', '09:16', 'sell', 1, 'strategy')
+E         Left contains 19 more items, first extra item: ('MGC', '09:18', 'buy', 2, 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:144: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight_exits.py::test_a_second_trigger_while_long_and_after_the_exit_does_nothing
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_sent_on_the_bar_at_te_plus_29
+FAILED tests/test_k8_members_flight_exits.py::test_heod_exit_is_sent_on_the_bar_at_1504
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[72-899]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[73-904]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[74-904]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[77-904]
+FAILED tests/test_k8_members_flight_exits.py::test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing0-555]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing1-557]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing2-905]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing3-906]
+FAILED tests/test_k8_members_flight_exits.py::test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated
+FAILED tests/test_k8_members_flight_exits.py::test_t_e_resets_when_flat - Ass...
+FAILED tests/test_k8_members_flight_exits.py::test_the_last_fill_is_1505_for_both_variants
+FAILED tests/test_k8_members_flight_engine.py::test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30
+FAILED tests/test_k8_members_flight_engine.py::test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505
+FAILED tests/test_k8_members_flight_engine.py::test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill
+18 failed, 191 passed in 3.75s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF45.py as strategy.members.k8.flight

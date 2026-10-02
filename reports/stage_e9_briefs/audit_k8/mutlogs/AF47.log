@@ -1,0 +1,1044 @@
+....................................F..FFFF..FFFF.......FFFFFFFFF..FFFFF [ 34%]
+.FFFFFFFF..F.FFFFFFFFFFFFFFF..FFF.FFFF.................................. [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+____________________ test_the_entry_size_is_the_frozen_q_c _____________________
+
+    def test_the_entry_size_is_the_frozen_q_c() -> None:
+        q_c = load_frozen_tables().vehicles["MGC"].q_c
+        assert q_c == 1
+        member = ready()
+>       assert entries(feed(member, DAY, dip_path({3: 5}))) == [(end_bar(3), "MGC", "buy", q_c)]
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:202: AssertionError
+_____________________ test_k1_reads_the_0829_and_0834_bars _____________________
+
+    def test_k1_reads_the_0829_and_0834_bars() -> None:
+        member = ready()
+>       assert entries(feed(member, DAY, dip_path({1: 5}))) == buy_at(hm(8, 34))
+E       AssertionError: assert [] == [(514, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (514, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:234: AssertionError
+________________ test_a_bar_at_0830_is_not_the_start_bar_of_k1 _________________
+
+    def test_a_bar_at_0830_is_not_the_start_bar_of_k1() -> None:
+        member = ready()
+        call(member, DAY, hm(8, 30), mes_bar=mes(DAY, hm(8, 30), B))  # 08:29 missing
+        out = call(member, DAY, hm(8, 34), mes_bar=mes(DAY, hm(8, 34), B - 5),
+                   mgc_bar=mgc(DAY, hm(8, 34)))
+        assert out == []
+        member = ready()  # control: the same dip after an 08:29 bar triggers
+        call(member, DAY, hm(8, 29), mes_bar=mes(DAY, hm(8, 29), B))
+        out = call(member, DAY, hm(8, 34), mes_bar=mes(DAY, hm(8, 34), B - 5),
+                   mgc_bar=mgc(DAY, hm(8, 34)))
+>       assert [(i.root, i.side) for i in out] == [("MGC", "buy")]
+E       AssertionError: assert [] == [('MGC', 'buy')]
+E         
+E         Right contains one more item: ('MGC', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:249: AssertionError
+________ test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500 ________
+
+    def test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500() -> None:
+        member = ready()
+>       assert entries(feed(member, DAY, dip_path({77: 5}))) == buy_at(hm(14, 54))
+E       AssertionError: assert [] == [(894, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (894, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:254: AssertionError
+__________________ test_every_block_k_triggers_at_its_own_bar __________________
+
+    def test_every_block_k_triggers_at_its_own_bar() -> None:
+        for k in (2, 30, 54, 76):
+            member = ready()
+>           assert entries(feed(member, DAY, dip_path({k: 5}))) == buy_at(end_bar(k)), k
+E           AssertionError: 2
+E           assert [] == [(519, 'MGC', 'buy', 1)]
+E             
+E             Right contains one more item: (519, 'MGC', 'buy', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight.py:265: AssertionError
+__________________ test_r_equal_to_q_in_another_form_triggers __________________
+
+    def test_r_equal_to_q_in_another_form_triggers() -> None:
+        """Q(d) = -3/B (n = 1,540); r_k = -6/(2B) on d is the same rational: the trigger fires."""
+        member = ready()
+        path = [B] * 2 + [2 * B] + [2 * B - 6] * 75  # r_2 = +1, r_3 = -6/2B, then 0
+>       assert entries(feed(member, DAY, path)) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:291: AssertionError
+____ test_an_mes_roll_inside_a_block_is_no_trigger_and_later_blocks_trigger ____
+
+    def test_an_mes_roll_inside_a_block_is_no_trigger_and_later_blocks_trigger() -> None:
+        member = ready()
+        ids = {i: MES_ID + 1 for i in range(3, 78)}  # the id changes between the bars of block 3
+        assert entries(feed(member, DAY, dip_path({3: 5}), ids=ids)) == []
+        member = ready()
+>       assert entries(feed(member, DAY, dip_path({3: 5, 6: 5}), ids=ids)) == buy_at(end_bar(6))
+E       AssertionError: assert [] == [(539, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (539, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:299: AssertionError
+_______________ test_instrument_ids_are_compared_within_mes_only _______________
+
+    def test_instrument_ids_are_compared_within_mes_only() -> None:
+        member = ready()  # the MGC bar carries another id than MES: irrelevant
+        assert MGC_ID != MES_ID
+>       assert entries(feed(member, DAY, dip_path({3: 5}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:305: AssertionError
+______ test_a_bar_whose_trade_date_is_not_its_ct_date_is_not_a_block_bar _______
+
+    def test_a_bar_whose_trade_date_is_not_its_ct_date_is_not_a_block_bar() -> None:
+        """K8-L-02: bars on CT date DAY stamped with trade date 2025-06-18 (whose reference set the
+        kit also fills) are no block bars of either date."""
+        nxt = FLIGHT_DATES[FLIGHT_DATES.index(DAY) + 1]
+        member = ready()
+        call(member, DAY, hm(8, 29), mes_bar=mes(DAY, hm(8, 29), B, trade_date=nxt))
+        out = call(member, DAY, hm(8, 34), mes_bar=mes(DAY, hm(8, 34), B - 5, trade_date=nxt),
+                   mgc_bar=mgc(DAY, hm(8, 34), trade_date=nxt))
+        assert out == []
+        member = ready()  # control: the same bars stamped DAY trigger
+        call(member, DAY, hm(8, 29), mes_bar=mes(DAY, hm(8, 29), B))
+        out = call(member, DAY, hm(8, 34), mes_bar=mes(DAY, hm(8, 34), B - 5),
+                   mgc_bar=mgc(DAY, hm(8, 34)))
+>       assert [(i.root, i.side) for i in out] == [("MGC", "buy")]
+E       AssertionError: assert [] == [('MGC', 'buy')]
+E         
+E         Right contains one more item: ('MGC', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:321: AssertionError
+_______________ test_member_n_1199_is_no_trade_and_n_1200_trades _______________
+
+    def test_member_n_1199_is_no_trade_and_n_1200_trades() -> None:
+        member = ready(values=[59] + [60] * 19)
+        assert entries(feed(member, DAY, dip_path({3: 50}))) == []
+        member = ready(values=60)  # n = 1,200: Q = -5/B
+>       assert entries(feed(member, DAY, dip_path({3: 5}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:354: AssertionError
+________________________ test_member_m_at_1201_and_1540 ________________________
+
+    def test_member_m_at_1201_and_1540() -> None:
+        member = ready(values=[61] + [60] * 19)  # n = 1,201: m = 7, Q = -4/B
+>       assert entries(feed(member, DAY, dip_path({3: 4}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:361: AssertionError
+________________ test_member_counts_duplicate_reference_values _________________
+
+    def test_member_counts_duplicate_reference_values() -> None:
+        dips = (10, 10, 9, 8, 7, 6, 5, 4, 3, 2)  # n = 1,540, m = 8: Q = -4/B (not -3/B)
+        member = ready(dips=dips)
+>       assert entries(feed(member, DAY, dip_path({3: 4}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:373: AssertionError
+_____________ test_undefined_reference_computations_are_not_values _____________
+
+    def test_undefined_reference_computations_are_not_values() -> None:
+        """n = 19 x 77 = 1,463, m = 8: Q = -3/B from the dips -10..-2; counting the undefined -50/B
+        would give -4/B."""
+>       assert entries(feed(_undefined_first_reference(), DAY, dip_path({3: 3}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:392: AssertionError
+_______________ test_trigger_needs_r_negative_even_at_or_below_q _______________
+
+    def test_trigger_needs_r_negative_even_at_or_below_q() -> None:
+        member = ready(dips=())  # every reference value 0: Q = 0
+        assert entries(feed(member, DAY, dip_path())) == []  # r = 0 <= Q, not < 0
+        member = ready(dips=())
+>       assert entries(feed(member, DAY, dip_path({3: 1}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:401: AssertionError
+______________ test_a_positive_q_never_triggers_a_non_negative_r _______________
+
+    def test_a_positive_q_never_triggers_a_non_negative_r() -> None:
+        assert entries(feed(_positive_q(), DAY, dip_path())) == []  # every r = 0 <= Q
+        small = [B + 100] * 3 + [B + 101] * 75  # r_3 = 1/(B + 100) <= Q, r = 0 elsewhere
+        assert entries(feed(_positive_q(), DAY, small)) == []
+>       assert entries(feed(_positive_q(), DAY, dip_path({3: 1}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:415: AssertionError
+_________ test_warm_up_the_20th_date_does_not_trade_and_the_21st_does __________
+
+    def test_warm_up_the_20th_date_does_not_trade_and_the_21st_does() -> None:
+        refs = reference_dates(DAY)
+        member = flight.make_h30()  # the run's first bar is on refs[1]: refs[1..19] and DAY
+        for i, ref in enumerate(refs[1:], start=1):
+            dip = {10: DIPS[i]} if i < len(DIPS) else {}
+            out = feed(member, ref, dip_path({**dip, 3: 50} if ref == refs[-1] else dip))
+            assert entries(out) == [], ref  # eligible dates 1..19 of the run: warm-up
+        out = feed(member, DAY, dip_path({3: 50}))
+        assert entries(out) == []  # DAY is the 20th eligible date of this run: still warm-up
+        after = FLIGHT_DATES[FLIGHT_DATES.index(DAY) + 1]
+>       assert entries(feed(member, after, dip_path({3: 50}))) == buy_at(end_bar(3))  # the 21st
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:429: AssertionError
+_____ test_the_21st_date_trades_when_the_run_starts_on_the_first_reference _____
+
+    def test_the_21st_date_trades_when_the_run_starts_on_the_first_reference() -> None:
+        member = ready()
+>       assert entries(feed(member, DAY, dip_path({3: 5}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:434: AssertionError
+______ test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade ______
+
+    def test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade() -> None:
+        """The run starts on FLIGHT_DATES[0] (2019-05-01): the 20th date has 19 reference dates
+        (n = 1,463, all after the first bar) and does not trade; the 21st does."""
+        member = flight.make_h30()
+        for i, ref in enumerate(FLIGHT_DATES[:19]):
+            dip = {10: DIPS[i]} if i < len(DIPS) else {}
+            assert entries(feed(member, ref, dip_path(dip))) == [], ref
+        twentieth, twenty_first = FLIGHT_DATES[19], FLIGHT_DATES[20]
+        assert len(reference_dates(twentieth)) == 19
+        assert entries(feed(member, twentieth, dip_path({3: 50}))) == []
+>       assert entries(feed(member, twenty_first, dip_path({3: 50}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:447: AssertionError
+___________ test_a_non_full_date_is_skipped_as_a_reference_and_as_d ____________
+
+    def test_a_non_full_date_is_skipped_as_a_reference_and_as_d() -> None:
+        """2025-11-28 (early halt) is not in FLIGHT_DATES: its values never enter Q(2025-12-01)
+        (a -50/B dip there would move Q from -3/B to -4/B) and it never trades itself, although its
+        reference set (the same 20 dates as 2025-12-01's) would give Q = -3/B."""
+        d, halt = date(2025, 12, 1), date(2025, 11, 28)
+        member = flight.make_h30()
+        prepare(member, d)
+        assert entries(feed(member, halt, dip_path({3: 50, 20: 3}))) == []
+>       assert entries(feed(member, d, dip_path({3: 3}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:475: AssertionError
+__________________ test_values_of_d_itself_never_enter_q_of_d __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x726cf6b9c2c0>
+
+    def test_values_of_d_itself_never_enter_q_of_d(monkeypatch: pytest.MonkeyPatch) -> None:
+        """Q(d) is fixed before d's 08:30: a -60/B value at k = 1 on d (its trigger skipped by a
+        guard at 08:35) would move Q from -3/B to -4/B if it counted; x = 3 at k = 3 still enters."""
+        monkeypatch.setitem(rel.GUARD_INSTANTS, "MGC", (ns_at(DAY, hm(8, 35)) // NS,))
+        member = ready()
+>       assert entries(feed(member, DAY, dip_path({1: 60, 3: 3}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:483: AssertionError
+__________ test_only_the_first_trigger_of_d_enters_even_when_refused ___________
+
+    def test_only_the_first_trigger_of_d_enters_even_when_refused() -> None:
+        member = ready()  # the account stays flat: the engine refused the first intent
+>       assert entries(feed(member, DAY, dip_path({3: 5, 10: 5, 40: 9}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:86: AssertionError
+_______ test_a_second_trigger_while_long_and_after_the_exit_does_nothing _______
+
+    def test_a_second_trigger_while_long_and_after_the_exit_does_nothing() -> None:
+        member = ready()
+>       enter(member, 3)
+
+tests/test_k8_members_flight_exits.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+_______________________ test_the_next_date_enters_again ________________________
+
+    def test_the_next_date_enters_again() -> None:
+        member = ready()
+>       enter(member, 3)
+
+tests/test_k8_members_flight_exits.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+______ test_c6_skips_the_1300_trigger_on_an_fomc_date_and_enters_at_1305 _______
+
+    def test_c6_skips_the_1300_trigger_on_an_fomc_date_and_enters_at_1305() -> None:
+        member = ready(FOMC)  # r_54 = -5/B, r_55 = -5/(B - 5): both trigger (Q = -3/B)
+        out = feed(member, FOMC, dip_path({54: 5, 55: 10}))  # t_54 = 13:00, t_55 = 13:05
+>       assert entries(out) == buy_at(hm(13, 4))
+E       AssertionError: assert [] == [(784, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (784, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:121: AssertionError
+________________ test_a_1300_trigger_on_a_non_fomc_date_enters _________________
+
+    def test_a_1300_trigger_on_a_non_fomc_date_enters() -> None:
+        member = ready()
+>       assert entries(feed(member, DAY, dip_path({54: 5, 55: 10}))) == buy_at(hm(12, 59))
+E       AssertionError: assert [] == [(779, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (779, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:128: AssertionError
+_____ test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day _____
+
+    def test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day() -> None:
+        member = ready(FOMC)  # C6 first: the 13:00 trigger is skipped, its missing bar is moot
+        out = feed(member, FOMC, dip_path({54: 5, 55: 10}), mgc_skip={54})
+>       assert entries(out) == buy_at(hm(13, 4))
+E       AssertionError: assert [] == [(784, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (784, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:134: AssertionError
+___ test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[659-False] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x726cf731a570>
+guard_minute = 659, entered = False
+
+    @pytest.mark.parametrize(("guard_minute", "entered"), [
+        (hm(10, 59), False),  # t = 11:00 in [10:59, 11:01)
+        (hm(11, 0), False),  # t = R
+        (hm(10, 58), True),  # t = R + 120 s: not guarded
+        (hm(11, 1), True),  # t < R
+    ])
+    def test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min(
+            monkeypatch: pytest.MonkeyPatch, guard_minute: int, entered: bool) -> None:
+        """k = 30: decision t = 11:00, the entry bar 10:59. A guard [R, R + 2 min) holding 11:00
+        skips the trigger; the 11:05 trigger then enters."""
+        guard_at(monkeypatch, DAY, guard_minute)
+        member = ready()
+        out = feed(member, DAY, dip_path({30: 5, 31: 10}))
+>       assert entries(out) == buy_at(hm(10, 59) if entered else hm(11, 4))
+E       AssertionError: assert [] == [(664, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (664, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:150: AssertionError
+___ test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[660-False] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x726cf6fa25d0>
+guard_minute = 660, entered = False
+
+    @pytest.mark.parametrize(("guard_minute", "entered"), [
+        (hm(10, 59), False),  # t = 11:00 in [10:59, 11:01)
+        (hm(11, 0), False),  # t = R
+        (hm(10, 58), True),  # t = R + 120 s: not guarded
+        (hm(11, 1), True),  # t < R
+    ])
+    def test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min(
+            monkeypatch: pytest.MonkeyPatch, guard_minute: int, entered: bool) -> None:
+        """k = 30: decision t = 11:00, the entry bar 10:59. A guard [R, R + 2 min) holding 11:00
+        skips the trigger; the 11:05 trigger then enters."""
+        guard_at(monkeypatch, DAY, guard_minute)
+        member = ready()
+        out = feed(member, DAY, dip_path({30: 5, 31: 10}))
+>       assert entries(out) == buy_at(hm(10, 59) if entered else hm(11, 4))
+E       AssertionError: assert [] == [(664, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (664, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:150: AssertionError
+____ test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[658-True] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x726cf731a000>
+guard_minute = 658, entered = True
+
+    @pytest.mark.parametrize(("guard_minute", "entered"), [
+        (hm(10, 59), False),  # t = 11:00 in [10:59, 11:01)
+        (hm(11, 0), False),  # t = R
+        (hm(10, 58), True),  # t = R + 120 s: not guarded
+        (hm(11, 1), True),  # t < R
+    ])
+    def test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min(
+            monkeypatch: pytest.MonkeyPatch, guard_minute: int, entered: bool) -> None:
+        """k = 30: decision t = 11:00, the entry bar 10:59. A guard [R, R + 2 min) holding 11:00
+        skips the trigger; the 11:05 trigger then enters."""
+        guard_at(monkeypatch, DAY, guard_minute)
+        member = ready()
+        out = feed(member, DAY, dip_path({30: 5, 31: 10}))
+>       assert entries(out) == buy_at(hm(10, 59) if entered else hm(11, 4))
+E       AssertionError: assert [] == [(659, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (659, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:150: AssertionError
+____ test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[661-True] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x726cf731b650>
+guard_minute = 661, entered = True
+
+    @pytest.mark.parametrize(("guard_minute", "entered"), [
+        (hm(10, 59), False),  # t = 11:00 in [10:59, 11:01)
+        (hm(11, 0), False),  # t = R
+        (hm(10, 58), True),  # t = R + 120 s: not guarded
+        (hm(11, 1), True),  # t < R
+    ])
+    def test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min(
+            monkeypatch: pytest.MonkeyPatch, guard_minute: int, entered: bool) -> None:
+        """k = 30: decision t = 11:00, the entry bar 10:59. A guard [R, R + 2 min) holding 11:00
+        skips the trigger; the 11:05 trigger then enters."""
+        guard_at(monkeypatch, DAY, guard_minute)
+        member = ready()
+        out = feed(member, DAY, dip_path({30: 5, 31: 10}))
+>       assert entries(out) == buy_at(hm(10, 59) if entered else hm(11, 4))
+E       AssertionError: assert [] == [(659, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (659, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:150: AssertionError
+_________________ test_c6_reads_the_traded_roots_instants_only _________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x726cf6fcc230>
+
+    def test_c6_reads_the_traded_roots_instants_only(monkeypatch: pytest.MonkeyPatch) -> None:
+        for root in ("6C", "MNQ"):
+            monkeypatch.setitem(rel.GUARD_INSTANTS, root, (ns_at(DAY, hm(11, 0)) // NS,))
+        member = ready()
+>       assert entries(feed(member, DAY, dip_path({30: 5}))) == buy_at(hm(10, 59))
+E       AssertionError: assert [] == [(659, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (659, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:157: AssertionError
+_____ test_an_mes_bar_absent_at_tk_minus_1_and_present_at_tk_is_never_used _____
+
+    def test_an_mes_bar_absent_at_tk_minus_1_and_present_at_tk_is_never_used() -> None:
+        member = ready()
+        feed(member, DAY, dip_path(n_values=2))  # bars 08:29, 08:34, 08:39
+        missing = call(member, DAY, hm(8, 44), mes_bar=None, mgc_bar=mgc(DAY, hm(8, 44)))
+        assert missing == []
+        late = call(member, DAY, hm(8, 45), mes_bar=mes(DAY, hm(8, 45), 20000 - 50),
+                    mgc_bar=mgc(DAY, hm(8, 45)))  # the 08:44 bar arrives one minute late
+        assert late == []
+        # block 4 (start bar 08:44 missing) is undefined too; block 5 triggers normally
+        out = {}
+        for i in (4, 5):
+            out[end_bar(i)] = call(member, DAY, end_bar(i),
+                                   mes_bar=mes(DAY, end_bar(i), 20000 - 5 if i == 5 else 20000),
+                                   mgc_bar=mgc(DAY, end_bar(i)))
+>       assert entries({m: g for m, g in out.items() if g}) == buy_at(end_bar(5))
+E       AssertionError: assert [] == [(534, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (534, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:194: AssertionError
+________________ test_h30_exit_is_sent_on_the_bar_at_te_plus_29 ________________
+
+    def test_h30_exit_is_sent_on_the_bar_at_te_plus_29() -> None:
+        member = ready_as("H30")
+>       enter(member, 3)  # entry bar 08:44, fill at 08:45 = T_e
+        ^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:209: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+__________________ test_heod_exit_is_sent_on_the_bar_at_1504 ___________________
+
+    def test_heod_exit_is_sent_on_the_bar_at_1504() -> None:
+        member = ready_as("HEOD")
+>       enter(member, 3)
+
+tests/test_k8_members_flight_exits.py:215: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='HEOD', name='K8-flight-01 HEOD MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES',...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[72-899] ____________________
+
+k = 72, exit_bar = 899
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+>       enter(member, k)
+
+tests/test_k8_members_flight_exits.py:227: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 72, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(869, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (869, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[73-904] ____________________
+
+k = 73, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+>       enter(member, k)
+
+tests/test_k8_members_flight_exits.py:227: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 73, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(874, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (874, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[74-904] ____________________
+
+k = 74, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+>       enter(member, k)
+
+tests/test_k8_members_flight_exits.py:227: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 74, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(879, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (879, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[77-904] ____________________
+
+k = 77, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+>       enter(member, k)
+
+tests/test_k8_members_flight_exits.py:227: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 77, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(894, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (894, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+___________ test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit ____________
+
+    def test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit() -> None:
+        member = ready_as("H30")
+>       enter(member, 3)  # entry bar 08:44; no MGC bar at 08:45: the engine fills at 08:46
+        ^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:234: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing0-555] _
+
+variant = 'H30', missing = {554}, sent = 555
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+>       enter(member, 3)
+
+tests/test_k8_members_flight_exits.py:250: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing1-557] _
+
+variant = 'H30', missing = {554, 555, 556}, sent = 557
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+>       enter(member, 3)
+
+tests/test_k8_members_flight_exits.py:250: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing2-905] _
+
+variant = 'HEOD', missing = {904}, sent = 905
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+>       enter(member, 3)
+
+tests/test_k8_members_flight_exits.py:250: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='HEOD', name='K8-flight-01 HEOD MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES',...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing3-906] _
+
+variant = 'HEOD', missing = {904, 905}, sent = 906
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+>       enter(member, 3)
+
+tests/test_k8_members_flight_exits.py:250: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='HEOD', name='K8-flight-01 HEOD MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES',...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+______ test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated ______
+
+    def test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated() -> None:
+        member = ready_as("H30")
+>       enter(member, 3)
+
+tests/test_k8_members_flight_exits.py:256: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+_________________ test_an_engine_closed_position_gets_no_exit __________________
+
+    def test_an_engine_closed_position_gets_no_exit() -> None:
+        member = ready_as("HEOD")
+>       enter(member, 3)
+
+tests/test_k8_members_flight_exits.py:263: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='HEOD', name='K8-flight-01 HEOD MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES',...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+__________________________ test_t_e_resets_when_flat ___________________________
+
+    def test_t_e_resets_when_flat() -> None:
+        """After the exit fills, a later position (impossible on real bars: one entry a day) would
+        count its own T_e: the member keeps no stale exit time."""
+        member = ready_as("H30")
+>       enter(member, 3)
+
+tests/test_k8_members_flight_exits.py:272: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+k = 3, day = datetime.date(2025, 6, 17)
+
+    def enter(member: FlightToGold, k: int, day: date = DAY) -> None:
+        """Feed the block bars up to the bar at t_k - 1 with a 5-tick dip at k: the entry."""
+>       assert entries(feed(member, day, dip_path({k: 5}, n_values=k))) == buy_at(end_bar(k))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:49: AssertionError
+_________________ test_the_last_fill_is_1505_for_both_variants _________________
+
+    def test_the_last_fill_is_1505_for_both_variants() -> None:
+        for variant in ("H30", "HEOD"):
+            member = ready_as(variant)
+            out = feed(member, DAY, dip_path({76: 5}))  # entry bar 14:49, fill 14:50
+>           assert entries(out) == buy_at(hm(14, 49))
+E           AssertionError: assert [] == [(889, 'MGC', 'buy', 1)]
+E             
+E             Right contains one more item: (889, 'MGC', 'buy', 1)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:283: AssertionError
+__________ test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30 ___________
+
+    def test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30() -> None:
+        res = run(flight.make_h30(), frames())
+>       assert fills(res) == [("MGC", "08:45", "buy", 1, "strategy"),
+                              ("MGC", "09:15", "sell", 1, "strategy")]
+E       AssertionError: assert [] == [('MGC', '08:..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: ('MGC', '08:45', 'buy', 1, 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:126: AssertionError
+_____________ test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505 _____________
+
+    def test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505() -> None:
+        res = run(flight.make_heod(), frames())
+>       assert fills(res) == [("MGC", "08:45", "buy", 1, "strategy"),
+                              ("MGC", "15:05", "sell", 1, "strategy")]
+E       AssertionError: assert [] == [('MGC', '08:..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: ('MGC', '08:45', 'buy', 1, 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:133: AssertionError
+____ test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill ____
+
+    def test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill() -> None:
+        frame_map = frames()
+        mgc = frame_map["MGC"]
+        t_k = int(datetime.combine(DAY, time(8, 45), tzinfo=CT).timestamp()) * NS
+        frame_map["MGC"] = mgc[mgc["ts_event"] != t_k].reset_index(drop=True)
+        res = run(flight.make_h30(), frame_map)
+>       assert fills(res) == [("MGC", "08:46", "buy", 1, "strategy"),
+                              ("MGC", "09:16", "sell", 1, "strategy")]
+E       AssertionError: assert [] == [('MGC', '08:..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: ('MGC', '08:46', 'buy', 1, 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:144: AssertionError
+______ test_a_roll_blackout_of_the_signal_leg_only_blocks_the_entry_v16a _______
+
+    def test_a_roll_blackout_of_the_signal_leg_only_blocks_the_entry_v16a() -> None:
+        frame_map = frames()
+        rules, mw = runner_rules(frame_map, mes_blackout={DAY})
+        assert DAY in mw.excluded["roll_blackout_any_leg"] and DAY not in mw.dates
+        assert DAY in mw.blackout_union
+        res = run(flight.make_h30(), frame_map, rules)
+>       assert intents(res) == [("MGC", "08:44", "engine_not_a_window_date")]
+E       AssertionError: assert [] == [('MGC', '08:...window_date')]
+E         
+E         Right contains one more item: ('MGC', '08:44', 'engine_not_a_window_date')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:165: AssertionError
+_______ test_the_engine_names_the_roll_blackout_when_d_is_a_window_date ________
+
+    def test_the_engine_names_the_roll_blackout_when_d_is_a_window_date() -> None:
+        frame_map = frames()
+        inputs = {leg.root: leg_inputs(leg.root, traded=leg.traded) for leg in LEGS}
+        rules = StageERules(inputs, frozenset(WINDOW), frozenset({DAY}), NO_RELEASES)
+        res = run(flight.make_h30(), frame_map, rules)
+>       assert intents(res) == [("MGC", "08:44", "engine_roll_blackout")]
+E       AssertionError: assert [] == [('MGC', '08:...ll_blackout')]
+E         
+E         Right contains one more item: ('MGC', '08:44', 'engine_roll_blackout')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:174: AssertionError
+____________ test_control_without_a_blackout_the_runner_rules_fill _____________
+
+    def test_control_without_a_blackout_the_runner_rules_fill() -> None:
+        frame_map = frames()
+        rules, mw = runner_rules(frame_map)
+        assert DAY in mw.dates and not mw.blackout_union
+        res = run(flight.make_h30(), frame_map, rules)
+>       assert fills(res)[0] == ("MGC", "08:45", "buy", 1, "strategy")
+               ^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_k8_members_flight_engine.py:183: IndexError
+__________________ test_the_member_is_a_fresh_object_per_run ___________________
+
+    def test_the_member_is_a_fresh_object_per_run() -> None:
+        first, second = flight.make_h30(), flight.make_h30()
+        assert isinstance(first, FlightToGold) and first is not second
+        run(first, frames())
+>       assert fills(run(second, frames()))[0][1] == "08:45"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_k8_members_flight_engine.py:190: IndexError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_the_entry_size_is_the_frozen_q_c
+FAILED tests/test_k8_members_flight.py::test_k1_reads_the_0829_and_0834_bars
+FAILED tests/test_k8_members_flight.py::test_a_bar_at_0830_is_not_the_start_bar_of_k1
+FAILED tests/test_k8_members_flight.py::test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500
+FAILED tests/test_k8_members_flight.py::test_every_block_k_triggers_at_its_own_bar
+FAILED tests/test_k8_members_flight.py::test_r_equal_to_q_in_another_form_triggers
+FAILED tests/test_k8_members_flight.py::test_an_mes_roll_inside_a_block_is_no_trigger_and_later_blocks_trigger
+FAILED tests/test_k8_members_flight.py::test_instrument_ids_are_compared_within_mes_only
+FAILED tests/test_k8_members_flight.py::test_a_bar_whose_trade_date_is_not_its_ct_date_is_not_a_block_bar
+FAILED tests/test_k8_members_flight.py::test_member_n_1199_is_no_trade_and_n_1200_trades
+FAILED tests/test_k8_members_flight.py::test_member_m_at_1201_and_1540 - Asse...
+FAILED tests/test_k8_members_flight.py::test_member_counts_duplicate_reference_values
+FAILED tests/test_k8_members_flight.py::test_undefined_reference_computations_are_not_values
+FAILED tests/test_k8_members_flight.py::test_trigger_needs_r_negative_even_at_or_below_q
+FAILED tests/test_k8_members_flight.py::test_a_positive_q_never_triggers_a_non_negative_r
+FAILED tests/test_k8_members_flight.py::test_warm_up_the_20th_date_does_not_trade_and_the_21st_does
+FAILED tests/test_k8_members_flight.py::test_the_21st_date_trades_when_the_run_starts_on_the_first_reference
+FAILED tests/test_k8_members_flight.py::test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade
+FAILED tests/test_k8_members_flight.py::test_a_non_full_date_is_skipped_as_a_reference_and_as_d
+FAILED tests/test_k8_members_flight.py::test_values_of_d_itself_never_enter_q_of_d
+FAILED tests/test_k8_members_flight_exits.py::test_only_the_first_trigger_of_d_enters_even_when_refused
+FAILED tests/test_k8_members_flight_exits.py::test_a_second_trigger_while_long_and_after_the_exit_does_nothing
+FAILED tests/test_k8_members_flight_exits.py::test_the_next_date_enters_again
+FAILED tests/test_k8_members_flight_exits.py::test_c6_skips_the_1300_trigger_on_an_fomc_date_and_enters_at_1305
+FAILED tests/test_k8_members_flight_exits.py::test_a_1300_trigger_on_a_non_fomc_date_enters
+FAILED tests/test_k8_members_flight_exits.py::test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day
+FAILED tests/test_k8_members_flight_exits.py::test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[659-False]
+FAILED tests/test_k8_members_flight_exits.py::test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[660-False]
+FAILED tests/test_k8_members_flight_exits.py::test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[658-True]
+FAILED tests/test_k8_members_flight_exits.py::test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[661-True]
+FAILED tests/test_k8_members_flight_exits.py::test_c6_reads_the_traded_roots_instants_only
+FAILED tests/test_k8_members_flight_exits.py::test_an_mes_bar_absent_at_tk_minus_1_and_present_at_tk_is_never_used
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_sent_on_the_bar_at_te_plus_29
+FAILED tests/test_k8_members_flight_exits.py::test_heod_exit_is_sent_on_the_bar_at_1504
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[72-899]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[73-904]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[74-904]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[77-904]
+FAILED tests/test_k8_members_flight_exits.py::test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing0-555]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing1-557]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing2-905]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing3-906]
+FAILED tests/test_k8_members_flight_exits.py::test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated
+FAILED tests/test_k8_members_flight_exits.py::test_an_engine_closed_position_gets_no_exit
+FAILED tests/test_k8_members_flight_exits.py::test_t_e_resets_when_flat - Ass...
+FAILED tests/test_k8_members_flight_exits.py::test_the_last_fill_is_1505_for_both_variants
+FAILED tests/test_k8_members_flight_engine.py::test_h30_fills_mgc_at_the_tk_open_and_exits_at_te_plus_30
+FAILED tests/test_k8_members_flight_engine.py::test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505
+FAILED tests/test_k8_members_flight_engine.py::test_an_mgc_bar_missing_at_tk_fills_later_and_h30_counts_from_the_fill
+FAILED tests/test_k8_members_flight_engine.py::test_a_roll_blackout_of_the_signal_leg_only_blocks_the_entry_v16a
+FAILED tests/test_k8_members_flight_engine.py::test_the_engine_names_the_roll_blackout_when_d_is_a_window_date
+FAILED tests/test_k8_members_flight_engine.py::test_control_without_a_blackout_the_runner_rules_fill
+FAILED tests/test_k8_members_flight_engine.py::test_the_member_is_a_fresh_object_per_run
+54 failed, 155 passed in 3.64s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF47.py as strategy.members.k8.flight

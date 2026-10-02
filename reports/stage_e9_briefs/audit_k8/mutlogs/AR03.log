@@ -1,0 +1,163 @@
+.............................FF.....................................F... [ 34%]
+.F.F.F.................................F................................ [ 68%]
+F.FF.............................................................        [100%]
+=================================== FAILURES ===================================
+_____________________________ test_in_guard_edges ______________________________
+
+    def test_in_guard_edges() -> None:
+        """R and R + 60 s guarded; R + 120 s and R - 60 s not (integer ns, both ends)."""
+        for root in ("MGC", "6C", "MNQ"):
+            for r in (rel.GUARD_INSTANTS[root][0], rel.GUARD_INSTANTS[root][-1]):
+                ns = r * NS
+>               assert rel.in_guard(root, ns) and rel.in_guard(root, ns + 60 * NS)
+E               AssertionError: assert (False)
+E                +  where False = <function in_guard at 0x76d1e1ba9300>('MGC', 1556733600000000000)
+E                +    where <function in_guard at 0x76d1e1ba9300> = rel.in_guard
+
+tests/test_k8_members_tables.py:299: AssertionError
+_______ test_mgc_guards_on_the_flight_fill_grid_are_the_fomc_1300_dates ________
+
+    def test_mgc_guards_on_the_flight_fill_grid_are_the_fomc_1300_dates() -> None:
+        """Task 1b A3: of the research-window MGC instants only FOMC 13:00 CT meets a flight fill
+        minute (08:35..14:55 every 5 minutes); 13:00 and 13:01 are guarded, 13:05 is not."""
+        grid = {(8 * 60 + 30 + 5 * k) for k in range(1, 78)}
+        hits = []
+        for s in rel.GUARD_INSTANTS["MGC"]:
+            local = datetime.fromtimestamp(s, tz=UTC).astimezone(CT)
+            if _in_research(local.date()) and local.hour * 60 + local.minute in grid:
+                hits.append(local)
+        assert len(hits) == 10 and {(h.hour, h.minute) for h in hits} == {(13, 0)}
+        fomc = date(2025, 6, 18)
+        assert date(2025, 6, 18) in {h.date() for h in hits}
+>       assert rel.in_guard("MGC", _ct_ns(fomc, 13, 0)) and rel.in_guard("MGC", _ct_ns(fomc, 13, 1))
+E       AssertionError: assert (False)
+E        +  where False = <function in_guard at 0x76d1e1ba9300>('MGC', 1750269600000000000)
+E        +    where <function in_guard at 0x76d1e1ba9300> = rel.in_guard
+E        +    and   1750269600000000000 = _ct_ns(datetime.date(2025, 6, 18), 13, 0)
+
+tests/test_k8_members_tables.py:320: AssertionError
+__________________ test_values_of_d_itself_never_enter_q_of_d __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x76d19f35ef00>
+
+    def test_values_of_d_itself_never_enter_q_of_d(monkeypatch: pytest.MonkeyPatch) -> None:
+        """Q(d) is fixed before d's 08:30: a -60/B value at k = 1 on d (its trigger skipped by a
+        guard at 08:35) would move Q from -3/B to -4/B if it counted; x = 3 at k = 3 still enters."""
+        monkeypatch.setitem(rel.GUARD_INSTANTS, "MGC", (ns_at(DAY, hm(8, 35)) // NS,))
+        member = ready()
+>       assert entries(feed(member, DAY, dip_path({1: 60, 3: 3}))) == buy_at(end_bar(3))
+E       AssertionError: assert [(514, 'MGC', 'buy', 1)] == [(524, 'MGC', 'buy', 1)]
+E         
+E         At index 0 diff: (514, 'MGC', 'buy', 1) != (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:483: AssertionError
+______ test_c6_skips_the_1300_trigger_on_an_fomc_date_and_enters_at_1305 _______
+
+    def test_c6_skips_the_1300_trigger_on_an_fomc_date_and_enters_at_1305() -> None:
+        member = ready(FOMC)  # r_54 = -5/B, r_55 = -5/(B - 5): both trigger (Q = -3/B)
+        out = feed(member, FOMC, dip_path({54: 5, 55: 10}))  # t_54 = 13:00, t_55 = 13:05
+>       assert entries(out) == buy_at(hm(13, 4))
+E       AssertionError: assert [(779, 'MGC', 'buy', 1)] == [(784, 'MGC', 'buy', 1)]
+E         
+E         At index 0 diff: (779, 'MGC', 'buy', 1) != (784, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:121: AssertionError
+_____ test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day _____
+
+    def test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day() -> None:
+        member = ready(FOMC)  # C6 first: the 13:00 trigger is skipped, its missing bar is moot
+        out = feed(member, FOMC, dip_path({54: 5, 55: 10}), mgc_skip={54})
+>       assert entries(out) == buy_at(hm(13, 4))
+E       AssertionError: assert [] == [(784, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (784, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:134: AssertionError
+___ test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[660-False] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x76d1e1b76db0>
+guard_minute = 660, entered = False
+
+    @pytest.mark.parametrize(("guard_minute", "entered"), [
+        (hm(10, 59), False),  # t = 11:00 in [10:59, 11:01)
+        (hm(11, 0), False),  # t = R
+        (hm(10, 58), True),  # t = R + 120 s: not guarded
+        (hm(11, 1), True),  # t < R
+    ])
+    def test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min(
+            monkeypatch: pytest.MonkeyPatch, guard_minute: int, entered: bool) -> None:
+        """k = 30: decision t = 11:00, the entry bar 10:59. A guard [R, R + 2 min) holding 11:00
+        skips the trigger; the 11:05 trigger then enters."""
+        guard_at(monkeypatch, DAY, guard_minute)
+        member = ready()
+        out = feed(member, DAY, dip_path({30: 5, 31: 10}))
+>       assert entries(out) == buy_at(hm(10, 59) if entered else hm(11, 4))
+E       AssertionError: assert [(659, 'MGC', 'buy', 1)] == [(664, 'MGC', 'buy', 1)]
+E         
+E         At index 0 diff: (659, 'MGC', 'buy', 1) != (664, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:150: AssertionError
+____________________ test_scenario_dates_are_calendar_facts ____________________
+
+    def test_scenario_dates_are_calendar_facts() -> None:
+        oil = set(OILCAD_DATES)
+        for d in (WPSR_DAY, FOMC_DAY, HOLIDAY_WPSR_DAY, DROPPED_WPSR_DAY, PLAIN_DAY):
+            assert d in oil
+>       assert in_guard("6C", ns_at(WPSR_DAY, hm(9, 30)))
+E       AssertionError: assert False
+E        +  where False = in_guard('6C', 1752071400000000000)
+E        +    where 1752071400000000000 = ns_at(datetime.date(2025, 7, 9), 570)
+E        +      where 570 = hm(9, 30)
+
+tests/test_k8_members_oilcad.py:310: AssertionError
+__________ test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35 ___________
+
+    def test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35() -> None:
+>       assert entries(WPSR_DAY, {"09:30": 2, "09:35": 2}) == [("09:34", "buy")]
+E       AssertionError: assert [('09:29', 'b...9:34', 'buy')] == [('09:34', 'buy')]
+E         
+E         At index 0 diff: ('09:29', 'buy') != ('09:34', 'buy')
+E         Left contains one more item: ('09:34', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:601: AssertionError
+_____________________ test_c6_skips_13_00_on_an_fomc_date ______________________
+
+    def test_c6_skips_13_00_on_an_fomc_date() -> None:
+>       assert entries(FOMC_DAY, {"13:00": 2, "13:05": 2}) == [("13:04", "buy")]
+E       AssertionError: assert [('12:59', 'b...3:04', 'buy')] == [('13:04', 'buy')]
+E         
+E         At index 0 diff: ('12:59', 'buy') != ('13:04', 'buy')
+E         Left contains one more item: ('13:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:609: AssertionError
+_ test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row __
+
+    def test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row() -> None:
+>       assert entries(HOLIDAY_WPSR_DAY, {"11:00": 2, "11:05": 2}) == [("11:04", "buy")]
+E       AssertionError: assert [('10:59', 'b...1:04', 'buy')] == [('11:04', 'buy')]
+E         
+E         At index 0 diff: ('10:59', 'buy') != ('11:04', 'buy')
+E         Left contains one more item: ('11:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:613: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_tables.py::test_in_guard_edges - AssertionError:...
+FAILED tests/test_k8_members_tables.py::test_mgc_guards_on_the_flight_fill_grid_are_the_fomc_1300_dates
+FAILED tests/test_k8_members_flight.py::test_values_of_d_itself_never_enter_q_of_d
+FAILED tests/test_k8_members_flight_exits.py::test_c6_skips_the_1300_trigger_on_an_fomc_date_and_enters_at_1305
+FAILED tests/test_k8_members_flight_exits.py::test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day
+FAILED tests/test_k8_members_flight_exits.py::test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[660-False]
+FAILED tests/test_k8_members_oilcad.py::test_scenario_dates_are_calendar_facts
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_13_00_on_an_fomc_date
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row
+10 failed, 199 passed in 4.57s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AR03.py as strategy.members.k8._releases

@@ -1,0 +1,26 @@
+........................................................................ [ 34%]
+..........................F............................................. [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+__________________________ test_t_e_resets_when_flat ___________________________
+
+    def test_t_e_resets_when_flat() -> None:
+        """After the exit fills, a later position (impossible on real bars: one entry a day) would
+        count its own T_e: the member keeps no stale exit time."""
+        member = ready_as("H30")
+        enter(member, 3)
+        hold(member, hm(8, 45), hm(9, 15), pending={hm(9, 15): -1})
+        hold(member, hm(9, 16), hm(9, 20), flat_from=hm(9, 16))
+>       assert sells(hold(member, hm(10, 0), hm(10, 29))) == [hm(10, 29)]
+E       assert [600, 601, 60...604, 605, ...] == [629]
+E         
+E         At index 0 diff: 600 != 629
+E         Left contains 29 more items, first extra item: 601
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:275: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight_exits.py::test_t_e_resets_when_flat - ass...
+1 failed, 208 passed in 3.64s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF46.py as strategy.members.k8.flight

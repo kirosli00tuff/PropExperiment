@@ -1,0 +1,46 @@
+........................................................................ [ 34%]
+.........................................F.F.F.......................... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+________________________ test_trading_windows_are_s0_12 ________________________
+
+    def test_trading_windows_are_s0_12() -> None:
+>       assert mk().trading_windows == {
+            "6C": (TradingInterval(time(8, 4), time(13, 41)),),
+            "MCL": (TradingInterval(time(7, 59), time(13, 25)),),
+        }
+E       AssertionError: assert {'6C': (Tradi...set_days=0),)} == {'6C': (Tradi...set_days=0),)}
+E         
+E         Differing items:
+E         {'6C': (TradingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 41), start_offset_days=0, end_offset_days=0),)} != {'6C': (TradingInterval(start_ct=datetime.time(8, 4), end_ct=datetime.time(13, 41), start_offset_days=0, end_offset_days=0),)}
+E         {'MCL': (TradingInterval(start_ct=datetime.time(7, 54), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)} != {'MCL': (TradingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)}
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:334: AssertionError
+____________ test_decision_clock_is_08_05_to_13_25_every_5_minutes _____________
+
+    def test_decision_clock_is_08_05_to_13_25_every_5_minutes() -> None:
+        t = oilcad.DECISION_TIMES_CT
+>       assert len(t) == 65
+E       assert 66 == 65
+E        +  where 66 = len((datetime.time(8, 0), datetime.time(8, 5), datetime.time(8, 10), datetime.time(8, 15), datetime.time(8, 20), datetime.time(8, 25), ...))
+
+tests/test_k8_members_oilcad.py:349: AssertionError
+__________________________ test_no_decision_at_08_00 ___________________________
+
+    def test_no_decision_at_08_00() -> None:
+        """A big MCL move 07:54 -> 07:59 with a 6C bar at 07:59: 08:00 is not a decision time."""
+>       assert entries(DAY, mcl_extra=[(hm(7, 54), B_MCL - 3)]) == []
+E       AssertionError: assert [('07:59', 'buy')] == []
+E         
+E         Left contains one more item: ('07:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:360: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_trading_windows_are_s0_12 - Asse...
+FAILED tests/test_k8_members_oilcad.py::test_decision_clock_is_08_05_to_13_25_every_5_minutes
+FAILED tests/test_k8_members_oilcad.py::test_no_decision_at_08_00 - Assertion...
+3 failed, 206 passed in 3.69s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO01.py as strategy.members.k8.oilcad

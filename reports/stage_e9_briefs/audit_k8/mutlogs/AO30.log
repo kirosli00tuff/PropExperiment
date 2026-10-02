@@ -1,0 +1,31 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+..........F......................................................        [100%]
+=================================== FAILURES ===================================
+____ test_exit_on_the_first_6c_bar_at_t_e_plus_14_resent_while_not_pending _____
+
+    def test_exit_on_the_first_6c_bar_at_t_e_plus_14_resent_while_not_pending() -> None:
+        """T_e = 09:05 (the account first shows +1 there): no exit before 09:19; an exit intent on
+        09:19 and, refused (still not pending), again on 09:20; pending at 09:21: nothing."""
+        pend_from = ns_at(DAY, hm(9, 21))
+        held, pend = account(("6C",), 1), account(("6C",), 1, -1)
+        flat = account(("6C",))
+    
+        def acct(ts: int) -> MemberAccountView:
+            if ts < ns_at(DAY, hm(9, 5)):
+                return flat
+            return pend if ts >= pend_from else held
+    
+        out = drive(mk(), trade_bars(DAY, cad_to=hm(9, 25)), acct)
+>       assert [(i[1], i[3], i[4]) for i in out] == [("09:19", "sell", 1), ("09:20", "sell", 1)]
+E       AssertionError: assert [('09:19', 's...ell', 1), ...] == [('09:19', 's...', 'sell', 1)]
+E         
+E         Left contains 5 more items, first extra item: ('09:21', 'sell', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:667: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_exit_on_the_first_6c_bar_at_t_e_plus_14_resent_while_not_pending
+1 failed, 208 passed in 3.64s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO30.py as strategy.members.k8.oilcad

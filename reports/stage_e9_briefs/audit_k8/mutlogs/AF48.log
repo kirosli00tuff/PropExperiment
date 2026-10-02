@@ -1,0 +1,49 @@
+........................................................FFF............. [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_______________ test_member_n_1199_is_no_trade_and_n_1200_trades _______________
+
+    def test_member_n_1199_is_no_trade_and_n_1200_trades() -> None:
+        member = ready(values=[59] + [60] * 19)
+        assert entries(feed(member, DAY, dip_path({3: 50}))) == []
+        member = ready(values=60)  # n = 1,200: Q = -5/B
+>       assert entries(feed(member, DAY, dip_path({3: 5}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:354: AssertionError
+________________________ test_member_m_at_1201_and_1540 ________________________
+
+    def test_member_m_at_1201_and_1540() -> None:
+        member = ready(values=[61] + [60] * 19)  # n = 1,201: m = 7, Q = -4/B
+>       assert entries(feed(member, DAY, dip_path({3: 4}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:361: AssertionError
+________________ test_member_counts_duplicate_reference_values _________________
+
+    def test_member_counts_duplicate_reference_values() -> None:
+        dips = (10, 10, 9, 8, 7, 6, 5, 4, 3, 2)  # n = 1,540, m = 8: Q = -4/B (not -3/B)
+        member = ready(dips=dips)
+        assert entries(feed(member, DAY, dip_path({3: 4}))) == buy_at(end_bar(3))
+        member = ready(dips=dips)
+>       assert entries(feed(member, DAY, dip_path({3: 3}))) == []
+E       AssertionError: assert [(524, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:375: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_member_n_1199_is_no_trade_and_n_1200_trades
+FAILED tests/test_k8_members_flight.py::test_member_m_at_1201_and_1540 - Asse...
+FAILED tests/test_k8_members_flight.py::test_member_counts_duplicate_reference_values
+3 failed, 206 passed in 3.54s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF48.py as strategy.members.k8.flight

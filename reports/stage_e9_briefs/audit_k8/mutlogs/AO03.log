@@ -1,0 +1,58 @@
+........................................................................ [ 34%]
+.........................................F.FF........................... [ 68%]
+.....................F...........................................        [100%]
+=================================== FAILURES ===================================
+________________________ test_trading_windows_are_s0_12 ________________________
+
+    def test_trading_windows_are_s0_12() -> None:
+>       assert mk().trading_windows == {
+            "6C": (TradingInterval(time(8, 4), time(13, 41)),),
+            "MCL": (TradingInterval(time(7, 59), time(13, 25)),),
+        }
+E       AssertionError: assert {'6C': (Tradi...set_days=0),)} == {'6C': (Tradi...set_days=0),)}
+E         
+E         Differing items:
+E         {'6C': (TradingInterval(start_ct=datetime.time(8, 4), end_ct=datetime.time(13, 36), start_offset_days=0, end_offset_days=0),)} != {'6C': (TradingInterval(start_ct=datetime.time(8, 4), end_ct=datetime.time(13, 41), start_offset_days=0, end_offset_days=0),)}
+E         {'MCL': (TradingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 20), start_offset_days=0, end_offset_days=0),)} != {'MCL': (TradingInterval(start_ct=datetime.time(7, 59), end_ct=datetime.time(13, 25), start_offset_days=0, end_offset_days=0),)}
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:334: AssertionError
+____________ test_decision_clock_is_08_05_to_13_25_every_5_minutes _____________
+
+    def test_decision_clock_is_08_05_to_13_25_every_5_minutes() -> None:
+        t = oilcad.DECISION_TIMES_CT
+>       assert len(t) == 65
+E       assert 64 == 65
+E        +  where 64 = len((datetime.time(8, 5), datetime.time(8, 10), datetime.time(8, 15), datetime.time(8, 20), datetime.time(8, 25), datetime.time(8, 30), ...))
+
+tests/test_k8_members_oilcad.py:349: AssertionError
+_____________________ test_first_and_last_decisions_trade ______________________
+
+    def test_first_and_last_decisions_trade() -> None:
+>       assert entries(DAY, {"08:05": 2, "13:25": 2}) == [("08:04", "buy"), ("13:24", "buy")]
+E       AssertionError: assert [('08:04', 'buy')] == [('08:04', 'b...3:24', 'buy')]
+E         
+E         Right contains one more item: ('13:24', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:355: AssertionError
+___________________ test_engine_nothing_after_the_13_40_fill ___________________
+
+    def test_engine_nothing_after_the_13_40_fill() -> None:
+        res = run_day({"13:25": 2}, mcl_extra=[(hm(13, 29), B_MCL + 10)], cad_to=hm(14, 30))
+>       assert fills(res) == [(DAY, "13:25", "6C", "buy", "strategy"),
+                              (DAY, "13:40", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '13:25', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:752: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_trading_windows_are_s0_12 - Asse...
+FAILED tests/test_k8_members_oilcad.py::test_decision_clock_is_08_05_to_13_25_every_5_minutes
+FAILED tests/test_k8_members_oilcad.py::test_first_and_last_decisions_trade
+FAILED tests/test_k8_members_oilcad.py::test_engine_nothing_after_the_13_40_fill
+4 failed, 205 passed in 3.65s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO03.py as strategy.members.k8.oilcad

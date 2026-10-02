@@ -1,0 +1,167 @@
+.................................................FFFFFFFFFFF............ [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_____________________ test_threshold_m_and_the_value_floor _____________________
+
+    def test_threshold_m_and_the_value_floor() -> None:
+        assert threshold(_vals(*DIPS, zeros=1189)) is None  # n = 1,199
+>       assert threshold(_vals(*DIPS, zeros=1190)) == (-5, B)  # n = 1,200: m = 6
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert (-4, 20000) == (-5, 20000)
+E         
+E         At index 0 diff: -4 != -5
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:331: AssertionError
+_______________________ test_threshold_counts_duplicates _______________________
+
+    def test_threshold_counts_duplicates() -> None:
+        values = _vals(10, 10, 9, 8, 7, 6, 5, 4, 3, 2, zeros=1530)  # n = 1,540, m = 8
+>       assert threshold(values) == (-4, B)
+E       assert (-3, 20000) == (-4, 20000)
+E         
+E         At index 0 diff: -3 != -4
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:340: AssertionError
+_____________________ test_m_is_ceil_of_n_over_200[1200-6] _____________________
+
+n = 1200, m = 6
+
+    @pytest.mark.parametrize(("n", "m"), [(1200, 6), (1201, 7), (1400, 7), (1401, 8), (1540, 8)])
+    def test_m_is_ceil_of_n_over_200(n: int, m: int) -> None:
+        ladder = [(-(n - i), B) for i in range(n)]  # all distinct: the m-th smallest is -(n - m + 1)
+>       assert threshold(ladder) == (-(n - m + 1), B)
+E       assert (-1194, 20000) == (-1195, 20000)
+E         
+E         At index 0 diff: -1194 != -1195
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:347: AssertionError
+_____________________ test_m_is_ceil_of_n_over_200[1201-7] _____________________
+
+n = 1201, m = 7
+
+    @pytest.mark.parametrize(("n", "m"), [(1200, 6), (1201, 7), (1400, 7), (1401, 8), (1540, 8)])
+    def test_m_is_ceil_of_n_over_200(n: int, m: int) -> None:
+        ladder = [(-(n - i), B) for i in range(n)]  # all distinct: the m-th smallest is -(n - m + 1)
+>       assert threshold(ladder) == (-(n - m + 1), B)
+E       assert (-1194, 20000) == (-1195, 20000)
+E         
+E         At index 0 diff: -1194 != -1195
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:347: AssertionError
+_____________________ test_m_is_ceil_of_n_over_200[1400-7] _____________________
+
+n = 1400, m = 7
+
+    @pytest.mark.parametrize(("n", "m"), [(1200, 6), (1201, 7), (1400, 7), (1401, 8), (1540, 8)])
+    def test_m_is_ceil_of_n_over_200(n: int, m: int) -> None:
+        ladder = [(-(n - i), B) for i in range(n)]  # all distinct: the m-th smallest is -(n - m + 1)
+>       assert threshold(ladder) == (-(n - m + 1), B)
+E       assert (-1393, 20000) == (-1394, 20000)
+E         
+E         At index 0 diff: -1393 != -1394
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:347: AssertionError
+_____________________ test_m_is_ceil_of_n_over_200[1401-8] _____________________
+
+n = 1401, m = 8
+
+    @pytest.mark.parametrize(("n", "m"), [(1200, 6), (1201, 7), (1400, 7), (1401, 8), (1540, 8)])
+    def test_m_is_ceil_of_n_over_200(n: int, m: int) -> None:
+        ladder = [(-(n - i), B) for i in range(n)]  # all distinct: the m-th smallest is -(n - m + 1)
+>       assert threshold(ladder) == (-(n - m + 1), B)
+E       assert (-1393, 20000) == (-1394, 20000)
+E         
+E         At index 0 diff: -1393 != -1394
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:347: AssertionError
+_____________________ test_m_is_ceil_of_n_over_200[1540-8] _____________________
+
+n = 1540, m = 8
+
+    @pytest.mark.parametrize(("n", "m"), [(1200, 6), (1201, 7), (1400, 7), (1401, 8), (1540, 8)])
+    def test_m_is_ceil_of_n_over_200(n: int, m: int) -> None:
+        ladder = [(-(n - i), B) for i in range(n)]  # all distinct: the m-th smallest is -(n - m + 1)
+>       assert threshold(ladder) == (-(n - m + 1), B)
+E       assert (-1532, 20000) == (-1533, 20000)
+E         
+E         At index 0 diff: -1532 != -1533
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:347: AssertionError
+_______________ test_member_n_1199_is_no_trade_and_n_1200_trades _______________
+
+    def test_member_n_1199_is_no_trade_and_n_1200_trades() -> None:
+        member = ready(values=[59] + [60] * 19)
+        assert entries(feed(member, DAY, dip_path({3: 50}))) == []
+        member = ready(values=60)  # n = 1,200: Q = -5/B
+        assert entries(feed(member, DAY, dip_path({3: 5}))) == buy_at(end_bar(3))
+        member = ready(values=60)
+>       assert entries(feed(member, DAY, dip_path({3: 4}))) == []
+E       AssertionError: assert [(524, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:356: AssertionError
+________________________ test_member_m_at_1201_and_1540 ________________________
+
+    def test_member_m_at_1201_and_1540() -> None:
+        member = ready(values=[61] + [60] * 19)  # n = 1,201: m = 7, Q = -4/B
+        assert entries(feed(member, DAY, dip_path({3: 4}))) == buy_at(end_bar(3))
+        member = ready(values=[61] + [60] * 19)
+>       assert entries(feed(member, DAY, dip_path({3: 3}))) == []
+E       AssertionError: assert [(524, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:363: AssertionError
+________________ test_member_counts_duplicate_reference_values _________________
+
+    def test_member_counts_duplicate_reference_values() -> None:
+        dips = (10, 10, 9, 8, 7, 6, 5, 4, 3, 2)  # n = 1,540, m = 8: Q = -4/B (not -3/B)
+        member = ready(dips=dips)
+        assert entries(feed(member, DAY, dip_path({3: 4}))) == buy_at(end_bar(3))
+        member = ready(dips=dips)
+>       assert entries(feed(member, DAY, dip_path({3: 3}))) == []
+E       AssertionError: assert [(524, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:375: AssertionError
+_____________ test_undefined_reference_computations_are_not_values _____________
+
+    def test_undefined_reference_computations_are_not_values() -> None:
+        """n = 19 x 77 = 1,463, m = 8: Q = -3/B from the dips -10..-2; counting the undefined -50/B
+        would give -4/B."""
+        assert entries(feed(_undefined_first_reference(), DAY, dip_path({3: 3}))) == buy_at(end_bar(3))
+>       assert entries(feed(_undefined_first_reference(), DAY, dip_path({3: 2}))) == []
+E       AssertionError: assert [(524, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:393: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_threshold_m_and_the_value_floor
+FAILED tests/test_k8_members_flight.py::test_threshold_counts_duplicates - as...
+FAILED tests/test_k8_members_flight.py::test_m_is_ceil_of_n_over_200[1200-6]
+FAILED tests/test_k8_members_flight.py::test_m_is_ceil_of_n_over_200[1201-7]
+FAILED tests/test_k8_members_flight.py::test_m_is_ceil_of_n_over_200[1400-7]
+FAILED tests/test_k8_members_flight.py::test_m_is_ceil_of_n_over_200[1401-8]
+FAILED tests/test_k8_members_flight.py::test_m_is_ceil_of_n_over_200[1540-8]
+FAILED tests/test_k8_members_flight.py::test_member_n_1199_is_no_trade_and_n_1200_trades
+FAILED tests/test_k8_members_flight.py::test_member_m_at_1201_and_1540 - Asse...
+FAILED tests/test_k8_members_flight.py::test_member_counts_duplicate_reference_values
+FAILED tests/test_k8_members_flight.py::test_undefined_reference_computations_are_not_values
+11 failed, 198 passed in 3.66s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF14.py as strategy.members.k8.flight

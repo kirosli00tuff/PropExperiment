@@ -1,0 +1,26 @@
+................................................F....................... [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+______ test_a_bar_whose_trade_date_is_not_its_ct_date_is_not_a_block_bar _______
+
+    def test_a_bar_whose_trade_date_is_not_its_ct_date_is_not_a_block_bar() -> None:
+        """K8-L-02: bars on CT date DAY stamped with trade date 2025-06-18 (whose reference set the
+        kit also fills) are no block bars of either date."""
+        nxt = FLIGHT_DATES[FLIGHT_DATES.index(DAY) + 1]
+        member = ready()
+        call(member, DAY, hm(8, 29), mes_bar=mes(DAY, hm(8, 29), B, trade_date=nxt))
+        out = call(member, DAY, hm(8, 34), mes_bar=mes(DAY, hm(8, 34), B - 5, trade_date=nxt),
+                   mgc_bar=mgc(DAY, hm(8, 34), trade_date=nxt))
+>       assert out == []
+E       AssertionError: assert [LegIntent(ro...tl_bars=None)] == []
+E         
+E         Left contains one more item: LegIntent(root='MGC', side='buy', quantity=1, ts_utc=datetime.datetime(2025, 6, 17, 13, 35, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:316: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_a_bar_whose_trade_date_is_not_its_ct_date_is_not_a_block_bar
+1 failed, 208 passed in 3.61s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF26.py as strategy.members.k8.flight

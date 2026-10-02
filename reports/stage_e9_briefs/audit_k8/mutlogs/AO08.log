@@ -1,0 +1,34 @@
+........................................................................ [ 34%]
+....................................................F...F............... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+________ test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation ________
+
+    def test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation() -> None:
+>       assert oilcad.scale([0.25, -0.25] * 499 + [0.0]) is None  # n = 999
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert 0.25 is None
+E        +  where 0.25 = <function scale at 0x774bc682ca40>((([0.25, -0.25] * 499) + [0.0]))
+E        +    where <function scale at 0x774bc682ca40> = oilcad.scale
+
+tests/test_k8_members_oilcad.py:412: AssertionError
+____________________ test_n_1000_trades_and_n_999_does_not _____________________
+
+    def test_n_1000_trades_and_n_999_does_not() -> None:
+        n1000 = STANDARD[:-1] + ((6, 6, 36),)  # one zero fewer: n = 1000
+        n999 = STANDARD[:-1] + ((6, 6, 35),)  # n = 999
+        assert len(ref_values(n1000)) == 1000 and len(ref_values(n999)) == 999
+        assert entries(DAY, {"10:05": 2}, specs=n1000) == [("10:04", "buy")]
+>       assert entries(DAY, {"10:05": 2}, specs=n999) == []
+E       AssertionError: assert [('10:04', 'buy')] == []
+E         
+E         Left contains one more item: ('10:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:447: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation
+FAILED tests/test_k8_members_oilcad.py::test_n_1000_trades_and_n_999_does_not
+2 failed, 207 passed in 3.66s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO08.py as strategy.members.k8.oilcad

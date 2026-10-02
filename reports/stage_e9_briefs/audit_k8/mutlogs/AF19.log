@@ -1,0 +1,19 @@
+............................................F........................... [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_______________ test_compare_and_trigger_are_exact_beyond_float ________________
+
+    def test_compare_and_trigger_are_exact_beyond_float() -> None:
+        near, q = (-(10**17) - 1, 10**17), (-1, 1)  # equal as floats, not as rationals
+        assert float(near[0]) / near[1] == float(q[0]) / q[1]
+>       assert compare(near, q) == -1 and compare(q, near) == 1 and compare(q, (-2, 2)) == 0
+E       assert (0 == -1)
+E        +  where 0 = compare((-100000000000000001, 100000000000000000), (-1, 1))
+
+tests/test_k8_members_flight.py:279: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_compare_and_trigger_are_exact_beyond_float
+1 failed, 208 passed in 3.80s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF19.py as strategy.members.k8.flight

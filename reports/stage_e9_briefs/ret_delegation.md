@@ -1,0 +1,8 @@
+| Agent name | Worker file | Model | Effort | Objective | Time (PDT) | Tokens | Status and deviations |
+|---|---|---|---|---|---|---|---|
+| ReleaseChecker-OpusMed | worker-medium | opus | medium | Task 1b: release rows, wkndbtc clock points, the 24/7 change, roll blackouts, EC-CAL, external series (brief reports/stage_e9_briefs/1b_release_checker.md) | 22:20-22:31 | 10,204,160 | done; MES blackouts unverifiable from the named sources; BLS pages saved from Scrapling markdown (curl 403); ISM via Wayback (live page needs login); no WebSearch |
+| MemberCoder-A-OpusXHigh | worker-xhigh | opus | xhigh | Task 2: _calendar.py, _releases.py and their generator first, then K8-flight-01 (H30, HEOD) and four test files (2A_member_coder_A.md) | 22:28-23:09 | 20,290,233 | done; 87/87 mutants killed; spawned before Task 1b returned (section 6 item 22); section 7 sent by message; `fractions` not on the allowlist, so exact integer pairs |
+| MemberCoder-B-OpusXHigh | worker-xhigh | opus | xhigh | Task 2: K8-oilcad-01 and K8-wkndbtc-01 with two test files (2B_member_coder_B.md) | 22:32-23:09 | 14,813,091 | done; 88/91 mutants killed (3 equivalent); the harness refused its report write (saved by the lead); two stray empty files made and deleted at once (section 2) |
+| MemberAuditor-K8-FableXHigh | worker-xhigh | fable | xhigh | Task 3 fidelity audit (auditor_task3_K8.md), then, resumed, Task 6 recomputation (auditor_task6_K8.md) | 23:09-23:37; 23:55-00:03 | 11,285,770 (both parts) | done; 0 blocking, 0 should-fix, 8 notes; Part 2 no discrepancy; ran the holdout status at its end only |
+
+No other worker was spawned; no worker spawned workers. At most three ran at once (1b, coder A, coder B).

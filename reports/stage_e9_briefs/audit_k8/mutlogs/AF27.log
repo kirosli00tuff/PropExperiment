@@ -1,0 +1,25 @@
+...................................................................F.... [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+___________ test_a_non_full_date_is_skipped_as_a_reference_and_as_d ____________
+
+    def test_a_non_full_date_is_skipped_as_a_reference_and_as_d() -> None:
+        """2025-11-28 (early halt) is not in FLIGHT_DATES: its values never enter Q(2025-12-01)
+        (a -50/B dip there would move Q from -3/B to -4/B) and it never trades itself, although its
+        reference set (the same 20 dates as 2025-12-01's) would give Q = -3/B."""
+        d, halt = date(2025, 12, 1), date(2025, 11, 28)
+        member = flight.make_h30()
+        prepare(member, d)
+>       assert entries(feed(member, halt, dip_path({3: 50, 20: 3}))) == []
+E       AssertionError: assert [(524, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:474: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_a_non_full_date_is_skipped_as_a_reference_and_as_d
+1 failed, 208 passed in 3.66s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF27.py as strategy.members.k8.flight

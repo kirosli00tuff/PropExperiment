@@ -1,0 +1,28 @@
+........................................................................ [ 34%]
+......................................................................F. [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+___________ test_bars_are_identified_by_ct_date_not_trade_date_alone ___________
+
+    def test_bars_are_identified_by_ct_date_not_trade_date_alone() -> None:
+        """K7-L-01: a 6C bar opening 09:04 on CT date d + 1 but carrying trade_date d is not the 6C
+        bar at 09:04 of d: d's references are complete and d + 1's MCL block is a big move, yet no
+        entry."""
+        day = DAY
+        nxt = OILCAD_DATES[OILCAD_DATES.index(day) + 1]
+        bars = oil_bars(day, cad_to=hm(9, 0)) + [
+            rb for rb in trade_bars(nxt, {"09:05": 2}) if rb[0] == "MCL"]
+        wrong = mk_bar("6C", nxt, hm(9, 4), B_CAD, trade_day=day)
+        out = drive(mk(), sorted([*bars, wrong], key=lambda rb: rb[1].ts_event_ns))
+>       assert out == []
+E       AssertionError: assert [(datetime.da...C', 'buy', 1)] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 7, 9), '09:04', '6C', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:580: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_bars_are_identified_by_ct_date_not_trade_date_alone
+1 failed, 208 passed in 3.62s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO34.py as strategy.members.k8.oilcad

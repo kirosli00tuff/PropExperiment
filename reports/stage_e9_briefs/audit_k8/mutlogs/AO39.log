@@ -1,0 +1,559 @@
+........................................................................ [ 34%]
+............................................F..FF.....FFF.F.....FFF..... [ 68%]
+FFFFFF........FFFFFFFFF.F........................................        [100%]
+=================================== FAILURES ===================================
+_____________________ test_first_and_last_decisions_trade ______________________
+
+    def test_first_and_last_decisions_trade() -> None:
+>       assert entries(DAY, {"08:05": 2, "13:25": 2}) == [("08:04", "buy"), ("13:24", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:355: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'08:05': 2, '13:25': 2}, acct = None
+kw = {}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '08:04', '6C', 'buy', 2), (datetime.date(2025, 7, 8), '13:24', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x773210e53c60>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+____________ test_r_t_reads_the_mcl_bars_at_t_minus_1_and_t_minus_6 ____________
+
+    def test_r_t_reads_the_mcl_bars_at_t_minus_1_and_t_minus_6() -> None:
+        """t = 08:05: closes of 07:59 (B) and 08:04 (B + 2): a buy. Decoy bars 08:00..08:03 at
+        B + 6 (a sell if 08:00 were t - 5) and 07:58 at B + 6 (a sell against 08:04 if it were
+        t - 7) are never read."""
+        decoys = [(m, B_MCL + 6) for m in (hm(7, 58), *range(hm(8, 0), hm(8, 4)))]
+>       assert entries(DAY, {"08:05": 2}, mcl_extra=decoys) == [("08:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:373: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'08:05': 2}, acct = None
+kw = {'mcl_extra': [(478, 6006), (480, 6006), (481, 6006), (482, 6006), (483, 6006)]}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '08:04', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x7732101a35e0>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+_________________ test_the_entry_is_on_the_6c_bar_at_t_minus_1 _________________
+
+    def test_the_entry_is_on_the_6c_bar_at_t_minus_1() -> None:
+        """A big move at t = 09:05 is acted on at the 09:04 view only."""
+>       assert entries(DAY, {"09:05": 2}) == [("09:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:378: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'09:05': 2}, acct = None, kw = {}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '09:04', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x773210e52b50>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+______________________ test_z_exactly_2_trades_end_to_end ______________________
+
+    def test_z_exactly_2_trades_end_to_end() -> None:
+        """STANDARD: s = u/2; a +1 step from B is r = u, z = 2.0 exactly: a buy; -1 a sell."""
+>       assert entries(DAY, {"10:05": 1}) == [("10:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:428: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'10:05': 1}, acct = None, kw = {}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '10:04', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x7732113c2cf0>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+______________ test_ddof_1_end_to_end_just_below_2_does_not_trade ______________
+
+    def test_ddof_1_end_to_end_just_below_2_does_not_trade() -> None:
+        """On base B + 1 a +1 step is r = 1/6001: z = 1.99967 with ddof 1 (no trade); ddof 0 would
+        give 2.00067 (a trade)."""
+        values = ref_values(STANDARD)
+        r = (B_MCL + 2 - (B_MCL + 1)) / (B_MCL + 1)
+        assert abs(r / statistics.stdev(values)) < 2.0 <= abs(r / statistics.pstdev(values))
+        assert entries(DAY, {"10:05": 1}, base=B_MCL + 1) == []
+>       assert entries(DAY, {"10:05": 2}, base=B_MCL + 1) == [("10:04", "buy")]  # control
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:439: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'10:05': 2}, acct = None
+kw = {'base': 6001}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '10:04', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x7732113c2cf0>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+____________________ test_n_1000_trades_and_n_999_does_not _____________________
+
+    def test_n_1000_trades_and_n_999_does_not() -> None:
+        n1000 = STANDARD[:-1] + ((6, 6, 36),)  # one zero fewer: n = 1000
+        n999 = STANDARD[:-1] + ((6, 6, 35),)  # n = 999
+        assert len(ref_values(n1000)) == 1000 and len(ref_values(n999)) == 999
+>       assert entries(DAY, {"10:05": 2}, specs=n1000) == [("10:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:446: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'10:05': 2}, acct = None
+kw = {'specs': ((7, 7, 37), (7, 7, 37), (7, 7, 37), (7, 7, 37), (7, 7, 37), (6, 6, 38), ...)}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '10:04', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x773210e51560>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+________________ test_sign_buys_on_z_above_zero_and_sells_below ________________
+
+    def test_sign_buys_on_z_above_zero_and_sells_below() -> None:
+>       assert entries(DAY, {"09:05": 2, "10:05": -2}) == [("09:04", "buy"), ("10:04", "sell")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:456: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'09:05': 2, '10:05': -2}, acct = None
+kw = {}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '09:04', '6C', 'buy', 2), (datetime.date(2025, 7, 8), '10:04', '6C', 'sell', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x7732113c2cf0>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+______ test_mcl_roll_inside_a_block_no_entry_at_t_later_decisions_proceed ______
+
+    def test_mcl_roll_inside_a_block_no_entry_at_t_later_decisions_proceed() -> None:
+        """08:59 carries id 777 and 09:04 id 778: r_09:05 undefined (no entry at 09:05, though
+        the move is big); 09:04 and 09:09 both 778: r_09:10 defined, a buy."""
+        ids = {m: 778 for m in POINTS if m >= hm(9, 4)}
+>       assert entries(DAY, {"09:05": 2, "09:10": 2}, mcl_ids=ids) == [("09:09", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:519: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'09:05': 2, '09:10': 2}, acct = None
+kw = {'mcl_ids': {544: 778, 549: 778, 554: 778, 559: 778, ...}}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '09:09', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x7732113c2cf0>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+_________________ test_missing_6c_entry_bar_blocks_that_t_only _________________
+
+    def test_missing_6c_entry_bar_blocks_that_t_only() -> None:
+>       assert entries(DAY, {"09:05": 2, "09:10": 2}, cad_skip=[hm(9, 4)]) == [("09:09", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:524: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'09:05': 2, '09:10': 2}, acct = None
+kw = {'cad_skip': [544]}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '09:09', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x773210e529b0>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+________ test_missing_mcl_bar_at_t_minus_1_blocks_t_and_the_next_block _________
+
+    def test_missing_mcl_bar_at_t_minus_1_blocks_t_and_the_next_block() -> None:
+        """09:04 missing: r_09:05 (09:04 is c1) and r_09:10 (09:04 is c6) undefined."""
+>       out = entries(DAY, {"09:05": 2, "09:10": 2, "09:15": 2}, mcl_skip=[hm(9, 4)])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:529: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'09:05': 2, '09:10': 2, '09:15': 2}
+acct = None, kw = {'mcl_skip': [544]}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '09:14', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x7732101a2cf0>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+__________ test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35 ___________
+
+    def test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35() -> None:
+>       assert entries(WPSR_DAY, {"09:30": 2, "09:35": 2}) == [("09:34", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:601: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 9), steps = {'09:30': 2, '09:35': 2}, acct = None
+kw = {}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 9), '09:34', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x7732113c2cf0>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+_________________ test_09_30_on_a_non_wpsr_date_is_not_skipped _________________
+
+    def test_09_30_on_a_non_wpsr_date_is_not_skipped() -> None:
+>       assert entries(PLAIN_DAY, {"09:30": 2}) == [("09:29", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:605: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'09:30': 2}, acct = None, kw = {}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '09:29', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x7732113c2cf0>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+_____________________ test_c6_skips_13_00_on_an_fomc_date ______________________
+
+    def test_c6_skips_13_00_on_an_fomc_date() -> None:
+>       assert entries(FOMC_DAY, {"13:00": 2, "13:05": 2}) == [("13:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:609: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 30), steps = {'13:00': 2, '13:05': 2}, acct = None
+kw = {}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 30), '13:04', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x7732101a2cf0>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+_ test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row __
+
+    def test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row() -> None:
+>       assert entries(HOLIDAY_WPSR_DAY, {"11:00": 2, "11:05": 2}) == [("11:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:613: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 9, 4), steps = {'11:00': 2, '11:05': 2}, acct = None
+kw = {}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 9, 4), '11:04', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x773210934380>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+________________ test_c6_tests_the_fill_minute_t_on_the_6c_root ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x77321116ce90>
+
+    def test_c6_tests_the_fill_minute_t_on_the_6c_root(monkeypatch: pytest.MonkeyPatch) -> None:
+        calls: list[tuple[str, int]] = []
+    
+        def spy(root: str, t_ns: int) -> bool:
+            calls.append((root, t_ns))
+            return False
+    
+        monkeypatch.setattr(oilcad, "in_guard", spy)
+>       assert entries(DAY, {"09:05": 2}) == [("09:04", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:625: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'09:05': 2}, acct = None, kw = {}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '09:04', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x773210936f60>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+_____________ test_a_skipped_decision_leaves_later_decisions_alone _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7732106ce7b0>
+
+    def test_a_skipped_decision_leaves_later_decisions_alone(monkeypatch: pytest.MonkeyPatch
+                                                             ) -> None:
+        monkeypatch.setattr(oilcad, "in_guard", lambda root, t_ns: True)
+        assert entries(DAY, {"09:05": 2, "09:10": 2}) == []
+        monkeypatch.setattr(oilcad, "in_guard",
+                            lambda root, t_ns: t_ns == ns_at(DAY, hm(9, 5)))
+>       assert entries(DAY, {"09:05": 2, "09:10": 2}) == [("09:09", "buy")]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:635: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+day = datetime.date(2025, 7, 8), steps = {'09:05': 2, '09:10': 2}, acct = None
+kw = {}
+
+    def entries(day: date, steps: Mapping[str, int] | None = None, *,
+                acct: AccountFn | None = None, **kw: Any) -> list[tuple[str, str]]:
+        """(CT hh:mm of the view, side) of every intent on the trade date (direct calls)."""
+        out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+>       assert all(i[0] == day and i[2] == "6C" and i[4] == 1 for i in out), out
+E       AssertionError: [(datetime.date(2025, 7, 8), '09:09', '6C', 'buy', 2)]
+E       assert False
+E        +  where False = all(<generator object entries.<locals>.<genexpr> at 0x7732113c2cf0>)
+
+tests/test_k8_members_oilcad.py:289: AssertionError
+___ test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position ____
+
+    def test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position() -> None:
+        res = run_day({"09:05": 2})
+>       assert fills(res) == [(DAY, "09:05", "6C", "buy", "strategy"),
+                              (DAY, "09:20", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '09:05', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:699: AssertionError
+____________________________ test_engine_sell_side _____________________________
+
+    def test_engine_sell_side() -> None:
+>       assert fills(run_day({"09:05": -2})) == [(DAY, "09:05", "6C", "sell", "strategy"),
+                                                 (DAY, "09:20", "6C", "buy", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '09:05', '6C', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:706: AssertionError
+______ test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing ______
+
+    def test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing() -> None:
+        res = run_day({"09:05": 2}, cad_skip=[hm(9, 5)])
+>       assert fills(res) == [(DAY, "09:06", "6C", "buy", "strategy"),
+                              (DAY, "09:21", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '09:06', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:712: AssertionError
+__________ test_engine_missing_exit_bar_exits_on_the_first_later_bar ___________
+
+    def test_engine_missing_exit_bar_exits_on_the_first_later_bar() -> None:
+        res = run_day({"09:05": 2}, cad_skip=[hm(9, 19)])
+>       assert fills(res) == [(DAY, "09:05", "6C", "buy", "strategy"),
+                              (DAY, "09:21", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '09:05', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:718: AssertionError
+___ test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20 ____
+
+    def test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20() -> None:
+        """Big moves at 09:05, 09:20 (= t_e + 15, decided on the exit's 09:19 view: no entry) and
+        09:25 (= t_e + 20: an entry)."""
+        res = run_day({"09:05": 2, "09:20": 2, "09:25": 2})
+>       assert fills(res) == [(DAY, "09:05", "6C", "buy", "strategy"),
+                              (DAY, "09:20", "6C", "sell", "strategy"),
+                              (DAY, "09:25", "6C", "buy", "strategy"),
+                              (DAY, "09:40", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 4 more items, first extra item: (datetime.date(2025, 7, 8), '09:05', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:726: AssertionError
+______ test_engine_late_fill_holds_the_position_through_the_next_decision ______
+
+    def test_engine_late_fill_holds_the_position_through_the_next_decision() -> None:
+        """6C bars 09:05..09:08 missing: the 09:05 entry fills at 09:09 (T_e = 09:09), so the 09:10
+        decision (its 09:09 view) sees a position: no entry; the exit fills at 09:24."""
+        res = run_day({"09:05": 2, "09:10": 2}, cad_skip=list(range(hm(9, 5), hm(9, 9))))
+>       assert fills(res) == [(DAY, "09:09", "6C", "buy", "strategy"),
+                              (DAY, "09:24", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '09:09', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:736: AssertionError
+____ test_engine_closure_leaves_the_account_flat_and_later_decisions_apply _____
+
+    def test_engine_closure_leaves_the_account_flat_and_later_decisions_apply() -> None:
+        """A bar flatten flag on the 09:10 6C bar: the engine closes at 09:11; the member sends no
+        exit; the 09:20 decision enters again and exits at 09:35."""
+        res = run_day({"09:05": 2, "09:20": 2}, flatten_at=[hm(9, 10)])
+>       assert fills(res) == [(DAY, "09:05", "6C", "buy", "strategy"),
+                              (DAY, "09:11", "6C", "sell", "forced_flatten"),
+                              (DAY, "09:20", "6C", "buy", "strategy"),
+                              (DAY, "09:35", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 4 more items, first extra item: (datetime.date(2025, 7, 8), '09:05', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:744: AssertionError
+___________________ test_engine_nothing_after_the_13_40_fill ___________________
+
+    def test_engine_nothing_after_the_13_40_fill() -> None:
+        res = run_day({"13:25": 2}, mcl_extra=[(hm(13, 29), B_MCL + 10)], cad_to=hm(14, 30))
+>       assert fills(res) == [(DAY, "13:25", "6C", "buy", "strategy"),
+                              (DAY, "13:40", "6C", "sell", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2025, 7, 8), '13:25', '6C', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:752: AssertionError
+_________ test_engine_refuses_on_a_signal_leg_roll_blackout_date_only __________
+
+    def test_engine_refuses_on_a_signal_leg_roll_blackout_date_only() -> None:
+        """V16(a) end to end: an MCL roll blackout on the trade date (6C clean). With the rules the
+        runner builds (member_window: the union removes the date) the open is refused as outside
+        the window; with the date kept in the window and the union as blackout, by name
+        engine_roll_blackout; with no blackout it fills."""
+        m = mk()
+        bars = oil_bars(DAY, {"09:05": 2})
+        rules, mw = runner_rules(m, bars, {"MCL": [DAY]})
+        assert DAY not in mw.dates and DAY in mw.blackout_union
+        assert DAY in mw.excluded["roll_blackout_any_leg"]
+        res = engine(m, bars, rules)
+        assert fills(res) == [] and refusals(res) == ["engine_not_a_window_date"]
+        res = engine(mk(), bars, rules_of(m, [DAY], blackout=mw.blackout_union))
+        assert fills(res) == [] and refusals(res) == ["engine_roll_blackout"]
+        clean, mw2 = runner_rules(m, bars, {})
+        assert DAY in mw2.dates
+>       assert fills(engine(mk(), bars, clean))[0] == (DAY, "09:05", "6C", "buy", "strategy")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_k8_members_oilcad.py:773: IndexError
+_______________ test_reference_dates_include_roll_blackout_dates _______________
+
+    def test_reference_dates_include_roll_blackout_dates() -> None:
+        """K8-L-04: a reference date that is a roll-blackout date still gives its values (the bars
+        are delivered; only opens are refused there): with one blackout reference date, z = 2.0
+        still trades."""
+        m = mk()
+        bars = oil_bars(DAY, {"10:05": 1})
+        rules = rules_of(m, [DAY, *refs_of(DAY)], blackout=[refs_of(DAY)[3]])
+>       assert fills(engine(m, bars, rules))[0] == (DAY, "10:05", "6C", "buy", "strategy")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_k8_members_oilcad.py:791: IndexError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_first_and_last_decisions_trade
+FAILED tests/test_k8_members_oilcad.py::test_r_t_reads_the_mcl_bars_at_t_minus_1_and_t_minus_6
+FAILED tests/test_k8_members_oilcad.py::test_the_entry_is_on_the_6c_bar_at_t_minus_1
+FAILED tests/test_k8_members_oilcad.py::test_z_exactly_2_trades_end_to_end - ...
+FAILED tests/test_k8_members_oilcad.py::test_ddof_1_end_to_end_just_below_2_does_not_trade
+FAILED tests/test_k8_members_oilcad.py::test_n_1000_trades_and_n_999_does_not
+FAILED tests/test_k8_members_oilcad.py::test_sign_buys_on_z_above_zero_and_sells_below
+FAILED tests/test_k8_members_oilcad.py::test_mcl_roll_inside_a_block_no_entry_at_t_later_decisions_proceed
+FAILED tests/test_k8_members_oilcad.py::test_missing_6c_entry_bar_blocks_that_t_only
+FAILED tests/test_k8_members_oilcad.py::test_missing_mcl_bar_at_t_minus_1_blocks_t_and_the_next_block
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35
+FAILED tests/test_k8_members_oilcad.py::test_09_30_on_a_non_wpsr_date_is_not_skipped
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_13_00_on_an_fomc_date
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row
+FAILED tests/test_k8_members_oilcad.py::test_c6_tests_the_fill_minute_t_on_the_6c_root
+FAILED tests/test_k8_members_oilcad.py::test_a_skipped_decision_leaves_later_decisions_alone
+FAILED tests/test_k8_members_oilcad.py::test_engine_fills_6c_at_t_and_exits_at_t_e_plus_15_with_no_mcl_position
+FAILED tests/test_k8_members_oilcad.py::test_engine_sell_side - AssertionErro...
+FAILED tests/test_k8_members_oilcad.py::test_engine_t_e_is_the_actual_fill_when_the_6c_bar_at_t_is_missing
+FAILED tests/test_k8_members_oilcad.py::test_engine_missing_exit_bar_exits_on_the_first_later_bar
+FAILED tests/test_k8_members_oilcad.py::test_engine_spacing_exit_view_blocks_t_e_plus_15_next_entry_t_e_plus_20
+FAILED tests/test_k8_members_oilcad.py::test_engine_late_fill_holds_the_position_through_the_next_decision
+FAILED tests/test_k8_members_oilcad.py::test_engine_closure_leaves_the_account_flat_and_later_decisions_apply
+FAILED tests/test_k8_members_oilcad.py::test_engine_nothing_after_the_13_40_fill
+FAILED tests/test_k8_members_oilcad.py::test_engine_refuses_on_a_signal_leg_roll_blackout_date_only
+FAILED tests/test_k8_members_oilcad.py::test_reference_dates_include_roll_blackout_dates
+26 failed, 183 passed in 3.88s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO39.py as strategy.members.k8.oilcad

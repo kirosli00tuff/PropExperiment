@@ -1,0 +1,33 @@
+............................................................FF.......... [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_______________ test_trigger_needs_r_negative_even_at_or_below_q _______________
+
+    def test_trigger_needs_r_negative_even_at_or_below_q() -> None:
+        member = ready(dips=())  # every reference value 0: Q = 0
+>       assert entries(feed(member, DAY, dip_path())) == []  # r = 0 <= Q, not < 0
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert [(514, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (514, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:399: AssertionError
+______________ test_a_positive_q_never_triggers_a_non_negative_r _______________
+
+    def test_a_positive_q_never_triggers_a_non_negative_r() -> None:
+>       assert entries(feed(_positive_q(), DAY, dip_path())) == []  # every r = 0 <= Q
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert [(514, 'MGC', 'buy', 1)] == []
+E         
+E         Left contains one more item: (514, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:412: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_trigger_needs_r_negative_even_at_or_below_q
+FAILED tests/test_k8_members_flight.py::test_a_positive_q_never_triggers_a_non_negative_r
+2 failed, 207 passed in 3.76s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF22.py as strategy.members.k8.flight

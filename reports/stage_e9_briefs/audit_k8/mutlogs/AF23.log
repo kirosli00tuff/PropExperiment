@@ -1,0 +1,109 @@
+.............................................F..........FFFF.......FF... [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+__________________ test_r_equal_to_q_in_another_form_triggers __________________
+
+    def test_r_equal_to_q_in_another_form_triggers() -> None:
+        """Q(d) = -3/B (n = 1,540); r_k = -6/(2B) on d is the same rational: the trigger fires."""
+        member = ready()
+        path = [B] * 2 + [2 * B] + [2 * B - 6] * 75  # r_2 = +1, r_3 = -6/2B, then 0
+>       assert entries(feed(member, DAY, path)) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:291: AssertionError
+_______________ test_member_n_1199_is_no_trade_and_n_1200_trades _______________
+
+    def test_member_n_1199_is_no_trade_and_n_1200_trades() -> None:
+        member = ready(values=[59] + [60] * 19)
+        assert entries(feed(member, DAY, dip_path({3: 50}))) == []
+        member = ready(values=60)  # n = 1,200: Q = -5/B
+>       assert entries(feed(member, DAY, dip_path({3: 5}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:354: AssertionError
+________________________ test_member_m_at_1201_and_1540 ________________________
+
+    def test_member_m_at_1201_and_1540() -> None:
+        member = ready(values=[61] + [60] * 19)  # n = 1,201: m = 7, Q = -4/B
+>       assert entries(feed(member, DAY, dip_path({3: 4}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:361: AssertionError
+________________ test_member_counts_duplicate_reference_values _________________
+
+    def test_member_counts_duplicate_reference_values() -> None:
+        dips = (10, 10, 9, 8, 7, 6, 5, 4, 3, 2)  # n = 1,540, m = 8: Q = -4/B (not -3/B)
+        member = ready(dips=dips)
+>       assert entries(feed(member, DAY, dip_path({3: 4}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:373: AssertionError
+_____________ test_undefined_reference_computations_are_not_values _____________
+
+    def test_undefined_reference_computations_are_not_values() -> None:
+        """n = 19 x 77 = 1,463, m = 8: Q = -3/B from the dips -10..-2; counting the undefined -50/B
+        would give -4/B."""
+>       assert entries(feed(_undefined_first_reference(), DAY, dip_path({3: 3}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:392: AssertionError
+___________ test_a_non_full_date_is_skipped_as_a_reference_and_as_d ____________
+
+    def test_a_non_full_date_is_skipped_as_a_reference_and_as_d() -> None:
+        """2025-11-28 (early halt) is not in FLIGHT_DATES: its values never enter Q(2025-12-01)
+        (a -50/B dip there would move Q from -3/B to -4/B) and it never trades itself, although its
+        reference set (the same 20 dates as 2025-12-01's) would give Q = -3/B."""
+        d, halt = date(2025, 12, 1), date(2025, 11, 28)
+        member = flight.make_h30()
+        prepare(member, d)
+        assert entries(feed(member, halt, dip_path({3: 50, 20: 3}))) == []
+>       assert entries(feed(member, d, dip_path({3: 3}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:475: AssertionError
+__________________ test_values_of_d_itself_never_enter_q_of_d __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70c8f09ce300>
+
+    def test_values_of_d_itself_never_enter_q_of_d(monkeypatch: pytest.MonkeyPatch) -> None:
+        """Q(d) is fixed before d's 08:30: a -60/B value at k = 1 on d (its trigger skipped by a
+        guard at 08:35) would move Q from -3/B to -4/B if it counted; x = 3 at k = 3 still enters."""
+        monkeypatch.setitem(rel.GUARD_INSTANTS, "MGC", (ns_at(DAY, hm(8, 35)) // NS,))
+        member = ready()
+>       assert entries(feed(member, DAY, dip_path({1: 60, 3: 3}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:483: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_r_equal_to_q_in_another_form_triggers
+FAILED tests/test_k8_members_flight.py::test_member_n_1199_is_no_trade_and_n_1200_trades
+FAILED tests/test_k8_members_flight.py::test_member_m_at_1201_and_1540 - Asse...
+FAILED tests/test_k8_members_flight.py::test_member_counts_duplicate_reference_values
+FAILED tests/test_k8_members_flight.py::test_undefined_reference_computations_are_not_values
+FAILED tests/test_k8_members_flight.py::test_a_non_full_date_is_skipped_as_a_reference_and_as_d
+FAILED tests/test_k8_members_flight.py::test_values_of_d_itself_never_enter_q_of_d
+7 failed, 202 passed in 4.18s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF23.py as strategy.members.k8.flight

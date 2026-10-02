@@ -1,0 +1,26 @@
+.................F...................................................... [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+________________ test_member_dates_are_the_sorted_intersections ________________
+
+    def test_member_dates_are_the_sorted_intersections() -> None:
+        expected = {
+            "FLIGHT_DATES": tuple(sorted(_full_sessions("equity") & _full_sessions("metals"))),
+            "OILCAD_DATES": tuple(sorted(_full_sessions("energy") & _full_sessions("fx"))),
+            "WKNDBTC_DATES": tuple(sorted(_full_sessions("equity") & _full_sessions("crypto")))}
+        for name, days in expected.items():
+>           assert getattr(cal, name) == days, name
+E           AssertionError: FLIGHT_DATES
+E           assert (datetime.dat...9, 5, 8), ...) == (datetime.dat...9, 5, 8), ...)
+E             
+E             At index 44 diff: datetime.date(2019, 7, 3) != datetime.date(2019, 7, 5)
+E             Left contains 4 more items, first extra item: datetime.date(2026, 6, 15)
+E             Use -v to get more diff
+
+tests/test_k8_members_tables.py:212: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_tables.py::test_member_dates_are_the_sorted_intersections
+1 failed, 208 passed in 4.85s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AC03.py as strategy.members.k8._calendar

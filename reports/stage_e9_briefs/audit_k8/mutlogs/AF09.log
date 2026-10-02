@@ -1,0 +1,1456 @@
+....................................F..FFFF..FFFF.......FFF.F..FF.FFFFFF [ 34%]
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.......................................... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+____________________ test_the_entry_size_is_the_frozen_q_c _____________________
+
+    def test_the_entry_size_is_the_frozen_q_c() -> None:
+        q_c = load_frozen_tables().vehicles["MGC"].q_c
+        assert q_c == 1
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight.py:201: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_____________________ test_k1_reads_the_0829_and_0834_bars _____________________
+
+    def test_k1_reads_the_0829_and_0834_bars() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight.py:233: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+________________ test_a_bar_at_0830_is_not_the_start_bar_of_k1 _________________
+
+    def test_a_bar_at_0830_is_not_the_start_bar_of_k1() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight.py:240: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+________ test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500 ________
+
+    def test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight.py:253: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+__________________ test_every_block_k_triggers_at_its_own_bar __________________
+
+    def test_every_block_k_triggers_at_its_own_bar() -> None:
+        for k in (2, 30, 54, 76):
+>           member = ready()
+                     ^^^^^^^
+
+tests/test_k8_members_flight.py:264: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+__________________ test_r_equal_to_q_in_another_form_triggers __________________
+
+    def test_r_equal_to_q_in_another_form_triggers() -> None:
+        """Q(d) = -3/B (n = 1,540); r_k = -6/(2B) on d is the same rational: the trigger fires."""
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight.py:289: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+____ test_an_mes_roll_inside_a_block_is_no_trigger_and_later_blocks_trigger ____
+
+    def test_an_mes_roll_inside_a_block_is_no_trigger_and_later_blocks_trigger() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight.py:295: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_______________ test_instrument_ids_are_compared_within_mes_only _______________
+
+    def test_instrument_ids_are_compared_within_mes_only() -> None:
+>       member = ready()  # the MGC bar carries another id than MES: irrelevant
+                 ^^^^^^^
+
+tests/test_k8_members_flight.py:303: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+______ test_a_bar_whose_trade_date_is_not_its_ct_date_is_not_a_block_bar _______
+
+    def test_a_bar_whose_trade_date_is_not_its_ct_date_is_not_a_block_bar() -> None:
+        """K8-L-02: bars on CT date DAY stamped with trade date 2025-06-18 (whose reference set the
+        kit also fills) are no block bars of either date."""
+        nxt = FLIGHT_DATES[FLIGHT_DATES.index(DAY) + 1]
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight.py:312: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_______________ test_member_n_1199_is_no_trade_and_n_1200_trades _______________
+
+    def test_member_n_1199_is_no_trade_and_n_1200_trades() -> None:
+>       member = ready(values=[59] + [60] * 19)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight.py:351: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = [59, 60, 60, 60, 60, 60, ...]
+dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+________________________ test_member_m_at_1201_and_1540 ________________________
+
+    def test_member_m_at_1201_and_1540() -> None:
+>       member = ready(values=[61] + [60] * 19)  # n = 1,201: m = 7, Q = -4/B
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight.py:360: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = [61, 60, 60, 60, 60, 60, ...]
+dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+________________ test_member_counts_duplicate_reference_values _________________
+
+    def test_member_counts_duplicate_reference_values() -> None:
+        dips = (10, 10, 9, 8, 7, 6, 5, 4, 3, 2)  # n = 1,540, m = 8: Q = -4/B (not -3/B)
+>       member = ready(dips=dips)
+                 ^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight.py:372: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (10, 10, 9, 8, 7, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_______________ test_trigger_needs_r_negative_even_at_or_below_q _______________
+
+    def test_trigger_needs_r_negative_even_at_or_below_q() -> None:
+>       member = ready(dips=())  # every reference value 0: Q = 0
+                 ^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight.py:398: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = ()
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_____ test_the_21st_date_trades_when_the_run_starts_on_the_first_reference _____
+
+    def test_the_21st_date_trades_when_the_run_starts_on_the_first_reference() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight.py:433: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+______ test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade ______
+
+    def test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade() -> None:
+        """The run starts on FLIGHT_DATES[0] (2019-05-01): the 20th date has 19 reference dates
+        (n = 1,463, all after the first bar) and does not trade; the 21st does."""
+        member = flight.make_h30()
+        for i, ref in enumerate(FLIGHT_DATES[:19]):
+            dip = {10: DIPS[i]} if i < len(DIPS) else {}
+            assert entries(feed(member, ref, dip_path(dip))) == [], ref
+        twentieth, twenty_first = FLIGHT_DATES[19], FLIGHT_DATES[20]
+        assert len(reference_dates(twentieth)) == 19
+        assert entries(feed(member, twentieth, dip_path({3: 50}))) == []
+>       assert entries(feed(member, twenty_first, dip_path({3: 50}))) == buy_at(end_bar(3))
+E       AssertionError: assert [] == [(524, 'MGC', 'buy', 1)]
+E         
+E         Right contains one more item: (524, 'MGC', 'buy', 1)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight.py:447: AssertionError
+____________ test_reference_dates_are_the_20_flight_dates_before_d _____________
+
+    def test_reference_dates_are_the_20_flight_dates_before_d() -> None:
+        d = date(2025, 12, 1)
+        refs = reference_dates(d)
+>       assert len(refs) == 20 and refs[-1] == date(2025, 11, 26)
+E       assert (21 == 20)
+E        +  where 21 = len((datetime.date(2025, 10, 29), datetime.date(2025, 10, 30), datetime.date(2025, 10, 31), datetime.date(2025, 11, 3), datetime.date(2025, 11, 4), datetime.date(2025, 11, 5), ...))
+
+tests/test_k8_members_flight.py:462: AssertionError
+___________ test_a_non_full_date_is_skipped_as_a_reference_and_as_d ____________
+
+    def test_a_non_full_date_is_skipped_as_a_reference_and_as_d() -> None:
+        """2025-11-28 (early halt) is not in FLIGHT_DATES: its values never enter Q(2025-12-01)
+        (a -50/B dip there would move Q from -3/B to -4/B) and it never trades itself, although its
+        reference set (the same 20 dates as 2025-12-01's) would give Q = -3/B."""
+        d, halt = date(2025, 12, 1), date(2025, 11, 28)
+        member = flight.make_h30()
+>       prepare(member, d)
+
+tests/test_k8_members_flight.py:473: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 12, 1), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 10, 29), datetime.date(2025, 10, 30), datetime.date(2025, 10, 31), datetime.date(2025, 11, 3), datetime.date(2025, 11, 4), datetime.date(2025, 11, 5), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+__________________ test_values_of_d_itself_never_enter_q_of_d __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x710343a69430>
+
+    def test_values_of_d_itself_never_enter_q_of_d(monkeypatch: pytest.MonkeyPatch) -> None:
+        """Q(d) is fixed before d's 08:30: a -60/B value at k = 1 on d (its trigger skipped by a
+        guard at 08:35) would move Q from -3/B to -4/B if it counted; x = 3 at k = 3 still enters."""
+        monkeypatch.setitem(rel.GUARD_INSTANTS, "MGC", (ns_at(DAY, hm(8, 35)) // NS,))
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight.py:482: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+__________ test_only_the_first_trigger_of_d_enters_even_when_refused ___________
+
+    def test_only_the_first_trigger_of_d_enters_even_when_refused() -> None:
+>       member = ready()  # the account stays flat: the engine refused the first intent
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_______ test_a_second_trigger_while_long_and_after_the_exit_does_nothing _______
+
+    def test_a_second_trigger_while_long_and_after_the_exit_does_nothing() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_______________________ test_the_next_date_enters_again ________________________
+
+    def test_the_next_date_enters_again() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:102: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+________________ test_no_entry_while_an_order_is_pending_on_mgc ________________
+
+    def test_no_entry_while_an_order_is_pending_on_mgc() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+______ test_c6_skips_the_1300_trigger_on_an_fomc_date_and_enters_at_1305 _______
+
+    def test_c6_skips_the_1300_trigger_on_an_fomc_date_and_enters_at_1305() -> None:
+>       member = ready(FOMC)  # r_54 = -5/B, r_55 = -5/(B - 5): both trigger (Q = -3/B)
+                 ^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:119: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 18), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), datetime.date(2025, 5, 27), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+________________ test_a_1300_trigger_on_a_non_fomc_date_enters _________________
+
+    def test_a_1300_trigger_on_a_non_fomc_date_enters() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_____ test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day _____
+
+    def test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day() -> None:
+>       member = ready(FOMC)  # C6 first: the 13:00 trigger is skipped, its missing bar is moot
+                 ^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:132: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 18), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), datetime.date(2025, 5, 27), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+___ test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[659-False] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7103481d0c50>
+guard_minute = 659, entered = False
+
+    @pytest.mark.parametrize(("guard_minute", "entered"), [
+        (hm(10, 59), False),  # t = 11:00 in [10:59, 11:01)
+        (hm(11, 0), False),  # t = R
+        (hm(10, 58), True),  # t = R + 120 s: not guarded
+        (hm(11, 1), True),  # t < R
+    ])
+    def test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min(
+            monkeypatch: pytest.MonkeyPatch, guard_minute: int, entered: bool) -> None:
+        """k = 30: decision t = 11:00, the entry bar 10:59. A guard [R, R + 2 min) holding 11:00
+        skips the trigger; the 11:05 trigger then enters."""
+        guard_at(monkeypatch, DAY, guard_minute)
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+___ test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[660-False] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x710343a6a120>
+guard_minute = 660, entered = False
+
+    @pytest.mark.parametrize(("guard_minute", "entered"), [
+        (hm(10, 59), False),  # t = 11:00 in [10:59, 11:01)
+        (hm(11, 0), False),  # t = R
+        (hm(10, 58), True),  # t = R + 120 s: not guarded
+        (hm(11, 1), True),  # t < R
+    ])
+    def test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min(
+            monkeypatch: pytest.MonkeyPatch, guard_minute: int, entered: bool) -> None:
+        """k = 30: decision t = 11:00, the entry bar 10:59. A guard [R, R + 2 min) holding 11:00
+        skips the trigger; the 11:05 trigger then enters."""
+        guard_at(monkeypatch, DAY, guard_minute)
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+____ test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[658-True] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x710343a691c0>
+guard_minute = 658, entered = True
+
+    @pytest.mark.parametrize(("guard_minute", "entered"), [
+        (hm(10, 59), False),  # t = 11:00 in [10:59, 11:01)
+        (hm(11, 0), False),  # t = R
+        (hm(10, 58), True),  # t = R + 120 s: not guarded
+        (hm(11, 1), True),  # t < R
+    ])
+    def test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min(
+            monkeypatch: pytest.MonkeyPatch, guard_minute: int, entered: bool) -> None:
+        """k = 30: decision t = 11:00, the entry bar 10:59. A guard [R, R + 2 min) holding 11:00
+        skips the trigger; the 11:05 trigger then enters."""
+        guard_at(monkeypatch, DAY, guard_minute)
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+____ test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[661-True] ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x710343a6c140>
+guard_minute = 661, entered = True
+
+    @pytest.mark.parametrize(("guard_minute", "entered"), [
+        (hm(10, 59), False),  # t = 11:00 in [10:59, 11:01)
+        (hm(11, 0), False),  # t = R
+        (hm(10, 58), True),  # t = R + 120 s: not guarded
+        (hm(11, 1), True),  # t < R
+    ])
+    def test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min(
+            monkeypatch: pytest.MonkeyPatch, guard_minute: int, entered: bool) -> None:
+        """k = 30: decision t = 11:00, the entry bar 10:59. A guard [R, R + 2 min) holding 11:00
+        skips the trigger; the 11:05 trigger then enters."""
+        guard_at(monkeypatch, DAY, guard_minute)
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_________________ test_c6_reads_the_traded_roots_instants_only _________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7103481d02f0>
+
+    def test_c6_reads_the_traded_roots_instants_only(monkeypatch: pytest.MonkeyPatch) -> None:
+        for root in ("6C", "MNQ"):
+            monkeypatch.setitem(rel.GUARD_INSTANTS, root, (ns_at(DAY, hm(11, 0)) // NS,))
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:156: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+__________ test_a_missing_entry_bar_at_the_first_trigger_ends_the_day __________
+
+    def test_a_missing_entry_bar_at_the_first_trigger_ends_the_day() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+__________ test_an_entry_bar_of_another_trade_date_counts_as_missing ___________
+
+    def test_an_entry_bar_of_another_trade_date_counts_as_missing() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_____ test_an_mes_bar_absent_at_tk_minus_1_and_present_at_tk_is_never_used _____
+
+    def test_an_mes_bar_absent_at_tk_minus_1_and_present_at_tk_is_never_used() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:181: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_________________ test_no_forward_fill_of_an_earlier_mes_close _________________
+
+    def test_no_forward_fill_of_an_earlier_mes_close() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:198: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+________________ test_h30_exit_is_sent_on_the_bar_at_te_plus_29 ________________
+
+    def test_h30_exit_is_sent_on_the_bar_at_te_plus_29() -> None:
+>       member = ready_as("H30")
+                 ^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:208: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+__________________ test_heod_exit_is_sent_on_the_bar_at_1504 ___________________
+
+    def test_heod_exit_is_sent_on_the_bar_at_1504() -> None:
+>       member = ready_as("HEOD")
+                 ^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:214: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='HEOD', name='K8-flight-01 HEOD MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES',...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[72-899] ____________________
+
+k = 72, exit_bar = 899
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+>       member = ready_as("H30")
+                 ^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[73-904] ____________________
+
+k = 73, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+>       member = ready_as("H30")
+                 ^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[74-904] ____________________
+
+k = 74, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+>       member = ready_as("H30")
+                 ^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[77-904] ____________________
+
+k = 77, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+>       member = ready_as("H30")
+                 ^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+___________ test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit ____________
+
+    def test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit() -> None:
+>       member = ready_as("H30")
+                 ^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:233: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing0-555] _
+
+variant = 'H30', missing = {554}, sent = 555
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+>       member = ready_as(variant)
+                 ^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:249: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing1-557] _
+
+variant = 'H30', missing = {554, 555, 556}, sent = 557
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+>       member = ready_as(variant)
+                 ^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:249: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing2-905] _
+
+variant = 'HEOD', missing = {904}, sent = 905
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+>       member = ready_as(variant)
+                 ^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:249: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='HEOD', name='K8-flight-01 HEOD MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES',...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing3-906] _
+
+variant = 'HEOD', missing = {904, 905}, sent = 906
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+>       member = ready_as(variant)
+                 ^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:249: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='HEOD', name='K8-flight-01 HEOD MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES',...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+______ test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated ______
+
+    def test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated() -> None:
+>       member = ready_as("H30")
+                 ^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:255: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_________________ test_an_engine_closed_position_gets_no_exit __________________
+
+    def test_an_engine_closed_position_gets_no_exit() -> None:
+>       member = ready_as("HEOD")
+                 ^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:262: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='HEOD', name='K8-flight-01 HEOD MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES',...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+__________________________ test_t_e_resets_when_flat ___________________________
+
+    def test_t_e_resets_when_flat() -> None:
+        """After the exit fills, a later position (impossible on real bars: one entry a day) would
+        count its own T_e: the member keeps no stale exit time."""
+>       member = ready_as("H30")
+                 ^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:271: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_________________ test_the_last_fill_is_1505_for_both_variants _________________
+
+    def test_the_last_fill_is_1505_for_both_variants() -> None:
+        for variant in ("H30", "HEOD"):
+>           member = ready_as(variant)
+                     ^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_flight_exits.py:281: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight_exits.py:43: in ready_as
+    prepare(member, day)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+_____________________ test_no_entry_from_a_view_after_1454 _____________________
+
+    def test_no_entry_from_a_view_after_1454() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:292: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+__________________________ test_no_intent_on_mes_ever __________________________
+
+    def test_no_intent_on_mes_ever() -> None:
+>       member = ready()
+                 ^^^^^^^
+
+tests/test_k8_members_flight_exits.py:301: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_flight.py:169: in ready
+    prepare(member, day, **kw)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+member = FlightToGold(variant='H30', name='K8-flight-01 H30 MGC', legs=(LegSpec(root='MGC', traded=True), LegSpec(root='MES', t...radingInterval(start_ct=datetime.time(8, 29), end_ct=datetime.time(14, 55), start_offset_days=0, end_offset_days=0),)})
+day = datetime.date(2025, 6, 17), values = 77, dips = (1, 2, 3, 4, 5, 6, ...)
+
+    def prepare(member: FlightToGold, day: date, values: int | Sequence[int] = 77,
+                dips: Sequence[int] = DIPS) -> tuple[date, ...]:
+        """Feed the 20 reference dates of ``day`` (the first one is the first bar of the run): date i
+        gives values[i] defined r values, with a dip of dips[i] ticks at k = 10 when i < len(dips)."""
+        refs = reference_dates(day)
+>       assert len(refs) == 20
+E       assert 21 == 20
+E        +  where 21 = len((datetime.date(2025, 5, 16), datetime.date(2025, 5, 19), datetime.date(2025, 5, 20), datetime.date(2025, 5, 21), datetime.date(2025, 5, 22), datetime.date(2025, 5, 23), ...))
+
+tests/test_k8_members_flight.py:149: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_the_entry_size_is_the_frozen_q_c
+FAILED tests/test_k8_members_flight.py::test_k1_reads_the_0829_and_0834_bars
+FAILED tests/test_k8_members_flight.py::test_a_bar_at_0830_is_not_the_start_bar_of_k1
+FAILED tests/test_k8_members_flight.py::test_the_last_block_ends_at_1455_and_there_is_no_block_at_1500
+FAILED tests/test_k8_members_flight.py::test_every_block_k_triggers_at_its_own_bar
+FAILED tests/test_k8_members_flight.py::test_r_equal_to_q_in_another_form_triggers
+FAILED tests/test_k8_members_flight.py::test_an_mes_roll_inside_a_block_is_no_trigger_and_later_blocks_trigger
+FAILED tests/test_k8_members_flight.py::test_instrument_ids_are_compared_within_mes_only
+FAILED tests/test_k8_members_flight.py::test_a_bar_whose_trade_date_is_not_its_ct_date_is_not_a_block_bar
+FAILED tests/test_k8_members_flight.py::test_member_n_1199_is_no_trade_and_n_1200_trades
+FAILED tests/test_k8_members_flight.py::test_member_m_at_1201_and_1540 - asse...
+FAILED tests/test_k8_members_flight.py::test_member_counts_duplicate_reference_values
+FAILED tests/test_k8_members_flight.py::test_trigger_needs_r_negative_even_at_or_below_q
+FAILED tests/test_k8_members_flight.py::test_the_21st_date_trades_when_the_run_starts_on_the_first_reference
+FAILED tests/test_k8_members_flight.py::test_fewer_than_20_reference_dates_at_the_tables_start_is_no_trade
+FAILED tests/test_k8_members_flight.py::test_reference_dates_are_the_20_flight_dates_before_d
+FAILED tests/test_k8_members_flight.py::test_a_non_full_date_is_skipped_as_a_reference_and_as_d
+FAILED tests/test_k8_members_flight.py::test_values_of_d_itself_never_enter_q_of_d
+FAILED tests/test_k8_members_flight_exits.py::test_only_the_first_trigger_of_d_enters_even_when_refused
+FAILED tests/test_k8_members_flight_exits.py::test_a_second_trigger_while_long_and_after_the_exit_does_nothing
+FAILED tests/test_k8_members_flight_exits.py::test_the_next_date_enters_again
+FAILED tests/test_k8_members_flight_exits.py::test_no_entry_while_an_order_is_pending_on_mgc
+FAILED tests/test_k8_members_flight_exits.py::test_c6_skips_the_1300_trigger_on_an_fomc_date_and_enters_at_1305
+FAILED tests/test_k8_members_flight_exits.py::test_a_1300_trigger_on_a_non_fomc_date_enters
+FAILED tests/test_k8_members_flight_exits.py::test_a_skipped_trigger_with_a_missing_entry_bar_does_not_end_the_day
+FAILED tests/test_k8_members_flight_exits.py::test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[659-False]
+FAILED tests/test_k8_members_flight_exits.py::test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[660-False]
+FAILED tests/test_k8_members_flight_exits.py::test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[658-True]
+FAILED tests/test_k8_members_flight_exits.py::test_c6_tests_the_fill_minute_t_k_against_r_and_r_plus_2_min[661-True]
+FAILED tests/test_k8_members_flight_exits.py::test_c6_reads_the_traded_roots_instants_only
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_entry_bar_at_the_first_trigger_ends_the_day
+FAILED tests/test_k8_members_flight_exits.py::test_an_entry_bar_of_another_trade_date_counts_as_missing
+FAILED tests/test_k8_members_flight_exits.py::test_an_mes_bar_absent_at_tk_minus_1_and_present_at_tk_is_never_used
+FAILED tests/test_k8_members_flight_exits.py::test_no_forward_fill_of_an_earlier_mes_close
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_sent_on_the_bar_at_te_plus_29
+FAILED tests/test_k8_members_flight_exits.py::test_heod_exit_is_sent_on_the_bar_at_1504
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[72-899]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[73-904]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[74-904]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[77-904]
+FAILED tests/test_k8_members_flight_exits.py::test_an_mgc_bar_missing_at_tk_moves_te_and_the_h30_exit
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing0-555]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[H30-missing1-557]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing2-905]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing3-906]
+FAILED tests/test_k8_members_flight_exits.py::test_a_refused_exit_is_resent_and_a_pending_exit_is_not_duplicated
+FAILED tests/test_k8_members_flight_exits.py::test_an_engine_closed_position_gets_no_exit
+FAILED tests/test_k8_members_flight_exits.py::test_t_e_resets_when_flat - ass...
+FAILED tests/test_k8_members_flight_exits.py::test_the_last_fill_is_1505_for_both_variants
+FAILED tests/test_k8_members_flight_exits.py::test_no_entry_from_a_view_after_1454
+FAILED tests/test_k8_members_flight_exits.py::test_no_intent_on_mes_ever - as...
+51 failed, 158 passed in 3.04s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF09.py as strategy.members.k8.flight

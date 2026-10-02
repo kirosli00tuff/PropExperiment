@@ -108,6 +108,10 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
   - Stage E.8 — K6 grains, oilseeds and livestock screening. Run 2026-10-01 (see reports/E.8_RETURN.md): seven members
     (27 trials) coded, Fable-audited, FROZEN (commit 0a14a9a, cluster freeze a6f8b497...) and screened once: Tier A
     K6-limitcont-01 HE on a single trade (t 1.002, mechanical), 26 Tier B; N = 194. Nothing bought.
+  - Stage E.9 — K8 cross-market screening. Run 2026-10-01/02 (see reports/E.9_RETURN.md): three members (4 trials:
+    K8-flight-01 H30 and HEOD on MGC with MES, K8-oilcad-01 on 6C with MCL, K8-wkndbtc-01 on MNQ with MBT) coded,
+    Fable-audited, FROZEN (commit 558a5dc, cluster freeze 99f5a6ce...) and screened once: Tier A flight HEOD (t 1.395) and
+    wkndbtc (t 1.072, resting on one Monday), Tier B H30 and oilcad; N = 198. Nothing bought. Every cluster is screened.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

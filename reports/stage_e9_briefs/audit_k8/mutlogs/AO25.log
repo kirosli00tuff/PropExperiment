@@ -1,0 +1,31 @@
+........................................................................ [ 34%]
+.............................................................F.......... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_____________ test_warm_up_20th_eligible_date_no_trade_21st_trades _____________
+
+    def test_warm_up_20th_eligible_date_no_trade_21st_trades() -> None:
+        """The run starts on S[0]. S[0]..S[18] each give 55 values; S[19] and S[20] carry a big
+        move. On S[19] the references start one date before the run (warm-up: no trade, though
+        n = 1045 and z ~ 7); on S[20] they are S[0]..S[19]: a trade."""
+        start = OILCAD_DATES.index(date(2025, 8, 4))
+        s = OILCAD_DATES[start:start + 21]
+        warm = ((5, 5, 45),) * 19
+        assert len(ref_values(warm)) == 1045
+        bars = (ref_bars(s[:19], warm) + trade_bars(s[19], {"10:05": 3})
+                + trade_bars(s[20], {"10:05": 10}))
+        bars = sorted(bars, key=lambda rb: rb[1].ts_event_ns)
+        out = drive(mk(), bars)
+>       assert [(i[0], i[1], i[3]) for i in out] == [(s[20], "10:04", "buy")]
+E       AssertionError: assert [(datetime.da...0:04', 'buy')] == [(datetime.da...0:04', 'buy')]
+E         
+E         At index 0 diff: (datetime.date(2025, 8, 29), '10:04', 'buy') != (datetime.date(2025, 9, 2), '10:04', 'buy')
+E         Left contains one more item: (datetime.date(2025, 9, 2), '10:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:495: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_warm_up_20th_eligible_date_no_trade_21st_trades
+1 failed, 208 passed in 3.66s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO25.py as strategy.members.k8.oilcad

@@ -1,0 +1,89 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+.........................................................FFFFFF..        [100%]
+=================================== FAILURES ===================================
+______________ test_exit_at_monday_14_58_resent_while_not_pending ______________
+
+    def test_exit_at_monday_14_58_resent_while_not_pending() -> None:
+        """The member's entry on the Sunday 17:59 view, then a position from 18:00: no exit before
+        14:58 Monday; exits on 14:58 and (refused, not pending) 14:59; pending from 15:00."""
+        acct = _acct(ns_at(sunday_of(MON), hm(18, 0)), 1, pend_from=ns_at(MON, hm(15, 0)))
+        out = entries(week(MON, 0, 10), acct)
+>       assert out == [(sunday_of(MON), "17:59", "buy"), (MON, "14:58", "sell"),
+                       (MON, "14:59", "sell")]
+E       AssertionError: assert [(datetime.da...4:59', 'buy')] == [(datetime.da...:59', 'sell')]
+E         
+E         At index 1 diff: (datetime.date(2025, 6, 2), '14:58', 'buy') != (datetime.date(2025, 6, 2), '14:58', 'sell')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:312: AssertionError
+____ test_exit_of_a_short_buys_and_a_missing_exit_bar_goes_to_the_next_bar _____
+
+    def test_exit_of_a_short_buys_and_a_missing_exit_bar_goes_to_the_next_bar() -> None:
+        acct = _acct(ns_at(sunday_of(MON), hm(18, 0)), -1, pend_from=ns_at(MON, hm(15, 0)))
+        out = entries(week(MON, 10, 0, mnq_skip=[(0, hm(14, 58))]), acct)
+>       assert out == [(sunday_of(MON), "17:59", "sell"), (MON, "14:59", "buy")]
+E       AssertionError: assert [(datetime.da...:59', 'sell')] == [(datetime.da...4:59', 'buy')]
+E         
+E         At index 1 diff: (datetime.date(2025, 6, 2), '14:59', 'sell') != (datetime.date(2025, 6, 2), '14:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:319: AssertionError
+__________________ test_every_exit_closes_the_whole_position ___________________
+
+    def test_every_exit_closes_the_whole_position() -> None:
+        acct = _acct(ns_at(sunday_of(MON), hm(18, 0)), 2, pend_from=ns_at(MON, hm(14, 59)))
+        out = entries_any_qty(week(MON, 0, 10), acct)
+>       assert out == [(sunday_of(MON), "17:59", "buy", 1), (MON, "14:58", "sell", 2)]
+E       AssertionError: assert [(datetime.da...8', 'buy', 2)] == [(datetime.da...', 'sell', 2)]
+E         
+E         At index 1 diff: (datetime.date(2025, 6, 2), '14:58', 'buy', 2) != (datetime.date(2025, 6, 2), '14:58', 'sell', 2)
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:325: AssertionError
+_________ test_engine_fills_mnq_at_sunday_18_00_and_exits_monday_14_59 _________
+
+    def test_engine_fills_mnq_at_sunday_18_00_and_exits_monday_14_59() -> None:
+        res = run_week(MON)
+>       assert fills(res) == [(sunday_of(MON), "18:00", "MNQ", "buy", "strategy"),
+                              (MON, "14:59", "MNQ", "sell", "strategy")]
+E       AssertionError: assert [(datetime.da...end_of_data')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 1 diff: (datetime.date(2025, 6, 2), '15:06', 'MNQ', 'sell', 'end_of_data') != (datetime.date(2025, 6, 2), '14:59', 'MNQ', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:343: AssertionError
+_________________ test_engine_sell_side_after_the_24_7_change __________________
+
+    def test_engine_sell_side_after_the_24_7_change() -> None:
+        res = run_week(MON_AFTER, 10, 0)
+>       assert fills(res) == [(sunday_of(MON_AFTER), "18:00", "MNQ", "sell", "strategy"),
+                              (MON_AFTER, "14:59", "MNQ", "buy", "strategy")]
+E       AssertionError: assert [(datetime.da...end_of_data')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 1 diff: (datetime.date(2026, 6, 8), '15:06', 'MNQ', 'buy', 'end_of_data') != (datetime.date(2026, 6, 8), '14:59', 'MNQ', 'buy', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:352: AssertionError
+__________ test_engine_missing_exit_bar_exits_on_the_first_later_bar ___________
+
+    def test_engine_missing_exit_bar_exits_on_the_first_later_bar() -> None:
+        res = run_week(MON, mnq_skip=[(0, hm(14, 58))])
+>       assert fills(res) == [(sunday_of(MON), "18:00", "MNQ", "buy", "strategy"),
+                              (MON, "15:00", "MNQ", "sell", "strategy")]
+E       AssertionError: assert [(datetime.da...end_of_data')] == [(datetime.da..., 'strategy')]
+E         
+E         At index 1 diff: (datetime.date(2025, 6, 2), '15:06', 'MNQ', 'sell', 'end_of_data') != (datetime.date(2025, 6, 2), '15:00', 'MNQ', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:358: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_wkndbtc.py::test_exit_at_monday_14_58_resent_while_not_pending
+FAILED tests/test_k8_members_wkndbtc.py::test_exit_of_a_short_buys_and_a_missing_exit_bar_goes_to_the_next_bar
+FAILED tests/test_k8_members_wkndbtc.py::test_every_exit_closes_the_whole_position
+FAILED tests/test_k8_members_wkndbtc.py::test_engine_fills_mnq_at_sunday_18_00_and_exits_monday_14_59
+FAILED tests/test_k8_members_wkndbtc.py::test_engine_sell_side_after_the_24_7_change
+FAILED tests/test_k8_members_wkndbtc.py::test_engine_missing_exit_bar_exits_on_the_first_later_bar
+6 failed, 203 passed in 3.65s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AW25.py as strategy.members.k8.wkndbtc

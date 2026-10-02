@@ -1,0 +1,29 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+...................................................F.............        [100%]
+=================================== FAILURES ===================================
+___________________ test_c6_tests_the_mnq_sunday_18_00_fill ____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x702107a06690>
+
+    def test_c6_tests_the_mnq_sunday_18_00_fill(monkeypatch: pytest.MonkeyPatch) -> None:
+        calls: list[tuple[str, int]] = []
+    
+        def spy(root: str, t_ns: int) -> bool:
+            calls.append((root, t_ns))
+            return False
+    
+        monkeypatch.setattr(wkndbtc, "in_guard", spy)
+        assert entries(week(MON, 0, 10)) == [(sunday_of(MON), "17:59", "buy")]
+>       assert calls == [("MNQ", ns_at(sunday_of(MON), hm(18, 0)))]
+E       AssertionError: assert [('6C', 1748818800000000000)] == [('MNQ', 1748818800000000000)]
+E         
+E         At index 0 diff: ('6C', 1748818800000000000) != ('MNQ', 1748818800000000000)
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:276: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_wkndbtc.py::test_c6_tests_the_mnq_sunday_18_00_fill
+1 failed, 208 passed in 6.45s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AW34.py as strategy.members.k8.wkndbtc

@@ -1,0 +1,42 @@
+........................................................................ [ 34%]
+...........F................F........................................... [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_____ test_an_mes_bar_absent_at_tk_minus_1_and_present_at_tk_is_never_used _____
+
+    def test_an_mes_bar_absent_at_tk_minus_1_and_present_at_tk_is_never_used() -> None:
+        member = ready()
+        feed(member, DAY, dip_path(n_values=2))  # bars 08:29, 08:34, 08:39
+        missing = call(member, DAY, hm(8, 44), mes_bar=None, mgc_bar=mgc(DAY, hm(8, 44)))
+        assert missing == []
+        late = call(member, DAY, hm(8, 45), mes_bar=mes(DAY, hm(8, 45), 20000 - 50),
+                    mgc_bar=mgc(DAY, hm(8, 45)))  # the 08:44 bar arrives one minute late
+>       assert late == []
+E       AssertionError: assert [LegIntent(ro...tl_bars=None)] == []
+E         
+E         Left contains one more item: LegIntent(root='MGC', side='buy', quantity=1, ts_utc=datetime.datetime(2025, 6, 17, 13, 46, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:187: AssertionError
+_____________________ test_no_entry_from_a_view_after_1454 _____________________
+
+    def test_no_entry_from_a_view_after_1454() -> None:
+        member = ready()
+        feed(member, DAY, dip_path())  # no trigger through 14:54
+        for minute in range(hm(14, 55), hm(15, 30)):  # deep MES dips on every later minute
+            got = call(member, DAY, minute, mes_bar=mes(DAY, minute, 20000 - 80 - minute % 7),
+                       mgc_bar=mgc(DAY, minute))
+>           assert got == [], minute
+E           AssertionError: 895
+E           assert [LegIntent(ro...tl_bars=None)] == []
+E             
+E             Left contains one more item: LegIntent(root='MGC', side='buy', quantity=1, ts_utc=datetime.datetime(2025, 6, 17, 19, 56, tzinfo=datetime.timezone.utc), limit_price=None, ttl_bars=None)
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:297: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight_exits.py::test_an_mes_bar_absent_at_tk_minus_1_and_present_at_tk_is_never_used
+FAILED tests/test_k8_members_flight_exits.py::test_no_entry_from_a_view_after_1454
+2 failed, 207 passed in 7.61s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF55.py as strategy.members.k8.flight

@@ -1,0 +1,61 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+...........................F................FFF..................        [100%]
+=================================== FAILURES ===================================
+________ test_research_window_mondays_and_no_mnq_guard_at_sunday_18_00 _________
+
+    def test_research_window_mondays_and_no_mnq_guard_at_sunday_18_00() -> None:
+        """54 eligible Mondays in the research window (spec section 7); no MNQ guard instant meets
+        a Sunday 18:00 fill or the Monday 14:59 exit fill (S0.10)."""
+        mondays = [d for d in WKNDBTC_DATES if date(2025, 4, 1) <= d <= date(2026, 6, 19)
+                   and wkndbtc.is_trade_monday(d)]
+>       assert len(mondays) == 54
+E       assert 58 == 54
+E        +  where 58 = len([datetime.date(2025, 4, 7), datetime.date(2025, 4, 14), datetime.date(2025, 4, 21), datetime.date(2025, 4, 28), datetime.date(2025, 5, 5), datetime.date(2025, 5, 12), ...])
+
+tests/test_k8_members_wkndbtc.py:133: AssertionError
+_________________ test_excluded_mondays_do_not_trade[monday1] __________________
+
+monday = datetime.date(2025, 4, 21)
+
+    @pytest.mark.parametrize("monday", [HOLIDAY_MON, AFTER_GOOD_FRIDAY, AFTER_HALT_FRIDAY])
+    def test_excluded_mondays_do_not_trade(monday: date) -> None:
+>       assert entries(week(monday, 0, 10)) == []
+E       AssertionError: assert [(datetime.da...7:59', 'buy')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 4, 20), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:233: AssertionError
+_________________ test_excluded_mondays_do_not_trade[monday2] __________________
+
+monday = datetime.date(2025, 12, 1)
+
+    @pytest.mark.parametrize("monday", [HOLIDAY_MON, AFTER_GOOD_FRIDAY, AFTER_HALT_FRIDAY])
+    def test_excluded_mondays_do_not_trade(monday: date) -> None:
+>       assert entries(week(monday, 0, 10)) == []
+E       AssertionError: assert [(datetime.da...7:59', 'buy')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 11, 30), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:233: AssertionError
+_______________ test_is_trade_monday_needs_both_d_and_d_minus_3 ________________
+
+    def test_is_trade_monday_needs_both_d_and_d_minus_3() -> None:
+        assert wkndbtc.is_trade_monday(MON)
+        assert not wkndbtc.is_trade_monday(HOLIDAY_MON)
+>       assert not wkndbtc.is_trade_monday(AFTER_GOOD_FRIDAY)
+E       assert not True
+E        +  where True = <function is_trade_monday at 0x74717ae85d00>(datetime.date(2025, 4, 21))
+E        +    where <function is_trade_monday at 0x74717ae85d00> = wkndbtc.is_trade_monday
+
+tests/test_k8_members_wkndbtc.py:239: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_wkndbtc.py::test_research_window_mondays_and_no_mnq_guard_at_sunday_18_00
+FAILED tests/test_k8_members_wkndbtc.py::test_excluded_mondays_do_not_trade[monday1]
+FAILED tests/test_k8_members_wkndbtc.py::test_excluded_mondays_do_not_trade[monday2]
+FAILED tests/test_k8_members_wkndbtc.py::test_is_trade_monday_needs_both_d_and_d_minus_3
+4 failed, 205 passed in 3.92s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AW12.py as strategy.members.k8.wkndbtc

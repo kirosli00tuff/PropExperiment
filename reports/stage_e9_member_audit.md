@@ -470,3 +470,131 @@ the confirmation window (table recomputation above); (ii) oilcad's "|z| = 2.0 re
 (K8-L-09) is a Part 2 recomputation item, since a member has no reporting channel.
 
 ## Part 2: recomputation (Task 6)
+
+Brief: reports/stage_e9_briefs/auditor_task6_K8.md (lead, 23:57 PDT). Started 2026-10-01 23:55 PDT (the brief
+arrived while Part 1 was closing), ended 2026-10-02 00:03 PDT. Inputs: the runner's outputs in
+reports/stage_e9_k8_screen/ (run 23:53:04-23:53:59 PDT, "K8 research: 4 members, 0 refused"), the frozen cost,
+vehicle and release tables (reports/stage_e2a_costs.json, reports/stage_e2a_vehicles.json,
+reports/stage_e2b_release_calendar.json), the K8 literal tables, the Task 1b check, D5 (docs/STAGE_E_DESIGN.md
+298-345) and the tier rules of screening/stage_e_stats.py read as a reference. No bar file opened, no runner or
+member run; every figure below is recomputed in my own code (reports/stage_e9_briefs/audit_k8/part2_recompute.py,
+log part2_recompute.log) from the recorded outputs and the frozen tables only.
+
+Verdicts: items 0, 1, 2, 3, 5, 6 VERIFIED; item 4 VERIFIED WITH NOTES (two facts not checkable without prices:
+one wkndbtc Monday without a trip, and five one-minute-late oilcad exits attributed to missing 6C bars by
+elimination). No DISCREPANCY.
+
+### 0. The frozen files: VERIFIED
+
+reports/stage_e_k8_member_freeze.json (sha256 99f5a6ce4f91fd63..., commit 558a5dc) lists strategy/members/__init__.py
+(0 bytes) and the six files under strategy/members/k8/; every listed sha256 equals the file on disk now and, for
+the six K8 files, the sha256 I recorded in Part 1 (table above). No file was changed after the audit
+(reports/stage_e9_member_rulings.md: no code change). The freeze's four declarations are S0.2's (ordinals 1-4,
+traded leg first).
+
+### 1. The screen per record: VERIFIED
+
+For each record: mean = fmean(values), sd = pstdev(values) (ddof 0), t = mean / (sd / sqrt(n)), passes = mean > 0
+and t >= 1.0, over every date of series.dates. Relative difference to the record's screen: 0.0 on every field
+(mean_ticks, sd_pop_ticks, t_daily; passes and n_days equal).
+
+| Trial | n days | Trips | Mean (ticks/ct/day) | sd (pop) | Daily t | Passes |
+|---|---|---|---|---|---|---|
+| K8-flight-01 H30 MGC | 280 | 55 | +4.269964285714 | 73.209153680 | 0.975973154454 | no |
+| K8-flight-01 HEOD MGC | 280 | 55 | +10.676392857143 | 128.078745748 | 1.394846752908 | yes |
+| K8-oilcad-01 6C | 255 | 552 | -4.454352941176 | 12.040836045 | -5.907423044551 | no |
+| K8-wkndbtc-01 MNQ | 250 | 39 | +28.974880000000 | 427.201387117 | 1.072405409875 | yes |
+
+The series: dates sorted and unique, weekdays, first/last equal to window_dates.first/last, n equal to
+window_dates.n, no excluded date present; series.dates plus the record's excluded dates equal the union of the two
+legs' trade dates and the series dates are a subset of the legs' common EC-CAL trade dates (equity and metals
+315, energy and fx 315, equity and crypto 308 in the research window; the one extra union date is 2026-04-03,
+Good Friday, "not_every_leg_trades"; wkndbtc's eight are the crypto booked-forward Mondays); values[i] equals
+daily_net_usd[i] / (q_c x tick value) for every i; the non-zero days are exactly the trip dates (55, 55, 190, 39;
+no trip date nets to zero) and every trip date is a series date. Zeros on no-trade days hold.
+
+### 2. Tiers against D5 and OC-H: VERIFIED
+
+D5: Tier A = passes the screen and carries no D9 label; Tier B = fails it; OC-H: any D9 label (coverage below
+0.95, mean hold below 10 min, more than 20 entries a day, a hold below 2 min) = excluded whatever the screen says.
+Every record has labels [] and I find no D9 label from the records' own fields (coverage MES 1.000, MGC 0.999,
+6C 0.982, MCL 0.9985, MBT 0.974, MNQ 0.998; max entries per day 1/1/15/1; min hold 20/20/3/2 minutes, mean hold
+29.6/292.3/15.0/1226.8). Tiers: H30 B, HEOD A, oilcad B, wkndbtc A, as K8_research_cluster.json; refused_members
+and not_tiered empty; one harness sha256 (9a8ebe7364be...) across the cluster file and the four records.
+
+Sensitivity of the two Tier A t-statistics to the largest single day (reported, not a ruling):
+
+| Trial | Largest day | t without it | Without the top 2 | Without the top 3 | Without the worst day |
+|---|---|---|---|---|---|
+| K8-flight-01 HEOD MGC (t 1.395) | 2026-04-02, +849.9 ticks | 1.085 (still passes) | 0.751 (2026-01-22 +775.9) | 0.413 (2026-03-09 +665.9) | 1.752 (2026-06-09, -606.1) |
+| K8-wkndbtc-01 MNQ (t 1.072) | 2026-06-08, +2267.6 ticks | 0.781 (fails) | 0.477 (2025-05-12 +2106.6) | 0.169 (2025-11-24 +1905.6) | 1.638 (2026-03-09, -2800.4) |
+
+wkndbtc's pass rests on one Monday; that Monday (2026-06-08) is also its only trip after the 24/7 change
+(item 4). HEOD survives the removal of its largest day but not of its two largest.
+
+### 3. Daily series rebuilt from the trip lists and the frozen cost table: VERIFIED
+
+For K8-flight-01 HEOD MGC, K8-wkndbtc-01 MNQ and K8-oilcad-01 6C, in my own code with no replay: per trip
+net = gross - 2 x commission per side (MGC 96 c, MNQ 61 c, 6C 211 c: the Topstep round turn halved) - slippage
+at the entry fill - slippage at the exit fill, where slippage = ceil(round(ticks x tick value in cents, 6)) with
+ticks = the frozen 30-minute CT bucket's side ticks, or max half-spread + depth when the fill lies in
+[release, release + 30 min) of a release naming the root (D8) or the exit is a D9.7 price_limit_exit (forced
+event cost, D9.7). The cost table is side-symmetric at q_c = 1 in every bucket of the three roots (depth 0,
+buy = sell), so the side the trip list omits cannot change a figure. Result: 55/55, 39/39 and 552/552 trips
+reproduce net_cents exactly (integer cents); the per-date sums equal daily_net_usd and, divided by q_c x tick
+value, the series values on every date, with no trip date outside the series. Event-window fills: HEOD 1 entry
+(a G17 date, fill inside 30 min of 08:15 CT), wkndbtc 1 exit (the forced D9.7 exit), oilcad 19 entries and
+20 exits (post-WPSR fills). record_sha256 in each trip file equals the sha256 of its record file (all four
+checked: b0b44ac1..., 5bbc9ae7..., 89ddd825..., 9d29d80b...). Gross cannot be checked: the trip list carries no
+fill prices and no bar may be read.
+
+### 4. Trade counts against the event tables and the rules: VERIFIED WITH NOTES
+
+- **wkndbtc.** 54 eligible Mondays (Task 1b B) less the record's exclusions among them (14 roll-blackout
+  Mondays, the same 14 as 1b D; 0 UR-1; 0 not-every-leg) = 40 expected; 39 trips on 39 distinct Mondays, all
+  expected ones, each with d and d - 3 in WKNDBTC_DATES. Unexplained: 2026-03-16 (no trip; the record shows no
+  refusal that day, so G = 0, a missing MBT or MNQ bar at one of the three clock points, or an MBT instrument
+  change between Friday and Sunday; not checkable without prices). Every entry filled Sunday 18:00 CT (39/39);
+  38 exits filled Monday 14:59 CT; the one deviation is 2025-04-07: a D9.7 price_limit_exit at Sunday 18:02
+  (hold 2 minutes, the D9.3b minimum; net +1896 c). No MNQ guard at any wkndbtc fill. Before the 24/7 change
+  38 trips, after it 1 (2026-06-08; 2026-06-01 and 06-15 are blackout Mondays).
+- **flight.** Both trials: 55 trips, every date in FLIGHT_DATES and in the series, at most one per date; every
+  entry fill on the 5-minute grid 08:35..14:55 CT; no entry fill inside an MGC guard; the one 13:00 entry
+  (2025-11-17) is not an FOMC date. H30 and HEOD have identical (date, entry fill instant) sets, both BUY by
+  construction (the trip list carries no side). H30 exits all at T_e + 30 or at 15:05 when T_e + 30 is later
+  (holds 30 x 53, 20 x 2 for the two 14:45 entries); HEOD exits all at 15:05 (holds 20..390 minutes). No
+  deviation.
+- **oilcad.** 552 trips on 190 dates, all OILCAD_DATES; max 15 entries a day (<= 17); every entry fill on the
+  grid 08:05..13:25; none inside a 6C guard and none at R or R + 1 of any WPSR, NFP or FOMC row naming 6C on
+  its date (so no 09:30 on a 10:30-ET WPSR date, no 11:00 on a 12:00-ET date including 2026-05-28, no 13:00 on
+  an FOMC date); entries on one day at least 20 minutes apart on every day. Exits: 541 at T_e + 15; 11 not:
+  2 MLL liquidations (2025-09-26 09:05 -> 09:09, hold 4 min, net -2008 c; 2026-03-04 10:05 -> 10:08, hold
+  3 min, net -2520 c: the "3-minute trip"), 4 D9.5a exit deferrals (entries 09:15 on 2025-10-08, 2026-03-04,
+  2026-05-06, 2026-05-20: nominal exit fill 09:30 = R of the WPSR row, filled 09:32 = R + 2, hold 17), and 5
+  one-minute-late exits not in any guard (nominal fills 12:50, 12:25, 11:05, 10:35, 08:25 on 2025-07-25,
+  08-08, 09-10, 10-06, 10-13; hold 16), which only a missing 6C bar at the nominal minute explains (the specs'
+  "first later bar"; bar presence not checkable here). The 8 fill_guard_deferral counts are exactly the 4 exit
+  deferrals x 2 bars each (deferred at 09:30 and 09:31, filled 09:32); no entry fill is off the grid or at
+  R + 2 of a 6C instant, so no K8-L-08 entry deferral occurred (R-T3-8: count 0).
+
+### 5. Program N: VERIFIED
+
+Four records with status "run" and a screen (the four declared trials, ordinals 1-4, labels equal to the
+freeze's); no refused or excluded record; no file in reports/stage_e9_k8_screen/ outside the four trials and the
+cluster file. N = 194 + 4 = 198 (K8-L-16).
+
+### 6. MLL liquidations and the counters: VERIFIED
+
+| Trial | accounts_started (MLL restarts) | mll_liquidation | fill_guard_deferral | price_limit_exit | other counters |
+|---|---|---|---|---|---|
+| K8-flight-01 H30 MGC | 1 (0) | 0 | 0 | 0 | engine_not_a_window_date 10 |
+| K8-flight-01 HEOD MGC | 1 (0) | 0 | 0 | 0 | engine_not_a_window_date 10 |
+| K8-oilcad-01 6C | 3 (2) | 2 | 8 | 0 | engine_not_a_window_date 158, account_not_active 7 |
+| K8-wkndbtc-01 MNQ | 1 (0) | 0 | 0 | 1 | engine_not_a_window_date 2 |
+
+oilcad's two liquidations net -9.06 ticks of a series total of -1135.86 ticks over 255 days; with both set to
+zero the mean is -4.419 and t -5.889 (still fails on the mean). The 7 intents refused while the account was
+terminal would each need +162.3 net ticks (0.00811 USD/CAD in 15 minutes) to lift the mean to zero, and a total
+of +1327 ticks to reach t = 1 at the same sd: a bound, not an estimate; the tier cannot depend on them. No
+other trial started a second account. engine_not_a_window_date counts are the members' intents on dates the
+runner excluded (roll-blackout dates the member cannot read): expected, not a defect.

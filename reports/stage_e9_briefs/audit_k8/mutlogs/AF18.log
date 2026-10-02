@@ -1,0 +1,181 @@
+...................................F.................................... [ 34%]
+..............F.FFF...FF...F...F........................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+_________________ test_trading_windows_are_the_s0_12_intervals _________________
+
+    def test_trading_windows_are_the_s0_12_intervals() -> None:
+        for m in (flight.make_h30(), flight.make_heod()):
+>           assert m.trading_windows == {"MGC": (TradingInterval(time(8, 34), time(15, 6)),),
+                                         "MES": (TradingInterval(time(8, 29), time(14, 55)),)}
+E           AssertionError: assert {'MGC': (Trad...set_days=0),)} == {'MGC': (Trad...set_days=0),)}
+E             
+E             Omitting 1 identical items, use -vv to show
+E             Differing items:
+E             {'MGC': (TradingInterval(start_ct=datetime.time(8, 34), end_ct=datetime.time(15, 5), start_offset_days=0, end_offset_days=0),)} != {'MGC': (TradingInterval(start_ct=datetime.time(8, 34), end_ct=datetime.time(15, 6), start_offset_days=0, end_offset_days=0),)}
+E             Use -v to get more diff
+
+tests/test_k8_members_flight.py:194: AssertionError
+__________________ test_heod_exit_is_sent_on_the_bar_at_1504 ___________________
+
+    def test_heod_exit_is_sent_on_the_bar_at_1504() -> None:
+        member = ready_as("HEOD")
+        enter(member, 3)
+>       assert sells(hold(member, hm(8, 45), hm(15, 4))) == [hm(15, 4)]
+E       assert [903, 904] == [904]
+E         
+E         At index 0 diff: 903 != 904
+E         Left contains one more item: 904
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:216: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[73-904] ____________________
+
+k = 73, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+        enter(member, k)
+        t_k = end_bar(k) + 1
+>       assert sells(hold(member, t_k, exit_bar)) == [exit_bar]
+E       assert [903, 904] == [904]
+E         
+E         At index 0 diff: 903 != 904
+E         Left contains one more item: 904
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:229: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[74-904] ____________________
+
+k = 74, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+        enter(member, k)
+        t_k = end_bar(k) + 1
+>       assert sells(hold(member, t_k, exit_bar)) == [exit_bar]
+E       assert [903, 904] == [904]
+E         
+E         At index 0 diff: 903 != 904
+E         Left contains one more item: 904
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:229: AssertionError
+___________________ test_h30_exit_is_capped_at_1504[77-904] ____________________
+
+k = 77, exit_bar = 904
+
+    @pytest.mark.parametrize(("k", "exit_bar"), [
+        (72, hm(14, 59)),  # t 14:30: T_e + 29 = 14:59
+        (73, hm(15, 4)),  # t 14:35: T_e + 29 = 15:04 = the cap
+        (74, hm(15, 4)),  # t 14:40: capped at 15:04 (not 15:09)
+        (77, hm(15, 4)),  # t 14:55: capped, a 10-minute hold
+    ])
+    def test_h30_exit_is_capped_at_1504(k: int, exit_bar: int) -> None:
+        member = ready_as("H30")
+        enter(member, k)
+        t_k = end_bar(k) + 1
+>       assert sells(hold(member, t_k, exit_bar)) == [exit_bar]
+E       assert [903, 904] == [904]
+E         
+E         At index 0 diff: 903 != 904
+E         Left contains one more item: 904
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:229: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing2-905] _
+
+variant = 'HEOD', missing = {904}, sent = 905
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+        enter(member, 3)
+>       assert sells(hold(member, hm(8, 45), sent, missing=missing)) == [sent]
+E       assert [903, 905] == [905]
+E         
+E         At index 0 diff: 903 != 905
+E         Left contains one more item: 905
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:251: AssertionError
+_ test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing3-906] _
+
+variant = 'HEOD', missing = {904, 905}, sent = 906
+
+    @pytest.mark.parametrize(("variant", "missing", "sent"), [
+        ("H30", {hm(9, 14)}, hm(9, 15)),
+        ("H30", {hm(9, 14), hm(9, 15), hm(9, 16)}, hm(9, 17)),
+        ("HEOD", {hm(15, 4)}, hm(15, 5)),
+        ("HEOD", {hm(15, 4), hm(15, 5)}, hm(15, 6)),
+    ])
+    def test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar(
+            variant: str, missing: set[int], sent: int) -> None:
+        member = ready_as(variant)
+        enter(member, 3)
+>       assert sells(hold(member, hm(8, 45), sent, missing=missing)) == [sent]
+E       assert [903, 906] == [906]
+E         
+E         At index 0 diff: 903 != 906
+E         Left contains one more item: 906
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:251: AssertionError
+_________________ test_the_last_fill_is_1505_for_both_variants _________________
+
+    def test_the_last_fill_is_1505_for_both_variants() -> None:
+        for variant in ("H30", "HEOD"):
+            member = ready_as(variant)
+            out = feed(member, DAY, dip_path({76: 5}))  # entry bar 14:49, fill 14:50
+            assert entries(out) == buy_at(hm(14, 49))
+>           assert sells(hold(member, hm(14, 50), hm(15, 4))) == [hm(15, 4)]
+E           assert [903, 904] == [904]
+E             
+E             At index 0 diff: 903 != 904
+E             Left contains one more item: 904
+E             Use -v to get more diff
+
+tests/test_k8_members_flight_exits.py:284: AssertionError
+_____________ test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505 _____________
+
+    def test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505() -> None:
+        res = run(flight.make_heod(), frames())
+>       assert fills(res) == [("MGC", "08:45", "buy", 1, "strategy"),
+                              ("MGC", "15:05", "sell", 1, "strategy")]
+E       AssertionError: assert [('MGC', '08:..., 'strategy')] == [('MGC', '08:..., 'strategy')]
+E         
+E         At index 1 diff: ('MGC', '15:04', 'sell', 1, 'strategy') != ('MGC', '15:05', 'sell', 1, 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_flight_engine.py:133: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_flight.py::test_trading_windows_are_the_s0_12_intervals
+FAILED tests/test_k8_members_flight_exits.py::test_heod_exit_is_sent_on_the_bar_at_1504
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[73-904]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[74-904]
+FAILED tests/test_k8_members_flight_exits.py::test_h30_exit_is_capped_at_1504[77-904]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing2-905]
+FAILED tests/test_k8_members_flight_exits.py::test_a_missing_exit_bar_sends_the_exit_on_the_first_later_bar[HEOD-missing3-906]
+FAILED tests/test_k8_members_flight_exits.py::test_the_last_fill_is_1505_for_both_variants
+FAILED tests/test_k8_members_flight_engine.py::test_heod_fills_mgc_at_the_tk_open_and_exits_at_1505
+9 failed, 200 passed in 3.73s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AF18.py as strategy.members.k8.flight

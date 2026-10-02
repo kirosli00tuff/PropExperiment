@@ -1,0 +1,51 @@
+........................................................................ [ 34%]
+...................................................FF..F................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+______________ test_scale_is_the_sample_standard_deviation_ddof_1 ______________
+
+    def test_scale_is_the_sample_standard_deviation_ddof_1() -> None:
+        """Hand-computed: 500 x +0.25, 500 x -0.25 and one 0: ddof 1 gives exactly 0.25 (ss 62.5 over
+        1000), ddof 0 gives 0.24988; r = 0.49985 is z = 1.9994 under ddof 1 (no trade) and 2.0004
+        under ddof 0 (a trade)."""
+        values = [0.25] * 500 + [-0.25] * 500 + [0.0]
+        s = oilcad.scale(values)
+>       assert s == 0.25
+E       assert 0.2498750936719433 == 0.25
+
+tests/test_k8_members_oilcad.py:406: AssertionError
+________ test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation ________
+
+    def test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation() -> None:
+        assert oilcad.scale([0.25, -0.25] * 499 + [0.0]) is None  # n = 999
+>       assert oilcad.scale([0.25, -0.25] * 500) == pytest.approx(0.2501250, rel=1e-6)  # n = 1000
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert 0.25 == 0.250125 ± 2.5e-07
+E         
+E         comparison failed
+E         Obtained: 0.25
+E         Expected: 0.250125 ± 2.5e-07
+
+tests/test_k8_members_oilcad.py:413: AssertionError
+______________ test_ddof_1_end_to_end_just_below_2_does_not_trade ______________
+
+    def test_ddof_1_end_to_end_just_below_2_does_not_trade() -> None:
+        """On base B + 1 a +1 step is r = 1/6001: z = 1.99967 with ddof 1 (no trade); ddof 0 would
+        give 2.00067 (a trade)."""
+        values = ref_values(STANDARD)
+        r = (B_MCL + 2 - (B_MCL + 1)) / (B_MCL + 1)
+        assert abs(r / statistics.stdev(values)) < 2.0 <= abs(r / statistics.pstdev(values))
+>       assert entries(DAY, {"10:05": 1}, base=B_MCL + 1) == []
+E       AssertionError: assert [('10:04', 'buy')] == []
+E         
+E         Left contains one more item: ('10:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:438: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_scale_is_the_sample_standard_deviation_ddof_1
+FAILED tests/test_k8_members_oilcad.py::test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation
+FAILED tests/test_k8_members_oilcad.py::test_ddof_1_end_to_end_just_below_2_does_not_trade
+3 failed, 206 passed in 3.61s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO16.py as strategy.members.k8.oilcad

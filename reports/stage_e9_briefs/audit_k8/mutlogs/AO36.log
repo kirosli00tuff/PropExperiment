@@ -1,0 +1,84 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+F.FFFF...........................................................        [100%]
+=================================== FAILURES ===================================
+__________ test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35 ___________
+
+    def test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35() -> None:
+>       assert entries(WPSR_DAY, {"09:30": 2, "09:35": 2}) == [("09:34", "buy")]
+E       AssertionError: assert [('09:29', 'b...9:34', 'buy')] == [('09:34', 'buy')]
+E         
+E         At index 0 diff: ('09:29', 'buy') != ('09:34', 'buy')
+E         Left contains one more item: ('09:34', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:601: AssertionError
+_____________________ test_c6_skips_13_00_on_an_fomc_date ______________________
+
+    def test_c6_skips_13_00_on_an_fomc_date() -> None:
+>       assert entries(FOMC_DAY, {"13:00": 2, "13:05": 2}) == [("13:04", "buy")]
+E       AssertionError: assert [('12:59', 'b...3:04', 'buy')] == [('13:04', 'buy')]
+E         
+E         At index 0 diff: ('12:59', 'buy') != ('13:04', 'buy')
+E         Left contains one more item: ('13:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:609: AssertionError
+_ test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row __
+
+    def test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row() -> None:
+>       assert entries(HOLIDAY_WPSR_DAY, {"11:00": 2, "11:05": 2}) == [("11:04", "buy")]
+E       AssertionError: assert [('10:59', 'b...1:04', 'buy')] == [('11:04', 'buy')]
+E         
+E         At index 0 diff: ('10:59', 'buy') != ('11:04', 'buy')
+E         Left contains one more item: ('11:04', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:613: AssertionError
+________________ test_c6_tests_the_fill_minute_t_on_the_6c_root ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73dbf2615cd0>
+
+    def test_c6_tests_the_fill_minute_t_on_the_6c_root(monkeypatch: pytest.MonkeyPatch) -> None:
+        calls: list[tuple[str, int]] = []
+    
+        def spy(root: str, t_ns: int) -> bool:
+            calls.append((root, t_ns))
+            return False
+    
+        monkeypatch.setattr(oilcad, "in_guard", spy)
+        assert entries(DAY, {"09:05": 2}) == [("09:04", "buy")]
+>       assert calls == [("6C", ns_at(DAY, hm(9, 5)))]
+E       AssertionError: assert [('6C', 1751983440000000000)] == [('6C', 1751983500000000000)]
+E         
+E         At index 0 diff: ('6C', 1751983440000000000) != ('6C', 1751983500000000000)
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:626: AssertionError
+_____________ test_a_skipped_decision_leaves_later_decisions_alone _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73dbf276a720>
+
+    def test_a_skipped_decision_leaves_later_decisions_alone(monkeypatch: pytest.MonkeyPatch
+                                                             ) -> None:
+        monkeypatch.setattr(oilcad, "in_guard", lambda root, t_ns: True)
+        assert entries(DAY, {"09:05": 2, "09:10": 2}) == []
+        monkeypatch.setattr(oilcad, "in_guard",
+                            lambda root, t_ns: t_ns == ns_at(DAY, hm(9, 5)))
+>       assert entries(DAY, {"09:05": 2, "09:10": 2}) == [("09:09", "buy")]
+E       AssertionError: assert [('09:04', 'b...9:09', 'buy')] == [('09:09', 'buy')]
+E         
+E         At index 0 diff: ('09:04', 'buy') != ('09:09', 'buy')
+E         Left contains one more item: ('09:09', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_oilcad.py:635: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_09_30_on_a_standard_wpsr_date_and_not_09_35
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_13_00_on_an_fomc_date
+FAILED tests/test_k8_members_oilcad.py::test_c6_skips_11_00_on_holiday_week_wpsr_dates_including_the_e4_dropped_row
+FAILED tests/test_k8_members_oilcad.py::test_c6_tests_the_fill_minute_t_on_the_6c_root
+FAILED tests/test_k8_members_oilcad.py::test_a_skipped_decision_leaves_later_decisions_alone
+5 failed, 204 passed in 3.67s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO36.py as strategy.members.k8.oilcad

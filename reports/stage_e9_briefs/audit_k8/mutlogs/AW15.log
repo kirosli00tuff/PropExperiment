@@ -1,0 +1,50 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+................................................F.F..........F...        [100%]
+=================================== FAILURES ===================================
+______________ test_both_regimes_read_the_same_two_bars[monday1] _______________
+
+monday = datetime.date(2026, 6, 8)
+
+    @pytest.mark.parametrize("monday", [MON_BEFORE, MON_AFTER])
+    def test_both_regimes_read_the_same_two_bars(monday: date) -> None:
+>       assert entries(week(monday, 0, 10)) == [(sunday_of(monday), "17:59", "buy")]
+E       AssertionError: assert [] == [(datetime.da...7:59', 'buy')]
+E         
+E         Right contains one more item: (datetime.date(2026, 6, 7), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:246: AssertionError
+________ test_a_saturday_mnq_bar_booked_to_monday_is_not_the_entry_bar _________
+
+    def test_a_saturday_mnq_bar_booked_to_monday_is_not_the_entry_bar() -> None:
+        """MON_AFTER: a synthetic MNQ bar at Saturday 17:59 carrying trade_date d, next to the MBT
+        Saturday 17:59 bar (booked to d after the change): the entry is still only the Sunday one."""
+        sat = MON_AFTER - timedelta(days=2)
+        extra = mk_bar("MNQ", sat, hm(17, 59), B_MNQ, trade_day=MON_AFTER)
+>       assert entries([*week(MON_AFTER, 0, 10), extra]) == [(sunday_of(MON_AFTER), "17:59", "buy")]
+E       AssertionError: assert [] == [(datetime.da...7:59', 'buy')]
+E         
+E         Right contains one more item: (datetime.date(2026, 6, 7), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:263: AssertionError
+_________________ test_engine_sell_side_after_the_24_7_change __________________
+
+    def test_engine_sell_side_after_the_24_7_change() -> None:
+        res = run_week(MON_AFTER, 10, 0)
+>       assert fills(res) == [(sunday_of(MON_AFTER), "18:00", "MNQ", "sell", "strategy"),
+                              (MON_AFTER, "14:59", "MNQ", "buy", "strategy")]
+E       AssertionError: assert [] == [(datetime.da..., 'strategy')]
+E         
+E         Right contains 2 more items, first extra item: (datetime.date(2026, 6, 7), '18:00', 'MNQ', 'sell', 'strategy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:352: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_wkndbtc.py::test_both_regimes_read_the_same_two_bars[monday1]
+FAILED tests/test_k8_members_wkndbtc.py::test_a_saturday_mnq_bar_booked_to_monday_is_not_the_entry_bar
+FAILED tests/test_k8_members_wkndbtc.py::test_engine_sell_side_after_the_24_7_change
+3 failed, 206 passed in 3.65s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AW15.py as strategy.members.k8.wkndbtc

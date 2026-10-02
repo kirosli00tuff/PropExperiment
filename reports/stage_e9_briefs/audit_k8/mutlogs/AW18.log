@@ -1,0 +1,23 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+.........................................F.......................        [100%]
+=================================== FAILURES ===================================
+_______ test_p_f_comes_from_ct_date_d_minus_3_only_never_a_stale_friday ________
+
+    def test_p_f_comes_from_ct_date_d_minus_3_only_never_a_stale_friday() -> None:
+        """The Friday 2025-06-06 14:59 MBT bar exists; the Friday 2025-06-13 one is missing: the
+        Monday 2025-06-16 does not trade on the stale Friday."""
+        d = date(2025, 6, 16)
+        stale = mk_bar("MBT", date(2025, 6, 6), hm(14, 59), B_MBT)
+>       assert entries([stale, *week(d, 0, 10, mbt_skip=[(-3, hm(14, 59))])]) == []
+E       AssertionError: assert [(datetime.da...7:59', 'buy')] == []
+E         
+E         Left contains one more item: (datetime.date(2025, 6, 15), '17:59', 'buy')
+E         Use -v to get more diff
+
+tests/test_k8_members_wkndbtc.py:214: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_wkndbtc.py::test_p_f_comes_from_ct_date_d_minus_3_only_never_a_stale_friday
+1 failed, 208 passed in 3.83s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AW18.py as strategy.members.k8.wkndbtc

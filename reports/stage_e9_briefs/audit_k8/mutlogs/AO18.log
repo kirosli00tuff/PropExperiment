@@ -1,0 +1,54 @@
+........................................................................ [ 34%]
+....................................................F....F.............. [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+________ test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation ________
+
+    def test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation() -> None:
+        assert oilcad.scale([0.25, -0.25] * 499 + [0.0]) is None  # n = 999
+        assert oilcad.scale([0.25, -0.25] * 500) == pytest.approx(0.2501250, rel=1e-6)  # n = 1000
+>       assert oilcad.scale([0.0] * 1300) is None  # s = 0
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert 0.0 is None
+E        +  where 0.0 = <function scale at 0x7d751ea28a40>(([0.0] * 1300))
+E        +    where <function scale at 0x7d751ea28a40> = oilcad.scale
+
+tests/test_k8_members_oilcad.py:414: AssertionError
+_______________________ test_zero_scale_is_no_trade_on_d _______________________
+
+    def test_zero_scale_is_no_trade_on_d() -> None:
+        flat = ((0, 0, 65),) * 20
+>       assert entries(DAY, {"10:05": 50}, specs=flat) == []
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_k8_members_oilcad.py:452: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_k8_members_oilcad.py:288: in entries
+    out = drive(oilcad.make_6c(), oil_bars(day, steps, **kw), acct)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_k8_members_oilcad.py:127: in drive
+    for item in member.on_minute(view, flat if acct is None else acct(ts)):
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+strategy/members/k8/oilcad.py:231: in on_minute
+    return self._entry(view, bar, signal)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+strategy/members/k8/oilcad.py:258: in _entry
+    if not passes_threshold(r, s):
+           ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+r = 0.0, s = 0.0
+
+    def passes_threshold(r: float, s: float) -> bool:
+        """|z_t| >= Z_THRESHOLD with z_t = r_t / s(d) in float (K8-L-09)."""
+>       return abs(r / s) >= Z_THRESHOLD
+                   ^^^^^
+E       ZeroDivisionError: float division by zero
+
+strategy/members/k8/oilcad.py:121: ZeroDivisionError
+=========================== short test summary info ============================
+FAILED tests/test_k8_members_oilcad.py::test_scale_refuses_fewer_than_1000_values_and_a_zero_deviation
+FAILED tests/test_k8_members_oilcad.py::test_zero_scale_is_no_trade_on_d - Ze...
+2 failed, 207 passed in 3.65s
+
+[k8audit] installed mutant /home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e9_briefs/audit_k8/mutants/AO18.py as strategy.members.k8.oilcad

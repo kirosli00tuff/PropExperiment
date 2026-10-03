@@ -28,6 +28,7 @@ From 2026-09-23 on, each new prompt is committed here before it is sent.
 | E.7 | STAGE_E.7.md | Opus 5.5, xhigh | 2026-09-28, before the weekly reset | K1 equity index alone: free VXN history, CPI instants, code, Fable-audit and freeze five members, screen; no purchase |
 | E.8 | STAGE_E.8.md | Opus 5.5, xhigh | 2026-09-30 to 10-01 | K6 grains, oilseeds and livestock alone: WASDE and limit checks, code, Fable-audit and freeze seven members, screen; no purchase |
 | E.9 | STAGE_E.9.md | Opus 5.5, xhigh | 2026-10-01 | K8 cross-market alone: legs per V16, event and clock checks, code, Fable-audit (cross-leg look-ahead) and freeze three members, screen four trials; no purchase |
+| E.10 | STAGE_E.10.md | Opus 5.5, xhigh | 2026-10-02 | Low-frequency full-session holds: literature research and a draft K9 catalog built around the cost wall, Fable adversarial review; no market data, no purchase |
 
 Model names are as written in each prompt at the time. The routing rules
 that apply today are in CLAUDE.md.

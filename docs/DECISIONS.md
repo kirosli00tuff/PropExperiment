@@ -338,3 +338,15 @@
   later research run must state a minimum trade count before a pass
   counts, set before any data is read. K6's confirmation is not planned:
   its only Tier A trial rests on one trade.
+- 2026-10-02 (user, planning chat): V19. Amends V17's order. The narrow
+  research run on low-frequency, full-session holds (V17's fourth step)
+  runs before the ML route, so the user has time to settle the ML route's
+  compute host. Stage E.10 researches and drafts a K9 catalog from
+  published evidence only (no market data, no Stage E figures), E.11
+  freezes it after the user's decisions, and E.12 codes and screens it.
+  The ML route follows. acct-2 was topped up to a $125 balance by the user
+  on 2026-10-02. ACCOUNT_2_CAP_USD (cumulative) is raised to match by the
+  next purchasing session, about $249.67, and .env now holds the keys as
+  DATABENTO_API_KEY1 and DATABENTO_API_KEY2, which data/config.py must be
+  taught to select by account before any purchase (it reads only
+  DATABENTO_API_KEY today, so every Databento call is refused until then).

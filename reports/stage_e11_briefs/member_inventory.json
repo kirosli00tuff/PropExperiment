@@ -1,0 +1,1945 @@
+[
+ {
+  "member_ids": [
+   "K1-vwap-01"
+  ],
+  "cluster": "K1",
+  "file": "strategy/members/k1/vwap.py",
+  "legs_traded": [
+   "MNQ"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "vwap_side_s_t",
+    "formula": "s_t = sign(3*C_t*sum(vol) - sum((H+L+C)*vol)) over present 1-min bars of CT date d from 08:30 through bar t, integer ticks; if zero, carry s_(t-1) (0 before first sign); sum(vol)=0 -> no action, s not updated",
+    "inputs": "MNQ ohlcv-1m bars of CT date d (H, L, C, volume) from 08:30; EQUITY_FULL_SESSIONS",
+    "literals": [
+     "TP_PARTS=3 (k1/vwap.py:70)",
+     "RULE_END_CT=time(14, 57) (k1/vwap.py:71)",
+     "EXIT_BEFORE_C_MIN=2 (k1/vwap.py:72)",
+     "MAX_ENTRIES=20 (k1/vwap.py:73)",
+     "MIN_HOLD_MINUTES=1 (k1/vwap.py:74)"
+    ],
+    "availability": "close of bar t (t+1 min CT); intent on bar t fills next open"
+   }
+  ],
+  "entry_rule": "On each bar t in [08:30,14:57) with no order pending: flat, s_t!=0 and <20 entry intents today -> market entry q_c; position opposite to s_t and min hold met (>=1 min after the first-seen bar) -> exit then, if <20 entries, entry, both on bar t",
+  "exit_rule": "Final market intent on first present bar >= 14:58 (fills 14:59 open); no rule intent from the 14:57 bar on; otherwise reversal on opposite s_t",
+  "direction_rule": "position = s_t (above session VWAP -> buy, below -> sell)",
+  "fixed_clock": false,
+  "extra_data": [
+   "EQUITY_FULL_SESSIONS literal date table (k1/_calendar.py)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K1-vxnband-01"
+  ],
+  "cluster": "K1",
+  "file": "strategy/members/k1/vxnband.py",
+  "legs_traded": [
+   "MNQ"
+  ],
+  "legs_read": [
+   "VXN index daily close (literal table)"
+  ],
+  "decision_variables": [
+   {
+    "name": "vxn_regime_V",
+    "formula": "V = VXN_CLOSE of the calendar date of the EQUITY_TRADE_DATES entry immediately before d (never d's own close); trade only if V<20 (strict) or V>=30",
+    "inputs": "VXN_CLOSE table (k1/_vxn.py, generated from data/vendor/index_history/vxn/VXN_History.csv); EQUITY_TRADE_DATES",
+    "literals": [
+     "BAND_DIVISOR=1600 (k1/vxnband.py:68)",
+     "VXN_LOW_CUT=Decimal(20) (k1/vxnband.py:69)",
+     "VXN_HIGH_CUT=Decimal(30) (k1/vxnband.py:70)",
+     "SCAN_END_CT=time(14, 29) (k1/vxnband.py:71)",
+     "HOLD_MINUTES=30 (k1/vxnband.py:72)",
+     "CLOSE_BEFORE_C_MIN=1 (k1/vxnband.py:73)"
+    ],
+    "availability": "prior trade date's VXN close, read on d's 08:30 bar close (08:31 CT)"
+   },
+   {
+    "name": "band_breach",
+    "formula": "sell iff 1600*(close_t - C_prev) > C_prev*V; buy iff 1600*(close_t - C_prev) < -(C_prev*V); C_prev = close of the 14:59 bar of the most recent COMPLETE trade date; scan bars [08:30,14:29); first breach on either side uses the day's one entry",
+    "inputs": "MNQ ohlcv-1m: prior complete day's 14:59 close, bars of d 08:30..14:28; instrument guard vs the 08:30 bar",
+    "literals": [
+     "BAND_DIVISOR=1600 (k1/vxnband.py:68)",
+     "VXN_LOW_CUT=Decimal(20) (k1/vxnband.py:69)",
+     "VXN_HIGH_CUT=Decimal(30) (k1/vxnband.py:70)",
+     "SCAN_END_CT=time(14, 29) (k1/vxnband.py:71)",
+     "HOLD_MINUTES=30 (k1/vxnband.py:72)",
+     "CLOSE_BEFORE_C_MIN=1 (k1/vxnband.py:73)"
+    ],
+    "availability": "close of the breaching bar t (intent on that bar, fills next open)"
+   }
+  ],
+  "entry_rule": "Market intent q_c on the first breach bar (scan [08:30,14:29)), only if VXN regime holds and guards pass; one entry per day",
+  "exit_rule": "Market intent on first present bar >= entry-intent bar + 30 min (latest 14:58, fill 14:59); engine flatten at F as backstop",
+  "direction_rule": "fade: SELL on upper band breach, BUY on lower band breach",
+  "fixed_clock": false,
+  "extra_data": [
+   "VXN daily close series (Cboe VXN_History.csv embedded as literal table k1/_vxn.py; not ohlcv-1m)",
+   "EQUITY_FULL_SESSIONS / EQUITY_TRADE_DATES literal calendars"
+  ]
+ },
+ {
+  "member_ids": [
+   "K1-cp1-01"
+  ],
+  "cluster": "K1",
+  "file": "strategy/members/k1/cp1.py",
+  "legs_traded": [
+   "MNQ (q 1)",
+   "M2K (q 3)",
+   "MYM (q 3)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp1_momentum_s",
+    "formula": "s = sign(close of bar at O+29 [08:59] - open of the trade date's first bar), integer ticks; first bar = the 17:00 CT bar of CT date d-1 carrying trade_date d; both bars present with one instrument_id; zero -> no trade",
+    "inputs": "MNQ/M2K/MYM ohlcv-1m; clock O 08:30, C 15:00, F 15:08",
+    "literals": [
+     "GLOBEX_OPEN_CT=time(17, 0) (k1/cp1.py:57)",
+     "SIGNAL_AFTER_O_MIN=29 (k1/cp1.py:58)",
+     "ENTRY_BEFORE_C_MIN=31 (k1/cp1.py:59)",
+     "EXIT_BEFORE_C_MIN=2 (k1/cp1.py:60)"
+    ],
+    "availability": "close of the O+29 bar (O+30 min CT); entry bar is C-31"
+   }
+  ],
+  "entry_rule": "Market intent on the exact bar C-31 (14:29, fills 14:30), fills next open",
+  "exit_rule": "Market intent on first present bar >= C-2 (14:58, fill 14:59); engine flatten backstop",
+  "direction_rule": "momentum: buy if s>0, sell if s<0",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K1-cp2-01"
+  ],
+  "cluster": "K1",
+  "file": "strategy/members/k1/cp2.py",
+  "legs_traded": [
+   "MNQ (q 1)",
+   "M2K (q 3)",
+   "MYM (q 3)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp2_range",
+    "formula": "OR_high = max high, OR_low = min low of present bars opening in [O,O+15) of CT date d ([08:30,08:45)); no range bar -> no trade",
+    "inputs": "MNQ/M2K/MYM ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k1/cp2.py:56)",
+     "BUFFER_TICKS=4 (k1/cp2.py:57)",
+     "HOLD_BARS=75 (k1/cp2.py:58)",
+     "F_REGULAR_CT=time(15, 8) (k1/cp2.py:59)"
+    ],
+    "availability": "range known at O+15"
+   },
+   {
+    "name": "cp2_breakout",
+    "formula": "first bar opening in [O+15,C) with close >= OR_high + 4 ticks (buy) or <= OR_low - 4 ticks (sell); 4 ticks = MNQ 1.00, M2K 0.40, MYM 4.0 index points; one entry per trade date",
+    "inputs": "MNQ/M2K/MYM ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k1/cp2.py:56)",
+     "BUFFER_TICKS=4 (k1/cp2.py:57)",
+     "HOLD_BARS=75 (k1/cp2.py:58)",
+     "F_REGULAR_CT=time(15, 8) (k1/cp2.py:59)"
+    ],
+    "availability": "close of the breakout bar (intent on that bar, fills next open)"
+   }
+  ],
+  "entry_rule": "Market intent on the first qualifying bar in [O+15,C); one entry per trade date",
+  "exit_rule": "75th present bar seen while position non-zero (from bar after entry decision bar): market intent closing (fills next open); NO C-2 exit; engine flatten backstop",
+  "direction_rule": "buy above OR_high+4 ticks, sell below OR_low-4 ticks",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K1-cp3-01"
+  ],
+  "cluster": "K1",
+  "file": "strategy/members/k1/cp3.py",
+  "legs_traded": [
+   "MNQ (q 1)",
+   "M2K (q 3)",
+   "MYM (q 3)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp3_clv",
+    "formula": "CLV = (C-L)/(H-L) in ticks of the most recent COMPLETE daily bar d-1 built from bars [O,C) (bars [08:30,15:00), close bar 14:59); H-L>0; d-1's instrument_id equals the O bar's; CLV>=0.8 buy, <=0.2 sell (non-strict, exact integer compare)",
+    "inputs": "MNQ/M2K/MYM ohlcv-1m daily bars; early_halt_ct field; complete-day rule (O and C-1 bars exist, no early_halt_ct, one instrument_id)",
+    "literals": [
+     "CLV_BUY_AT_OR_ABOVE=Decimal(\"0.8\") (k1/cp3.py:62)",
+     "CLV_SELL_AT_OR_BELOW=Decimal(\"0.2\") (k1/cp3.py:63)",
+     "CLOSE_BEFORE_C_MIN=1 (k1/cp3.py:64)",
+     "EXIT_BEFORE_C_MIN=2 (k1/cp3.py:65)"
+    ],
+    "availability": "known at the O bar of d (day d-1 finalised when a later trade date's bar arrives)"
+   }
+  ],
+  "entry_rule": "Market intent on the exact O bar of CT date d (fills O+1 open); no trade if the O bar carries early_halt_ct",
+  "exit_rule": "Market intent on first present bar >= C-2 (14:58, fill 14:59); engine flatten backstop",
+  "direction_rule": "CLV>=0.8 buy, CLV<=0.2 sell",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K2-cp1-01"
+  ],
+  "cluster": "K2",
+  "file": "strategy/members/k2/cp1.py",
+  "legs_traded": [
+   "ZT",
+   "ZF",
+   "ZN",
+   "TN",
+   "ZB",
+   "UB (one product per trial, q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp1_momentum_s",
+    "formula": "s = sign(close of bar at O+29 [07:49] - open of the trade date's first bar), integer ticks; first bar = the 17:00 CT bar of CT date d-1 carrying trade_date d; both bars present with one instrument_id; zero -> no trade",
+    "inputs": "ZT/ZF/ZN/TN/ZB/UB ohlcv-1m; clock O 07:20, C 14:00",
+    "literals": [
+     "GLOBEX_OPEN_CT=time(17, 0) (k2/cp1.py:47)",
+     "SIGNAL_AFTER_O_MIN=29 (k2/cp1.py:48)",
+     "ENTRY_BEFORE_C_MIN=31 (k2/cp1.py:49)",
+     "EXIT_BEFORE_C_MIN=2 (k2/cp1.py:50)"
+    ],
+    "availability": "close of the O+29 bar (O+30 min CT); entry bar is C-31"
+   }
+  ],
+  "entry_rule": "Market intent on the exact bar C-31 (13:29, fills 13:30), fills next open",
+  "exit_rule": "Market intent on first present bar >= C-2 (13:58, fill 13:59); engine flatten backstop",
+  "direction_rule": "momentum: buy if s>0, sell if s<0",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K2-cp2-01"
+  ],
+  "cluster": "K2",
+  "file": "strategy/members/k2/cp2.py",
+  "legs_traded": [
+   "ZT",
+   "ZF",
+   "ZN",
+   "TN",
+   "ZB",
+   "UB (one product per trial, q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp2_range",
+    "formula": "OR_high = max high, OR_low = min low of present bars opening in [O,O+15) of CT date d ([07:20,07:35)); no range bar -> no trade",
+    "inputs": "ZT/ZF/ZN/TN/ZB/UB ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k2/cp2.py:48)",
+     "BUFFER_TICKS=4 (k2/cp2.py:49)",
+     "HOLD_BARS=75 (k2/cp2.py:50)",
+     "F_REGULAR_CT=time(15, 8) (k2/cp2.py:51)"
+    ],
+    "availability": "range known at O+15"
+   },
+   {
+    "name": "cp2_breakout",
+    "formula": "first bar opening in [O+15,C) with close >= OR_high + 4 ticks (buy) or <= OR_low - 4 ticks (sell); 4 ticks = 4 x each root's vendor tick; one entry per trade date",
+    "inputs": "ZT/ZF/ZN/TN/ZB/UB ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k2/cp2.py:48)",
+     "BUFFER_TICKS=4 (k2/cp2.py:49)",
+     "HOLD_BARS=75 (k2/cp2.py:50)",
+     "F_REGULAR_CT=time(15, 8) (k2/cp2.py:51)"
+    ],
+    "availability": "close of the breakout bar (intent on that bar, fills next open)"
+   }
+  ],
+  "entry_rule": "Market intent on the first qualifying bar in [O+15,C); one entry per trade date",
+  "exit_rule": "75th present bar seen while position non-zero (from bar after entry decision bar): market intent closing (fills next open); NO C-2 exit; engine flatten backstop",
+  "direction_rule": "buy above OR_high+4 ticks, sell below OR_low-4 ticks",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K2-cp3-01"
+  ],
+  "cluster": "K2",
+  "file": "strategy/members/k2/cp3.py",
+  "legs_traded": [
+   "ZT",
+   "ZF",
+   "ZN",
+   "TN",
+   "ZB",
+   "UB (one product per trial, q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp3_clv",
+    "formula": "CLV = (C-L)/(H-L) in ticks of the most recent COMPLETE daily bar d-1 built from bars [O,C) (bars [07:20,14:00), close bar 13:59); H-L>0; d-1's instrument_id equals the O bar's; CLV>=0.8 buy, <=0.2 sell (non-strict, exact integer compare)",
+    "inputs": "ZT/ZF/ZN/TN/ZB/UB ohlcv-1m daily bars; early_halt_ct field; complete-day rule (O and C-1 bars exist, no early_halt_ct, one instrument_id)",
+    "literals": [
+     "CLV_BUY_AT_OR_ABOVE=Decimal(\"0.8\") (k2/cp3.py:54)",
+     "CLV_SELL_AT_OR_BELOW=Decimal(\"0.2\") (k2/cp3.py:55)",
+     "LOOKBACK=1 (k2/cp3.py:56)",
+     "CLOSE_BEFORE_C_MIN=1 (k2/cp3.py:57)",
+     "EXIT_BEFORE_C_MIN=2 (k2/cp3.py:58)"
+    ],
+    "availability": "known at the O bar of d (day d-1 finalised when a later trade date's bar arrives)"
+   }
+  ],
+  "entry_rule": "Market intent on the exact O bar of CT date d (fills O+1 open); no trade if the O bar carries early_halt_ct",
+  "exit_rule": "Market intent on first present bar >= C-2 (13:58, fill 13:59); engine flatten backstop",
+  "direction_rule": "CLV>=0.8 buy, CLV<=0.2 sell",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K3-cp1-01"
+  ],
+  "cluster": "K3",
+  "file": "strategy/members/k3/cp1.py",
+  "legs_traded": [
+   "6E",
+   "6A",
+   "6B",
+   "6C",
+   "6J",
+   "6S",
+   "6N (one per trial, q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp1_momentum_s",
+    "formula": "s = sign(close of bar at O+29 [07:49] - open of the trade date's first bar), integer ticks; first bar = the 17:00 CT bar of CT date d-1 carrying trade_date d; both bars present with one instrument_id; zero -> no trade",
+    "inputs": "6E/6A/6B/6C/6J/6S/6N ohlcv-1m; clock O 07:20, C 14:00, F 15:08",
+    "literals": [
+     "GLOBEX_OPEN_CT=time(17, 0) (k3/cp1.py:51)",
+     "SIGNAL_AFTER_O_MIN=29 (k3/cp1.py:52)",
+     "ENTRY_BEFORE_C_MIN=31 (k3/cp1.py:53)",
+     "EXIT_BEFORE_C_MIN=2 (k3/cp1.py:54)"
+    ],
+    "availability": "close of the O+29 bar (O+30 min CT); entry bar is C-31"
+   }
+  ],
+  "entry_rule": "Market intent on the exact bar C-31 (13:29, fills 13:30), fills next open",
+  "exit_rule": "Market intent on first present bar >= C-2 (13:58, fill 13:59); engine flatten backstop",
+  "direction_rule": "momentum: buy if s>0, sell if s<0",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K3-cp2-01"
+  ],
+  "cluster": "K3",
+  "file": "strategy/members/k3/cp2.py",
+  "legs_traded": [
+   "6E",
+   "6A",
+   "6B",
+   "6C",
+   "6J",
+   "6S",
+   "6N (one per trial, q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp2_range",
+    "formula": "OR_high = max high, OR_low = min low of present bars opening in [O,O+15) of CT date d ([07:20,07:35)); no range bar -> no trade",
+    "inputs": "6E/6A/6B/6C/6J/6S/6N ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k3/cp2.py:55)",
+     "BUFFER_TICKS=4 (k3/cp2.py:56)",
+     "HOLD_BARS=75 (k3/cp2.py:57)",
+     "F_REGULAR_CT=time(15, 8) (k3/cp2.py:58)"
+    ],
+    "availability": "range known at O+15"
+   },
+   {
+    "name": "cp2_breakout",
+    "formula": "first bar opening in [O+15,C) with close >= OR_high + 4 ticks (buy) or <= OR_low - 4 ticks (sell); 4 ticks = 0.0002 on 6E/6A/6C/6S/6N, 0.0004 on 6B, 0.000002 on 6J; one entry per trade date",
+    "inputs": "6E/6A/6B/6C/6J/6S/6N ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k3/cp2.py:55)",
+     "BUFFER_TICKS=4 (k3/cp2.py:56)",
+     "HOLD_BARS=75 (k3/cp2.py:57)",
+     "F_REGULAR_CT=time(15, 8) (k3/cp2.py:58)"
+    ],
+    "availability": "close of the breakout bar (intent on that bar, fills next open)"
+   }
+  ],
+  "entry_rule": "Market intent on the first qualifying bar in [O+15,C); one entry per trade date",
+  "exit_rule": "75th present bar seen while position non-zero (from bar after entry decision bar): market intent closing (fills next open); NO C-2 exit; engine flatten backstop",
+  "direction_rule": "buy above OR_high+4 ticks, sell below OR_low-4 ticks",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K3-cp3-01"
+  ],
+  "cluster": "K3",
+  "file": "strategy/members/k3/cp3.py",
+  "legs_traded": [
+   "6E",
+   "6A",
+   "6B",
+   "6C",
+   "6J",
+   "6S",
+   "6N (one per trial, q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp3_clv",
+    "formula": "CLV = (C-L)/(H-L) in ticks of the most recent COMPLETE daily bar d-1 built from bars [O,C) (bars [07:20,14:00), close bar 13:59); H-L>0; d-1's instrument_id equals the O bar's; CLV>=0.8 buy, <=0.2 sell (non-strict, exact integer compare)",
+    "inputs": "6E/6A/6B/6C/6J/6S/6N ohlcv-1m daily bars; early_halt_ct field; complete-day rule (O and C-1 bars exist, no early_halt_ct, one instrument_id)",
+    "literals": [
+     "CLV_BUY_AT_OR_ABOVE=Decimal(\"0.8\") (k3/cp3.py:57)",
+     "CLV_SELL_AT_OR_BELOW=Decimal(\"0.2\") (k3/cp3.py:58)",
+     "LOOKBACK=1 (k3/cp3.py:59)",
+     "CLOSE_BEFORE_C_MIN=1 (k3/cp3.py:60)",
+     "EXIT_BEFORE_C_MIN=2 (k3/cp3.py:61)"
+    ],
+    "availability": "known at the O bar of d (day d-1 finalised when a later trade date's bar arrives)"
+   }
+  ],
+  "entry_rule": "Market intent on the exact O bar of CT date d (fills O+1 open); no trade if the O bar carries early_halt_ct",
+  "exit_rule": "Market intent on first present bar >= C-2 (13:58, fill 13:59); engine flatten backstop",
+  "direction_rule": "CLV>=0.8 buy, CLV<=0.2 sell",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K4-cp1-01"
+  ],
+  "cluster": "K4",
+  "file": "strategy/members/k4/cp1.py",
+  "legs_traded": [
+   "MCL (q 4)",
+   "NG (q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp1_momentum_s",
+    "formula": "s = sign(close of bar at O+29 [08:29] - open of the trade date's first bar), integer ticks; first bar = the 17:00 CT bar of CT date d-1 carrying trade_date d; both bars present with one instrument_id; zero -> no trade",
+    "inputs": "MCL/NG ohlcv-1m; clock O 08:00, C 13:30",
+    "literals": [
+     "GLOBEX_OPEN_CT=time(17, 0) (k4/cp1.py:49)",
+     "SIGNAL_AFTER_O_MIN=29 (k4/cp1.py:50)",
+     "ENTRY_BEFORE_C_MIN=31 (k4/cp1.py:51)",
+     "EXIT_BEFORE_C_MIN=2 (k4/cp1.py:52)"
+    ],
+    "availability": "close of the O+29 bar (O+30 min CT); entry bar is C-31"
+   }
+  ],
+  "entry_rule": "Market intent on the exact bar C-31 (12:59, fills 13:00), fills next open",
+  "exit_rule": "Market intent on first present bar >= C-2 (13:28, fill 13:29); engine flatten backstop",
+  "direction_rule": "momentum: buy if s>0, sell if s<0",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K4-cp2-01"
+  ],
+  "cluster": "K4",
+  "file": "strategy/members/k4/cp2.py",
+  "legs_traded": [
+   "MCL (q 4)",
+   "NG (q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp2_range",
+    "formula": "OR_high = max high, OR_low = min low of present bars opening in [O,O+15) of CT date d ([08:00,08:15)); no range bar -> no trade",
+    "inputs": "MCL/NG ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k4/cp2.py:50)",
+     "BUFFER_TICKS=4 (k4/cp2.py:51)",
+     "HOLD_BARS=75 (k4/cp2.py:52)",
+     "F_REGULAR_CT=time(15, 8) (k4/cp2.py:53)"
+    ],
+    "availability": "range known at O+15"
+   },
+   {
+    "name": "cp2_breakout",
+    "formula": "first bar opening in [O+15,C) with close >= OR_high + 4 ticks (buy) or <= OR_low - 4 ticks (sell); 4 ticks = MCL 0.04, NG 0.004; one entry per trade date",
+    "inputs": "MCL/NG ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k4/cp2.py:50)",
+     "BUFFER_TICKS=4 (k4/cp2.py:51)",
+     "HOLD_BARS=75 (k4/cp2.py:52)",
+     "F_REGULAR_CT=time(15, 8) (k4/cp2.py:53)"
+    ],
+    "availability": "close of the breakout bar (intent on that bar, fills next open)"
+   }
+  ],
+  "entry_rule": "Market intent on the first qualifying bar in [O+15,C); one entry per trade date",
+  "exit_rule": "75th present bar seen while position non-zero (from bar after entry decision bar): market intent closing (fills next open); NO C-2 exit; engine flatten backstop",
+  "direction_rule": "buy above OR_high+4 ticks, sell below OR_low-4 ticks",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K4-cp3-01"
+  ],
+  "cluster": "K4",
+  "file": "strategy/members/k4/cp3.py",
+  "legs_traded": [
+   "MCL (q 4)",
+   "NG (q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp3_clv",
+    "formula": "CLV = (C-L)/(H-L) in ticks of the most recent COMPLETE daily bar d-1 built from bars [O,C) (bars [08:00,13:30), close bar 13:29); H-L>0; d-1's instrument_id equals the O bar's; CLV>=0.8 buy, <=0.2 sell (non-strict, exact integer compare)",
+    "inputs": "MCL/NG ohlcv-1m daily bars; early_halt_ct field; complete-day rule (O and C-1 bars exist, no early_halt_ct, one instrument_id)",
+    "literals": [
+     "CLV_BUY_AT_OR_ABOVE=Decimal(\"0.8\") (k4/cp3.py:54)",
+     "CLV_SELL_AT_OR_BELOW=Decimal(\"0.2\") (k4/cp3.py:55)",
+     "LOOKBACK=1 (k4/cp3.py:56)",
+     "CLOSE_BEFORE_C_MIN=1 (k4/cp3.py:57)",
+     "EXIT_BEFORE_C_MIN=2 (k4/cp3.py:58)"
+    ],
+    "availability": "known at the O bar of d (day d-1 finalised when a later trade date's bar arrives)"
+   }
+  ],
+  "entry_rule": "Market intent on the exact O bar of CT date d (fills O+1 open); no trade if the O bar carries early_halt_ct",
+  "exit_rule": "Market intent on first present bar >= C-2 (13:28, fill 13:29); engine flatten backstop",
+  "direction_rule": "CLV>=0.8 buy, CLV<=0.2 sell",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K5-cp1-01"
+  ],
+  "cluster": "K5",
+  "file": "strategy/members/k5/cp1.py",
+  "legs_traded": [
+   "MGC (q 1)",
+   "MHG (q 2)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp1_momentum_s",
+    "formula": "s = sign(close of bar at O+29 [MGC 07:49, MHG 07:39] - open of the trade date's first bar), integer ticks; first bar = the 17:00 CT bar of CT date d-1 carrying trade_date d; both bars present with one instrument_id; zero -> no trade",
+    "inputs": "MGC/MHG ohlcv-1m; clock MGC O 07:20 C 12:30; MHG O 07:10 C 12:00",
+    "literals": [
+     "GLOBEX_OPEN_CT=time(17, 0) (k5/cp1.py:52)",
+     "SIGNAL_AFTER_O_MIN=29 (k5/cp1.py:53)",
+     "ENTRY_BEFORE_C_MIN=31 (k5/cp1.py:54)",
+     "EXIT_BEFORE_C_MIN=2 (k5/cp1.py:55)"
+    ],
+    "availability": "close of the O+29 bar (O+30 min CT); entry bar is C-31"
+   }
+  ],
+  "entry_rule": "Market intent on the exact bar C-31 (MGC 11:59 / MHG 11:29), fills next open",
+  "exit_rule": "Market intent on first present bar >= C-2 (MGC 12:28 / MHG 11:58); engine flatten backstop",
+  "direction_rule": "momentum: buy if s>0, sell if s<0",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K5-cp2-01"
+  ],
+  "cluster": "K5",
+  "file": "strategy/members/k5/cp2.py",
+  "legs_traded": [
+   "MGC (q 1)",
+   "MHG (q 2)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp2_range",
+    "formula": "OR_high = max high, OR_low = min low of present bars opening in [O,O+15) of CT date d (MGC [07:20,07:35), MHG [07:10,07:25)); no range bar -> no trade",
+    "inputs": "MGC/MHG ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k5/cp2.py:54)",
+     "BUFFER_TICKS=4 (k5/cp2.py:55)",
+     "HOLD_BARS=75 (k5/cp2.py:56)",
+     "F_REGULAR_CT=time(15, 8) (k5/cp2.py:57)"
+    ],
+    "availability": "range known at O+15"
+   },
+   {
+    "name": "cp2_breakout",
+    "formula": "first bar opening in [O+15,C) with close >= OR_high + 4 ticks (buy) or <= OR_low - 4 ticks (sell); 4 ticks = MGC 0.40, MHG 0.0020; one entry per trade date",
+    "inputs": "MGC/MHG ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k5/cp2.py:54)",
+     "BUFFER_TICKS=4 (k5/cp2.py:55)",
+     "HOLD_BARS=75 (k5/cp2.py:56)",
+     "F_REGULAR_CT=time(15, 8) (k5/cp2.py:57)"
+    ],
+    "availability": "close of the breakout bar (intent on that bar, fills next open)"
+   }
+  ],
+  "entry_rule": "Market intent on the first qualifying bar in [O+15,C); one entry per trade date",
+  "exit_rule": "75th present bar seen while position non-zero (from bar after entry decision bar): market intent closing (fills next open); NO C-2 exit; engine flatten backstop",
+  "direction_rule": "buy above OR_high+4 ticks, sell below OR_low-4 ticks",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K5-cp3-01"
+  ],
+  "cluster": "K5",
+  "file": "strategy/members/k5/cp3.py",
+  "legs_traded": [
+   "MGC (q 1)",
+   "MHG (q 2)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp3_clv",
+    "formula": "CLV = (C-L)/(H-L) in ticks of the most recent COMPLETE daily bar d-1 built from bars [O,C) (MGC bars [07:20,12:30) close 12:29; MHG [07:10,12:00) close 11:59); H-L>0; d-1's instrument_id equals the O bar's; CLV>=0.8 buy, <=0.2 sell (non-strict, exact integer compare)",
+    "inputs": "MGC/MHG ohlcv-1m daily bars; early_halt_ct field; complete-day rule (O and C-1 bars exist, no early_halt_ct, one instrument_id)",
+    "literals": [
+     "CLV_BUY_AT_OR_ABOVE=Decimal(\"0.8\") (k5/cp3.py:57)",
+     "CLV_SELL_AT_OR_BELOW=Decimal(\"0.2\") (k5/cp3.py:58)",
+     "LOOKBACK=1 (k5/cp3.py:59)",
+     "CLOSE_BEFORE_C_MIN=1 (k5/cp3.py:60)",
+     "EXIT_BEFORE_C_MIN=2 (k5/cp3.py:61)"
+    ],
+    "availability": "known at the O bar of d (day d-1 finalised when a later trade date's bar arrives)"
+   }
+  ],
+  "entry_rule": "Market intent on the exact O bar of CT date d (fills O+1 open); no trade if the O bar carries early_halt_ct",
+  "exit_rule": "Market intent on first present bar >= C-2 (MGC 12:28 / MHG 11:58); engine flatten backstop",
+  "direction_rule": "CLV>=0.8 buy, CLV<=0.2 sell",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K6-cp1-01"
+  ],
+  "cluster": "K6",
+  "file": "strategy/members/k6/cp1.py",
+  "legs_traded": [
+   "ZC",
+   "ZW",
+   "ZS",
+   "ZM",
+   "ZL",
+   "HE",
+   "LE (one per trial, q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp1_momentum_s",
+    "formula": "s = sign(close of bar at O+29 [08:59] - open of the trade date's first bar), integer ticks; first bar: grains = earliest bar with trade_date d opening >= 19:00 CT d-1 (the 08:30 bar if no evening session); livestock = the 08:30 bar of CT date d (missing -> no trade); both bars present with one instrument_id; zero -> no trade",
+    "inputs": "ZC/ZW/ZS/ZM/ZL/HE/LE ohlcv-1m; clock grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+    "literals": [
+     "GRAIN_EVENING_OPEN_CT=time(19, 0) (k6/cp1.py:59)",
+     "SIGNAL_AFTER_O_MIN=29 (k6/cp1.py:60)",
+     "ENTRY_BEFORE_C_MIN=31 (k6/cp1.py:61)",
+     "EXIT_BEFORE_C_MIN=2 (k6/cp1.py:62)"
+    ],
+    "availability": "close of the O+29 bar (O+30 min CT); entry bar is C-31"
+   }
+  ],
+  "entry_rule": "Market intent on the exact bar C-31 (grains 12:44, livestock 12:29), fills next open",
+  "exit_rule": "Market intent on first present bar >= C-2 (grains 13:13, livestock 12:58); engine flatten backstop",
+  "direction_rule": "momentum: buy if s>0, sell if s<0",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K6-cp2-01"
+  ],
+  "cluster": "K6",
+  "file": "strategy/members/k6/cp2.py",
+  "legs_traded": [
+   "ZC",
+   "ZW",
+   "ZS",
+   "ZM",
+   "ZL",
+   "HE",
+   "LE (one per trial, q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp2_range",
+    "formula": "OR_high = max high, OR_low = min low of present bars opening in [O,O+15) of CT date d ([08:30,08:45)); no range bar -> no trade",
+    "inputs": "ZC/ZW/ZS/ZM/ZL/HE/LE ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k6/cp2.py:59)",
+     "BUFFER_TICKS=4 (k6/cp2.py:60)",
+     "HOLD_BARS=75 (k6/cp2.py:61)",
+     "F_REGULAR_CT={GRAINS: time(13, 18), LIVESTOCK: time(13, 3)} (k6/cp2.py:63)"
+    ],
+    "availability": "range known at O+15"
+   },
+   {
+    "name": "cp2_breakout",
+    "formula": "first bar opening in [O+15,C) with close >= OR_high + 4 ticks (buy) or <= OR_low - 4 ticks (sell); 4 ticks = ZC/ZW/ZS 1.00; ZM 0.40; ZL 0.04; HE/LE 0.100; one entry per trade date",
+    "inputs": "ZC/ZW/ZS/ZM/ZL/HE/LE ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k6/cp2.py:59)",
+     "BUFFER_TICKS=4 (k6/cp2.py:60)",
+     "HOLD_BARS=75 (k6/cp2.py:61)",
+     "F_REGULAR_CT={GRAINS: time(13, 18), LIVESTOCK: time(13, 3)} (k6/cp2.py:63)"
+    ],
+    "availability": "close of the breakout bar (intent on that bar, fills next open)"
+   }
+  ],
+  "entry_rule": "Market intent on the first qualifying bar in [O+15,C); one entry per trade date",
+  "exit_rule": "75th present bar seen while position non-zero (from bar after entry decision bar): market intent closing (fills next open); NO C-2 exit; engine flatten backstop",
+  "direction_rule": "buy above OR_high+4 ticks, sell below OR_low-4 ticks",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K6-cp3-01"
+  ],
+  "cluster": "K6",
+  "file": "strategy/members/k6/cp3.py",
+  "legs_traded": [
+   "ZC",
+   "ZW",
+   "ZS",
+   "ZM",
+   "ZL",
+   "HE",
+   "LE (one per trial, q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp3_clv",
+    "formula": "CLV = (C-L)/(H-L) in ticks of the most recent COMPLETE daily bar d-1 built from bars [O,C) (grains [08:30,13:15) close 13:14; livestock [08:30,13:00) close 12:59); H-L>0; d-1's instrument_id equals the O bar's; CLV>=0.8 buy, <=0.2 sell (non-strict, exact integer compare)",
+    "inputs": "ZC/ZW/ZS/ZM/ZL/HE/LE ohlcv-1m daily bars; early_halt_ct field; complete-day rule (O and C-1 bars exist, no early_halt_ct, one instrument_id)",
+    "literals": [
+     "CLV_BUY_AT_OR_ABOVE=Decimal(\"0.8\") (k6/cp3.py:64)",
+     "CLV_SELL_AT_OR_BELOW=Decimal(\"0.2\") (k6/cp3.py:65)",
+     "CLOSE_BEFORE_C_MIN=1 (k6/cp3.py:66)",
+     "EXIT_BEFORE_C_MIN=2 (k6/cp3.py:67)"
+    ],
+    "availability": "known at the O bar of d (day d-1 finalised when a later trade date's bar arrives)"
+   }
+  ],
+  "entry_rule": "Market intent on the exact O bar of CT date d (fills O+1 open); no trade if the O bar carries early_halt_ct",
+  "exit_rule": "Market intent on first present bar >= C-2 (grains 13:13, livestock 12:58); engine flatten backstop",
+  "direction_rule": "CLV>=0.8 buy, CLV<=0.2 sell",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K7-cp1-01"
+  ],
+  "cluster": "K7",
+  "file": "strategy/members/k7/cp1.py",
+  "legs_traded": [
+   "MBT (q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp1_momentum_s",
+    "formula": "s = sign(close of bar at O+29 [08:59] - open of the trade date's first bar), integer ticks; first bar = the 17:00 CT bar of CT date d-1 carrying trade_date d (Monday 17:00 bar after a booked-forward Monday); weekend bars carrying Monday's trade date are not read; both bars present with one instrument_id; zero -> no trade",
+    "inputs": "MBT ohlcv-1m; clock O 08:30, C 15:00, F 15:08",
+    "literals": [
+     "GLOBEX_OPEN_CT=time(17, 0) (k7/cp1.py:55)",
+     "SIGNAL_AFTER_O_MIN=29 (k7/cp1.py:56)",
+     "ENTRY_BEFORE_C_MIN=31 (k7/cp1.py:57)",
+     "EXIT_BEFORE_C_MIN=2 (k7/cp1.py:58)"
+    ],
+    "availability": "close of the O+29 bar (O+30 min CT); entry bar is C-31"
+   }
+  ],
+  "entry_rule": "Market intent on the exact bar C-31 (14:29, fills 14:30), fills next open",
+  "exit_rule": "Market intent on first present bar >= C-2 (14:58, fill 14:59); engine flatten backstop",
+  "direction_rule": "momentum: buy if s>0, sell if s<0",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K7-cp2-01"
+  ],
+  "cluster": "K7",
+  "file": "strategy/members/k7/cp2.py",
+  "legs_traded": [
+   "MBT (q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp2_range",
+    "formula": "OR_high = max high, OR_low = min low of present bars opening in [O,O+15) of CT date d ([08:30,08:45)); no range bar -> no trade",
+    "inputs": "MBT ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k7/cp2.py:54)",
+     "BUFFER_TICKS=4 (k7/cp2.py:55)",
+     "HOLD_BARS=75 (k7/cp2.py:56)",
+     "F_REGULAR_CT=time(15, 8) (k7/cp2.py:57)"
+    ],
+    "availability": "range known at O+15"
+   },
+   {
+    "name": "cp2_breakout",
+    "formula": "first bar opening in [O+15,C) with close >= OR_high + 4 ticks (buy) or <= OR_low - 4 ticks (sell); 4 ticks = 4 x 5.00 = 20.00 USD; one entry per trade date",
+    "inputs": "MBT ohlcv-1m",
+    "literals": [
+     "RANGE_MINUTES=15 (k7/cp2.py:54)",
+     "BUFFER_TICKS=4 (k7/cp2.py:55)",
+     "HOLD_BARS=75 (k7/cp2.py:56)",
+     "F_REGULAR_CT=time(15, 8) (k7/cp2.py:57)"
+    ],
+    "availability": "close of the breakout bar (intent on that bar, fills next open)"
+   }
+  ],
+  "entry_rule": "Market intent on the first qualifying bar in [O+15,C); one entry per trade date",
+  "exit_rule": "75th present bar seen while position non-zero (from bar after entry decision bar): market intent closing (fills next open); NO C-2 exit; engine flatten backstop",
+  "direction_rule": "buy above OR_high+4 ticks, sell below OR_low-4 ticks",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K7-cp3-01"
+  ],
+  "cluster": "K7",
+  "file": "strategy/members/k7/cp3.py",
+  "legs_traded": [
+   "MBT (q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "cp3_clv",
+    "formula": "CLV = (C-L)/(H-L) in ticks of the most recent COMPLETE daily bar d-1 built from bars [O,C) (bars [08:30,15:00), close bar 14:59); H-L>0; d-1's instrument_id equals the O bar's; CLV>=0.8 buy, <=0.2 sell (non-strict, exact integer compare)",
+    "inputs": "MBT ohlcv-1m daily bars; early_halt_ct field; complete-day rule (O and C-1 bars exist, no early_halt_ct, one instrument_id)",
+    "literals": [
+     "CLV_BUY_AT_OR_ABOVE=Decimal(\"0.8\") (k7/cp3.py:60)",
+     "CLV_SELL_AT_OR_BELOW=Decimal(\"0.2\") (k7/cp3.py:61)",
+     "CLOSE_BEFORE_C_MIN=1 (k7/cp3.py:62)",
+     "EXIT_BEFORE_C_MIN=2 (k7/cp3.py:63)"
+    ],
+    "availability": "known at the O bar of d (day d-1 finalised when a later trade date's bar arrives)"
+   }
+  ],
+  "entry_rule": "Market intent on the exact O bar of CT date d (fills O+1 open); no trade if the O bar carries early_halt_ct",
+  "exit_rule": "Market intent on first present bar >= C-2 (14:58, fill 14:59); engine flatten backstop",
+  "direction_rule": "CLV>=0.8 buy, CLV<=0.2 sell",
+  "fixed_clock": false,
+  "extra_data": []
+ },
+ {
+  "member_ids": [
+   "K2-aucpre-01"
+  ],
+  "cluster": "K2",
+  "file": "strategy/members/k2/aucpre.py",
+  "legs_traded": [
+   "ZT",
+   "ZF",
+   "ZN",
+   "TN",
+   "ZB",
+   "UB (each on its own tenor's auctions; q_c 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [],
+  "entry_rule": "SELL q_c market intent on the bar at T_a-181 min (fills T_a-180 open); T_a = competitive close - 1 h in CT; skip if bar missing or early_halt_ct",
+  "exit_rule": "Market intent on first bar >= T_a-2 min (fills nominally T_a-1); hold 179 min",
+  "direction_rule": "always SELL",
+  "fixed_clock": true,
+  "extra_data": [
+   "Treasury auction / FOMC / ISM Services dates and times: literal tables k2/_releases.py generated from reports/stage_e2b_release_calendar.json (a calendar, not market data)"
+  ],
+  "calendar_flag_literals": [
+   "SIDE=SELL (k2/aucpre.py:33)",
+   "ENTRY_DECISION_OFFSET_MIN=-181 (k2/aucpre.py:34)",
+   "EXIT_DECISION_OFFSET_MIN=-2 (k2/aucpre.py:35)",
+   "WINDOW_START_CT=time(7, 29) (k2/aucpre.py:36)",
+   "WINDOW_END_CT=time(12, 0) (k2/aucpre.py:37)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K2-aucpost-01"
+  ],
+  "cluster": "K2",
+  "file": "strategy/members/k2/aucpost.py",
+  "legs_traded": [
+   "ZT",
+   "ZF",
+   "ZN",
+   "TN",
+   "ZB",
+   "UB (own tenor)"
+  ],
+  "legs_read": [],
+  "decision_variables": [],
+  "entry_rule": "BUY q_c market intent on bar T_a+4 (fills T_a+5 open); skip if bar missing or early_halt_ct",
+  "exit_rule": "Market intent on bar T_a+184 (fills T_a+185 open); missing -> first later bar; hold 180 min",
+  "direction_rule": "always BUY",
+  "fixed_clock": true,
+  "extra_data": [
+   "Treasury auction / FOMC / ISM Services dates and times: literal tables k2/_releases.py generated from reports/stage_e2b_release_calendar.json (a calendar, not market data)"
+  ],
+  "calendar_flag_literals": [
+   "SIDE=BUY (k2/aucpost.py:33)",
+   "ENTRY_DECISION_OFFSET_MIN=4 (k2/aucpost.py:34)",
+   "EXIT_DECISION_OFFSET_MIN=184 (k2/aucpost.py:35)",
+   "WINDOW_START_CT=time(10, 34) (k2/aucpost.py:36)",
+   "WINDOW_END_CT=time(15, 6) (k2/aucpost.py:37)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K2-fomcpost-01"
+  ],
+  "cluster": "K2",
+  "file": "strategy/members/k2/fomcpost.py",
+  "legs_traded": [
+   "ZT",
+   "ZF",
+   "ZN",
+   "TN",
+   "ZB",
+   "UB"
+  ],
+  "legs_read": [],
+  "decision_variables": [],
+  "entry_rule": "On scheduled FOMC statement dates released at 13:00 CT: BUY q_c market intent on the 13:29 bar (fills 13:30)",
+  "exit_rule": "Market intent on the 15:04 bar (fills 15:05); missing -> first later bar; hold 95 min",
+  "direction_rule": "always BUY",
+  "fixed_clock": true,
+  "extra_data": [
+   "Treasury auction / FOMC / ISM Services dates and times: literal tables k2/_releases.py generated from reports/stage_e2b_release_calendar.json (a calendar, not market data)"
+  ],
+  "calendar_flag_literals": [
+   "SIDE=BUY (k2/fomcpost.py:34)",
+   "ENTRY_DECISION_CT=time(13, 29) (k2/fomcpost.py:35)",
+   "EXIT_DECISION_CT=time(15, 4) (k2/fomcpost.py:36)",
+   "WINDOW_START_CT=time(13, 29) (k2/fomcpost.py:37)",
+   "WINDOW_END_CT=time(15, 6) (k2/fomcpost.py:38)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K2-predrift-01"
+  ],
+  "cluster": "K2",
+  "file": "strategy/members/k2/predrift.py",
+  "legs_traded": [
+   "ZN",
+   "ZB"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "ism_predrift_s",
+    "formula": "s = sign(close of 08:49 bar - open of 08:30 bar), integer ticks, on ISM Services release dates (T = 09:00 CT); both bars present, one instrument_id; s=0 -> no trade",
+    "inputs": "ZN or ZB ohlcv-1m 08:30 and 08:49 bars; k2/_releases.ISM_SERVICES_DATES",
+    "literals": [
+     "EXPOSURES=(\"ZN\", \"ZB\") (k2/predrift.py:46)",
+     "RELEASE_CT=time(9, 0) (k2/predrift.py:47)",
+     "SIGNAL_START_OFFSET_MIN=-30 (k2/predrift.py:48)",
+     "ENTRY_DECISION_OFFSET_MIN=-11 (k2/predrift.py:49)",
+     "EXIT_DECISION_OFFSET_MIN=4 (k2/predrift.py:50)",
+     "WINDOW_START_CT=time(8, 30) (k2/predrift.py:51)",
+     "WINDOW_END_CT=time(9, 6) (k2/predrift.py:52)"
+    ],
+    "availability": "close of the 08:49 bar (08:50 CT)"
+   }
+  ],
+  "entry_rule": "Market intent on the 08:49 bar in direction s (fills 08:50); skip if missing or early_halt_ct",
+  "exit_rule": "Market intent on the 09:04 bar (fills 09:05); missing -> first later bar; hold 15 min through the release; index value never read",
+  "direction_rule": "side = sign(s): continue the 08:30-08:49 move",
+  "fixed_clock": false,
+  "extra_data": [
+   "Treasury auction / FOMC / ISM Services dates and times: literal tables k2/_releases.py generated from reports/stage_e2b_release_calendar.json (a calendar, not market data)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K2-monthend-01"
+  ],
+  "cluster": "K2",
+  "file": "strategy/members/k2/monthend.py",
+  "legs_traded": [
+   "ZT",
+   "ZF",
+   "ZN",
+   "TN",
+   "ZB",
+   "UB"
+  ],
+  "legs_read": [],
+  "decision_variables": [],
+  "entry_rule": "On N (last EC-CAL rates trade date of a month) and N-1, each independently: unconditional BUY q_c market intent on the 07:20 bar (fills 07:21); skip if missing or early_halt_ct",
+  "exit_rule": "Market intent on the 15:04 bar (fills 15:05); missing -> first later bar; engine flatten at F",
+  "direction_rule": "always BUY",
+  "fixed_clock": true,
+  "extra_data": [
+   "Month-end date table k2/_month_end.py (literal, from EC-CAL rates calendar)"
+  ],
+  "calendar_flag_literals": [
+   "SIDE=\"buy\" (k2/monthend.py:46)",
+   "EXIT_BAR_CT=time(15, 4) (k2/monthend.py:47)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K3-ecbfix-01"
+  ],
+  "cluster": "K3",
+  "file": "strategy/members/k3/ecbfix.py",
+  "legs_traded": [
+   "6E (q_c 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [],
+  "entry_rule": "Two sequential legs on each FX full-session trade date not a TARGET closing day: leg 1 SELL on the 00:59 CT bar (fills 01:00); leg 2 BUY on the bar at T_E (fills T_E+1), only if flat and leg 1 opened that date and was closed by the member's own exit",
+  "exit_rule": "Leg 1 exit on bar T_E-1 (fills T_E); leg 2 exit on the 15:04 bar (fills 15:05); T_E = 07:15 CT (08:15 CT in C9 mismatch weeks)",
+  "direction_rule": "leg 1 short, leg 2 long",
+  "fixed_clock": true,
+  "extra_data": [
+   "Fix-time tables k3/_clocks.py (T_L, T_E, T_T literal CT instants per weekday) and calendars k3/_calendar.py: calendars, not market data"
+  ],
+  "calendar_flag_literals": [
+   "EXPOSURES=(\"6E\",) (k3/ecbfix.py:52)",
+   "LEG1_ENTRY_DECISION_CT=\"00:59\" (k3/ecbfix.py:53)",
+   "LEG1_EXIT_DECISION_OFFSET_MIN=-1 (k3/ecbfix.py:54)",
+   "LEG2_ENTRY_DECISION_OFFSET_MIN=0 (k3/ecbfix.py:55)",
+   "LEG2_EXIT_DECISION_CT=\"15:04\" (k3/ecbfix.py:56)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K3-ldnmom-01"
+  ],
+  "cluster": "K3",
+  "file": "strategy/members/k3/ldnmom.py",
+  "legs_traded": [
+   "6E",
+   "6J (q_c 1 each)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "ldn_pre_fix_trend_S",
+    "formula": "S = ticks(close of bar at T_L-13) - ticks(open of bar at T_L-15) (bars 15:45,15:46,15:47 London); S=0 -> no trade; guard: both bars one instrument_id; T_L = 10:00 CT (11:00 in mismatch weeks)",
+    "inputs": "6E or 6J ohlcv-1m; T_L table (k3/_clocks.py); FX_FULL_SESSIONS, EW_BANK_HOLIDAYS exclusions",
+    "literals": [
+     "EXPOSURES=(\"6E\", \"6J\") (k3/ldnmom.py:48)",
+     "SIGNAL_START_OFFSET_MIN=-15 (k3/ldnmom.py:49)",
+     "ENTRY_DECISION_OFFSET_MIN=-13 (k3/ldnmom.py:50)",
+     "EXIT_DECISION_OFFSET_MIN=4 (k3/ldnmom.py:51)"
+    ],
+    "availability": "close of the T_L-13 bar (T_L-12 CT, 09:48 standard)"
+   }
+  ],
+  "entry_rule": "Market intent on the T_L-13 bar (fills T_L-12 open), only on FX full sessions not E&W bank holidays",
+  "exit_rule": "Market intent on bar T_L+4 (fills T_L+5); missing -> first later bar",
+  "direction_rule": "BUY if S>0, SELL if S<0 (momentum)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Fix-time tables k3/_clocks.py (T_L, T_E, T_T literal CT instants per weekday) and calendars k3/_calendar.py: calendars, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K3-ldnrev-01"
+  ],
+  "cluster": "K3",
+  "file": "strategy/members/k3/ldnrev.py",
+  "legs_traded": [
+   "6E",
+   "6J",
+   "6S (q_c 1 each)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "ldn_month_end_M",
+    "formula": "M = ticks(close of bar T_L-1) - ticks(close of bar T_L-11) (10-minute pre-fix move); M=0 -> no trade; guard: T_L-11, T_L-1, T_L+4 bars share one instrument_id",
+    "inputs": "6E/6J/6S ohlcv-1m; month-end date ME(m) from k3/_calendar.MONTH_ENDS; T_L table",
+    "literals": [
+     "EXPOSURES=(\"6E\", \"6J\", \"6S\") (k3/ldnrev.py:47)",
+     "SIGNAL_START_OFFSET_MIN=-11 (k3/ldnrev.py:48)",
+     "SIGNAL_END_OFFSET_MIN=-1 (k3/ldnrev.py:49)",
+     "ENTRY_DECISION_OFFSET_MIN=4 (k3/ldnrev.py:50)",
+     "EXIT_DECISION_OFFSET_MIN=19 (k3/ldnrev.py:51)"
+    ],
+    "availability": "close of bar T_L-1 (T_L CT); entry decision bar is T_L+4"
+   }
+  ],
+  "entry_rule": "Month-end only (ME(m) in FX_FULL_SESSIONS, not E&W bank holiday): market intent on bar T_L+4 (fills T_L+5)",
+  "exit_rule": "Market intent on bar T_L+19 (fills T_L+20); missing -> first later bar",
+  "direction_rule": "BUY if M<0, SELL if M>0 (contrarian)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Fix-time tables k3/_clocks.py (T_L, T_E, T_T literal CT instants per weekday) and calendars k3/_calendar.py: calendars, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K3-mehedge-01"
+  ],
+  "cluster": "K3",
+  "file": "strategy/members/k3/mehedge.py",
+  "legs_traded": [
+   "6J (q_c 1)"
+  ],
+  "legs_read": [
+   "Nikkei 225 (precomputed monthly log return, literal table)"
+  ],
+  "decision_variables": [
+   {
+    "name": "nikkei_month_return_R_eq",
+    "formula": "R_eq(m) = ln(P_a/P_b); P_a = Nikkei 225's last official close on a Tokyo date strictly before ME(m)'s calendar date, P_b = its last official close in month m-1; no trade if 0 or None",
+    "inputs": "k3/_mehedge_signal.MEHEDGE_R_EQ_6J (generated from saved Nikkei Inc. daily CSV captures); ME(m) month-end FX trade date",
+    "literals": [
+     "ENTRY_BEFORE_TL_MIN=61 (k3/mehedge.py:57)",
+     "EXIT_BEFORE_TL_MIN=4 (k3/mehedge.py:58)",
+     "WINDOW_END_BEFORE_TL_MIN=2 (k3/mehedge.py:59)"
+    ],
+    "availability": "uses closes strictly before ME(m)'s date, known before the ME(m) session; entry bar T_L-61 (09:00 CT standard)"
+   }
+  ],
+  "entry_rule": "Month-end: market intent on the bar at T_L-61 of CT date ME(m) (fills T_L-60 open); skip if bar missing",
+  "exit_rule": "Market intent on first present bar >= T_L-4 (fills nominally T_L-3), sent whatever the instrument_id",
+  "direction_rule": "SELL if R_eq>0, BUY if R_eq<0",
+  "fixed_clock": false,
+  "extra_data": [
+   "EXTERNAL Nikkei 225 daily close series (Nikkei Inc. CSV captures, via literal table k3/_mehedge_signal.py) -- not Databento ohlcv-1m",
+   "Fix-time tables k3/_clocks.py (T_L, T_E, T_T literal CT instants per weekday) and calendars k3/_calendar.py: calendars, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K3-tkypost-01"
+  ],
+  "cluster": "K3",
+  "file": "strategy/members/k3/tkypost.py",
+  "legs_traded": [
+   "6J (q_c 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [],
+  "entry_rule": "On Tokyo business days (trade date d in FX_FULL_SESSIONS): BUY market intent on the bar at T_T on d-1 (18:55 CST / 19:55 CDT; fills T_T+1)",
+  "exit_rule": "Market intent on the 00:59 CT bar of d (fills 01:00); missing -> first later bar",
+  "direction_rule": "always BUY",
+  "fixed_clock": true,
+  "extra_data": [
+   "Fix-time tables k3/_clocks.py (T_L, T_E, T_T literal CT instants per weekday) and calendars k3/_calendar.py: calendars, not market data"
+  ],
+  "calendar_flag_literals": [
+   "EXPOSURES=(\"6J\",) (k3/tkypost.py:44)",
+   "EXIT_DECISION_CT=\"00:59\" (k3/tkypost.py:45)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K3-tkypre-01"
+  ],
+  "cluster": "K3",
+  "file": "strategy/members/k3/tkypre.py",
+  "legs_traded": [
+   "6J (q_c 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [],
+  "entry_rule": "Gotobi days (Tokyo day-of-month 5,10,15,20,25,30 or last Tokyo business day): SELL market intent on the 17:29 CT bar of calendar day d-1 (fills 17:30)",
+  "exit_rule": "Market intent on the bar at T_T-1 on d-1 (fills T_T: 18:55 CST / 19:55 CDT); missing -> first later bar",
+  "direction_rule": "always SELL",
+  "fixed_clock": true,
+  "extra_data": [
+   "Fix-time tables k3/_clocks.py (T_L, T_E, T_T literal CT instants per weekday) and calendars k3/_calendar.py: calendars, not market data"
+  ],
+  "calendar_flag_literals": [
+   "EXPOSURES=(\"6J\",) (k3/tkypre.py:45)",
+   "ENTRY_DECISION_CT=\"17:29\" (k3/tkypre.py:46)",
+   "EXIT_DECISION_OFFSET_MIN=-1 (k3/tkypre.py:47)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K4-apipre-01"
+  ],
+  "cluster": "K4",
+  "file": "strategy/members/k4/apipre.py",
+  "legs_traded": [
+   "MCL (q_c 4)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "api_tuesday_return_R_API",
+    "formula": "R_API = ticks(close of 15:39 bar) - ticks(close of 15:24 bar), both on CT date W-1 (the Tuesday before the WPSR Wednesday W); R_API=0 -> no trade; guard: 15:24, 15:39 bars of W-1 and the 07:29 bar of W share one instrument_id",
+    "inputs": "MCL ohlcv-1m Tuesday 15:24 and 15:39 bars; WPSR Wednesday table; ENERGY_FULL_SESSIONS; FEDERAL_MONDAY_HOLIDAYS; API_DROPPED_WEEKS",
+    "literals": [
+     "EXPOSURES=(\"MCL\",) (k4/apipre.py:51)",
+     "SIGNAL_START_CT=time(15, 24) (k4/apipre.py:52)",
+     "SIGNAL_END_CT=time(15, 39) (k4/apipre.py:53)",
+     "ENTRY_DECISION_CT=time(7, 29) (k4/apipre.py:54)",
+     "EXIT_DECISION_CT=time(9, 28) (k4/apipre.py:55)"
+    ],
+    "availability": "close of the 15:39 bar on W-1 (15:40 CT); carried overnight to entry bar 07:29 of W"
+   }
+  ],
+  "entry_rule": "Market intent on the 07:29 bar of W (fills 07:30), skip if missing or early_halt_ct",
+  "exit_rule": "Market intent on the 09:28 bar of W (fills 09:29) before the 09:30 release; missing -> first later bar",
+  "direction_rule": "side = sign(R_API) (continuation)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Release tables k4/_releases.py (WPSR, NGS, FEDERAL_MONDAY_HOLIDAYS, NYSE_NOT_FULL, API_DROPPED_WEEKS) from reports/stage_e2b_release_calendar.json; k4/_calendar.ENERGY_FULL_SESSIONS: calendars, not market data. Released values (API, EIA, storage) are never read"
+  ]
+ },
+ {
+  "member_ids": [
+   "K4-eiafade-01"
+  ],
+  "cluster": "K4",
+  "file": "strategy/members/k4/eiafade.py",
+  "legs_traded": [
+   "MCL (q_c 4)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "wpsr_post_release_move_M",
+    "formula": "t0 = ticks(close of bar T_W-1), t14 = ticks(close of bar T_W+14); M=(t14-t0)/t0 requires t0>0; trade only if 200*(t14-t0) <= -t0 (M<=-0.005) or 200*(t14-t0) >= t0 (M>=+0.005); guard: both bars one instrument_id",
+    "inputs": "MCL ohlcv-1m; WPSR rows with T_W+15 <= 13:13 CT (09:30,10:00,11:00,12:00 CT slots)",
+    "literals": [
+     "EXPOSURES=(\"MCL\",) (k4/eiafade.py:48)",
+     "BASE_OFFSET_MIN=-1 (k4/eiafade.py:49)",
+     "ENTRY_DECISION_OFFSET_MIN=14 (k4/eiafade.py:50)",
+     "ENTRY_FILL_OFFSET_MIN=15 (k4/eiafade.py:51)",
+     "LATEST_ENTRY_FILL_CT=time(13, 13) (k4/eiafade.py:52)",
+     "EXIT_DECISION_CT=time(13, 28) (k4/eiafade.py:53)",
+     "THRESHOLD_DENOMINATOR=200 (k4/eiafade.py:54)"
+    ],
+    "availability": "close of the T_W+14 bar (T_W+15 CT)"
+   }
+  ],
+  "entry_rule": "Market intent on the T_W+14 bar (fills T_W+15 open); skip if missing or early_halt_ct",
+  "exit_rule": "Market intent on first present bar >= 13:28 (fills nominally 13:29)",
+  "direction_rule": "fade: BUY if M<=-0.5%, SELL if M>=+0.5%",
+  "fixed_clock": false,
+  "extra_data": [
+   "Release tables k4/_releases.py (WPSR, NGS, FEDERAL_MONDAY_HOLIDAYS, NYSE_NOT_FULL, API_DROPPED_WEEKS) from reports/stage_e2b_release_calendar.json; k4/_calendar.ENERGY_FULL_SESSIONS: calendars, not market data. Released values (API, EIA, storage) are never read"
+  ]
+ },
+ {
+  "member_ids": [
+   "K4-eiamom-01"
+  ],
+  "cluster": "K4",
+  "file": "strategy/members/k4/eiamom.py",
+  "legs_traded": [
+   "MCL (q_c 4)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "wpsr_day_r3",
+    "formula": "r3 = ticks(close of 09:59 bar) - ticks(close of 09:29 bar) on standard WPSR days (T_W=09:30 CT); r3=0 -> no trade; guard: 09:29, 09:59, 14:29 bars share one instrument_id",
+    "inputs": "MCL ohlcv-1m; WPSR standard rows not in NYSE_NOT_FULL",
+    "literals": [
+     "EXPOSURES=(\"MCL\",) (k4/eiamom.py:47)",
+     "SIGNAL_START_CT=time(9, 29) (k4/eiamom.py:48)",
+     "SIGNAL_END_CT=time(9, 59) (k4/eiamom.py:49)",
+     "ENTRY_DECISION_CT=time(14, 29) (k4/eiamom.py:50)",
+     "EXIT_DECISION_CT=time(14, 58) (k4/eiamom.py:51)"
+    ],
+    "availability": "close of the 09:59 bar (10:00 CT); entry bar 14:29"
+   }
+  ],
+  "entry_rule": "Market intent on the 14:29 bar (fills 14:30); skip if missing or early_halt_ct",
+  "exit_rule": "Market intent on first present bar >= 14:58 (fills nominally 14:59)",
+  "direction_rule": "side = sign(r3) (continuation)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Release tables k4/_releases.py (WPSR, NGS, FEDERAL_MONDAY_HOLIDAYS, NYSE_NOT_FULL, API_DROPPED_WEEKS) from reports/stage_e2b_release_calendar.json; k4/_calendar.ENERGY_FULL_SESSIONS: calendars, not market data. Released values (API, EIA, storage) are never read"
+  ]
+ },
+ {
+  "member_ids": [
+   "K4-ngpre-01"
+  ],
+  "cluster": "K4",
+  "file": "strategy/members/k4/ngpre.py",
+  "legs_traded": [
+   "NG (q_c 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [],
+  "entry_rule": "On every NGS release date: SELL market intent on the bar at T-91 (standard 07:59, fills 08:00); T = 09:30 or 11:00 CT per row; skip if missing or early_halt_ct",
+  "exit_rule": "Market intent on bar T+29 (standard 09:59, fills 10:00); missing -> first later bar",
+  "direction_rule": "always SELL",
+  "fixed_clock": true,
+  "extra_data": [
+   "Release tables k4/_releases.py (WPSR, NGS, FEDERAL_MONDAY_HOLIDAYS, NYSE_NOT_FULL, API_DROPPED_WEEKS) from reports/stage_e2b_release_calendar.json; k4/_calendar.ENERGY_FULL_SESSIONS: calendars, not market data. Released values (API, EIA, storage) are never read"
+  ],
+  "calendar_flag_literals": [
+   "EXPOSURES=(\"NG\",) (k4/ngpre.py:42)",
+   "SIDE=SELL (k4/ngpre.py:43)",
+   "ENTRY_DECISION_OFFSET_MIN=-91 (k4/ngpre.py:44)",
+   "EXIT_DECISION_OFFSET_MIN=29 (k4/ngpre.py:45)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K4-ovr-01"
+  ],
+  "cluster": "K4",
+  "file": "strategy/members/k4/ovr.py",
+  "legs_traded": [
+   "MCL (q 4)",
+   "NG (q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "hourly_return_r_t",
+    "formula": "r(t) = (close of bar t-1 - open of bar t-60)/open of bar t-60 (float from integer ticks), t in {09:00,10:00,11:00,12:00,13:00}; guard: both bars present, one instrument_id, open>0",
+    "inputs": "MCL/NG ohlcv-1m bars of CT date d",
+    "literals": [
+     "SIGNAL_MINUTES=60 (k4/ovr.py:63)",
+     "DECISION_BAR_BEFORE_T_MIN=1 (k4/ovr.py:64)",
+     "EXIT_AFTER_T_MIN=58 (k4/ovr.py:65)",
+     "REFERENCE_DATES=20 (k4/ovr.py:66)",
+     "MIN_VALUES=80 (k4/ovr.py:67)",
+     "PERCENTILE_METHOD=\"linear\" (k4/ovr.py:69)",
+     "WINDOW_END_CT=time(14, 0) (k4/ovr.py:70)"
+    ],
+    "availability": "close of bar t-1 (t CT)"
+   },
+   {
+    "name": "percentile_cuts_P10_P90",
+    "formula": "P10, P90 = numpy.percentile(values,[10,90],method=linear) of r(tau) at the same five clock times over the 20 most recent ENERGY_FULL_SESSIONS dates strictly before d; need >=80 values; warm-up: no trade while any reference date precedes the first bar received",
+    "inputs": "MCL/NG ohlcv-1m of the 20 prior full-session dates; ENERGY_FULL_SESSIONS",
+    "literals": [
+     "SIGNAL_MINUTES=60 (k4/ovr.py:63)",
+     "DECISION_BAR_BEFORE_T_MIN=1 (k4/ovr.py:64)",
+     "EXIT_AFTER_T_MIN=58 (k4/ovr.py:65)",
+     "REFERENCE_DATES=20 (k4/ovr.py:66)",
+     "MIN_VALUES=80 (k4/ovr.py:67)",
+     "PERCENTILE_METHOD=\"linear\" (k4/ovr.py:69)",
+     "WINDOW_END_CT=time(14, 0) (k4/ovr.py:70)"
+    ],
+    "availability": "dates strictly before d; cuts known at start of d"
+   }
+  ],
+  "entry_rule": "Entry on bar t-1 (exact bar, fills open of t), only when flat with no pending order: r(t)<=P10 buy, r(t)>=P90 sell; P10=P90=r -> no trade; early_halt_ct decision bar -> no trade at t",
+  "exit_rule": "Market intent on first present bar >= t+58 (fills nominally t+59); engine flatten at F backstop",
+  "direction_rule": "contrarian: buy at lower tail, sell at upper tail",
+  "fixed_clock": false,
+  "extra_data": [
+   "ENERGY_FULL_SESSIONS literal table (calendar)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K5-fomc-01"
+  ],
+  "cluster": "K5",
+  "file": "strategy/members/k5/fomc.py",
+  "legs_traded": [
+   "MGC (q_c 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "fomc_5min_move_s",
+    "formula": "s = ticks(close of 13:04 bar) - ticks(close of 12:59 bar) on FOMC statement dates (13:00 CT); both bars present, one instrument_id; s=0 -> no trade",
+    "inputs": "MGC ohlcv-1m; FOMC_STATEMENT_DATES",
+    "literals": [
+     "EXPOSURES=(\"MGC\",) (k5/fomc.py:38)",
+     "SIGNAL_START_CT=time(12, 59) (k5/fomc.py:39)",
+     "ENTRY_DECISION_CT=time(13, 4) (k5/fomc.py:40)",
+     "EXIT_DECISION_CT=time(13, 14) (k5/fomc.py:41)"
+    ],
+    "availability": "close of the 13:04 bar (13:05 CT)"
+   }
+  ],
+  "entry_rule": "Market intent on the 13:04 bar (fills 13:05); skip if missing or early_halt_ct",
+  "exit_rule": "Market intent on the 13:14 bar (fills 13:15); missing -> first later bar; hold 10 min",
+  "direction_rule": "side = sign(s) (continuation)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Calendar/event tables k5/_releases.py (FOMC_STATEMENT_DATES, GOLD_AM_AUCTIONS, GOLD_PM_AUCTIONS with T in CT) from reports/stage_e2b_release_calendar.json plus Task 1b release check; k5/_calendar.METALS_FULL_SESSIONS: calendars, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K5-ovr-01"
+  ],
+  "cluster": "K5",
+  "file": "strategy/members/k5/ovr.py",
+  "legs_traded": [
+   "MGC (q 1)",
+   "MHG (q 2)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "hourly_return_r_t",
+    "formula": "r(t) = (close of bar t-1 - open of bar t-60)/open of bar t-60 at t = O+60k while t<=C: MGC 08:20,09:20,10:20,11:20,12:20; MHG 08:10,09:10,10:10,11:10; guard: both bars, one instrument_id, open>0",
+    "inputs": "MGC/MHG ohlcv-1m",
+    "literals": [
+     "DECISION_STEP_MIN=60 (k5/ovr.py:65)",
+     "SIGNAL_MINUTES=60 (k5/ovr.py:66)",
+     "DECISION_BAR_BEFORE_T_MIN=1 (k5/ovr.py:67)",
+     "EXIT_AFTER_T_MIN=58 (k5/ovr.py:68)",
+     "REFERENCE_DATES=20 (k5/ovr.py:69)",
+     "VALUE_FLOOR_PERCENT=80 (k5/ovr.py:70)",
+     "PERCENTILE_METHOD=\"linear\" (k5/ovr.py:72)",
+     "WINDOW_END_AFTER_LAST_T_MIN=60 (k5/ovr.py:73)"
+    ],
+    "availability": "close of bar t-1"
+   },
+   {
+    "name": "percentile_cuts_P10_P90",
+    "formula": "P10/P90 (numpy linear) of r(tau) at the same clock times over the 20 most recent METALS_FULL_SESSIONS dates before d; need >=80% of possible values (MGC 80 of 100, MHG 64 of 80); warm-up rule",
+    "inputs": "MGC/MHG ohlcv-1m of 20 prior dates; METALS_FULL_SESSIONS",
+    "literals": [
+     "DECISION_STEP_MIN=60 (k5/ovr.py:65)",
+     "SIGNAL_MINUTES=60 (k5/ovr.py:66)",
+     "DECISION_BAR_BEFORE_T_MIN=1 (k5/ovr.py:67)",
+     "EXIT_AFTER_T_MIN=58 (k5/ovr.py:68)",
+     "REFERENCE_DATES=20 (k5/ovr.py:69)",
+     "VALUE_FLOOR_PERCENT=80 (k5/ovr.py:70)",
+     "PERCENTILE_METHOD=\"linear\" (k5/ovr.py:72)",
+     "WINDOW_END_AFTER_LAST_T_MIN=60 (k5/ovr.py:73)"
+    ],
+    "availability": "dates strictly before d"
+   }
+  ],
+  "entry_rule": "Entry on bar t-1 (fills open of t), flat and no pending: r<=P10 buy, r>=P90 sell; early_halt_ct decision bar -> no trade at t",
+  "exit_rule": "Market intent on first present bar >= t+58 (fills nominally t+59)",
+  "direction_rule": "contrarian (buy lower tail, sell upper tail)",
+  "fixed_clock": false,
+  "extra_data": [
+   "METALS_FULL_SESSIONS literal table"
+  ]
+ },
+ {
+  "member_ids": [
+   "K5-pmfix-01"
+  ],
+  "cluster": "K5",
+  "file": "strategy/members/k5/pmfix.py",
+  "legs_traded": [
+   "MGC (q_c 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "pm_fix_move_s",
+    "formula": "s = ticks(close of bar T_P+1) - ticks(close of bar T_P-1); T_P = CT instant of 15:00 London (09:00 CT, 10:00 CT in 5-hour weeks) on scheduled gold PM auction days; s=0 -> no trade; both bars one instrument_id",
+    "inputs": "MGC ohlcv-1m; GOLD_PM_AUCTIONS table",
+    "literals": [
+     "EXPOSURES=(\"MGC\",) (k5/pmfix.py:39)",
+     "SIGNAL_START_OFFSET_MIN=-1 (k5/pmfix.py:40)",
+     "ENTRY_DECISION_OFFSET_MIN=1 (k5/pmfix.py:41)",
+     "EXIT_DECISION_OFFSET_MIN=11 (k5/pmfix.py:42)"
+    ],
+    "availability": "close of bar T_P+1 (T_P+2 CT)"
+   }
+  ],
+  "entry_rule": "Market intent on bar T_P+1 (fills T_P+2); skip if missing or early_halt_ct",
+  "exit_rule": "Market intent on bar T_P+11 (fills T_P+12); missing -> first later bar; hold 10 min",
+  "direction_rule": "side = sign(s) (continuation)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Calendar/event tables k5/_releases.py (FOMC_STATEMENT_DATES, GOLD_AM_AUCTIONS, GOLD_PM_AUCTIONS with T in CT) from reports/stage_e2b_release_calendar.json plus Task 1b release check; k5/_calendar.METALS_FULL_SESSIONS: calendars, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K5-preauc-01"
+  ],
+  "cluster": "K5",
+  "file": "strategy/members/k5/preauc.py",
+  "legs_traded": [
+   "MGC (q_c 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [],
+  "entry_rule": "Scheduled gold AM auction days: unconditional SELL market intent on bar T-31 (normally 03:59, fills 04:00); T = CT instant of 10:30 London (04:30, or 05:30 in 5-hour weeks); skip if missing or early_halt_ct",
+  "exit_rule": "Market intent on bar T-2 (04:28, fills 04:29); missing -> first later bar; hold 29 min",
+  "direction_rule": "always SELL",
+  "fixed_clock": true,
+  "extra_data": [
+   "Calendar/event tables k5/_releases.py (FOMC_STATEMENT_DATES, GOLD_AM_AUCTIONS, GOLD_PM_AUCTIONS with T in CT) from reports/stage_e2b_release_calendar.json plus Task 1b release check; k5/_calendar.METALS_FULL_SESSIONS: calendars, not market data"
+  ],
+  "calendar_flag_literals": [
+   "EXPOSURES=(\"MGC\",) (k5/preauc.py:43)",
+   "SIDE=SELL (k5/preauc.py:44)",
+   "ENTRY_DECISION_OFFSET_MIN=-31 (k5/preauc.py:45)",
+   "EXIT_DECISION_OFFSET_MIN=-2 (k5/preauc.py:46)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K6-crushgap-01"
+  ],
+  "cluster": "K6",
+  "file": "strategy/members/k6/crushgap.py",
+  "legs_traded": [
+   "ZS (q_c 1)"
+  ],
+  "legs_read": [
+   "ZM",
+   "ZL (signal legs; never traded)"
+  ],
+  "decision_variables": [
+   {
+    "name": "crush_gap_G",
+    "formula": "GPM = 0.022*P_ZM + 11*P_ZL - P_ZS in USD/bu (vendor price / vendor_price_factor, exact integer units of 0.0001 USD/bu); G(d) = GPM_open(d) [opens of ZM, ZL, ZS 08:30 bars of CT date d] - GPM_close(d-1) [closes of the three 13:14 bars of d-1 = previous EC-CAL grain trade date]; guard: each leg's 13:14 d-1 bar and 08:30 d bar exist with same instrument_id; d in GRAIN_FULL_SESSIONS",
+    "inputs": "ZM, ZL, ZS ohlcv-1m 13:14 (d-1) and 08:30 (d) bars; vendor_price_factor/tick from rules.products",
+    "literals": [
+     "TRADED=\"ZS\" (k6/crushgap.py:66)",
+     "SIGNAL_LEGS=(\"ZM\", \"ZL\") (k6/crushgap.py:67)",
+     "LEGS=(TRADED, *SIGNAL_LEGS) (k6/crushgap.py:68)",
+     "GPM_UNIT_USD_PER_BU=Decimal(\"0.0001\") (k6/crushgap.py:71)",
+     "FILTER_USD_PER_BU=Decimal(\"0.02\") (k6/crushgap.py:72)",
+     "CLOSE_BEFORE_C_MIN=1 (k6/crushgap.py:73)",
+     "EXIT_BEFORE_C_MIN=2 (k6/crushgap.py:74)",
+     "FILTER_UNITS=_exact_units(FILTER_USD_PER_BU, \"the filter\") (k6/crushgap.py:92)"
+    ],
+    "availability": "open of the 08:30 bars of d (08:31 CT); entry intent on the 08:30 ZS bar, fills 08:31"
+   }
+  ],
+  "entry_rule": "Market intent on the 08:30 ZS bar if G<=-0.02 (SELL) or G>=+0.02 USD/bu (BUY), non-strict; never an intent on ZM/ZL",
+  "exit_rule": "Market intent on first ZS bar >= 13:13 (fills nominally 13:14); engine flatten backstop",
+  "direction_rule": "BUY ZS if G>=+0.02, SELL if G<=-0.02 (overnight gap continuation)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Calendars/tables k6/_calendar.py, k6/_wasde.py (WASDE dates at 12:00 ET = 11:00 CT, from reports/stage_e2b_release_calendar.json), k6/_limits.py (LIMIT_PERIODS from rules.price_limits): calendars and rules constants, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K6-limitcont-01"
+  ],
+  "cluster": "K6",
+  "file": "strategy/members/k6/limitcont.py",
+  "legs_traded": [
+   "HE",
+   "LE (q_c 1 each)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "limit_close_event",
+    "formula": "Event if S(c,d-1)-S(c,d-2) = +L(d-1) ticks (BUY) or -L(d-1) ticks (SELL) exactly, and S(c,d-2)-S(c,d-3) is neither +L(d-2) nor -L(d-2); S = D9.7 settlement proxy of a trade date (volume-weighted close of bars in the settlement window [12:59:30,13:00:00) CT, fallback close of last bar before window end); L = initial daily limit in force from LIMIT_PERIODS in ticks; every bar S uses carries the instrument_id c of d's 08:30 bar; d-1,d-2,d-3 = three prior LIVESTOCK_TRADE_DATES",
+    "inputs": "HE/LE ohlcv-1m bars (closes, volume near 13:00) of d-1,d-2,d-3; 08:30 bar of d; LIMIT_PERIODS, DROPPED_LIMIT_DATES, settlement window (rules.price_limits); LIVESTOCK_FULL_SESSIONS",
+    "literals": [
+     "EXPOSURES=(\"HE\", \"LE\") (k6/limitcont.py:66)",
+     "ENTRY_BAR=time(8, 44) (k6/limitcont.py:67)",
+     "EXIT_LEAD_MINUTES=2 (k6/limitcont.py:68)",
+     "DAYS_BACK=3 (k6/limitcont.py:69)"
+    ],
+    "availability": "d-1 proxy known at d-1 close; event known at 08:30 of d; entry bar 08:44"
+   }
+  ],
+  "entry_rule": "Market intent on the 08:44 bar (fills 08:45) if event; the 08:44 bar must exist and carry c",
+  "exit_rule": "Market intent on first bar >= 12:58 (fills 12:59) or earlier engine D9.7 forced exit",
+  "direction_rule": "BUY after a +limit close, SELL after a -limit close (continuation)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Calendars/tables k6/_calendar.py, k6/_wasde.py (WASDE dates at 12:00 ET = 11:00 CT, from reports/stage_e2b_release_calendar.json), k6/_limits.py (LIMIT_PERIODS from rules.price_limits): calendars and rules constants, not market data",
+   "Settlement proxy and limit amounts come from rules.price_limits constants and ohlcv-1m bars; no separate Databento schema"
+  ]
+ },
+ {
+  "member_ids": [
+   "K6-wasdepost-01"
+  ],
+  "cluster": "K6",
+  "file": "strategy/members/k6/wasdepost.py",
+  "legs_traded": [
+   "ZC (q_c 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "wasde_5min_move_R",
+    "formula": "R = close of 11:14 bar - close of 10:59 bar in ticks on WASDE dates (T=11:00 CT fixed) in GRAIN_FULL_SESSIONS; both bars one instrument_id; R=0 -> no trade",
+    "inputs": "ZC ohlcv-1m; WASDE_DATES",
+    "literals": [
+     "EXPOSURES=(\"ZC\",) (k6/wasdepost.py:43)",
+     "SIGNAL_BAR=time(10, 59) (k6/wasdepost.py:44)",
+     "ENTRY_BAR=time(11, 14) (k6/wasdepost.py:45)",
+     "EXIT_BAR=time(13, 13) (k6/wasdepost.py:46)"
+    ],
+    "availability": "close of the 11:14 bar (11:15 CT)"
+   }
+  ],
+  "entry_rule": "Market intent on the 11:14 bar (fills 11:15) in sign(R)",
+  "exit_rule": "Market intent on first bar >= 13:13 (fills 13:14)",
+  "direction_rule": "side = sign(R) (continuation)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Calendars/tables k6/_calendar.py, k6/_wasde.py (WASDE dates at 12:00 ET = 11:00 CT, from reports/stage_e2b_release_calendar.json), k6/_limits.py (LIMIT_PERIODS from rules.price_limits): calendars and rules constants, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K6-wasdepre-01"
+  ],
+  "cluster": "K6",
+  "file": "strategy/members/k6/wasdepre.py",
+  "legs_traded": [
+   "ZC",
+   "ZS (q_c 1 each)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "wasde_predrift_Dr",
+    "formula": "Dr = close of 10:29 bar - open of 08:30 bar in ticks on WASDE dates (T=11:00 CT) in GRAIN_FULL_SESSIONS; both bars one instrument_id; Dr=0 -> no trade",
+    "inputs": "ZC or ZS ohlcv-1m; WASDE_DATES",
+    "literals": [
+     "EXPOSURES=(\"ZC\", \"ZS\") (k6/wasdepre.py:46)",
+     "DRIFT_START_BAR=time(8, 30) (k6/wasdepre.py:47)",
+     "ENTRY_BAR=time(10, 29) (k6/wasdepre.py:48)",
+     "EXIT_BAR=time(11, 14) (k6/wasdepre.py:49)"
+    ],
+    "availability": "close of the 10:29 bar (10:30 CT)"
+   }
+  ],
+  "entry_rule": "Market intent on the 10:29 bar (fills 10:30) in sign(Dr)",
+  "exit_rule": "Market intent on the 11:14 bar (fills 11:15); missing -> first later bar; through the release",
+  "direction_rule": "side = sign(Dr) (drift continuation)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Calendars/tables k6/_calendar.py, k6/_wasde.py (WASDE dates at 12:00 ET = 11:00 CT, from reports/stage_e2b_release_calendar.json), k6/_limits.py (LIMIT_PERIODS from rules.price_limits): calendars and rules constants, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K7-expiry-01"
+  ],
+  "cluster": "K7",
+  "file": "strategy/members/k7/expiry.py",
+  "legs_traded": [
+   "MBT (q_c 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [],
+  "entry_rule": "On each MBTX expiry date d in CRYPTO_FULL_SESSIONS and not VENDOR_DEGRADED: BUY market intent on bar T_exp-301 (04:59 or 05:59; fills T_exp-300 open); at most one per date",
+  "exit_rule": "Market intent on bar T_exp-2 (09:58 or 10:58; fills T_exp-1); T_exp = 16:00 London in CT (10:00, or 11:00 in mismatch weeks); missing -> first later bar",
+  "direction_rule": "always BUY (long only)",
+  "fixed_clock": true,
+  "extra_data": [
+   "Calendars k7/_calendar.py (CRYPTO_FULL_SESSIONS, VENDOR_DEGRADED, MBTX expiry table with T_exp = 16:00 London in CT): calendars, not market data",
+   "Docstring note: every MBTX date is a roll-blackout date in the research window so expected trade count is 0"
+  ],
+  "calendar_flag_literals": [
+   "ENTRY_FILL_BEFORE_T_MIN=300 (k7/expiry.py:53)",
+   "EXIT_FILL_BEFORE_T_MIN=1 (k7/expiry.py:54)",
+   "T_EXP_SLOTS=(\"10:00\", \"11:00\") (k7/expiry.py:55)",
+   "WINDOW_START_CT=time(5, 0) (k7/expiry.py:56)",
+   "WINDOW_END_CT=time(11, 0) (k7/expiry.py:57)"
+  ]
+ },
+ {
+  "member_ids": [
+   "K7-montrend-01"
+  ],
+  "cluster": "K7",
+  "file": "strategy/members/k7/montrend.py",
+  "legs_traded": [
+   "MBT (q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "hourly_tsmom_s_t",
+    "formula": "s_t = sign(close of bar at t-1min - open of bar at t-60min) in ticks at 20 decision times t = Sunday 18:00..23:00 and Monday 00:00..13:00 (hourly); 0 if either bar missing or instrument_ids differ; bars read only with trade_date d (Monday) from Sunday 17:00 CT to Monday 13:59",
+    "inputs": "MBT ohlcv-1m of Sunday evening / Monday; Monday trade date d in CRYPTO_FULL_SESSIONS, not VENDOR_DEGRADED",
+    "literals": [
+     "MONDAY=0 (k7/montrend.py:58)",
+     "SUNDAY_OFFSET_DAYS=-1 (k7/montrend.py:59)",
+     "FIRST_DECISION=(SUNDAY_OFFSET_DAYS, time(18, 0)) (k7/montrend.py:60)",
+     "LAST_DECISION=(0, time(13, 0)) (k7/montrend.py:61)",
+     "STEP_MINUTES=60 (k7/montrend.py:62)",
+     "LOOKBACK_MINUTES=60 (k7/montrend.py:63)",
+     "SIGNAL_END_BEFORE_T_MIN=1 (k7/montrend.py:64)",
+     "FLAT_AT=(0, time(14, 0)) (k7/montrend.py:65)",
+     "FINAL_EXIT_BEFORE_FLAT_MIN=1 (k7/montrend.py:66)",
+     "DIRECTION=1 (k7/montrend.py:67)"
+    ],
+    "availability": "close of bar t-1 (t CT)"
+   }
+  ],
+  "entry_rule": "On bar t if s_t!=0, account flat with no pending order, and bar t exists with the signal bars' instrument_id: entry in direction s_t (fills t+1); at most 20 entries per date",
+  "exit_rule": "Flatten at close of bar t-1 if open position sign != s_t (fills open of t); final exit on Monday 13:59 bar (fills 14:00)",
+  "direction_rule": "direction = s_t (momentum, DIRECTION=+1)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Calendars k7/_calendar.py (CRYPTO_FULL_SESSIONS, VENDOR_DEGRADED, MBTX expiry table with T_exp = 16:00 London in CT): calendars, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K7-rev2h-01"
+  ],
+  "cluster": "K7",
+  "file": "strategy/members/k7/rev2h.py",
+  "legs_traded": [
+   "MBT (q 1)"
+  ],
+  "legs_read": [],
+  "decision_variables": [
+   {
+    "name": "two_hour_return_r",
+    "formula": "r1 = close of 10:29 bar - open of 08:30 bar (decision 10:30); r2 = close of 12:29 bar - open of 10:30 bar (decision 12:30), ticks; 0 if either bar missing or instrument_ids differ; target = -sign(r) x q",
+    "inputs": "MBT ohlcv-1m bars of CT date d only; CRYPTO_FULL_SESSIONS, not VENDOR_DEGRADED",
+    "literals": [
+     "BLOCK_MINUTES=120 (k7/rev2h.py:55)",
+     "BLOCKS=3 (k7/rev2h.py:56)",
+     "DECISION_BLOCKS=(1, 2) (k7/rev2h.py:57)",
+     "SIGNAL_END_BEFORE_T_MIN=1 (k7/rev2h.py:58)",
+     "FINAL_EXIT_BEFORE_END_MIN=1 (k7/rev2h.py:59)",
+     "WINDOW_END_AFTER_BLOCKS_MIN=1 (k7/rev2h.py:60)",
+     "DIRECTION=-1 (k7/rev2h.py:61)"
+    ],
+    "availability": "close of bar at decision-1 (10:30 / 12:30 CT)"
+   }
+  ],
+  "entry_rule": "At 10:30 and 12:30 (decided on the close of the bar at decision-1): hold if target equals position; else flatten (fills decision-time open), then entry on the decision bar if flat and bar exists with signal bars' instrument_id (fills +1 min); at most 2 entries per date",
+  "exit_rule": "Final exit: market intent on the 14:29 bar (fills 14:30)",
+  "direction_rule": "contrarian: -sign(r) (DIRECTION=-1)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Calendars k7/_calendar.py (CRYPTO_FULL_SESSIONS, VENDOR_DEGRADED, MBTX expiry table with T_exp = 16:00 London in CT): calendars, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K8-flight-01 (trials H30 and HEOD; ordinals 1,2)"
+  ],
+  "cluster": "K8",
+  "file": "strategy/members/k8/flight.py",
+  "legs_traded": [
+   "MGC (q_c 1)"
+  ],
+  "legs_read": [
+   "MES (signal leg, never traded)"
+  ],
+  "decision_variables": [
+   {
+    "name": "mes_5min_return_r_k",
+    "formula": "r_k = (c1-c6)/c6, c1,c6 = closes (integer ticks) of MES bars at t_k-1 and t_k-6, for 77 five-minute blocks t_k = 08:35..14:55 (k=1 uses the 08:34 and 08:29 bars); both present with one instrument_id, c6>0",
+    "inputs": "MES ohlcv-1m bars of CT date d",
+    "literals": [
+     "TRADED=\"MGC\" (k8/flight.py:69)",
+     "SIGNAL=\"MES\" (k8/flight.py:70)",
+     "VARIANTS=(\"H30\", \"HEOD\") (k8/flight.py:71)",
+     "BLOCK_CLOCK_START=time(8, 30) (k8/flight.py:75)",
+     "BLOCK_MINUTES=5 (k8/flight.py:76)",
+     "BLOCKS=77 (k8/flight.py:77)",
+     "END_BAR_BEFORE_T_MIN=1 (k8/flight.py:78)",
+     "START_BAR_BEFORE_T_MIN=6 (k8/flight.py:79)",
+     "REFERENCE_DATES=20 (k8/flight.py:80)",
+     "MIN_VALUES=1200 (k8/flight.py:81)",
+     "TAIL_DIVISOR=200 (k8/flight.py:82)",
+     "H30_INTENT_AFTER_FILL_MIN=29 (k8/flight.py:83)",
+     "LAST_EXIT_BAR=time(15, 4) (k8/flight.py:84)"
+    ],
+    "availability": "close of MES bar t_k-1 (t_k CT)"
+   },
+   {
+    "name": "tail_quantile_Q_d",
+    "formula": "Q(d) = m-th smallest of all defined r_k over the 20 most recent FLIGHT_DATES strictly before d, m = ceil(0.005 n) = (n+199)//200; need n>=1200 reference values; warm-up rule; trigger at t_k if r_k <= Q(d) and r_k < 0",
+    "inputs": "MES ohlcv-1m of 20 prior dates (FLIGHT_DATES = equity and metals full sessions)",
+    "literals": [
+     "TRADED=\"MGC\" (k8/flight.py:69)",
+     "SIGNAL=\"MES\" (k8/flight.py:70)",
+     "VARIANTS=(\"H30\", \"HEOD\") (k8/flight.py:71)",
+     "BLOCK_CLOCK_START=time(8, 30) (k8/flight.py:75)",
+     "BLOCK_MINUTES=5 (k8/flight.py:76)",
+     "BLOCKS=77 (k8/flight.py:77)",
+     "END_BAR_BEFORE_T_MIN=1 (k8/flight.py:78)",
+     "START_BAR_BEFORE_T_MIN=6 (k8/flight.py:79)",
+     "REFERENCE_DATES=20 (k8/flight.py:80)",
+     "MIN_VALUES=1200 (k8/flight.py:81)",
+     "TAIL_DIVISOR=200 (k8/flight.py:82)",
+     "H30_INTENT_AFTER_FILL_MIN=29 (k8/flight.py:83)",
+     "LAST_EXIT_BAR=time(15, 4) (k8/flight.py:84)"
+    ],
+    "availability": "reference dates strictly before d"
+   }
+  ],
+  "entry_rule": "FIRST trigger of the day not skipped by the C6 release guard on MGC uses the day's one entry: BUY MGC market intent on MGC bar t_k-1 (fills t_k open); no entry while MGC holds a position or pending order",
+  "exit_rule": "H30: market intent on MGC bar at min(T_e+29, 15:04); HEOD: on the 15:04 bar; T_e = CT open of the bar at which the position first shows; resent while refused; engine flatten at F 15:08",
+  "direction_rule": "always BUY MGC after an extreme negative MES 5-min move",
+  "fixed_clock": false,
+  "extra_data": [
+   "Calendars k8/_calendar.py (FLIGHT_DATES, OILCAD_DATES, WKNDBTC_DATES) and release-guard table k8/_releases.py (GUARD_ROWS from reports/stage_e2b_release_calendar.json; C6 skip of fills within [R,R+2min)): calendars, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K8-oilcad-01"
+  ],
+  "cluster": "K8",
+  "file": "strategy/members/k8/oilcad.py",
+  "legs_traded": [
+   "6C (q_c 1)"
+  ],
+  "legs_read": [
+   "MCL (signal leg, never traded)"
+  ],
+  "decision_variables": [
+   {
+    "name": "mcl_5min_return_r_t",
+    "formula": "r_t = (c1-c6)/c6 Python float from integer-tick closes of MCL bars at t-1 and t-6 at decision times t = 08:05,08:10,...,13:25 (65/day); both present, one instrument_id, c6>0",
+    "inputs": "MCL ohlcv-1m",
+    "literals": [
+     "TRADED=\"6C\" (k8/oilcad.py:55)",
+     "SIGNAL=\"MCL\" (k8/oilcad.py:56)",
+     "FIRST_DECISION_CT=time(8, 5) (k8/oilcad.py:62)",
+     "LAST_DECISION_CT=time(13, 25) (k8/oilcad.py:63)",
+     "STEP_MIN=5 (k8/oilcad.py:64)",
+     "LAST_BAR_BEFORE_T_MIN=1 (k8/oilcad.py:65)",
+     "FIRST_BAR_BEFORE_T_MIN=6 (k8/oilcad.py:66)",
+     "REFERENCE_DATES=20 (k8/oilcad.py:67)",
+     "MIN_VALUES=1000 (k8/oilcad.py:68)",
+     "Z_THRESHOLD=2.0 (k8/oilcad.py:69)",
+     "EXIT_AFTER_FILL_MIN=14 (k8/oilcad.py:70)",
+     "DECISION_TIMES_CT=decision_times() (k8/oilcad.py:88)"
+    ],
+    "availability": "close of MCL bar t-1 (t CT)"
+   },
+   {
+    "name": "z_score_z_t",
+    "formula": "z_t = r_t / s(d), s(d) = statistics.stdev (n-1) of every defined r_t over the 20 most recent OILCAD_DATES strictly before d; n>=1000; s=0 -> no trade; trigger |z_t| >= 2.0",
+    "inputs": "MCL ohlcv-1m of 20 prior dates",
+    "literals": [
+     "TRADED=\"6C\" (k8/oilcad.py:55)",
+     "SIGNAL=\"MCL\" (k8/oilcad.py:56)",
+     "FIRST_DECISION_CT=time(8, 5) (k8/oilcad.py:62)",
+     "LAST_DECISION_CT=time(13, 25) (k8/oilcad.py:63)",
+     "STEP_MIN=5 (k8/oilcad.py:64)",
+     "LAST_BAR_BEFORE_T_MIN=1 (k8/oilcad.py:65)",
+     "FIRST_BAR_BEFORE_T_MIN=6 (k8/oilcad.py:66)",
+     "REFERENCE_DATES=20 (k8/oilcad.py:67)",
+     "MIN_VALUES=1000 (k8/oilcad.py:68)",
+     "Z_THRESHOLD=2.0 (k8/oilcad.py:69)",
+     "EXIT_AFTER_FILL_MIN=14 (k8/oilcad.py:70)",
+     "DECISION_TIMES_CT=decision_times() (k8/oilcad.py:88)"
+    ],
+    "availability": "reference strictly before d"
+   }
+  ],
+  "entry_rule": "Market intent on the 6C bar at t-1 (fills t open) when |z_t|>=2.0, flat on 6C, 6C bar present, fill minute not in a 6C release-guard interval",
+  "exit_rule": "Market intent closing the position on first present 6C bar >= T_e+14 (fills nominally T_e+15)",
+  "direction_rule": "BUY if c1>c6, SELL if c1<c6 (6C follows MCL's sign)",
+  "fixed_clock": false,
+  "extra_data": [
+   "Calendars k8/_calendar.py (FLIGHT_DATES, OILCAD_DATES, WKNDBTC_DATES) and release-guard table k8/_releases.py (GUARD_ROWS from reports/stage_e2b_release_calendar.json; C6 skip of fills within [R,R+2min)): calendars, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K8-wkndbtc-01"
+  ],
+  "cluster": "K8",
+  "file": "strategy/members/k8/wkndbtc.py",
+  "legs_traded": [
+   "MNQ (q_c 1)"
+  ],
+  "legs_read": [
+   "MBT (signal leg, never traded)"
+  ],
+  "decision_variables": [
+   {
+    "name": "weekend_btc_move_G",
+    "formula": "G = P_S/P_F - 1 signed as integer tick difference P_S - P_F; P_F = close of MBT 14:59 bar on CT date d-3 (Friday), P_S = close of MBT 17:59 bar on CT date d-1 (Sunday, trade_date d); Monday d and Friday d-3 both in WKNDBTC_DATES; both bars one instrument_id; G=0 -> no trade",
+    "inputs": "MBT ohlcv-1m Friday 14:59 and Sunday 17:59 bars",
+    "literals": [
+     "TRADED=\"MNQ\" (k8/wkndbtc.py:51)",
+     "SIGNAL=\"MBT\" (k8/wkndbtc.py:52)",
+     "MONDAY=0 (k8/wkndbtc.py:57)",
+     "FRIDAY_OFFSET_DAYS=-3 (k8/wkndbtc.py:58)",
+     "SUNDAY_OFFSET_DAYS=-1 (k8/wkndbtc.py:59)",
+     "FRIDAY_BAR_CT=time(14, 59) (k8/wkndbtc.py:60)",
+     "SUNDAY_BAR_CT=time(17, 59) (k8/wkndbtc.py:61)",
+     "EXIT_BAR_CT=time(14, 58) (k8/wkndbtc.py:62)"
+    ],
+    "availability": "close of the MBT Sunday 17:59 bar (18:00 CT Sunday)"
+   }
+  ],
+  "entry_rule": "Market intent on the MNQ 17:59 bar of Sunday (trade_date d), fills 18:00 open; only with no position/pending order; skipped if 18:00 falls in an MNQ guard interval",
+  "exit_rule": "Market intent on first present MNQ bar >= 14:58 of CT date d (fills nominally 14:59)",
+  "direction_rule": "BUY MNQ if G>0, SELL if G<0",
+  "fixed_clock": false,
+  "extra_data": [
+   "Calendars k8/_calendar.py (FLIGHT_DATES, OILCAD_DATES, WKNDBTC_DATES) and release-guard table k8/_releases.py (GUARD_ROWS from reports/stage_e2b_release_calendar.json; C6 skip of fills within [R,R+2min)): calendars, not market data"
+  ]
+ },
+ {
+  "member_ids": [
+   "K9-anncday-01"
+  ],
+  "cluster": "K9",
+  "file": "reports/stage_e10_catalog_K9.md (draft, no code; entry at lines 195-300)",
+  "legs_traded": [
+   "MNQ (q_c 1)",
+   "M2K (q_c 3)",
+   "MYM (q_c 3)"
+  ],
+  "legs_read": [],
+  "decision_variables": [],
+  "calendar_flag_literals": [
+   "EC-K9 date set (C9: 60 dates; 58 after R-12 exclusions of early-close/halt/closure dates, in the window 2025-07-03 and 2026-04-03)"
+  ],
+  "entry_rule": "BUY q_c by market intent on the 17:59 CT bar of the evening before announcement trade date d (Sunday 17:59 when d is a Monday), fills 18:00 CT open",
+  "exit_rule": "Market intent at 14:58 CT on d, fill 14:59; early-close, early-halt and closure dates excluded; F governs an unscheduled halt; hold about 21 h",
+  "direction_rule": "always BUY",
+  "fixed_clock": true,
+  "extra_data": [
+   "EC-K9 announcement calendar: FOMC statement days, NFP, GDP first and last estimates, ISM manufacturing, earlier of CPI/PPI per month; official schedules (calendar, not ohlcv-1m); some dates [unverified: rescheduled by the 2025 appropriations lapse]; no released value read",
+   "Catalog states signal is calendar membership only"
+  ]
+ }
+]

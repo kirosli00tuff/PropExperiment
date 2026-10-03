@@ -383,3 +383,26 @@
   with E.10's corrected script. Stage E.11 drafts the v2 design and
   builds its pipeline on synthetic data, with no market data, purchase
   or training, as one long build session.
+- 2026-10-03 (user, planning chat): V22. Income path and data plan,
+  after the quant-integration research report. The report puts a
+  realistic net Sharpe at 0.8 to 1.8, about $1.5K to $3.5K a month across
+  5 x 150K XFAs. $10K a month on Topstep alone needs a net Sharpe near
+  3.4 ($95 a day per account at about $450 of daily risk, 10% of the
+  $4,500 MLL), so the user does not plan around it. Path: first earn five
+  figures from XFA payouts, or enough to fund a small personal micro
+  futures account, then move the same models to personal accounts, where
+  income grows with capital and no MLL applies. Data: more history, not
+  finer data (no tick or order-book purchases; holds run 60 minutes or
+  longer). The first purchase spends only the funds already in the two
+  Databento accounts (acct-1 about $28 usable, acct-2 $125 after the cap
+  raise to about $249.67): the v2 freeze session quotes a priority subset
+  of the 2019-2024 one-minute history (most liquid products, lowest cost
+  relative to volatility) that fits that budget. Gate 0, the pre-cost
+  component audit, runs on that subset first. The rest of the 28 products
+  and a free quote for full-size contracts back to 2010 come later, and
+  only if Gate 0 finds a gross edge. The report's findings go into the v2
+  freeze (Gate 0, ridge primary with shallow LightGBM as challenger,
+  nested CPCV with embargo, PBO, DSR at the full trial count, t >= 3,
+  holds of 60 minutes or more at 1 to 3 decision times, cost gate
+  k in {1.5, 2, 3}, drawdown-distance sizing, payout-mechanics
+  simulation, kill switches, and the Live Funded Account API ban).

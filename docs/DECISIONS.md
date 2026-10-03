@@ -406,3 +406,40 @@
   holds of 60 minutes or more at 1 to 3 decision times, cost gate
   k in {1.5, 2, 3}, drawdown-distance sizing, payout-mechanics
   simulation, kill switches, and the Live Funded Account API ban).
+- 2026-10-03 (user, planning chat): V23. After E.11. The user accepts
+  all 19 of the lead's V2.12 recommendations in
+  docs/STAGE_E_ML_V2_DESIGN.md: (1) the gross cost-gate reading
+  (hurdles 1.5c / 2c / 3c, tau 0.167) and Gate 0 at a gross mean of
+  1.5c on the top-20% confident trades, t >= 3, Holm 0.05 with family A
+  in the Holm family, at least 30 trades; (2) the phase-1 subset rule as
+  written; (3) the CME maintenance margin as the volatility proxy, the
+  frozen E|m_1| only if CME's pages block the fetch; (4) phase 1 covers
+  the training window only, the holdout-2 chunks deferred to phase 2;
+  (5) a free quote for the 2010 extension at the freeze, bought only
+  after a Gate 0 pass and with a D4 start-rule amendment; (6, 7) the
+  decision clock, the horizons and the roll-blackout rule as written;
+  (8) the signal library as written, plus the EC-K9 calendar for
+  2019-2024 built from official pages in the freeze session so
+  K9-anncday-01 enters; (9) the research-window warm-up skips the sealed
+  gap; (10) the grids as written, 45 configurations; (11) the sizing
+  constants as written plus the release-window rule (no new entry with
+  a fill in [release - 5 min, release + 30 min) while open
+  lot-equivalents exceed half the tier); (12) the 150K MLL, scaling
+  schedule and reset price read from Topstep's public pages at the
+  freeze; (13) the kill-switch thresholds as written; (14) the success
+  criteria as written, with the 1.5 x slippage sensitivity a
+  must-survive condition in the holdout-2 registration; (15) the payout
+  policy as written; (16) deployment (a): a frozen model, weights fixed
+  and hashed, never retrained live, replacing the "deployed bot runs
+  plain rules" decision of 2026-09-24; (17) the ThinkPad as the compute
+  host; (18) whether to accept a Live Funded call-up is decided before
+  the first funded account; (19) the purchase: the user pre-approves
+  spending the funds already in the two Databento accounts (acct-1's
+  headroom, about $28.41, first, then acct-2's $125 after
+  ACCOUNT_2_CAP_USD rises to $249.67) on the phase-1 subset in Stage
+  E.12, after a fresh quote logged in that session, with no further
+  approval. No spend beyond those funds. The ML route's slot in the
+  research-window Holm family stays unused: v2's research-window read is
+  a screen (t >= 1.0), and confirmation rests on the nested
+  out-of-sample t >= 3, the DSR at N_total and the holdout-2 read. Stage
+  E.12 freezes v2, buys phase 1, runs Gate 0 once, and stops.

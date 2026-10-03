@@ -30,6 +30,7 @@ From 2026-09-23 on, each new prompt is committed here before it is sent.
 | E.9 | STAGE_E.9.md | Opus 5.5, xhigh | 2026-10-01 | K8 cross-market alone: legs per V16, event and clock checks, code, Fable-audit (cross-leg look-ahead) and freeze three members, screen four trials; no purchase |
 | E.10 | STAGE_E.10.md | Opus 5.5, xhigh | 2026-10-02 | Low-frequency full-session holds: literature research and a draft K9 catalog built around the cost wall, Fable adversarial review; no market data, no purchase |
 | E.11 | STAGE_E.11.md | Opus 5.5, xhigh (Fable max design review) | 2026-10-03 | ML route v2, a quant-style portfolio model: design draft and full pipeline build on synthetic data, leakage canaries, runtime probe, per-account key fix (harness v7); revised before launch with the research findings and V22 (Gate 0, ridge first, CPCV, drawdown-distance sizing, payout simulation); no market data, no purchase, no training |
+| E.12 | STAGE_E.12.md | Opus 5.5, xhigh (Fable xhigh freeze review and Gate 0 verification) | 2026-10-03 | ML route v2 freeze with V23 applied, harness v8 (acct-2 cap, key strip, training-window purchase), phase-1 purchase within the funds on hand, c/sigma filter, Gate 0 run once, free quotes for later phases; then stop |
 
 Model names are as written in each prompt at the time. The routing rules
 that apply today are in CLAUDE.md.

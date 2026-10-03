@@ -350,3 +350,24 @@
   DATABENTO_API_KEY1 and DATABENTO_API_KEY2, which data/config.py must be
   taught to select by account before any purchase (it reads only
   DATABENTO_API_KEY today, so every Databento call is refused until then).
+- 2026-10-02 (user, planning chat): V20. ML route v2, a quant-style
+  model, replaces running the frozen ML route as designed. After K9
+  (E.10 to E.12), a design session writes and freezes "ML route v2"
+  before any training data is bought. It follows a quant trader's
+  workflow, with the program's own technology: signal research (candidate
+  signals), signal construction and normalization, alpha combination into
+  one score per product per session, a transaction-cost model with a
+  turnover penalty, risk-scaled position sizing inside the lot limit and
+  the trailing drawdown, portfolio construction across products under the
+  Topstep constraints (flat by 15:08 CT), walk-forward testing with nested
+  model selection, a minimum trade count (V18), holdout-2 as the final
+  gate, then paper trading before any account. Candidate signals include
+  every K1 to K8 family and every K9 family as features, all of them, not
+  only those that looked promising: choosing signals by their Stage E
+  research-window results would select on the test data. The model
+  chooses and weights signals on the training window only. Open for the
+  user at the design session: deploying a frozen model (weights fixed and
+  hashed, never retrained live) in place of the "deployed bot runs plain
+  rules" decision of 2026-09-24, and the compute host. The training window
+  overlaps the 2019-2024 data already read for K4's and K5's
+  confirmations (MCL, NG, MGC, MHG), which the design records.

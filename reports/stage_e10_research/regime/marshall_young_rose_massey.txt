@@ -1,0 +1,674 @@
+Copyright is owned by the Author of the thesis. Permission is given for
+a copy to be downloaded by an individual for the purpose of research and
+private study only. The thesis may not be reproduced elsewhere without
+the permission of the Author.
+   Candlestick Technical Trading
+ Strategies: Can They Create Value
+               for Investors?
+
+
+
+
+      A Thesis Presented in Fulfilment of the
+Requirements for the Degree of Doctor of Philosophy
+in Finance at Massey University, Palmerston North,
+                  New Zealand.
+
+
+
+
+            Benjamin Richard Marshall
+
+
+                       2005
+                                    Abstract
+
+
+
+
+This thesis examines the profitability of the oldest known form of technical analysis,
+
+candlestick trading strategies. Unlike traditional technical analysis which is based
+
+around close prices, these strategies generate buy and sell signals that are based on
+
+the relationship between open, high, low and close prices within a day and over
+
+consecutive days.    Traditional technical analysis, which has been the focus of
+
+previous academic research, has a long-term focus with positions being held for
+
+months and years. In contrast, candlestick technical analysis has a short-term focus
+
+with positions being held for ten days or less.       This difference is significant as
+
+surveys of market participants indicate that they place 50 per cent more importance
+
+on technical analysis for horizons of a week than they do for horizons of a year.
+
+
+
+
+Candlestick technical analysis was developed on rice data in J apan in the 1 700s so
+
+the tests in this thesis, using Dow Jones Industrial Index (DHA) component stock
+
+data for the 1 992 - 2002 period, are clearly out of sample tests. These tests are more
+
+robust to criticisms of data snooping than is the existing technical analysis literature.
+
+Proponents of technical analysis in the Western world would have had the
+
+opportunity to have become aware of candlestick trading strategies by this study's
+
+timeframe and would also have had the opportunity to source the data and software
+
+necessary to implement these strategies.     So, a direct test of market efficiency is
+
+possible. This was not achievable by authors of many previous papers, who used
+
+data starting in the early 1 900s and techniques that could not have been implemented
+
+at that time.
+
+
+
+
+                                                                                       11
+Using an innovative extension of the bootstrap methodology, which allows the
+
+generation of random open, high, low and close prices, to test the profitability of
+
+candlestick technical trading strategies showed that candlestick technical analysis
+
+does not have value. There is no evidence that a trader adhering to candlestick
+
+technical analysis would out-perfonn the market.
+
+
+
+
+                                                                                 111
+                            Acknowledgements
+
+
+
+
+Completion of this thesis would have been impossible without the loving support of
+
+my wife, Lauren. I owe her a huge amount.
+
+
+
+
+The tough times, which are always part of research, were able to be overcome
+
+without undue stress due to my faith. The verse "I can do all things through him who
+
+gives me strength" (Philippians 4 : 1 3 ) was a constant source of inspiration.
+
+
+
+
+This research was supported financially by the Foundation for Research in Science
+
+and Technology (FRST) in the form of a Top Achiever Doctoral Scholarship. Their
+
+generosity is much appreciated.
+
+
+
+
+My pnmary supervIsor, Associate Professor Martin Young, has contributed an
+
+immense amount to this thesis. In my view, Martin is the ultimate supervisor. He
+
+always strikes a very good balance between giving direction and not stifling
+
+creativity.
+
+
+
+
+I am incredibly grateful to Professor Lawrence Rose, my secondary supervisor, for
+
+his help on this thesis. Despite LaITy'S busy schedule he constantly gave in-depth
+
+feedback and guidance.
+
+
+
+
+The willingness of Professor Chris Moore to provide the resources required to
+
+conduct such quantitative research is very much appreciated.
+
+
+                                                                                  IV
+Finally, I want to note my sincere appreciation to Rock and Jared Cahan for their
+
+assistance with my Matlab queries. Rock, in particular, will never know how much I
+
+value his work in this area.
+
+
+
+
+                                                                                 v
+                                                                                                            Table of Contents
+
+
+
+
+Abstract                ........................................... ................... . . . . . .......... . . ................. . .......................                                                                           ii
+Acknowledgements . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . . .. . . . . . . . . . . . . iv
+Table of Contents . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . vi
+List of Tables . . . ...... . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ix
+List of Figures . . . .. . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . xi
+Chapter One: Introduction .                                                        ...                                              .. .
+                                                                                                       ......................................             .             . ..                    . . . .                  .       ..     1    .....                   ......                  .        ........                           ...             ...               ..          ........
+
+
+
+Chapter Two: Literature Review . .                                                                   .                  ...     . .       ..........          .       ............. . ... .                         . . .. 10
+                                                                                                                                                                                                                 ..............                                              ..........                              .           ...              .......                          ...         .
+
+
+
+2. 1 . Introduction . . . . . .                 .   .   .    .       .                  .
+                                                                         .......................         .                          . . . . . .. . .
+                                                                                                                                                   ........                  .............              . .              .           10
+                                                                                                                                                                                                                                  .....                   .       ..         ....                .....                   .   ......                      ..           ..........
+
+
+
+2.2. Traditional Finance                                            .           .
+                                                                          ............                                  .....       . . . . .. . .
+                                                                                                                                          ..........................          . . ..                    .                .      . 11
+                                                                                                                                                                                                                                 ..          .           ..          .       .       .....            ..             ..          .....                   ...........                                 .
+
+
+
+    2.2. 1 . Background                                         .
+                                                             ...............                  .. .              ..............                                . ...       . .
+                                                                                                                                                                         ............................ ..                      ... 1 1                                        .....               ..          .........                           ...                  .......
+
+
+
+    2.2.2. Random Walk Hypothesis . .                                                                          ... . . . . . . .
+                                                                                                                               ....            ...          ........      . . . ..         ..       ..      ... . . 1 1
+                                                                                                                                                                                                             .       .        ..         ...              ..         .......                     ..          .       .       ........                                      ..          ..      ...
+
+
+
+    2.2 . 3. Efficient M arket Hypothesis                                                              . . ...                . . . . . . . . ...
+                                                                                                                                              .........                  .    .            .....  . ....         .   .        . 14
+                                                                                                                                                                                                                              .      ..          ....                ...             ...         .               .......                     ...                           . . ....                ..
+
+
+
+    2.2.4. Empirical Evidence against Market Efficiency . . . . . .                                                                                                               .........                     . .. . . 16              .       .            .      ..          ........                                                    ......                        ..              .    ..
+
+
+
+2.3. Behavioural Finance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . 20
+    2.3 . 1 . Background . . . . . . . . . . . . . .                 .    ..       .       .       ..       ..     . . . .
+                                                                                                                         ...          .       ....         ..         .. . . .. . . .
+                                                                                                                                                                 ........                  ...           .       ..       . . . 20
+                                                                                                                                                                                                                             .......... . . . . . .                                           ..         ..          ..          .           ...             ..       .....                     .       .
+
+
+
+    2.3 . 2 . Psychological Biases . .                                                  . . . .... . .. . . .
+                                                                                                         ..             .........                  ...          ....  . . . . . . . . . . .. . . 20
+                                                                                                                                                                              ...                   ..       ..           ....               .           ..          ......                  ....                    .           .           .           ...               .       ...          ...
+
+
+
+    2 . 3 . 3 . Limits to Arbitrage . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+    2.3 .4. The Stock Market as a Complex Adaptive System . .                                                                                                                   .                 . . . . . . . . 23                                             .       ..          .......                 ...... . .                          ...              .        ..              ..       .
+
+
+
+2 .4. Technical Analysis                                  .                   .. . . .
+                                                                          ........                      .........             . . . . .. ......            ..    ..         . . ... . .
+                                                                                                                                                                          ...........                            ...          . . 24
+                                                                                                                                                                                                                                 .       ..          .           ....                .....           .       ....                        .       ....                ........                       .
+
+
+
+    2.4. 1 . Background . .                                  ....     . ..        ............   .. . . . . . . . .. . . ....                 .......                ...            . . .
+                                                                                                                                                                                  .....             ..       ..          .      . . 24
+                                                                                                                                                                                                                                 .       ....                ..              .       .   .......                     ...             ....                ............
+
+
+
+     2.4.2. Theoretical Foundations . . . . . . . .                                                                      ...    . . . ..
+                                                                                                                                      .       ....         ... ...        .   . . . . . . . . . . . 25
+                                                                                                                                                                                  ..       .......                   .       .       .           ......                          .       .....           ....                    ....                .       .        .        ...              .       .
+
+
+
+     2.4.3. Characteristics of Markets to which Technical Analysis is Applied .. .                                                                                                                                              . . 28                                                                                                                                     .       .....
+
+
+
+     2.4.4. Empirical Tests Consistent with the Efficient Market H ypothesis ... . 30                                                                                                                                                                                                                                                                 ...                      ...             ....
+
+
+
+          2.4.4. 1 . Filter Rule Tests . .                                      . . .. . . . . . ... . . . .. . . . .. . . ...
+                                                                                                            ..          .....             ..       .       .    ....          .       ..    .       ..               .        .. 3 1
+                                                                                                                                                                                                                             ....                ...             ...                 .   ...         .       .           .....                   .       ..                ......                       .
+
+
+
+          2.4.4.2. Moving Average and Trading Range Break-Out Tests . . . . . . . . . . . . . 32                                                                                                                                                                                                                     .           ..               ...             .                ...              ..
+
+
+
+          2 .4.4. 3 . Genetic Programming . . . . . . . . . . . .                                                                 . . . . . . . . . . . . . . . . . . . . 37
+                                                                                                                                      .        ..      ...           .            .    .         .....                   .       ...                 .       ..          ..          .   ...         ...                 .       .       .       ...             ....              ..                   .
+
+
+
+          2 .4.4.4. Dow Theory . . . . .                                               .  .    ..      . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
+                                                                                                        ....             .    . . . ....               ......             .....             .        ....                .       ...                 .       ..          ..          .   ..      ..          .           .                       .       .       .    .            . ..         ..
+
+
+
+          2 .4.4. 5 . Support and Resistance . . . . . . . .                                                                          . .. . .. .. ....
+                                                                                                                                              ...      ..       ...       .       .   . .. . .. ...
+                                                                                                                                                                                       .         .......                         ... 40              .       .           .           .           .....                   .           ..          ...                 ..                . . ....
+
+
+
+          2 .4.4.6. Chart Patterns . . . . . . . . . . . . . . . . . . . . .                   .        .           .    ..           .        .       ....     .    .    .     . .
+                                                                                                                                                                                  ....          . ..      . ...          .  . . 41
+                                                                                                                                                                                                                                 ..          .       .......                         .......                 .       ....... . . .                               ..        .....                ..
+
+
+
+          2 .4.4.7. Return Anomalies . . .                                          .... . . . . . .                            . . . . . . . . . . . . . . . . . ... . . 44
+                                                                                                                             .....                     .    .    ..       .       .    ..   .....                        .       .       ..          .       .           ....            .       ..          .           .....                   ..              ..                ..          ...
+
+
+
+               2.4.4.7. 1 . Short Term . . . .                                          . . . . . . .. . . . . . . . . . . . . . .
+                                                                                                        .       .        ........                      .       ....       .       .   . .......
+                                                                                                                                                                                       ..        ..          ..          .  . 44                             .       ...             .   .    ......                     ....                                        . . . .. . .               ...
+
+
+
+               2.4.4.7.2. Intermediate Term .                                                    . . . .. . .. . . .                      .    ......            .. . . . . . . . . . . . . . . .. . . 44
+                                                                                                                                                                          ..          ..        ...          .        .          ...             ..          .......                     .       ..          .                       .           .           ..        .           ...          ..
+
+
+
+               2.4.4.7 . 3 . Long Term . . .                                            .. ... . . .   ..       ..          . . . . . . . . . . . . . . . . . . . . . . . 46
+                                                                                                                         ........                      .         .       ..       .    . . . . ..            .           .       ....                .       .           ....            ....            ..                  .           .                   ....              .       . ..         .
+
+
+
+     2 . 5 . Empirical Tests not Consistent with the Efficient Market Hypothesis . . . . . . . 47                                                                                                                                                                                                                                                                              ...             .
+
+
+
+          2 .5 . 1 . Filter Rule Tests . . . . . . . . . .                                         ...          .       .    ...  . . . . . . . . . . . . . . . . . . . . . . . . . . . . 48
+                                                                                                                                          .    ..          ..    ..       .............                                  .       .       .       ..          .           .           .   .    ...            .       ..          .       .       .               .                     ..
+
+
+
+          2 . 5 .2. Moving Average and Trading Range Break-Out Tests . . . . . . . . . . . . . . 49                                                                                                                                                                                              ..              .       ...                             .            .            ...         ...
+
+
+
+         2 . 5 . 3 . CRISMA . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+                                                             .       ..       .        .       .       ..       .       ....          ..       ..          ..    ..       ...          ..       .   ...                          .   51  .               .           .           .       ..              .       .           .       .           .       ...               ... . . ....
+
+
+
+          2 . 5 .4. Neural Networks . . . . . . . . . . . . . . .                                      ..       .        .    . . . .. .  .    .           ..   . . . . . . . . . . . . . . . . . . . 52
+                                                                                                                                                                 ..       .       .    ........                      ..          .       .       ..          .....                       .    ...            ..          ....                    .       .                             .            ..
+
+
+
+          2 . 5 . 5 . Nearest Neighbour Techniques . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 53                                                      ....         ..        .    ...             .    ...            .           .           .       ..       ..         .       ..                  ..                  .       .               .         .           ..       ...
+
+
+
+         2 . 5 .6. Genetic Programming                                                        . . .. . . . .. . .... .. . . ...........                     .    .        .       .... . . . . . . . . . . . 54
+                                                                                                                                                                                            ...          .           ....            .                       .           .    ..         .   .....                   ..          .                       .           ....              ....
+
+
+
+     2.6. Candlestick Charting . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 55
+                                                                                                   ...          ..      ....              ....         ...       .        .       .    .                 ..          ..          .       .       ....                .           .       ...                                                             .       .    .        .       ..       ..
+
+
+
+     2.7. Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+                                                        ..       .       ..       ..       .       .        .       .....         ...          ..      ...       ....             ...       ..           . ...               .  . . 58   .       ....                .           ....                ..              .       .                               .        ........
+
+
+
+Chapter Three: Data and Methodology . . . . . . . . . . . . . . . . . . .                                                                              ...       ..       .     . . . . . . . . . . . . 60
+                                                                                                                                                                                      ..    ..       ..                          .   .           .           ...              ..         .....               .       .           .           ..          .       .     ..          .       .    ...
+
+
+
+3 . 1 . Introduction . . . . . . . . . . .    . . . ..       .       .        ....          .  .       .. .
+                                                                                                       ....             ... . .       ......  . ..         .....              . . . . . . . . . . . . . . . . 60
+                                                                                                                                                                                      ......             ..          ......                      .           .............                                   .                   .               .               .    ..               ..       ...
+
+
+
+3 .2. Data . . . . . . .  .   .   ..   ..... . . . . ...
+                                           ..   . . . . ....                       ..          .     . . .. .. . . ..... .. .
+                                                                                                       ..       .       ...           ...........                        ....            .. .. ... ... .. ... 61
+                                                                                                                                                                                       ....              ...                 ...             .       .                       ..          .    .......                            .           ..                  .             .           ..
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                            VI
+     3 . 2. 1 . Data Used . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+                                                      .   .    ..               .         ..      ..    .    ..   ...           ..          ..        .   .    .      .    .   ..   ..        .   ..  ...           ...       .     61..       ........                ......           .......               ......
+
+
+
+     3 .2.2. Data Snooping                          ...         ......                            .. . . .
+                                                                                          ....................                          .. .          .   ..   ...      . . . . . . . . . . . . . 63
+                                                                                                                                                                          ........            .   ...                 .........                        ...       .    .    ..      .        .   ....              ..   ..
+
+
+
+3 . 3 . Methodology . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 66
+                                                  .   .   .    ..       .             .       .   ....       .. .      .        ..          ..        .   ..               .    .    .    .           ..              .           ..        ...             .     .    .    ...         ..       ....         .....
+
+
+
+     3 . 3 . 1 . Candlestick Patterns . . . ..... . . . . . . . . . . . . . . . . . . . . ..      .     ..              .           .                   .. . . . . . ....      ..   ..        .   .....                           . 66
+                                                                                                                                                                                                                               ....             ..          ..   .    .     ....        ........ ......
+
+
+
+     3 .3 .2 . Measures of Candlestick Trading Strategy Profitability . . . . . . . . . . . . . . . . 7 1                                                                                                                                                  .     .    .    ...              .   ..       .        ..   ..
+
+
+
+          3 . 3 . 2. 1 . T-Test .         . . . . . . . .. . . . . . . . . . . . . .
+                                                          .....         ....              .       .     ..          .       .           ..  .    .    ..  . . . .. . ... .... .
+                                                                                                                                                               ............                   .       ......          . . 71      .       ..       .        ..    .         ...             .    .....        ...       ..
+
+
+
+          3.2.3 .2. Bootstrapping Methodology . . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 72
+     3 .4. Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 77
+Chapter Four: Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 79
+4. 1 . Introduction . . . . . . . . . . . . . . . . . .             .       .         ... . . .. . . .. .
+                                                                                    ...       .....          ......             .       .       ...       ..   ...    .
+                                                                                                                                                                      .   ..    ..       ..       .. .
+                                                                                                                                                                                                  .       ...                   . . 79
+                                                                                                                                                                                                                          .......                      .............                    ....         ........
+
+
+
+4.2. Surnrnary Statistics . . . . . . . . . . . . . . . . .         .               ...       .       ...    ...        . . ... . .. . . . . .. .. . .
+                                                                                                                        .       .       .       ...       .    .....       .....         ..               .       .       . . 81
+                                                                                                                                                                                                                              .       ..       .       ..       ....        ....        .       ..       .....     ..      .
+
+
+
+4.3. Statistical Tests . . . . . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 82
+     4.3 . 1 . Scenario A: Trade initiated at the Close Price on the Day of the S ignal,
+                  a Ten-Day Holding Period, and a Ten-Day Exponential Moving
+                  Average to Determine Prior Trend . . . . . . . . . . . . . . . . . .                                                                          .    ....      .. . . .. .
+                                                                                                                                                                                     .    .           .                       . . 82  .    ..          .....          ...    ...        .       ...........                .
+
+
+
+     4.3.2. Scenario B: Trade initiated at the Close Price on the Day after the
+                   Signal, a Ten-Day Holding Period, and a Ten-Day Exponential
+                  Moving Average to Determine Prior Trend . . . . . .                                                                                                                ..       .       .       .                     92
+                                                                                                                                                                                                                              ................... . ......... . . . . . . . .
+
+
+
+     4.3 . 3 . Scenario C: Trade initiated at the Open Price on the Day after the
+                   Signal, a Ten-Day Holding Period, and a Ten-Day Exponential
+                   Moving Average to Determine Prior Trend .                                                                                        .. .                      .      ..         . .
+                                                                                                                                                                                              .....                 . . . 99
+                                                                                                                                                                                                                          .       .........                      ........ .             .......              ..    .    ..
+
+
+
+     4.3 .4. Scenario D: Trade initiated at the Open Price on the Day after the
+                   Signal, a Five-Day Holding Period, and a Ten-Day Exponential
+                   Moving Average to Determine Prior Trend                                                                                                                                          .
+                                                                                                                                                                                     ................................             1 05                                                  .............
+
+
+
+     4 . 3 . 5 . Scenario E: Trade initiated at the Open Price on the Day after the
+                   Signal, a Two-Day Holding Period, and a Ten-Day Exponential
+                   Moving Average to Determine Prior Trend . . .                                                                                                                     ..       . ...   .           . . . III
+                                                                                                                                                                                                              .......................                                                   ......               ....
+
+
+
+     4.3 .6. Scenario F: Trade initiated at the Open Price on the Day after the
+                   Signal, a Five-Day Holding Period, a Ten-Day Exponential Moving
+                  A verage to Determine Prior Trend, and all Candlestick Parameters
+                   Decreased by 20% . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 1 8
+     4.3.7. Scenario G: Trade initiated at the Open Price on the Day after the
+                   Signal, a Five-Day Holding Period, a Ten-Day Exponential Moving
+                   Average to Determine Prior Trend and all Candlestick Parameters
+                   Increased by 200/0 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . 1 24
+     4.3 . 8 . Scenario H : Trade initiated at the Open Price on the Day after the
+                   Signal, a Five-Day Holding Period, and a Five-Day Exponential
+                   Moving Average to Determine Prior Trend .                                                                                            .               .            ...          .......                 . 1 30
+                                                                                                                                                                                                                              .......                      ............ . ..                    ........           ..
+
+
+
+     4.3.9. Scenario I: Trade initiated at the Open Price on the Day after the
+                   Signal, a Five-Day Holding Period, and a Fifteen-Day Exponential
+                   Moving Average to Determine Prior Trend .                                                                                          . . . .                        ...  . . . . . 1 36
+                                                                                                                                                                                                  .....                   .       ..       ....             .......          ...       ..       ..   .....         ..
+
+
+
+4.4. Conclusion . . . . . .                 ..   ..   .    .   .... . . ..      ........          .     ....      ..        . .
+                                                                                                                        .......                      ............              .....                  .
+                                                                                                                                                                                              ........................ . .. . . . 1 42                                                      ....... . . . . .
+
+
+
+Chapter Five: Conclusions                                                   . . . .
+                                                                                .............                   . .
+                                                                                                                  ..    ...             .       ........                                                                          1 44
+                                                                                                                                                                    ... ................ . . . . . .. . . ...... ....... . . .. . . . . .....
+
+
+
+References                    ................................... . ......... ...... ......... ................ ...... . . ......... . .. . ...............                                                                       1 49
+Appendix One: Candlestick Single Lines and Reversal Patterns                                                                                                                              . ..                  .           . 1 63                     . . . . . ....        ..        ......             .....        .
+
+
+
+     A. l . l . Bullish Single Lines                                    . . . . . .. . . .    ......         .    ..    ...             ..       .... . .. . .. .
+                                                                                                                                                               ....       ....      ....  .       .....     . .           .       1 63.    .           .    .... . . .       ........                .    .......
+
+
+
+     A. l .2. Bearish Single Lines                                                    .                 ... ..
+                                                                                              .............                           . . ...
+                                                                                                                                . .......                      .    .. . .
+                                                                                                                                                                     .........            .       .....                   . 1 66
+                                                                                                                                                                                                                              .....                    .    .    ...........                .........              ..
+
+
+
+     A. l .3 . Bullish Reversal Patterns . . . . . .                                                              ....          .       ... . .  ....          ..............             ..      ....                ..    . 1 68...............                            .    ..............                       .
+
+
+
+     A. l .4. Bearish Reversal Patterns .                                                           ..            ...........                   .     .                   .
+                                                                                                                                                           ...................                        .       ....... ..... . 171                           . . . ..........                ..........                 .
+
+
+
+Appendix Two: Dow Stocks .                                                                                ..
+                                                                                          . . . . . ...................                                 ..     ......... ............       .                                     1 75
+                                                                                                                                                                                                                                  .... ...... . . ....                           ... . . ............
+
+
+
+
+                                                                                                                                                                                                                                                                                                                               Vll
+Appendix Three: Matlab Code                                                      .................................................................................                                                              1 77
+  A.3. 1 . Candlestick Functions                                                     ................................................ ....................                                                .
+                                                                                                                                                                                                        ..........              1 79
+  A.3.2. T-Test . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 89
+  A.3.3. EMA                            ..........................................................................................................                                                                              20 1
+  A.3 .4. Uttest                          .................................. .......................................................................                                                                            202
+  A.3.5. Random Walk Bootstrap                                                                                .
+                                                                                           ... . . . ............          ............................                 .  .....    ........        .
+                                                                                                                                                                                                   .............                203
+  A.3 .6. Resample Function                                                                       : . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . . . . .. . . . . . .. . . . . . . . . . . . . . . . . . 223
+                                                                            ...... . ..............
+
+
+
+  A.3.7. AR 1 Bootstrap . . . . . . . . . . . . . . . . .. ... . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 224
+  A.3.8. GARCH-M Bootstrap                                                           ...............................................................................                                                            245
+  A.3 .9. GARCH-M Function                                                       .......... ..................·.....................................................                                                            266
+  A.3 . 1 0. EGARCH Bootstrap                                                      ................................................................................                                                             268
+  A.3 . 1 1 . EGARCH Function                                                    .....................................................                                  .  .................                . . . 2 89
+                                                                                                                                                                                                         ....     ..   .
+
+
+
+
+                                                                                                                                                                                                                           viii
+                                                                      List of Tables
+
+
+Table 1 : Number of Candlestick Patterns Tested . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . . . . . . 69
+Table 2: Summary Statistics                                   .......................................................................................                                     81
+Table 3 : Scenario A : T-Test Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . 83
+Table 4: Scenario A: Bootstrap Proportions for all Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8 5
+Table 5 : Scenario A: Bootstrap and Raw S eries Means and Standard
+           Deviations for Random Walk and ARCl ) Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
+Table 6: Scenario A: Bootstrap and Raw Series Means and Standard
+           Deviations for GARCH-M and EGARCH Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9 1
+Table 7 : Scenario B : T-Test Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 93
+Table 8: Scenario B : Bootstrap Proportions for all Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 95
+Table 9 : Scenario B : Bootstrap and Raw Series Means and Standard Deviations
+           for Random Walk and AR( 1 ) Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . . 97
+Table 1 0: Scenario B: Bootstrap and Raw Series Means and Standard
+           Deviations for GARCH-M and EGARCH Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
+Table 1 1 : Scenario C : T-Test Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 00
+Table 1 2 : Scenario C : Bootstrap Proportions for all Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 02
+Table 1 3 : Scenario C : Bootstrap and Raw Series Means and Standard
+           Deviations for Random Walk and AR( I ) Null Models . . . . . . . . . . . . . . . . . . . . . . . . .... 1 03
+Table 1 4: Scenario C : Bootstrap and Raw Series Means and Standard
+           Deviations for GARCH-M and EGARCH Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . 1 04
+Table 1 5 : Scenario D: T-Test Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 06
+Table 1 6 : Scenario D : Bootstrap Proportions for all Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . 1 08
+Table 1 7 : Scenario D : Bootstrap and Raw Series Means and Standard
+           Deviations for Random Walk and ARCl ) Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 09
+Table 1 8 : Scenario D : Bootstrap and Raw Series Means and Standard
+           Deviations for GARCH-M and EGARCH Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . 1 1 0
+Table 1 9 : Scenario E : T-Test Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 1 2
+Table 20: Scenario E : Bootstrap Proportions for all Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 1 4
+Table 2 1 : Scenario E : Bootstrap and Raw Series Means and Standard
+           Deviations for Random Walk and ARC1 ) Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 1 6
+Table 22: Scenario E : Bootstrap and Raw Series Means and Standard
+           Deviations for GARCH-M and EGARCH Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . 1 1 7
+Table 23 : Scenario F: T-Test Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 1 9
+Table 24: Scenario F : Bootstrap Proportions for all Null Models . . . . . . . . . . . . . . . . . . . . . . . .... 1 2 1
+Table 2 5 : Scenario F : Bootstrap and Raw Series Means and Standard
+           Deviations for Random Walk and AR(I) Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 22
+Table 26: Scenario F : Bootstrap and Raw Series Means and Standard
+           Deviations for GARCH-M and EGARCH Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . 1 23
+Table 27: Scenario G : T-Test Results . . . . . . . . ... . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. . . . . . . . 1 25
+Table 2 8 : Scenario G: Bootstrap Proportions for all Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . 1 27
+Table 29: Scenario G : Bootstrap and Raw Series Means and Standard
+           Deviations for Random Walk and AR(I) Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 28
+Table 30: Scenario G : Bootstrap and Raw Series Means and Standard
+           Deviations for GARCH-M and EGARCH Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . 1 29
+Table 3 1 : Scenario H : T-Test Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 3 1
+Table 32 : Scenario H : Bootstrap Proportions for all Null Models . . . . . . . . . . . . . . . . . . . . . . . . . . 1 3 3
+
+
+                                                                                                                                                                                       IX
+Table 3 3 : Scenario H : Bootstrap and Raw Series Means and Standard
+           Deviations for Random Walk and AR{ l ) Null Models                  .......... . . . ...............              1 34
+Table 34: Scenario H : Bootstrap and Raw Series Means and Standard
+           Deviations for GARCH-M and EGARCH Null Models                          ....... . . . . . ..............           1 35
+Table 3 5 : Scenario I: T-Test Results
+                                    ........................................................................                 1 37
+Table 36: Scenario I: Bootstrap Proportions for all Null Models                ..... ... . .. ...... . . . . . . . . . . .   138
+Table 3 7 : Scenario I : Bootstrap and Raw S eries Means and Standard
+           Deviations for Random Walk and AR{ l ) Null Models                  ............................                  1 40
+Table 3 8 : Scenario I: Bootstrap and Raw S eries Means and Standard
+           Deviations for GARCH-M and EGARCH Null Models                          ........ ......... . . .... . . .          1 41
+
+
+
+
+                                                                                                                                x
+A.3. 1 t . EGARCH Function
+
+
+
+1    f un c t i on R = egarch_func t i on ( N , return s , res i dual s , C , MA , AR , K , GARCH , ARCH , L , s igma )
+2    % EARCH_BOOTSTRAP boo t s t raps an egarch model .
+3    % I nput i s res i dua l s and f i t ted parameters f rom origina l egarch mode l . N i s
+4    % the number of rea l i sat i on s to c reate . Returns a T by N mat r i x of N return
+5    % series of l ength T .
+6
+7    l ead = 1 0 0 0 ;
+8
+9    T       l ength ( re s idua l s ) ;
+10   R       z eros ( T+ l ead , N ) ;
+11
+12   for n=l : N
+13
+14           eps i lon = resamp l e ( [ res idua l s ;       res i dua l s ;   res idua l s ] ) ;
+15           h t = s t d ( residua l s . * s i gma ) A 2 ;
+16           R ( l , n) = 0 ;
+17
+18           for t = 2 : T + l ead
+19
+20                 o l d_ht = ht ;
+21                 h t = exp ( K      + GARCH * l og ( ht )     + ARCH * ( abs ( ep s i l on ( t -1 ) * sqrt ( o l d_ht ) ) / sqrt ( ht ) - s qrt ( 2/pi ) )    +
+     L * ( ep s i lon ( t - 1 ) * sqrt ( o l d_ht ) ) / sqrt ( ht ) ) ;
+22                 R ( t , n ) = C + AR * R ( t- l ,n ) + MA* ( ep s i l on ( t - 1 ) * sqrt ( o l d_ht ) ) + eps i lon ( t ) * sqrt ( ht ) ;
+23
+24   %               o l d_ht      ht ;
+25   %               ht = exp ( K       + GARCH * l og ( ht ) + ARCH * ( abs(epsilon ( t - 1 ) ) / sqrt ( h t ) - s qrt ( 2 /pi ) )         +   L * ( ep s i l on ( t -
+     l ) ) / sqrt ( ht ) ) ;
+26   %               R ( t , n ) = C + AR *R ( t - 1 , n ) + MA* ( ep s i l on ( t - 1 ) ) + eps i l on ( t ) ;
+27
+28           end ;
+29
+30   end ;
+
+
+
+                                                                                                                                                                          289
+                              List of Figures
+
+
+Figure 1 . Open, High, Low and Close Prices Displayed as Candles                       . .......... . .......... .....     4
+Figure 2: White Marubozu Candlestick. ....................................................................                56
+Figure 3: Bullish Engulfing Candlestick Pattern   .   .......... . . . . .... . . . ........ . ........................   58
+
+
+
+
+                                                                                                                          Xl
+

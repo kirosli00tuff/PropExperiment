@@ -1,0 +1,2840 @@
+                              ERASMUS UNIVERSITY ROTTERDAM
+                                        Erasmus School of Economics
+
+
+
+
+                The structure of overnight
+                  versus intraday prices
+                              Master Thesis Quantitative Finance
+
+
+                                               Daan Fortuin (503339)
+
+               Supervisor Transtrend: M. Oort                   Supervisor Transtrend: L. Hendrikx
+               Supervisor University: dr. R.J. Lange              Second Assessor : dr. O. Kleen
+
+                                                  December 24, 2022
+
+                                                      Abstract
+           After-hours trading has given investors the opportunity to trade after markets have
+      closed. Returns can therefore be split into intraday and overnight returns. Overnight re-
+      turns outperform intraday returns when sorting on upside close-to-close volatility, which is
+      a proxy for retail investor attention. A possible explanation would be that retail investors
+      buy around the open, drive up opening prices, which causes higher overnight returns and
+      lower intraday returns. This effect is robust to the exact time of open and close. To corrob-
+      orate these findings I model intraday and overnight volatility using Dynamic Conditional
+      Score - EGARCH (DCS-EGARCH) models. The coupled-component DCS-EGARCH uses
+      a sequential estimation procedure of kernel technology and maximum likelihood. The two-
+      component DCS-EGARCH uses a simultaneous estimation procedure depending on only a
+      filter and a quadratic spline. Although the methodology of these models differ, they both
+      lead to the conclusion that intraday and overnight volatility differ significantly, in addition
+      to a relative importance increase of overnight volatility. All things considered, intraday and
+      overnight returns have different dynamics and should be modelled accordingly.
+
+
+
+
+The content of this thesis is the sole responsibility of the author and does not reflect the view of the supervisor, second
+                             assessor, Erasmus School of Economics or Erasmus University.
+Contents
+1 Introduction                                                                              3
+
+2 Literature Review                                                                         6
+
+3 Data                                                                                     10
+  3.1   Variable Assembly . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+  3.2   Markets and sample periods . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+        3.2.1   ETFs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+        3.2.2   Dow Jones Industrial Average . . . . . . . . . . . . . . . . . . . . . 13
+        3.2.3   Nasdaq 100 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+        3.2.4   S&P500 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+  3.3   Robustness tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+
+4 Methodology                                                                              22
+  4.1   HAR-UV-SC       . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+  4.2   Coupled component DCS-EGARCH . . . . . . . . . . . . . . . . . . . . . . 24
+  4.3   Two-component DCS-EGARCH . . . . . . . . . . . . . . . . . . . . . . . . 27
+        4.3.1   Quadratic Spline . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+  4.4   Adjusted model . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+  4.5   Constancy of ratio test . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+  4.6   Evaluation measures . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+
+5 Results                                                                                  31
+  5.1   HAR-UV-SC       . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+        5.1.1   ICSS algorithm . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+        5.1.2   In-sample analysis . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+        5.1.3   Out-of-sample analysis . . . . . . . . . . . . . . . . . . . . . . . . . 33
+  5.2   DCS-EGARCH . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 34
+        5.2.1   Standard base specification    . . . . . . . . . . . . . . . . . . . . . . 36
+        5.2.2   Adjusted base specification . . . . . . . . . . . . . . . . . . . . . . . 36
+        5.2.3   Coupled component . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
+        5.2.4   two-component . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 40
+        5.2.5   Case study: Amgen and Microsoft . . . . . . . . . . . . . . . . . . . 41
+                                        1
+6 Conclusion                                                                            48
+
+Bibliography                                                                            49
+
+Appendix A Data composition                                                             52
+  A.1 S&P500 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 52
+  A.2 Institutional Ownership . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60
+  A.3 Dow 30 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60
+  A.4 Nasdaq 100 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60
+  A.5 Robustness test . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 61
+
+Appendix B Preliminary Results                                                          62
+  B.1 ETFs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 62
+  B.2 Dow Jones Industrial Average . . . . . . . . . . . . . . . . . . . . . . . . . 64
+  B.3 Nasdaq 102 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67
+
+Appendix C Additional tables and figures                                                74
+
+Appendix D Proofs                                                                       89
+
+
+
+
+                                            2
+1        Introduction
+The structure of overnight versus intraday prices of stocks and their return generating
+process has been an extensively researched topic in finance, since the opportunity to trade
+during market-closure (Berkman et al. (2012), Cooper et al. (2008), Kelly and Clark
+(2011)). Many papers find outperformance of overnight returns, from close-to-open, in
+comparison to intraday returns, from open-to-close, during the period around the dot-
+com bubble, where overnight trading, also called after-hours trading, can be split in post-
+market and pre-market trading. The predominant explanations for this phenomenon are
+retail investor attention (Berkman et al., 2012) and the liquidity premium (Cooper et al.,
+2008). Greater effects were found when sorting on higher close-to-close volatility, lower
+institutional ownership, difficulty to value and positive investor sentiment.
+    If the effect observed in the literature is persistent, it should be robust to the exact start
+and end of intraday trading. Otherwise the observed discrepancy could be wholly based
+on the particular dynamics around the open and close. Estimation assumptions are of
+great importance to the observed results, as the open and close are volatile moments. The
+exact endpoints used for comparison between overnight and intraday returns influences
+this estimation, especially considering the larger bid-ask spreads during market open and
+close.
+    This research field is currently relevant with respect to the shift in balance between
+retail investors and institutional investors. In the wake of the COVID-19 pandemic, ‘meme
+stocks’ such as GameStop and AMC Entertainment proved to be a battleground between
+retail investors and several large institutional investors. The literature suggests a possible
+strange effect of this competition between retail and institutional investors. Aggregate
+stock returns appear to be higher during overnight trading hours than intraday trading
+hours. This could be due to retail investors pushing up prices during the open because they
+can, in general, not trade overnight. Investors could make use of these characteristics, if
+these results would appear significantly in the data, and consequently adjust their trading
+strategies. A strategy including going long in the night and short in the day could be
+profitable in such a situation.
+    Most papers pertaining to this effect date back from the period before the global
+financial crisis. I therefore review this problem using a more recent data set and investigate
+if overnight returns still outperform intraday returns and if this phenomenon is robust
+                                                3
+to the exact starting or ending time of the trading day. Furthermore, I look into the
+effects of sorting stocks in certain portfolios based on close-to-close upside volatility and
+institutional ownership. The sorting process needs an estimate of this upside volatility
+and I therefore forecast this using a relatively simple heterogeneous autoregressive (HAR)
+model incorporating structural changes, proposed by Gong and Lin (2021).
+   I show that the difference between overnight and intraday returns is significantly differ-
+ent from zero for the period 2016 to 2022 when using upside volatility sorting updated on
+a daily basis. The pandemic plays an important role in this phenomenon. There seems to
+be a change in retail investor behaviour in the last four to five years, which has accelerated
+since the COVID-19 pandemic. Retail investors appear to follow momentum strategies,
+assessed by sorting on close-to-close upside volatility. Retail investors, mostly only able
+to trade during market hours, concentrate their purchases during the open, resulting in
+high opening prices and higher overnight returns. This ‘overnight anomaly’ is most clearly
+observed in S&P 500 stocks, but also holds for Nasdaq 100 stocks and Dow 30 stocks.
+This phenomenon is robust to the exact start and end of the trading day and the anomaly
+is therefore not caused by the dynamics and more volatile movements around open and
+close. This robustness test uses the median of value weighted average minute prices for
+an 30 minute interval. Furthermore, institutional ownership has a negative effect on this
+occurred effect, which is motivated in the literature by Berkman et al. (2012).
+   This phenomenon in the data supports the notion of modeling overnight and intra-
+day returns and their volatilities separately. Linton and Wu (2020) propose a semi-
+parametric coupled component Dynamic Conditional Score - Exponential GARCH model
+(coupled component DCS-EGARCH model). This model enables the overnight and in-
+traday volatilities to have different dynamic properties, which are clearly observed in the
+data including between these volatilities. I retrieve short and long run volatility series,
+for both overnight and intraday, to make conclusions about their behaviour, especially
+before, during and after the COVID-crash in March 2020. Linton and Wu (2020) use a
+dependence structure based on overnight versus intraday dynamics until 2017. As dynam-
+ics have changed, based on the data analysis, Iintroduce an adjusted base specification
+of the coupled component DCS-EGARCH model using a different dependence structure.
+Although this specification improves the model, it does not have an influence on the short
+and long run components. Although no increase of efficiency is found after changing the
+
+                                              4
+base specification, it proves the robustness of the model to the used base specification.
+   Moreover, I use the methodology of Harvey and Lange (2018) to come up with a
+different estimation technique for the long run volatilities. Instead of the coupled com-
+ponent model, where I optimize the short and long run components sequentially, I only
+use a filter in the so-called two-component DSC-EGARCH to estimate the short and long
+run component simultaneously. I focus on 22 stocks in the Dow 30, because graphically
+presenting 456 plots for each model is not feasible. This data set is similar to Linton and
+Wu (2020). I extend the sample period from (1993-2017) to (1993-2022). The overnight
+anomaly is also expressively present in this sample of stocks and therefore sufficient and
+convenient for my analysis.
+   The DCS-EGARCH model proves to be robust to the used methodology. The results
+from the coupled component and two-component model correspond to a great extent. The
+long run component, total volatility and ratio (overnight to intraday) of total volatility
+behave similar across models and the same conclusions can be drawn from them. These
+conclusions include the relative importance increase from overnight volatilities to intraday
+volatilities, which is caused by a decrease of intraday volatility, rather than an increase
+of relative overnight volatility (on average). This effect is found for both the short run
+and long run processes. Furthermore, intraday and overnight volatility peaks were the
+same during the dot-com bubble and the financial crisis, but overnight volatility was
+significantly higher than intraday volatility during the COVID-19 crash. Nevertheless,
+overnight volatility remains smaller in absolute sense than intraday volatility over the
+entire sample period, a phenomenon already shown in the literature. In addition to these
+results, I find some short run dynamics. Overnight volatility is more leptokurtic. This
+increased during the the last two years, namely due to overnight crashes. On the other
+hand, intraday returns have even become more Gaussian during the last two years, which
+is also supported by the data analysis of the difference in return during the pandemic. The
+models also imply higher volatility after negative returns in general. Moreover, intraday
+returns are negatively affected by previous night and day returns, and overnight returns
+have a negative effect on subsequent negative returns.
+   All in all, I find a significant difference in return between overnight and intraday re-
+turns when sorting on upside volatility for the period 2016 to 2022. This effect is most
+striking since the COVID-19 pandemic. This upside volatility can already be forecast with
+
+                                             5
+simple methods, such as a HAR model with structural changes. The difference in dynam-
+ics between intraday and overnight prices is, next to the return generating process, found
+in the volatility process. I extend the semi-parametric coupled component DCS-EGARCH
+model of Linton and Wu (2020) by using additional data and changing the base specifi-
+cation. Furthermore, I develop a new model called the two-component DCS-EGARCH,
+which uses a simultaneous optimization, instead of a sequential optimization, which is
+more time-efficient. The two-component model uses the methodology from Harvey and
+Lange (2018), is a parametric model and uses quadratic splines instead of kernel technol-
+ogy. Modelling intraday and overnight volatility is proven to be model-robust, as both
+models indicate the same results, namely a significant difference between intraday and
+overnight volatility, including a relative importance increase of overnight volatility. All
+results lead to the conclusion that intraday and overnight returns have different dynamics
+and should be modelled accordingly.
+    The remainder of this paper is structured as follows. Section 2 relates this paper to the
+existing literature. Section 3 informs about the data used and already gives some insights
+into the structure of overnight versus intraday returns. Section 4 describes the models
+from the literature, the new adjusted models and the evaluation measures. Next, we report
+the results of the described methodology in Section 5. Lastly, Section 6 summarizes the
+main results and provides ideas for further research.
+
+
+
+2     Literature Review
+After-hours trading and overnight returns are an interesting topic in the literature since
+the introduction of electronic communication networks (ECN) in 1969. ECNs accommo-
+date investors to trade when financial markets are closed and to participate in so-called
+after-hours trading. After-hours trading became even more widespread in 1999, when
+ECNs became more widely available to retail investors. Hong and Wang (2000) gives a
+complete overview of the difference between overnight and intraday returns before after-
+hours trading was more widely available. They find higher activity around the open and
+close in combination with higher volatility during these periods of market closure and
+opening. Additionally, they show empirically that intraday returns are higher and more
+volatile than overnight returns.
+
+                                              6
+   The return-generating process has according to some papers changed since after-hours
+trading became more accessible to retail investors. Three papers, namely Berkman et al.
+(2012), Cooper et al. (2008) and Kelly and Clark (2011), find a significant difference be-
+tween overnight and intraday returns for the period 1993 to 2008 using different methods.
+They claim that intraday returns are negative or zero, while overnight returns are signif-
+icantly positive. All three papers list different reasons for this phenomenon, use different
+data and differ in focus.
+   Berkman et al. (2012) use a sample of the 3000 largest US stocks for the period
+1996-2008 and an abridged sample of NASDAQ stocks for the period 1997-2001 including
+detailed information on the identity of market participants for each trade. They calculate
+log returns using quote midpoints and construct various variables to explain the difference
+in night versus day returns. These variables include two proxies for retail attention,
+three measures of retail buying at the open, two proxies for short sale constraints and
+three measures of transaction costs. Furthermore, they look at hard-to-value stocks and
+sentiment. Berkman et al. (2012) conclude that the difference between the overnight and
+intraday returns is caused by high opening prices. These high prices are caused by retail
+investor attention. Moreover, the effect is more prominently present for hard-to-value
+stocks, stocks with less institutional ownership and stocks with more sentiment.
+   Cooper et al. (2008) look at S&P 500 stocks, 14 exchange-traded funds (ETFs), 44
+firms in the Amex Interactive Week Internet Index and S&P 500 E-mini futures. They
+conclude that the US equity premium is solely due to overnight returns for the period 1993-
+2006. They split the intraday returns in three periods and conclude that day reversals
+after positive overnight returns are due to high opening prices which decline in the first
+hour of trading. They perform robustness tests for calendar effects, growth of ECNs
+and decimalization and try to explain the high difference in night versus day returns
+by earnings announcements, liquidity effects and price pressure effects. Cooper et al.
+(2008) refer to further research for a full explanation of the night versus day return,
+as they can only explain a small portion of this effect by the illiquidity premium as
+suggested by Longstaff (1995), and to a smaller amount to risk, earnings surprises, return
+autocorrelation, decimalization and the growth of ECNs.
+   Thirdly, Kelly and Clark (2011) consider ETFs and differ from the previous two papers
+by using risk-adjusted excess returns instead of raw returns. They also compute volume
+
+                                             7
+weighted average prices in comparison with the two other papers who use first/last traded
+prices. Their focus is on long-short trading strategies by making use of the difference in
+the night versus day returns for the period 1995-2006. One of five ETFs is profitable by
+exploiting this difference using the long-short strategy. Significance of this difference is
+determined by the Sharpe ratio test of Opdyke (2007), which has since been improved by
+Ledoit and Wolf (2008).
+   A fourth paper, Lachance (2015), finds the same results for on average almost six
+thousand stocks for the period 1995-2014. She claims that one out of five stocks has a
+significantly positive difference between night and day returns, which pays two times the
+market return for a volatility which is three times as small. These stocks also have an
+average negative intraday return.
+   Where the previous four papers look specifically to the difference in return in the
+US, other papers have looked at overnight volatility, different countries, other relations,
+trading strategies, earnings announcements, intraday patterns and options. French and
+Roll (1986) were among the first to look at overnight volatility and conclude that it was
+lower than intraday volatility because of less public information, fewer informed investors
+and fewer pricing errors. More recently, Linton and Wu (2020) show that the ratio of
+overnight to intraday volatility has increased in the last two decades for Dow Jones stocks
+and large stocks in the CRSP database. Linton and Wu (2020) use a coupled component
+model, which enables differentiation of dynamics of overnight and intraday volatility. This
+model is a dynamic conditional score model, for which Harvey (2013) laid the foundation.
+They use a two step estimation procedure to optimize both long and short run components.
+In addition to using this model, I adapt it with a part of the methodology from Harvey
+and Lange (2018), which allows me to do a one step estimation. They modify the GARCH
+filter to a two-component GARCH filter using a parameter restriction to create a long and
+short run component. Where Linton and Wu (2020) focus on proposing their model and
+applying it to past data, Harvey and Lange (2018) do not differentiate between overnight
+and intraday returns and concentrates on forecasting ability.
+   Cai and Qiu (2009) find significantly higher overnight returns compared to daily re-
+turns in 23 countries. They test the assertion of Miller (1977), which states that stocks
+are overpriced due to divergence of opinions by the absence of short selling. Divergence
+of opinions happens overnight, causes high opening prices and returns therefore are sig-
+
+                                             8
+nificantly higher overnight. Aretz and Bartram (2015) finds quite the opposite, when
+conducting an analysis on 48,413 stock from 35 countries for the period 1993-2012. They
+find higher day returns than night returns, both having a similar volatility. Hendershott
+et al. (2020) studies the relation between stock prices and beta for both night and intraday
+returns. They find that overnight returns are positively related to beta and vice versa
+for intraday returns. This holds for beta-sorted portfolios, industry portfolios, book-to-
+market portfolios, individual US stocks and international stocks. Branch and Ma (2006)
+discover a negative correlation between overnight returns and intraday returns the follow-
+ing day. Branch and Ma (2012) expands this paper and gives a more detailed elaboration
+on the negative correlation. Lou et al. (2019) looks at multiple trading strategies for which
+they claim that returns are earned entirely overnight or earned entirely intraday. They
+link this behaviour to investor heterogeneity and claim that short-term investors could
+profit from their discovery due to the large economic magnitudes of their results, but
+that also long-term investors could profit by timing their orders either near the open or
+during the close. Basdekidou et al. (2017) also look at different strategies and anomalies,
+such as the overnight return temporal market anomaly. They also conclude that returns
+are earned entirely overnight or entirely intraday. Jiang et al. (2012) look at earnings
+announcements for S&P500 stocks from 2004-2008 released during after-hours and finds
+that trading, price change and price discovery are heightened during and just after the
+releases. The timing of earnings announcements is concentrated during market closure, as
+firms prefer to use informed traders to start the price discovery, where informed traders
+refer to traders with superior knowledge due to either access to private information or
+skillful processing of public information. Wood et al. (1985) split their analysis in four
+parts namely night, day, open and close. They find unusually high returns and volatitlities
+during open and close, while day returns, with exclusion from open and close, are discov-
+ered to behave normally. Muravyev and Ni (2020) investigate S&P500 index options and
+find positive day returns and negative night returns. This is robust across all maturities
+and moneyness classes, and also across equity options.
+   All in all, there is a lot of research on this topic. Many papers find the same dynamics,
+but give different causes. This also depends on the markets and data samples used.
+However, most papers are outdated and do not cover the period since the COVID-crash.
+I will therefore use methods from several studies using more recent data and assess the
+
+                                             9
+several causes.
+
+
+
+3     Data
+This section evaluates the data, gives some descriptive statistics and already analyzes
+the data with some more advanced methods. Firstly, it covers the used variables, then
+describes all sample periods of the securities and their respective markets and finally
+gives evidence of larger overnight returns in comparison with day returns when sorting
+on particular variables.
+
+
+3.1     Variable Assembly
+
+The data consists of daily returns and price patterns around open and close. I decompose
+the daily returns into intraday and overnight returns. Log returns are used for convenience
+and do not alter the results. The intraday return is defined as the return from open to
+close and the overnight return as the return form close to open. The exact definition of
+open and close will be discussed hereafter. Log returns are defined as:
+
+                  Close-to-Open return = CTOt = log(Opent /Closet−1 )
+
+                  Open-to-Close return = OTCt = log(Closet /Opent )
+                                                                                          (1)
+                  Close-to-Close return = CTCt = log(Closet /Closet−1 )
+
+                  Open-to-Open return = OTOt = log(Opent /Opent−1 ).
+
+    One thing is important to mention with regard to calculation. The night return (CTOt )
+is followed by the intraday return (OTCt ), when calculating the difference between both
+series. This pattern is needed for calculation but has for a considerable time horizon, no
+implications on the results. Figure 1 shows a clarifying timeline. I analyse the difference as
+it would have direct implications on the (weak) efficient market hypothesis. The difference
+is defined as:
+
+    Difference in return = Overnight return − day return = DIFFt = CTOt − OTCt .          (2)
+
+    Descriptive statistics are evaluated by taking standard t-tests on the time series av-
+erage of the difference (DIFFt ). This is straightforward when evaluating an index, ETF
+(exchange traded fund) or single stock. However, my analysis is mainly on multiple stocks.
+                                             10
+Therefore, I take the cross-sectional mean of all assets in the sample and thus calculating
+the cross-sectional mean for each point in time. This method is used in Berkman et al.
+(2012) to adjust for cross-sectional correlation as proposed in Bernard (1987). The mean
+and variance of the computed time-series is subsequently used for the corresponding t-
+tests. Newey-West standard errors (Newey and West, 1987) correct for serial correlation
+in the created time-series of cross-sectional means.
+   Cooper et al. (2008), Kelly and Clark (2011) and Berkman et al. (2012) report sig-
+nificance tests using tables. This forces them to look at only one period of time, as they
+can only report those estimates. I differ in visualisation of the results by using a rolling
+window and displaying the entire time series of DIFFt . This increases interpretability and
+shows time variation. Next to that, it informs readers more extensively, as it gives far
+more details, as for a time-series of four years, the reader gets one thousands times more
+observations.
+   Inspired by Berkman et al. (2012), I use portfolio sorts based on volatility and insti-
+tutional ownership. Berkman et al. (2012) link higher overnight returns to attention of
+retail investors. A proxy for the presence of retail investors is the squared close-to-close
+return of the previous day. The squared return is a rough measure for the volatility. We
+refer to this proxy as VOLt−1 :
+
+                 VOLt−1 = Close-to-close volatility yesterday = CTC2t−1 ,                 (3)
+
+   Berkman et al. (2012) use CTC2t−1 . However, from the analysis I discover that total
+close-to-close volatility does not work as a good proxy in recent times, as sorting on this
+metric does not give a significant difference in overnight minus intraday return. However,
+upside close-to-close volatility is a good proxy and gives the same results for this era,
+as Berkman et al. (2012) report for the dot-com bubble period. Therefore, I introduce
+VOL+
+   t−1 :
+
+
+        VOL+                                                                   2
+           t−1 = Upside close-to-close volatility yesterday = (max{CTCt−1 , 0}) ,         (4)
+
+   where it is important to mention that sorting on this variable gives the same results as
+sorting on close-to-close return directly. However, I choose to define it as upside volatility
+for the purpose of the used forecasting procedure and the resemblance with the available
+literature.
+
+                                             11
+    Figure 1 gives a clear timeline of the used variables. It is important to realize that the
+VOL+
+   t−1 is only known at CLOSEt−1 . When sorting on this variable with the purpose of
+
+following a related trading strategy at time point CLOSEt−1 , the need to forecast VOL+
+                                                                                      t−1
+
+arises. The model used for the forecast will be discussed in the next section.
+    Another sorting variable used by Berkman et al. (2012) is Institutional Ownership
+(IOt ):
+
+                                            shares outstanding hold by institutions
+          IOt = Institutional Ownership =                                                 (5)
+                                                    divided by total shares
+
+    Data on institutional ownership comes from the the WRDS (Wharton Research Data
+Services) Thomson Reuters Institutional Holdings (13F) Database. Data is available on
+450 S&P500 stocks, as we lose six stocks due to different use of tickers, absence of differ-
+entiation between series of the same stock, mergers and acquisitions during the research
+or unavailability. I lose another 130 stocks due to incoherent data in the WRDS database.
+Institutional Ownership exceeds 100% for these stocks, which is by definition impossible.
+Details on the stocks used can be found in Appendix A. Institutional Ownership is a
+quarterly reported variable.
+
+                         Figure 1: Timeline returns and volatility
+
+
+
+
+3.2       Markets and sample periods
+
+This subsection covers the details of the markets and sample periods. The main sample I
+use consists of constituents of the S&P500 index, but some preliminary research consists
+of data from ETFs, the 30 stocks of the Dow Jones Industrial Average index and stocks
+tracking the NASDAQ 100 index.
+
+
+
+                                             12
+3.2.1   ETFs
+
+Kelly and Clark (2011) is one of few papers, which laid the foundation for the ‘overnight
+anomaly’. They provide evidence of this anomaly using data on five ETFs, namely DIA,
+IWM, MDY, QQQ and SPY, tracking respectively the Dow 30, the Russell 2000, the S&P
+400 Midcap, the Nasdaq 100 and the S&P 500. DIA, QQQ and SPY cover stocks with
+big market capitalization, MDY with medium market capitalization and IWM with small
+market capitalization. Figure 19 and Figure 20 in Appendix B show the time series of the
+DIFFt for each ETF. Table 5 reports the sample periods for each ETF. A rolling window
+of eight years is used to be able to compare directly to the results of Kelly and Clark
+(2011). Confidence intervals are based on Newey-West (Newey and West, 1987) standard
+errors for a 5% level. The difference in return (DIFFt ) is indeed significant for four out
+of five ETFs for the period considered by Kelly and Clark (2011). The fifth is almost
+significant, but the difference in result could be due to different estimation methods. This
+period is actually approximately the first data point of each time series in the figures, as it
+corresponds to the mean of that date and the eight years before. The anomaly disappears
+for all ETFs quite rapidly after this period. Although a (small) increase in DIFFt is found
+for all ETFs in the last eight to ten years, only IWM has a significant difference between
+overnight and intraday returns recently.
+
+
+3.2.2   Dow Jones Industrial Average
+
+After finding no expressive anomaly in the ETFs, I first consider a small sample of stocks,
+namely the Dow Jones Industrial Average, or Dow 30 for short. I find no direct evidence in
+the descriptive statistics of this sample, thus I sort stocks on overnight return to examine
+heterogeneity of overnight versus intraday prices. The overnight return for each stock
+during the last five years determined the corresponding tercile, low, medium or high,
+where a tercile contains one third of the stocks of a portfolio. The sample consists of 26
+stocks (as four stocks had a horizon of less than 30 years), meaning six or seven stocks per
+tercile. A rolling window of twelve years is used and significance is determined as before.
+Figure 21 shows that stocks are heterogeneous in DIFFt for the Dow 30. It is important
+to note that these results come by definition of the sorting and are purely used to show
+for heterogeneity amongst stocks.
+   Figure 22 shows the overnight returns minus the intraday returns when sorted on
+                                              13
+close-to-close upside volatility using a rolling window of five years. A clear pattern arises
+since April 2021, which accounts for the period 2017 to 2022, where a high VOL+
+                                                                              t−1 gives
+
+a higher return on day t, on average. This difference is significantly different from zero,
+rejecting the null hypothesis of equal return. Sorting on upside close-to-close volatility
+and proceeding in a long night short day strategy is thus profitable, without considering
+transaction costs. For this strategy, positions need to be balanced twice a day, which
+includes a lot of transaction costs. I will elaborate on this in the next section.
+
+
+3.2.3   Nasdaq 100
+
+The third sample includes the 123 largest stocks from the Nasdaq Exchange where large
+refers to market capitalization. I exclude 21 firms who have less than 2461 data points,
+which is almost 10 years of data as one year refers to 252 trading days. The initial sample
+of 123 stocks ends up to have 102 stocks after data cleaning, which is close to 100 and
+divisible by three. The last condition is important for the sorting process. More details
+about the used stocks can be found in Appendix A. The 102 stocks are divided in terciles
+of 34 stocks based on yesterdays upside close-to-close volatility (VOL+
+                                                                      t−1 ). This approach
+
+is inspired by Berkman et al. (2012). By creating this variable I lose 2 observations per
+stock. Figure 23 in Appendix B shows the difference in return (overnight - intraday
+return) per tercile (high, medium and low VOL+
+                                             t−1 respectively) for a rolling window of
+
+five years. Confidence bounds are calculated by computing standard errors by taking
+cross-sectional means and using Newey-West standard errors of the time-series of means.
+The high tercile has a significant difference in return, or in other words, the overnight
+return is significantly larger than the intraday return. The medium and low tercile are
+both insignificant. Berkman et al. (2012) claims that this is the result of retail investors
+who buy at the open and thus raise opening prices. VOL+
+                                                      t−1 is used as a proxy for
+
+retail attention. This phenomenon, outperformance of overnight returns, observed by
+several papers during the period around the dot-com bubble, has since the COVID-19
+crisis risen to significant values, at least for large cap Nasdaq and Dow 30 stocks, when
+sorting on a proxy for retail attention. This could be due to a change in retail investor
+behaviour since the pandemic, as during the dot-com bubble, which is contrary to the
+(weak) Efficient Market Hypothesis. Another interesting feature is the steep decline in
+DIFFt−1 . This means that, in comparison to the period before and after, during the first
+
+                                             14
+weeks of the COVID-19 pandemic night returns where smaller. Better said, crashes were
+more concentrated in the overnight periods than in the intraday periods. Considering this,
+the effect, as I use a rolling window of five years, is even larger when not considering the
+first few weeks or months of the pandemic. The difference in return yields approximately
+0.07% per day, when using a trading strategy of going long in the night and short in the
+day without transaction costs, which means approximately 19% per year.
+   Figure 24 and Figure 25 show what happens when sorting in sextiles, meaning six
+equal groups of 17 stocks, instead of terciles. In the highest sixtile (high), the phenoma is
+far more significant and larger than before. The difference in return yields approximately
+0.1% per day, when using a trading strategy of going long in the night and short in the
+day without transaction costs, which means approximately 29% per year (for the last
+five years). To compare, the annual return of the S&P500 was 8.9% the last five years
+and 12.5% the last ten years. All other sextiles are insignicant from zero and decrease
+per sextile, where high2 comes between high and medium. The lowest sextile however is
+increasing with respect to the sextile above (low). Again, a rolling window of five years
+is used and the begin of the pandemic is visible in each figure.
+   Trading costs should be taken into account when considering trading strategies. Trad-
+ing costs are often divided in transaction costs and the bid-ask spread. The average
+transaction cost per stock is approximately 0.01% per trade. As this strategy involves
+selling at the open and buying at the close, 0.02% of the profit goes to the transaction
+cost. The bid-ask spread is an issue when dealing with quote data. However, since I use
+trade data, the bid-ask spread is already part of the price. I am thus left with a (large)
+0.08% (0.10%-0.02%) profit per day. The question remains in which magnitude this strat-
+egy can be implemented. The 0.08% profit is realistic when trading one stock of each
+firm a day. Institutional investors are not interested in such quantities. The traded prices
+include the bid-ask spread at that moment for that particular stocks. When institutional
+investors want to trade in large volumes, the bid-ask spread could become larger as of the
+current supply and demand. This will diminish the profit rapidly. The trading strategy
+is thus profitable when trading small volumes, but will soon become unprofitable when
+increasing the volumes.
+   Finally, Figure 26 and Figure 27 show respectively the OTCt−1 and CTOt−1 . The day
+returns, OTCt−1 , are smallest for the high VOL+                              +
+                                               t−1 and highest for the low VOLt−1 , but
+
+
+                                             15
+all insignificant from zero. The night returns, CTOt−1 , are (for the last five years, so May
+2017 to May 2022) significantly different from zero for the high and low tercile, and almost
+significant for the medium tercile. The small day returns for the high tercile thus cause
+the DIFFt−1 to be largest for the high tercile. Another interesting feature is the influence
+of the COVID-19 crisis on returns. Day returns are not affected at all by this crisis,
+while night returns are affected negatively. To conclude, the negative returns during the
+first few weeks of the corona pandemic and the dropping stock prices are located in the
+overnight returns.
+
+
+3.2.4   S&P500
+
+The next sample consists of constituents of the S&P500 as of April 4 2022. This sample
+includes 505 stocks from a wide variety of industries and sectors. I lose 49 stocks, which
+have an initial public offering (IPO) in the last ten years, to ensure a minimum of ten
+years data for each stock. The results are derived from the remaining 456 stocks. The
+used stocks are clearly described in Appendix A. The analysis is the same as before.
+Using a rolling window of five years, I compute the time series of cross-sectional means
+and use Newey-West standard errors for significance tests. Figure 2 shows the descriptive
+statistics of the S&P500 stocks.
+
+    Figure 2: Difference in return descriptive statistics for a five year rolling window
+
+
+
+
+   Whereas the difference in overnight versus intraday returns are not significantly dif-
+ferent for the period 2013 to 2020, the steep increase in difference since the COVID-19
+pandemic almost reaches significance for approximately the last five years, after a steep
+increase since March 2020. This increase is remarkable in comparison to the full sam-
+                                         16
+ple period and indicates a change in overnight versus intraday price dynamics. For the
+Nasdaq sample, portfolio sorting is necessary to find a significant difference. For S&P500
+stocks, the overnight anomaly is present far more pronounced for the last five to six years.
+There is again a large drop at March 2020, indicating that crashes found place mainly
+during market closure when the COVID-19 crisis started.
+   Figure 3 displays three terciles, namely sorted per day on VOL+
+                                                                 t−1 (respectively high,
+
+medium and low). There is a clear pattern. High upside close-to-close volatility yesterday
+means a relatively high overnight and lower intraday return today due to higher opening
+prices forced by higher retail investor attention. High VOL+
+                                                           t−1 means a significant out-
+
+performance of overnight returns. The medium tercile is almost significant and lower in
+absolute value. The low tercile is even lower and more insignificant.
+   Once more, I use portfolio sorts on upside volatility to proxy for attention of retail
+investors. As mentioned before, I use upside close-to-close volatility, whereas Berkman
+et al. (2012) uses total close-to-close volatility. Using different proxies, we find the same
+results. This could be explained as a shift in behaviour of retail investors. Reacting to
+total volatility of a certain stock, during the dot-com period, could be explained by a
+dichotomy of retail investors. One part of retail investors reacts to upside volatility, due
+to for example the momentum argument, and the other part reacts to downside volatility,
+due to for example the argument which states a cheaper entry point. The previous five to
+six years, there is only a reaction to upside volatility. This could be explained by a shift
+in behaviour of retail investors to momentum strategies.
+   Sorting on VOL+
+                 t−1 is done daily. IO data is only available quarterly and it would
+
+also not change the sorting drastically if available daily. Therefore it is expected that
+these sorts do not influence the DIFFt−1 that much. However, it is still an interesting
+sort, as IO is by definition negatively correlated with retail investing. Figure 4 gives the
+three sorts of IO and plots the difference in return time-series. The green line is the low
+IO sort and is thus expected to have a high amount of retail investors, which, by our
+hypothesis, should have a bigger DIFFt−1 . This behaviour is seen after the COVID-19
+pandemic. The direct opposite happened before the pandemic. This hints to a shift in
+behaviour of retail investors after the pandemic. This is the same conclusion as from the
+three sorted portfolio on upside volatility. The low IO sort is always beneath the green
+time-series after March 2020 and always above before March 2020. This is in line with our
+
+                                             17
+Figure 3: Difference in return for 3 sorts on different values of upside close-to-close volatil-
+ity yesterday for a five year rolling window
+
+
+
+
+                                               18
+hypothesis. Appendix B includes the same plot with confidence bounds, namely Figure
+28. The low and medium sort are significantly different from zero for the last five years,
+as I use a rolling window of five years. Nevertheless, the sorts do not differ substantially
+and are close to the descriptive statistics. Sorting on upside volatility will thus be more
+profitable. It should be noted that I use a slightly different set of stocks.
+
+Figure 4: Difference in return sorted on institutional ownership for a five year rolling
+window
+
+
+
+
+3.3    Robustness tests
+
+Previous analysis uses first and last trade data for respectively the open and close. Open
+and close are volatile moments and trading at exactly the open or close is near impossible.
+Therefore I perform a robustness test to ensure that the difference in returns is not totally
+based on the dynamics around open and close. Transtrend provides minute data on
+approximately 120 stocks of the S&P500. Instead of one open price (first trade) and
+one close price (last trade), I use the minute data to create four prices, namely a pre-
+open price, post-open price, pre-close price and post-close price. I compute the Volume
+Weighted Average Price (VWAP) of each minute. Kelly and Clark (2011) take the VWAP
+of the first five minutes to compute the open and close prices. This method is not robust
+to the often much higher volumes at exactly the open or close. The VWAP of the first
+                                         19
+five minutes will therefore be very close to the first traded price. To tackle this problem,
+I calculate the VWAP per minute for the 30 minutes before and after the open and close.
+This way I get four vectors of 30 values each. To compute the four new prices I take
+the median of each vector. Extreme observations are filtered out in this way and I get a
+fair price that is possible to trade for. I do exactly the same analysis again calculating
+the overnight return between the post-close and pre-open price. The intraday return is
+calculated between the post-open and pre-close price. US exchanges open at 09.30 AM
+and close at 04.00 PM. So exact definitions are:
+
+   PRE-OPENt = Median of the VWAMPm of minutes 09.00 AM - 9.30 AM on day t
+
+ POST-OPENt = Median of the VWAMPm of minutes 09.30 AM - 10.00 AM on day t
+
+  PRE-CLOSEt = Median of the VWAMPm of minutes 03.30 PM - 04.00 PM on day t
+
+POST-CLOSEt = Median of the VWAMPm of minutes 04.00 PM - 04.30 PM on day t
+
+   where VWAMPm is the Volume Weighted Average Minute Price in minute m.
+
+   Every stock is traded with enough volume during the day. However, before opening
+and after closure, data is scarce. After sorting the 120 stocks on available minute data, I
+use two samples of respectively ten and twenty stocks. For the ten-stock sample, 60% of
+the data is available if I only use days for which all ten stock have data. This improves
+to 79% when using all days for which at least eight of ten stocks have data. Having
+data means having at least one minute of data in all four intervals. For the twenty-stock
+portfolio, only 35% of the trading days is available when using all stocks. This improves
+to a decent percentage of 76 when using all days for which at least 16/20 stocks have
+data. I perform the analysis for the 10 out of 10 (64%), 8 out of 10 (79%) and 16 out of
+20 (76%) stock samples.
+   Figure 5, Figure 6 and Figure 7 give the three samples for the time period January
+2013 to May 2022 for a rolling window of four years and give the DIFFt when using the
+VWAP method and the first/last traded price method. The rolling window is smaller for
+the simple reason that less data is available.
+
+
+
+
+                                            20
+Figure 5: Difference in return using VWAP and first/last traded price for a four year
+rolling window. Using data on ten stocks. Only days with data on all ten stocks
+
+
+
+
+Figure 6: Difference in return using VWAP and first/last traded price for a four year
+rolling window. Using data on ten stocks. Only days with data on at least eight stocks
+
+
+
+
+                                          21
+Figure 7: Difference in return using VWAP and first/last traded price for a four year
+rolling window. Using data on twenty stocks. Only days with data on at least sixteen
+stocks
+
+
+
+
+    For all three figures it is important to note that significance of the results does not
+change, at the minimum for the 5% level. Using VWAP instead of first/last trade does
+thus not change the results. Dynamics around opening and closure do thus not account for
+the overnight anomaly. It could be argued that these sample are too small, but the reality
+teaches us that data during market closure is scarce. The VWAP uses only trade data
+and is thus based on realized trades. Of course, quote data could be used to determine
+pre-open or post-close prices, but the question arises how useful quotes are when not
+traded upon.
+
+
+
+4     Methodology
+
+4.1      HAR-UV-SC
+
+In the previous section, data results implied that sorting on upside close-to-close volatility
+could be a profitable strategy. This upside close-to-close volatility needs to be forecasted
+to use this long-short strategy in respectively the night and day. There is a wide variety
+of volatility models in the literature. Nevertheless, upside/downside volatility is a less
+                                             22
+researched measure. One of few recent papers which do look into downside volatility is
+Gong and Lin (2021). They propose a heterogeneous autoregressive model of downside
+volatility (HAR-DV) and advise to use structural changes (HAR-DV-SC) when estimating
+downside volatility. I use this model to convert it to an upside volatility model to estimate
+the upside close-to-close volatility of S&P500 stocks.
+   The model uses upside realized semivariance to proxy for upside volatility. This idea
+originates from Barndorff-Nielsen et al. (2008). Our model uses daily realized upside
+volatility. Daily upside volatility is defined as follows:
+
+                                    UVD              2
+                                      t = I[rt > 0] rt ,                                 (6)
+
+with
+                                              Closet
+                                      rt =            − 1,                               (7)
+                                             Closet−1
+where I[] is an indicator function and Closet−1 is the close price at (t-1 ). The weekly and
+monthly upside realized volatility are defined as follows:
+
+                             W   UVD     D               D
+                                   t + UVt−1 + · · · + UVt−4
+                           UVt =                             ,                           (8)
+                                                    5
+
+and
+                             M   UVD     D               D
+                                   t + UVt−1 + · · · + UVt−21
+                           UVt =                              .                          (9)
+                                                   22
+   A week consists of five trading days, while a month, on average, consists of 22 trading
+days. Gong and Lin (2021) follow Corsi (2009) by stating that short-, mid-, and long-term
+downside volatilities affect short-term investors, mid- and long-term downside volatilities
+affect mid-term investors and that long-term downside volatilities affect long-term in-
+vestors. They finally come up with the HAR-DV model, in my case the HAR-UV model,
+which is defined as:
+
+                                                 W        M
+                       UVt+h = c + α1 UVD
+                                        t + α2 UVt + α3 UVt + ϵt+h ,                    (10)
+
+where UVt+h is the average upside volatility between days t and t + h and ϵt+h the error
+term.
+   The model gets extended by adding structural changes parameters. This extension
+makes the model more efficient, as shown in Gong and Lin (2021). This is done us-
+ing dummy variables for certain time periods corresponding to the structural changes.
+Dummy Di,t is 1 for structural changes i. The HAR-UP-SC is defined as follows:
+                                           23
+                                                                    S
+              UVt+h = c + α1 UVD        W        M
+                                                                    X
+                               t + α2 UVt + α3 UVt +                      (δi Di,t ) + ϵt+h .   (11)
+                                                                    i=1
+
+   Structural changes are determined using the Inclán-Tiao cumulative sum of squares
+algorithm (ICSS algorithm), proposed in Inclan and Tiao (1994). This procedure works
+as follows. They first compute the cumulative sum of squares of the first to n observations
+of the return series:
+                                                  n
+                                                        rt2 .
+                                                  X
+                                           Cn =                                                 (12)
+                                                  t=1
+
+   They test for constant volatility by the following Dn statistic:
+
+                                              Cn  n
+                                      Dn =       − ,                                            (13)
+                                              CT  T
+
+with T being the total observations in the given time-series. They prove that this depends
+on some F-statistics:
+                                                                     !
+                                (T − n)n            1 − FT −n,n
+                           Dn =                                     ,                           (14)
+                                   T2             n
+                                                  T
+                                                    + T T−n FT −n,n
+
+with
+                                           (CT − Cn )/(T − n)
+                               FT −n,n =                      .                                 (15)
+                                                 Cn /n
+   If the max |Dn | is larger than the critical value, the corresponding n is taken as
+structural change, as the null hypothesis of equal variance is rejected. This algorithm is
+done repeatedly until the max |Dn | is not larger than the critical value anymore. According
+                                                                q
+to Inclan and Tiao (1994), under variance homogeneity,          T /2Dk behaves like a Brownian
+bridge asymptotically. The 5% critical value is therefore equal to 1.358. This procedure
+is done on any stock to find structural changes in the in-sample time series.
+
+
+4.2    Coupled component DCS-EGARCH
+
+To model the ratio of overnight to intraday volatility, I use the coupled component dy-
+namic conditional score exponential generalized autoregressive conditional heteroskedastic
+model, proposed by Linton and Wu (2020). In the following, I refer to this model as the
+coupled component.
+   Log returns are used in this model, defined as in equation (1). To increase inter-
+pretability, CT Ot = rtN and OT Ct = rtD . Initially, I use the exact same model as Linton
+and Wu (2020), which states:
+                                              24
+                                rtD            µD                         D
+                                                                                      uD
+                           !          !             !                           !            !
+                     1δ                                   π11 π12        rt−1
+                                                                   
+                                                                                       t
+                                          =             +                 N
+                                                                                    +  N
+                                                                                                 ,         (16)
+                     01         rtN            µN         π21 π22        rt−1         ut
+                                    N
+with the conditional shocks uD
+                             t and ut with mean zero. The error process ut has an
+
+exponential form and depends on the short run effects λ and the long run effects σ.
+Therefore the process has conditional heteroskedasticity:
+                                                                  D         D
+                                      uD            exp(λD
+                                           !                                         !
+                                       t                 t ) exp(σ (t/T )) ϵt
+                           ut =                =                            N
+                                                                                         .                 (17)
+                                      uN
+                                       t            exp(λN        N
+                                                         t ) exp(σ (t/T )) ϵt
+
+   The short run component λ evolves over time as follows:
+
+                    λD                      D         D         N
+                     t = ωD (1 − βD ) + βD λt−1 + γD mt−1 + ρD mt
+                                                                                                           (18)
+                             ∗                 D        ∗   N           N
+                          + γD (mD
+                                 t−1 + 1)sign(et−1 ) + ρD (mt + 1)sign(et ),
+
+
+                  λN                      N         N         D
+                   t = ωN (1 − βN ) + βN λt−1 + γN mt−1 + ρN mt
+                                                                                                           (19)
+                            ∗                          ∗
+                         + γN (mN             N            D             D
+                                t−1 + 1)sign(et−1 ) + ρN (mt−1 + 1)sign(et−1 ),
+
+
+where mkt , for k ∈ {D, N }:
+
+                                                       (1 + νk )(ekt )2
+                                          mkt =                            .
+                                                   νk exp(2λkt ) + (ekt )2
+                     h          i
+                                t
+   I use ekt = exp −σ̃tk        T
+                                      ukt . This provides the dynamic relation between the short
+run process λ and the long run process σ. The exact definition of the innovation process
+mkt is based on a dynamic conditional score approach. For more details, I refer to Linton
+and Wu (2020). The parameters in the λ process have the following interpretation. ωk
+is the unconditional mean of the short run volatility and βk gives the perseverance of λ.
+        (∗)                                                                                          (∗)
+Where γD captures the influence of intraday innovation yesterday on λD
+                                                                     t , ρD captures the
+
+effect of overnight innovations yesterday on λD
+                                              t . It is important to mention that yesterday
+
+is defined as the previous period and the notation of t and t − 1 is solely based on the
+assumption of having the overnight return (rtN ) being followed by the intraday return
+                                                        (∗)       (∗)
+(rtD ). The same interpretation holds for γN and ρN , which measures the effect of lagged
+overnight shocks and previous period intraday shocks on the short run overnight volatility
+                                    ∗    ∗
+today respectively. The parameters γD , γN , ρ∗D and ρ∗N allow for so-called leverage effects,
+meaning that they use the sign of a direct (smoothed) innovation ekt and are not reliable
+on the sign of mkt , as mkt can not be smaller than minus one.
+   Let ϕ denote the parameter set as:
+
+                              ∗
+         ϕ = (ωD , βD , γD , γD , ρD , ρ∗D , νD , ωN , βN , γN , γN
+                                                                  ∗
+                                                                    , ρN , ρ∗N , νN )T ∈ Φ ⊂ R14           (20)
+                                                    25
+The long run component σtk , k ∈ {D, N }, is defined as follows, for s ∈ (0,1):
+                                               T
+                                                                                                         !
+                                       1    1X                    α
+                                k
+                               σ̃ (s) = log       K(s − t/T ) ukt   .                                                     (21)
+                                       α    T t=1
+
+   K(·) is a kernel with support [−1, 1]. I use the Epanechnikov kernel as it has the
+lowest mean square error of known kernels, and is therefore an often used kernel.
+   For identification purposes, I re-center σ(s)k :
+                                                                                  T
+                                              t                    t           1X         t
+                                                                                                
+                                   σ̃ k               = σ̃ k               −         σ̃ k                ,                (22)
+                                              T                    T           T t=1      T
+
+where Tt ∈ (0,1) by definition , having the same domain as s.
+   After estimating the coefficients of the model in equation (16) using least squares, I
+can retrieve ut . Using ut , I initialize σ̃ k (s) and determine ekt , for k ∈ {D, N }:
+
+                                                                                t
+                                                                                  
+                                                  ekt = exp −σ̃tk                        ukt .                            (23)
+                                                                                T
+
+   The log-likelihood function for ϕ, where θ denotes the function σ̃ k (s) for s ∈ (0, 1),
+can then be written as:
+                                                T 
+                                             1X                              
+                                lT (ϕ; θ̃) =        ltD (ϕ; θ̃) + ltN (ϕ; θ̃) ,                                           (24)
+                                             T t=1
+
+                                              (ẽkt )2
+                                                                                !
+                     νk + 1                                        νk + 1  1             νk
+                                                                                                                        
+ltk = −λkt (ϕ; θ̃) −        ln       1+              k
+                                                            + ln Γ        − ln νk − ln Γ    .
+                        2               νk exp(2λt (ϕ; θ̃))           2    2             2
+
+   Γ is the gamma function and I initialize λk1 = ωk . ϕ is estimated by maximizing
+λT (ϕ; θ̃) with respect to ϕ ∈ Φ and I get ϕ̃ and λ̃kt . This is done using a so-called GARCH
+filter. The likelihood is optimized using this filter and a non-linear optimizer. I will refer
+to this optimization as the filter optimization. I then calculate η̃tk as:
+
+                                                  η̃tk = exp(−λ̃kt (ϕ̃; θ̃)) ukt .
+
+   In the next step, I maximize the following log-likelihood with respect to σ̂ k (s), where
+σ̂ k (s) is the optimized value of σ̃ k (s) for each value of s separately:
+                               T
+                                                                     (η̃ k exp(−σ̂ k (s))2
+                                                          "                                                      !#
+                           1                           ν̃k + 1
+ LkT (σ̂ k (s); ϕ̃, s) = −                                     ln 1 + t
+                                                               k
+                               X
+                                  K(s − t/T ) σ̂ (s) +                                                                . (25)
+                            T t=1                          2                  ν̃k
+
+   This optimization is performed with the same non-linear optimizer and I will refer to
+this optimization as the sigma optimization.
+
+                                                                       26
+   I conduct both these optimizations, the filter and the sigma, repeatedly until conver-
+gence. Convergence is defined as the difference in parameter values upon the previous
+optimization and is, just as in Linton and Wu (2020), mathematically defined as:
+                X Z h                             i2                          T              
+        ∆r =              σ̂ j,[r] (u) − σ̂ j,[r−1] (u) du + ϕ̂[r] − ϕ̂[r−1]      ϕ̂[r] − ϕ̂[r−1] .   (26)
+               j=D,N
+
+   The optimization procedure stops when ∆r ≤ τ for some small value τ .
+
+
+4.3    Two-component DCS-EGARCH
+
+Another way to specify both the short and long run is proposed by Harvey and Lange
+(2018). They propose to split the short run component, see equations (18) and (19), in
+two parts, where now one serves as the short run component and one as the long run
+component. This means that equation (18) switches, for i ∈ {1, 2}, to:
+
+                                       λD         D      D
+                                        t = ωD + λ1,t + λ2,t ,
+                                                                                                      (27)
+
+and
+                                                      N ∗
+               λD           D             D                    D             D
+                i,t = βi,D λi,t−1 + γi,D mt−1 + ρi,D mt γi,D (mt−1 + 1)sign(et−1 )
+                                                                                                      (28)
+                    + ρ∗i,D (mN           N
+                              t + 1)sign(et ).
+
+Equation (19) changes, for i ∈ {1, 2}, to:
+
+                                      λN         N      N
+                                       t = ωN + λ1,t + λ2,t ,
+                                                                                                      (29)
+
+and
+                                                       ∗
+             λN           N           N           D          N             N
+              i,t = βi,N λt−1 + γi,N mt−1 + ρi,N mt + γi,N (mt−1 + 1)sign(et−1 )
+                                                                                                      (30)
+                   + ρ∗i,N (mD             D
+                             t−1 + 1)sign(et−1 ).
+
+   This model is only defined for β1,k ̸=β2,k , for k ∈ {D, N }, where we define β1,k > β2,k
+and thus λk1,t being the long run component.
+   The estimation procedure changes as σ k is replaced by λk1,t . For that reason, equation
+(23) changes to:
+
+                                               ekt = ukt .                                            (31)
+
+   Equation (24) remains unchanged and is optimized using the same non-linear optimizer
+as before. The short and long run components are optimized using the filter and at the
+same time. This makes this procedure more time-efficient than the coupled component
+model, as I do not need equation (25).
+                                                   27
+4.3.1     Quadratic Spline
+
+Harvey and Lange (2018) suggests to model the long run λk1,t using exogenous variables by
+way of a quadratic spline. This quadratic spline, introduced by Engle and Rangel (2008),
+is defined, for t = 1, . . . , T , as:
+                                                     K
+                                     λk1,t = π0k +         πik max{t − ti−1 , 0}2 .
+                                                     X
+                                                                                                               (32)
+                                                     i=1
+
+    T is split into K equally ranged intervals, where t0 = 0, t1 = T /K, t2 = 2T /K,. . . ,
+tK = T . The optimal K is determined by a information criterion. Although Harvey and
+Lange (2018) claim that the spline is less preferable from multiple points of view, it gives
+a better visual representation of the long run component, which is more interpretable. In
+addition, the long run components of both models are comparable in this way.
+
+
+4.4     Adjusted model
+
+The coupled component and the two-component model both use the same base specifi-
+cation as given in equation (16). This specification allows overnight returns to depend
+on lagged (overnight and intraday) returns. Intraday returns depend on lagged intraday
+returns and and overnight returns with the same t. However, recent data indicates that
+overnight and intraday returns can be explained by lagged upside close-to-close volatility.
+For this reason, I include this variable in the base specification. As I use the squared
+return for a proxy for (upside) volatility, it is in essence the same to use the max function
+over zero and the lagged close-to-close return. Therefore the included variable rtCTC,+ is
+defined as:
+
+                                           rtCTC,+ = max {0, rtCTC },                                          (33)
+
+where rtCTC = (rtD + rtN ).
+    I let the overnight and intraday return depend on the new variable in equation (33)
+and the remaining part of the model in equation (16) stays the same. The new base
+specification therefore is:
+
+                       rtD            µD                          D
+                                                                              ξD                  uD
+                   !         !             !                            !          !                   !
+              1δ                                 π11 π12         rt−1
+                                                            
+                                                                                        CTC,+      t
+                                 =             +                            + N        rt−1   +            .   (34)
+              01       rtN            µN         π21 π22          N
+                                                                 rt−1         ξ                    N
+                                                                                                  ut
+
+
+
+                                                            28
+4.5     Constancy of ratio test
+
+To statistically test the constancy of the ratio of long run overnight volatility to long run
+intraday volatility, I use the constancy of ratio test considered by Linton and Wu (2020).
+I test the following null hypothesis:
+
+                                  H0 : exp(σ0N (s)) = ρ exp(σ0D (s)).
+
+   The alternative hypothesis states a time varying ratio. The considered t-ratio t̂(s)
+follows a standard normal distribution under the null hypothesis and is defined as:
+                                         √
+                                           T h(ρ̂(s) − ρ̂)
+                                 t̂(s) =     q             ,
+                                                ω̂(s)
+
+with:
+
+                                                    exp(σ̂ N (s))
+                                         ρ̂(s) =                  ,
+                                                    exp(σ̂ D (s))
+                                              Z 1
+                                                 exp(σ̂ N (s))
+                                       ρ̂ =                    ds,
+                                               0 exp(σ̂ D (s))
+
+                                                                      !
+                                                     ν̂N + 3 ν̂D + 3
+                            ω̂(s) = ρ̂ ∥K∥22
+                                         2
+                                                            +        .
+                                                       2ν̂N    2ν̂D
+
+   I plot the test statistic t̂(s) for s ∈ (0, 1) and determine the significance using confidence
+intervals. ∥K∥22 is defined as:
+                                                    Z
+                                         ∥K∥22 =        K(s)2 ds,
+
+where I use the Epanechnikov kernel. This kernel K(s) is defined as:
+
+                                                     3       
+                                        K(s) =          1 − s2 ,
+                                                     4
+
+with s ∈ (0, 1). Therefore:
+
+                                             9     2    1
+                              Z                                      
+                                        2
+                                   K(s) ds =    s − s3 + s5 .
+                                             16    3    5
+
+The proof of the equation above can be found in Appendix D.
+
+
+4.6     Evaluation measures
+
+I evaluate the dynamics of the overnight and intraday volatilities considering the short
+and long run components. The long run component of the coupled component is σ k (s).
+                                       29
+This measure is demeaned for identification purposes in each step of the algorithm. The
+long run component of the two-component, λk1,t , does not have demeaning necessities.
+However, to compare both components, I consider
+                                                            1 T
+                                 λk,demeaned = λk1,t −           λk
+                                                              X
+                                  1,t                                                     (35)
+                                                            T t=1 1,t
+throughout the whole next section, if not mentioned otherwise. Hence, I will use the
+demeaned function above of λk1,t .
+   Although both short and long run can be considered individually, the development
+of the total volatility for both day and night is interesting as well. Therefore I take the
+following equation as a measure for total volatility in the coupled component model, which
+is a combination of the short and long run components:
+                              s
+                                    νk                   t
+                                                                        
+                                         exp 2λkt + 2σtk                       .          (36)
+                                  νk − 2                 T
+   Notice that this measure depends on νk . When νk goes to infinity, the scalar upfront
+goes to one. However, when νk is close to two, this scalar becomes larger than one and
+penalizes the total volatility for the leptokurtic behaviour of the error distribution.
+   For the two-component model this equation changes. Harvey and Lange (2018) con-
+siders exp(λk2,t ) for the short run and exp(ωk + λk1,t ) for the long run. I change the short
+run to exp(ωk + λk2,t ) for comparison reasons with the other model due to demeaning.
+As the estimation procedure of both models differs significantly, I take these measures to
+compare the models. Notice that I did not use this in equation (35), for the simple reason
+that demeaning will immediately get rid of this adjustment. Equation (36), for the total
+volatility, changes for the two-component to:
+                             s
+                                   νk      h                     i
+                                        exp 2ωk + 2λk1,t + 2λk2,t .                       (37)
+                                 νk − 2
+   Furthermore I consider the ratio of total volatility overnight to total volatility intraday
+(for the coupled component):
+                                 r                h                i
+                                      νN                              t
+                                     νN −2
+                                           exp        2λN     N
+                                                        t + 2σt       T
+                                 r                h                i ,                  (38)
+                                      νD                              t
+                                     νD −2
+                                           exp        2λD     D
+                                                        t + 2σt       T
+
+and for the two-component:
+                              r               h                            i
+                                   νN
+                                  νN −2
+                                        exp   2ωN + 2λN       N
+                                                      1,t + 2λ2,t
+                              r               h                            i.             (39)
+                                   νD
+                                  νD −2
+                                        exp       2ωD + 2λD       D
+                                                          1,t + 2λ2,t
+                                                       30
+5       Results
+In this section I discuss the results, which can be divided into two parts, namely the
+in-sample estimates, out-of-sample estimates and results of the HAR-UV-SC model, and
+the outcomes of the coupled component and the two-component model. Although the
+latter two models are of higher importance, I will begin with the HAR-UV-SC model for
+the simple reason of keeping a logically ordered narrative.
+
+
+5.1     HAR-UV-SC
+
+The HAR-UV-SC model consists of the estimation of the structural change parameters
+and the autoregressive parameters. The structural change estimates are determined by
+the ICSS algorithm. The sets of parameters are reported and visually shown for the in-
+sample analysis. As the out-of-sample analysis estimates the parameter using a rolling
+window, I only discuss the outcome of the use of these estimated upside volatilities in the
+sorted portfolio analysis, as before.
+
+
+5.1.1    ICSS algorithm
+
+The ICSS algorithm is performed on every stock of the S&P500. Figure 8 shows the
+results for the stocks Apple (AAPL), American Tower Corporation (AMT) and Akamai
+Technologies (AKAM). AMT has the least structural changes, AKAM the most and
+AAPL has an average amount of structural changes. The green and red lines give three
+times the standard deviation of the returns series. For normally distributed variables this
+should include 99% of the observations. Return series are not normally distributed, so a
+smaller percentage should be expected between those bounds, because of the heavier tail
+distributions.
+    Figure 8 shows that the ICSS algorithm depends heavily on the distribution of returns.
+When this distribution has a higher kurtosis, meaning more large absolute returns, the
+algorithm finds more structural changes. This is by definition, but can also be clearly
+seen in the figure, as the shakier the time-series, the more structural changes are found.
+Furthermore, the biggest outliers are found during the COVID-19 pandemic which is by
+far the biggest crisis in this sample period.
+
+
+
+                                                31
+Figure 8: Structural changes found by the ICSS algorithm for respectively AAPL, AMT
+and AKAM for a five year rolling window
+
+
+
+
+5.1.2   In-sample analysis
+
+In-sample estimates of the three stocks, AAPL, AMT and AKAM, are given in Table 1.
+Significance levels for 0.1% are (***), 1% are (**), 5% are (*), and 10% are (·).
+
+
+
+                                            32
+Table 1: In-sample estimates for the HAR-UV-SC model for AAPL, AMT and AKAM
+
+
+          AAPL           AMT           AKAM                 AAPL         AMT            AKAM
+
+ c        0.00027***    0.00012***     0.00024***     δ12   0.00001                    -0.00009
+ α1       0.07672       0.01135       -0.03199        δ13   -0.00013*                  -0.00018**
+ α2     -0.15291*       0.13315       -0.06130        δ14   0.00095**                  -0.00009
+ α3     -0.03769       -0.38181       -0.49393**      δ15   0.00004                    -0.00010·
+ δ1     -0.00008       -0.00003*       0.00084*       δ16   -0.00016**                  0.00007
+ δ2       0.00036       0.00154*       0.00014        δ17                               0.01165***
+ δ3     -0.00016**      0.00012*       0.00093        δ18                               0.00004
+ δ4     -0.00001                       0.00006        δ19                               0.00115
+ δ5     -0.00012*                      0.00466        δ20                              -0.00001
+ δ6     -0.00013*                     -0.00001        δ21                              -0.00004
+ δ7       0.00001                      0.00001        δ22                               0.00215*
+ δ8     -0.00013·                      0.00013        δ23                              -0.00001
+ δ9     -0.00019**                     0.00417        δ24                               0.00015
+ δ10    -0.00004                       0.00008        δ25                              -0.00013*
+ δ11    -0.00017*                     -0.00012·
+
+
+      The constant is significant for all three stocks. α2 is significant and negative for AAPL.
+This means that the lagged weekly upside volatility has a negative effect on the volatility
+today. The same conclusion holds for AKAM for α3 and thus the lagged monthly upside
+volatility. Furthermore, structural change dummies are regularly significant for all three
+stocks.
+
+
+5.1.3     Out-of-sample analysis
+
+I use the rolling fixed-window prediction method for the out-of-sample estimation. This
+method is also used in Gong and Lin (2021). This method uses a rolling window of
+1000 observations for each estimation and prediction. This means that for every single
+forecast, the ICSS algorithm is performed, as well as the estimation of the HAR-UV-SC
+parameters. Having 2658 observations, I have 1658 upside volatility forecasts. These
+volatility forecasts are used to sort the stocks into terciles every day. The same procedure
+
+                                                 33
+is performed as before, where I use a rolling window of four years. This leaves us with
+approximately two and a half years of output. Figure 9 shows the difference in return,
+overnight vs intraday, for the three different terciles, which are sorted on high, medium
+and low VOL+
+           t−1 .
+
+   Figure 9 shows the difference in returns when sorting on the estimated upside volatil-
+ities by the HAR-UV-SC model. Sorting on these estimates is profitable as the difference
+is significantly different from zero for the high tercile. This means a non-zero profit, when
+using this strategy for the last four years using the HAR-UV-SC estimates. The medium
+tercile is not significantly different from zero for a 5% level and the low tercile is even
+lower. Although the estimates enable a profit, the results is by far not as pronounced as
+when using realized upside volatilities. This could be due to the simplicity of the HAR-
+UV-SC model, which in fact only uses autoregressive terms and structural changes. This
+model could easily be extended, although this is not the aim of the paper.
+
+
+5.2    DCS-EGARCH
+
+After finding thorough evidence of an overnight anomaly and the relatively easy forecast-
+ing of upside volatility with the cause of exploiting this anomaly, I use the anomaly and
+the interaction of overnight and intraday returns to model the overnight and intraday
+volatility separately. For this purpose, I first estimate the base specification as given in
+Linton and Wu (2020). Then I try to improve this model by adding information found
+in the data section. I analyse the impact of the incorporation of the new variables. Then
+I estimate the coupled component DCS-EGARCH model of Linton and Wu (2020). I
+extend the coupled component from Linton and Wu (2020) in two dimensions. I first add
+the data from 2017-2022 to the model. Secondly, I change this model with insights from
+Harvey and Lange (2018) to model the long run (volatility) in a different way. This model
+will be called the two-component DCS-EGARCH.
+   For this analysis I use stocks from the Dow 30, which have data available since 1993.
+Eight stocks are removed from the sample due to few data (CRM, DOW, GS and V) and
+incorrect/incomplete data before 2001 (BA, CAT, DIS and KO), which leads to biased
+parameter estimates. The 22 stocks I use for the analysis are: AAPL, AMGN, AXP,
+CSCO, CVX, HD, HON, IBM, INTC, JNJ, JPM, MCD, MMM, MRK, MSFT, NKE,
+PG, TRV, UNH, VZ, WBA and WMT.
+                                             34
+Figure 9: Difference in return for 3 sorts on different values of upside close-to-close volatil-
+ity yesterday using the HAR-UV-SC for a four year rolling window
+
+
+
+
+                                              35
+5.2.1   Standard base specification
+
+I first estimate the standard base specification used by Linton and Wu (2020), as shown in
+equation (16). Table 6 shows the parameters estimates for the standard base specification
+for the period 4 Janaury 1993 until 3 August 2022. The values are close, but not identical,
+to the estimates in Linton and Wu (2020), which is to be expected as five years of data
+has been added. I generally draw the same conclusion, namely a positive δ for ten out
+of twelve significant values. In combination with a negative π11 for all significant values,
+which means that both overnight and intraday returns have a negative effect on subse-
+quent intraday returns. π12 and π21 have, considering only significant estimates, seven
+negative and five positive, and eight negative and three positive values respectively. No
+unambiguous conclusion can be derived from those estimates. However, in contradiction
+with Linton and Wu (2020), I find twelve negative out of twelve significant values for π22 ,
+which means a negative effect of the overnight return on the subsequent overnight return.
+This could be explained by the big crashes during the COVID-19 pandemic, which mostly
+occurred overnight and were of relatively large magnitude, as seen in the data section.
+Finally, the parameters estimates for µD and µN are positive for most stocks, 18 and 17
+times respectively.
+
+
+5.2.2   Adjusted base specification
+
+The adjusted coupled component model has an adjustment on the base specification,
+which can be found in equation (34). I incorporate insights from the data with this
+specification, namely the overnight anomaly. As the overnight anomaly is only present
+in abundance after the start of the COVID-19 pandemic, I first consider the parameter
+estimates of this model with data from May 2020 to May 2022. Table 7 shows the
+parameter estimates for the adjusted base specification for the period May 2020 until
+May 2022. I see different dynamics for this specific period. Although δ is positive (seven
+times out of seven significant estimates) and π11 is negative again (five times out of seven
+significant estimates), I find a more pronounced pattern for π12 , π21 and π22 . π12 is positive
+(six out seven) and π21 is negative (five out five). This means, for those particular stocks,
+day returns have the same sign as night returns the day before and that day returns have
+a negative effect on subsequent night returns. π22 is negative again (eight out of nine),
+meaning a negative effect of the overnight return on the subsequent overnight return. The
+                                              36
+new parameters, ξD and ξN , follow my expectations. ξD is most of the time negative or
+zero, and ξN is positive or zero. This explains the positive difference found in earlier (the
+positive difference in the return due to close-to-close volatility), and the addition of these
+parameters is in that sense valuable, as some parameters are significantly different from
+zero.
+   Table 8 in Appendix C gives the parameter estimates of the adjusted model. I find
+ten positive values out of 13 significant values. π11 is also negative again among most
+stocks. This is all in line with earlier results. π12 and π21 have no clear pattern, just as in
+the standard model for this time period. Also π22 is negative for ten out of ten significant
+stocks and zero otherwise. The interesting thing is the number of significant values among
+ξD and ξN . Although not consistent in sign, more than eight and thirteen significant
+estimates are found respectively. The added variables are expected to have a particular
+sign in the subsample beginning in 2020, but these variables thus also have predictable
+power in the entire sample. This could potentially make the upcoming volatility models
+more efficient.
+   To directly see the result of the potential efficiency increase, the used innovations,
+namely ukt , should be analysed from both base specifications. Figure 29 and Figure 30
+                                          N
+show respectively the innovations uD
+                                   t and ut from both models plotted against each other
+
+to see if the changed base specification gives rise to a different set of innovations. This is
+interesting as the innovations are the only input to the DCS-EGARCH models, as can be
+seen in equation (17).
+   The figures show that the innovations from both models are almost identical. This
+could be seen as a trivial case, as both models look alike and only differ in two variables.
+However, if I plot the innovations from the adjusted model against a model with only a
+constant, the same pattern, innovations on the 45 degree line, evolves. I can thus conclude
+that the base specification is not of big influence to the outcome of the eventual models.
+Therefore I use the standard base specification in the upcoming models. On the other
+hand, the absence of such a influence is beneficial in the way that the model is robust to
+the chosen base specification.
+
+
+
+
+                                              37
+5.2.3   Coupled component
+
+I estimate the coupled component model by optimizing the likelihood functions in equation
+(24) and equation (25). After repeatedly optimizing these functions sequentially, I end
+up with an optimized set of parameters ϕ, as in equation (20), and the long run function
+σ k (s). The parameters ϕ can be found in Table 9 and in Table 10. ωD is mostly positive
+and always larger than ωN , which is always negative. It should be noted that I consider
+an exponential model, and that ω k , the unconditional mean of the short run volatility, can
+not be negative in exponential form. The intraday short run volatility is thus larger than
+the overnight short run volatility. βD and βN are large, but significantly smaller than one,
+indicating a stable, yet autoregressive, process. However, these terms are smaller than in
+Linton and Wu (2020) suggesting less correlation in short term volatility in the period
+2017 to 2022. γD and ρD are always positive and significant. The same holds for γN and
+                                                                           ∗
+ρN . This implies, in combination with the significant and negative terms γD , ρ∗D , γN
+                                                                                      ∗
+                                                                                        and
+ρ∗N , that negative returns are followed by higher volatility. The values are roughly the
+same as in Linton and Wu (2020). This does not apply to νD and νN . These parameters
+refer to the degree of freedom from the distribution of volatilities. νD is lower on average
+(value of 2.92) and νN is larger on average (value of 8.45). This means more leptokurtic
+overnight volatilities and the other way around for intraday returns. The earlier seen data
+already indicates that COVID-19 crashes mostly occurred during the night, giving rise to
+a more leptokurtic distribution. In combination with smaller ωk for overnight returns, I
+conclude that overnight returns are less volatile but their distribution has more kurtosis.
+   A more formal way of showing the difference in dynamics between overnight and in-
+traday volatility is conducting a Wald test on the parameter estimates. The p-values of
+these tests can be found in Table 11 just as the null hypothesis. The null hypothesis
+states equality between the overnight and intraday parameters. The equality of the un-
+conditional mean ωk and the degree-of-freedom parameter νk are rejected for all stocks.
+The parameters γk , γk∗ , ρk and ρ∗k are seldom rejected. However, in contrast to Linton
+and Wu (2020), I reject the equality of βk very often. This means that the autoregres-
+sive dynamics have changed during the last five years, probably caused by the reversals
+and crashes during March 2020. This results is also reflected in the p-values of the joint
+null hypothesis, which is also more often rejected. Short term dynamics have therefore
+diverged in the last couple of years for intraday versus overnight volatility.
+                                             38
+   Figure 31 presents the long run component σ k (s). This function is optimized repeat-
+edly to convergence. It is important to remember that both functions, intraday and
+overnight, are standardized multiple times. The intraday long run volatility is actually
+higher than the overnight long run volatility. However, using this approach the long
+run relative dynamics can be observed. For most stocks, the overnight component is
+smaller than before the financial crisis (second vertical grey dotted line) and is higher
+than the intraday component after. Another communal characteristic, for both intraday
+and overnight, are the maxima around the crisis periods, indicated by the grey dotted
+lines. The dynamics during the pandemic differ from the dynamics during the other two
+crises periods. Relative overnight volatilities rise higher during this crisis, while rising to
+the same relative level as intraday volatilities during the other two crises.
+   The ratio of total overnight to total intraday volatility, as given in equation (38), is
+shown in Figure 32. The ratio is increasing for almost all stocks during the sample period.
+Most stocks have the largest peak during the corona crisis, but another often appearing
+peak is found around 2011/2012. This is the period when the long run (standardized)
+overnight volatility became relatively larger than its intraday opposite. The interpretation
+of the absolute value of the ratio, sometimes greater than one, is not that simple. The
+ratio uses the total volatility, which is a combination of the long and short run component.
+Although the short run component is reliable, the long run component is standardized
+repeatedly and the ratio can therefore not be interpreted as a fair ratio. However, the
+increase of this ratio does have a nice interpretation as a relative increase in overnight to
+intraday volatility.
+   I consider the total volatility for each stock in Figure 33. The definition for the total
+volatility is of great influence on the given results. The total volatility consists of both
+the long and short run component. Both are in practice greater in magnitude for intraday
+returns. The long run is however standardized. Although the short run is larger, the total
+volatility does not differ that much in size. This is due to the scalar νkν−2
+                                                                           k
+                                                                              . This scalar
+goes to one for ν going to infinity. Intraday returns have less kurtosis with a average
+νD of 8.45. νN is 2.92 on average. As a result, the total overnight volatility is scaled by
+3.2, while the total intraday volatility is scaled by 1.3. In the figure, this comes down to
+                          √           
+                             8.45/6.45
+a relative scaling of 1.6  √             in favour of the overnight volatility. Although the
+                              2.92/0.92
+scaling is reasonable, as it includes the heavy tails of the overnight returns, it remains
+
+                                              39
+the question if it should be included in a total volatility equation. Nevertheless, the most
+important feature of the Figure is whether or not both time series converge, diverge or
+remain at the same relative height. Basically every two time series converge over the
+sample period. This is due to the decrease of total intraday volatility after the dot-com
+bubble. The ratio of overnight to intraday total volatility increases as a result and is in
+accordance with Figure 32. Overnight returns are also found to top intraday returns in
+absolute magnitude during crises periods as indicated by the greater total volatility in
+these time intervals.
+   Finally, I consider the t-statistics from the constancy of ratio test in Figure 34. The
+pattern of these t-statistics is in line with the ratios of overnight to intraday volatility,
+namely increasing over time. As the test is considered with respect to the mean, all t-
+statistics cross the 95% confidence bounds in approximately one half on the time series.
+Stocks, such as WBA and WMT, which have a rather constant ratio, fall between these
+bounds for most periods and thus have a constant volatility ratio. However, most stocks
+have an increasing volatility ratio and the null hypothesis of a constant ratio is rejected
+for most periods.
+
+
+5.2.4   two-component
+
+The estimation procedure of the two-component differs from the coupled component.
+Instead of optimizing the short and long run component sequentially, the short and long
+run component are estimated simultaneously. This make it more time-efficient. Both
+components are estimated using a filter. The long run from the coupled component
+uses kernel technology giving it a relatively smooth function, although it is not perfectly
+smooth as the wider the kernel, the smoother the function. A filter has by default a more
+shaky pattern. To enable a fair comparison between both specifications (coupled and
+two-component), I use a quadratic spline to transform the long run component λk1,t into a
+smooth function. The results of these transformations can be found in Figure 35. λk1,t is
+smoother than σ k (s) due to previous mentioned reasons. λk1,t follows σ k (s) really well. The
+overnight and intraday functions intersect at the same time and the dominant function
+matches as well. A difference is the curvature of the overnight function. Where both
+intraday and overnight have the same curvature in Figure 31, in Figure 35 the intraday
+function has relatively more curvature. This is explained by the standardization. This
+
+                                              40
+happens multiple times in the coupled component estimation, but only once in the two-
+component estimation. The overnight functions are flatter for that reason. The same
+conclusions as for the coupled component hold. At approximately one half of the sample
+period, the overnight long run component becomes larger than the intraday long run
+component. Notice again that this is relative, as both functions have been standardized.
+Intraday volatility is actually larger.
+   Figure 36 displays the ratios of overnight to intraday total volatility. The patterns are
+roughly the same as for the coupled component model. Two things stand out. Firstly,
+the ratios are smoother and denser, as direct consequence of the smoother long run com-
+ponents. Secondly, the local minima and maxima do match up for both models. The
+ratios are increasing over the total interval and again I find maxima for all stocks around
+2011/2012, mainly due to the relative larger long run component since that time.
+   After all, Figure 37 gives the total volatility for the intraday and overnight returns. The
+two-component model captures the total volatility well when using the coupled component
+as benchmark. The functions look again denser and smoother due to the quadratic spline.
+The value of K (see equation 32) equals 15, which captures the curvature nicely. Total
+intraday volatility converges to total overnight volatility generally. The volatility values
+on the y-axis for both models are not comparable and do not have a clear interpretation.
+This is due to the estimation procedure. The total volatility depends on νk , the short
+run component and the long run component. νk differs between models as it is optimized
+simultaneously or sequentially. The long run component is standardized ones or several
+times and the short run parameters also have a different dependece structure due to the
+estimation procedures. Therefore, we should concentrate on the relative behaviour of the
+overnight and intraday volatilities and the shape of the corresponding functions. These
+are definitely comparable. Although both methodologies differ substantially, the results
+are roughly the same in terms of pattern and relative dynamics. The results are thus
+robust to the methodology, which provides a stronger conclusion.
+
+
+5.2.5   Case study: Amgen and Microsoft
+
+Although the long run, ratio and total volatility of both models have been compared and
+discussed individually, it is interesting to zoom in on two particular stocks. In this way I
+can directly compare the two models more efficiently and cover some other characteristics
+
+                                             41
+as well. The choice of these two stocks is random and could be replaced with any of the
+stocks. Amgen (AMGN) and Microsoft (MSFT) are the considered stocks.
+   Figure 10 compares the long run components of AMGN, with σ k (s) in the left subfigure
+and λk1,t on the right. The three vertical lines represent the following crises: dot-com
+bubble (10 March 2000), financial crisis (16 September 2008) and the corona crisis (9
+March 2020). These vertical lines are the same for all upcoming figures. The intersections
+are almost parallel and the surpassion of the overnight long run volatility happens for
+both models around 2006. The relative importance of overnight volatility has thus been
+increasing over the sample period. The local maxima during the COVID-19 pandemic
+shows that it is and still is important to differiate between intraday and overnight returns.
+Extreme local values are visible in both subfigures and maxima are most of the time
+reached during the crises moments. The spline smoothness parameter K has a value of
+fifteen and manages to capture the same level of curvature.
+
+
+
+
+Figure 10: The long run component σ k (·), for k ∈ {D, N }, of the coupled component
+(left) and the long run component λk1,t , for k ∈ {D, N }, of the two-component (right).
+
+
+   The ratios of total volatilities can be found in Figure 11. The definition of these
+ratios are given in equation (38) and equation (39). The coupled component (left) and
+two-component (right) behave quite similar. The two-component is a bit smoother and
+denser due to the smoothness of the quadratic spline in the long run component. Both
+have maxima around 2009 and 2011. Both models capture an increasing trend and thus
+a relative increase of overnight volatility to intraday volatility.
+
+                                              42
+Figure 11:             The ratio of overnight to intraday volatility, where volatility is
+                        r               h                  i
+                             νk                            t
+measured as                 νk −2
+                                  exp       2λkt + 2σtk    T
+                                                                 for the coupled component (left) and as
+r               h                              i
+     νk
+    νk −2
+          exp       2ωk + 2λk2,t + 2λk1,t for the two-component (right).
+
+
+     Although the (relative) ratio increase, it is interesting to plot both volatility sepa-
+rately as well. Figure 12 shows the total volatility for both models. The patterns by
+both EGARCH models are almost identical in terms of increase, decrease, local minima
+and local maxima. The scale differs by a multiple, but this is due to the difference in
+methodology. The scale is in any case not relevant, as the total volatility consists of
+standardized variables and parameters, which are optimized to a lesser extent. For this
+reason, the focus should lay on the dynamics. These are matches quite fairly. In both
+figures there is convergence of the time series, indicating an importance increase of the
+overnight volatility, already seen in Figure 11. Most maxima are during the crises periods
+as expected.
+     Now I consider the same analysis for the Microsoft stock. Figure 13 shows the long
+run components of both models, which have a lot of shared features. They have the
+same local maxima/minima, intersect at the same moments in time and have maxima at
+the indicated crises dates. The main difference is the level of smoothness. The long run
+volatility of the stock is thus model robust.
+     The total volatility ratio of MSFT is shown in Figure 14. The ratios behave differently
+at first sight. However, the maxima at 1998, 2005, 2012 and 2016 do match. One as well
+as the other have a drop during the dot-com bubble and the financial crisis, which is quite
+inconsistent with the other stocks, but consistent across models. In addition, the ratios
+are increasing over the entire sample period, but seem to stabilize to a certain degree.
+                                           43
+                                                                           r               h                  i
+                                                                                νk                            t
+Figure 12: Total intraday and overnight volatility, measured as                νk −2
+                                                                                     exp       2λkt + 2σtk    T
+                                                r               h                              i
+                                                     νk
+for the coupled component (left) and as             νk −2
+                                                          exp       2ωk + 2λk2,t + 2λk1,t for the two-
+component (right).
+
+
+
+
+Figure 13: The long run component σ k (·), for k ∈ {D, N }, of the coupled component
+(left) and the long run component λk1,t , for k ∈ {D, N }, of the two-component (right).
+
+
+The V-shape for the period 2020-2022 is not unusual, as seen in multiple stock ratios.
+   The total volatilities are depicted in Figure 15. Convergence of overnight and intraday
+returns, higher intraday volatility in absolute value, higher intraday volatility before the
+financial crisis in relative sense and the maxima during crises periods are all features of this
+Figure and the before discussed total volatility plots. These features are clearly matched
+in both models. The only difference is displayed in the scale, which is due the difference
+in methodology and caused by the (under-)optimizing of the short run parameters, as the
+                                         44
+Figure 14:             The ratio of overnight to intraday volatility, where volatility is
+                        r               h                  i
+                             νk                            t
+measured as                 νk −2
+                                  exp       2λkt + 2σtk    T
+                                                                 for the coupled component (left) and as
+r               h                              i
+     νk
+    νk −2
+          exp       2ωk + 2λk2,t + 2λk1,t for the two-component (right).
+
+
+long run components are actually matched in scale.
+
+
+
+
+                                                                                             r               h                  i
+                                                                                                  νk                            t
+Figure 15: Total intraday and overnight volatility, measured as                                  νk −2
+                                                                                                       exp       2λkt + 2σtk    T
+                                                                  r               h                              i
+                                                                       νk
+for the coupled component (left) and as                               νk −2
+                                                                            exp       2ωk + 2λk2,t + 2λk1,t for the two-
+component (right).
+
+
+     I will now cover some characteristics which, due to the use of multiple functions, are
+hard to interpret when shown for all stocks at once as in Appendix C. These characteristics
+focus on the two-component model. Figure 16 shows the unstandardized long run filter
+λk1,t with their corresponding splines for AMGN and MSFT. The difference in long run
+volatility between intraday and overnight returns stands out. This provides the evidence
+                                                                 45
+that the total volatility (ratios) should be evaluated with care. Splines are fitted to the
+filter with K equal to 5, 10 and 15. When K becomes larger, the spline is fitted to a
+greater extent to the filter, which will cause an increase in curvature. The choice of K is
+a typical bias-variance trade off when used for forecasting, but is solely based on linking
+the two models to the best extent. It turns out that K equal to 15 has the best fit, as
+this value is used among all long run components from the two-component model. The
+estimation procedure of the two-component uses a filter as explained in the methodology
+section. As a result, the long run filter λk1,t is not a smooth function as shown in the
+figure. In combination with the quadratic spline method, the long run component can be
+matched to σ k (s). The optimization procedure of the coupled component has this spline
+feature thus build-in in the sequential likelihood optimization. The ‘smoothing’ process
+in this likelihood optimization is caused by the kernel technology, which by definition uses
+a weighted average of observations (rolling window) resulting in a (relatively) smoothed
+function.
+
+
+
+
+Figure 16: The long run filter λk1,t (k ∈ {D, N }) with splines for K ∈ {5, 10, 15} of the
+two-component.
+
+
+   The unstandardized long run filters of intraday and overnight returns are depicted in
+Figure 17. This time in combination with the short run processes. The blue lines refer
+to the intraday volatility, where the red lines refer to the overnight volatility. The short
+run process λk2,t is shaky and moves around the unconditional mean ωk of the short run
+process, which is larger for the intraday returns for all stocks (table 10). The long run
+filter λk1,t is less shaky. For both stocks, λD                 N
+                                              1,t converges to λ1,t over the sample period.
+
+The relative importance increase of overnight volatility is thus explained by a decrease of
+                                           46
+intraday long run volatility, rather than by an increase of overnight long run volatility.
+This phenomenon is also visible for almost all stocks in Figure 33 and Figure 37. However,
+in those figures, the long run component is standardized and the result is mainly driven
+by the short run process and the relative change in long run volatility. Figure 17 displays
+that also the long run process complements this phenomenon.
+
+
+
+
+Figure 17: Short and long run component for intraday and overnight volatility of the
+two-component.
+
+
+
+
+Figure 18: T -statistics of the constancy of ratio test for the ratio of intraday and overnight
+volatility of the coupled component.
+
+
+   Lastly, Figure 18 shows the t-statistics of the constancy of ratio test for the ratio of
+intraday and overnight volatility of the coupled component for both AMGN and MSFT.
+Both stocks have an increasing ratio and thus also an increasing t-statistic. Constancy is
+rejected for both stocks before the dot-com bubble and numerous times for shorts periods
+                                              47
+after. Nevertheless, both stocks have a quite constant ratio since 2000. The constancy of
+the ratio of MSFT is effected mostly by the COVID-19 crisis.
+
+
+
+6     Conclusion
+This study examines the difference between intraday and overnight returns. The empirical
+results show that overnight minus intraday returns are significantly greater than zero for
+the period 2016-2022 when sorting on upside close-to-close volatility. This indicates a
+change of retail investor behaviour and activity. The difference in return is robust against
+the dynamics around market opening and closure, which are volatile moments.
+    Adding multiple components to dynamic conditional score EGARCH models can pro-
+vide for separately modelling the returns allowing for different dynamical properties. I
+develop the two-component model, which nicely captures all features from the coupled
+component model and is more time-efficient.
+    Overnight volatility increases in relative importance, which is caused by a decrease of
+intraday volatility over the period 1993-2022. Overnight volatility however stays smaller
+than intraday volatility in absolute terms, although overnight returns are more leptokurtic.
+    In conclusion, intraday and overnight returns have quite different dynamics and should
+be modelled accordingly. This could be done using a DCS-EGARCH model, as these
+models are robust to the exact specification.
+    This analysis could be extended in several directions. One interesting direction would
+be to use retail investor data to test the direct relation between (upside) volatility and
+retail investor strategies. Next to that, the analysis could be performed on several different
+markets and products. Additionally, the assumptions of the kernel size, the curvature
+parameter of the spline and the non-linear optimization could be investigated.
+
+
+
+
+                                             48
+Bibliography
+K. Aretz and S. M. Bartram. Making money while you sleep? Anomalies in international
+  day and night returns. Anomalies in International Day and Night Returns (July 24,
+  2015), 2015.
+
+O. E. Barndorff-Nielsen, S. Kinnebrock, and N. Shephard. Measuring downside risk-
+  realised semivariance. CREATES Research Paper, (2008-42), 2008.
+
+V. A. Basdekidou et al. The overnight return temporal market anomaly. International
+  Journal of Economics and Finance, 9(3):1–10, 2017.
+
+H. Berkman, P. D. Koch, L. Tuttle, and Y. J. Zhang. Paying attention: Overnight returns
+  and the hidden cost of buying at the open. Journal of Financial and Quantitative
+  Analysis, 47(4):715–741, 2012.
+
+V. L. Bernard. Cross-sectional dependence and problems in inference in market-based
+  accounting research. Journal of Accounting Research, pages 1–48, 1987.
+
+B. S. Branch and A. J. Ma. The overnight return, one more anomaly. One More Anomaly
+  (September 6, 2006), 2006.
+
+B. S. Branch and A. J. Ma. Overnight return, the invisible hand behind intraday returns?
+  Journal of Applied Finance (Formerly Financial Practice and Education), 22(2), 2012.
+
+T. T. Cai and M. Qiu. International evidence on overnight return anomaly. Unpublished
+  working paper. Massey University, 2009.
+
+M. J. Cooper, M. T. Cliff, and H. Gulen. Return differences between trading and non-
+  trading hours: Like night and day. Unpublished working paper. Virginia Tech, 2008.
+
+F. Corsi. A simple approximate long-memory model of realized volatility. Journal of
+  Financial Econometrics, 7(2):174–196, 2009.
+
+R. F. Engle and J. G. Rangel. The spline-GARCH model for low-frequency volatility and
+  its global macroeconomic causes. The Review of Financial Studies, 21(3):1187–1222,
+  2008.
+
+
+
+                                            49
+K. R. French and R. Roll. Stock return variances: The arrival of information and the
+  reaction of traders. Journal of Financial Economics, 17(1):5–26, 1986.
+
+X. Gong and B. Lin. Effects of structural changes on the prediction of downside volatility
+  in futures markets. Journal of Futures Markets, 41(7):1124–1153, 2021.
+
+A. Harvey and R.-J. Lange. Modeling the interactions between volatility and returns
+  using EGARCH-M. Journal of Time Series Analysis, 39(6):909–919, 2018.
+
+A. C. Harvey. Dynamic models for volatility and heavy tails: with applications to financial
+  and economic time series, volume 52. Cambridge University Press, 2013.
+
+T. Hendershott, D. Livdan, and D. Rösch. Asset pricing: A tale of night and day. Journal
+  of Financial Economics, 138(3):635–662, 2020.
+
+H. Hong and J. Wang. Trading and returns under periodic market closures. The Journal
+  of Finance, 55(1):297–354, 2000.
+
+C. Inclan and G. C. Tiao. Use of cumulative sums of squares for retrospective detection of
+  changes of variance. Journal of the American Statistical Association, 89(427):913–923,
+  1994.
+
+C. X. Jiang, T. Likitapiwat, and T. H. McInish. Information content of earnings an-
+  nouncements: Evidence from after-hours trading. Journal of Financial and Quantitative
+  Analysis, 47(6):1303–1330, 2012.
+
+M. A. Kelly and S. P. Clark. Returns in trading versus non-trading hours: The difference
+  is day and night. Journal of Asset Management, 12(2):132–145, 2011.
+
+M.-E. Lachance. Night trading: Lower risk but higher returns? Unpublished working
+  paper. San Diego State University, 2015.
+
+O. Ledoit and M. Wolf. Robust performance hypothesis testing with the Sharpe ratio.
+  Journal of Empirical Finance, 15(5):850–859, 2008.
+
+O. Linton and J. Wu. A coupled component DCS-EGARCH model for intraday and
+  overnight volatility. Journal of Econometrics, 217(1):176–201, 2020.
+
+
+
+                                             50
+F. A. Longstaff. How much can marketability affect security values?    The Journal of
+  Finance, 50(5):1767–1774, 1995.
+
+D. Lou, C. Polk, and S. Skouras. A tug of war: Overnight versus intraday expected
+  returns. Journal of Financial Economics, 134(1):192–213, 2019.
+
+E. M. Miller. Risk, uncertainty, and divergence of opinion. The Journal of Finance, 32
+  (4):1151–1168, 1977.
+
+D. Muravyev and X. C. Ni. Why do option returns change sign from day to night? Journal
+  of Financial Economics, 136(1):219–238, 2020.
+
+W. K. Newey and K. D. West. A simple, positive semi-definite, heteroskedasticity and
+  autocorrelationconsistent covariance matrix. Econometrica, 55(3):703–708, 1987.
+
+J. D. J. Opdyke. Comparing Sharpe ratios: So where are the p-values? Journal of Asset
+  Management, 8(5):308–336, 2007.
+
+R. A. Wood, T. H. McInish, and J. K. Ord. An investigation of transactions data for
+  NYSE stocks. The Journal of Finance, 40(3):723–739, 1985.
+
+
+
+
+                                          51
+Appendix A                  Data composition
+
+A.1       S&P500
+
+The main sample consists of the 504 S&P500 stocks as of April 4, 2022. This includes
+the changes on April 4, 2022, when Camden (CPT) was added and People’s United
+Financial (PBCT) was removed. Although the name of the S&P500 would anticipate
+otherwise, the index contains 504 stocks, because five constituents have two share classes
+(Alphabet, Discovery, Fox Corporation, News Corp, Under Armour). Table 2 gives the
+exact composition of the sample.
+
+                       Table 2: Main sample: S&P500 constituents
+
+
+ Ticker     Name                               Ticker   Name
+ MMM        3M                                 AOS      A. O. Smith
+ ABT        Abbott Laboratories                ABBV     AbbVie
+ ABMD       Abiomed                            ACN      Accenture
+ ATVI       Activision Blizzard                ADM      ADM
+ ADBE       Adobe                              AAP      Advance Auto Parts
+ AMD        Advanced Micro Devices             AES      AES Corp
+ AFL        Aflac                              A        Agilent Technologies
+ APD        Air Products & Chemicals           AKAM     Akamai Technologies
+ ALK        Alaska Air Group                   ALB      Albemarle Corporation
+ ARE        Alexandria Real Estate Equities    ALGN     Align Technology
+ ALLE       Allegion                           LNT      Alliant Energy
+ ALL        Allstate Corp                      GOOGL    Alphabet (Class A)
+ GOOG       Alphabet (Class C)                 MO       Altria Group
+ AMZN       Amazon                             AMCR     Amcor
+ AEE        Ameren Corp                        AAL      American Airlines Group
+ AEP        American Electric Power            AXP      American Express
+ AIG        American International Group       AMT      American Tower
+ AWK        American Water Works               AMP      Ameriprise Financial
+ ABC        AmerisourceBergen                  AME      Ametek
+ AMGN       Amgen                              APH      Amphenol
+ ADI        Analog Devices                     ANSS     Ansys
+ ANTM       Anthem                             AON      Aon
+ APA        APA Corporation                    AAPL     Apple
+                                                                       Continued on Next Page
+
+                                              52
+                      Table 2: Main sample: S&P500 constituents
+
+
+Ticker    Name                              Ticker   Name
+AMAT      Applied Materials                 APTV     Aptiv
+ANET      Arista Networks                   AJG      Arthur J. Gallagher & Co.
+AIZ       Assurant                          T        AT&T
+ATO       Atmos Energy                      ADSK     Autodesk
+ADP       Automatic Data Processing         AZO      AutoZone
+AVB       AvalonBay Communities             AVY      Avery Dennison
+BKR       Baker Hughes                      BLL      Ball Corp
+BAC       Bank of America                   BBWI     Bath & Body Works Inc.
+BAX       Baxter International              BDX      Becton Dickinson
+BRKB.VI   Berkshire Hathaway                BBY      Best Buy
+BIO       Bio-Rad Laboratories              TECH     Bio-Techne
+BIIB      Biogen                            BLK      BlackRock
+BK        BNY Mellon                        BA       Boeing
+BKNG      Booking Holdings                  BWA      BorgWarner
+BXP       Boston Properties                 BSX      Boston Scientific
+BMY       Bristol Myers Squibb              AVGO     Broadcom
+BR        Broadridge Financial Solutions    BRO      Brown & Brown
+BF-B      Brown–Forman                      CHRW     C. H. Robinson
+CDNS      Cadence Design Systems            CZR      Caesars Entertainment
+CPB       Campbell Soup                     COF      Capital One Financial
+CAH       Cardinal Health                   KMX      CarMax
+CCL       Carnival Corporation              CARR     Carrier Global
+CTLT      Catalent                          CAT      Caterpillar
+CBOE      Cboe Global Markets               CBRE     CBRE
+CDW       CDW                               CE       Celanese
+CNC       Centene Corporation               CNP      CenterPoint Energy
+CDAY      Ceridian                          CERN     Cerner
+CF        CF Industries                     CRL      Charles River Laboratories
+SCHW      Charles Schwab Corporation        CHTR     Charter Communications
+CVX       Chevron Corporation               CMG      Chipotle Mexican Grill
+CB        Chubb                             CHD      Church & Dwight
+CI        Cigna                             CINF     Cincinnati Financial
+CTAS      Cintas Corporation                CSCO     Cisco Systems
+C         Citigroup                         CFG      Citizens Financial Group
+                                                                   Continued on Next Page
+
+                                           53
+                       Table 2: Main sample: S&P500 constituents
+
+
+Ticker   Name                              Ticker   Name
+CTXS     Citrix Systems                    CLX      Clorox
+CME      CME Group                         CMS      CMS Energy
+KO       Coca-Cola Company                 CTSH     Cognizant Technology Solutions
+CL       Colgate-Palmolive                 CMCSA    Comcast
+CMA      Comerica                          CAG      Conagra Brands
+COP      ConocoPhillips                    ED       Consolidated Edison
+STZ      Constellation Brands              CPRT     Copart
+GLW      Corning                           CTVA     Corteva
+COST     Costco                            CTRA     Coterra
+CCI      Crown Castle                      CSX      CSX
+CMI      Cummins                           CVS      CVS Health
+DHI      D. R. Horton                      DHR      Danaher Corporation
+DRI      Darden Restaurants                DVA      DaVita
+DE       Deere & Co.                       DAL      Delta Air Lines
+XRAY     Dentsply Sirona                   DVN      Devon Energy
+DXCM     DexCom                            FANG     Diamondback Energy
+DLR      Digital Realty Trust              DFS      Discover Financial Services
+DISCA    Discovery (Series A)              DISCK    Discovery (Series C)
+DISH     Dish Network                      DG       Dollar General
+DLTR     Dollar Tree                       D        Dominion Energy
+DPZ      Domino’s Pizza                    DOV      Dover Corporation
+DOW      Dow                               DTE      DTE Energy
+DUK      Duke Energy                       DRE      Duke Realty Corp
+DD       DuPont                            DXC      DXC Technology
+EMN      Eastman Chemical                  ETN      Eaton Corporation
+EBAY     eBay                              ECL      Ecolab
+EIX      Edison International              EW       Edwards Lifesciences
+EA       Electronic Arts                   LLY      Eli Lilly & Co
+EMR      Emerson Electric Company          ENPH     Enphase Energy
+ETR      Entergy                           EOG      EOG Resources
+EFX      Equifax                           EQIX     Equinix
+EQR      Equity Residential                ESS      Essex Property Trust
+EL       Estée Lauder Companies           ETSY     Etsy
+RE       Everest Re                        EVRG     Evergy
+                                                                 Continued on Next Page
+
+                                          54
+                     Table 2: Main sample: S&P500 constituents
+
+
+Ticker   Name                            Ticker   Name
+ES       Eversource Energy               EXC      Exelon
+EXPE     Expedia Group                   EXPD     Expeditors
+EXR      Extra Space Storage             XOM      ExxonMobil
+FFIV     F5 Networks                     FB       Facebook
+FAST     Fastenal                        FRT      Federal Realty Investment Trust
+FDX      FedEx                           FIS      Fidelity National Information Services
+FITB     Fifth Third Bancorp             FRC      First Republic Bank
+FE       FirstEnergy                     FISV     Fiserv
+FLT      Fleetcor                        FMC      FMC Corporation
+F        Ford                            FTNT     Fortinet
+FTV      Fortive                         FBHS     Fortune Brands Home & Security
+FOXA     Fox Corporation (Class A)       FOX      Fox Corporation (Class B)
+BEN      Franklin Resources              FCX      Freeport-McMoRan
+CEG      Gap                             GRMN     Garmin
+IT       Gartner                         GNRC     Generac Holdings
+GD       General Dynamics                GE       General Electric
+GIS      General Mills                   GM       General Motors
+GPC      Genuine Parts                   GILD     Gilead Sciences
+GPN      Global Payments                 GL       Globe Life
+GS       Goldman Sachs                   HAL      Halliburton
+SEDG     Hanesbrands                     HAS      Hasbro
+HCA      HCA Healthcare                  PEAK     Healthpeak Properties
+HSIC     Henry Schein                    HES      Hess Corporation
+HPE      Hewlett Packard Enterprise      HLT      Hilton Worldwide
+HOLX     Hologic                         HD       Home Depot
+HON      Honeywell                       HRL      Hormel
+HST      Host Hotels & Resorts           HWM      Howmet Aerospace
+HPQ      HP                              HUM      Humana
+HBAN     Huntington Bancshares           HII      Huntington Ingalls Industries
+IBM      IBM                             IEX      IDEX Corporation
+IDXX     Idexx Laboratories              MOH      IHS Markit
+ITW      Illinois Tool Works             ILMN     Illumina
+INCY     Incyte                          IR       Ingersoll Rand
+INTC     Intel                           ICE      Intercontinental Exchange
+                                                                Continued on Next Page
+
+                                        55
+                      Table 2: Main sample: S&P500 constituents
+
+
+Ticker   Name                                  Ticker   Name
+IFF      International Flavors & Fragrances    IP       International Paper
+IPG      Interpublic Group                     INTU     Intuit
+ISRG     Intuitive Surgical                    IVZ      Invesco
+IPGP     IPG Photonics                         IQV      IQVIA
+IRM      Iron Mountain                         JBHT     J. B. Hunt
+JKHY     Jack Henry & Associates               J        Jacobs Engineering Group
+SJM      JM Smucker                            JNJ      Johnson & Johnson
+JCI      Johnson Controls                      JPM      JPMorgan Chase
+JNPR     Juniper Networks                      EPAM     Kansas City Southern
+K        Kellogg’s                             KEY      KeyCorp
+KEYS     Keysight Technologies                 KMB      Kimberly-Clark
+KIM      Kimco Realty                          KMI      Kinder Morgan
+KLAC     KLA Corporation                       KHC      Kraft Heinz
+KR       Kroger                                LHX      L3Harris Technologies
+LH       LabCorp                               LRCX     Lam Research
+LW       Lamb Weston                           LVS      Las Vegas Sands
+SBNY     Leggett & Platt                       LDOS     Leidos
+LEN      Lennar                                LNC      Lincoln National
+LIN      Linde                                 LYV      Live Nation Entertainment
+LKQ      LKQ Corporation                       LMT      Lockheed Martin
+L        Loews Corporation                     LOW      Lowe’s
+LUMN     Lumen Technologies                    LYB      LyondellBasell
+MTB      M&T Bank                              MRO      Marathon Oil
+MPC      Marathon Petroleum                    MKTX     MarketAxess
+MAR      Marriott International                MMC      Marsh & McLennan
+MLM      Martin Marietta Materials             MAS      Masco
+MA       Mastercard                            MTCH     Match Group
+MKC      McCormick & Company                   MCD      McDonald’s
+MCK      McKesson Corporation                  MDT      Medtronic
+MRK      Merck & Co.                           MET      MetLife
+MTD      Mettler Toledo                        MGM      MGM Resorts International
+MCHP     Microchip Technology                  MU       Micron Technology
+MSFT     Microsoft                             MAA      Mid-America Apartments
+MRNA     Moderna                               MHK      Mohawk Industries
+                                                                       Continued on Next Page
+
+                                              56
+                       Table 2: Main sample: S&P500 constituents
+
+
+Ticker   Name                                Ticker   Name
+TAP      Molson Coors Beverage Company       MDLZ     Mondelez International
+MPWR     Monolithic Power Systems            MNST     Monster Beverage
+MCO      Moody’s Corporation                 MS       Morgan Stanley
+MSI      Motorola Solutions                  MSCI     MSCI
+NDAQ     Nasdaq                              NTAP     NetApp
+NFLX     Netflix                             NWL      Newell Brands
+NEM      Newmont                             NWSA     News Corp (Class A)
+NWS      News Corp (Class B)                 NEE      NextEra Energy
+NLSN     Nielsen Holdings                    NKE      Nike
+NI       NiSource                            NSC      Norfolk Southern
+NTRS     Northern Trust                      NOC      Northrop Grumman
+NLOK     NortonLifeLock                      NCLH     Norwegian Cruise Line Holdings
+NRG      NRG Energy                          NUE      Nucor
+NVDA     Nvidia                              NVR      NVR
+NXPI     NXP                                 ORLY     O’Reilly Automotive
+OXY      Occidental Petroleum                ODFL     Old Dominion Freight Line
+OMC      Omnicom Group                       OKE      Oneok
+ORCL     Oracle                              OGN      Organon & Co.
+OTIS     Otis Worldwide                      PCAR     Paccar
+PKG      Packaging Corporation of America    PH       Parker-Hannifin
+PAYX     Paychex                             PAYC     Paycom
+PYPL     PayPal                              PENN     Penn National Gaming
+PNR      Pentair                             CPT      People’s United Financial
+PEP      PepsiCo                             PKI      PerkinElmer
+PFE      Pfizer                              PM       Philip Morris International
+PSX      Phillips 66                         PNW      Pinnacle West Capital
+PXD      Pioneer Natural Resources           PNC      PNC Financial Services
+POOL     Pool Corporation                    PPG      PPG Industries
+PPL      PPL                                 PFG      Principal Financial Group
+PG       Procter & Gamble                    PGR      Progressive Corporation
+PLD      Prologis                            PRU      Prudential Financial
+PTC      PTC                                 PEG      Public Service Enterprise Group
+PSA      Public Storage                      PHM      PulteGroup
+PVH      PVH                                 QRVO     Qorvo
+                                                                    Continued on Next Page
+
+                                            57
+                    Table 2: Main sample: S&P500 constituents
+
+
+Ticker   Name                           Ticker   Name
+QCOM     Qualcomm                       PWR      Quanta Services
+DGX      Quest Diagnostics              RL       Ralph Lauren Corporation
+RJF      Raymond James Financial        RTX      Raytheon Technologies
+O        Realty Income Corporation      REG      Regency Centers
+REGN     Regeneron Pharmaceuticals      RF       Regions Financial Corporation
+RSG      Republic Services              RMD      ResMed
+RHI      Robert Half International      ROK      Rockwell Automation
+ROL      Rollins                        ROP      Roper Technologies
+ROST     Ross Stores                    RCL      Royal Caribbean Group
+SPGI     S&P Global                     CRM      Salesforce
+SBAC     SBA Communications             SLB      Schlumberger
+STX      Seagate Technology             SEE      Sealed Air
+SRE      Sempra Energy                  NOW      ServiceNow
+SHW      Sherwin-Williams               SPG      Simon Property Group
+SWKS     Skyworks Solutions             SNA      Snap-on
+SO       Southern Company               LUV      Southwest Airlines
+SWK      Stanley Black & Decker         SBUX     Starbucks
+STT      State Street Corporation       STE      Steris
+SYK      Stryker Corporation            SIVB     SVB Financial
+SYF      Synchrony Financial            SNPS     Synopsys
+SYY      Sysco                          TMUS     T-Mobile US
+TROW     T. Rowe Price                  TTWO     Take-Two Interactive
+TPR      Tapestry                       TGT      Target Corporation
+TEL      TE Connectivity                TDY      Teledyne Technologies
+TFX      Teleflex                       TER      Teradyne
+TSLA     Tesla                          TXN      Texas Instruments
+TXT      Textron                        COO      The Cooper Companies
+HIG      The Hartford                   HSY      The Hershey Company
+MOS      The Mosaic Company             TRV      The Travelers Companies
+DIS      The Walt Disney Company        TMO      Thermo Fisher Scientific
+TJX      TJX Companies                  TSCO     Tractor Supply Company
+TT       Trane Technologies             TDG      TransDigm Group
+TRMB     Trimble                        TFC      Truist Financial
+TWTR     Twitter                        TYL      Tyler Technologies
+                                                                Continued on Next Page
+
+                                       58
+                         Table 2: Main sample: S&P500 constituents
+
+
+ Ticker      Name                            Ticker   Name
+ TSN         Tyson Foods                     USB      U.S. Bancorp
+ UDR         UDR                             ULTA     Ulta Beauty
+ UAA         Under Armour (Class A)          UA       Under Armour (Class C)
+ UNP         Union Pacific                   UAL      United Airlines
+ UPS         United Parcel Service           URI      United Rentals
+ UNH         UnitedHealth Group              UHS      Universal Health Services
+ VLO         Valero Energy                   VTR      Ventas
+ VRSN        Verisign                        VRSK     Verisk Analytics
+ VZ          Verizon Communications          VRTX     Vertex Pharmaceuticals
+ VFC         VF Corporation                  VTRS     Viatris
+ V           Visa                            VNO      Vornado Realty Trust
+ VMC         Vulcan Materials                WRB      W. R. Berkley Corporation
+ GWW         W. W. Grainger                  WAB      Wabtec
+ WBA         Walgreens Boots Alliance        WMT      Walmart
+ WM          Waste Management                WAT      Waters Corporation
+ WEC         WEC Energy Group                WFC      Wells Fargo
+ WELL        Welltower                       WST      West Pharmaceutical Services
+ WDC         Western Digital                 FDS      Western Union
+ WRK         WestRock                        WY       Weyerhaeuser
+ WHR         Whirlpool Corporation           WMB      Williams Companies
+ WTW         Willis Towers Watson            WYNN     Wynn Resorts
+ XEL         Xcel Energy                     NDSN     Xilinx
+ XYL         Xylem                           YUM      Yum! Brands
+ ZBRA        Zebra Technologies              ZBH      Zimmer Biomet
+ ZION        Zions Bancorp                   ZTS      Zoetis
+
+
+
+
+     For the main analysis, stocks with less than ten years of data are removed. I end
+up with 456 stocks. The removed 48 stocks are: ABBV, ALLE, AMCR, ANET, APTV,
+BRKB.VI, CARR, CDAY, CDW, CEG, CFG, CTLT, CTVA, CZR, DOW, ENPH, EPAM,
+ETSY, FANG, FB, FOX, FOXA, FTV, HLT, HPE, HWM, IQV, IR, KEYS, KHC, LW,
+MRNA, NCLH, NOW, NWS, NWSA, OGN, OTIS, PAYC, PSX, PYPL, QRVO, SEDG,
+SYF, TWTR, UA, WRK, ZTS.
+
+
+                                            59
+A.2    Institutional Ownership
+
+When doing the analysis on institutional ownership, I lose, for mentioned reasons, six
+stocks. Stocks lost in institutional ownership: BF-B, CMCSA, DISCA, DISCK, GOOGL,
+MOS
+
+
+A.3    Dow 30
+
+The constituents of the Dow 30 can be found in Table 3. All stocks are present in the
+S&P500 and can thus be searched by name in Table 2.
+
+                              Table 3: Dow 30 constituents
+
+
+                   Tickers Dow 30
+
+                   MMM        CAT      GS         JNJ    NKE     VZ
+                   AXP        CVX      HD         JPM    PG      V
+                   AMGN       CSCO     HON        MCD    CRM     WBA
+                   AAPL       KO       INTC       MRK    TRV     WMT
+                   BA         DOW      IBM        MSFT   UNH     DIS
+
+
+   Selecting only constituents for the analysis with at least 30 years of data, I lose: DOW,
+GS, CRM and V.
+
+
+A.4    Nasdaq 100
+
+The 123 largest stock on the Nasdaq exchange can be found in Table 4. Most stocks are
+presented in the S&P500 and can thus be searched by name in Table 2.
+
+
+
+
+                                             60
+                                 Table 4: Nasdaq stocks
+
+
+ Tickers Nasdaq 123
+
+ AAPL     ATVI         COIN      EQIX     GOOGL      LRCX      NTES      ROST      TXN
+ ABNB     AVGO         COST      ERIC     HON        LULU      NVDA      SBAC      VOD
+ ADBE     AZN          CPRT      EXC      HZNP       MAR       NXPI      SBUX      VRSK
+ ADI      BIDU         CRWD      EXPE     IDXX       MCHP      ODFL      SGEN      VRTX
+ ADP      BIIB         CSCO      FANG     ILMN       MDB       ORLY      SIRI      WBA
+ ADSK     BKNG         CSGP      FAST     INTC       MDLZ      PANW      SIVB      WBD
+ AEP      BKR          CSX       FB       INTU       MELI      PAYX      SNPS      WDAY
+ ALGN     BNTX         CTAS      FISV     ISRG       MNST      PCAR      SNY       WTW
+ AMAT     CCEP         CTSH      FITB     JD         MRNA      PDD       TEAM      XEL
+ AMD      CDNS         DDOG      FTNT     KDP        MRVL      PEP       TMUS      ZM
+ AMGN     CERN         DLTR      GFS      KHC        MSFT      PYPL      TROW      ZS
+ AMZN     CHTR         DXCM      GILD     KLAC       MU        QCOM      TSCO
+ ANSS     CMCSA        EA        GMAB     LCID       NDAQ      REGN      TSLA
+ ASML     CME          EBAY      GOOG     LI         NFLX      RIVN      TTD
+
+
+   Selecting only constituents for the analysis which meet the criteria, I lose 21 stocks:
+PYPL, ABNB, JD, TEAM, MRNA, KHC, WDAY, CRWD, PDD, DDOG, BNTX, COIN,
+LCID, RIVN, ZM, ZS, TTD, GFS, MDB, FANG and LI.
+
+
+A.5     Robustness test
+
+For this analysis I (can) only use a small sample of stocks. Figure 5 and Figure 6 use the
+ten following stocks: AAPL, TSLA, AMZN, MSFT, PFE, NVDA, GOOGL, VZ, F and
+WFC. Figure 7 uses the following stocks in addition to the previous named stocks: CVX,
+DIS, CAT, CCL, WMT, IBM, JNJ, MS, PG and CSCO.
+
+
+
+
+                                           61
+Appendix B         Preliminary Results
+
+B.1   ETFs
+
+                     Table 5: Sample periods ETFs
+
+
+                                        Sample Period
+             ETF    Tracking            From         To
+
+             DIA    Dow 30              20-01-1998   19-04-2022
+             IWM    Russell 2000        29-12-2000   19-04-2022
+             MDY    S&P400 Midcap       04-05-1995   19-04-2022
+             QQQ    Nasdaq 100          10-03-1999   19-04-2022
+             SPY    S&P500              02-01-1996   19-04-2022
+
+
+
+               Figure 19: Difference in return for ETFs (1)
+
+
+
+
+                     Notes. Eight year rolling window
+
+
+
+
+                                   62
+Figure 20: Difference in return for ETFs (2)
+
+
+
+
+      Notes. Eight year rolling window
+
+
+
+
+                    63
+B.2   Dow Jones Industrial Average
+
+             Figure 21: Difference in return by sorting on CTOt
+
+
+
+
+             Notes. Twelve year rolling window, sorted on five years
+
+
+                                       64
+Figure 22: Difference in return for 3 sorts on different values of upside close-to-close
+volatility yesterday
+
+
+
+
+                             Notes. Five year rolling window
+
+
+
+                                           65
+B.3     Nasdaq 102
+
+Figure 23: Difference in return for 3 sorts on different values of upside close-to-close
+volatility yesterday
+
+
+
+
+                                           67
+
+                             Notes. Five year rolling window
+Figure 24: Difference in return for 6 sorts on different values of upside close-to-close
+volatility yesterday
+
+
+
+
+                             Notes. Five year rolling window
+
+
+
+                                           68
+Figure 25: Difference in return for 6 sorts on different values of upside close-to-close
+volatility yesterday
+
+
+
+
+                             Notes. Five year rolling window
+
+
+
+                                           69
+Figure 26: Day return for 3 sorts on different values of upside close-to-close volatility
+yesterday
+
+
+
+
+                             Notes. Five year rolling window
+                                           70
+Figure 27: Night return for 3 sorts on different values of upside close-to-close volatility
+yesterday
+
+
+
+
+                              Notes. Five year rolling window
+                                            71
+Figure 28: Difference in return sorted on institutional ownership with confidence bounds
+
+
+
+
+                             Notes. Five year rolling window
+
+
+
+
+                                           72
+Appendix C               Additional tables and figures
+
+Table 6: Estimates of the standard base specification for the period 4 January 1993 - 3
+August 2022
+
+                    δ         µD        µN              π11        π12        π21        π22
+   AAPL        0.0375    -0.0159     0.0892          -0.0632    0.0591    -0.0113     0.0045
+              (0.0151)   (0.0261)   (0.0201)        (0.0116)   (0.0151)   (0.0089)   (0.0116)
+  AMGN         0.1172    -0.0091     0.0598          -0.0228    0.0384    -0.0465    -0.0277
+              (0.0182)   (0.0213)   (0.0136)        (0.0116)   (0.0182)   (0.0074)   (0.0116)
+    AXP       -0.0777     0.0179     0.0250          -0.0507    0.0096    -0.0118    -0.0497
+              (0.0186)   (0.0213)   (0.0133)        (0.0116)   (0.0186)   (0.0072)   (0.0116)
+   CSCO        0.0242    -0.0110     0.0631          -0.0681    0.0040     0.0179    -0.0307
+              (0.0175)   (0.0244)   (0.0161)        (0.0116)   (0.0175)   (0.0076)   (0.0116)
+    CVX       -0.1066     0.0061     0.0230          -0.0689   -0.0237    -0.0175     -0.0435
+              (0.0182)   (0.0161)   (0.0102)        (0.0116)   (0.0183)   (0.0073)   (0.0116)
+     HD        0.0123     0.0206     0.0268          0.0108     -0.0764    0.0174    -0.0126
+              (0.0178)   (0.0190)   (0.0124)        (0.0116)   (0.0178)   (0.0075)   (0.0116)
+    HON        0.0510     0.0015     0.0371          -0.0078    -0.0350    0.0161    -0.0140
+              (0.0176)   (0.0188)   (0.0123)        (0.0116)   (0.0176)   (0.0076)   (0.0116)
+    IBM       -0.0251     0.0380     -0.0036        -0.0389     0.0537    -0.0039     -0.0652
+              (0.0165)   (0.0166)   (0.0116)        (0.0116)   (0.0165)   (0.0081)   (0.0116)
+   INTC       -0.0051     0.0006     0.0330          -0.0687    0.0364    -0.0107      -0.050
+              (0.0158)   (0.0222)   (0.0163)        (0.0116)   (0.0158)   (0.0085)   (0.0116)
+     JNJ       0.0637     0.0282     0.0092          -0.0177   -0.0221     0.0059    -0.0042
+              (0.0187)   (0.0133)   (0.0082)        (0.0116)   (0.0187)   (0.0072)   (0.0116)
+    JPM       -0.0144    -0.0007     0.0317          -0.0740   -0.0033     0.0124     -0.0668
+              (0.0179)   (0.0225)   (0.0145)        (0.0116)   (0.0179)   (0.0075)   (0.0116)
+   MCD         0.0982     0.0438     -0.0007         -0.0319   -0.0193    -0.0186     0.0080
+              (0.0182)   (0.0151)   (0.0096)        (0.0116)   (0.0182)   (0.0074)   (0.0116)
+   MMM        -0.0142     0.0146     0.0097          -0.0124   -0.0030    -0.0333     -0.0277
+              (0.0190)   (0.0147)   (0.0090)        (0.0116)   (0.0189)   (0.0071)   (0.0116)
+   MRK         0.0041     0.0282     -0.0086         -0.0048   -0.0346    -0.0001     -0.0038
+              (0.0172)   (0.0165)   (0.0111)        (0.0116)   (0.0172)   (0.0078)   (0.0116)
+  MSFT        -0.0370     0.0263     0.0374          -0.0679    0.0137    -0.0092    -0.0397
+              (0.0172)   (0.0188)   (0.0126)        (0.0116)   (0.0172)   (0.0078)   (0.0116)
+    NKE        0.0295     0.0483     0.0026          0.0134    -0.0320    -0.0040    -0.0234
+              (0.0175)   (0.0196)   (0.0129)        (0.0116)   (0.0175)   (0.0077)   (0.0116)
+     PG        0.0869     0.0798    -0.0450          -0.0477    0.0329    -0.0351    -0.0330
+              (0.0166)   (0.0139)   (0.0097)        (0.0116)   (0.0166)   (0.0081)   (0.0116)
+    TRV        0.0843     0.0228     0.0089         -0.0583     -0.0973    -0.0223   -0.0466
+              (0.0203)   (0.0182)   (0.0104)        (0.0116)   (0.0203)   (0.0066)   (0.0116)
+    UNH       -0.0295     0.0270     0.0413          0.0172    -0.0421    -0.0040    -0.0190
+              (0.0193)   (0.0220)   (0.0132)        (0.0116)   (0.0193)   (0.0070)   (0.0116)
+      VZ       0.0423     0.0078     0.0019          -0.0364   -0.0439    -0.0150     0.0012
+              (0.0203)   (0.0157)   (0.0090)        (0.0116)   (0.0203)   (0.0066)   (0.0116)
+   WBA         0.0802     0.0409     -0.0140         -0.0262   -0.0097    -0.0188     -0.0203
+              (0.0191)   (0.0185)   (0.0112)        (0.0116)   (0.0191)   (0.0070)   (0.0116)
+   WMT         0.0697     0.0043     0.0262          -0.0348    0.0069    -0.0099     0.0021
+              (0.0189)   (0.0163)   (0.0100)        (0.0116)   (0.0189)   (0.0071)   (0.0116)
+  average      0.0012     0.0181     0.0200    74    -0.0319    -0.0039   -0.0069    -0.0243
+Table 7: Estimates of the adjusted base specification for the period 18 May 2020 - 10 May
+2022
+
+                  δ        µD         µN         π11             π12        π21        π22         ξD         ξN
+  AAPL       0.0126     0.1162     -0.0288   -0.0420         -0.0805     0.0140     -0.1513    -0.0928    0.1819
+            (0.0640)   (0.1073)   (0.0755)   (0.0705)        (0.0893)   (0.0496)   (0.0625)   (0.1109)   (0.0776)
+ AMGN        0.1176    -0.0067     0.0032    -0.0068         -0.0391     -0.0645    0.0811     -0.0071    0.0366
+            (0.0697)   (0.0816)   (0.0527)   (0.0741)        (0.0851)   (0.0477)   (0.0548)   (0.1118)   (0.0722)
+   AXP      -0.0905     0.0870     0.0424     0.0525          0.2230    -0.0096     -0.1489    -0.1861    0.1439
+            (0.0513)   (0.1026)   (0.0901)   (0.0646)        (0.0813)   (0.0567)   (0.0711)   (0.0954)   (0.0836)
+  CSCO       0.1077     0.0454     -0.0442   -0.1035          0.0466     -0.0665    0.0129     0.0465     0.0005
+            (0.0532)   (0.0769)   (0.0651)   (0.0658)        (0.0677)   (0.0556)   (0.0573)   (0.1021)   (0.0864)
+   CVX       0.0137    -0.0111     0.0778    -0.1357          0.0092     0.0677     -0.0197    0.0812     -0.0211
+            (0.0518)   (0.1030)   (0.0895)   (0.0692)        (0.0759)   (0.0601)   (0.0660)   (0.1028)   (0.0894)
+    HD       0.0401     0.1476     0.0732     0.0601          0.2502     0.0507     0.0070    -0.2699     -0.0608
+            (0.0761)   (0.0883)   (0.0522)   (0.0686)        (0.0880)   (0.0405)   (0.0521)   (0.1189)   (0.0704)
+   HON       0.1213    -0.0664     0.0188    -0.0968          0.0401     0.0171     -0.1088    0.0998     0.1222
+            (0.0555)   (0.0838)   (0.0680)   (0.0661)        (0.0794)   (0.0536)   (0.0642)   (0.1087)   (0.0880)
+   IBM      -0.0843    -0.0121     0.0243    -0.0475          0.0954     -0.0040    -0.0892   -0.0074     0.0186
+            (0.0562)   (0.0762)   (0.0611)   (0.0646)        (0.0669)   (0.0518)   (0.0534)   (0.0960)   (0.0769)
+  INTC      -0.0052     0.2093     -0.0082    0.0880          0.1334     -0.0591    0.0513     -0.3767    -0.0082
+            (0.0487)   (0.1005)   (0.0931)   (0.0629)        (0.0545)   (0.0582)   (0.0504)   (0.0980)   (0.0907)
+    JNJ      0.1952    -0.0002     0.0021    -0.0393         -0.0344     -0.1242    -0.0887    0.0026     0.1139
+            (0.0659)   (0.0618)   (0.0423)   (0.0741)        (0.0901)   (0.0504)   (0.0614)   (0.1192)   (0.0813)
+   JPM       0.0137     0.0027     0.0621    -0.0165          0.1114     0.0475    -0.0513     -0.1124    0.0905
+            (0.0471)   (0.0894)   (0.0854)   (0.0682)        (0.0729)   (0.0651)   (0.0696)   (0.0978)   (0.0934)
+  MCD        0.2382     0.0592     0.1155     0.0137          0.2044     0.0275    -0.0457     -0.1568    -0.0922
+            (0.0665)   (0.0667)   (0.0449)   (0.0766)        (0.0873)   (0.0518)   (0.0591)   (0.1191)   (0.0805)
+  MMM        0.0875    -0.1076     0.0578    -0.1260          0.0614     0.0133     -0.0664    0.1113     -0.0161
+            (0.0668)   (0.0795)   (0.0535)   (0.0694)        (0.0807)   (0.0468)   (0.0543)   (0.1142)   (0.0770)
+  MRK        0.0572    -0.0866     0.0775    -0.0863          -0.1586    -0.0158    0.1250     0.1091     -0.0106
+            (0.0534)   (0.0668)   (0.0562)   (0.0653)        (0.0698)    (0.055)   (0.0585)   (0.0956)   (0.0806)
+  MSFT      -0.0229     0.0770     -0.0245   -0.1117          0.0415     -0.0718    -0.0990    -0.0966    0.1369
+            (0.0664)   (0.0954)   (0.0647)   (0.0689)        (0.0870)   (0.0466)   (0.0589)   (0.1121)   (0.0758)
+   NKE       0.0359    -0.0650     0.1284    -0.0127          0.0904     0.0170     -0.0791    -0.0678    0.0290
+            (0.0479)   (0.0899)   (0.0843)   (0.0631)        (0.0766)   (0.0593)   (0.0720)   (0.0972)   (0.0914)
+    PG       0.2776    -0.0148     0.0502    -0.1644         -0.1319     -0.0456    -0.0044    0.1524     -0.0397
+            (0.0863)    (0.066)   (0.0344)   (0.0761)        (0.1102)   (0.0397)   (0.0575)   (0.1281)   (0.0669)
+   TRV       0.1320     -0.1412    -0.0084    -0.1686         -0.0037   -0.1294    -0.2026     0.2584     0.2058
+            (0.0636)   (0.0922)   (0.0653)   (0.0736)        (0.0884)   (0.0518)   (0.0620)   (0.1150)   (0.0810)
+   UNH       0.1955     0.1063     -0.0279    0.0544          0.1672    -0.1045     -0.1811    -0.1162    0.1910
+            (0.0661)   (0.0845)   (0.0575)   (0.0781)        (0.0936)   (0.0530)   (0.0632)   (0.1175)   (0.0795)
+       VZ    0.0290    -0.0105     0.0130     0.0322          0.2361    -0.0085     -0.0085    -0.0729    -0.0082
+            (0.0795)   (0.0559)   (0.0317)   (0.0679)        (0.0929)   (0.0385)   (0.0526)   (0.1090)   (0.0618)
+  WBA       -0.0930    -0.0043    -0.0131     0.0336          0.1845     -0.0072    -0.1641   -0.0316     0.0716
+            (0.0798)   (0.1115)   (0.0629)   (0.0748)        (0.0932)   (0.0422)   (0.0521)   (0.1116)   (0.0629)
+  WMT        0.0804     0.0802     -0.0412    0.0639          0.1493    -0.0879     -0.1002    -0.1839    0.1769
+            (0.0785)   (0.0693)   (0.0397)   (0.0817)        (0.0948)   (0.0467)   (0.0542)   (0.1192)   (0.0679)
+ average     0.0613     0.0016     0.0301     -0.0401         0.0732    -0.0170    -0.0687     -0.0351    0.0588
+
+
+
+                                                        75
+Table 8: Estimates of the adjusted base specification for the period 4 January 1993 - 3
+August 2022
+
+                 δ        µD         µN         π11             π12        π21        π22         ξD         ξN
+  AAPL      0.0367     0.0464     0.0589    -0.0293          0.0866    -0.0277     -0.0089    -0.0667    0.0324
+           (0.0151)   (0.0350)   (0.0269)   (0.0172)        (0.0182)   (0.0132)   (0.0140)   (0.0250)   (0.0193)
+ AMGN       0.1171    -0.0059     0.0204    -0.0205          0.0408    -0.0743     -0.0569    -0.0045    0.0546
+           (0.0182)   (0.0293)   (0.0186)   (0.0184)        (0.0235)   (0.0117)   (0.0150)   (0.0278)   (0.0177)
+   AXP     -0.0776    -0.0037     0.0234    -0.0657          -0.0053    -0.0128    -0.0508    0.0296     0.0021
+           (0.0186)   (0.0283)   (0.0176)   (0.0173)        (0.0226)   (0.0108)   (0.0141)   (0.0255)   (0.0159)
+  CSCO      0.0241    -0.0073     0.0291    -0.0660          0.0062     -0.0020    -0.0504    -0.0044    0.0404
+           (0.0175)   (0.0329)   (0.0217)   (0.0174)        (0.0217)   (0.0115)   (0.0143)   (0.0263)   (0.0174)
+   CVX     -0.1072    -0.0504     0.0317    -0.1171          -0.0674    -0.0102    -0.0368    0.0960    -0.0146
+           (0.0182)   (0.0223)   (0.0142)   (0.0175)        (0.0218)   (0.0111)   (0.0139)   (0.0261)   (0.0166)
+    HD      0.0121     0.0080     0.0466     0.0011          -0.0843    0.0326    -0.0003     0.0190     -0.0297
+           (0.0178)   (0.0261)   (0.0170)   (0.0180)        (0.0210)   (0.0117)   (0.0137)   (0.0269)   (0.0175)
+   HON      0.0503    -0.0341     0.0572    -0.0352          -0.0611    0.0316     0.0007     0.0554     -0.0312
+           (0.0176)   (0.0254)   (0.0167)   (0.0176)        (0.0216)   (0.0116)   (0.0142)   (0.0266)   (0.0175)
+   IBM     -0.0246     0.0216    -0.0305    -0.0532          0.0407     -0.0274    -0.0865    0.0274     0.0450
+           (0.0165)   (0.0226)   (0.0158)   (0.0177)        (0.0205)   (0.0124)   (0.0144)   (0.0257)   (0.0180)
+  INTC     -0.0053     0.0257     0.0184    -0.0531          0.0489     -0.0198    -0.0573    -0.0302    0.0176
+           (0.0158)   (0.0310)   (0.0228)   (0.0177)        (0.0191)   (0.0130)   (0.0140)   (0.0261)   (0.0191)
+    JNJ     0.0635    -0.0084     0.0122    -0.0591         -0.0596     0.0093     -0.0010    0.0800    -0.0067
+           (0.0187)   (0.0184)   (0.0114)   (0.0185)        (0.0228)   (0.0114)   (0.0141)   (0.0277)   (0.0172)
+   JPM     -0.0147    -0.0672     0.0360    -0.1204          -0.0472    0.0154     -0.0639    0.0882    -0.0058
+           (0.0179)   (0.0295)   (0.0191)   (0.0177)        (0.0219)   (0.0114)   (0.0142)   (0.0254)   (0.0164)
+  MCD       0.0974     0.0121     0.0151    -0.0635          -0.0492    -0.0028    0.0229     0.0613     -0.0305
+           (0.0182)   (0.0208)   (0.0133)   (0.0184)        (0.0227)   (0.0118)   (0.0145)   (0.0277)   (0.0177)
+  MMM      -0.0144     0.0081     0.0217    -0.0186         -0.0089     -0.0219    -0.0168    0.0125    -0.0232
+           (0.0190)   (0.0204)   (0.0124)   (0.0178)        (0.0229)   (0.0109)   (0.0140)   (0.0273)   (0.0167)
+  MRK       0.0043    -0.0006    -0.0153     -0.0297         -0.0536    -0.0059    -0.0083    0.0491     0.0116
+           (0.0172)   (0.0228)   (0.0153)   (0.0179)        (0.0201)   (0.0120)   (0.0135)   (0.0268)   (0.0180)
+  MSFT     -0.0369     0.0101     0.0318    -0.0802          0.0022     -0.0135    -0.0437    0.0236     0.0082
+           (0.0172)   (0.0260)   (0.0175)   (0.0179)        (0.0214)   (0.0121)   (0.0144)   (0.0263)   (0.0177)
+   NKE      0.0291     0.0274     0.0254    -0.0028          -0.0471    0.0136     -0.0069    0.0307     -0.0335
+           (0.0175)   (0.0266)   (0.0176)   (0.0181)        (0.0219)   (0.0120)   (0.0145)   (0.0266)   (0.0176)
+    PG      0.0853     0.0573    -0.0056    -0.0722          0.0154     0.0077     -0.0024    0.0486     -0.0849
+           (0.0166)   (0.0186)   (0.0130)   (0.0177)        (0.0192)   (0.0124)   (0.0134)   (0.0267)   (0.0186)
+   TRV      0.0881     -0.0639   -0.0170    -0.1338          -0.1703   -0.0448    -0.0684     0.1495     0.0448
+           (0.0203)   (0.0239)   (0.0137)   (0.0178)        (0.0242)   (0.0102)   (0.0138)   (0.0269)   (0.0154)
+   UNH     -0.0295     0.0277    -0.0059     0.0177         -0.0417     -0.0357    -0.0441    -0.0010    0.0644
+           (0.0193)   (0.0292)   (0.0176)   (0.0174)        (0.0218)   (0.0104)   (0.0131)   (0.0263)   (0.0158)
+     VZ     0.0423     0.0060     0.0183    -0.0381          -0.0454    0.0008     0.0153     0.0032     -0.0303
+           (0.0203)   (0.0220)   (0.0126)   (0.0189)        (0.0243)   (0.0108)   (0.0139)   (0.0286)   (0.0163)
+  WBA       0.0800     0.0256    -0.0003    -0.0385          -0.0206    -0.0078    -0.0105    0.0241    -0.0215
+           (0.0191)   (0.0258)   (0.0157)   (0.0185)        (0.0231)   (0.0112)   (0.0140)   (0.0284)   (0.0172)
+  WMT       0.0693     0.0168     0.0045    -0.0231          0.0179    -0.0302     -0.0170    -0.0225    0.0389
+           (0.0189)   (0.0225)   (0.0138)   (0.0186)        (0.0233)   (0.0114)   (0.0143)   (0.0278)   (0.0170)
+ average    0.0009     0.0064     0.0157    -0.0426          -0.0138   -0.0088     -0.0264    0.0208     0.0038
+
+
+
+                                                       76
+Table 9: Estimates of the intraday dynamic (short run) parameters in the coupled com-
+ponent model
+
+                  ωD          βD         γD               ∗
+                                                         γD         ρD         ρ∗D        νD
+  AAPL         0.5120     0.9224     0.0445          -0.0090    0.0379     -0.0095    8.9697
+            (0.0178)     (0.0098)   (0.0040)        (0.0023)   (0.0049)   (0.0027)   (0.7261)
+  AMGN         0.3015     0.9401     0.0433          -0.0062    0.0413     -0.0006    7.9214
+            (0.0201)     (0.0073)   (0.0037)        (0.0022)   (0.0047)   (0.0025)   (0.5848)
+    AXP        0.2427     0.9505     0.0453          -0.0117    0.0393     -0.0161    9.6933
+            (0.0225)      (0.005)   (0.0035)        (0.0021)   (0.0039)   (0.0025)   (0.8454)
+   CSCO        0.3771     0.9476     0.0398          -0.0098    0.0388     -0.0177   10.9149
+            (0.0202)     (0.0054)   (0.0033)        (0.0021)   (0.0040)   (0.0024)   (0.9721)
+    CVX        0.1010     0.9566     0.0393          -0.0087    0.0319     -0.0143   12.2095
+            (0.0222)     (0.0047)   (0.0032)        (0.0020)   (0.0036)   (0.0023)   (1.3019)
+     HD        0.2088     0.9405     0.0424          -0.0104    0.0442     -0.0165    8.9748
+            (0.0200)     (0.0066)   (0.0037)        (0.0023)   (0.0045)   (0.0027)   (0.7057)
+    HON        0.1458     0.9316     0.0457          -0.0140    0.0504     -0.0149    8.2666
+            (0.0196)     (0.0071)   (0.0041)        (0.0024)   (0.0045)   (0.0028)   (0.6201)
+    IBM        0.0407     0.9438     0.0420          -0.0058    0.0454     -0.0084    7.3982
+            (0.0204)     (0.0067)   (0.0039)        (0.0022)   (0.0047)   (0.0026)   (0.4915)
+   INTC        0.4081     0.9601     0.0312          -0.0044    0.0325     -0.0100   12.1822
+            (0.0210)     (0.0044)   (0.0028)        (0.0017)   (0.0038)   (0.0022)   (1.2472)
+     JNJ       -0.1855    0.9431     0.0462          -0.0037    0.0447     -0.0114    7.1226
+            (0.0213)     (0.0059)   (0.0037)        (0.0023)   (0.0043)   (0.0026)   (0.4638)
+    JPM        0.2474     0.9610     0.0440          -0.0068    0.0413     -0.0106    7.9424
+            (0.0258)     (0.0038)   (0.0035)        (0.0021)   (0.0039)   (0.0023)   (0.5833)
+   MCD         -0.0319    0.9259     0.0390          -0.0059    0.0504     -0.0099    7.9088
+            (0.0180)     (0.0101)   (0.0044)        (0.0023)   (0.0052)   (0.0028)   (0.5602)
+   MMM         -0.0632    0.9509     0.0365          -0.0092    0.0432     -0.0108    6.8735
+            (0.0207)     (0.0056)   (0.0036)        (0.0022)   (0.0045)   (0.0026)   (0.4265)
+   MRK         0.0681     0.9253     0.0457          -0.0032    0.0453     -0.0108    6.8977
+            (0.0183)     (0.0107)   (0.0045)        (0.0026)   (0.0053)   (0.0028)   (0.4164)
+  MSFT         0.2224     0.9417     0.0435          -0.0041    0.0541     -0.0095   10.5668
+            (0.0211)     (0.0062)   (0.0036)        (0.0021)   (0.0047)   (0.0025)   (0.9601)
+    NKE        0.2109     0.9490     0.0388          -0.0057    0.0373     -0.0080    7.1371
+            (0.0203)     (0.0066)   (0.0038)        (0.0023)   (0.0047)   (0.0025)   (0.4686)
+     PG        -0.1294    0.9369     0.0431          -0.0044    0.0421     -0.0141    7.9902
+            (0.0194)     (0.0074)   (0.0038)        (0.0023)   (0.0044)   (0.0027)   (0.5637)
+    TRV        0.0780     0.9375     0.0514         -0.0068     0.0509     -0.0135    8.0345
+            (0.0215)     (0.0070)   (0.0042)        (0.0025)   (0.0049)   (0.0027)   (0.5940)
+    UNH        0.3059     0.9455     0.0430          -0.0046    0.0405     -0.0121    6.9643
+            (0.0207)     (0.0070)   (0.0038)        (0.0024)   (0.0048)   (0.0027)   (0.4471)
+      VZ       0.0316     0.9440     0.0338          -0.0056    0.0401     -0.0157    9.6899
+            (0.0188)     (0.0068)   (0.0035)        (0.0021)   (0.0042)   (0.0025)   (0.8191)
+   WBA         0.2059     0.9296     0.0370          -0.0059    0.0527     -0.0092    7.1348
+            (0.0183)     (0.0109)   (0.0043)        (0.0025)   (0.0055)   (0.0028)   (0.4771)
+   WMT         0.0037     0.9448     0.0387          -0.0022    0.0381     -0.0129    7.5265
+            (0.0197)     (0.0072)   (0.0036)        (0.0021)   (0.0044)   (0.0026)   (0.5068)
+  average      0.1458     0.9457     0.0413          -0.0066    0.0424     -0.0118    8.4471
+
+
+
+                                               77
+Table 10: Estimates of the overnight dynamic (short run) parameters in the coupled
+component model
+
+                ωN          βN         γN               ∗
+                                                       γN         ρN         ρ∗N        νN
+  AAPL      -0.3529     0.9130     0.0668          -0.0163    0.0722    -0.0147     2.7968
+            (0.0215)   (0.0088)   (0.0067)        (0.0037)   (0.0052)   (0.0032)   (0.0824)
+  AMGN      -0.6651     0.9442     0.0464          -0.0085    0.0492    -0.0114     2.9895
+            (0.0224)   (0.0061)   (0.0050)        (0.0028)   (0.0043)   (0.0025)   (0.0941)
+    AXP     -0.5432     0.9604     0.0453          -0.0227    0.0419    -0.0171     3.8124
+            (0.0263)   (0.0036)   (0.0042)        (0.0027)   (0.0036)   (0.0023)   (0.1517)
+  CSCO      -0.4062     0.9515     0.0429          -0.0177    0.0420    -0.0156     3.2009
+            (0.0226)   (0.0051)   (0.0046)        (0.0026)   (0.0038)   (0.0025)   (0.1036)
+    CVX     -0.6673     0.9704     0.0332          -0.0141    0.0293    -0.0085     4.2939
+            (0.0257)   (0.0029)   (0.0034)        (0.0021)   (0.0029)   (0.0018)   (0.1947)
+     HD     -0.6194     0.9471     0.0563          -0.0228    0.0407    -0.0135     3.2386
+            (0.0239)   (0.0054)   (0.0049)        (0.0031)   (0.0040)   (0.0028)   (0.1158)
+    HON     -0.6042     0.9535     0.0511          -0.0221    0.0402    -0.0169     3.4149
+            (0.0246)   (0.0046)   (0.0045)        (0.0028)   (0.0040)   (0.0026)   (0.1251)
+    IBM     -0.7911     0.9561     0.0529          -0.0149    0.0391    -0.0152     2.7288
+            (0.0254)   (0.0046)   (0.0050)        (0.0028)   (0.0040)   (0.0025)   (0.0825)
+   INTC     -0.4058     0.9522     0.0426          -0.0154    0.0366    -0.0091     2.9076
+            (0.0222)   (0.0070)   (0.0056)        (0.0030)   (0.0041)   (0.0023)   (0.0886)
+     JNJ    -0.8996     0.9553     0.0411          -0.0169    0.0404    -0.0141     3.8619
+            (0.0231)   (0.0047)   (0.0042)        (0.0026)   (0.0038)   (0.0024)   (0.1558)
+    JPM     -0.4007     0.9645     0.0431          -0.0230    0.0382    -0.0120     4.0353
+            (0.0266)   (0.0032)   (0.0040)        (0.0023)   (0.0036)   (0.0021)   (0.1655)
+   MCD      -0.7882     0.9450     0.0458          -0.0182    0.0428    -0.0146     3.3642
+            (0.0218)   (0.0057)   (0.0047)        (0.0029)   (0.0042)   (0.0025)   (0.1198)
+   MMM      -0.8937     0.9618     0.0432          -0.0122    0.0377    -0.0131     3.0316
+            (0.0255)   (0.0040)   (0.0043)        (0.0028)   (0.0040)   (0.0024)   (0.1051)
+   MRK      -0.7276     0.9410     0.0492          -0.0147    0.0484    -0.0127     3.0998
+            (0.0221)   (0.0072)   (0.0052)        (0.0030)   (0.0047)   (0.0027)   (0.1055)
+  MSFT      -0.6351     0.9395     0.0615          -0.0127    0.0497    -0.0059     3.0077
+            (0.0235)   (0.0066)   (0.0057)        (0.0031)   (0.0043)   (0.0026)   (0.0933)
+    NKE     -0.7892     0.9421     0.0482          -0.0215    0.0500    -0.0130     2.3774
+            (0.0225)   (0.0068)   (0.0055)        (0.0032)   (0.0048)   (0.0030)   (0.0675)
+     PG     -0.9665     0.9423     0.0389          -0.0218    0.0431    -0.0133     3.3955
+            (0.0204)   (0.0059)   (0.0045)        (0.0028)   (0.0041)   (0.0026)   (0.1217)
+    TRV      -0.8770    0.9595     0.0532         -0.0176     0.0423     -0.0110    3.0239
+            (0.0273)   (0.0043)   (0.0050)        (0.0028)   (0.0040)   (0.0024)   (0.1012)
+    UNH     -0.7343     0.9411     0.0583          -0.0152    0.0540    -0.0108     2.4406
+            (0.0244)   (0.0066)   (0.0059)        (0.0034)   (0.0049)   (0.0031)   (0.0734)
+      VZ    -0.8247     0.9546     0.0460          -0.0207    0.0378    -0.0067     3.3764
+            (0.0237)   (0.0049)   (0.0048)        (0.0028)   (0.0037)   (0.0024)   (0.1237)
+   WBA      -0.7554     0.9444     0.0524          -0.0191    0.0347    -0.0132     2.9146
+            (0.0221)   (0.0064)   (0.0052)        (0.0031)   (0.0042)   (0.0026)   (0.0933)
+   WMT      -0.8219     0.9548     0.0359          -0.0140    0.0386    -0.0078     3.1159
+            (0.0218)   (0.0053)   (0.0046)        (0.0026)   (0.0037)   (0.0023)   (0.1040)
+  average    -2.3158    0.9534     0.0538          -0.0172    0.0431    -0.0111     2.9224
+
+
+
+                                             78
+Table 11: P-values of several Wald tests for equivalence of intraday and overnight param-
+eters
+
+                                                                                        ∗
+                                                                            (βD , γD , γD , ρD , ρ∗D )
+                                  ∗    ∗
+         ωD = ωN βD = βN γD = γN γD = γN ρD = ρN ρ∗D = ρ∗N νD = νN = (βN , γN , γN
+                                                                                 ∗
+                                                                                   , ρN , ρ∗N )
+ AAPL      0.0000    0.0383   0.0002   0.0602    0.6333   0.4958   0.0000                     0.0004
+AMGN       0.0000    0.0135   0.0847   0.4483    0.5638   0.9770   0.0000                     0.0712
+  AXP      0.0000    0.0038   0.3198   0.4366    0.6111   0.7747   0.0000                     0.0174
+ CSCO      0.0000    0.4678   0.0687   0.4818    0.7708   0.9134   0.0000                     0.5013
+  CVX      0.0000    0.0005   0.8338   0.8613    0.3071   0.5348   0.0000                     0.0000
+    HD     0.0000    0.0214   0.0823   0.2431    0.4522   0.8383   0.0000                     0.0388
+  HON      0.0000    0.0000   0.6198   0.5625    0.4696   0.8084   0.0000                     0.0000
+   IBM     0.0000    0.0000   0.1462   0.4487    0.3018   0.9004   0.0000                     0.0000
+  INTC     0.0011    0.0000   0.0001   0.0782    0.6772   0.9067   0.0000                     0.0000
+   JNJ     0.0000    0.0104   0.5033   0.6873    0.4442   0.7145   0.0000                     0.0195
+  JPM      0.0178    0.1913   0.4605   0.7202    0.6614   0.8045   0.0000                     0.6930
+  MCD      0.0000    0.0000   0.6827   0.4688    0.1335   0.7570   0.0000                     0.0000
+ MMM       0.0000    0.0014   0.3625   0.4237    0.4467   0.7678   0.0000                     0.0005
+  MRK      0.0000    0.0000   0.3137   0.5681    0.3690   0.9049   0.0000                     0.0000
+ MSFT      0.0000    0.3791   0.0031   0.1797    0.5895   0.9612   0.0000                     0.0004
+  NKE      0.0000    0.6250   0.0138   0.1773    0.8798   0.4279   0.0000                     0.0055
+    PG     0.0158    0.0021   0.2876   0.4449    0.5844   0.8589   0.0000                     0.0037
+  TRV      0.0000    0.0000   0.2641   0.6783    0.1740   0.6906   0.0000                     0.0000
+  UNH      0.0000    0.3858   0.0032   0.1498    0.8052   0.5753   0.0000                     0.0186
+    VZ     0.0000    0.0002   0.0662   0.3118    0.4195   0.9303   0.0000                     0.0002
+  WBA      0.0000    0.0000   0.2483   0.3740    0.0446   0.8408   0.0000                     0.0000
+ WMT       0.0000    0.0002   0.1928   0.4695    0.3049   0.6820   0.0000                     0.0000
+
+
+
+
+                                                79
+Figure 29: Intraday innovations from the standard base specification plotted against
+intraday innovations from the adjusted base specification.
+
+
+
+
+                                           80
+Figure 30: Overnight innovations from the standard base specification plotted against
+overnight innovations from the adjusted base specification.
+
+
+
+
+                                           81
+Figure 31: The long run component σ k (·), for k ∈ {D, N }, of the coupled component
+model. The three vertical lines represent the following crises: dot-com bubble (10 March
+2000), financial crisis (16 September 2008) and the corona crisis (9 March 2020).
+
+
+
+
+                                           82
+Figure 32: The ratio of overnight to intraday volatility, where volatility is measured as
+r               h                  i
+     νk                            t
+    νk −2
+          exp       2λkt + 2σtk    T
+                                         , of the coupled component model. The three vertical lines rep-
+resent the following crises: dot-com bubble (10 March 2000), financial crisis (16 September
+2008) and the corona crisis (9 March 2020).
+
+
+
+
+                                                          83
+                                                                  r               h                  i
+                                                                       νk                            t
+Figure 33: Total intraday and overnight volatility, measured as       νk −2
+                                                                            exp       2λkt + 2σtk    T
+                                                                                                           ,
+of the coupled component model. The three vertical lines represent the following crises:
+dot-com bubble (10 March 2000), financial crisis (16 September 2008) and the corona
+crisis (9 March 2020).
+
+
+
+
+                                            84
+Figure 34: T-statistics of the constancy of ratio test of the coupled component model.
+The horizontal lines represent the 95% confidence intervals.
+
+
+
+
+                                           85
+Figure 35: The long run component λk1,t , for k ∈ {D, N }, of the two component model.
+The three vertical lines represent the following crises: dot-com bubble (10 March 2000),
+financial crisis (16 September 2008) and the corona crisis (9 March 2020).
+
+
+
+
+                                           86
+Figure 36: The ratio of overnight to intraday volatility, where volatility is measured as
+r               h                     i
+     νk
+    νk −2
+          exp       2ωk + 2λk1,t + 2λk2,t , of the two component model. The three vertical lines rep-
+resent the following crises: dot-com bubble (10 March 2000), financial crisis (16 September
+2008) and the corona crisis (9 March 2020).
+
+
+
+
+                                                     87
+Figure          37:        Total    intraday   and     overnight   volatility,   measured    as
+r               h                    i
+     νk
+    νk −2
+          exp       2ωk + 2λk1,t + 2λk2,t , of the two component model.      The three vertical
+lines represent the following crises: dot-com bubble (10 March 2000), financial crisis (16
+September 2008) and the corona crisis (9 March 2020).
+
+
+
+
+                                                  88
+Appendix D                   Proofs
+              K(s)2 I use:
+          R
+To find
+
+                                                3       
+                                      K(s) =       1 − s2 ,
+                                                4
+
+with s ∈ {0, 1}. Now compute the integral:
+                              Z           Z 
+                                             3         2
+                                                         
+                                      2
+                                  K(s) =        1 − s2     ds,
+                                             4
+                                         Z
+                                            9         2
+                                       =        1 − s2 ds,
+                                            16
+                                         Z
+                                            9               
+                                       =        1 − 2s2 + s4 ds,
+                                            16
+                                          9 Z               
+                                       =        1 − 2s2 + s4 ds,
+                                         16 
+                                          9       2 3 1 5
+                                                             
+                                       =      s− s + s .
+                                         16       3       5
+
+
+
+
+                                                89
+

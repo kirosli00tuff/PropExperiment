@@ -3181,3 +3181,89 @@ Per worker spawn: worker-medium opus medium (ReleaseChecker) 10,204,160; worker-
 11.3%. Cache reads are 97.1% of the total. E.8 used 129.7M tokens for 27 trials; E.9 used 99.8M for 4 (two-leg members,
 four test files per coder, and the extra cross-leg audit items). These are token counts, not plan-credit percentages; the
 /usage meter is the user's to record.
+
+## 2026-10-03 — Stage E.10: K9 low-frequency full-session holds, literature research and a draft catalog (no data, no purchase)
+
+Lead Opus 5.5 xhigh, 2026-10-02 22:20 to 00:15 PDT, unattended. The design target came first, written and
+hashed at 22:29 before any source was read (reports/stage_e10_design_target.md, sha256 ce798814...). It sets the
+cost wall per exposure: M_X = 3 x the worst-bucket round trip, which is not binding for full-session holds, while
+eps is. It also sets the K9 shape (at most two entries a week, a hold of at least two hours, flat by F, q_c), the
+exclusion list X1-X15 and the proposed screen (D5 plus at least 30 trips, V18).
+
+Four opus-high readers logged 88 sources, 62 in full text; every topic stopped on saturation. Semantic Scholar's
+.env key is one character, so OpenAlex and the web carried the search. A CatalogWriter (opus xhigh) and two
+rounds of lead rulings followed, then a Fable xhigh review: 0 blocking, 8 should-fix, 8 notes, all 123 passages
+re-verified.
+
+**Draft K9: one member, K9-anncday-01**, the macro-announcement-day premium. It is long MNQ, M2K and MYM from
+18:00 CT the prior evening to 14:59 CT on FOMC, payroll, GDP, ISM-manufacturing and CPI/PPI dates. It expects
+about 53 trips after the cap on 299 dates and 44.5 in the worst case. It is source-overlap, and **3 trials**
+take projected N from 198 to 201. K9-vixspike-01 was withdrawn on review R-01 (a one-day VIX change fails the
+pre-declared X10 test) and K9-vixback-01 on state persistence. Both texts are kept for the user, and 17 other
+candidates are excluded with reasons.
+
+The design draft is docs/STAGE_E_DESIGN_K9_DRAFT.md: K = 10, the 30-trip floor, a 40-trial budget, the
+component-edge eps reading, the step 2 path, and the 18:00 CT reopen entry as a user decision. The user owes 11
+decisions (reports/E.10_RETURN.md section 7) before E.11 freezes. Nothing was bought, frozen or coded. Both
+holdouts are all_ok with 0 unlocks, REGISTRATION.md is 0 bytes and the ledger is unchanged.
+
+Two incidental prints of Stage E result fragments (format lookups) are disclosed in the return; neither was
+used. A finding for the user: the E.4 cost script undercounts output tokens (it keeps the first streamed usage
+record); E.10 uses a corrected script. Full record: reports/E.10_RETURN.md.
+
+### Session cost
+
+Counted from this session's transcripts with reports/stage_e10_briefs/cost.py, which takes the final usage
+per streamed message (see open choice 15). Inputs: the lead transcript c0c85ee1-61ec-4348-b692-3b35ab945cfd.jsonl
+and its subagents/*.jsonl, UTC slice 2026-10-03T05:15:00Z to 07:13:11Z (00:13 PDT). The lead's last messages
+after the cutoff (the progress entry and the commit, about 2 minutes) are not counted. Raw output:
+reports/stage_e10_briefs/cost_final.txt. These are token counts, not plan-credit percentages. The user reads
+the /usage meter.
+
+**Wall clock.** 2026-10-02 22:20 PDT to 00:15 PDT on 2026-10-03 (commit at 00:14): about 1 h 55 min, with no pauses or
+outages, so work time equals wall time. The initial estimate was 4 h 50 min (ETA 03:10). The readers took 20-22
+minutes against 60 estimated, the catalog and its rounds about 70 minutes against 60, and the review 25 minutes
+against 45.
+
+**Final table** (PDT; tokens are transcript totals; lead slices overlap by a few messages, so the lead total
+row is authoritative):
+
+| Row | Owner | Model | Effort | Start | End | Time | Tokens | Status, deviations |
+|---|---|---|---|---|---|---|---|---|
+| 0-2 Startup, design target, search plan | lead | opus | xhigh | 22:20 | 22:31 | 11 min | 8,250,978 | done; estimate 70 min |
+| 3 Readers (lead waiting, spot checks) | lead | opus | xhigh | 22:32 | 22:55 | 23 min | 5,796,123 | done |
+| 3a LitReader-Regime-OpusHigh | worker-high | opus | high | 22:32 | 22:52 | 20 min | 26,041,043 | accepted |
+| 3b LitReader-Overnight-OpusHigh | worker-high | opus | high | 22:32 | 22:54 | 22 min | 26,118,443 | accepted |
+| 3c LitReader-Calendar-OpusHigh | worker-high | opus | high | 22:33 | 22:52 | 20 min | 22,483,478 | accepted |
+| 3d LitReader-Commodity-OpusHigh | worker-high | opus | high | 22:33 | 22:54 | 21 min | 23,139,818 | accepted |
+| 4 Rulings rounds 1-2, design draft | lead | opus | xhigh | 22:55 | 23:31 | 36 min | 8,588,006 | done |
+| 4b CatalogWriter-OpusXHigh round 1 | worker-xhigh | opus | xhigh | 22:58 | 23:22 | 24 min | 18,986,408 | done; 17 questions |
+| 4d CatalogWriter-OpusXHigh round 2 (resumed) | worker-xhigh | opus | xhigh | 23:24 | 23:30 | 6 min | 5,540,591 | done |
+| 5 CatalogReviewer-FableXHigh | worker-xhigh | fable | xhigh | 23:31 | 23:56 | 25 min | 2,985,036 | done; 0 B, 8 SF, 8 N |
+| 5 (lead during the review: checks, return prep) | lead | opus | xhigh | 23:31 | 23:56 | 25 min | 2,504,092 | done |
+| 6 Rulings on the review, design draft F-H, return | lead | opus | xhigh | 23:56 | 00:13 (cutoff) | 17 min | 13,460,226 | done |
+| 6b CatalogWriter-OpusXHigh round 3 (resumed) | worker-xhigh | opus | xhigh | 23:59 | 00:08 | 9 min | 12,829,055 | done |
+| Pauses or outages | | | | | | 0 | | none |
+| **Stage total** | | | | 22:20 | 00:15 | **about 1 h 55 min** (estimate 4 h 50 min) | **176,034,389** | lead 37,910,517 (21.5%); workers 138,123,872 (78.5%) |
+
+**Tokens per model:**
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 418 | 116,450 | 2,527,920 | 340,248 | 2,985,036 |
+| claude-opus-5-5 | 1,656 | 857,034 | 169,735,011 | 2,455,652 | 173,049,353 |
+| all | 2,074 | 973,484 | 172,262,931 | 2,795,900 | 176,034,389 |
+
+**Per worker spawn:**
+- LitReader-Regime-OpusHigh: worker-high, opus, high, 26,041,043.
+- LitReader-Overnight-OpusHigh: worker-high, opus, high, 26,118,443.
+- LitReader-Calendar-OpusHigh: worker-high, opus, high, 22,483,478.
+- LitReader-Commodity-OpusHigh: worker-high, opus, high, 23,139,818.
+- CatalogWriter-OpusXHigh: worker-xhigh, opus, xhigh, 37,356,054 over three rounds (18,986,408, 5,540,591 and
+  12,829,055).
+- CatalogReviewer-FableXHigh: worker-xhigh, fable, xhigh, 2,985,036.
+
+**Delegation share:**
+- The lead took 21.5% of tokens and the workers 78.5%.
+- By tier: Opus lead 21.5%, Opus workers 76.8%, Fable 1.7%.
+- Cache reads are 97.9% of all tokens.

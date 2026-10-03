@@ -112,6 +112,13 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     K8-flight-01 H30 and HEOD on MGC with MES, K8-oilcad-01 on 6C with MCL, K8-wkndbtc-01 on MNQ with MBT) coded,
     Fable-audited, FROZEN (commit 558a5dc, cluster freeze 99f5a6ce...) and screened once: Tier A flight HEOD (t 1.395) and
     wkndbtc (t 1.072, resting on one Monday), Tier B H30 and oilcad; N = 198. Nothing bought. Every cluster is screened.
+  - Stage E.10 — K9 low-frequency full-session holds: literature research and a draft catalog. Run 2026-10-02/03
+    (see reports/E.10_RETURN.md): 88 sources logged by four opus readers; draft K9 catalog of one member,
+    K9-anncday-01 (macro-announcement-day premium, long MNQ, M2K, MYM, 3 trials, source-overlap), after the
+    lead withdrew K9-vixback-01 and the Fable review (0 blocking, 8 should-fix) led to withdrawing
+    K9-vixspike-01; design draft docs/STAGE_E_DESIGN_K9_DRAFT.md (K = 10, 30-trip floor, 40-trial budget).
+    No market data, nothing bought, nothing frozen; N stays 198 (201 if screened). E.11 freezes after the
+    user's decisions.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

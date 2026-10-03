@@ -1,0 +1,1851 @@
+                                                      Journal of Financial Economics 135 (2020) 774–794
+
+
+
+                                                       Contents lists available at ScienceDirect
+
+
+                                             Journal of Financial Economics
+                                                journal homepage: www.elsevier.com/locate/jfec
+
+
+
+
+Time series momentum: Is it there?R
+Dashan Huang a,∗, Jiangyuan Li a, Liyao Wang b, Guofu Zhou c,d
+a
+  Lee Kong Chian School of Business, Singapore Management University, 50 Stamford Road, 178899, Singapore
+b
+  School of Economics, Singapore Management University, 90 Stamford Road, 178903, Singapore
+c
+  Olin School of Business, Washington University in St. Louis, 1 Brookings Drive, St. Louis, MO 63130, USA
+d
+  China Academy of Financial Research (CAFR), 211 West Huaihai Road, Shanghai 200030, China
+
+
+
+
+a r t i c l e         i n f o                          a b s t r a c t
+
+Article history:                                       Time series momentum (TSM) refers to the predictability of the past 12-month return on
+Received 1 June 2018                                   the next one-month return and is the focus of several recent inﬂuential studies. This pa-
+Revised 5 December 2018
+                                                       per shows that asset-by-asset time series regressions reveal little evidence of TSM, both
+Accepted 7 January 2019
+                                                       in- and out-of-sample. While the t-statistic in a pooled regression appears large, it is not
+Available online 9 August 2019
+                                                       statistically reliable as it is less than the critical values of parametric and nonparametric
+JEL classiﬁcation:                                     bootstraps. From an investment perspective, the TSM strategy is proﬁtable, but its perfor-
+G12                                                    mance is virtually the same as that of a similar strategy that is based on historical sample
+G14                                                    mean and does not require predictability. Overall, the evidence on TSM is weak, particu-
+G15                                                    larly for the large cross section of assets.
+F37
+                                                                                                             © 2019 Elsevier B.V. All rights reserved.
+Keywords:
+Time series momentum
+Risk premium
+Return predictability
+Pooled regression
+
+
+
+
+                                                                                  1. Introduction
+
+                                                                                      Whether past returns predict future returns is a central
+    R
+     We are grateful to William Schwert (the editor) and an anonymous
+                                                                                  topic in ﬁnance. Fama (1965), French and Roll (1986), Lo
+referee for very insightful and helpful comments that signiﬁcantly im-            and MacKinlay (1988), and Conrad and Kaul (1988), among
+proved the paper. We also thank Lauren H. Cohen, Eugene Fama, Amit                others, show that past returns can positively predict future
+Goyal, Wesley R. Gray, Campbell R. Harvey, Johan Hombert, Narasimhan              returns at a short horizon, but the magnitude is too small
+Jegadeesh, Raymond Kan, Yan Liu, Roger Loh, David Rapach, Yiuman Tse,
+                                                                                  to be exploitable. Moskowitz et al. (MOP, 2012) conclude
+John Wald, Dacheng Xiu, and seminar and conference participants at
+Baruch College, Rutgers University, Washington University in St. Louis,           with a much greater degree of predictability that time se-
+2017 Conference on Financial Predictability and Data Science, 2017 Work-          ries momentum (TSM) is everywhere: The past 12-month
+shop on Advanced Econometrics at the University of Kansas, and 2018 Na-           return positively predicts the next one- to 12-month return
+tional Bureau of Economic Research-National Science Foundation (NBER-             for a comprehensive set of approximately 55 assets. In ad-
+NSF) Time Series Conference for valuable comments. Dashan Huang ac-
+knowledges that this study was partially funded at the Singapore Man-
+                                                                                  dition, MOP show that a TSM trading strategy, which buys
+agement University through a research grant (C207MSS17B009) from the              assets if their past 12-month returns are positive and sells
+Ministry of Education Academic Research Fund Tier 1.                              them otherwise, earns signiﬁcant average and risk-adjusted
+   ∗
+     Corresponding author.                                                        returns. Hurst et al. (2017) and Georgopoulou and Wang
+     E-mail addresses: dashanhuang@smu.edu.sg (D. Huang),                         (2017) examine the TSM on a broader range of asset classes
+jiangyuanli.2015@pbs.smu.edu.sg (J. Li),
+                                                                                  and longer sample periods, and they ﬁnd similar results.
+liyao.wang.2015@phdecons.smu.edu.sg (L. Wang), zhou@wustl.edu
+ (G. Zhou).                                                                       Koijen et al. (2018) use TSM portfolio returns as a risk
+
+https://doi.org/10.1016/j.jﬁneco.2019.08.004
+0304-405X/© 2019 Elsevier B.V. All rights reserved.
+                                  D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794                    775
+
+
+factor to analyze carry trade. Kim et al. (2016) ﬁnd that the                    critical values of the bootstraps are 12.53 and 4.83, re-
+proﬁts of the TSM strategy are driven by volatility scaling                      spectively. They are larger than 4.34, the t-statistic from
+and that its performance without volatility scaling is no                        the pooled regression with real data. This ﬁnding is ro-
+better than that of a buy-and-hold strategy. Moreover, in                        bust to all alternative cases, such as within each asset class,
+a concurrent study, Goyal and Jegadeesh (2018) show that                         with different sample periods, and without volatility scal-
+the traditional cross-sectional momentum strategy is more                        ing. Hence, a high t-statistic found by MOP is not statisti-
+proﬁtable than the TSM once the leverage ratio is prop-                          cally signiﬁcant in supporting the existence of TSM.
+erly adjusted. Despite an improved understanding, whether                             In the third stage, we examine why the TSM strategy is
+time series predictability is present at the 12-month fre-                       proﬁtable even though the statistical evidence on time se-
+quency remains an open question.1                                                ries predictability is weak. In their study, MOP (Moskowitz
+    In this paper, using the same data set as MOP                                et al., 2012) construct the TSM strategy by buying assets
+(Moskowitz et al., 2012), we reexamine the statistical and                       with positive past 12-month return and selling assets with
+economic evidence of TSM. From both time series and                              negative past 12-month return. At the same time, MOP as-
+cross-sectional analyses, we ﬁnd that the evidence on TSM                        sign a portfolio weight equal to 40% divided by the as-
+is weak. Hence, concluding that TSM exists across the                            set volatility, so that for each asset the ex ante annualized
+global asset classes appears questionable.                                       volatility is 40%. This volatility scaling can make the attri-
+    We conduct our study in three stages. In the ﬁrst stage,                     bution of the performance of the TSM strategy complex. To
+we run a time series regression of monthly return for each                       separate the volatility effect, we follow (Kim et al., 2016)
+asset on its past 12-month return. At the 10% signiﬁcance                        and Goyal and Jegadeesh (2018) and focus on the TSM
+level, 47 of the 55 assets have a t-statistic of less than 1.65,                 strategy with the simple equal weighting without volatil-
+suggesting that the in-sample evidence of TSM is weak.2                          ity scaling as the benchmark. Volatility scaling is not an
+Since Welch and Goyal (2008), studies on return pre-                             issue if all strategies are based on volatility-scaled returns
+dictability have shifted the focus to out-of-sample perfor-                      when comparing their performances.
+mance. We compute the standard (Campbell and Thomp-                                   We examine the performance of the TSM strategy in
+son, 2008) out-of-sample R2OS for each asset and ﬁnd that                        four ways. First, we investigate the performance of an al-
+only three assets deliver signiﬁcant R2OS at the 10% level.                      ternative trading strategy that does not require predictabil-
+Univariate time series regressions thus indicate that the                        ity. Based on the observation that a high mean asset is
+evidence on time series predictability is weak among the                         more likely to have a positive past 12-month return and
+assets.                                                                          therefore is more likely to be bought by the TSM strat-
+    In the second stage, we follow MOP’s approach and                            egy, we propose a times series history (TSH) strategy that
+run a pooled regression by stacking all asset returns to-                        buys assets if their historical mean returns are positive
+gether. Consistent with MOP, we ﬁnd a t-statistic of 4.34                        and sells them otherwise, which is theoretically proﬁtable
+in the regression of predicting the next one-month re-                           even if asset returns are independent over time, but some
+turn using the past 12-month return. At the conventional                         have signiﬁcantly higher means than others. We ﬁnd that
+critical level of 2, one could interpret this t-statistic of                     the TSM and TSH strategies perform virtually the same
+4.34 as strong evidence against no predictability. We ar-                        and their differences in average returns, as well as in risk-
+gue that the pooled regression is likely to over-reject the                      adjusted ones, are indifferent from zero. Also, we ﬁnd that
+null hypothesis for three reasons. First, if assets have dif-                    the performances of the TSM and TSH strategies mainly
+ferent mean returns, the slope estimate from the pooled                          stem from their long legs, and their short legs have in-
+regression without controlling for ﬁxed effects tends to be                      signiﬁcant average and risk-adjusted returns. This result
+biased upward (Hjalmarsson, 2010). Second, as a predic-                          suggests that both the TSM and TSH tend to long assets
+tor, the past 12-month return is persistent and can gener-                       with greater mean returns and short those with lower
+ate substantial size distortions (Hodrick, 1992; Stambaugh,                      means. Because the TSH strategy is deﬁned without requir-
+1999; Campbell and Yogo, 2006; Ang and Bekaert, 2007;                            ing time series predictability, it seems questionable to at-
+Boudoukh et al., 2008; Li and Yu, 2012). Third, because                          tribute the performance of the TSM strategy to predictabil-
+volatility varies dramatically across assets, volatility scal-                   ity.
+ing in the pooled regression without controlling for ﬁxed                             Second, we report the results with alternative portfolio
+effects further exacerbates the upward bias.                                     weighting schemes, such as volatility weighting as in MOP
+    To assess the degree of over-rejection, we use two boot-                     (Moskowitz et al., 2012), past 12-month return weighting,
+strap methods. The ﬁrst is a parametric wild bootstrap                           and equal weighting with a zero-investment constraint as
+that simulates samples based on the ﬁtted pooled regres-                         in Goyal and Jegadeesh (2018). The results are similar, and
+sion residuals, and the second is a nonparametric pairs                          the alpha differential between the TSM and TSH strategies
+bootstrap that resamples the predictor and the dependent                         is always indifferent from zero. In short, the proﬁtable per-
+variable simultaneously. Both methods accommodate con-                           formance of the TSM strategy is similar to that of the TSH
+ditional heteroskedasticity, but the latter allows for more                      strategy that requires no predictability, suggesting that the
+general data-generating processes. We ﬁnd that the 5%                            performance of the TSM does not necessarily support pre-
+                                                                                 dictability at the 12-month frequency across asset classes.
+  1
+                                                                                      Third, based on the predictive slope of Lewellen (2015),
+    In this paper, the terms “TSM” and “time series predictability” are
+used interchangeably.
+                                                                                 we examine the overall predictability of TSM across assets.
+  2
+    The multiple test framework of Harvey et al. (2016) could suggest            The slope measures how realized returns are explained by
+even weaker evidence on TSM.                                                     predicted returns. If the past 12-month return perfectly
+776                                 D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794
+
+
+predicts the next one-month return, the slope should have                          2. Data
+a value of one. We ﬁnd that for the TSM forecasts the slope
+has a value close to zero, suggesting that the TSM forecasts                           We collect futures prices for 24 commodities, nine de-
+have little predictive power.3 When regressing the TSM                             veloped country equity indexes, 13 developed government
+forecasts on the TSH forecasts, the slope is very close to                         bonds, and nine currency forwards from the same data
+one, irrespective of whether the TSM forecasts use volatil-                        sources as MOP (Moskowitz et al., 2012). These 55 in-
+ity scaling or not. This result indicates little difference in                     struments are the same as those in MOP’s Table 1.5 The
+predictability between the two forecasts, suggesting, again,                       sample period is from January 1985 to December 2015.
+no evidence of TSM across the assets.                                              For each day, we calculate the daily excess return of
+    Fourth, of interest is examining under what conditions                         each futures contract with the nearest- or next-nearest-
+the TSM is a better trading strategy than the TSH. Based on                        to-delivery contract and compound the daily returns to
+one thousand simulated samples by using pooled regres-                             a cumulative month return index. For brevity, returns in
+sion with varying assumed degrees of time series momen-                            this paper always refer to excess returns, unless otherwise
+tum (i.e., the slope varies from 0.1 to 0.4), we ﬁnd that the                      stated.
+TSM and TSH strategies perform similarly when the slope                                Table 1 reports the sample mean (arithmetic), volatility
+is 0.1 (with real data, the slope of the pooled regression is                      (standard deviation), and ﬁrst-order autocorrelation of the
+0.08, controlling for ﬁxed effects). When the slope is 0.2,                        returns on the 55 futures contracts. The mean and volatil-
+the TSM outperforms the TSH, but the difference is sta-                            ity are annualized and represented in percentage. Signiﬁ-
+tistically insigniﬁcant. This means that if there is genuine                       cant variations exist in mean return and volatility across
+time series predictability, the advantage of the TSM strat-                        different contracts. Within the commodity asset class, 24
+egy is not apparent as long as the slope is small. When the                        contracts yield positive, zero, and negative mean returns,
+slope is 0.4, the TSM dominates the TSH in the sense that                          from −11.33% for natural gas to 12.31% for unleaded gaso-
+it does better in almost all the simulated samples. Because                        line. The volatility ranges from 13.56% for cattle to 50.79%
+the two strategies generate similar performance using real                         for natural gas. On average, the mean return and volatil-
+data, our simulation indicates that the evidence of TSM is                         ity are 2.59% and 28.50%, respectively. The nine equity in-
+likely weak if it exists. Combined with other results, the                         dex futures contracts are more homogenous, with mean
+TSM is unlikely to be statistically signiﬁcant for all the as-                     return from 3.09% for TOPIX (Tokyo Stock Price Index) to
+sets. In short, a lack of empirical evidence exists to support                     9.69% for DAX (German Stock Index) and volatility from
+the hypothesis that the TSM is everywhere.                                         15.87% for FTSE 100 (Financial Times Stock Exchange 100
+    As a ﬁnal remark, our results do not claim in any way                          Index) to 23.21% for FTSE/MIB (Italian National Stock Ex-
+that there is no predictability in the asset classes, but that                     change Index). On average, the return and volatility are
+the predictability, if it exists, is not as simple as a con-                       7.24% and 19.26%, respectively. Finally, bond futures and
+stant 12-month return rule. The best example could be                              currency forwards earn lower mean returns with lower
+the stock market, with ample evidence that its risk pre-                           volatilities. Within each asset class, the average mean and
+mium can be predicted by a wide range of predictors such                           volatility are 4.54% and 7.85% for bond futures and 1.22%
+as macroeconomic variables and investor sentiment [see,                            and 10.90% for currency forwards, respectively. Table 1 also
+e.g., Jiang et al. (2019) for the latest literature]. Cross-                       highlights a well-known fact that the past one-month re-
+sectionally, since Jegadeesh and Titman (1993) discovery of                        turn cannot predict the next one-month return, because
+momentum, there have been hundreds of potential anoma-                             the ﬁrst-order correlation is generally close to zero.
+lies [see, e.g., Hou et al. (2019) for the replication]. Re-
+cently, Gu et al. (2018) and Freyberger et al. (2019), among                       3. Univariate time series regression
+others, use machine learning tools to ﬁnd even stronger
+predictability.4 However, none of them is related to the                              In this section, we run univariate time series regres-
+TSM.                                                                               sions to explore the predictability of the past 12-month
+    The rest of this paper is organized as follows.                                return for individual assets. These regressions clearly tell
+Section 2 introduces data we use in this paper.                                    which asset return can be predicted by its past 12-month
+Section 3 shows that asset-by-asset regressions suggest                            return and which cannot, thereby providing direct evi-
+that the evidence of TSM, if any, is weak. Section 4 ﬁnds                          dence on whether the ﬁnding in MOP (Moskowitz et al.,
+that the pooled regression overstates the presence of                              2012) is common across asset classes.
+TSM and that bootstrap-corrected t-statistics cannot reject
+the null hypothesis of no predictability. Section 5 shows                          3.1. In-sample performance
+that the TSM strategy performs the same as an alterna-
+tive trading strategy that does not require predictability.                            Time series regression is standard for identifying re-
+Section 6 concludes.                                                               turn predictability, but pooled regression is seldom used
+                                                                                   in the literature. Ang and Bekaert (2007) and Hjalmarsson
+                                                                                   (2010) are exceptions, showing a heterogeneous pattern in
+  3
+    Lewellen (2015) shows in his footnote 3 that a slope of less than 0.5
+under-performs a naive forecast. Han et al. (2019) discuss more properties
+of the slope.                                                                        5
+                                                                                       MOP use 12 cross-currency pairs in trading strategies but report only
+  4
+    Rapach et al. (2013) use LASSO, a major machine learning tool, to              nine underlying currencies in their summary statistics table. To maximally
+forecast international equity markets, which is the earliest study that we         replicate the results, we focus on the nine underlying currencies. As a
+ﬁnd in the ﬁnance literature applying LASSO to predict stock returns.              consequence, we examine a total of 55 assets, not 58.
+         D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794           777
+
+
+
+Table 1
+Summary statistics of 55 assets across four asset classes.
+   This table reports the mean return, volatility (standard deviation), and ﬁrst-order autocorrela-
+tion [ρ (1)], where the mean and volatility are annualized and represented in percentage. “Average”
+refers to the average value within asset class. The sample period is 1985:01–2015:12.
+
+ Asset                            Start date                 Mean           Volatility            ρ (1)
+ Panel A: Commodity futures
+ Aluminum                         November 1986              −2.09            19.92                0.10
+ Brent oil                        February 1992               7.77            30.62                0.12
+ Cattle                           January 1985                1.64            13.56                0.02
+ Cocoa                            January 1985               −2.54            28.11               −0.13
+ Coffee                           January 1985               −2.06            37.95               −0.02
+ Copper                           January 1985               11.48            26.80                0.15
+ Corn                             January 1985               −4.91            26.65                0.00
+ Cotton                           January 1985                1.36            25.83                0.03
+ Crude                            January 1985                6.37            34.98                0.19
+ Gas oil                          April 1989                  8.21            33.23                0.12
+ Gold                             January 1985                1.54            15.65               −0.12
+ Heating oil                      January 1985                6.41            32.60                0.08
+ Hogs                             January 1985               −3.70            24.23               −0.04
+ Natural gas                      April 1990                −11.33            50.79                0.08
+ Nickel                           February 1993               7.06            34.37                0.05
+ Platinum                         January 1992                6.36            20.76                0.06
+ Silver                           January 1985                2.02            27.73               −0.08
+ Soybeans                         January 1985                4.01            23.17               −0.05
+ Soymeal                          January 1985                6.23            28.75               −0.11
+ Soy oil                          October 1990                4.33            26.12               −0.07
+ Sugar                            January 1985                6.24            34.75                0.11
+ Unleaded gasoline                January 1985               12.31            35.71                0.10
+ Wheat                            January 1985               −4.33            26.68               −0.03
+ Zinc                             February 1991              −0.33            25.08                0.00
+ Average                                                      2.59            28.50                0.02
+ Panel B: Equity index futures
+ SPI 200                       January 1985                    7.41           16.11                0.00
+ DAX                           January 1985                    9.69           21.70                0.07
+ IBEX 35                       January 1985                    9.27           22.66                0.10
+ CAC 40                        January 1985                    6.73           19.69                0.09
+ FTSE/MIB                      January 1985                    6.29           23.21                0.05
+ TOPIX                         January 1985                    3.09           19.70                0.09
+ AEX                           January 1985                    6.96           19.16                0.08
+ FTSE 100                      January 1985                    6.51           15.87               −0.01
+ S&P 500                       January 1985                    9.21           15.20                0.04
+ Average                                                       7.24           19.26                0.06
+ Panel C: Government bond futures
+ Three-year Australian      July 1988                         3.34             4.58               −0.05
+ Ten-year Australian        January 1985                      5.57             6.90                0.08
+ Two-year European          January 1989                      1.47             3.41                0.13
+ Five-year European         January 1989                      1.83             4.26                0.09
+ Ten-year European          January 1985                      4.16             9.66                0.03
+ Thirty-year European       January 1987                      7.56            10.39                0.09
+ Ten-year Canadian          January 1985                      6.44            10.79               −0.03
+ Ten-year Japanese          December 1986                     3.66            13.78                0.07
+ Ten-year UK                January 1985                      4.14             8.28                0.08
+ Two-year US                January 1989                      1.49             1.67                0.22
+ Five-year US               January 1989                      2.84             4.30                0.15
+ Ten-year US                January 1985                      3.64             7.60                0.06
+ Thirty-year US             January 1985                     12.59            16.44                0.07
+ Average                                                      4.54             7.85                0.08
+ Panel D: Currency forwards
+ AUD/USD                          January 1985                1.10            12.03                0.06
+ EUR/USD                          January 1985                2.06            11.02                0.01
+ CAD/USD                          January 1985                0.43             7.44               −0.06
+ JPY/USD                          January 1985                1.72            11.12                0.05
+ NOK/USD                          January 1985                0.51            11.01                0.04
+ NZD/USD                          January 1985                2.13            12.31               −0.02
+ SEK/USD                          January 1985                0.39            11.25                0.10
+ CHF/USD                          January 1985                2.92            11.77               −0.01
+ GBP/USD                          January 1985               −0.28            10.14                0.07
+ Average                                                      1.22            10.90                0.03
+778                                 D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794
+
+
+
+
+                  6
+
+
+                  4
+
+
+                  2
+
+
+                  0
+
+
+                        1             10                     20                    30                     40                       50
+
+
+
+                  3
+
+
+                  2
+
+
+                  1
+
+
+                  0
+
+
+                 -1
+                        1             10                     20                    30                     40                       50
+
+Fig. 1. Time series momentum (TSM) with asset-by-asset regression. This ﬁgure plots the in- and out-of-sample R2 s of forecasting a futures contract return
+with time series regression as
+ i
+rt+1 = αi + βi rt−12
+                i
+                     ,t + εt+1 ,
+                           i
+
+       i
+where rt−12 ,t is asset i’s past 12-month return. The in- and out-of-sample periods are 1985:01–2015:12 and 20 0 0:01–2015:12, respectively.
+
+
+
+
+predictability. For example, Ang and Bekaert (2007, p.663)                         modities, two equity indexes, two government bonds, and
+show that, in contrast to the US, the UK and Japan return                          one currency. Third, although not signiﬁcant, 17 assets
+predictability disappears when expected returns are con-                           deliver negative slopes, amounting to 31% of the assets.
+strained to be non-negative and conclude that “none of the                         Fourth, the R2 s are small, with an average of 0.39%, and
+[return predictability] patterns in other countries resem-                         only ﬁve assets generate an R2 larger than 1%. To have
+bles the US pattern.”                                                              an intuitive understanding of the predictive performance,
+    For each asset, we run the predictive regression                               Panel A of Fig. 1 plots the R2 statistic for each asset. Only
+                                                                                   two assets have R2 s that stand out above 2%.
+ i
+rt+1 = α + β rt−12
+              i
+                   ,t + εt+1 ,
+                         i
+                                                                      (1)
+       i
+where rt+1 is the return of asset i in month t + 1 and                             3.2. Out-of-sample performance
+ i
+rt−12    is its past 12-month return (i.e., the return between
+      ,t                                                                              Due to concerns of data mining and structural breaks,
+months t − 12 and t). The predictive power is based on ei-
+                                                                                   studies on return predictability have shifted the focus to
+ther the regression slope β or the R2 statistic. If the re-
+                                                                                   out-of-sample performance since Welch and Goyal (2008).
+gression R2 statistic is signiﬁcantly larger than zero with a
+                                                                                   To investigate the out-of-sample performance of TSM, we
+positive β , then asset i displays TSM, i.e., its past 12-month
+                                                                                   use the Campbell and Thompson (2008) out-of-sample R2OS
+return predicts the next one-month return.
+                                                                                   statistic as the assessment criterion, which is deﬁned as
+   Table 2 reports the regression slope, the Newey–West t-                                   T −1
+statistic, and R2 . We have four observations. First, the pres-                     2         t=K       (rt+1
+                                                                                                          i
+                                                                                                              − rˆt+1
+                                                                                                                  i
+                                                                                                                      )2
+ence of TSM is not prevalent. Of the 55 assets, only eight
+                                                                                   ROS = 1 − T −1                       ,                             (2)
+                                                                                              t=K       (rt+1
+                                                                                                          i
+                                                                                                              − r̄t+1
+                                                                                                                  i
+                                                                                                                      )2
+display signiﬁcant regression slopes at the 10% level, rep-
+resenting 15% of assets (only three signiﬁcant at the 5%                           where K is the initial sample size for parameters training,
+                                                                                     i
+                                                                                   rˆt+1 is the expected return estimated with information up
+level). Second, the signiﬁcance is not concentrated but dis-
+perse among the four asset classes, including three com-                           to month t and calculated as rˆi = αˆ t + βˆt r i
+                                                                                                                             t+1
+                                                                                                                                     , αˆ t and
+                                                                                                                                           t−12,t
+          D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794               779
+
+
+Table 2
+In- and out-of-sample performance of time series momentum (TSM) with time series regression.
+   This table reports the slope, t-statistic, in-sample R2 , and out-of-sample R2OS of rt+1       i
+                                                                                                     = αi +
+βi rt−12
+    i
+         ,t + ε i
+               t+1 . “Average” refers to the  average  value within  each  asset class. #(10%  signiﬁcance)
+refers to the number of signiﬁcant in-sample regression slopes or signiﬁcant R2OS s at the 10% level
+or stronger. ∗∗∗ , ∗∗ , and ∗ denote statistical signiﬁcance at the 1%, 5%, and 10% level, respectively. The
+in- and out-of-sample periods are 1985:01–2015:12 and 20 0 0:01–2015:12, respectively.
+
+  Asset                                    βi               t-stat              R2                 R2OS
+  Panel A: Commodity futures
+  Aluminum                             0.30                 0.88               0.28             −1.42
+  Brent oil                            0.34                 0.69               0.14             −1.29
+  Cattle                               0.38∗∗               2.23               0.94             −0.62
+  Cocoa                               −0.14                -0.28               0.03             −1.51
+  Coffee                               0.21                 0.40               0.04              0.23
+  Copper                               0.77∗                1.69               0.97              0.21
+  Corn                                −0.37                −0.94               0.23             −0.37
+  Cotton                               0.57                 1.23               0.56             −1.00
+  Crude                                0.60                 1.34               0.35              0.08
+  Gas oil                              0.49                 1.11               0.26             −1.00
+  Gold                                 0.29                 1.43               0.42             −0.38
+  Heating oil                          0.59                 1.39               0.38             −0.06
+  Hogs                                 0.39                 1.25               0.31             −0.73
+  Natural gas                         −0.21                −0.30               0.02             −4.51
+  Nickel                               1.01∗                1.83               1.03             −0.50
+  Platinum                            −0.12                −0.31               0.04             −1.83
+  Silver                              −0.11                −0.25               0.02             −2.31
+  Soybeans                            −0.39                −1.05               0.33             −0.63
+  Soymeal                             −0.47                −1.06               0.32             −0.19
+  Soy oil                              0.04                 0.09               0.00             −1.93
+  Sugar                               −0.65                −1.33               0.45             −0.10
+  Unleaded gasoline                    0.05                 0.12               0.00             −0.44
+  Wheat                               −0.10                −0.26               0.02             −1.21
+  Zinc                                 0.65                 1.24               0.79             −2.29
+  Average                                                                      0.33             −0.99
+  Panel B: Equity index futures
+  SPI 200                             −0.23                −0.49               0.25             −3.99
+  DAX                                  0.18                 0.54               0.08             −0.49
+  IBEX 35                              0.36                 1.20               0.30              0.07
+  CAC 40                               0.30                 0.98               0.28              0.13
+  FTSE/MIB                             0.70∗                1.92               1.08              0.73
+  TOPIX                                0.44∗                1.69               0.57              0.59
+  AEX                                  0.43                 1.22               0.58             −0.14
+  FTSE 100                            −0.16                −0.48               0.12             −5.24
+  S&P 500                              0.14                 0.45               0.10             −1.78
+  Average                                                                      0.37             −1.12
+  Panel C: Government bond futures
+  Three-year Australian            0.01                     0.29               0.02              −0.27
+  Ten-year Australian              0.13                     1.42               0.41              −1.74
+  Two-year European                0.15∗                    1.84               2.43               8.02∗∗
+  Five-year European               0.09                     1.11               0.57              −1.03
+  Ten-year European                0.17                     1.25               0.40              −1.03
+  Thirty-year European          −0.06                      −0.31               0.04              −0.74
+  Ten-year Canadian             −0.02                      −0.17               0.01              −1.32
+  Ten-year Japanese                0.11                     0.47               0.11              −0.54
+  Ten-year UK                      0.10                     1.06               0.18              −0.37
+  Two-year US                      0.08∗∗∗                  3.57               3.24               4.26∗∗∗
+  Five-year US                     0.06                     1.16               0.23              −0.23
+  Ten-year US                   −0.03                      −0.35               0.02              −0.39
+  Thirty-year US                   0.17                     0.60               0.15              −0.82
+  Average                                                                      0.60               0.29
+  Panel D: Currency forwards
+  AUD/USD                             −0.10                −0.47               0.08             −0.92
+  EUR/USD                              0.17                 1.08               0.29             −0.74
+  CAD/USD                              0.14                 1.18               0.42             −0.88
+  JPY/USD                              0.33∗∗∗              2.60               1.10              0.43∗
+  NOK/USD                             −0.01                −0.06               0.00             −0.59
+  NZD/USD                              0.09                 0.40               0.07             −0.94
+  SEK/USD                              0.12                 0.70               0.13             −0.82
+  CHF/USD                              0.12                 0.75               0.13             −1.42
+  GBP/USD                             −0.05                −0.29               0.03             −0.82
+  Average                                                                      0.25             −0.75
+  Average across asset classes                                                 0.39              −0.67
+  #(10% signiﬁcance)                   8                                                          3
+780                           D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794
+
+
+βˆt are the coeﬃcients of the time series regression Eq. (1),                gression of monthly returns scaled by volatility on the
+       i
+and r̄t+1  is the sample mean of asset i with data up to                     scaled returns lagged h months,
+month t. The choice of K is ad hoc in the literature, which                       /σti = α + β rt−h +1 /σt−h + εt+1 ,
+                                                                              i                 i         i     i
+                                                                             rt+1                                                                (3)
+depends on the nature of the possible model instability
+and the timing of the possible breaks. Hansen and Timmer-                           i
+                                                                             where rt+1 is asset i’s return in month t + 1 and σti is the
+mann (2012) theoretically show that a large K is preferable                  ex ante annualized volatility estimated by its exponentially
+if the data-generating process is stationary, but it comes at                weighted lagged squared daily returns:
+the cost of low power as there are fewer observations for                                    ∞
+                                                                                             
+out-of-sample evaluation. A small K can give the out-of-                     (σti )2 = 261         (1 − δ )δ j (rt−1
+                                                                                                                 i
+                                                                                                                     − j − r̄t ) ,
+                                                                                                                             i 2
+                                                                                                                                                 (4)
+sample test more desirable size properties, but it perhaps                                   j=0
+does not provide precise estimation. For these reasons, we
+select the ﬁrst 15 years of data for in-sample training and                  where r̄ti is the exponentially weighted average return and
+                                                                                                  
+the remaining 16 years of data for out-of-sample evalua-                     δ is chosen so that ∞  j=0 (1 − δ )δ = 60 days.
+                                                                                                                 j
+
+tion. That is, the full sample period is from January 1985                       MOP (Moskowitz et al., 2012) also use an alternative
+to December 2015 and the out-of-sample period is from                        speciﬁcation with the sign of lagged returns as the regres-
+January 20 0 0 to December 2015.                                             sor to examine the robustness of TSM,
+    Welch and Goyal (2008) show that the sample mean                              /σti = α + β sign(rt−h +1 ) + εt+1 ,
+                                                                              i                      i           i
+                                                                             rt+1                                                                (5)
+is a very stringent out-of-sample benchmark. If R2OS > 0,
+                i
+the forecast rˆt+1  outperforms the sample mean in terms                     where sign is the sign function that equals +1 when
+                                                                              i
+                                                                             rt−h    ≥ 0 and −1 when rt−hi     < 0.
+of mean squared forecast error (MSFE). Empirically, they                          +1                        +1
+show that the in-sample forecasting abilities of a variety                       As in MOP (Moskowitz et al., 2012), we calculate the t-
+of return predictors generally do not hold in out-of-sample                  statistics by clustering the standard errors by time (month)
+tests. To ascertain whether a forecast delivers a statisti-                  and plot the t-statistics of the pooled regression slopes
+cally signiﬁcant improvement in MSFE relative to the sam-                    with lagged returns from one month to 60 months in
+ple mean, we use the Clark and West (2007) statistic to                      Fig. 3.6 Qualitatively, we conﬁrm MOP (Moskowitz et al.,
+test the null hypothesis that the MSFE of the sample mean                    2012) that the past 12-month return of each asset is a
+forecast is less than or equal to the MSFE of the forecasted                 positive predictor of its future returns for one month to
+expected return, corresponding to H0 : R2OS ≤ 0 against HA :                 12 months in the pooled regression. After 12 months, the
+R2OS > 0.                                                                    forecasting sign changes and the forecasting power decays.
+    Although no strict relation exists between the in-                       In Fig. 3, Panel A shows the results with Eq. (3) over all
+sample and out-of-sample performance (Inoue and Kil-                         asset classes, and Panel B replaces the lagged return with
+ian, 2005), the last column of Table 2 and Panel B of                        its sign as Eq. (5). Both have a sizable t-statistic of about 4
+Fig. 1 show that the R2OS is smaller than the in-sample R2                   at the 12-month horizon.
+on average. Of the 55 assets, 45 have negative R2OS , indicat-                   Panels C to F of Fig. 3 plot the t-statistics of Eq. (5)
+ing no out-of-sample predictability. Of the remaining ten                    within each asset class and exhibit a similar pattern. The
+assets with positive R2OS , only three are signiﬁcant at the                 t-statistics appear to show a strong return continuation for
+10% level, which are the two-year European bond, the two-                    the ﬁrst 12 months and weak reversal for the following 48
+year US bond, and the JPY/USD (Japanese yen/US dollar)                       months. Overall, Fig. 3 appears to provide strong evidence
+forward. As a result, the average R2OS across the 55 assets is               on TSM. However, the t-statistics at the conventional level
+−0.67%, suggesting that there is no TSM out of sample.                       tend to overstate the predictability of the past 12-month
+    To further explore the robustness, Fig. 2 plots the R2 s                 return.
+and R2OS s of TSM by regressing the next one-month return
+on the past one-, three-, and six-month return, respec-                      4.2. Estimation bias
+tively. The results are similar to the case with the past 12-
+month return in Fig. 1. In addition, we consider volatility                      In Eq. (3), MOP (Moskowitz et al., 2012) make an im-
+scaling when running the asset-by-asset time series regres-                  plicit assumption that the mean returns of all assets are
+sions. The results are still quantitatively the same: Only the               the same by imposing a common intercept. From Table 1,
+same three assets have signiﬁcant R2OS s. In sum, based on                   the sample means of individual assets vary dramatically
+the typical univariate time series regression, the evidence                  across asset classes. In the literature, Jorion and Goetz-
+of TSM across all the assets is very weak.                                   mann (1999) show strong evidence that the equity pre-
+                                                                             mium varies across countries. Ang and Bekaert (2007) in-
+4. Pooled regression                                                         vestigate return predictability with pooled regression but
+                                                                             explicitly consider the variation in average returns. Menzly
+   In this section, we ﬁrst replicate the results in MOP                     et al. (2004) analyze cross-sectional differences in time se-
+(Moskowitz et al., 2012) and then show that the pooled                       ries return predictability.
+regression tends to overstate the presence of TSM.                               To highlight ﬁxed effects, a possible speciﬁcation is
+
+4.1. The t-statistic
+                                                                              i
+                                                                             rt+1 /σti = α + β rt−h
+                                                                                                i
+                                                                                                    +1 /σt−h + μi /σi + εt+1 ,
+                                                                                                          i              i
+                                                                                                                                                 (6)
+
+  By stacking all futures contracts’ returns and dates,                        6
+                                                                                 The t-statistics that double-cluster the standard errors by time and
+MOP (Moskowitz et al., 2012) run a pooled predictive re-                     asset are quantitatively similar.
+                                      D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794                         781
+
+
+
+       6                                                                                   4
+
+                                                                                           3
+       4
+                                                                                           2
+       2                                                                                   1
+
+                                                                                           0
+       0
+                                                                                          -1
+           1          10         20       30          40         50                            1        10          20         30   40         50
+
+
+       6                                                                                   4
+
+                                                                                           3
+       4
+                                                                                           2
+       2                                                                                   1
+
+                                                                                           0
+       0
+                                                                                          -1
+           1          10         20       30          40         50                            1        10          20         30   40         50
+
+
+       6                                                                                   4
+
+                                                                                           3
+       4
+                                                                                           2
+       2                                                                                   1
+
+                                                                                           0
+       0
+                                                                                          -1
+           1          10         20       30          40         50                            1        10          20         30   40         50
+
+
+Fig. 2. Time series momentum (TSM) with asset-by-asset regression based on different lags. This ﬁgure plots the in- and out-of-sample R2 s of forecasting
+a futures contract return with time series regression as
+ i
+rt+1 = αi + βi rt−h,t
+                i
+                      + εt+1
+                         i
+                             ,
+         i
+where rt−h,t is asset i’s past h-month return (h = 1, 3, and 6). The in- and out-of-sample periods are 1985:01–2015:12 and 20 0 0:01–2015:12, re-
+spectively.
+
+
+
+where μi and σ i are the unconditional mean and volatility                           to be heteroskedastic. The third is the Kruskal–Wallis test,
+of asset i. Hence, the estimate of β from Eq. (3) should                             which relaxes both the normality and homoskedasticity as-
+be                                                                                   sumptions (Kruskal and Wallis, 1952), and the fourth is a
+               Cov(rt−h
+                    i
+                           /σt−h
+                              i
+                                 , μi /σi )                                          bootstrap test. When applying these four tests to real data,
+βˆ = β +                +1
+                                              .                         (7)          Table 3 shows that the null hypothesis that all 55 assets
+                   Var(rt−h
+                        i
+                            +1
+                               /σt−h
+                                  i
+                                     )                                               have the same mean is strongly rejected. In addition, we
+If all assets have the same Sharpe ratio (or mean, if volatil-                       reject the null that they have the same Sharpe ratio. There-
+ities are the same), the second term is zero. Otherwise, it                          fore, the evidence of TSM shown in MOP (Moskowitz et al.,
+would be signiﬁcantly positive when the number of assets                             2012) is at least partially driven by the ﬁxed effects.
+is large, as the correlation between realized returns and                                The ﬁxed effects are not easily corrected in the pre-
+their means is mechanically positive. As a result, the slope                         dictive regression framework. Statistically, Hjalmarsson
+estimate of Eq. (3) is biased upward.                                                (2010) shows that when different assets have different av-
+    The question then is whether the 55 assets have the                              erage returns, the pooled regression, after controlling for
+same mean or Sharpe ratio. We perform four tests for                                 ﬁxed effects, suffers from a looking-forward bias because
+this hypothesis. The ﬁrst is analysis of variance (ANOVA),                           the time series demeaning of the data requires informa-
+which was proposed by Fisher (1918) with two assump-                                 tion after month t, which induces a correlation between
+tions: normality and homoskedasticity. The second is B.L.                            the lagged value of the demeaned regressor and the error
+Welch’s ANOVA (Welch, 1951), which allows the variance                               term in the predictive regression.
+782                                          D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794
+
+
+
+
+          6                                                                                       6
+          4                                                                                       4
+          2                                                                                       2
+          0                                                                                       0
+         -2                                                                                      -2
+
+              0                    20                       40                 60                     0                 20               40                   60
+
+
+          4
+                                                                                                  2
+          2
+                                                                                                  0
+          0
+                                                                                                 -2
+         -2
+              0                    20                       40                 60                     0                 20               40                   60
+
+
+          4                                                                                       4
+
+          2                                                                                       2
+
+                                                                                                  0
+          0
+                                                                                                 -2
+         -2
+              0                    20                       40                 60                     0                 20               40                   60
+
+
+Fig. 3. Time series momentum (TSM) with pooled regression: in-sample performance. This ﬁgure plots the t-statistics of the pooled regression slopes that
+regress month t returns on month t − h returns as
+ i
+rt+1 /σti = αh + βh rt−h
+                     i
+                         +1
+                            /σt−h
+                               i
+                                  + εt+1
+                                     i
+                                         ,
+for Panel A and
+ i
+rt+1 /σti = αh + βh sign(rt−h
+                          i
+                              +1
+                                 ) + εt+1
+                                      i
+
+                          i
+for Panels B to F, where rt−h +1
+                                 is asset i’s return in month t − h + 1 for h = 1, 2, . . . , 60. The t-statistics are clustered by time (month). The sample period is
+1985:01–2015:12.
+
+                                        Table 3
+                                        p-value from the test that all assets have the same mean or Sharpe ratio.
+                                          This table reports the p-value from the test that all assets have the same mean or
+                                        Sharpe ratio. We perform four tests, including the analysis of variance (ANOVA) in
+                                        Fisher (1918), Welch’s ANOVA in Welch (1951), Kruskal-Wallis test in Kruskal and Wallis
+                                        (1952), and bootstrap test. The sample period is 1985:01–2015:12.
+
+                                                                 ANOVA       Welch’s ANOVA            Kruskal-Wallis     Bootstrap
+
+                                             Mean                 0.08            < 10−3                  < 10−10            0
+                                             Sharpe ratio        < 10−5           < 10−5                  < 10−15            0
+
+
+
+
+    In addition to the ﬁxed effects, two more reasons                                       ample, Ang and Bekaert (2007) show substantial size dis-
+can lead to overstating the evidence on time series pre-                                    tortions with the Newey–West t-statistic when predicting
+dictability. First, as a predictor, the past 12-month cu-                                   stock returns with persistent variables. Second, because
+mulative return is persistent and can generate substantial                                  volatility varies dramatically across assets, volatility scal-
+size distortions (Hodrick, 1992; Stambaugh, 1999; Valka-                                    ing in the pooled regression without controlling for ﬁxed
+nov, 2003; Campbell and Yogo, 2006; Ang and Bekaert,                                        effects can further exacerbate the upward bias. For exam-
+20 07; Boudoukh et al., 20 08; Li and Yu, 2012). For ex-                                    ple, in Eq. (6), even when all assets have the same mean,
+                                 D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794                    783
+
+
+volatility scaling generates the ﬁxed effects as σ i varies                        of data-generating processes. Pairs bootstrap is considered
+dramatically across assets. MOP (Moskowitz et al., 2012)                           the most general and applicable method of bootstrapping.
+also explore the pooled regression in Eq. (5) by using the
+sign of the past 12-month return as the predictor, which                           Wild bootstrap. Suppose the true data-generating process
+can distort and change the true statistical signiﬁcance as                         is as Eq. (3). Let αˆ and βˆ be the estimates from the full
+the sign of the past 12-month return is highly skewed.                             sample of real data. Then, the residuals are
+                                                                                   εˆt+1
+                                                                                     i      i
+                                                                                         = rt+1 /σti − αˆ − βˆ rt−h
+                                                                                                                i
+                                                                                                                    +1 /σt−h .
+                                                                                                                          i
+                                                                                                                                           (8)
+4.3. Bootstrap tests
+                                                                                   We simulate a pseudo sample path with T observations
+                                                                                   as
+   Due to the concerns discussed above, the t-statistic
+from the pooled regression is questionable. To correctly
+                                                                                    i∗
+                                                                                   rt+1 /σti∗ = αˆ + βˆ rt−h
+                                                                                                         i
+                                                                                                             +1 /σt−h + ε
+                                                                                                                   i      i
+                                                                                                                        ˆt+1  i
+                                                                                                                             vt+1 ,        (9)
+evaluate the statistic signiﬁcance, we use bootstrap to sim-                       where ∗ indicates that the value is a bootstrapped ob-
+ulate the distribution of the t-statistic and deﬁne its 97.5%                      servation and vti is a random draw from a two-point
+quantile as the simulated t-statistic for signiﬁcance at the                       Rademacher distribution with mean 0 and variance 1:
+5% level. If the t-statistic from the real data is larger than                             
+                                                                                              1        with probability 1/2,
+1.96 but smaller than the simulated t-statistic, we can con-                       vti =                                                  (10)
+clude that the pooled regression tends to overreject the
+                                                                                              −1       with probability 1/2.
+null hypothesis and no signiﬁcant evidence supports TSM.                           This distribution has an appealing property that the error-
+   We use two standard bootstrap approaches. The ﬁrst is                           in-rejection probability is minimal when the sample size
+a more restrictive parametric wild bootstrap that samples                          is small, and it is robust to other distributions such as
+data based on the pooled regression residuals, and the sec-                        the Mammen distribution and standard normal distribu-
+ond is a more general nonparametric pairs bootstrap that                           tion (Davidson and Flachaire, 2008). After constructing a
+resamples the predictor and the dependent variable simul-                          pseudo sample path, we run pooled regression Eq. (3). We
+taneously. Both approaches accommodate conditional het-                            repeat this procedure one thousand times to calculate the
+eroskedasticity, but the second allows for a wider range                           simulated t-statistic of βˆ .
+
+
+                       Table 4
+                       t-statistic of pooled regression without controlling for ﬁxed effects.
+                          This table reports the t-statistic of pooled regression with real data and the simulated t-statistics
+                       with wild and pairs bootstrap. For each asset, we bootstrap a path with T observations and run pooled
+                       regression without controlling for ﬁxed effects to calculate the t-statistic. We repeat this procedure
+                       one thousand times and obtain the distribution of the t-statistic for testing the null hypothesis that
+                       there is no time series momentum. The bootstrapped t-statistic is deﬁned as the 97.5% percentile of the
+                       simulated t-statistics. The sample period is 1985:01–2015:12.
+
+                                                        Bootstrapped t-statistic                             Bootstrapped t-statistic
+
+                        h            t-statistic         Wild              Pairs        t-statistic            Wild               Pairs
+
+                         Panel A: Forecast with return lagged h months
+                                        i
+                                       rt+1 /σti = αh + βh rt−h
+                                                            i
+                                                                +1
+                                                                   /σt−h
+                                                                      i
+                                                                         + εt+1
+                                                                            i               i
+                                                                                           rt+1 /σti = αh + βh sign(rt−h
+                                                                                                                     i
+                                                                                                                         +1
+                                                                                                                            ) + εt+1
+                                                                                                                                 i
+
+
+                         1              3.11              9.26             3.63               2.90              8.18              3.41
+                         2              1.31              4.98             1.98               1.62              4.44              2.31
+                         3              2.89              8.61             3.45               2.83              6.84              3.45
+                         4              0.24              2.46             1.06               1.20              2.12              1.99
+                         5             -0.17              1.88             0.60              -0.34              1.83              0.54
+                         6              0.97              4.18             1.71               1.58              3.62              2.28
+                         7             -0.21              1.52             0.65               0.44              1.55              1.29
+                         8              0.75              3.81             1.49               1.09              3.20              1.84
+                         9              1.36              4.76             2.10               1.70              4.20              2.47
+                         10             3.02              8.12             3.60               2.56              6.46              3.30
+                         11             3.63             10.34             4.13               3.97              7.61              4.39
+                         12             0.29              2.52             1.00               0.55              2.35              1.26
+                         Panel B: Forecast with past h-month returns
+                                        i
+                                       rt+1 /σti = αh + βh rt−h,t
+                                                            i
+                                                                  /σt−1
+                                                                     i
+                                                                        + εt+1
+                                                                           i                i
+                                                                                           rt+1 /σti = αh + βh sign(rt−h,t
+                                                                                                                     i
+                                                                                                                           ) + εt+1
+                                                                                                                                i
+
+
+                         1              3.11              9.26             3.63               2.90              8.18              3.41
+                         2              2.92              9.46             3.46               3.07              8.32              3.61
+                         3              3.74             11.45             4.22               4.15             10.20              4.61
+                         4              3.49             10.71             3.97               4.57              9.49              4.96
+                         5              3.11              9.58             3.63               4.24              8.85              4.72
+                         6              3.29              9.65             3.80               3.88              8.88              4.39
+                         7              3.03              9.30             3.62               3.93              8.31              4.40
+                         8              3.05              9.44             3.62               3.74              8.33              4.24
+                         9              3.38              9.85             3.95               4.44              8.99              4.78
+                         10             3.94             11.38             4.46               5.27             10.22              5.63
+                         11             4.64             13.12             5.08               5.71             11.73              6.05
+                         12             4.34             12.53             4.83               5.14             11.05              5.53
+784                              D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794
+
+
+                       Table 5
+                       t-statistic of pooled regression within each asset class without controlling for ﬁxed effects.
+                          This table reports the t-statistic of pooled regression with real data and the simulated t-statistics
+                       with wild and pairs bootstrap. For each asset, we bootstrap a path of T observations and run pooled
+                       regression without controlling for ﬁxed effects to calculate the t-statistic. We repeat this procedure
+                       one thousand times and obtain the distribution of the t-statistic for testing the null hypothesis that
+                       there is no time series momentum. The bootstrapped t-statistic is deﬁned as the 97.5% percentile of the
+                       simulated t-statistics. The sample period is 1985:01–2015:12.
+                                        i
+                                       rt+1 /σti = αh + βh rt−h,t
+                                                            i
+                                                                  /σt−1
+                                                                     i
+                                                                        + εt+1
+                                                                           i             i
+                                                                                        rt+1 /σti = αh + βh sign(rt−h,t
+                                                                                                                  i
+                                                                                                                        ) + εt+1
+                                                                                                                             i
+
+
+                                                      Bootstrapped t-statistic                         Bootstrapped t-statistic
+
+                         h          t-statistic         Wild              Pairs     t-statistic           Wild               Pairs
+
+                         Panel A: Commodity futures
+                         1           1.74           5.09                  2.49        1.66                4.86                2.40
+                         3           2.32           6.28                  2.97        2.95                5.82                3.52
+                         6           2.98           7.08                  3.65        2.89                6.59                3.54
+                         12          3.46           8.20                  4.13        4.20                7.43                4.68
+                         Panel B: Equity index futures
+                         1            1.77           5.56                 2.41        0.46                4.85                1.27
+                         3            1.97           6.07                 2.68        1.03                5.33                1.79
+                         6            1.92           5.88                 2.57        2.29                5.37                2.89
+                         12           2.20           6.49                 2.92        3.00                6.05                3.60
+                         Panel C: Government bond futures
+                         1           2.35          6.58                   3.04        2.04                5.78                2.75
+                         3           2.37          6.68                   2.99        2.87                5.75                3.41
+                         6           0.60          3.22                   1.53        0.73                2.93                1.61
+                         12          1.68          5.39                   2.44        1.69                4.77                2.42
+                         Panel D: Currency forwards
+                         1            1.67          4.97                  2.46        2.09                4.32                2.88
+                         3            2.46          6.95                  3.09        2.46                5.97                3.12
+                         6            1.40          4.73                  2.19        2.23                4.27                2.94
+                         12           1.73          5.49                  2.61        1.96                5.08                2.74
+
+
+
+
+Pairs bootstrap. Pairs bootstrap resamples T pairs of                             Tables 2 and 4, the results reveal that TSM is unlikely to
+(rt+1
+  i   /σti , rt−h
+              i
+                  +1
+                     /σt−h
+                        i ) with replacement from the real data                   be present in any of the four asset classes.
+and uses these pairs to run the pooled regression                                     Does volatility scaling play a role in estimating the re-
+                                                                                  gression slopes and detecting the existence of TSM because
+ i∗
+rt+1 /σti∗ = αh + βh rt−h
+                      i∗
+                          +1 /σt−h + εt+1 .
+                                i∗    i
+                                                                      (11)        MOP (Moskowitz et al., 2012) run Eqs. (3) and (5) with
+                                                                                  volatility scaling while volatility varies across assets and
+Hence, the simulated t-statistic of βˆ can be calculated af-                      is predictable by its lagged values (Paye, 2012)? Table 6
+ter repeating the procedure one thousand times. This boot-                        reports the t-statistics with real data and bootstrapped
+strap allows not only more general data-generating pro-                           t-statistics from Eqs. (3) and (5) without volatility scal-
+cesses, but also potential model misspeciﬁcation [e.g., E(r)                      ing. The results display two empirical facts. First, the t-
+is not a linear function of rt−h+1 ].                                             statistics without volatility scaling are much smaller than
+    Table 4 reports the t-statistics with real data and the                       those with volatility scaling. For example, when predict-
+bootstrapped t-statistics. Consistent with Ang and Bekaert                        ing the next one-month return with the past one- and
+(2007), the t-statistics that cluster by time tend to over-                       12-month return without volatility scaling, the t-statistics
+reject the null hypothesis. For example, when forecast-                           of the regression slope are 1.80 and 1.68, respectively,
+ing the next one-month return with the past one-month                             which are much smaller than the values with volatility
+return, the t-statistic from the real data is 3.11, suggest-                      scaling in Table 4 (3.11 and 4.34), lending little support
+ing strong evidence of TSM. However, this is not the                              to TSM. Second, when predicting the next one-month re-
+case because the bootstrapped t-statistics are 9.26 and                           turn with the signs of the past one- and 12-month re-
+3.63, respectively. Similarly, when forecasting the next one-                     turns, the t-statistics are 2.20 and 3.72, respectively, and
+month return with the past 12-month return, the t-statistic                       they are smaller than that with volatility scaling. Therefore,
+from the real data is 4.34, and the simulated t-statistics                        volatility scaling plays a role. In fact, it seems at least par-
+are 12.53 and 4.83, respectively, suggesting that the ev-                         tially responsible for the performance of the TSM trading
+idence is weak in support of TSM. Moreover, forecasting                           strategy.
+with the sign of lagged returns does not support TSM                                  This paper extends the sample ending period of MOP
+either.                                                                           (Moskowitz et al., 2012) from 2009 to 2015 and raises
+    Table 5 presents the simulated t-statistics within each                       a possibility that TSM exists before 2009 and disappears
+asset class. For brevity, we report the results of predict-                       thereafter. Table 7 reports the results for the 1985 to
+ing the next one-month return with the past one-, three-,                         2009 sample period and rules out the possibility. The t-
+six-, and 12-month return, respectively. Consistent with                          statistics from real data are still smaller than the simulated
+                                 D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794                                785
+
+
+                       Table 6
+                       t-statistic of pooled regression without volatility scaling and without controlling for ﬁxed effects.
+                          This table reports the t-statistic of pooled regression with real data and the simulated t-statistics
+                       with wild and pairs bootstrap. For each asset, we bootstrap a path with T observations and run pooled
+                       regression without volatility scaling and without controlling for ﬁxed effects to calculate the t-statistic.
+                       We repeat this procedure one thousand times and obtain the distribution of the t-statistic for testing
+                       the null hypothesis that there is no time series momentum. The bootstrapped t-statistic is deﬁned as
+                       the 97.5% percentile of the simulated t-statistics. The sample period is 1985:01–2015:12.
+
+                                                    Bootstrapped t-statistic                          Bootstrapped t-statistic
+
+                         h          t-statistic        Wild            Pairs        t-statistic             Wild              Pairs
+
+                          Panel A: Forecast with return lagged h months
+                                           i
+                                          rt+1 = αh + βh rt−h
+                                                          i
+                                                              +1
+                                                                 + εt+1
+                                                                    i                       i
+                                                                                           rt+1 = αh + βh sign(rt−h
+                                                                                                                i
+                                                                                                                    +1
+                                                                                                                       ) + εt+1
+                                                                                                                            i
+
+
+                         1             1.80            5.49            2.51           2.20                6.13               2.85
+                         2             0.52            2.58            1.47           1.65                2.67               2.45
+                         3             1.43            4.57            2.19           1.84                4.58               2.58
+                         4             0.67            3.21            1.58           1.47                3.21               2.26
+                         5            −1.33           −0.10           −0.14          −0.89               −0.08               0.28
+                         6             1.03            3.37            1.92           1.77                3.45               2.48
+                         7            −1.21           −0.47           −0.18          −0.18               −0.50               0.77
+                         8            −0.64            0.60            0.42           0.17                0.54               1.12
+                         9            −0.97            0.23            0.28           0.22                0.19               1.30
+                         10            2.52            6.11            3.21           2.72                5.87               3.42
+                         11            5.04            9.88            5.30           5.17                9.89               5.51
+                         12           −1.04           −0.17            0.08          −0.11               −0.06               0.85
+                          Panel B: Forecast with past h-month returns
+                                            i
+                                           rt+1 = αh + βh rt−h,t
+                                                           i
+                                                                 + εt+1
+                                                                    i                       i
+                                                                                           rt+1 = αh + βh sign(rt−h,t
+                                                                                                                i
+                                                                                                                      ) + εt+1
+                                                                                                                           i
+
+
+                         1             1.80             5.49            2.51           2.20                 6.13              2.85
+                         2             1.39             4.56            2.21           2.57                 5.10              3.18
+                         3             1.71             5.26            2.45           3.06                 5.81              3.62
+                         4             1.82             5.30            2.59           3.75                 5.94              4.25
+                         5             1.27             4.27            2.09           3.23                 4.75              3.77
+                         6             1.55             4.85            2.39           2.71                 5.38              3.32
+                         7             1.04             3.89            1.90           2.54                 4.26              3.19
+                         8             0.78             3.49            1.58           2.24                 3.64              2.94
+                         9             0.62             3.12            1.50           2.57                 3.31              3.29
+                         10            1.08             3.75            1.96           3.62                 4.23              4.14
+                         11            2.09             5.61            2.84           4.17                 6.41              4.72
+                         12            1.68             4.96            2.50           3.72                 5.64              4.16
+
+
+
+
+t-statistics, regardless of which bootstrap approach is em-                      the estimate of β is βˆF E , then the residual εˆt+1
+                                                                                                                                  i   can be
+ployed. For example, when forecasting the next one-month                         calculated as
+return with the past 12-month return, the t-statistic is 4.48
+with real data, but it is 12.76 and 4.96 with the two boot-                      εˆt+1
+                                                                                   i      i
+                                                                                       = rt+1 /σti − r i /σ i − βˆF E (rt−h
+                                                                                                                        i
+                                                                                                                            +1 /σt−h − r−h+1 /σ−h ).
+                                                                                                                                  i     i      i
+
+strap approaches, respectively. The TSM is also insigniﬁcant                                                                                       (13)
+for each asset class. The results are reported in the Online
+Appendix.                                                                        Then, we simulate a pseudo sample path with T observa-
+                                                                                 tions as
+
+4.4. Controlling for ﬁxed effects                                                (rt+1
+                                                                                   i
+                                                                                       /σti − r i /σ i )∗
+                                                                                   = βˆF E (rt−h
+                                                                                             i
+                                                                                                 +1 /σt−h − r−h+1 /σ−h ) + ε
+                                                                                                       i     i      i        i
+                                                                                                                           ˆt+1  i
+                                                                                                                                vt+1 ,             (14)
+    Earlier evidence shows that the assets do not have the
+same mean, implying that ﬁxed effects should be con-                             where vt+1i   follows the Rademacher distribution. We can
+trolled in the pooled regression. In so doing, one can run                       then estimate the model with the simulated samples and
+the pooled regression by removing the asset means. The                           repeat the procedure one thousand times, to obtain the
+bootstrap procedures can also make a similar modiﬁcation.                        critical value of the wild bootstrap t-statistic.
+The question is whether controlling for ﬁxed effects can al-                         Regarding the pairs bootstrap, we resample T pairs of
+ter substantially the evidence on TSM.                                           the predictor and the dependent variable in Eq. (12) with
+    Following Gonçalves and Kaffo (2015), we now compute                         replacement from real data after de-meaning and then use
+the t-statistic from the pooled regression                                       these pairs to rerun the pooled regression. The pairs boot-
+                                                                                 strap t-statistic is naturally obtained after repeating the
+     /σti − r i /σ i = β (rt−h +1 /σt−h − r−h+1 /σ−h ) + εt+1 , (12)
+ i                         i         i     i      i       i
+rt+1                                                                             procedure one thousand times. Both the wild and pairs
+                                                                                 bootstraps do not suffer from the incidental parameter bias
+where r i /σ i and r−h
+                    i
+                       +1
+                          /σ−h
+                            i  denote the time series av-                        emphasized in Gonçalves and Kaffo (2015), because the
+           i
+erages of rt+1 /σti and rt−h
+                         i
+                             +1
+                                /σt−h
+                                   i , respectively. Suppose                     sample size is relatively large here.
+786                             D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794
+
+
+                      Table 7
+                      t-statistic of pooled regression without controlling for ﬁxed effects over 1985:01–2009:12.
+                         This table reports the t-statistic of pooled regression with real data and the bootstrapped t-statistics
+                      with wild and pairs bootstrap. For each asset, we bootstrap a path with T observations and run pooled
+                      regression without controlling for ﬁxed effects to calculate the t-statistic. We repeat this procedure
+                      one thousand times and obtain the distribution of the t-statistic for testing the null hypothesis that
+                      there is no time series momentum. The bootstrapped t-statistic is deﬁned as the 97.5% percentile of the
+                      simulated t-statistics.
+
+                                                     Bootstrapped t-statistic                           Bootstrapped t-statistic
+
+                        h          t-statistic         Wild             Pairs      t-statistic            Wild                   Pairs
+
+                        Panel A: Forecast with return lagged h months
+                                     i
+                                    rt+1 /σti = αh + βh rt−h
+                                                         i
+                                                             +1
+                                                                /σt−h
+                                                                   i
+                                                                      + εt+1
+                                                                         i               i
+                                                                                        rt+1 /σti = αh + βh sign(rt−h
+                                                                                                                  i
+                                                                                                                      +1
+                                                                                                                         ) + εt+1
+                                                                                                                              i
+
+
+                        1             3.71            10.68             4.20          3.75                 9.31                  4.19
+                        2             0.97             4.07             1.68          1.34                 3.65                  2.02
+                        3             2.48             7.43             3.11          2.44                 6.09                  3.01
+                        4             0.22             2.40             1.14          0.65                 2.28                  1.59
+                        5            -0.15             1.53             0.67         -0.38                 1.56                  0.66
+                        6             0.52             3.08             1.30          1.35                 2.78                  2.15
+                        7             0.39             3.07             1.24          0.95                 2.74                  1.84
+                        8             0.59             3.32             1.37          1.20                 2.84                  2.06
+                        9             1.68             5.26             2.42          1.96                 4.59                  2.66
+                        10            2.70             7.37             3.32          2.11                 5.83                  2.84
+                        11            3.70            10.37             4.23          4.04                 7.61                  4.54
+                        12            0.37             2.74             1.14          0.54                 2.39                  1.37
+                        Panel B: Forecast with past h-month returns
+                                      i
+                                     rt+1 /σti = αh + βh rt−h,t
+                                                          i
+                                                                /σt−1
+                                                                   i
+                                                                      + εt+1
+                                                                         i               i
+                                                                                        rt+1 /σti = αh + βh sign(rt−h,t
+                                                                                                                  i
+                                                                                                                        ) + εt+1
+                                                                                                                             i
+
+
+                        1             3.71            10.68             4.20          3.75                9.31                   4.19
+                        2             3.09             9.53             3.54          3.19                8.39                   3.70
+                        3             3.74            11.53             4.27          4.43                9.96                   4.94
+                        4             3.45            10.37             3.98          4.78                9.19                   5.19
+                        5             3.06             9.27             3.63          4.36                8.39                   4.85
+                        6             3.17             9.31             3.73          4.03                8.52                   4.46
+                        7             3.05             9.09             3.60          4.19                8.32                   4.62
+                        8             3.12             9.06             3.69          4.13                8.11                   4.58
+                        9             3.59            10.31             4.13          4.70                9.27                   5.13
+                        10            4.00            11.68             4.54          5.46               10.44                   5.85
+                        11            4.69            13.16             5.14          5.64               11.77                   6.07
+                        12            4.48            12.76             4.96          5.24               11.17                   5.62
+
+
+
+
+    Table 8 reports the t-statistics from the pooled re-                        of-sample performance is of interest to examine empiri-
+gression and the bootstrapped t-statistics. Compared with                       cally.
+Table 4, after controlling for the ﬁxed effects, the t-statistic                    Fig. 4 plots the out-of-sample R2OS for each individual
+is smaller than that without controlling for ﬁxed effects.                      asset. In Panel A, we present the results with volatility
+For example, when predicting the next one-month return                          scaling when running the pooled regression. To predict re-
+with the past 12-month return, the t-statistic is 4.34 in                       turns in month t + 1 at the end of month t, we run pooled
+Table 4 and 3.37 in Table 8. The most important result is                       regression Eq. (3) with returns up to month t as MOP
+that the t-statistic of 3.37 when controlling for ﬁxed ef-                      (Moskowitz et al., 2012). Let αˆ t and βˆt be the estimated
+fects does not affect the conclusion that insuﬃcient evi-                       intercept and slope. We calculate the expected return of
+dence exists in support of TSM. In the Online Appendix, we                      asset i for month t + 1 as
+show that this ﬁnding is robust to the cases within each
+                                                                                                               i
+asset class and without volatility scaling.                                                                   rt−12 ,t
+                                                                                Et (rt+1
+                                                                                     i
+                                                                                         ) = αˆ t σti + βˆt              σti ,           (15)
+                                                                                                               σt−1
+                                                                                                                 i
+
+4.5. Out-of-sample performance
+                                                                                which can be plugged into Eq. (2) to calculate the R2OS ac-
+    A further implicit assumption of a pooled regression                        cordingly.
+is that all 55 futures contracts are homogenous with the                           In comparison with earlier univariate regressions
+same slope in Eqs. (3) and (5). If the individual slopes are                    (Table 2), the pooled regression does improve the out-
+all identical, the pooled estimate converges to the com-                        of-sample forecasting performance in some of the mar-
+mon slope, and pooling data leads to a more precise es-                         kets. The R2OS is signiﬁcantly positive for three commod-
+timate than the individual time series regression estimate.                     ity futures contracts: cocoa, copper, and gold. Of the
+Whether the slopes of all individual assets are identical                       nine international equity markets, six are signiﬁcant at
+or not, there is no guarantee that pooling the data will                        the 10% level, with the remaining three positive but
+help. Nevertheless, whether pooling the data improves out-                      not signiﬁcant. The average R2OS in the equity markets is
+                               D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794                    787
+
+
+                     Table 8
+                     t-statistic of pooled regression controlling for ﬁxed effects.
+                        This table reports the t-statistic of pooled regression with real data and the bootstrapped t-statistics
+                     with wild and pairs bootstrap. For each asset, we bootstrap a path with T observations and run pooled
+                     regression controlling for ﬁxed effects to calculate the t-statistic. We repeat this procedure one thou-
+                     sand times and obtain the distribution of the t-statistic for testing the null hypothesis that there is no
+                     time series momentum. The bootstrapped t-statistic is deﬁned as the 97.5% percentile of the simulated
+                     t-statistics. The sample period is 1985:01–2015:12.
+
+                                                    Bootstrapped t-statistic                           Bootstrapped t-statistic
+
+                       h          t-statistic          Wild             Pairs     t-statistic            Wild                 Pairs
+
+                       Panel A: Forecast with return lagged h months
+                                    i
+                                   rt+1 /σti = αhi + βh rt−h
+                                                         i
+                                                             +1
+                                                                /σt−h
+                                                                   i
+                                                                      + εt+1
+                                                                         i              i
+                                                                                       rt+1 /σti = αhi + βh sign(rt−h
+                                                                                                                  i
+                                                                                                                      +1
+                                                                                                                         ) + εt+1
+                                                                                                                              i
+
+
+                       1             2.80              8.51             3.39        2.66                 7.60                3.19
+                       2             0.96              4.17             1.66        0.94                 3.85                1.67
+                       3             2.53              7.77             3.12        2.17                 6.36                2.83
+                       4            −0.19              1.56             0.70        0.36                 1.56                1.27
+                       5            −0.56              1.00             0.25       −0.94                 1.03                0.02
+                       6             0.58              3.26             1.36        1.07                 2.90                1.79
+                       7            −0.62              0.59             0.27        0.20                 1.01                1.04
+                       8             0.37              2.90             1.14        0.80                 2.64                1.53
+                       9             0.94              3.84             1.73        0.94                 3.53                1.79
+                       10            2.57              7.21             3.22        1.87                 5.71                2.61
+                       11            3.22              9.40             3.75        3.53                 7.03                4.17
+                       12           −0.12              1.63             0.65        0.37                 1.70                1.13
+                       Panel B: Forecast with past h-month returns
+                                     i
+                                    rt+1 /σti = αhi + βh rt−h,t
+                                                          i
+                                                                /σt−1
+                                                                   i
+                                                                      + εt+1
+                                                                         i              i
+                                                                                       rt+1 /σti = αhi + βh sign(rt−h,t
+                                                                                                                  i
+                                                                                                                        ) + εt+1
+                                                                                                                             i
+
+
+                       1              2.80             8.51             3.39         2.66                7.60                 3.19
+                       2              2.51             8.43             3.07         2.62                7.41                 3.19
+                       3              3.23            10.17             3.74         3.56                9.08                 4.17
+                       4              2.89             9.24             3.46         3.60                8.36                 4.11
+                       5              2.44             7.89             2.99         3.17                7.45                 3.66
+                       6              2.53             7.97             3.12         3.15                7.27                 3.70
+                       7              2.22             7.32             2.86         2.97                6.86                 3.43
+                       8              2.19             7.35             2.80         2.55                6.67                 3.24
+                       9              2.49             7.75             3.09         3.43                7.19                 3.92
+                       10             3.00             9.23             3.58         3.94                8.34                 4.38
+                       11             3.68            10.80             4.20         4.49                9.71                 4.94
+                       12             3.37            10.13             3.93         4.04                9.14                 4.53
+
+
+
+
+2.08%, indicating potential economic signiﬁcance as well                        of-sample forecasting performances, and it cannot provide
+(Campbell and Thompson, 2008). The R2OS s in the bond                           signiﬁcant support for TSM either.
+and currency markets are generally negative or slightly
+positive. The two exceptions are the two-year European
+                                                                                5. Trading strategy
+bond and two-year US bond. Overall, if there is any
+TSM, it appears to show up in the international equity
+                                                                                   In this section, we examine the source of proﬁtabil-
+markets only, not present in the entire cross section of
+                                                                                ity of the TSM strategy proposed by MOP (Moskowitz
+assets.
+                                                                                et al., 2012). We show in various ways that its perfor-
+   Panel B of Fig. 4 plots the R2OS for each asset without
+                                                                                mance does not necessarily indicate that TSM exists across
+volatility scaling when running regression Eq. (3). The out-
+                                                                                assets.
+of-sample performance does not change signiﬁcantly. Unt-
+abulated results show that the value of R2OS with volatil-
+ity scaling is generally similar to that without volatility                     5.1. TSM versus TSH at asset level
+scaling. Two exceptions are the two-year European bond
+and two-year US bond, which have extreme positive R2OS                              The early univariate regressions show that time se-
+in the case with volatility scaling (15.18% and 3.48%) but                      ries predictability is not a common feature across assets,
+extreme negative R2OS in the case without volatility scal-                      which suggests that the performance of the TSM strat-
+ing (−19.54% and −16.71%). As such, the average R2OS using                      egy perhaps is not attributed to predictability, at least not
+volatility scaling is −0.06%, which is larger than −0.35%                       entirely. Furthermore, it raises the possibility that some
+without volatility scaling.                                                     strategies that do not require predictability can perform
+   Overall, to a certain extent, a pooled regression can im-                    as well as the TSM strategy. As it turns out, this is the
+prove the out-of-sample forecasting power relative to the                       case.
+asset-by-asset time series regression, but such improve-                            Suppose the return of asset i follows an independent
+ment is restricted to some speciﬁc assets. For the entire                       and identically distributed normal distribution with mean
+cross section of assets, it does little to improve their out-                   μi and volatility σ i . Then, the probability of the past
+788                                         D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794
+
+
+
+
+                     6
+
+
+                     4
+
+
+                     2
+
+
+                     0
+
+
+                          1                     10                         20                   30                   40                    50
+
+
+
+                     6
+
+
+                     4
+
+
+                     2
+
+
+                     0
+
+
+                          1                     10                         20                   30                   40                    50
+
+Fig. 4. Time series momentum (TSM) with pooled regression: out-of-sample performance. This ﬁgure plots the out-of-sample R2OS of forecasting a futures
+contract return with pooled regression
+ i
+rt+1 /σti = α + β rt−12
+                   i
+                        ,t /σt−1 + εt+1 ,
+                              i     i
+
+for Panel A and
+ i
+rt+1 = α + β rt−12
+              i
+                   ,t + εt+1
+                         i
+
+
+                         ,t is asset i’s past 12-month return. We calculate asset i’s out-of-sample ROS by applying the same α
+                                                                                                                             ˆ t and βˆt to all assets
+                    i                                                                                2
+for Panel B, where rt−12
+                                                                    ri
+in estimating the expected return as Et (rt+1
+                                          i
+                                              ) = αˆ t σti + βˆt σt−12
+                                                                    i
+                                                                       ,t
+                                                                          σti in Panel A and Et (rt+1
+                                                                                                  i
+                                                                                                      ) = αˆ t + βˆt rt−12
+                                                                                                                      i
+                                                                                                                           ,t in Panel B, where α
+                                                                                                                                                ˆ t and βˆt are the pooled
+                                                                         t−1
+regression estimates with data up to month t. The out-of-sample period is 20 0 0:01–2015:12.
+
+
+
+12-month return being positive is                                                             level in this section. Without volatility scaling, the corre-
+                                     i                                                      sponding return of the TSM strategy in month t + 1 for as-
+                                        rt−12,t − 12μ    √ μ
+                                                         i                     i
+Pr(rt−12
+    i
+         ,t > 0 ) = 1 − Pr                  √         ≤ − 12 i                                set i is
+                                              12σ i         σ                                  TSM,i
+                           √                                                                  rt+1   = sign(rt−12
+                                                                                                             i
+                                                                                                                  ,t )rt+1 .
+                                                                                                                       i
+                                                                                                                                                                    (18)
+                       = ( 12μi /σ i ),                                               (16)
+                                                                                              Comparing Eqs. (17) and (18), the TSM strategy attempts to
+where ( · ) is the N(0, 1) cumulative distribution function.                                 exploit possible predictability of the past 12-month return,
+Hence, without time series predictability, the TSM strat-                                     and the TSH does not rely on any predictability at all. Our
+egy tends to buy an asset with high mean return (i.e.,                                        goal here is to examine their performances across assets.
+Sharpe ratio). Based on this observation, we consider an al-                                      Table 9 reports the average returns and Sharpe ratios,
+ternative strategy based on the time series history of asset                                  and their differences, of the TSM and TSH strategies based
+i’s return                                                                                    on Eqs. (18) and (17), respectively. The results show that
+ TSH,i
+rt+1   = sign(r1i ,t )rt+1
+                       i
+                           ,                                                           (17)   the TSM strategy generally performs the same as the TSH
+                                                                                              strategy. Of the 55 assets, only ﬁve show that the TSM
+where r1i ,t is the accumulative return of asset i from month                                 strategy generates a higher average return than the TSH
+1 to month t or the historical sample mean multiplied                                         strategy. When we use the Sharpe ratio as the perfor-
+by t.                                                                                         mance measure, the results remain unchanged. Thus, the
+   Volatility scaling on the TSH strategy is unnecessary be-                                  TSM strategy does not signiﬁcantly outperform at the asset
+cause we compare the TSM and TSH strategies at the asset                                      level the TSH strategy that does not require predictability.
+                                     D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794                                   789
+
+
+Table 9
+Time series momentum (TSM) versus time series history (TSH) at the asset level.
+  This table reports the mean returns and Sharpe ratios of the time series momentum and time series history strategies, as well as their difference, on the
+basis of individual assets. TSM refers to the strategy that buys the future contract if its past 12-month return is non-negative and sells it if its past 12-month
+return is negative, and TSH refers to the strategy that buys the futures contract if its historical sample mean is non-negative and sells it if its historical
+sample mean is negative. ∗∗∗ , ∗∗ , and ∗ denote statistical signiﬁcance at the 1%, 5%, and 10% level, respectively. The investment period is 1986:01–2015:12.
+
+                                   TSM       TSH        TSM              TSH           Return          p-value of       Sharpe ratio         p-value of
+  Asset                           return    return   Sharpe ratio    Sharpe ratio    difference    return difference     difference    Sharpe ratio difference
+
+  Aluminum                         0.27     −0.47         0.05           −0.08         0.74∗∗            0.04             0.13∗∗                 0.04
+  Brent oil                        0.80      0.32         0.09            0.04         0.48              0.44             0.05                   0.44
+  Cattle                           0.28      0.08         0.07            0.02         0.20              0.48             0.05                   0.48
+  Cocoa                           −0.46      0.13        −0.06            0.02        −0.59              0.32            −0.08                   0.31
+  Coffee                           0.18     −0.55         0.02           −0.05         0.73              0.30             0.07                   0.30
+  Copper                           0.77      0.94         0.10            0.12        −0.17              0.74            −0.02                   0.73
+  Corn                             0.11      0.14         0.01            0.02        −0.04              0.94            −0.01                   0.94
+  Cotton                           1.04     −0.07         0.14           −0.01         1.11∗∗            0.04             0.15∗∗                 0.04
+  Crude                            1.07      0.21         0.11            0.02         0.86              0.19             0.09                   0.19
+  Gas oil                          0.98      0.53         0.10            0.05         0.45              0.49             0.05                   0.49
+  Gold                             0.55      0.05         0.12            0.01         0.50∗             0.10             0.11∗                  0.10
+  Heating oil                      1.09      0.30         0.12            0.03         0.79              0.21             0.09                   0.21
+  Hogs                             0.29     −0.17         0.04           −0.02         0.46              0.37             0.06                   0.37
+  Natural gas                      1.26      0.05         0.09            0.01         1.21              0.25             0.08                   0.25
+  Nickel                           0.72      0.43         0.07            0.04         0.29              0.70             0.03                   0.70
+  Platinum                         0.30      0.53         0.05            0.09        −0.23              0.61            −0.04                   0.61
+  Silver                           0.33     −0.09         0.04           −0.01         0.42              0.46             0.05                   0.47
+  Soybean                         −0.15      0.02        −0.02            0.01        −0.17              0.68            −0.03                   0.67
+  Soymeal                          0.20      0.51         0.02            0.06        −0.31              0.58            −0.04                   0.58
+  Soy oil                          0.42      0.14         0.06            0.02         0.28              0.57             0.04                   0.57
+  Sugar                            0.05      0.49         0.01            0.05        −0.44              0.50            −0.04                   0.50
+  Unleaded gasoline                1.00      0.83         0.10            0.08         0.17              0.77             0.02                   0.77
+  Wheat                            0.38      0.26         0.05            0.03         0.12              0.81             0.02                   0.81
+  Zinc                             0.67     −0.22         0.09           −0.03         0.89∗             0.08             0.12∗                  0.08
+  SPI 200                          0.18      0.55         0.04            0.12        −0.37              0.17            −0.08                   0.17
+  DAX                              0.79      0.68         0.13            0.11         0.11              0.80             0.02                   0.79
+  IBEX 35                          0.71      0.72         0.11            0.11        −0.01              0.98             0.00                   0.98
+  CAC 40                           0.43      0.49         0.08            0.09        −0.06              0.89            −0.01                   0.88
+  FTSE/MIB                         0.90      0.36         0.14            0.05         0.54              0.27             0.09                   0.27
+  TOPIX                            0.84      0.25         0.15            0.04         0.59              0.18             0.11                   0.18
+  AEX                              0.73      0.55         0.13            0.10         0.18              0.66             0.03                   0.66
+  FTSE 100                         0.27      0.52         0.06            0.11        −0.25              0.40            −0.05                   0.40
+  S&P 500                          0.67      0.73         0.15            0.16        −0.06              0.84            −0.01                   0.83
+  Three-year Australian bond       0.24      0.28         0.24            0.28        −0.04              0.39            −0.04                   0.37
+  Ten-year Australian bond         0.32      0.42         0.15            0.21        −0.10              0.27            −0.06                   0.26
+  Two-year European bond           0.13      0.10         0.13            0.10         0.03              0.57             0.03                   0.56
+  Five-year European bond          0.08      0.13         0.06            0.11        −0.05              0.46            −0.05                   0.45
+  Ten-year European bond           0.05      0.25         0.02            0.09        −0.20              0.18            −0.07                   0.18
+  Thirty-year European bond        0.14      0.56         0.05            0.19        −0.42∗∗∗           0.01            −0.14∗∗∗                0.01
+  Ten-year Canadian bond           0.34      0.52         0.11            0.17        −0.18              0.32            −0.06                   0.31
+  Ten-year Japanese bond           0.21      0.08         0.06            0.02         0.13              0.55             0.04                   0.56
+  Ten-year UK bond                 0.34      0.28         0.14            0.12         0.06              0.68             0.02                   0.68
+  Two-year US bond                 0.13      0.12         0.28            0.26         0.01              0.65             0.02                   0.63
+  Five-year US bond                0.19      0.23         0.15            0.19        −0.04              0.41            −0.04                   0.40
+  Ten-year US bond                 0.19      0.28         0.09            0.13        −0.09              0.40            −0.04                   0.40
+  Thirty-year US bond              0.54      0.89         0.12            0.20        −0.35∗             0.07            −0.08∗                  0.06
+  AUD/USD                          0.06     −0.16         0.02           −0.05         0.22              0.37             0.07                   0.37
+  EUR/USD                          0.11      0.11         0.03            0.03         0.00              1.00             0.00                   1.00
+  CAD/USD                          0.23     −0.08         0.11           −0.04         0.31∗∗            0.05             0.15∗∗                 0.05
+  JPY/USD                          0.46      0.09         0.14            0.03         0.37              0.11             0.11                   0.11
+  NOK/USD                          0.06     −0.06         0.02           −0.02         0.12              0.58             0.04                   0.58
+  NZD/USD                          0.24      0.02         0.07            0.01         0.22              0.38             0.06                   0.38
+  SEK/USD                          0.04     −0.05         0.01           −0.02         0.09              0.70             0.03                   0.70
+  CHF/USD                          0.18      0.19         0.05            0.06        −0.01              0.96            −0.01                   0.97
+  GBP/USD                          0.00     −0.03         0.00           −0.01         0.03              0.87             0.01                   0.87
+  #(signiﬁcance)                                                                        7                                  7
+
+
+
+5.2. TSM versus TSH at portfolio level                                               (1993) note that if there are differences in mean returns,
+                                                                                     a strategy that buys high-mean assets using the proceeds
+   Even though no time series predictability exists, the                             from selling low-mean assets has a natural tilt toward
+TSM strategy could still be proﬁtable. Conrad and Kaul                               high-mean assets. To see this, consider just two assets. If
+(1988), Jegadeesh (1990), and Jegadeesh and Titman                                   the mean return of the ﬁrst asset far exceeds that of the
+790                                 D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794
+
+
+second, buying the ﬁrst and shorting the second is prof-                           of the TSM and TSH strategies. The results show that the
+itable. Because the past 12-month return can be viewed as                          performance of the two strategies mainly stems from the
+an estimate of the mean return, the TSM strategy could                             long legs and that the performance of their short legs is
+proﬁt from the differences in mean returns. If this is the                         always indifferent from zero. This new ﬁnding, not shown
+case, it will unlikely outperform the TSH strategy at the                          by MOP (Moskowitz et al., 2012) or Goyal and Jegadeesh
+portfolio level.                                                                   (2018), is consistent with our argument that the strong
+    To make the two strategies comparable, we consider the                         TSM performance is due to the difference in mean returns.
+following equal-weighting scheme for the TSM and TSH:                                  For robustness, we also consider three alternative port-
+                                                                                   folio weighting schemes: volatility weighting as in MOP
+         1 t N
+ TSM
+rt+1 =        sign(rt−12
+                    i
+                         ,t )rt+1
+                              i
+                                                                     (19)          (Moskowitz et al., 2012), past-12-month-return weighting,
+         Nt                                                                        and equal weighting with a zero-investment constraint as
+             i=1
+                                                                                   in Goyal and Jegadeesh (2018). The results do not change
+and
+                                                                                   qualitatively, and the alpha differential between the TSM
+         1 t N
+                                                                                   and TSH strategies is always indifferent from zero. The On-
+ TSH
+rt+1 =        sign(r1i ,t )rt+1
+                            i
+                                ,                                    (20)          line Appendix considers the case of constructing the TSM
+         Nt
+             i=1
+                                                                                   with the past six-month return, instead of the past 12-
+where Nt is the number of assets investable at time t.7 By                         month return, and the results remain unchanged. In sum,
+doing so, the two strategies differ only in how the past in-                       the performance of the TSM strategy in MOP (Moskowitz
+formation is used to select the assets. So, differences in                         et al., 2012) seems mainly stemming from the difference
+performance stem from the differences in asset selection,                          in mean returns, not from the times series predictability of
+not from differences in scaling the portfolio weights. Be-                         the past 12-month return.
+cause our goal here is not to improve the performance, the
+concern that the TSM strategy tilts weighting toward low                           5.3. TSM and TSH forecast comparison: predictive slope
+volatility assets is not an issue, because the TSH strategy
+has the same tilts. Nevertheless, we will examine volatility                           Lewellen (2015) proposes an interesting predictive slope
+weighting.                                                                         that assesses the degree of predictability of cross-sectional
+    Panel A of Table 10 presents the average and risk-                             forecasts in an elegant way, in which one simply runs a
+adjusted returns of the two strategies, the second of which                        cross-sectional regression of the realized returns on the
+is computed from two benchmark asset pricing models as                             forecasts. If the forecasts are perfect, the slope should be
+in MOP (Moskowitz et al., 2012). The ﬁrst model is the                             one. Generally, a value less than 0.5 indicates no pre-
+Fama–French four-factor model that uses the MSCI World                             dictability as the forecasts under-perform naive forecasts.
+Index as the market factor, and the second is the Asness                               At the end of month t, we calculate the expected return
+                                                                                                   TSM,i
+et al. (2013) three-factor model with the MSCI World In-                           of asset i as rˆt+1   , which is estimated by pooled regres-
+dex, the value everywhere factor, and the momentum ev-                             sion Eq. (3) with data up to month t, and then we regress
+                                                                                                           i         TSM,i
+erywhere factor. Over the 1986 to 2015 investment period,                          month t + 1 return rt+1      on rˆt+1   . The ﬁrst three columns
+the average return differential between the two strategies                         of Table 11 report the results. Consistent with the earlier
+is as small as 0.14%, not signiﬁcant with a p-value of 0.19.                       no predictability results, the regression slope is close to
+The results suggest that the TSM strategy generates virtu-                         zero and its t-statistic is less than one standard deviation,
+ally the same average portfolio return as the TSH strategy,                        suggesting that the in-sample performance with pooled re-
+consistent with earlier comparison at the asset level.                             gression Eq. (3) is not reliable and that the TSM estimates
+    When turning to the risk-adjusted returns, the TSM                             do not line up with the true expected returns out of sam-
+and TSH alphas are 0.15% (t-statistic = 1.94) and 0.05% (t-                        ple.
+statistic = 0.80) with the Fama–French four-factor model                               We also explore whether the TSM and TSH forecasts
+and 0.07% (t-statistic = 1.01) and 0.09% (t-statistic = 1.14)                      have the same mean. The last three columns of Table 11 re-
+with the Asness et al. (2013) three-factor model, respec-                          port the results of regressing the TSM forecasts of expected
+tively. As for the case with average return, the two strate-                       returns on the TSH forecasts. Because these two estimates
+gies’ alpha differentials with the two models are 0.10%                            are potentially unbiased, we do not include an intercept to
+(p-value = 0.29) and −0.02% (p-value = 0.84) and, there-                           improve the estimate eﬃciency. Consistent with earlier re-
+fore, are not statistically signiﬁcant from zero. Thus, the                        sults indicating little difference between the two strategies,
+TSM and TSH strategies do not generate sizable abnormal                            the slope is close to one and the t-statistic is much larger
+returns. Moreover, their difference in alpha is even smaller                       than two standard deviations. For robustness, we also per-
+than the difference in average return and is also insigniﬁ-                        form the tests for each asset class, and the results are the
+cant.                                                                              same as the overall case. In short, the TSM strategy has lit-
+    Also reported in Panel A of Table 10 are the average and                       tle predictive power and behaves in a very similar manner
+risk-adjusted returns of the long- and short-leg portfolios                        to the TSH strategy.
+
+   7
+     TSH and TSM have similar expressions here, in parallel with the asset-        5.4. When does the TSM outperform the TSH?
+level comparison. At the portfolio level, we also explore two alternative
+TSH strategies that buy (sell) half or one-third of the assets with high              In the previous sections, we have shown that the pre-
+(low) historical sample means and ﬁnd that their performances are quan-            dictability of the past 12-month return is weak with real
+titatively similar.
+                                                                                   data and that the TSM strategy performs similarly as the
+                                     D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794                                               791
+
+
+
+Table 10
+Time series momentum (TSM) versus time series history (TSH) at the portfolio level.
+  This table reports the average and risk-adjusted returns of the TSM and TSH strategies, where we restrict portfolio weights on individual assets to
+be the same for comparison when constructing these two strategies. TSM refers to the strategy that buys futures contracts with non-negative past 12-
+month return and sells futures contracts with negative past 12-month return, and TSH refers to the strategy that buys futures contracts with non-negative
+historical sample mean and sells futures contracts with negative historical sample mean. The benchmarks are the Fama-French four-factor model that
+includes MSCI World Index, SMB (small minus big), HML (high minus low), and UMD (momentum), and the Asness et al. (2013) three-factor model.
+Newey-West t-statistics and p-values are reported in parentheses and brackets, respectively. ∗∗∗ , ∗∗ , and ∗ denote statistical signiﬁcance at the 1%, 5%, and
+10% level, respectively. The investment period is 1986:01–2015:12.
+
+                                                   Fama–French four-factor model                                   Asness-Moskowitz-Pedersen three-factor model
+
+                                               MSCI                                                                        MSCI          Value       Momentum
+                       Mean        Alpha       World        SMB          HML                   UMD      R2      Alpha      World      everywhere     everywhere      R2
+                                               Index                                                                       Index
+
+  Panel A: Equal weighting, i.e., portfolio weight = N1
+  TSM strategy
+  Long leg            0.34∗∗∗       0.12∗∗    0.16∗∗∗      0.05∗∗       0.09∗∗∗             0.32∗∗∗   42.57%    0.09        0.16∗∗∗       0.14∗∗∗        0.38∗∗∗   41.92%
+                     (4.92)        (2.29)    (7.73)       (2.24)       (2.62)              (7.19)              (1.60)      (7.21)        (2.99)         (7.33)
+  Short leg         −0.05         −0.03       0.14∗∗∗      0.11∗∗∗      0.03              −0.28∗∗∗    48.31%    0.02        0.13∗∗∗     -0.09          −0.32∗∗∗    45.85%
+                   (−0.72)       (−0.46)     (5.30)       (4.01)       (0.96)            (−8.34)               (0.23)      (5.08)      (−1.42)        (−6.89)
+  Long - short        0.39∗∗∗       0.15∗     0.02       −0.06∗         0.06                0.60∗∗∗   46.03%    0.07        0.03          0.23∗∗         0.70∗∗∗   47.39%
+                     (4.73)        (1.94)    (0.61)     (−1.83)        (1.01)              (9.99)              (1.01)      (0.93)        (2.50)         (8.79)
+  TSH strategy
+  Long leg            0.27∗∗∗       0.07      0.28∗∗∗      0.14∗∗∗      0.10∗∗∗             0.08∗     49.07%    0.10        0.26∗∗∗       0.01           0.08∗     45.30%
+                     (2.56)        (0.95)    (8.79)       (4.41)       (3.90)              (1.93)              (1.13)      (7.73)        (0.24)         (1.65)
+  Short leg           0.02          0.02      0.03∗∗∗      0.03∗        0.02              −0.04∗∗      8.73%    0.01        0.03∗∗∗       0.03         −0.03        8.04%
+                     (0.61)        (0.52)    (3.51)       (1.83)       (1.47)            (−2.01)               (0.25)      (3.17)        (1.15)       (−1.04)
+  Long - short        0.25∗∗∗       0.05      0.25∗∗∗      0.11∗∗∗      0.08∗∗∗             0.13∗∗∗   44.83%    0.09        0.23∗∗∗     −0.02            0.11∗     42.01%
+                     (2.70)        (0.80)    (8.54)       (3.70)       (2.96)              (2.76)              (1.14)      (7.59)      (−0.29)          (1.94)
+  TSM versus TSH
+  Mean difference     0.14
+                     [0.19]
+  Alpha difference                  0.10                                                                       −0.02
+                                   [0.26]                                                                       [0.84]
+  Panel B: Volatility weighting, i.e., portfolio weight = N1 40%
+                                                              σit
+  TSM strategy
+  Long leg              1.02∗∗∗     0.58∗∗∗     0.28∗∗∗    −0.04        0.12                0.68∗∗∗   36.04%    0.48∗∗∗     0.28∗∗∗      0.36∗∗∗        0.84∗∗∗    37.46%
+                       (7.66)      (5.31)      (7.34)     (−0.67)      (1.85)              (8.02)              (4.29)      (7.96)       (3.21)         (8.41)
+  Short leg            -0.14       -0.06        0.22∗∗∗      0.19∗∗∗    0.04               -0.52∗∗∗   44.46%    0.02        0.20∗∗∗     -0.17          -0.59∗∗∗    42.42%
+                      (-1.07)     (-0.53)      (5.75)       (3.06)     (0.79)             (-8.67)              (0.13)      (5.52)      (-1.48)        (-9.19)
+  Long - short          1.16∗∗∗     0.64∗∗∗     0.05       −0.22∗∗      0.08                1.19∗∗∗   40.62%    0.46∗∗∗     0.08         0.53∗∗∗        1.43∗∗∗    41.58%
+                       (6.31)      (3.68)      (0.80)      (-2.24)     (0.85)             (10.31)              (2.90)      (1.25)       (2.75)        (10.81)
+  TSH strategy
+  Long leg              0.81∗∗∗     0.42∗∗∗     0.48∗∗∗     0.12∗∗       0.16∗∗             0.25∗∗∗   40.10%    0.43∗∗∗     0.46∗∗∗      0.13            0.29∗∗∗   38.80%
+                       (4.72)      (3.06)     (12.17)      (2.29)       (2.48)             (2.97)              (2.71)     (10.96)       (1.03)          (3.05)
+  Short leg             0.07        0.10∗       0.02        0.03        -0.01              -0.08∗∗∗    4.27%    0.07        0.02         0.06           -0.04       4.35%
+                       (1.50)      (1.93)      (1.28)      (1.33)      (-0.11)            (-2.73)              (1.39)      (1.42)       (1.07)         (-1.06)
+  Long - short          0.74∗∗∗     0.32∗∗      0.46∗∗∗     0.09         0.16∗∗             0.33∗∗∗   36.23%    0.36∗∗      0.44∗∗∗      0.06            0.33∗∗∗   35.01%
+                       (4.36)      (2.18)      (9.81)      (1.46)       (2.17)             (3.76)              (2.25)      (8.85)       (0.43)          (3.21)
+  TSM versus TSH
+  Mean difference       0.42∗
+                       [0.07]
+  Alpha difference                  0.32∗                                                                       0.10
+                                   [0.08]                                                                      [0.56]
+                                                                             ri
+  Panel C: Past 12-month return weighting, i.e, portfolio weight = N t−12i ,t
+                                                                            i=1   |rt−12,t |
+  TSM strategy
+  Long leg              0.50∗∗∗     0.08        0.27∗∗∗     0.17∗∗∗     0.14∗∗              0.66∗∗∗   32.83%    0.06        0.25∗∗∗      0.15∗          0.73∗∗∗    30.95%
+                       (3.54)      (0.72)      (5.85)      (3.62)      (2.06)              (8.65)              (0.52)      (5.09)       (1.65)         (7.71)
+  Short leg            -0.07       -0.01        0.19∗∗∗     0.16∗∗∗     0.01               -0.43∗∗∗   39.93%    0.05        0.18∗∗∗     -0.15          -0.49∗∗∗    38.05%
+                      (-0.65)     (-0.08)      (5.06)      (3.61)      (0.18)             (-7.74)              (0.49)      (5.06)      (-1.36)        (-6.97)
+  Long - short          0.57∗∗∗     0.09        0.08        0.01        0.13                1.09∗∗∗   40.17%    0.01        0.08         0.30∗∗         1.22∗∗∗    40.55%
+                       (3.79)      (0.69)      (1.48)      (0.14)      (1.35)             (12.55)              (0.08)      (1.57)       (2.04)        (11.33)
+  TSH strategy
+  Long leg              0.30∗      -0.03        0.43∗∗∗     0.23∗∗∗     0.14∗∗∗             0.19∗∗∗   48.23%    0.03        0.41∗∗∗     -0.03            0.17∗∗    44.26%
+                       (1.78)     (-0.23)      (8.10)      (4.71)      (3.22)              (2.77)              (0.21)      (6.70)      (-0.29)          (1.96)
+  Short leg             0.02        0.02        0.02∗∗∗     0.01        0.01               -0.04∗      5.23%    0.01        0.02∗∗∗      0.03           -0.03       5.18%
+                       (0.77)      (0.83)      (2.82)      (1.09)      (1.06)             (-1.70)              (0.50)      (2.64)       (1.08)         (-0.86)
+  Long - short          0.28∗      -0.05        0.41∗∗∗     0.22∗∗∗     0.13∗∗∗             0.23∗∗∗   46.18%    0.02        0.39∗∗∗     -0.06            0.20∗∗    42.65%
+                       (1.71)     (-0.42)      (7.87)      (4.39)      (2.93)              (3.10)              (0.10)      (6.85)      (-0.56)          (1.99)
+                                                                                                                                                    (continued on next page)
+792                                      D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794
+
+
+Table 10 (continued)
+
+                                                       Fama–French four-factor model                                   Asness-Moskowitz-Pedersen three-factor model
+
+                                                   MSCI                                                                          MSCI           Value     Momentum
+                          Mean         Alpha       World          SMB         HML            UMD         R2        Alpha         World       everywhere   everywhere     R2
+                                                   Index                                                                         Index
+
+ TSM versus TSH
+ Mean difference           0.29
+                          [0.12]
+ Alpha difference                       0.14                                                                      -0.01
+                                       [0.34]                                                                     [0.98]
+                                           1
+ Panel D: Zero investment, i.e., long = Nbuy   and short = N1sell
+ TSM strategy
+ Long leg             0.60∗∗∗      0.24∗∗∗     0.25∗∗∗    0.08∗∗              0.11∗∗      0.53∗∗∗      39.74%      0.20∗∗         0.24∗∗∗        0.17∗∗      0.61∗∗∗   39.10%
+                     (5.29)      (2.65)       (6.93)     (2.02)              (2.26)      (7.60)                   (2.14)         (6.41)         (2.19)      (7.17)
+ Short leg           -0.12       -0.06         0.28∗∗∗    0.23∗∗∗             0.05       -0.56∗∗∗      42.77%      0.02           0.26∗∗∗       -0.17       -0.64∗∗∗   40.27%
+                    (-0.74)     (-0.42)       (5.76)     (3.94)              (0.79)     (-7.40)                   (0.10)         (5.33)        (-1.24)     (-6.73)
+ Long - short         0.72∗∗∗      0.30∗∗     -0.03      -0.16∗∗              0.06        1.10∗∗∗      45.91%      0.18          -0.02           0.34∗∗      1.25∗∗∗   46.18%
+                     (4.32)      (1.96)      (-0.65)    (-2.43)              (0.69)     (10.26)                   (1.25)        (-0.40)         (1.97)      (8.52)
+ TSH strategy
+ Long leg             0.35∗∗∗      0.10        0.35∗∗∗    0.17∗∗∗             0.12∗∗∗      0.10∗       49.49%       0.13          0.33∗∗∗        0.02        0.10      45.78%
+                     (2.64)      (1.06)       (8.98)     (4.39)              (3.85)       (1.90)                   (1.25)        (7.92)         (0.21)      (1.56)
+ Short leg            0.08         0.04        0.15∗∗∗    0.14∗∗              0.09        -0.18∗        8.16%      -0.01          0.14∗∗∗        0.17       -0.09       7.37%
+                     (0.51)      (0.30)       (3.66)     (2.13)              (1.62)      (-1.86)                  (-0.05)        (3.28)         (1.48)      (0.75)
+ Long - short         0.27∗∗       0.06        0.20∗∗∗    0.03                0.03         0.28∗∗∗     11.89%       0.14          0.19∗∗∗       -0.16        0.19      12.27%
+                     (2.10)      (0.40)       (5.30)     (0.45)              (0.49)       (2.75)                   (1.02)        (4.83)        (-1.24)      (1.44)
+ TSM versus TSH
+ Mean difference      0.45∗∗
+                     [0.03]
+ Alpha difference                  0.24                                                                             0.04
+                                  [0.13]                                                                           [0.76]
+
+
+                                   Table 11
+                                   Time series momentum (TSM) and time series history (TSH) forecast comparison.
+                                                                                   i                             TSM,i
+                                     This table reports the results of regressing rt+1 on the expected return (rˆt+1   ) estimated at
+                                                                                                  TSM,i
+                                   time t with the TSM pooled regression Eq. (3) and regressing rˆt+1   on the expected return
+                                      TSH,i
+                                   (rˆt+1   ) estimated with the TSH approach (i.e., historical sample mean). ∗∗∗ , ∗∗ , and ∗ denote
+                                   statistical signiﬁcance at the 1%, 5%, and 10% level, respectively.
+                                                                i
+                                                               rt+1 = α + β rˆt+1
+                                                                              TSM,i
+                                                                                    + εt+1
+                                                                                       i                            TSM,i
+                                                                                                                  rˆt+1        TSH,i
+                                                                                                                          = drˆt+1   + uti
+
+                                     Asset class           β            t-statistic          R2           d             t-statistic           R2
+                                                TSM,i
+                                     Panel A: rˆt+1   is estimated with volatility scaling
+                                     Overall             0.19              0.61              0.04       1.09∗∗∗           18.56              40.33
+                                     Commodity           0.15              0.42              0.02       1.24∗∗∗           11.62              23.53
+                                     Equity              0.07              0.10              0.01       0.84∗∗∗           14.90              45.06
+                                     Bond                0.23              0.60              0.08       0.99∗∗∗           68.75              92.27
+                                     Currency           −0.08             −0.12              0.01       1.01∗∗∗           14.95               4.45
+                                                TSM,i
+                                     Panel B: rˆt+1   is estimated without volatility scaling
+                                     Overall               0.30         0.45         0.03               1.04∗∗∗           41.89              54.96
+                                     Commodity             0.09         0.11         0.00               1.01∗∗∗           26.53              37.65
+                                     Equity               −0.37       −0.32          0.07               0.93∗∗∗           35.34              77.93
+                                     Bond                 −0.49       −0.52          0.07               1.00∗∗∗           72.40              91.38
+                                     Currency              0.03         0.03         0.00               1.64∗∗∗           19.78              14.32
+
+
+
+
+TSH strategy that does not require any predictability. This                                       where β = 0.1, 0.2, and 0.4 (we divide the past 12-month
+section attempts to answer another question: If the pre-                                                   i
+                                                                                                  return rt−12 ,t
+                                                                                                                  by 12 to make β easy to interpret; β is 0.08
+dictability is strong, to what extent does the TSM strategy                                       for the real data). There are two ways to draw the resid-
+outperform the TSH strategy?8                                                                     uals. The ﬁrst is to ignore the off-diagonal elements and
+   Consistent with the pooled regression of MOP, we as-                                           draw the residuals asset by asset, thereby assuming no
+sume the following data-generating process:                                                       cross-asset predictability, and the second is to keep the co-
+                                                                                                  variance matrix structure and draw the residuals across as-
+                    i
+                   rt−12 ,t                                                                       sets. For a given speciﬁcation and beta, we simulate a path
+ i
+rt+1 = αi + β                 + εt+1
+                                 i
+                                     ,                                         (21)               for the 55 assets with T = 372 observations and construct
+                     12
+                                                                                                  the TSM and TSH strategies accordingly. We repeat this
+                                                                                                  procedure one thousand times to test whether these two
+ 8
+      We thank the anonymous referee for this intriguing research question.                       strategies generate the same mean returns. Empirically, we
+                                    D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794                              793
+
+
+
+         1
+
+
+
+      0.5
+
+
+
+         0
+             0              1          2             3              4             5             6              7             8           9            10
+
+         1
+
+
+
+      0.5
+
+
+
+         0
+             0              1          2             3              4             5             6              7             8           9            10
+
+         1
+
+
+
+      0.5
+
+
+
+         0
+             0              1          2             3              4             5             6              7             8           9            10
+
+
+
+Fig. 5. Annualized mean return difference between time series momentum (TSM) and time series history (TSH). This ﬁgure plots the distributions of
+simulated annualized mean returns of the TSM and TSH strategies, where each asset is assumed to follow
+                  i
+                 rt−12 ,t
+ i
+rt+1 = αi + β        + εt+1
+                         i
+                            ,
+                 12
+where β equals 0.1, 0.2, and 0.4. For each asset, we assume it has the same mean and variance as that in Table 1. Then, given the common slope
+β , α i is estimated with asset i’s real returns. We simulate a path of T = 372 observations, construct the TSM and TSH strategies, and calculate their mean
+returns. We repeat this procedure one thousand times to test whether these two strategies generate the same mean returns.
+
+
+
+ﬁnd that the two speciﬁcations generate almost the same                                Because the TSM and TSH use overlapping data at the
+results and therefore focus on the ﬁrst speciﬁcation.                              beginning of the investment period, one could expect that
+    Fig. 5 reports the results. When the slope is 0.1, the two                     this explains the statistically indistinguishable difference
+strategies perform almost the same. When the slope is 0.2,                         even when the slope is 0.2. In fact, it is not the case. To
+the TSM outperforms the TSH, but the difference is not sig-                        see this, we simulate a path of T + 240 observations for
+niﬁcant. Thus, if there is genuine time series predictability,                     the 55 assets, construct the TSM and TSH strategies start-
+the advantage of the TSM strategy is not apparent as long                          ing from the 241th observation (i.e., the TSM is based on
+as the slope is small. When the slope is 0.4, the TSM dom-                         the past 12-month return and the TSH is based on the his-
+inates the TSH in the sense that it does better in almost all                      torical sample mean), and calculate their mean returns. We
+the simulated data sets. Because the two strategies gener-                         repeat this procedure one thousand times to test whether
+ate similar performance using the real data, our simulation                        these two strategies generate the same mean returns.
+indicates that the evidence of time series predictability is                       Fig. A1 of the Online Appendix summarizes the results.
+weak if it exists. Combined with other results, the TSM is                         Generally, the basic patterns are similar to Fig. 5; that
+unlikely to be statistically signiﬁcant for all the assets. In                     is, the TSM strategy performs similarly as the TSH when
+short, a lack of empirical evidence exists to support that                         the data exhibit weak or intermediate time series pre-
+the TSM is everywhere.                                                             dictability, and it outperforms the TSH when the data
+794                                   D. Huang, J. Li and L. Wang et al. / Journal of Financial Economics 135 (2020) 774–794
+
+
+exhibit strong time series predictability. One observation is                        Freyberger, J., Neuhierl, A., Weber, M., 2019. Dissecting characteristics
+that with longer historical data in calculating the histor-                               nonparametrically. Rev. Financ. Stud., forthcoming.
+                                                                                     Georgopoulou, A., Wang, J., 2017. The trend is your friend: time series
+ical mean, the TSH generates 1% more annualized return                                    momentum strategies across equity and commodity markets. Rev. Fi-
+relative to the case of Fig. 5, which is simply due to the                                nance 21, 1557–1592.
+fact that observations over a longer time horizon generate                           Gonçalves, S., Kaffo, M., 2015. Bootstrap inference for linear dynamic
+                                                                                          panel data models with individual ﬁxed effects. J. Econom. 186,
+a better estimate of the sample mean (Merton, 1980).                                      407–426.
+                                                                                     Goyal, A., Jegadeesh, N., 2018. Cross-sectional and time series tests of
+6. Conclusion                                                                             return predictability: what is the difference? Rev. Financ. Stud. 31,
+                                                                                          1784–1824.
+                                                                                     Gu, S., Kelly, B. T., Xiu, D., 2018. Empirical asset pricing via machine learn-
+    In their inﬂuential study, MOP (Moskowitz et al., 2012)                               ing.Unpublished working paper, University of Chicago.
+assert a surprising time series momentum that the past                               Han, Y., He, A., Rapach, D., Zhou, G., 2019. What ﬁrm characteristics drive
+                                                                                          US stock returns?Unpublished working paper, Washington University
+12-month return can positively predict the next one-
+                                                                                          in St. Louis.
+month to 12-month return everywhere. They also show                                  Hansen, P., Timmermann, A., 2012. Choice of sample split in out-of-
+that a trading strategy based on TSM generates signiﬁcant                                 sample forecast evaluation. Unpublished working paper, University of
+average and risk-adjusted returns. As TSM is in stark con-                                California, San Diego.
+                                                                                     Harvey, C.R., Liu, Y., Zhu, H., 2016. ... and the cross section of expected
+trast to the previous literature and strongly challenges the                              returns. Rev. Financ. Stud. 29 (1), 5–68.
+weak form market eﬃciency hypothesis, we revisit TSM in                              Hjalmarsson, E., 2010. Predicting global stock returns. J. Financ. Quant.
+this paper. Employing the same data as MOP but extending                                  Anal. 45, 49–80.
+                                                                                     Hodrick, J., 1992. Dividend yields and expected stock returns: alterna-
+the sample period to 2015, we show that, statistically, the                               tive procedures for inferecne and measurement. Rev. Financ. Stud. 5,
+evidence for TSM is weak in asset-by-asset time series re-                                357–386.
+gressions and a pooled regression accounting for size dis-                           Hou, K., Xue, C., Zhang, L., 2019. Replicating anomalies.Rev. Financ. Stud.,
+                                                                                          forthcoming.
+tortions. Economically, we show that the performance of                              Hurst, B., Ooi, Y., Pedersen, L., 2017. A century of evidence on trend-fol-
+the TSM strategy is likely driven by differences in mean                                  lowing investing. J. Portf. Manag. 44, 15–29.
+returns, not predictability. A predictive slope analysis fol-                        Inoue, A., Kilian, L., 2005. In-sample or out-of-sample tests of predictabil-
+                                                                                          ity: which one should we use? Econom. Rev. 23 (4), 371–402.
+lowing the approach of Lewellen (2015) further conﬁrms
+                                                                                     Jegadeesh, N., 1990. Evidence of predictable behavior of security returns.
+weak evidence on TSM.                                                                     J. Finance 45 (3), 881–898.
+    A number of topics are of interest for future research.                          Jegadeesh, N., Titman, S., 1993. Returns to buying winners and selling
+                                                                                          losers: implications for stock market eﬃciency. J. Finance 48 (1),
+First, while the TSM strategy focuses on the 12-month
+                                                                                          65–91.
+return predictability, examining such a strategy at other                            Jiang, F., Lee, J., Martin, X., Zhou, G., 2019. Manager sentiment and stock
+time horizons and an optimal combination of all would                                     returns. J. Financ. Econ. 132 (1), 126–149.
+be worthwhile. Second, the predictability horizon can be                             Jorion, P., Goetzmann, W., 1999. Global stock markets in the 20th century.
+                                                                                          J. Finance 54, 953–980.
+time-varying and could be different across assets (instead                           Kim, A., Tse, Y., Wald, J., 2016. Time series momentum and volatility scal-
+of the same horizon), and developing a test and a new                                     ing. J. Financ. Mark. 30, 102–124.
+trading strategy for this possibility would be important. Fi-                        Koijen, R., Moskowitz, T., Pedersen, L., Vrugt, E., 2018. Carry. J. Financ.
+                                                                                          Econ. 127, 197–225.
+nally, considering the conditions under which time series                            Kruskal, W.H., Wallis, W.A., 1952. Use of ranks in one-criterion variance
+predictability can exist in an equilibrium model and devel-                               analysis. J. Am. Stat. Assoc. 47, 583–621.
+oping an empirical test for the implications would be de-                            Lewellen, J., 2015. The cross section of expected stock returns. Crit. Fi-
+                                                                                          nance Rev. 4, 1–44.
+sirable.                                                                             Li, J., Yu, J., 2012. Investor attention, psychological anchors, and stock re-
+                                                                                          turn predictability. J. Financ. Econ. 104, 401–419.
+References                                                                           Lo, A., MacKinlay, A., 1988. Stock market prices do not follow random
+                                                                                          walks: evidence from a simple speciﬁcation test. Rev. Financ. Stud. 1,
+Ang, A., Bekaert, G., 2007. Stock return predictability: is it there? Rev. Fi-            41–66.
+    nanc. Stud. 20, 651–707.                                                         Menzly, L., Santos, T., Veronesi, P., 2004. Understanding predictability. J.
+Asness, C., Moskowitz, T., Pedersen, L., 2013. Value and momentum every-                  Polit. Econ. 112, 1–47.
+    where. Rev. Financ. Stud. 20, 651–707.                                           Merton, R.C., 1980. On estimating the expected return on the market: an
+Boudoukh, J., Richardson, M., Whitelaw, R., 2008. The myth of long-hori-                  exploratory investigation. J. Financ. Econ. 8 (4), 323–361.
+    zon predictability. Rev. Financ. Stud. 21, 1577–1605.                            Moskowitz, T., Ooi, Y., Pedersen, L., 2012. Time series momentum. J. Fi-
+Campbell, J., Thompson, S., 2008. Predicting excess stock returns out of                  nanc. Econ. 104, 228–250.
+    sample: can anything beat the historical average? Rev. Financ. Stud.             Paye, B.S., 2012. ‘Déjà vol’: predictive regressions for aggregate stock mar-
+    21, 1509–1531.                                                                        ket volatility using macroeconomic variables. J. Financ. Econ. 106 (3),
+Campbell, J., Yogo, M., 2006. Eﬃcient tests of stock return predictability. J.            527–546.
+    Financ. Econ. 81, 27–60.                                                         Rapach, D., Strauss, J., Zhou, G., 2013. International stock return pre-
+Clark, T., West, K., 2007. Approximately normal tests for equal predictive                dictability: what is the role of the united states? J. Finance 68,
+    accuracy in nested models.. J. Econom. 138, 291–311.                                  1633–1662.
+Conrad, J., Kaul, G., 1988. An anatomy of trading strategies. Rev. Financ.           Stambaugh, R.F., 1999. Predictive regressions. J. Financ. Econ. 54 (3),
+    Stud. 11, 489–519.                                                                    375–421.
+Davidson, R., Flachaire, E., 2008. The wild bootstrap, tamed at last.. J.            Valkanov, R., 2003. Long-horizon regressions: theoretical results and ap-
+    Econom. 146, 162–169.                                                                 plications. J. Financ. Econ. 68, 201–232.
+Fama, E., 1965. The behavior of stock market prices. J. Bus. 38, 34–105.             Welch, B.L., 1951. On the comparison of several mean values: an alterna-
+Fisher, R.A., 1918. The correlation between relatives on the supposition of               tive approach. Biometrika 38, 330–336.
+    Mendelian inheritance. Philos. Trans. R. Soc. Edinb. 52, 399–433.                Welch, I., Goyal, A., 2008. A comprehensive look at the empirical per-
+French, K., Roll, R., 1986. Stock return variances: the arrival of information            formance of equity premium performance. Rev. Financ. Stud. 21,
+    and the reaction of traders. J. Financ. Econ. 17, 5–26.                               1455–1508.
+

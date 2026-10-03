@@ -1,0 +1,940 @@
+{
+ "stage": "E.10",
+ "task": "1(a)",
+ "rules": "Stage E.10 Task 1(a): the K9 cost wall per traded exposure, from frozen tables only.\n\nInputs (frozen, read-only): reports/stage_e2a_costs.json (D8 slippage per 30-minute bucket,\ncommission), reports/stage_e2a_epsilon.json (q_c, operative eps, E|m_1| for context).\nDesign rules (fixed in reports/stage_e10_design_target.md before any source is read):\n  RT_X  = commission_rt_ticks + 2 x max over the product's buckets of side_ticks   (worst bucket pair)\n  M_X   = 3 x RT_X                                       (minimum gross move per trade)\n  G_X(f)= eps_X / f + RT_X                               (gross per trade to net eps_X per trade date)\nNo market data, no Stage E screen figure is read.\n",
+ "inputs_sha256": {
+  "reports/stage_e2a_costs.json": "f4360bb77272d0335485a9e01c0f6fc6ab99c47d52e640d95f9cd0397296df14",
+  "reports/stage_e2a_epsilon.json": "4e2c773182a23e7d073305ca4eb0134d3b3ac554ccc8215730bc1e194eaff496"
+ },
+ "freqs": [
+  0.4,
+  0.2,
+  0.1
+ ],
+ "rows": [
+  {
+   "cluster": "K2",
+   "exposure": "2-year",
+   "vehicle": "ZT",
+   "q_c": 1,
+   "tick_value_usd": 7.8125,
+   "status": "undersized",
+   "eps_operative": 5,
+   "eps_translated": 10,
+   "commission_rt_ticks": 0.297,
+   "max_side_ticks": 0.513,
+   "rt_wall_ticks": 1.323,
+   "event_window_rt_ticks": 1.323,
+   "day_session_rt_mean_ticks": 1.301,
+   "M_X_ticks": 3.97,
+   "M_X_usd_at_q": 31.0,
+   "G_ticks": {
+    "0.40": 13.8,
+    "0.20": 26.3,
+    "0.10": 51.3
+   },
+   "G_usd_at_q": {
+    "0.40": 108.0,
+    "0.20": 206.0,
+    "0.10": 401.0
+   },
+   "E_abs_m1_ticks_context": 14.42,
+   "G_over_Em1_context": {
+    "0.40": 0.96,
+    "0.20": 1.83,
+    "0.10": 3.56
+   }
+  },
+  {
+   "cluster": "K2",
+   "exposure": "5-year",
+   "vehicle": "ZF",
+   "q_c": 1,
+   "tick_value_usd": 7.8125,
+   "status": "undersized",
+   "eps_operative": 6,
+   "eps_translated": 10,
+   "commission_rt_ticks": 0.297,
+   "max_side_ticks": 0.508,
+   "rt_wall_ticks": 1.313,
+   "event_window_rt_ticks": 1.313,
+   "day_session_rt_mean_ticks": 1.298,
+   "M_X_ticks": 3.94,
+   "M_X_usd_at_q": 30.78,
+   "G_ticks": {
+    "0.40": 16.3,
+    "0.20": 31.3,
+    "0.10": 61.3
+   },
+   "G_usd_at_q": {
+    "0.40": 127.0,
+    "0.20": 245.0,
+    "0.10": 479.0
+   },
+   "E_abs_m1_ticks_context": 17.35,
+   "G_over_Em1_context": {
+    "0.40": 0.94,
+    "0.20": 1.8,
+    "0.10": 3.53
+   }
+  },
+  {
+   "cluster": "K2",
+   "exposure": "10-year",
+   "vehicle": "ZN",
+   "q_c": 1,
+   "tick_value_usd": 15.625,
+   "status": "chosen",
+   "eps_operative": 3,
+   "eps_translated": 5,
+   "commission_rt_ticks": 0.168,
+   "max_side_ticks": 0.501,
+   "rt_wall_ticks": 1.17,
+   "event_window_rt_ticks": 1.17,
+   "day_session_rt_mean_ticks": 1.168,
+   "M_X_ticks": 3.51,
+   "M_X_usd_at_q": 54.83,
+   "G_ticks": {
+    "0.40": 8.7,
+    "0.20": 16.2,
+    "0.10": 31.2
+   },
+   "G_usd_at_q": {
+    "0.40": 135.0,
+    "0.20": 253.0,
+    "0.10": 487.0
+   },
+   "E_abs_m1_ticks_context": 13.12,
+   "G_over_Em1_context": {
+    "0.40": 0.66,
+    "0.20": 1.23,
+    "0.10": 2.38
+   }
+  },
+  {
+   "cluster": "K2",
+   "exposure": "Ultra 10-year",
+   "vehicle": "TN",
+   "q_c": 1,
+   "tick_value_usd": 15.625,
+   "status": "chosen",
+   "eps_operative": 4,
+   "eps_translated": 5,
+   "commission_rt_ticks": 0.168,
+   "max_side_ticks": 0.534,
+   "rt_wall_ticks": 1.235,
+   "event_window_rt_ticks": 1.235,
+   "day_session_rt_mean_ticks": 1.174,
+   "M_X_ticks": 3.71,
+   "M_X_usd_at_q": 57.9,
+   "G_ticks": {
+    "0.40": 11.2,
+    "0.20": 21.2,
+    "0.10": 41.2
+   },
+   "G_usd_at_q": {
+    "0.40": 176.0,
+    "0.20": 332.0,
+    "0.10": 644.0
+   },
+   "E_abs_m1_ticks_context": 16.64,
+   "G_over_Em1_context": {
+    "0.40": 0.68,
+    "0.20": 1.28,
+    "0.10": 2.48
+   }
+  },
+  {
+   "cluster": "K2",
+   "exposure": "Bond",
+   "vehicle": "ZB",
+   "q_c": 1,
+   "tick_value_usd": 31.25,
+   "status": "chosen",
+   "eps_operative": 2,
+   "eps_translated": 2,
+   "commission_rt_ticks": 0.088,
+   "max_side_ticks": 0.517,
+   "rt_wall_ticks": 1.122,
+   "event_window_rt_ticks": 1.122,
+   "day_session_rt_mean_ticks": 1.089,
+   "M_X_ticks": 3.37,
+   "M_X_usd_at_q": 105.18,
+   "G_ticks": {
+    "0.40": 6.1,
+    "0.20": 11.1,
+    "0.10": 21.1
+   },
+   "G_usd_at_q": {
+    "0.40": 191.0,
+    "0.20": 348.0,
+    "0.10": 660.0
+   },
+   "E_abs_m1_ticks_context": 12.87,
+   "G_over_Em1_context": {
+    "0.40": 0.48,
+    "0.20": 0.86,
+    "0.10": 1.64
+   }
+  },
+  {
+   "cluster": "K2",
+   "exposure": "Ultra bond",
+   "vehicle": "UB",
+   "q_c": 1,
+   "tick_value_usd": 31.25,
+   "status": "chosen",
+   "eps_operative": 2,
+   "eps_translated": 2,
+   "commission_rt_ticks": 0.093,
+   "max_side_ticks": 0.514,
+   "rt_wall_ticks": 1.121,
+   "event_window_rt_ticks": 1.121,
+   "day_session_rt_mean_ticks": 1.098,
+   "M_X_ticks": 3.36,
+   "M_X_usd_at_q": 105.09,
+   "G_ticks": {
+    "0.40": 6.1,
+    "0.20": 11.1,
+    "0.10": 21.1
+   },
+   "G_usd_at_q": {
+    "0.40": 191.0,
+    "0.20": 348.0,
+    "0.10": 660.0
+   },
+   "E_abs_m1_ticks_context": 16.05,
+   "G_over_Em1_context": {
+    "0.40": 0.38,
+    "0.20": 0.69,
+    "0.10": 1.32
+   }
+  },
+  {
+   "cluster": "K4",
+   "exposure": "WTI crude",
+   "vehicle": "MCL",
+   "q_c": 4,
+   "tick_value_usd": 1.0,
+   "status": "chosen",
+   "eps_operative": 21,
+   "eps_translated": 21,
+   "commission_rt_ticks": 1.72,
+   "max_side_ticks": 1.313,
+   "rt_wall_ticks": 4.346,
+   "event_window_rt_ticks": 4.346,
+   "day_session_rt_mean_ticks": 3.167,
+   "M_X_ticks": 13.04,
+   "M_X_usd_at_q": 52.16,
+   "G_ticks": {
+    "0.40": 56.8,
+    "0.20": 109.3,
+    "0.10": 214.3
+   },
+   "G_usd_at_q": {
+    "0.40": 227.0,
+    "0.20": 437.0,
+    "0.10": 857.0
+   },
+   "E_abs_m1_ticks_context": 91.57,
+   "G_over_Em1_context": {
+    "0.40": 0.62,
+    "0.20": 1.19,
+    "0.10": 2.34
+   }
+  },
+  {
+   "cluster": "K4",
+   "exposure": "Henry Hub gas",
+   "vehicle": "NG",
+   "q_c": 1,
+   "tick_value_usd": 10.0,
+   "status": "chosen",
+   "eps_operative": 8,
+   "eps_translated": 8,
+   "commission_rt_ticks": 0.422,
+   "max_side_ticks": 0.993,
+   "rt_wall_ticks": 2.408,
+   "event_window_rt_ticks": 2.408,
+   "day_session_rt_mean_ticks": 1.672,
+   "M_X_ticks": 7.22,
+   "M_X_usd_at_q": 72.23,
+   "G_ticks": {
+    "0.40": 22.4,
+    "0.20": 42.4,
+    "0.10": 82.4
+   },
+   "G_usd_at_q": {
+    "0.40": 224.0,
+    "0.20": 424.0,
+    "0.10": 824.0
+   },
+   "E_abs_m1_ticks_context": 63.93,
+   "G_over_Em1_context": {
+    "0.40": 0.35,
+    "0.20": 0.66,
+    "0.10": 1.29
+   }
+  },
+  {
+   "cluster": "K5",
+   "exposure": "gold",
+   "vehicle": "MGC",
+   "q_c": 1,
+   "tick_value_usd": 1.0,
+   "status": "chosen",
+   "eps_operative": 71,
+   "eps_translated": 85,
+   "commission_rt_ticks": 1.92,
+   "max_side_ticks": 1.838,
+   "rt_wall_ticks": 5.597,
+   "event_window_rt_ticks": 5.597,
+   "day_session_rt_mean_ticks": 4.086,
+   "M_X_ticks": 16.79,
+   "M_X_usd_at_q": 16.79,
+   "G_ticks": {
+    "0.40": 183.1,
+    "0.20": 360.6,
+    "0.10": 715.6
+   },
+   "G_usd_at_q": {
+    "0.40": 183.0,
+    "0.20": 361.0,
+    "0.10": 716.0
+   },
+   "E_abs_m1_ticks_context": 258.59,
+   "G_over_Em1_context": {
+    "0.40": 0.71,
+    "0.20": 1.39,
+    "0.10": 2.77
+   }
+  },
+  {
+   "cluster": "K5",
+   "exposure": "copper",
+   "vehicle": "MHG",
+   "q_c": 2,
+   "tick_value_usd": 1.25,
+   "status": "chosen",
+   "eps_operative": 27,
+   "eps_translated": 34,
+   "commission_rt_ticks": 1.536,
+   "max_side_ticks": 1.739,
+   "rt_wall_ticks": 5.015,
+   "event_window_rt_ticks": 5.015,
+   "day_session_rt_mean_ticks": 3.701,
+   "M_X_ticks": 15.04,
+   "M_X_usd_at_q": 37.61,
+   "G_ticks": {
+    "0.40": 72.5,
+    "0.20": 140.0,
+    "0.10": 275.0
+   },
+   "G_usd_at_q": {
+    "0.40": 181.0,
+    "0.20": 350.0,
+    "0.10": 688.0
+   },
+   "E_abs_m1_ticks_context": 88.17,
+   "G_over_Em1_context": {
+    "0.40": 0.82,
+    "0.20": 1.59,
+    "0.10": 3.12
+   }
+  },
+  {
+   "cluster": "K3",
+   "exposure": "EUR",
+   "vehicle": "6E",
+   "q_c": 1,
+   "tick_value_usd": 6.25,
+   "status": "chosen",
+   "eps_operative": 12,
+   "eps_translated": 13,
+   "commission_rt_ticks": 0.675,
+   "max_side_ticks": 0.815,
+   "rt_wall_ticks": 2.305,
+   "event_window_rt_ticks": 2.305,
+   "day_session_rt_mean_ticks": 1.935,
+   "M_X_ticks": 6.92,
+   "M_X_usd_at_q": 43.23,
+   "G_ticks": {
+    "0.40": 32.3,
+    "0.20": 62.3,
+    "0.10": 122.3
+   },
+   "G_usd_at_q": {
+    "0.40": 202.0,
+    "0.20": 389.0,
+    "0.10": 764.0
+   },
+   "E_abs_m1_ticks_context": 51.11,
+   "G_over_Em1_context": {
+    "0.40": 0.63,
+    "0.20": 1.22,
+    "0.10": 2.39
+   }
+  },
+  {
+   "cluster": "K3",
+   "exposure": "AUD",
+   "vehicle": "6A",
+   "q_c": 1,
+   "tick_value_usd": 5.0,
+   "status": "chosen",
+   "eps_operative": 11,
+   "eps_translated": 17,
+   "commission_rt_ticks": 0.844,
+   "max_side_ticks": 0.817,
+   "rt_wall_ticks": 2.477,
+   "event_window_rt_ticks": 2.477,
+   "day_session_rt_mean_ticks": 2.191,
+   "M_X_ticks": 7.43,
+   "M_X_usd_at_q": 37.16,
+   "G_ticks": {
+    "0.40": 30.0,
+    "0.20": 57.5,
+    "0.10": 112.5
+   },
+   "G_usd_at_q": {
+    "0.40": 150.0,
+    "0.20": 287.0,
+    "0.10": 562.0
+   },
+   "E_abs_m1_ticks_context": 36.73,
+   "G_over_Em1_context": {
+    "0.40": 0.82,
+    "0.20": 1.56,
+    "0.10": 3.06
+   }
+  },
+  {
+   "cluster": "K3",
+   "exposure": "GBP",
+   "vehicle": "6B",
+   "q_c": 1,
+   "tick_value_usd": 6.25,
+   "status": "chosen",
+   "eps_operative": 8,
+   "eps_translated": 13,
+   "commission_rt_ticks": 0.675,
+   "max_side_ticks": 0.677,
+   "rt_wall_ticks": 2.03,
+   "event_window_rt_ticks": 2.03,
+   "day_session_rt_mean_ticks": 1.916,
+   "M_X_ticks": 6.09,
+   "M_X_usd_at_q": 38.07,
+   "G_ticks": {
+    "0.40": 22.0,
+    "0.20": 42.0,
+    "0.10": 82.0
+   },
+   "G_usd_at_q": {
+    "0.40": 138.0,
+    "0.20": 263.0,
+    "0.10": 513.0
+   },
+   "E_abs_m1_ticks_context": 29.8,
+   "G_over_Em1_context": {
+    "0.40": 0.74,
+    "0.20": 1.41,
+    "0.10": 2.75
+   }
+  },
+  {
+   "cluster": "K3",
+   "exposure": "CAD",
+   "vehicle": "6C",
+   "q_c": 1,
+   "tick_value_usd": 5.0,
+   "status": "undersized",
+   "eps_operative": 9,
+   "eps_translated": 17,
+   "commission_rt_ticks": 0.844,
+   "max_side_ticks": 0.685,
+   "rt_wall_ticks": 2.214,
+   "event_window_rt_ticks": 2.214,
+   "day_session_rt_mean_ticks": 2.026,
+   "M_X_ticks": 6.64,
+   "M_X_usd_at_q": 33.21,
+   "G_ticks": {
+    "0.40": 24.7,
+    "0.20": 47.2,
+    "0.10": 92.2
+   },
+   "G_usd_at_q": {
+    "0.40": 124.0,
+    "0.20": 236.0,
+    "0.10": 461.0
+   },
+   "E_abs_m1_ticks_context": 24.06,
+   "G_over_Em1_context": {
+    "0.40": 1.03,
+    "0.20": 1.96,
+    "0.10": 3.83
+   }
+  },
+  {
+   "cluster": "K3",
+   "exposure": "JPY",
+   "vehicle": "6J",
+   "q_c": 1,
+   "tick_value_usd": 6.25,
+   "status": "chosen",
+   "eps_operative": 10,
+   "eps_translated": 13,
+   "commission_rt_ticks": 0.675,
+   "max_side_ticks": 0.713,
+   "rt_wall_ticks": 2.102,
+   "event_window_rt_ticks": 2.102,
+   "day_session_rt_mean_ticks": 1.89,
+   "M_X_ticks": 6.31,
+   "M_X_usd_at_q": 39.41,
+   "G_ticks": {
+    "0.40": 27.1,
+    "0.20": 52.1,
+    "0.10": 102.1
+   },
+   "G_usd_at_q": {
+    "0.40": 169.0,
+    "0.20": 326.0,
+    "0.10": 638.0
+   },
+   "E_abs_m1_ticks_context": 32.77,
+   "G_over_Em1_context": {
+    "0.40": 0.83,
+    "0.20": 1.59,
+    "0.10": 3.12
+   }
+  },
+  {
+   "cluster": "K3",
+   "exposure": "CHF",
+   "vehicle": "6S",
+   "q_c": 1,
+   "tick_value_usd": 6.25,
+   "status": "chosen",
+   "eps_operative": 13,
+   "eps_translated": 13,
+   "commission_rt_ticks": 0.675,
+   "max_side_ticks": 1.654,
+   "rt_wall_ticks": 3.983,
+   "event_window_rt_ticks": 3.983,
+   "day_session_rt_mean_ticks": 2.65,
+   "M_X_ticks": 11.95,
+   "M_X_usd_at_q": 74.68,
+   "G_ticks": {
+    "0.40": 36.5,
+    "0.20": 69.0,
+    "0.10": 134.0
+   },
+   "G_usd_at_q": {
+    "0.40": 228.0,
+    "0.20": 431.0,
+    "0.10": 837.0
+   },
+   "E_abs_m1_ticks_context": 65.72,
+   "G_over_Em1_context": {
+    "0.40": 0.56,
+    "0.20": 1.05,
+    "0.10": 2.04
+   }
+  },
+  {
+   "cluster": "K3",
+   "exposure": "NZD",
+   "vehicle": "6N",
+   "q_c": 1,
+   "tick_value_usd": 5.0,
+   "status": "undersized",
+   "eps_operative": 10,
+   "eps_translated": 17,
+   "commission_rt_ticks": 0.844,
+   "max_side_ticks": 0.887,
+   "rt_wall_ticks": 2.619,
+   "event_window_rt_ticks": 2.619,
+   "day_session_rt_mean_ticks": 2.252,
+   "M_X_ticks": 7.86,
+   "M_X_usd_at_q": 39.28,
+   "G_ticks": {
+    "0.40": 27.6,
+    "0.20": 52.6,
+    "0.10": 102.6
+   },
+   "G_usd_at_q": {
+    "0.40": 138.0,
+    "0.20": 263.0,
+    "0.10": 513.0
+   },
+   "E_abs_m1_ticks_context": 31.3,
+   "G_over_Em1_context": {
+    "0.40": 0.88,
+    "0.20": 1.68,
+    "0.10": 3.28
+   }
+  },
+  {
+   "cluster": "K6",
+   "exposure": "corn",
+   "vehicle": "ZC",
+   "q_c": 1,
+   "tick_value_usd": 12.5,
+   "status": "undersized",
+   "eps_operative": 4,
+   "eps_translated": 6,
+   "commission_rt_ticks": 0.422,
+   "max_side_ticks": 0.537,
+   "rt_wall_ticks": 1.496,
+   "event_window_rt_ticks": 1.496,
+   "day_session_rt_mean_ticks": 1.425,
+   "M_X_ticks": 4.49,
+   "M_X_usd_at_q": 56.09,
+   "G_ticks": {
+    "0.40": 11.5,
+    "0.20": 21.5,
+    "0.10": 41.5
+   },
+   "G_usd_at_q": {
+    "0.40": 144.0,
+    "0.20": 269.0,
+    "0.10": 519.0
+   },
+   "E_abs_m1_ticks_context": 12.65,
+   "G_over_Em1_context": {
+    "0.40": 0.91,
+    "0.20": 1.7,
+    "0.10": 3.28
+   }
+  },
+  {
+   "cluster": "K6",
+   "exposure": "wheat",
+   "vehicle": "ZW",
+   "q_c": 1,
+   "tick_value_usd": 12.5,
+   "status": "chosen",
+   "eps_operative": 4,
+   "eps_translated": 6,
+   "commission_rt_ticks": 0.422,
+   "max_side_ticks": 0.636,
+   "rt_wall_ticks": 1.694,
+   "event_window_rt_ticks": 1.694,
+   "day_session_rt_mean_ticks": 1.479,
+   "M_X_ticks": 5.08,
+   "M_X_usd_at_q": 63.52,
+   "G_ticks": {
+    "0.40": 11.7,
+    "0.20": 21.7,
+    "0.10": 41.7
+   },
+   "G_usd_at_q": {
+    "0.40": 146.0,
+    "0.20": 271.0,
+    "0.10": 521.0
+   },
+   "E_abs_m1_ticks_context": 18.78,
+   "G_over_Em1_context": {
+    "0.40": 0.62,
+    "0.20": 1.16,
+    "0.10": 2.22
+   }
+  },
+  {
+   "cluster": "K6",
+   "exposure": "soybeans",
+   "vehicle": "ZS",
+   "q_c": 1,
+   "tick_value_usd": 12.5,
+   "status": "chosen",
+   "eps_operative": 5,
+   "eps_translated": 6,
+   "commission_rt_ticks": 0.422,
+   "max_side_ticks": 0.611,
+   "rt_wall_ticks": 1.644,
+   "event_window_rt_ticks": 1.644,
+   "day_session_rt_mean_ticks": 1.469,
+   "M_X_ticks": 4.93,
+   "M_X_usd_at_q": 61.65,
+   "G_ticks": {
+    "0.40": 14.1,
+    "0.20": 26.6,
+    "0.10": 51.6
+   },
+   "G_usd_at_q": {
+    "0.40": 177.0,
+    "0.20": 333.0,
+    "0.10": 646.0
+   },
+   "E_abs_m1_ticks_context": 24.35,
+   "G_over_Em1_context": {
+    "0.40": 0.58,
+    "0.20": 1.09,
+    "0.10": 2.12
+   }
+  },
+  {
+   "cluster": "K6",
+   "exposure": "soybean meal",
+   "vehicle": "ZM",
+   "q_c": 1,
+   "tick_value_usd": 10.0,
+   "status": "chosen",
+   "eps_operative": 5,
+   "eps_translated": 8,
+   "commission_rt_ticks": 0.528,
+   "max_side_ticks": 0.632,
+   "rt_wall_ticks": 1.791,
+   "event_window_rt_ticks": 1.791,
+   "day_session_rt_mean_ticks": 1.608,
+   "M_X_ticks": 5.37,
+   "M_X_usd_at_q": 53.74,
+   "G_ticks": {
+    "0.40": 14.3,
+    "0.20": 26.8,
+    "0.10": 51.8
+   },
+   "G_usd_at_q": {
+    "0.40": 143.0,
+    "0.20": 268.0,
+    "0.10": 518.0
+   },
+   "E_abs_m1_ticks_context": 21.26,
+   "G_over_Em1_context": {
+    "0.40": 0.67,
+    "0.20": 1.26,
+    "0.10": 2.44
+   }
+  },
+  {
+   "cluster": "K6",
+   "exposure": "soybean oil",
+   "vehicle": "ZL",
+   "q_c": 1,
+   "tick_value_usd": 6.0,
+   "status": "chosen",
+   "eps_operative": 11,
+   "eps_translated": 14,
+   "commission_rt_ticks": 0.88,
+   "max_side_ticks": 0.897,
+   "rt_wall_ticks": 2.675,
+   "event_window_rt_ticks": 2.675,
+   "day_session_rt_mean_ticks": 2.174,
+   "M_X_ticks": 8.02,
+   "M_X_usd_at_q": 48.14,
+   "G_ticks": {
+    "0.40": 30.2,
+    "0.20": 57.7,
+    "0.10": 112.7
+   },
+   "G_usd_at_q": {
+    "0.40": 181.0,
+    "0.20": 346.0,
+    "0.10": 676.0
+   },
+   "E_abs_m1_ticks_context": 50.8,
+   "G_over_Em1_context": {
+    "0.40": 0.59,
+    "0.20": 1.14,
+    "0.10": 2.22
+   }
+  },
+  {
+   "cluster": "K6",
+   "exposure": "lean hogs",
+   "vehicle": "HE",
+   "q_c": 1,
+   "tick_value_usd": 10.0,
+   "status": "chosen",
+   "eps_operative": 7,
+   "eps_translated": 8,
+   "commission_rt_ticks": 0.522,
+   "max_side_ticks": 0.721,
+   "rt_wall_ticks": 1.965,
+   "event_window_rt_ticks": 1.965,
+   "day_session_rt_mean_ticks": 1.86,
+   "M_X_ticks": 5.89,
+   "M_X_usd_at_q": 58.95,
+   "G_ticks": {
+    "0.40": 19.5,
+    "0.20": 37.0,
+    "0.10": 72.0
+   },
+   "G_usd_at_q": {
+    "0.40": 195.0,
+    "0.20": 370.0,
+    "0.10": 720.0
+   },
+   "E_abs_m1_ticks_context": 32.3,
+   "G_over_Em1_context": {
+    "0.40": 0.6,
+    "0.20": 1.14,
+    "0.10": 2.23
+   }
+  },
+  {
+   "cluster": "K6",
+   "exposure": "live cattle",
+   "vehicle": "LE",
+   "q_c": 1,
+   "tick_value_usd": 10.0,
+   "status": "chosen",
+   "eps_operative": 8,
+   "eps_translated": 8,
+   "commission_rt_ticks": 0.522,
+   "max_side_ticks": 0.988,
+   "rt_wall_ticks": 2.498,
+   "event_window_rt_ticks": 2.498,
+   "day_session_rt_mean_ticks": 2.393,
+   "M_X_ticks": 7.49,
+   "M_X_usd_at_q": 74.94,
+   "G_ticks": {
+    "0.40": 22.5,
+    "0.20": 42.5,
+    "0.10": 82.5
+   },
+   "G_usd_at_q": {
+    "0.40": 225.0,
+    "0.20": 425.0,
+    "0.10": 825.0
+   },
+   "E_abs_m1_ticks_context": 70.72,
+   "G_over_Em1_context": {
+    "0.40": 0.32,
+    "0.20": 0.6,
+    "0.10": 1.17
+   }
+  },
+  {
+   "cluster": "K7",
+   "exposure": "bitcoin",
+   "vehicle": "MBT",
+   "q_c": 1,
+   "tick_value_usd": 0.5,
+   "status": "undersized",
+   "eps_operative": 90,
+   "eps_translated": 170,
+   "commission_rt_ticks": 5.64,
+   "max_side_ticks": 2.613,
+   "rt_wall_ticks": 10.866,
+   "event_window_rt_ticks": 10.866,
+   "day_session_rt_mean_ticks": 8.846,
+   "M_X_ticks": 32.6,
+   "M_X_usd_at_q": 16.3,
+   "G_ticks": {
+    "0.40": 235.9,
+    "0.20": 460.9,
+    "0.10": 910.9
+   },
+   "G_usd_at_q": {
+    "0.40": 118.0,
+    "0.20": 230.0,
+    "0.10": 455.0
+   },
+   "E_abs_m1_ticks_context": 241.23,
+   "G_over_Em1_context": {
+    "0.40": 0.98,
+    "0.20": 1.91,
+    "0.10": 3.78
+   }
+  },
+  {
+   "cluster": "K1",
+   "exposure": "Nasdaq-100",
+   "vehicle": "MNQ",
+   "q_c": 1,
+   "tick_value_usd": 0.5,
+   "status": "chosen",
+   "eps_operative": 170,
+   "eps_translated": 170,
+   "commission_rt_ticks": 2.44,
+   "max_side_ticks": 1.486,
+   "rt_wall_ticks": 5.412,
+   "event_window_rt_ticks": 5.412,
+   "day_session_rt_mean_ticks": 4.119,
+   "M_X_ticks": 16.24,
+   "M_X_usd_at_q": 8.12,
+   "G_ticks": {
+    "0.40": 430.4,
+    "0.20": 855.4,
+    "0.10": 1705.4
+   },
+   "G_usd_at_q": {
+    "0.40": 215.0,
+    "0.20": 428.0,
+    "0.10": 853.0
+   },
+   "E_abs_m1_ticks_context": 726.92,
+   "G_over_Em1_context": {
+    "0.40": 0.59,
+    "0.20": 1.18,
+    "0.10": 2.35
+   }
+  },
+  {
+   "cluster": "K1",
+   "exposure": "Russell 2000",
+   "vehicle": "M2K",
+   "q_c": 3,
+   "tick_value_usd": 0.5,
+   "status": "chosen",
+   "eps_operative": 50,
+   "eps_translated": 56,
+   "commission_rt_ticks": 2.44,
+   "max_side_ticks": 1.953,
+   "rt_wall_ticks": 6.346,
+   "event_window_rt_ticks": 6.346,
+   "day_session_rt_mean_ticks": 3.954,
+   "M_X_ticks": 19.04,
+   "M_X_usd_at_q": 28.56,
+   "G_ticks": {
+    "0.40": 131.3,
+    "0.20": 256.3,
+    "0.10": 506.3
+   },
+   "G_usd_at_q": {
+    "0.40": 197.0,
+    "0.20": 385.0,
+    "0.10": 760.0
+   },
+   "E_abs_m1_ticks_context": 212.27,
+   "G_over_Em1_context": {
+    "0.40": 0.62,
+    "0.20": 1.21,
+    "0.10": 2.39
+   }
+  },
+  {
+   "cluster": "K1",
+   "exposure": "Dow",
+   "vehicle": "MYM",
+   "q_c": 3,
+   "tick_value_usd": 0.5,
+   "status": "chosen",
+   "eps_operative": 56,
+   "eps_translated": 56,
+   "commission_rt_ticks": 2.44,
+   "max_side_ticks": 2.541,
+   "rt_wall_ticks": 7.523,
+   "event_window_rt_ticks": 7.189,
+   "day_session_rt_mean_ticks": 3.983,
+   "M_X_ticks": 22.57,
+   "M_X_usd_at_q": 33.85,
+   "G_ticks": {
+    "0.40": 147.5,
+    "0.20": 287.5,
+    "0.10": 567.5
+   },
+   "G_usd_at_q": {
+    "0.40": 221.0,
+    "0.20": 431.0,
+    "0.10": 851.0
+   },
+   "E_abs_m1_ticks_context": 262.3,
+   "G_over_Em1_context": {
+    "0.40": 0.56,
+    "0.20": 1.1,
+    "0.10": 2.16
+   }
+  }
+ ]
+}

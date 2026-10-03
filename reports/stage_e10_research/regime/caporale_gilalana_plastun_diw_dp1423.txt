@@ -1,0 +1,1303 @@
+                                                            1423
+Discussion
+Papers
+
+
+
+
+Deutsches Institut für Wirtschaftsforschung                    2014
+
+
+
+
+Short-Term Price Overreaction:
+Identiﬁcation, Testing, Exploitation
+
+
+Guglielmo Maria Caporale, Luis Gil-Alana and Alex Plastun
+Opinions expressed in this paper are those of the author(s) and do not necessarily reflect views of the institute.
+
+
+
+
+IMPRESSUM
+
+© DIW Berlin, 2014
+
+DIW Berlin
+German Institute for Economic Research
+Mohrenstr. 58
+10117 Berlin
+
+Tel. +49 (30) 897 89-0
+Fax +49 (30) 897 89-200
+http://www.diw.de
+
+ISSN electronic edition 1619-4535
+
+Papers can be downloaded free of charge from the DIW Berlin website:
+http://www.diw.de/discussionpapers
+
+Discussion Papers of DIW Berlin are indexed in RePEc and SSRN:
+http://ideas.repec.org/s/diw/diwwpp.html
+http://www.ssrn.com/link/DIW-Berlin-German-Inst-Econ-Res.html
+                        Short-Term Price Overreactions:
+                      Identification, Testing, Exploitation
+
+
+
+                              Guglielmo Maria Caporale*
+                     Brunel University, London, CESifo and DIW Berlin
+
+                                      Luis Gil-Alana
+                                    University of Navarra
+
+                                       Alex Plastun
+                               Ukrainian Academy of Banking
+
+                                       October 2014
+
+
+
+                                          Abstract
+
+This paper examines short-term price reactions after one-day abnormal price changes and
+whether they create exploitable profit opportunities in various financial markets. A t-test
+confirms the presence of overreactions and also suggests that there is an “inertia
+anomaly”, i.e. after an overreaction day prices tend to move in the same direction for some
+time. A trading robot approach is then used to test two trading strategies aimed at
+exploiting the detected anomalies to make abnormal profits. The results suggest that a
+strategy based on counter-movements after overreactions does not generate profits in the
+FOREX and the commodity markets, but it is profitable in the case of the US stock market.
+By contrast, a strategy exploiting the “inertia anomaly” produces profits in the case of the
+FOREX and the commodity markets, but not in the case of the US stock market.
+
+Keywords: Efficient Market Hypothesis, anomaly, overreaction hypothesis, abnormal
+returns, contrarian strategy, trading strategy, trading robot, t-test
+
+JEL classification: G12, G17, C63
+
+
+
+Corresponding author: Professor Guglielmo Maria Caporale, Research Professor at DIW
+Berlin. Department of Economics and Finance, Brunel University, London, UB8 3PH, UK.
+Tel.: +44 (0)1895 266713. Fax: +44 (0)1895 269770. Email: Guglielmo-
+Maria.Caporale@brunel.ac.uk
+
+                                             1
+1.     Introduction
+
+The Efficient Market Hypothesis (EMH) is one of the cornerstones of financial economics
+
+(Fama, 1965). Its implication is that there should not be any exploitable profit opportunities
+
+in financial markets. However, the empirical literature has documented the presence of a
+
+number of so-called “market anomalies”, i.e. price behaviour that appears to create abnormal
+
+profit opportunities.
+
+       One of the most famous stock market anomalies is the so-called overreaction
+
+hypothesis detected by De Bondt and Thaler (1985), who showed that investors tend to give
+
+excessive weight to recent relative to past information when making their portfolio choices.
+
+A special case of the overreaction hypothesis is short-term price reactions after one-day
+
+abnormal price changes. Empirical studies on various financial markets show that after such
+
+price changes there are bigger contrarian price movements than after normal (typical) daily
+
+fluctuations (Atkins and Dyl, 1990; Bremer and Sweeney, 1991; Bremer, Hiraki and
+
+Sweeney, 1997; Cox and Peterson, 1994; Choi and Jayaraman, 2009; etc).
+
+      This paper provides new evidence on the overreaction anomaly by analysing both
+
+price counter-movements and movements in the direction of the overreaction and comparing
+
+them to those after normal days. First, we carry out t-tests to establish whether the data
+
+generation process of prices is the same after days of overreaction and typical days. We
+
+show that short-term overreactions cause the emergence of patterns in price behaviour, i.e.
+
+temporary market inefficiencies that could result in extra profit opportunities. Then we use a
+
+trading robot method to examine whether or not trading strategies based on the detected
+
+statistical anomalies are profitable, i.e. whether price overreactions are simply statistical
+
+phenomena or can also be seen as evidence against the EMH. The analysis is carried out for
+
+various financial markets: the US stock market (the Dow Jones Index and two companies
+
+
+
+                                              2
+included in this index), FOREX (EURUSD, USDJPY, GBPCHF, AUDUSD) and
+
+commodity markets (Gold, Oil).
+
+      The remainder of this paper is organised as follows. Section 2 briefly reviews the
+
+existing literature on the overreaction hypothesis. Section 3 outlines the methodology
+
+followed in this study. Section 4 discusses the empirical results. Section 5 offers some
+
+concluding remarks.
+
+
+
+2.     Literature review
+
+There is a vast empirical literature on the EMH. Kothari and Warner (2006) reviewed over
+
+500 studies providing evidence in support of this paradigm. However, as pointed out by Ball
+
+(2009), there is also plenty of evidence suggesting the presence of market anomalies
+
+apparently inconsistent with EMH such as over- and under-reactions to information flows,
+
+volatility explosions and seasonal yield bursts, yield dependence on different variables such
+
+as market capitalisation, dividend rate, and market factors, etc. Over- or under-reactions are
+
+significant deviations of asset prices from their average values during certain periods of time
+
+(Stefanescu et al., 2012).
+
+       The overreaction hypothesis was first considered by De Bondt and Thaler (DT,
+
+1985), following the work of Kahneman and Tversky (1982), who had shown that investors
+
+overvalue recent relative to past information. The main conclusions of DT were that the best
+
+(worst) performing portfolios in the NYSE over a three-year period tended to under (over)-
+
+perform over the following three-year period. Overreactions are associated with irrational
+
+behaviour of investors who overreact to news arrivals. This leads to significant deviations of
+
+asset prices from their fundamental value. Such overreactions normally lead to price
+
+corrections. An interesting fact, mentioned by DT, is an asymmetry in the overreaction: its
+
+size is bigger for undervalued than for overvalued stocks. DT also reported the existence of a
+
+"January effect", i.e. overreactions tend to occur mostly in that month.
+
+                                               3
+       Subsequent studies on the overreaction hypothesis include Brown, Harlow and Tinic
+
+(1988), who analysed NYSE data for the period 1946-1983 and reached similar conclusions
+
+to DT; Zarowin (1989), who showed the presence of short-term market overreactions;
+
+Atkins and Dyl (1990), who found overreactions in the NYSE after significant price changes
+
+in one trading day, especially in the case of falling prices; Ferri and Min (1996), who
+
+confirmed the presence of overreactions using S&P 500 data for the period 1962-1991;
+
+Larson and Madura (2003), who used NYSE data for the period 1988-1998 and also showed
+
+the presence of overreactions, as did Clements et al. (2009).
+
+       Overreactions have also been found in other stock markets, including Spain (Alonso
+
+and Rubio, 1990), Canada (Kryzanowsky and Zhang, 1992), Australia (Brailsford, 1992;
+
+Clare and Thomas, 1995), Japan (Chang et al., 1995), Hong-Kong (Akhigbe et al., 1998),
+
+Brazil (DaCosta and Newton, 1994), Richards, 1997), New Zealand (Bowman and Iverson,
+
+1998)), China (Wang et al., 2004)), Greek (Antoniou et. al., 2005), Turkey (Vardar and
+
+Okan, 2008) and Ukraine (Mynhardt and Plastun, 2013). Some evidence is also available for
+
+other types of markets, such as the gold market (Cutler, Poterba, and Summers, 1991) and
+
+the option market (Poteshman, 2001).
+
+       A few studies have examined whether such anomalies give rise to profit
+
+opportunities. In particular, Jegadeesh and Titman (1993) developed a trading strategy based
+
+on an algorithm consisting in undertaking transactions in the opposite direction to the
+
+previous movement at a monthly frequency. They found that such a strategy generates a
+
+12% profit per year. A similar strategy, but at a weekly frequency, was developed by
+
+Lehmann (1990), and was found to be equally profitable.
+
+
+
+3.     Data and methodology
+
+We analyse the following daily series: for the US stock market, the Dow Jones index and
+
+stocks of two companies included in this index (Microsoft and Boeing - for the trading robot
+
+                                              4
+analysis we also add Wal Mart and Exxon); for the FOREX, EURUSD, USDJPY and
+
+GBCHF (for the trading robot analysis also AUDUSD); for commodities, Gold and Oil
+
+(only Gold for the trading robot analysis owing to data unavailability). The sample period
+
+covers the period from January 2002 till the end of September 2014 (for the trading robot
+
+analysis the period is 2012-2014).
+
+
+
+3.1    Student’s t-tests
+
+First we carry out Student’s t-tests to confirm (reject) the presence of stock market
+
+anomalies after overreactions, then we apply the trading robot approach to establish whether
+
+they create exploitable profit opportunities. According to the classical overreaction
+
+hypothesis, an overreaction should be followed by a correction, i.e. price counter-
+
+movements, and bigger than after normal days. If one day is not enough for the market to
+
+incorporate new information, i.e. to overreact, then after one-day abnormal price changes
+
+one can expect movements in the direction of the overreaction bigger than after normal days.
+
+       Therefore the following two hypotheses will be tested:
+
+       H1: Counter-reactions after overreactions differ from those after normal days.
+
+                                                                    The next day
+                                                          (prices tend to decrease in order
+                                                           to restore the balance and get
+                                                            back to the equilibrium price)
+
+
+
+
+                                                    Day of overreaction
+                                                 (case of prices increase)
+
+
+
+
+                                             5
+       H2: Price movements after overreactions in the direction of the overreaction differ
+from such movements after normal days.
+
+
+
+
+                                                                         The next day
+                                                              (prices tend to increase in order
+                                                                   to fully incorporate new
+                                                                 information or to finish the
+                                                                  process of overreacting)
+
+
+
+
+                                                        Day of overreaction
+                                                     (case of prices increase)
+
+
+
+
+        The null hypothesis is in both cases that the data after normal and overreaction days
+
+belong to the same population.
+
+        Our dataset is quite large, and therefore on the basis of the Central Limit Theorem
+
+(see Mendenhall, Beaver and Beaver, 2003) it can be argued that normality holds as required
+
+for carrying out t-tests. As a further check for normality, in the case of the EURUSD we
+
+also apply Pearson’s criterion: we randomly select 100 consecutive price ranges for the
+
+period 2006-2008 (Table 1) and calculate the critical values of the distribution. Since they
+
+do not exceed those of the chi-square distribution, one can conclude that the data are
+
+normally distributed and it is legitimate to perform Student’s t-tests.
+
+
+
+Table 1: “Normality” test for the EUR/USD data
+                                                             2006                        2007     2008
+Observations                                                                               100
+Average                                                     80.14                        73.62    145.19
+Standard deviation                                          28.37                         24.5     51.67
+Confidence level                                                                           0.95
+Chi-square values                                              6.1                        9.37     9.12
+Chi-square distribution critical value (hi(p=0.95,                                         14.1
+f=7) )
+Conclusion                                                          Data are normally distributed
+
+
+        We analyse short-term overreactions, so the period of analysis is 1 day (one trading
+
+session). The parameters characterising price behaviour over such a time interval are
+
+maximum, minimum, open and close prices. In most studies price movements are measured
+
+                                               6
+as the difference between the open and close price. In our opinion the daily return, i.e. the
+
+difference between the maximum and minimum prices during the day, is more appropriate.
+
+This is calculated as:
+
+                                  ( Highi − Lowi )
+                           Ri =                    × 100% ,                           (1)
+                                       Lowi
+
+where Ri is the % daily return, Highi is the maximum price, and Lowi is the minimum
+
+price for day і.
+
+        We consider three definitions of “overreaction”:
+
+        1)   when the current daily return exceeds the average plus one standard deviation
+
+                                        Ri > ( Rn + δ n ) ,                         (2)
+
+where Rn is the average size of daily returns for period n
+
+                                                n
+                                        Rn = ∑ Ri / n                                     (3)
+                                               i =1
+
+
+and δ n is the standard deviation of daily returns for period n
+
+
+                                   1 n
+                              δn =                2
+                                      ∑ ( Ri − R ) .                                      (4)
+                                   n i =1
+        2)   when the current daily return exceeds the average plus two standard deviations,
+
+i.e.,
+
+                                         Ri > ( Rn + 2 × δ n ) .                          (5)
+
+        3)   when the current daily return exceeds the average plus three standard deviations,
+
+i.e.,
+
+                                         Ri > ( Rn + 3 × δ n ) .                           (6)
+
+        The next step is to determine the size of the price movement during the next day. For
+
+Hypothesis 1 (the counter-reaction or counter-movement assumption), we measure it as the
+
+                                                7
+difference between the next day’s open price and the maximum deviation from it in the
+
+opposite direction to the price movement in the overreaction day.
+
+       If the price increased, then the size of the counter-reaction is calculated as:
+
+                                               ( Openi + 1 − Lowi + 1 )
+                            cRi + 1 = 100% ×                                              (7)
+                                                     LOwi + 1           ,
+
+where cRi + 1 is the counter-reaction size, and Openi + l is the next day’s open price.
+
+       If the price decreased, then the corresponding definition is:
+
+                                               ( Highi + 1 − Openi + 1 )
+                            сRi + 1 = 100% ×                                              (8)
+                                                     Openi + 1           .
+
+       In the case of Hypothesis 2 (movement in the direction of the overreaction), either
+
+equation (8) or (7) is used depending on whether the price has increased or decreased.
+
+       Two data sets (with cRi +1 values) are then constructed, including the size of price
+
+movements after normal and abnormal price changes respectively. The first data set consists
+
+of cRi +1 values after one-day abnormal price changes. The second contains cRi +1 values after
+
+a day with normal price changes. The null hypothesis to be tested is that they are both drawn
+
+from the same population.
+
+
+3.2    Trading robot analysis
+
+The trading robot approach considers the short-term overreactions from a trader’s viewpoint,
+
+i.e. whether it is possible to make abnormal profits by exploiting the overreaction anomaly.
+
+The trading robot simulates the actions of a trader according to an algorithm (trading
+
+strategy). This is a programme in the MetaTrader terminal that has been developed in
+
+MetaQuotes Language 4 (MQL4) and used for the automation of analytical and trading
+
+processes. Trading robots (called experts in MetaTrader ) allow to analyse price data and
+
+manage trading activities on the basis of the signals received.
+
+
+
+                                                8
+       MetaQuotes Language 4 is the language for programming trade strategies built in the
+
+client terminal. The syntax of MQL4 is quite similar to that of the C language. It allows to
+
+programme trading robots that automate trade processes and is ideally suited to the
+
+implementation of trading strategies. The terminal also allows to check the efficiency of
+
+trading robots using historical data. These are saved in the MetaTrader terminal as bars and
+
+represent records appearing as TOHLCV (HST format). The trading terminal allows to test
+
+experts by various methods. By selecting smaller periods it is possible to see price
+
+fluctuations within bars, i.e., price changes will be reproduced more precisely. For example,
+
+when an expert is tested on one-hour data, price changes for a bar can be modelled using
+
+one-minute data. The price history stored in the client terminal includes only Bid prices. In
+
+order to model Ask prices, the strategy tester uses the current spread at the beginning of
+
+testing. However, a user can set a custom spread for testing in the "Spread", thereby
+
+approximating better actual price movements.
+
+       We examine two trading strategies:
+
+   -   Strategy 1 (based on H1): This is based on the classical short-term overreaction
+
+       anomaly, i.e. the presence the abnormal counter-reactions the day after the
+
+       overreaction day. The algorithm is constructed as follows: at the end of the
+
+       overreaction day financial assets are sold or bought depending on whether abnormal
+
+       price increases or decreased respectively have occurred. An open position is closed if
+
+       a target profit value is reached or at the end of the following day (for details of how
+
+       the target profit value is defined see below).
+
+   -   Strategy 2 (based on H2):This is based on the non-classical short-term overreaction
+
+       anomaly, i.e. the presence the abnormal price movements in the direction of the
+
+       overreaction the following day. The algorithm is built as follows: at the end of the
+
+       overreaction day financial assets are bought or sold depending on whether abnormal
+
+
+
+
+                                               9
+        price increases or decreases respectively have occurred. Again, an open position is
+
+        closed if a target profit value is reached or at the end of the following day.
+
+                 In order to avoid data-snooping bias and artificial fitting of certain
+
+        parameters 1 we adopt the following testing procedure.
+
+    1. We use a base period (data from 2013) to obtain the optimal parameters for the
+
+        behaviour of asset prices (an example of such optimisation is reported in Appendix
+
+        A).
+
+    2. We test the trading strategy with the optimal parameters on the base period (2013
+
+        data) and two independent (non-optimised) periods (2012 and 2014) to see whether it
+
+        is profitable (an example can be found in Appendix B).
+
+    3. We perform continuous testing for the period 2012-2014 to obtain average results for
+
+        the trading strategy.
+
+    4. The results of continuous trading are used to assess the effectiveness of the strategy.
+
+        If total profits from trading are > 0 and the number of profitable trades is> 50%, and
+
+        the results are rather stable for different periods, then we conclude that there is a
+
+        market anomaly and it is exploitable.
+
+        The results of the trading strategy testing and some key data are presented in the
+
+"Report" in Appendix B. The most important indicators given in the “Report” are:
+
+        -     Total net profit: this is the difference between "Gross profit" and "Gross loss"
+
+              measured in US dollars. We used marginal trading with the leverage 1:100,
+
+              therefore it is necessary to invest $1000 to make the profit mentioned in the
+
+              Trading Report. The annual return is defined as Total net profit/100, so, for
+
+              instance, an annual total net profit of $100 represents a 10%annual return on the
+
+              investment;
+
+        -     Profit trades: % of successful trades in total trades;
+
+1
+ By changing the values of various parameters of the trading strategy one can make it profitable, but this
+would work only for the specific data set being used, not in general.
+                                                   10
+       -   Expected payoff: the mathematical expectation of a win. This parameter
+
+           represents the average profit/loss per trade. It is also the expected
+
+           profitability/unprofitability of the next trade;
+
+       -   Total trades: total amount of trade positions;
+
+       -   Bars in test: the number of past observations modelled in bars during testing.
+
+       The results are summarised in the “Graph” section of the “Report”: this represents
+
+the account balance and general account status considering open positions. The “Report”
+
+also provides full information on all the simulated transactions and their financial results.
+
+The following parameters affect the profitability of the trading strategies (the next section
+
+explains how they are set):
+
+       -   Criterion for overreaction (symbol: sigma_dz): the number of standard deviations
+
+           added to the mean to form the standard day interval;
+
+       -   Period of averaging (period_dz): the size of data set on which base mean and
+
+           standard deviation are counted;
+
+       -   Time in position (time_val): how long (in hours) the opened position has to be held;
+
+       -   Expected profit per trade or Take Profit (profit_koef): the size of profit expected
+
+           to result from a trade, measured as:
+
+                                   Take Profit=profit_koef*sigma_dz;
+
+       -   Maximum amount of losses per trade or Stop Loss (stop): the size of losses the
+
+           trader is willing to incur in a trade, defined as follows:
+
+                                        Stop Loss =stop*sigma_dz.
+
+
+
+4.     Empirical results
+
+The first step is to set the basic overreaction parameters/criterions by choosing the number
+
+of standard deviations (sigma_dz) to be added to the average to form the “standard” day
+
+
+
+
+                                               11
+interval for price fluctuations and the averaging period to calculate the mean and the
+
+standard deviation(symbol: period_dz).
+
+       For this purpose we used the Dow Jones Index data for the period 1987-2012. The
+
+number of abnormal returns detected in the period 1987-2012 is reported in Table 2.
+
+Table 2: Number of abnormal returns detections in Dow-Jones index during 1987-2012
+            Period_dz                      5            10               20           30
+ Indicator                        Number % Number % Number % Number %
+ Overall                           6458  100 6454 100 6444 100 6434 100
+ Number of abnormal returns
+                                    1297       20    1183    18    1123       17   1070    17
+ (criterion =mean+sigma_dz)
+ Number of abnormal returns
+                                    587        9     474     7     379        6    371     6
+ (criterion= mean+2*sigma_dz)
+ Number of abnormal returns
+                                    290        4     194     3     159        2    145     2
+ (criterion = mean+3*sigma_dz)
+       As can be seen, both parameters (averaging period and number of standard
+
+deviations added to the mean) affect the number of detected anomalies. Changes in the
+
+averaging period only have a small effect (the difference between the results when the
+
+period considered is 5 and 30 respectively is less than 10%). By contrast, each additional
+
+standard deviation significantly decreases the number of observed abnormal returns (by 50%
+
+for each additional sigma). Therefore 2-4% of the full sample (the number of abnormal
+
+returns in the case of 3 sigmas) is not sufficiently representative to draw conclusions. That is
+
+why we set the parameter sigma_dz equal to 1. To make sure that this choice is reasonable in
+
+practice we test the trading strategy based on overreactions with a different set of parameters
+
+(see Appendix C). The results provide evidence in favour of 1 as an appropriate value for
+
+the sigma_dz parameter. Student’s t –tests of short-term counter-reactions carried out for the
+
+Dow Jones index over the period 1987-2012 (see Table 3) suggest that the optimal averaging
+
+periods are 20 and 30 (the corresponding t-statistics are significantly higher than for other
+
+averaging periods), and thus the t-tests are also performed for these.
+
+
+
+
+                                                12
+Table 3: T-test of the short-term counter-reactions after the day of the overreaction for
+the Dow-Jones index during 1987-2012
+  Period_dz                        5                            10                       20                          30
+                        abnormal normal            abnormal Normal abnormal normal abnormal normal
+  Number of matches         1297     5161              1183       5271     1123       5321  1070        5364
+  Mean                     0,97%    0,95%             1,00%      0,94%    1,06%      0,93% 1,09%       0,92%
+  Standard deviation       0,97%    0,80%             1,01%      0,80%    1,08%      0,78% 1,12%       0,77%
+  t-criterion              0,859571855                2,033267584         4,230763317       4,722439164
+  t-critical (р=0.95)                                                1,96
+  Null hypothesis            accepted                    rejected            rejected          rejected
+
+
+
+            The results for H1 are presented in Tables 4 - 8. In the case of the commodity
+
+markets (see Table 4) H1 is rejected for Oil (this evidence in favor of anomaly presence) but
+
+cannot be rejected for Gold for both averaging periods.
+
+Table 4: T-test of Hypothesis 1 - case of commodity markets
+Period of averaging
+                                                  20                                                   30
+(period_dz)
+Type of asset                     Gold                          Oil                     Gold                         Oil
+Indicator               abnormal         normal        abnormal       normal   abnormal       normal        abnormal       normal
+Number of matches           536          2637            536           2637       538          2763           496          2667
+Mean                       0.84%         0.80%          0.84%         0.80%      0.83%         0.79%         1.73%         1.38%
+Standard deviation         0.73%         0.77%          0.73%         0.77%      0.75%         0.76%         1.56%         1.31%
+t-criterion                        1.4                         4.03                     1.16                        4.97
+t-critical (р=0.95)                                                       1.96
+Null hypothesis              accepted                       rejected               accepted                     rejected
+
+
+            The results from testing Hypothesis 1 for the US stock markets (see Tables 5 and 6)
+
+are stable for the two averaging periods (20 and 30) and confirm the presence of a statistical
+
+anomaly in the price dynamics in the US stock market after short-term overreactions.
+
+
+
+   Table 5: T-test of Hypothesis 1 for averaging period (period_dz) = 20, case of
+   US stock market
+     Type of asset                   Dow-Jones index                      Microsoft              Boeing Company
+     Indicator                      abnormal normal                   Abnormal normal           abnormal normal
+     Number of matches                 563       2610                   341        1884            400       1997
+     Mean                             0.82%     0.72%                  1.22%      0.94%           1.23%     1.03%
+     Standard deviation               1.00%     0.82%                  1.32%      1.02%           1.25%     1.05%
+     t-criterion                           2.49                              3.92                      3.18
+     t-critical (р=0.95)                                                     1.96
+     Null hypothesis                        rejected                       rejected                     rejected
+
+                                                            13
+ Table 6: T-test of Hypothesis 1 for averaging period (period_dz) = 30, case of
+ US stock market
+   Type of asset             Dow-Jones index           Microsoft        Boeing Company
+   Indicator                abnormal normal       abnormal normal      abnormal normal
+   Number of matches           535       2628        324       1890       371       2015
+   Mean                       0,87%     0,71%       1,20%     0,95%      0,58%     0,49%
+   Standard deviation         1,06%     0,80%       1,32%     1,02%      0,59%     0,55%
+   t-criterion                     3,47                  3,44                 2,95
+   t-critical (р=0.95)                                   1.96
+   Null hypothesis                rejected             rejected             rejected
+
+
+    The results from testing Hypothesis 1 for the FOREX (see Tables 7 and 8) are not as
+stable as those for the US stock market. No anomaly is detected for the EURUSD (for both
+periods of averaging), whilst one is observed in the behaviour of GBPCHF (for both
+averaging periods). The USDJPY results are sensitive to the choice of the averaging period
+(an anomaly is found with an averaging period of 20, but not of 30).
+
+ Table 7: T-test of Hypothesis 1 for averaging period (period_dz) = 20, case of
+ foreign exchange market
+   Type of asset                 EURUSD               USDJPY                GBPCHF
+   Indicator                abnormal normal       Abnormal normal      abnormal normal
+   Number of matches           534        2639      495        2793       540       2748
+   Mean                       0.45%      0.48%     0.52%      0.48%      0.48%     0.44%
+   Standard deviation         0.39%      0.41%     0.48%      0.45%      0.45%     0.46%
+   t-criterion                     -2.07                  1.8                 2.39
+   t-critical (р=0.95)                                   1.96
+   Null hypothesis                accepted             accepted             rejected
+
+
+ Table 8: T-test of Hypothesis 1 for averaging period (period_dz) = 30, case of
+ foreign exchange market
+   Type of asset                 EURUSD               USDJPY                GBPCHF
+   Indicator                abnormal normal       Abnormal normal      abnormal normal
+   Number of matches           529        2734      477       2786        513       2765
+   Mean                       0,46%      0,48%     0,52%     0,47%       0,49%     0,44%
+   Standard deviation         0,40%      0,41%     0,48%     0,45%       0,47%     0,46%
+   t-criterion                     -0,99                2,44                  2,57
+   t-critical (р=0.95)                                   1.96
+   Null hypothesis                accepted             rejected             rejected
+
+
+       Overall, it appears that in the case of H1 the longer the averaging period is, the
+
+bigger is the probability of anomaly detection. H1 cannot be rejected for the US stock
+
+                                             14
+market (in all cases) and in some cases for the FOREX (USDJPY and GBPCHF) and
+
+commodity (Oil) markets when the averaging period is 30. Therefore the classical short-term
+
+counter-movement after an overreaction day is confirmed in many cases, especially with an
+
+averaging period_dz =30. The only exceptions are Gold and EURUSD.
+
+            The results for H2 are presented in Tables 9 -13. Hypothesis 2 cannot be rejected in
+
+most cases for the commodity markets (see Table 9) (the only exception is Gold with an
+
+averaging period of 20).
+
+
+
+
+Table 9: T-test of Hypothesis 2 - case of commodity markets
+Period of averaging
+                                               20                                                 30
+(period_dz)
+Type of asset                  Gold                        Oil                    Gold                       Oil
+Indicator               abnormal      normal        abnormal     normal     abnormal     normal        abnormal    normal
+Number of matches          536       2637             517      2656          538      2763              496      2667
+Mean                      0,87%     0,79%            1,57%    1,42%         0,89% 0,78%                1,60% 1,41%
+Standard deviation        0,94%     0,78%            1,52%    1,40%         0,95% 0,77%                1,57% 1,39%
+t-criterion                    1,88                       2,3                    2,81                       2,67
+t-critical (р=0.95)                                                  1.96
+Null hypothesis              accepted                    rejected               rejected                   rejected
+
+            The results from testing Hypothesis 2 for the US stock markets (see Tables 10 and
+
+11) are stable for the two averaging periods (the only exception is the Dow-Jones index with
+
+an averaging period of 20) and confirm the presence of a statistical anomaly in the price
+
+dynamics in the US stock market after short-term overreactions. The same conclusion is
+
+reached for the FOREX market. In general the results for H2 are much more consistent (with
+
+an averaging period of 30) than the ones for H1: they provide strong evidence of an “inertia
+
+anomaly” in all markets considered after the overreaction day.
+
+
+
+
+                                                         15
+ Table 10: T-test of Hypothesis 2 for averaging period (period_dz) = 20, case of
+ US stock market
+   Type of asset            Dow-Jones index          Microsoft       Boeing Company
+   Indicator               abnormal normal      abnormal normal     Abnormal normal
+   Number of matches          563       2610       341       1884     400       1997
+   Mean                      0,69%     0,65%      1,19%     0,98%    1,29%     1,07%
+   Standard deviation        0,89%     0,83%      1,27%     0,94%    1,42%     1,12%
+   t-criterion                    1,13                 3,04               3,12
+   t-critical (р=0.95)                                 1.96
+   Null hypothesis              accepted             rejected            rejected
+
+ Table 11: T-test of Hypothesis 2 for averaging period (period_dz) = 30, case of
+ US stock market
+   Type of asset            Dow-Jones index          Microsoft       Boeing Company
+   Indicator               abnormal normal      abnormal normal     Abnormal normal
+   Number of matches          535       2628       324       1890     370       2016
+   Mean                      0,75%     0,65%      1,27%     1,00%    1,95%     1,61%
+   Standard deviation        1,05%     0,82%      1,34%     0,96%    1,50%     1,16%
+   t-criterion                    2,33                 3,62               4,36
+   t-critical (р=0.95)                                 1.96
+   Null hypothesis              rejected             rejected            rejected
+
+Table 12: T-test of Hypothesis 2 for averaging period (period_dz) = 20, case
+ of foreign exchange market
+   Type of asset                EURUSD               USDJPY             GBPCHF
+   Indicator               abnormal normal      abnormal normal     Abnormal normal
+   Number of matches          534       2639       495       2793     540       2748
+   Mean                      0,51%     0,45%      0,54%     0,48%    0,48%     0,43%
+   Standard deviation        0,49%     0,41%      0,60%     0,49%    0,57%     0,41%
+   t-criterion                    2,82                 2,17               2,24
+   t-critical (р=0.95)                                 1.96
+   Null hypothesis              rejected             rejected            rejected
+
+ Table 13: T-test of Hypothesis 2 for averaging period (period_dz) = 30, case
+ of foreign exchange market
+   Type of asset                EURUSD               USDJPY              GBPCHF
+   Indicator               abnormal normal      abnormal normal     abnormal normal
+   Number of matches          529       2734       477       2786      513       2765
+   Mean                      0,50%     0,44%      0,53%     0,47%     0,49%     0,43%
+   Standard deviation        0,47%     0,41%      0,60%     0,48%     0,60%     0,40%
+   t-criterion                    2,82                  2,3                 2,3
+   t-critical (р=0.95)                                 1.96
+   Null hypothesis              rejected             rejected            rejected
+
+
+
+
+                                           16
+       Next, we analyse whether these anomalies give rise to exploitable profit
+
+opportunities. If they do not, we conclude that they do not represent evidence inconsistent
+
+with the EMH. The parameters of the trading strategies 1 and 2 are set as follows:
+
+       1. Constants
+
+       -   Period_dz = 30 (explanations to this see above);
+
+       -   Time_val=22 (this amounts to closing a deal after a day being in position);
+
+       -   Sigma_dz=1 (see above).
+
+       2. Changeable (it needs to be optimised during testing)
+
+       -   Profit_koef;
+
+       -   Stop.
+
+       The results of the parameter optimisation and of the trading robot analysis are
+
+presented in Appendix D (Strategy 1) and E (Strategy 2).They imply that it is not possible to
+
+make extra profits by adopting Strategy 1 (based on Hypothesis 1) in the case of the
+
+FOREX. By contrast, there are exploitable profit opportunities in the case of the US stock
+
+market and the commodity markets; it should be noted, though, that the results are unstable
+
+and might reflect data-snooping bias in 2013 (the only exception are the very stable Wal
+
+Mart results). In general Strategy 1 (which is based on the assumption that after an
+
+overreaction day counter-movements are bigger than after a standard day) does not yield
+
+stable prpfitable results and therefore this anomaly cannot be seen as inconsistent with the
+
+EMH. Strategy 2, which is based instead on the “inertia anomaly”, appears to be much more
+
+successful: it generates positive profits in the case of the Gold and FOREX (EURUSD and
+
+UDSJPY) markets, not only in 2013, but also in other time periods.
+
+
+
+5.     Conclusions
+
+This paper examines short-term price overreactions in various financial markets
+
+(commodities, US stock market and FOREX). It aims to establish whether these are simply
+
+                                             17
+statistical phenomena (i.e., price dynamics after overreaction days differ statistically from
+
+those after normal days) or also represent an anomaly inconsistent with the EMH (i.e., it is
+
+possible to make extra profits exploiting them). For this purpose, first we perform t-tests to
+
+confirm/reject the presence of overreactions as a statistical phenomenon. Then we use a
+
+trading robot approach to simulate the behaviour of traders and test the profitability of two
+
+alternative strategies, one based on the classical overreaction anomaly (H1: counter-
+
+reactions after overreactions differ from those after normal days), the other on a newly
+
+defined “inertia anomaly” (H2: price movements after overreactions in the same direction of
+
+the overreaction differ from those after normal days).
+
+       The findings can be summarised as follows. H1 cannot be rejected for the US stock
+
+market and in some cases for the FOREX (USDJPY and GBPCHF) and commodity (Oil)
+
+markets when the averaging period is 30. The results for the H2 are even more consistent
+
+and provide strong evidence of an “inertia anomaly” in all markets considered after the
+
+overreaction day. The trading robot analysis shows that Strategy 1, which is based on the
+
+assumption that after the overreaction day counter-movements are bigger than after a
+
+standard day, is not generally profitable and therefore this anomaly cannot be seen as
+
+inconsistent with the EMH. By contrast, Strategy 2, based on the “inertia anomaly”, appears
+
+to be much more successful and generates profits in the case of the Gold and FOREX
+
+(EURUSD and UDSJPY) markets.
+
+
+
+
+                                             18
+References
+
+Akhigbe, A., T. Gosnell and T. Harikumar, (1998), Winners and Losers on NYSE: A
+Reexamination Using Daily Closing Bid-ask Spreads. Journal of Financial Research 21, 53–
+64.
+
+Alonso, A. and G. Rubio, (1990), Overreaction in the Spanish Equity Market. Journal of
+Banking and Finance 14, 469–481.
+
+Antoniou, A., E. C. Galariotis and S. I. Spyrou, (2005), Contrarian Profits and the
+Overreaction Hypothesis: The Case of the Athens Stock Exchange. European Financial
+Management 11, 71–98.
+
+Atkins, A.B. and E.A. Dyl, (1990), Price Reversals, Bid-Ask Spreads, and Market
+Efficiency. Journal of Financial and Quantitative Analysis 25, 535 – 547.
+
+Ball, R. (2009), The Global Financial Crisis and the Efficient Market Hypothesis: What
+Have We Learned?. Journal of Applied Corporate Finance 21, 8–16.
+
+Bowman, R. G. and D. Iverson, (1998), Short-run Over-reaction in the New Zealand Stock
+Market. Pacific-Basin Finance Journal 6, 475–491.
+
+Brailsford, T., (1992), A Test for the Winner–loser Anomaly in the Australian Equity
+Market: 1958–1987. Journal of Business Finance and Accounting 19, 225–241.
+
+Bremer, M. and R. J. Sweeney, (1991), The reversal of large stock price decreases. Journal
+of Finance 46, 747-754.
+
+Bremer, M., T. Hiraki and R.J. Sweeney, (1997), Predictable patterns after large stock price
+changes on the Tokyo Stock Exchange. Journal of Financial and Quantitative Analysis 33,
+345-365.
+
+Brown, K. C., W.V. Harlow and S. M. Tinic, (1988), Risk Aversion, Uncertain
+Information,and Market Efficiency. Journal of Financial Economics 22, 355 - 385.
+
+Chang, R., D. McLeavey and S. Rhee, (1995), Short-term Abnormal Returns of the
+Contrarian Strategy in the Japanese Stock Market. Journal of Business Finance and
+Accounting 22, 1035–1048.
+
+Choi, H.-S. and N. Jayaraman, (2009), Is reversal of large stock-price declines caused by
+overreaction or information asymmetry: Evidence from stock and option markets. Journal of
+Future Markets 29, 348–376.
+
+Clare, A. and S. Thomas, (1995), The Overreaction Hypothesis and the UK Stock Market.
+Journal of Business Finance and Accounting 22, 961–973.
+
+Clements A., M. Drew, E. Reedman and M. Veeraraghavan, (2009), The Death of the
+Overreaction Anomaly? A Multifactor Explanation of Contrarian Returns. Investment
+Management and Financial Innovations 6, 76-85.
+
+
+
+
+                                            19
+Cox, D. R. and D. R. Peterson, (1994), Stock Returns Following Large One-Day Declines:
+Evidence on Short-Term Reversals and Longer-Term Performance. Journal of Finance 49,
+255-267.
+
+Cutler, D., J. Poterba, and L. Summers, (1991), Speculative dynamics. Review of
+Economics Studies 58, 529–546.
+
+DaCosta Jr., N. C. A., (1994), Overreaction in the Brazilian Stock Market. Journal of
+Banking and Finance 18, 633–642.
+
+De Bondt W. and R. Thaler, (1985), Does the Stock Market Overreact?. Journal of Finance
+40, 793-808.
+
+Fama, E. F., (1965), The Behavior of Stock-Market Prices. The Journal of Business 38, 34-
+105.
+
+Ferri, M., G. and C. Min, (1996), Evidence that the Stock Market Overreacts and Adjusts.
+The Journal of Portfolio Management 22, 71-76.
+
+Jegadeesh, N. and S. Titman, (1993), Returns to Buying Winners and Selling Losers:
+Implications for Stock Market Efficiency. The Journal of Finance 48, 65-91.
+
+Kahneman, D. and A. Tversky, (1982), The psychology of preferences. Scientific
+American246, 160-173.
+
+Kothari, S. P. and J. B. Warner, (2006), The econometrics of event studies. Handbook of
+Empirical Corporate Finance.
+
+Kryzanowski, L. and H. Zhang, (1992), The Contrarian Strategy Does Not Work in
+Canadian Markets. Journal of Financial and Quantitative Analysis 27, 383–395.
+
+Larson, S. and J. Madura, (2003), What Drives Stock Price Behavior Following Extreme
+One-Day Returns. Journal of Financial Research Southern Finance Association26, 113-127.
+
+Lehmann, B., (1990), Fads, Martingales, and Market Efficiency. Quarterly Journal of
+Economics 105, 1-28.
+
+Mendenhall, W., R. J. Beaver and B. M. Beaver, (2003), Introduction to Probability and
+Statistics, 11th edn, Brooks / Cole, Pacific Grove.
+
+Mynhardt, R. H. and A. Plastun, (2013), The Overreaction Hypothesis: The case of
+Ukrainian stock market. Corporate Ownership and Control 11, 406-423.
+
+Poteshman, A., (2001), Underreaction, overreaction and increasing misreaction to
+information in the options market. Journal of Finance 56, 851–876.
+
+Richards, A., (1997), Winner–loser Reversals in National Stock Market Indices: Can They
+Be Explained?. Journal of Finance 52, 2129–2144.
+
+Stefanescu, R., D. Ramona and N. Costel, (2012), Overreaction and Underreaction on the
+Bucharest Stock Exchange. Proceedings of the 2nd International Conference on Business
+
+                                           20
+Administration and Economics ”People. Ideas. Experience”, October 25-26, 2012, Reşiţa
+(22. October 2012), 367-377.
+
+Vardar, G. and B. Okan, (2008), Short Term Overreaction Effect: Evidence on the Turkish
+Stock Market. Proceedings of the Conference on Emerging Economic Issues in a
+Globalizing World, Izmir University of Economics, 155-165.
+
+Wang, J., B. M. Burton, and D. M. Power, (2004), Analysis of the Overreaction Effect in the
+Chinese Stock Market. Applied Economics Letters 11, 437–442.
+
+Zarowin P., (1989), Does the Stock Market Overreact to Corporate Earnings Information?.
+The Journal of Finance 44, 1385-1399.
+
+
+
+
+                                            21
+                                               Appendix A
+
+              Example of optimisation results: case of EURUSD, period 2013, H1 testing
+
+Fig. A.1 – Distribution of results (X – profit_koef, Y – stop) – deeper green means better results
+
+
+
+
+Table A.1 – Results of testing: case of EURUSD, period 2013 (changeable parameters profit_koef
+from 0.5 to 3 with step 0.5; stop from 1 to 5 with step 1), start deposit = 10000$, size of trading lot =
+10000$, margin (credit) leverage = 100, time_val =22, period_dz=30, sigma_koef=1
+
+ Number of                 Total      Profit   Expected      Drawdown,   Drawdown,
+               Profit, $                                                             Profit_koef     Stop
+ simulation                trades     factor     payoff           $          %
+          1    -34.61          31   0.91       -1.12         183.27      17.88%      0.5             1
+          7    -67.61         28    0.84       -2.41         170.27      16.90%      0.5             2
+         13    -88.61         28    0.81       -3.16         184.27      17.92%      0.5             3
+         19    -168.61        28    0.69       -6.02         237.71      23.67%      0.5             4
+         25    -229.61        28    0.62       -8.20         296.46      29.59%      0.5             5
+          9    -309.61        28    0.60       -11.06        330.47      32.98%      1.5             2
+         12    -314.61        28    0.60       -11.24        339.05      33.84%      3               2
+          8    -329.61        28    0.56       -11.77        413.88      41.31%      1               2
+         15    -330.61        28    0.60       -11.81        351.47      35.08%      1.5             3
+          2    -330.61        30    0.48       -11.02        414.88      41.41%      1               1
+         11    -333.61        28    0.58       -11.91        354.47      35.38%      2.5             2
+         18    -335.61        28    0.60       -11.99        356.47      35.58%      3               3
+         10    -341.61        28    0.57       -12.20        362.47      36.17%      2               2
+         21    -348.61        28    0.59       -12.45        369.47      36.87%      1.5             4
+         14    -350.61        28    0.56       -12.52        434.88      43.40%      1               3
+         24    -353.61        28    0.59       -12.63        380.15      37.94%      3               4
+         17    -354.61        28    0.58       -12.66        375.47      37.47%      2.5             3
+         16    -362.61        28    0.57       -12.95        383.47      38.27%      2               3
+         20    -368.61        28    0.55       -13.16        454.46      45.36%      1               4
+          6    -369.61        30    0.46       -12.32        431.46      43.06%      3               1
+         23    -372.61        28    0.56       -13.31        393.47      39.27%      2.5             4
+         22    -380.61        28    0.55       -13.59        401.47      40.07%      2               4
+          4    -395.61        30    0.42       -13.19        425.46      42.46%      2               1
+          5    -405.61        30    0.41       -13.52        451.46      45.06%      2.5             1
+          3    -405.61        30    0.41       -13.52        426.47      42.56%      1.5             1
+         27    -409.61        28    0.55       -14.63        430.47      42.96%      1.5             5
+         30    -414.61        28    0.55       -14.81        441.15      44.03%      3               5
+         26    -429.61        28    0.51       -15.34        515.46      51.44%      1               5
+         29    -433.61        28    0.53       -15.49        454.47      45.36%      2.5             5
+         28    -441.61        28    0.52       -15.77        462.47      46.15%      2               5
+
+                                                        22
+                                                      Appendix B
+
+                Example of strategy tester report: case of EURUSD, period 2014, H1 testing
+
+  Table B.1 – Overall statistics
+
+Symbol                                 EURUSD (Euro vs US Dollar)
+
+Period                                 1 Hour (H1) 2014.01.01 23:00 - 2014.09.26 22:00 (2014.01.01 - 2015.01.01)
+
+Model                                  Every tick (the most precise method based on all available least timeframes)
+
+Parameters                             profit_koef=0.5; stop=2; sigma_koef=1; period_dz=30; time_val=22;
+
+Barsintest                     5572    Ticks modelled                 5138778     Modelling quality                      90.00%
+Mismatched charts
+                                  0
+errors
+Initial deposit             1000.00                                               Spread                              Current (2)
+
+Total net profit              -28.01   Gross profit                     103.95    Gross loss                             -131.96
+
+Profit factor                  0.79    Expected payoff                    -2.33
+
+                                                                       109.51                                            10.84%
+Absolute drawdown             99.65    Maximal drawdown                           Relative drawdown
+                                                                     (10.84%)                                           (109.51)
+
+Total trades                     12    Short positions (won %)      5 (60.00%)    Long positions (won %)              7 (71.43%)
+
+                                       Profit trades (% of total)   8 (66.67%)    Loss trades (% of total)            4 (33.33%)
+
+                             Largest   profit trade                      18.83    loss trade                              -76.14
+                            Average    profit trade                     Гру.99    loss trade                              -32.99
+                                       consecutive wins (profit                   consecutive losses (loss in
+                           Maximum                                    5 (56.71)                                        2 (-45.65)
+                                       in money)                                  money)
+                                       consecutive profit (count                  consecutive loss (count of
+                            Maximal                                   56.71 (5)                                        -76.14 (1)
+                                       of wins)                                   losses)
+
+                            Average    consecutive wins                      3    consecutive losses                           1
+
+
+
+
+  Figure B.1 – Equity dynamics
+
+
+
+
+                                                             23
+     Table B.2 – Statement
+
+#                 Time    Type     Order   Size    Price    S/L      T/P      Profit   Balance
+ 1     02.01.2014 23:45    buy        1    0.10   1.3662   1.3584   1.3681
+ 2     03.01.2014 21:45   close       1    0.10   1.3586   1.3584   1.3681   -76.14    1.3586
+ 3     23.01.2014 23:00    sell       2    0.10   1.3696   1.3770   1.3677
+ 4      24.01.2014 9:51     t/p       2    0.10   1.3677   1.3770   1.3677   18.83     1.3677
+ 5     28.02.2014 23:00    sell       3    0.10   1.3802   1.3863   1.3787
+ 6      03.03.2014 0:00   close       3    0.10   1.3788   1.3863   1.3787   13.83     1.3788
+ 7     06.03.2014 23:00    sell       4    0.10   1.3861   1.3924   1.3845
+ 8     07.03.2014 21:00   close       4    0.10   1.3871   1.3924   1.3845   -10.17    1.3871
+ 9     19.03.2014 23:00    buy        5    0.10   1.3820   1.3759   1.3835
+10      20.03.2014 4:14     t/p       5    0.10   1.3835   1.3759   1.3835   14.58     1.3835
+11     30.04.2014 23:00    sell       6    0.10   1.3867   1.3918   1.3854
+12     01.05.2014 21:00   close       6    0.10   1.3867   1.3918   1.3854    -0.51    1.3867
+13     08.05.2014 23:00    buy        7    0.10   1.3841   1.3796   1.3852
+14     09.05.2014 13:01      s/l      7    0.10   1.3796   1.3796   1.3852   -45.14    1.3796
+15     05.06.2014 23:00    sell       8    0.10   1.3660   1.3719   1.3645
+16     06.06.2014 10:11     t/p       8    0.10   1.3645   1.3719   1.3645   14.83     1.3645
+17     22.07.2014 23:00    buy        9    0.10   1.3466   1.3438   1.3473
+18     23.07.2014 10:34     t/p       9    0.10   1.3473   1.3438   1.3473     6.86    1.3473
+19     20.08.2014 23:00    buy       10    0.10   1.3260   1.3226   1.3269
+20      21.08.2014 9:30     t/p      10    0.10   1.3269   1.3226   1.3269     8.58    1.3269
+21     04.09.2014 23:00    buy       11    0.10   1.2947   1.2913   1.2956
+22     05.09.2014 11:03     t/p      11    0.10   1.2956   1.2913   1.2956     8.86    1.2956
+23     17.09.2014 23:00    buy       12    0.10   1.2874   1.2802   1.2892
+24     18.09.2014 11:51     t/p      12    0.10   1.2892   1.2802   1.2892   17.58     1.2892
+
+
+
+
+                                                  24
+                                  Appendix С
+
+              Testing results for the EURUSD, period 2012-2014
+
+
+
+   Figure C.1 – Testing results for the EURUSD, period 2012-2014 (X –
+sigma_dz, Y – time_val)*
+
+
+
+
+   Figure C.2 – Testing results for the EURUSD, period 2012-2014 (X –
+sigma_dz, Y – profit_koef)*
+
+
+
+
+   Figure C.3 – Testing results for the EURUSD, period 2012-2014 (X –
+sigma_dz, Y – period_dz)*
+
+
+
+
+      * The darker the bars, the more profitable the trading strategy is.
+
+
+
+
+                                      25
+                                                                   Appendix D
+
+                                                        Trading results for Strategy 1
+
+Table D.1: Trading results for Strategy 1
+
+               Parameters               2012                     2013                       2014                2012-2014
+                                                                                                                       average
+              profit_        %          profit, annual %         profit, annual %       profit, annual %       profit, annual
+              koef      stop succesfull USD return succesfull USD return succesfull USD return succesfull USD return
+                                                              FOREX
+EURUSD            0,5      2    64,0%      -21    -2%    71,0%      -67    -7%    67,0%    -28    -3%    68,0%  -116      -4%
+USDJPY            0,5      5    70,0%       -1     0%    82,0%     225     23%    69,0%    -39    -4%    75,0%   183       6%
+GBPCHF              1      4    71,0%       -3     0%    60,0%    -120 -12%       47,0%  -207 -21%       61,0%  -330     -11%
+AUDUSD              3      1    23,8%    -187 -19%       44,0%     288     29%    30,0%  -120 -12%       32,0%    24       1%
+                                                           US stock market
+Microsoft           1      2    63,0%       -3     0%    63,0%        8     1%    55,0%     -6    -1%    61,0%      0      0%
+Boeing
+Company           0,5       3   74,0%      -13   -1%     84,0%      56        6%    80,0%       0     0%    80,0%    44     1%
+Exxon               1       5   56,0%      -30   -3%     73,0%      30        3%    71,0%      21     2%    66,0%    23     1%
+Wal mart          2,5       1   37,0%        5    1%     58,0%      50        5%    50,0%      27     3%    47,0%    82     3%
+Commodities
+Gold                3       5   43,0%     -252   -25%    58,0%     912        91%   33,0%     -138   -14%   51,0%   618     21%
+
+
+
+
+                                                                         26
+                                                                         Appendix E
+
+                                                              Trading results for Strategy 2
+
+Table E.1: Trading results for Strategy 2
+
+                      Parameters                  2012                        2013                     2014                    2012-2014
+                                                                                                                                          average
+ Financial asset                       %          profit,     annual %          profit, annual %      profit, annual   %          profit, annual
+                   profit_koef stop    succesfull USD         return succesfull USD return succesfull USD return       succesfull USD return
+                                                                          FOREX
+EURUSD                    0,5      2        71%       -86        -9%      87%     430     43%    92%    128     13%        82%      471      16%
+USDJPY                      1      2        62%       244       24%       58%       45     5%    69%       0     0%        62%      288      10%
+GBPCHF                      1      2        42%      -266      -27%       64%       36     4%    37%   -318    -32%        51%     -560     -19%
+AUDUSD                      2      2        52%       266       27%       46%      -79    -8%    41%     -29    -3%        47%      146       5%
+                                                                      US stock market
+Microsoft                  1       2        50%       -17        -2%      42%      -20    -2%    42%      -7    -1%        45%      -46      -2%
+Boeing
+Company                    1       3        54%       -43       -4%      58%     -42    -4%      50%     -69    -7%        51%     -150      -5%
+Exxon                      1       3        61%       -13       -1%      60%     -40    -4%      40%     -52    -5%        55%     -110      -4%
+Wal mart                   1       2        57%       -22       -2%      32%     -64    -6%      47%     -25    -3%        46%     -111      -4%
+                                                                       Commodities
+Gold                      0,5      5        64%          22     2%       73%     608   61%      100%     276    28%        75%      903     30%
+
+
+
+
+                                                                            27
+

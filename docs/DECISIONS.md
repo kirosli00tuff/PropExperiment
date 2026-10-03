@@ -371,3 +371,15 @@
   rules" decision of 2026-09-24, and the compute host. The training window
   overlaps the 2019-2024 data already read for K4's and K5's
   confirmations (MCL, NG, MGC, MHG), which the design records.
+- 2026-10-03 (user, planning chat): V21. After E.10. K9 is not frozen or
+  screened on its own: its one surviving member, K9-anncday-01 (the
+  macro announcement-day premium), is folded into ML route v2 as a
+  candidate signal. E.10's design target showed that no low-frequency
+  rule can reach eps alone, so any edge is a component edge, which is
+  what v2 combines. E.10's design inputs carry forward to v2: the cost
+  wall, K = 10 as the proposed maximum Holm K (K9 dropped, the ML route
+  kept), and a minimum trade count of 30. The two withdrawn VIX members
+  stay withdrawn. Earlier stages' session-cost figures are not re-run
+  with E.10's corrected script. Stage E.11 drafts the v2 design and
+  builds its pipeline on synthetic data, with no market data, purchase
+  or training, as one long build session.

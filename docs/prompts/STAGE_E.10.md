@@ -41,7 +41,8 @@ Usage: follows CLAUDE.md's context-hygiene rules, including the research
 rules: readers write pages to disk and grep them, and only quoted lines
 enter context. Use CLAUDE.md's page-fetch fallback (WebFetch, then
 Scrapling `get`, then `fetch`, `stealthy-fetch` only where a site's terms
-allow automated access). Firecrawl is not used. For scholarly search, use
+allow automated access). Firecrawl is the last resort, only when Scrapling
+fails, and each use is logged (CLAUDE.md). For scholarly search, use
 the Semantic Scholar API with the key in .env under
 SEMANTIC_SCHOLAR_API_KEY (send it as the x-api-key header, never print or
 log it) and OpenAlex with the polite-pool email in .env under

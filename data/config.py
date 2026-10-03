@@ -1,8 +1,10 @@
 """Paths, spend caps, and credential loading for the offline data lane.
 
-The Databento key is read from the environment or from this repo's ``.env``
-(``DATABENTO_API_KEY``), mirroring MLCryptoEngine's pattern of a
-git-ignored ``.env`` read through one config function. It is never
+Each Databento account has its own key, read from the environment or from this repo's
+``.env``: ``DATABENTO_API_KEY1`` for acct-1, ``DATABENTO_API_KEY2`` for acct-2, chosen by
+``ACTIVE_ACCOUNT`` unless the caller names the account (Stage E.11, V19; the old single
+``DATABENTO_API_KEY`` is no longer read). This mirrors MLCryptoEngine's pattern of a
+git-ignored ``.env`` read through one config function. A key is never
 hardcoded, logged, or written anywhere. This module holds NO TopstepX
 credential of any kind and must never grow one in Stage A.1.
 """
@@ -131,7 +133,14 @@ STEP2_PURCHASE_SESSION_ID = STAGE_E5_SESSION_ID
 STEP2_SESSION_CAP_USD = E5_SESSION_CAP_USD
 STEP2_REQUEST_CAP_USD = E5_REQUEST_CAP_USD
 
-DATABENTO_KEY_ENV = "DATABENTO_API_KEY"
+# One Databento key per account (Stage E.11, V19): .env holds DATABENTO_API_KEY1 and
+# DATABENTO_API_KEY2 only. require_databento_key reads the variable of the account it is asked
+# for (ACTIVE_ACCOUNT by default). The old single DATABENTO_API_KEY is not read, not even as a
+# fallback. Every account in ACCOUNTS has exactly one entry here.
+DATABENTO_KEY_ENV_BY_ACCOUNT: MappingProxyType[str, str] = MappingProxyType({
+    ACCOUNT_1_ID: "DATABENTO_API_KEY1",
+    ACCOUNT_2_ID: "DATABENTO_API_KEY2",
+})
 DATASET = "GLBX.MDP3"
 
 
@@ -152,11 +161,27 @@ def _read_env_file(path: Path) -> dict[str, str]:
     return out
 
 
-def require_databento_key(env_file: Path = ENV_FILE) -> str:
-    """The Databento key, or a clear failure naming the variable."""
-    key = os.environ.get(DATABENTO_KEY_ENV) or _read_env_file(env_file).get(DATABENTO_KEY_ENV)
-    if not key:
+def require_databento_key(env_file: Path = ENV_FILE, account: str | None = None) -> str:
+    """The Databento key of ``account`` (``ACTIVE_ACCOUNT`` when None), or a clear failure.
+
+    The account's variable is read from the environment, else from ``env_file``; a blank
+    environment value does not shadow the file. An account with no registered variable, and a
+    variable that is missing, empty or whitespace-only, raise MissingSecretError naming the
+    account and the variable, never a value.
+    """
+    account_id = ACTIVE_ACCOUNT if account is None else account
+    name = DATABENTO_KEY_ENV_BY_ACCOUNT.get(account_id)
+    if name is None:
         raise MissingSecretError(
-            f"{DATABENTO_KEY_ENV} is not set in the environment or {env_file.name}"
+            f"no Databento key variable is registered for account {account_id!r} "
+            f"(known accounts: {', '.join(DATABENTO_KEY_ENV_BY_ACCOUNT)})"
+        )
+    key = os.environ.get(name, "")
+    if not key.strip():
+        key = _read_env_file(env_file).get(name, "")
+    if not key.strip():
+        raise MissingSecretError(
+            f"{name} (the Databento key of account {account_id}) is not set, or is empty, "
+            f"in the environment or {env_file.name}"
         )
     return key

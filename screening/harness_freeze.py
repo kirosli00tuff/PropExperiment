@@ -254,6 +254,7 @@ FROZEN_INPUTS = (
     "reports/stage_e2b_release_sources_commodity.json", "reports/stage_e2b_release_sources_named.json",
     "reports/stage_e2b_release_names.json", "reports/stage_e2b_ml_probes.json",
     "reports/stage_e2b_v10_amendment.md", "pyproject.toml", "uv.lock", MEMBERS_INIT,
+    "reports/stage_e12_closure_rulings.json",  # harness v9: data.step2_store's closure ruling
 )
 FROZEN_INPUT_DIRS = ("reports/stage_e2a_funnel",)
 # M7.8: "every M7 test" is hashed with the pipeline; the other Stage E tests travel with it.

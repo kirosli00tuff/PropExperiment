@@ -30,14 +30,24 @@ What differs, in order:
    file is a leak and raises.
 3. The written frame is checked again: every trade date must be a confirmation-window date
    (data.research_bars.refuse_non_confirmation_dates) inside 2019-05-06..2024-02-29.
+4. Harness v9 (Stage E.12, user decision 2026-10-03, L-3's principle "kept and flagged"): bars
+   inside a scheduled closure beyond the close minute are held for the lead UNLESS the
+   enumerated ruling file ``CLOSURE_RULINGS_PATH`` (schema closure_rulings/1) lists every one of
+   the root's such bars by (root, ct, trade_date) with ruling keep_and_flag, and every entry it
+   lists for the root is such a bar. Then the bars are kept with their values unchanged and
+   flagged in_scheduled_closure, and the summary and the parquet metadata record the file's path
+   and sha256 under "closure_ruling". A bar not listed still holds; a listed entry with no such
+   bar, or a malformed file, refuses. Close-minute bars are unaffected.
 From the step 2 history this module computes bars, their validation and calendar checks only.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
+from collections import Counter
 from collections.abc import Callable, Sequence
 from dataclasses import asdict
 from datetime import date, timedelta
@@ -85,6 +95,11 @@ CONDITION_PATH = VENDOR_ROOT / "condition" / f"{DATASET}_2019-04-01_2025-04-01.j
 ROLLS_DIR = VENDOR_ROOT / "rolls"
 SEALED_ROOT = DATA_ROOT / "sealed"
 BUILDER_FILES = ("data/step2_store.py", "data/build_bars.py")
+# Harness v9: the lead's enumerated ruling on held closure bars (a frozen input of the manifest).
+CLOSURE_RULINGS_PATH = REPO_ROOT / "reports" / "stage_e12_closure_rulings.json"
+CLOSURE_RULINGS_SCHEMA = "closure_rulings/1"
+KEEP_AND_FLAG = "keep_and_flag"  # the only ruling v9 applies
+RULING_ENTRY_KEYS = ("root", "ct", "trade_date", "ruling")
 if len(UNSEALED_NAMES) != 58 or (LAST_TRADE_DATE + timedelta(days=1)) != EMBARGO2_START:
     raise RuntimeError("the step 2 store reads the 58 chunks 2019-05..2024-02 and ends the day "
                        "before the embargo")
@@ -209,8 +224,10 @@ def build_step2_product(spec: bb.ProductSpec, cal: GroupCalendar, degraded: list
                         load_bars: Callable[[list[Path]], pd.DataFrame] = load_raw_bars,
                         embedded: list[dict] | None = None,
                         seal_paths: Sequence[ho.HoldoutPaths] | None = None,
-                        sealed_roots: Sequence[Path] = (SEALED_ROOT,)) -> bb.BuildResult:
-    """Everything except writing. ``summary`` carries counts, dates and flags only."""
+                        sealed_roots: Sequence[Path] = (SEALED_ROOT,),
+                        closure_rulings: Path = CLOSURE_RULINGS_PATH) -> bb.BuildResult:
+    """Everything except writing. ``summary`` carries counts, dates and flags only.
+    ``closure_rulings``: the enumerated closure-bar ruling file (harness v9)."""
     refuse_inputs(spec.root, spec.files, sealed_roots=sealed_roots, seal_paths=seal_paths)
     summary: dict[str, Any] = {
         "product": spec.root, "group": spec.group, "continuous": spec.continuous,
@@ -235,7 +252,7 @@ def build_step2_product(spec: bb.ProductSpec, cal: GroupCalendar, degraded: list
     del decoded
     summary["window_drops"] = drop_log
     return _build_window(spec, cal, degraded, rolls, symbology, roll_source, raw, days, summary,
-                         problems, embedded)
+                         problems, embedded, Path(closure_rulings))
 
 
 def _record_counts(spec: bb.ProductSpec, raw: pd.DataFrame, summary: dict) -> list[str]:
@@ -264,8 +281,8 @@ def _window_ns(cal: GroupCalendar) -> tuple[int, int, Any]:
 
 def _build_window(spec: bb.ProductSpec, cal: GroupCalendar, degraded: list[dict], rolls: list,
                   symbology: dict | None, roll_source: str, raw: pd.DataFrame, days: np.ndarray,
-                  summary: dict, problems: list[str], embedded: list[dict] | None
-                  ) -> bb.BuildResult:
+                  summary: dict, problems: list[str], embedded: list[dict] | None,
+                  closure_rulings: Path = CLOSURE_RULINGS_PATH) -> bb.BuildResult:
     lo_ns, hi_ns, opened = _window_ns(cal)
     c_starts, c_ends = closed_windows(opened, lo_ns, hi_ns)
     ts = raw["ts_event"].to_numpy().astype(np.int64)
@@ -289,13 +306,92 @@ def _build_window(spec: bb.ProductSpec, cal: GroupCalendar, degraded: list[dict]
         summary["refusal_causes"] = hard
         return bb.BuildResult(summary, None, None)
     deep = [c for c in summary["closure_bars"] if not c["close_minute"]]
-    if deep:
+    ruling, held, refused = _closure_ruling(spec.root, deep, closure_rulings)
+    if refused:
+        summary["refusal_causes"] = refused
+        return bb.BuildResult(summary, None, None)
+    if deep and ruling is None:
         summary["status"] = "held_for_lead"
         summary["refusal_causes"] = [
             f"{len(deep)} bars inside a scheduled closure beyond the close minute (first "
-            f"{deep[0]['ct']} CT): held for the lead before building (ruling L-3)"]
+            f"{deep[0]['ct']} CT): held for the lead before building (ruling L-3)", *held]
         return bb.BuildResult(summary, None, None)
+    if ruling is not None:
+        summary["closure_ruling"] = ruling
     return _flag(spec, cal, degraded, rolls, symbology, raw, days, lo_ns, hi_ns, opened, summary)
+
+
+# ------------------------------------------------------- closure rulings ----
+def load_closure_rulings(path: Path) -> tuple[list[dict], str]:
+    """(entries, sha256 of the bytes parsed) of a closure_rulings/1 file. Step2StoreRefused
+    unless it has a ruling text and every entry holds exactly root, ct, trade_date and ruling
+    as strings, the ruling is keep_and_flag (the only one v9 applies) and no entry repeats."""
+    path = Path(path)
+    raw = path.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    try:
+        payload = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise Step2StoreRefused(f"closure ruling {path.name}: not JSON ({exc})") from exc
+    if not isinstance(payload, dict) or payload.get("schema") != CLOSURE_RULINGS_SCHEMA:
+        raise Step2StoreRefused(f"closure ruling {path.name}: schema is not "
+                                f"{CLOSURE_RULINGS_SCHEMA!r}")
+    text, entries = payload.get("ruling"), payload.get("entries")
+    if not isinstance(text, str) or not text.strip() or not isinstance(entries, list):
+        raise Step2StoreRefused(f"closure ruling {path.name}: needs a ruling text and an entries "
+                                "list")
+    seen: set[tuple[str, str, str]] = set()
+    for i, entry in enumerate(entries):
+        if not isinstance(entry, dict) or set(entry) != set(RULING_ENTRY_KEYS) or not all(
+                isinstance(entry[k], str) for k in RULING_ENTRY_KEYS):
+            raise Step2StoreRefused(f"closure ruling {path.name}: entry {i} must hold exactly "
+                                    f"{list(RULING_ENTRY_KEYS)} as strings")
+        if entry["ruling"] != KEEP_AND_FLAG:
+            raise Step2StoreRefused(f"closure ruling {path.name}: entry {i} rules "
+                                    f"{entry['ruling']!r}; harness v9 applies {KEEP_AND_FLAG!r} "
+                                    "only")
+        key = (entry["root"], entry["ct"], entry["trade_date"])
+        if key in seen:
+            raise Step2StoreRefused(f"closure ruling {path.name}: entry {i} repeats {key}")
+        seen.add(key)
+    return entries, digest
+
+
+def _closure_ruling(root: str, deep: list[dict], path: Path
+                    ) -> tuple[dict | None, list[str], list[str]]:
+    """(the summary's "closure_ruling" record when the file rules every one of ``deep``, held
+    causes, refusal causes). ``deep``: the root's closure bars beyond the close minute, as the
+    summary's closure_bars rows. A missing file rules nothing."""
+    path = Path(path)
+    if not path.is_file():
+        return None, ([f"no closure ruling file at {bb._rel(path)}"] if deep else []), []
+    try:
+        entries, digest = load_closure_rulings(path)
+    except Step2StoreRefused as exc:
+        return None, [], [str(exc)]
+    mine = [e for e in entries if e["root"] == root]
+    bar_keys = Counter((c["ct"], c["trade_date"]) for c in deep)
+    listed = {(e["ct"], e["trade_date"]) for e in mine}
+    unmatched = [e for e in mine if (e["ct"], e["trade_date"]) not in bar_keys]
+    unlisted = [c for c in deep if (c["ct"], c["trade_date"]) not in listed]
+    ambiguous = sorted(k for k, n in bar_keys.items() if n > 1)
+    held = []
+    if unlisted:
+        held.append(f"{len(unlisted)} of them not listed in {path.name}: " + ", ".join(
+            f"{c['ct']} CT (trade date {c['trade_date']})" for c in unlisted))
+    if ambiguous:
+        held.append(f"{len(ambiguous)} (ct, trade date) key(s) name more than one bar: "
+                    f"{ambiguous}")
+    if unmatched:
+        return None, held, [
+            f"closure ruling {path.name} (sha256 {digest}) lists {len(unmatched)} {root} bar(s) "
+            "that are not bars inside a scheduled closure beyond the close minute in this build: "
+            + ", ".join(f"{e['ct']} CT (trade date {e['trade_date']})" for e in unmatched),
+            *held]
+    if held or not deep:
+        return None, held, []
+    return {"path": bb._rel(path), "sha256": digest, "bars_ruled": len(deep),
+            "entries": mine}, [], []
 
 
 def _flag(spec: bb.ProductSpec, cal: GroupCalendar, degraded: list[dict], rolls: list,
@@ -381,6 +477,7 @@ def _metadata(spec: bb.ProductSpec, rolls: list, summary: dict) -> dict:
         "purchase_manifest": summary.get("purchase_manifest"),
         "sealed_chunks_not_opened": summary["sealed_chunks_not_opened"],
         "harness_sha256": summary["harness_sha256"],
+        **({"closure_ruling": summary["closure_ruling"]} if "closure_ruling" in summary else {}),
     }
 
 
@@ -389,10 +486,11 @@ def run_product(root: str, *, expected_harness_sha256: str, out_base: Path = STE
                 reports_base: Path = STEP2_REPORTS, rolls_dir: Path = ROLLS_DIR,
                 condition: Path = CONDITION_PATH,
                 client_factory: Callable[[], Any] | None = None,
-                log: Callable[[str], None] = print) -> dict:
+                log: Callable[[str], None] = print,
+                closure_rulings: Path = CLOSURE_RULINGS_PATH) -> dict:
     """One product end to end: the harness preflight FIRST (before any purchased file is read;
     its sha256 goes into the summary and the parquet metadata), then spec, rolls, build, write
-    (never over an existing file)."""
+    (never over an existing file). ``closure_rulings``: the harness v9 ruling file."""
     from screening import harness_freeze  # lazy: keeps the module importable without it
 
     harness_sha256 = harness_freeze.preflight(expected_harness_sha256)
@@ -404,7 +502,8 @@ def run_product(root: str, *, expected_harness_sha256: str, out_base: Path = STE
     rolls, symbology, source = bb.ensure_rolls(spec, client_factory, log)
     embedded = bb.embedded_intervals([f.path for f in spec.files], spec.continuous)
     result = build_step2_product(spec, cal, bb.degraded_days(condition), rolls, symbology,
-                                 source, harness_sha256=harness_sha256, embedded=embedded)
+                                 source, harness_sha256=harness_sha256, embedded=embedded,
+                                 closure_rulings=closure_rulings)
     manifest = purchase_manifest_path(root, reports_base)
     result.summary["purchase_manifest"] = {"path": bb._rel(manifest),
                                            "sha256": bb.sha256_file(manifest)}

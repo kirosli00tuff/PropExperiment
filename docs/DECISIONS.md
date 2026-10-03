@@ -443,3 +443,25 @@
   a screen (t >= 1.0), and confirmation rests on the nested
   out-of-sample t >= 3, the DSR at N_total and the holdout-2 read. Stage
   E.12 freezes v2, buys phase 1, runs Gate 0 once, and stops.
+- 2026-10-03 (user, planning chat): V24. After E.12. Gate 0 failed
+  (best pair NG h60, t_B 2.51 against the Holm bar near 3.6; pooled
+  family B mean gross -0.72 ticks against 2.26 ticks of cost; Fable
+  verified all 273 tests). Under the frozen V2.2b, ML route v2 stops: no
+  phase-2 purchase, no V2.6 model, no holdout-2 registration. Program N
+  is 471. Harness v9 (7fd757f6..., the keep-and-flag ruling path for 24
+  closure bars, chosen at the session's mid-stage question) stays in
+  force. The phase-1 stores stay on disk; any reuse needs a new
+  pre-registration that counts N = 471. Funds left: acct-1 $1.61,
+  acct-2 $18.07, with no spend approved beyond V23. The user chooses to
+  keep searching rather than pause. Stage E.13 is a research and
+  scoping stage with no market-data read and no purchase: (a) venues
+  that allow multi-day holds with automation (prop firms, including
+  Phidias's semi-automated reading in the 2026-09-28 entry, and a
+  personal micro-futures account for a Canadian resident), with the
+  trend and carry evidence and the capital it needs; (b) new information
+  sources for intraday signals (positioning, storage and weather
+  surprises, implied volatility); (c) a draft pre-registration for a
+  backward NG replication on 2010-2019 data, with its feasibility and
+  quoted cost; (d) a ranking of these against each other, with
+  pre-registration drafts for the top one or two. Re-running Gate 0,
+  relaxing its bar, or re-mining the 2019-2024 stores is ruled out.

@@ -1,0 +1,432 @@
+........................................................................ [  1%]
+........................................................................ [  2%]
+........................................................................ [  3%]
+................................................x....................... [  4%]
+....................................................s................... [  5%]
+........................................................................ [  6%]
+........................................................................ [  7%]
+........................................................................ [  8%]
+........................................................................ [  9%]
+........................................................................ [ 11%]
+........................................................................ [ 12%]
+........................................................................ [ 13%]
+........................................................................ [ 14%]
+........................................................................ [ 15%]
+........................................................................ [ 16%]
+........................................................................ [ 17%]
+........................................................................ [ 18%]
+........................................................................ [ 19%]
+.....................................................................s.. [ 21%]
+........................................................................ [ 22%]
+........................................................................ [ 23%]
+........................................................................ [ 24%]
+......F....F..................FF........................................ [ 25%]
+.......F................................................................ [ 26%]
+........................................................................ [ 27%]
+........................................................................ [ 28%]
+........................................................................ [ 29%]
+........................................................................ [ 30%]
+........................................................................ [ 32%]
+........................................................................ [ 33%]
+........................................................................ [ 34%]
+........................................................................ [ 35%]
+........................................................................ [ 36%]
+........................................................................ [ 37%]
+........................................................................ [ 38%]
+........................................................................ [ 39%]
+........................................................................ [ 40%]
+........................................................................ [ 42%]
+........................................................................ [ 43%]
+........................................................................ [ 44%]
+........................................................................ [ 45%]
+........................................................................ [ 46%]
+........................................................................ [ 47%]
+........................................................................ [ 48%]
+........................................................................ [ 49%]
+........................................................................ [ 50%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+........................................................................ [ 54%]
+........................................................................ [ 55%]
+........................................................................ [ 56%]
+........................................................................ [ 57%]
+........................................................................ [ 58%]
+........................................................................ [ 59%]
+........................................................................ [ 60%]
+........................................................................ [ 61%]
+........................................................................ [ 63%]
+........................................................................ [ 64%]
+........................................................................ [ 65%]
+........................................................................ [ 66%]
+........................................................................ [ 67%]
+........................................................................ [ 68%]
+........................................................................ [ 69%]
+........................................................................ [ 70%]
+........................................................................ [ 71%]
+........................................................................ [ 72%]
+..................................x..x.................................. [ 74%]
+........................................................................ [ 75%]
+........................................................................ [ 76%]
+........................................................................ [ 77%]
+........................................................................ [ 78%]
+........................................................................ [ 79%]
+........................................................................ [ 80%]
+........................................................................ [ 81%]
+........................................................................ [ 82%]
+........................................................................ [ 84%]
+......................................................................F. [ 85%]
+........................................................................ [ 86%]
+........................................................................ [ 87%]
+........................................................................ [ 88%]
+........................................................................ [ 89%]
+........................................................................ [ 90%]
+........................................................................ [ 91%]
+........................................................................ [ 92%]
+........................................................................ [ 94%]
+........................................................................ [ 95%]
+........................................................................ [ 96%]
+........................................................................ [ 97%]
+........................................................................ [ 98%]
+........................................................................ [ 99%]
+..............................                                           [100%]
+=================================== FAILURES ===================================
+__ test_quote_only_issues_no_billable_request_and_ledgers_zero_lines_on_acct2 __
+
+tmp_path = PosixPath('/tmp/pytest-of-kiros-li/pytest-86/test_quote_only_issues_no_bill0')
+capsys = <_pytest.capture.CaptureFixture object at 0x7386d143a1e0>
+
+    def test_quote_only_issues_no_billable_request_and_ledgers_zero_lines_on_acct2(
+            tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+        # Arrange
+        before = real_state()
+        client = quote_client()
+        ledger = tmp_path / "ledger.jsonl"
+        ledger.write_text(json.dumps({"session_id": "stage-E.1-2026-09-24", "event": "commit",
+                                      "usd": 103.48, "account": "acct-2",
+                                      "request": {"x": 1}}) + "\n", encoding="utf-8")
+        out_json, out_md = tmp_path / "q.json", tmp_path / "q.md"
+    
+        # Act
+        rc = ps.main(["--quote-only", "--set", "ml-route"], key_loader=lambda **kw: "SECRET-KEY-XYZ",
+                     gate_factory=gates_for(tmp_path, ledger),
+                     client_factory=lambda key: client, quotes_json=out_json, quotes_md=out_md,
+                     log=lambda m: None)
+    
+        # Assert: nothing billable touched; every new line a $0.00 quote on acct-2 under the active
+        # step 2 purchase policy's session id (data/config.py; Stage E.12 on, stage-E.12-2026-10-03).
+        assert rc == 0 and client.billable_hits == []
+        with pytest.raises(RuntimeError, match="forbidden"):
+            client.timeseries.get_range(dataset="GLBX.MDP3")
+        new = read_entries(ledger)[1:]
+        assert len(new) == 30 * 71 + 48  # MBT from 2021-04 (OC-R): no pre-listing month requested
+        assert {(e["event"], e["usd"], e["account"], e["session_id"]) for e in new} == {
+            ("quote", 0.0, "acct-2", config.STEP2_PURCHASE_SESSION_ID)}
+        payload = json.loads(out_json.read_text(encoding="utf-8"))
+        section = payload["sets"]["ml-route"]
+        assert section["contracts"] == 31 and section["chunks"] == 2178 and section["complete"]
+        assert section["first_priced_month"] == {"MBT": "2021-04-01"}
+        assert payload["account"]["spent_usd"] == pytest.approx(103.48)
+        headroom = config.ACCOUNT_2_CAP_USD - 103.48  # credit left = cap headroom since V19
+        assert payload["account"]["cap_headroom_usd"] == pytest.approx(headroom)
+        assert payload["account"]["credit_left_usd"] == pytest.approx(headroom)
+        assert (payload["session_cap_usd"], payload["request_cap_usd"]) == (
+            ps.STEP2_SESSION_CAP_USD, ps.STEP2_REQUEST_CAP_USD)  # the active caps, whatever they are
+        total = section["total_usd"]
+        assert total == pytest.approx(sum(r["usd"] for r in section["per_contract"].values()))
+        assert total == pytest.approx(sum(c["usd"] for c in section["per_cluster"].values()))
+        assert section["topup_usd_at_quote"] == pytest.approx(round(max(0, total - headroom), 2))
+        assert set(section["per_cluster"]) == set(ps.CLUSTERS)
+        md = out_md.read_text(encoding="utf-8")
+        assert "31 contracts, 2178 chunks" in md and "| MBT | K7 |" in md
+        out = capsys.readouterr()
+        assert "SECRET-KEY-XYZ" not in out.out + out.err + md + out_json.read_text(encoding="utf-8")
+>       assert real_state() == before
+E       assert (24497, 8284, 39962, True) == (24458, 8284, 39962, True)
+E         
+E         At index 0 diff: 24497 != 24458
+E         Use -v to get more diff
+
+tests/test_e2b_pull_step2.py:305: AssertionError
+_ test_buy_seals_each_holdout_chunk_after_its_byte_check_before_the_next_request _
+
+tmp_path = PosixPath('/tmp/pytest-of-kiros-li/pytest-86/test_buy_seals_each_holdout_ch0')
+preflight_ok = ['abababababababababababababababababababababababababababababababab']
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7386d32c0290>
+
+    def test_buy_seals_each_holdout_chunk_after_its_byte_check_before_the_next_request(
+            tmp_path: Path, preflight_ok: list[str], monkeypatch: pytest.MonkeyPatch) -> None:
+        # Arrange: record the order of downloads, byte checks and seals.
+        before = real_state()
+        events: list[str] = []
+        make = paths_for(tmp_path)
+        zn_paths = make("ZN")
+    
+        def on_call(kw: dict[str, Any]) -> None:
+            sealed = [Path(r["original_path"]).name for r in
+                      (ho.load_manifest(zn_paths)["raw_files"] if zn_paths.manifest.exists() else [])]
+            plain = [p.name for p in seal.chunk_paths("ZN", zn_paths) if p.exists()]
+            events.append(f"download {kw['start']} sealed={len(sealed)} plaintext={plain}")
+    
+        real_check, real_seal = adapter.delivered_record_bytes, seal.seal_chunk
+        monkeypatch.setattr(adapter, "delivered_record_bytes",
+                            lambda p: events.append(f"check {Path(p).name}") or real_check(p))
+        monkeypatch.setattr(seal, "seal_chunk", lambda r, raw, p, note="": events.append(
+            f"seal {Path(raw).name}") or real_seal(r, raw, p, note=note))
+        client = buy_client(on_call=on_call)
+        plan = ps.plan_step2(["ZN"])[ZN_SUBPLAN]
+    
+        # Act
+        done = run(tmp_path, client, plan)
+    
+        # Assert: order, ledger, seals, no plaintext of a sealed range, manifests.
+        assert [e.split()[0] for e in events] == ["download", "check"] * 2 + [
+            "download", "check", "seal"] * 3
+        assert events[4] == "download 2024-03-01 sealed=0 plaintext=[]"
+        assert events[7] == "download 2024-04-01 sealed=1 plaintext=[]"
+        assert events[10] == "download 2024-05-01 sealed=2 plaintext=[]"
+        assert [d["action"].split()[0] for d in done] == ["bought", "bought"] + ["bought"] * 3
+        entries = read_entries(tmp_path / "ledger.jsonl")
+        assert [e["event"] for e in entries] == ["quote", "commit", "settle"] * 5
+        assert {e["account"] for e in entries} == {"acct-2"}
+        assert {e["session_id"] for e in entries} == {config.STEP2_PURCHASE_SESSION_ID}
+        report = seal.verify("ZN", zn_paths)
+        assert report["chunks_sealed"] == 3 and report["sealed_in_order"]
+        assert report["unsealed_plaintext_present"] == [] and report["unlock_log_ok"]
+        assert all(v["sealed_ok"] and v["plaintext_absent"] for v in report["raw_files"].values())
+        assert not any(p.exists() for p in seal.chunk_paths("ZN", zn_paths))
+        manifest = json.loads((tmp_path / "reports" / "purchase_ZN.json").read_text("utf-8"))
+        assert [f["name"] for f in manifest["files"]] == ["range=2024-01-01_2024-02-01.dbn.zst",
+                                                          "range=2024-02-01_2024-03-01.dbn.zst"]
+        assert all(len(f["sha256"]) == 64 and f["record_count"] > 0 for f in manifest["files"])
+        assert len(manifest["sealed_chunks"]) == 3 and manifest["harness_sha256"] == HARNESS
+        log = (tmp_path / "docs" / "UNLOCK_LOG.md").read_text(encoding="utf-8")
+        assert log.count("SEALED holdout 2 ZN raw chunk") == 3 and " UNLOCK " not in log
+>       assert real_state() == before
+E       assert (24498, 8284, 39962, True) == (24497, 8284, 39962, True)
+E         
+E         At index 0 diff: 24498 != 24497
+E         Use -v to get more diff
+
+tests/test_e2b_pull_step2.py:438: AssertionError
+___ test_quote_only_ledgers_only_zero_lines_under_the_active_session[caps0] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-kiros-li/pytest-86/test_quote_only_ledgers_only_z0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7386d32c0f80>
+caps = (0.0, 0.0)
+
+    @pytest.mark.parametrize("caps", CAP_CASES)
+    def test_quote_only_ledgers_only_zero_lines_under_the_active_session(
+            tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caps: tuple[float, float]) -> None:
+        # Arrange
+        before = real_state()
+        set_caps(monkeypatch, *caps)
+        ledger = tmp_path / "ledger.jsonl"
+        client = quote_client()
+    
+        # Act
+        rc = ps.main(["--quote-only", "--set", "ml-route"], key_loader=lambda **kw: "k",
+                     gate_factory=gates_for(tmp_path, ledger),
+                     client_factory=lambda key: client, quotes_json=tmp_path / "q.json",
+                     quotes_md=tmp_path / "q.md", log=lambda m: None)
+    
+        # Assert: whatever the caps, only $0.00 quote lines on acct-2 under the active session id.
+        entries = read_entries(ledger)
+        assert rc == 0 and client.billable_hits == [] and entries
+        assert {(e["event"], e["usd"], e["account"], e["session_id"]) for e in entries} == {
+            ("quote", 0.0, "acct-2", ACTIVE_SESSION)}
+        payload = json.loads((tmp_path / "q.json").read_text(encoding="utf-8"))
+        assert payload["session_id"] == ACTIVE_SESSION
+        assert (payload["session_cap_usd"], payload["request_cap_usd"]) == caps
+>       assert real_state() == before
+E       assert (24543, 8284, 39962, True) == (24506, 8284, 39962, True)
+E         
+E         At index 0 diff: 24543 != 24506
+E         Use -v to get more diff
+
+tests/test_e2b_pull_step2.py:753: AssertionError
+___ test_quote_only_ledgers_only_zero_lines_under_the_active_session[caps1] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-kiros-li/pytest-86/test_quote_only_ledgers_only_z1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7386d2187290>
+caps = (21.52, 3.0)
+
+    @pytest.mark.parametrize("caps", CAP_CASES)
+    def test_quote_only_ledgers_only_zero_lines_under_the_active_session(
+            tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caps: tuple[float, float]) -> None:
+        # Arrange
+        before = real_state()
+        set_caps(monkeypatch, *caps)
+        ledger = tmp_path / "ledger.jsonl"
+        client = quote_client()
+    
+        # Act
+        rc = ps.main(["--quote-only", "--set", "ml-route"], key_loader=lambda **kw: "k",
+                     gate_factory=gates_for(tmp_path, ledger),
+                     client_factory=lambda key: client, quotes_json=tmp_path / "q.json",
+                     quotes_md=tmp_path / "q.md", log=lambda m: None)
+    
+        # Assert: whatever the caps, only $0.00 quote lines on acct-2 under the active session id.
+        entries = read_entries(ledger)
+        assert rc == 0 and client.billable_hits == [] and entries
+        assert {(e["event"], e["usd"], e["account"], e["session_id"]) for e in entries} == {
+            ("quote", 0.0, "acct-2", ACTIVE_SESSION)}
+        payload = json.loads((tmp_path / "q.json").read_text(encoding="utf-8"))
+        assert payload["session_id"] == ACTIVE_SESSION
+        assert (payload["session_cap_usd"], payload["request_cap_usd"]) == caps
+>       assert real_state() == before
+E       assert (24581, 8284, 39962, True) == (24543, 8284, 39962, True)
+E         
+E         At index 0 diff: 24581 != 24543
+E         Use -v to get more diff
+
+tests/test_e2b_pull_step2.py:753: AssertionError
+___ test_holdout2_only_quotes_reach_only_gate_quote_and_report_both_accounts ___
+
+tmp_path = PosixPath('/tmp/pytest-of-kiros-li/pytest-86/test_holdout2_only_quotes_reac0')
+capsys = <_pytest.capture.CaptureFixture object at 0x7386d1e94530>
+
+    def test_holdout2_only_quotes_reach_only_gate_quote_and_report_both_accounts(
+            tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+        # Arrange: acct-2 already spent $124.67 in this ledger, acct-1 $9.47 here + $82.12 external
+        before = real_state()
+        ledger = tmp_path / "ledger.jsonl"
+        ledger.write_text("".join(json.dumps(e) + "\n" for e in (
+            {"session_id": "old", "event": "commit", "usd": 124.67, "account": "acct-2"},
+            {"session_id": "old", "event": "commit", "usd": 9.47, "account": "acct-1"})),
+            encoding="utf-8")
+        factory = factory_for(tmp_path)
+        (tmp_path / "external_ledger.jsonl").write_text(
+            json.dumps({"usd": 82.12}) + "\n", encoding="utf-8")
+        client = quote_client()
+        out = tmp_path / "e12" / "quotes.json"
+        keys: list[dict[str, Any]] = []
+    
+        # Act
+        rc = ps.main(["--quote-only", "--set", "ml-v2", "--holdout2-only", "--quotes-out", str(out)],
+                     key_loader=lambda **kw: keys.append(kw) or FAKE_KEY, gate_factory=factory,
+                     client_factory=lambda key: client, quotes_json=tmp_path / "unused.json",
+                     log=lambda m: None)
+    
+        # Assert: free metadata only, $0.00 quote lines on acct-2 (the default) under E.12
+        assert rc == 0 and client.billable_hits == [] and keys == [{"account": "acct-2"}]
+        with pytest.raises(RuntimeError, match="forbidden"):
+            client.timeseries.get_range(dataset="GLBX.MDP3")
+        new = read_entries(ledger)[2:]
+        assert len(new) == 28 * 13
+        assert {(e["event"], e["usd"], e["account"], e["session_id"]) for e in new} == {
+            ("quote", 0.0, "acct-2", E12)}
+        assert all(e["request"]["start"] >= "2024-03-01" for e in new)
+        payload = json.loads(out.read_text(encoding="utf-8"))
+        section = payload["sets"]["ml-v2+holdout2-only"]
+        assert (section["contracts"], section["chunks"], section["complete"]) == (28, 364, True)
+        assert section["total_usd"] == pytest.approx(sum(
+            r["usd_sealed_2024_03_2025_03"] for r in section["per_contract"].values()))
+        positions = payload["accounts"]["positions"]
+        assert set(positions) == {"acct-1", "acct-2"}
+        assert positions["acct-2"]["spent_usd"] == pytest.approx(124.67)
+        assert positions["acct-2"]["account_cap_usd"] == config.ACCOUNT_2_CAP_USD
+        assert positions["acct-2"]["cap_headroom_usd"] == pytest.approx(
+            config.ACCOUNT_2_CAP_USD - 124.67)
+        assert positions["acct-1"]["spent_usd"] == pytest.approx(9.47 + 82.12)
+        assert positions["acct-1"]["cap_headroom_usd"] == pytest.approx(120.00 - 9.47 - 82.12)
+        assert payload["accounts"]["combined_headroom_usd"] == pytest.approx(
+            positions["acct-1"]["cap_headroom_usd"] + positions["acct-2"]["cap_headroom_usd"])
+        md = out.with_suffix(".md").read_text(encoding="utf-8")
+        assert md.startswith(f"# Step 2 quotes, session {E12}")
+        assert "## ml-v2+holdout2-only" in md and "| acct-1 |" in md and "| acct-2 |" in md
+        assert not (tmp_path / "unused.json").exists()
+        captured = capsys.readouterr()
+        assert FAKE_KEY not in captured.out + captured.err + md + out.read_text(encoding="utf-8")
+>       assert real_state() == before
+E       assert (24583, 8284, 39962, True) == (24581, 8284, 39962, True)
+E         
+E         At index 0 diff: 24583 != 24581
+E         Use -v to get more diff
+
+tests/test_e2b_pull_step2_e12.py:461: AssertionError
+________ test_quote_only_makes_no_billable_call_and_writes_the_summary _________
+
+tmp_path = PosixPath('/tmp/pytest-of-kiros-li/pytest-86/test_quote_only_makes_no_billa0')
+capsys = <_pytest.capture.CaptureFixture object at 0x738698ab9ac0>
+
+    def test_quote_only_makes_no_billable_call_and_writes_the_summary(
+        tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        # Arrange
+        real = (_lines(config.LEDGER_PATH), config.ACCESS_DOC_PATH.stat().st_size
+                if config.ACCESS_DOC_PATH.exists() else 0)
+        client = quote_only_client()
+        logged: list[str] = []
+        summary_path = tmp_path / "reports" / "stage_e1_quote_summary.json"
+    
+        # Act
+        rc = pu.main(["--quote-only"], key_loader=lambda: "SECRET-KEY-DO-NOT-PRINT",
+                     gate_factory=lambda: gate(tmp_path, session_cap_usd=0.0),
+                     client_factory=lambda key: client, summary_path=summary_path,
+                     log=logged.append)
+    
+        # Assert: nothing billable was touched, and a download attempt now raises.
+        assert rc == 0
+        assert client.billable_hits == []
+        assert isinstance(client.timeseries, qu.ForbiddenNamespace)
+        with pytest.raises(RuntimeError, match="forbidden"):
+            client.timeseries.get_range(dataset="GLBX.MDP3")
+        with pytest.raises(RuntimeError, match="forbidden"):
+            client.batch.submit_job()
+        entries = read_entries(tmp_path / "ledger.jsonl")
+        assert len(entries) == 900 + 4  # two expensive MNQ days quoted whole, then as halves
+        assert {(e["event"], e["usd"], e["account"], e["session_id"]) for e in entries} == {
+            ("quote", 0.0, "acct-2", "stage-E.1-2026-09-24")}
+        summary = json.loads(summary_path.read_text())
+        counts = summary["counts"]
+        assert (counts["planned_requests"], counts["pieces"], counts["requests_split"],
+                counts["split_pieces"], counts["max_depth"]) == (900, 902, 2, 4, 1)
+        assert summary["complete"] and counts["quote_failed"] == counts["split_refused"] == 0
+        assert summary["largest_piece"]["usd"] <= 3.00
+        assert summary["largest_piece"]["root"] == "MNQ" and summary["account"] == "acct-2"
+        assert len(summary["per_root"]) == 45 and set(summary["per_schema"]) == {"ohlcv-1m", "mbp-1"}
+        assert set(summary["per_cluster"]) == {"K1", "K2", "K3", "K4", "K5", "K6", "K7"}
+        mnq = summary["per_root"]["MNQ"]
+        assert (mnq["requests"], mnq["pieces"], mnq["cluster"]) == (20, 22, "K1")
+        assert sum(b["requests"] for b in summary["per_cluster"].values()) == 900
+        total = sum(b["usd"] for b in summary["per_root"].values())
+        assert summary["total_usd"] == pytest.approx(total)
+        assert summary["total_usd"] == pytest.approx(
+            sum(b["usd"] for b in summary["per_schema"].values()))
+        out = capsys.readouterr()
+        everything = "\n".join(logged) + out.out + out.err + summary_path.read_text()
+        assert "SECRET-KEY-DO-NOT-PRINT" not in everything
+        assert f"account acct-2 (cap ${config.ACCOUNT_2_CAP_USD:.2f}" in logged[0]
+        assert "request cap $3.00" in logged[0]
+>       assert (_lines(config.LEDGER_PATH), config.ACCESS_DOC_PATH.stat().st_size
+                if config.ACCESS_DOC_PATH.exists() else 0) == real
+E       assert (25130, 8030) == (25126, 8030)
+E         
+E         At index 0 diff: 25130 != 25126
+E         Use -v to get more diff
+
+tests/test_pull_universe.py:395: AssertionError
+=============================== warnings summary ===============================
+tests/test_e2a_exposure_gate.py: 34 warnings
+tests/test_funnel_simulator.py: 18 warnings
+  /home/kiros-li/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/multiprocessing/popen_fork.py:66: DeprecationWarning: This process (pid=1505555) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+tests/test_funnel_simulator.py::test_summarize_hand_computed_on_three_run_results
+  /home/kiros-li/Documents/GitHub/PropExperiment/.venv/lib/python3.12/site-packages/numpy/lib/_function_base_impl.py:4609: RuntimeWarning: invalid value encountered in scalar multiply
+    lerp_interpolation = add(a, diff_b_a * t, out=... if out is None else out)
+
+tests/test_stage_e_runner.py::test_an_empty_window_supplies_0_days_and_the_member_is_inconclusive_by_design
+  /home/kiros-li/Documents/GitHub/PropExperiment/screening/stage_e_stats_power.py:218: RuntimeWarning: invalid value encountered in multiply
+    t_stat = np.where(positive, shifted / safe_se, np.inf * np.sign(shifted))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_e2b_pull_step2.py::test_quote_only_issues_no_billable_request_and_ledgers_zero_lines_on_acct2
+FAILED tests/test_e2b_pull_step2.py::test_buy_seals_each_holdout_chunk_after_its_byte_check_before_the_next_request
+FAILED tests/test_e2b_pull_step2.py::test_quote_only_ledgers_only_zero_lines_under_the_active_session[caps0]
+FAILED tests/test_e2b_pull_step2.py::test_quote_only_ledgers_only_zero_lines_under_the_active_session[caps1]
+FAILED tests/test_e2b_pull_step2_e12.py::test_holdout2_only_quotes_reach_only_gate_quote_and_report_both_accounts
+FAILED tests/test_pull_universe.py::test_quote_only_makes_no_billable_call_and_writes_the_summary
+6 failed, 6499 passed, 2 skipped, 3 xfailed, 54 warnings in 1314.74s (0:21:54)
+exit 1

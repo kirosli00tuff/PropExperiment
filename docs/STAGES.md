@@ -124,6 +124,10 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     configurations, nested CPCV; drawdown-distance sizing, kill switches, payout simulation); ml_route_v2/ with 704
     synthetic tests, all leakage canaries caught; harness v7 (per-account Databento keys). No market data, nothing
     bought, frozen or trained; N stays 198. A freeze session follows the user's 19 decisions.
+  - Stage E.12 — ML route v2 frozen, phase 1 bought, Gate 0 run once. Run 2026-10-03 (see
+    reports/E.12_RETURN.md): v2 frozen (9466f2e) with V23; harness v8 and, by the user's decision on 24 held
+    closure bars, v9; all 28 exposures' training windows bought for $133.72; Gate 0 FAIL (best NG h60, 3.25x
+    cost, t 2.51, not Holm-rejected), verified by Fable; v2 stops; N = 471.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

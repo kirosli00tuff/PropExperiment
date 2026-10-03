@@ -20,11 +20,16 @@ section 4. For a decision row at t (decision_ts_ns) of vehicle X with flatten F_
   a minute no calibrated bucket covers: NaN;
 - y_norm_<h> = y_gross / sigma_X,d (v1 ML-A06, signals._daily); ok_<h>: every one of y_gross,
   both costs and sigma_X,d present (sigma > 0).
+- release_window (V23 item 11; E.12 lead rule P-5): True where the entry fill (entry_ts_ns, after
+  the D9.5a deferral) lies in [r - 5 min, r + 30 min) of a release r of the vehicle's own list (the
+  list the deferral and the event-window cost use; portfolio.release_window_mask); False where
+  there is no entry. The portfolio layer reads it (decide.candidates carries it); it is no feature;
 - ``cost_missing_counts``: per (root, horizon), the rows whose gross move is formed but whose
   fill minute has no calibrated cost bucket (a cost NaN), which ok_<h> drops from training and
   scoring; panel.build_panel puts them in Panel.counts (code review C-05).
-Columns: entry_price (vendor units of the price path), entry_ts_ns (addition), sigma_d, then per
-horizon y_gross, cost_long, cost_short, exit_ts_ns, y_norm, ok.
+Columns: entry_price (vendor units of the price path), entry_ts_ns (addition), release_window
+(addition, V23 item 11), sigma_d, then per horizon y_gross, cost_long, cost_short, exit_ts_ns,
+y_norm, ok.
 """
 
 from __future__ import annotations
@@ -40,6 +45,7 @@ import pandas as pd
 
 from ml_route_v2.clock import minutes_after_midnight_ct
 from ml_route_v2.constants import HORIZON_MINUTES, HORIZONS, UNIVERSE
+from ml_route_v2.portfolio import release_window_mask
 from ml_route_v2.signals._core import (
     NS_MIN,
     BarArrays,
@@ -187,8 +193,9 @@ def _vehicle_targets(v: str, b: BarArrays, t: np.ndarray, flat: np.ndarray, days
         ok_e &= ~_in_window(entry_ns + CPI_HALF_WINDOW_NS, cpi, 2 * CPI_HALF_WINDOW_NS + 1)
     entry_open = np.where(ok_e, b.open[np.clip(i_e, 0, None)], np.nan)
     ev_e = _in_window(entry_ns, rel, EVENT_WINDOW_NS)
-    out: dict[str, np.ndarray] = {"entry_price": entry_open,
-                                  "entry_ts_ns": np.where(ok_e, entry_ns, -1)}
+    entry_fill = np.where(ok_e, entry_ns, -1)
+    out: dict[str, np.ndarray] = {"entry_price": entry_open, "entry_ts_ns": entry_fill,
+                                  "release_window": release_window_mask(entry_fill, rel)}
     for h in HORIZONS:
         mins = HORIZON_MINUTES[h]
         if mins is None:
@@ -220,7 +227,8 @@ def build_targets(rows: pd.DataFrame, bars: Mapping[str, pd.DataFrame], *, relea
     n = len(rows)
     sig = sigma_d(rows, bars, _memo=memo).to_numpy()
     cols: dict[str, np.ndarray] = {"entry_price": np.full(n, np.nan),
-                                   "entry_ts_ns": np.full(n, -1, np.int64), "sigma_d": sig}
+                                   "entry_ts_ns": np.full(n, -1, np.int64),
+                                   "release_window": np.zeros(n, dtype=bool), "sigma_d": sig}
     for h in HORIZONS:
         for stem in ("y_gross", "cost_long", "cost_short"):
             cols[f"{stem}_{h}"] = np.full(n, np.nan)
@@ -245,7 +253,7 @@ def build_targets(rows: pd.DataFrame, bars: Mapping[str, pd.DataFrame], *, relea
         cols[f"y_norm_{h}"] = np.where(good_sigma, y / np.where(good_sigma, sig, 1.0), np.nan)
         cols[f"ok_{h}"] = (np.isfinite(y) & np.isfinite(cols[f"cost_long_{h}"])
                            & np.isfinite(cols[f"cost_short_{h}"]) & good_sigma)
-    order = ["entry_price", "entry_ts_ns", "sigma_d"]
+    order = ["entry_price", "entry_ts_ns", "release_window", "sigma_d"]
     for h in HORIZONS:
         order += [f"y_gross_{h}", f"cost_long_{h}", f"cost_short_{h}", f"exit_ts_ns_{h}",
                   f"y_norm_{h}", f"ok_{h}"]

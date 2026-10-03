@@ -9,9 +9,15 @@ The positive controls (the whole signal library passes the perturbation test, zs
 the normalizer check, an unshifted world passes the session-grid guard) run beside them.
 
 Gate 0 canaries (c) and (d) call Gate 0 on every pair (admissible=None) in a world whose 60-minute
-sd is 3 round trips: at the c/sigma filter's tau (sd >= 10 c), a sign edge below the cost gate's
-2.5 c hurdle is at most 0.25 sd, which needs roughly 200+ trades per pair to reach Holm's t; a
-seconds-scale test cannot afford that. The filter itself is Task 2's (tests/test_ml_v2_panel.py).
+sd is 3 round trips: at the c/sigma filter's tau (0.167, V23 item 1: sd >= 6 c), an edge at the
+gross reading's lowest hurdle (1.5 c) is at most 0.25 sd, which needs roughly 200+ trades per pair
+to reach Holm's t; a seconds-scale test cannot afford that. The filter itself is Task 2's
+(tests/test_ml_v2_panel.py).
+
+Canary (c) under the decided defaults (V23 item 1): an edge in [1.5 c, 2.5 c) passes Gate 0 and
+the k = 1.5 cost gate trades it under the gross reading (the default); under the literal net
+reading (COST_GATE_READING = "net", pinned by monkeypatch) the same edge is rejected at every k,
+the old canary semantics.
 """
 
 from __future__ import annotations
@@ -22,6 +28,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
+import ml_route_v2.constants as v2c
 from ml_route_v2 import cpcv
 from ml_route_v2.configs import CONFIGS, ConfigLedger, SplitScore, ridge_spec
 from ml_route_v2.constants import COST_GATE_KS, GATE0_COST_MULTIPLE, UNIVERSE
@@ -490,36 +497,81 @@ def test_gate0_c_binary_edge_between_bars_passes_gate0(tmp_path) -> None:
     assert any(t.test_id in verdict.passing for t in h60)
 
 
-def test_gate0_c_binary_edge_is_rejected_by_the_cost_gate_at_every_k() -> None:
+def _mid_edge_oracle():
     panel = g0_panel(MID_EDGE_C, LOW_SIGMA_C)
     data = horizon_data(panel, "h60")
     oracle = _oracle_rhat(data, MID_EDGE_C)
     side_cost = np.where(oracle > 0, data.rows["cost_long_h60"], data.rows["cost_short_h60"])
-    ratio = np.abs(oracle) / side_cost
+    return data, oracle, np.abs(oracle) / side_cost
+
+
+def test_gate0_c_binary_edge_is_rejected_at_every_k_under_the_net_reading(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """The literal F7 reading (selectable, no longer the default): |r_hat| - c > k c needs a
+    predicted gross above 2.5 c, so an edge in [1.5 c, 2.5 c) is never traded."""
+    monkeypatch.setattr(v2c, "COST_GATE_READING", "net")
+    data, oracle, ratio = _mid_edge_oracle()
     assert np.mean((ratio >= GATE0_COST_MULTIPLE) & (ratio < 2.5)) > 0.95  # a sub-hurdle edge
     assert _trades_per_k(data, oracle) == dict.fromkeys(COST_GATE_KS, 0)
 
 
+def test_gate0_c_binary_edge_is_traded_by_the_k15_gate_under_the_gross_reading() -> None:
+    """V23 item 1 (the default): |r_hat| > k c. The same [1.5 c, 2.5 c) edge is NOT rejected by
+    the k = 1.5 gate where the predictions exceed 1.5 c: each k trades exactly the rows whose
+    predicted gross exceeds k round trips, nearly every row at k = 1.5."""
+    assert v2c.COST_GATE_READING == "gross"
+    data, oracle, ratio = _mid_edge_oracle()
+    trades = _trades_per_k(data, oracle)
+    assert trades == {k: int((ratio > k).sum()) for k in COST_GATE_KS}
+    assert trades[COST_GATE_KS[0]] > 0.95 * len(ratio)
+    assert trades[COST_GATE_KS[0]] > trades[COST_GATE_KS[1]] >= trades[COST_GATE_KS[2]]
+
+
 @pytest.mark.xfail(strict=True, reason="reported to lead: C-1 ridge extrapolates a bounded "
                    "(sign) edge linearly in z, so its predicted gross passes 2.5 c on large-|z| "
-                   "rows although the true edge is 2 c; canary (c) holds for the true "
-                   "conditional mean and bounded predictions only")
-def test_gate0_c_binary_edge_ridge_predictions_are_rejected_at_every_k() -> None:
+                   "rows although the true edge is 2 c; canary (c) under the net reading holds "
+                   "for the true conditional mean and bounded predictions only")
+def test_gate0_c_binary_edge_ridge_predictions_are_rejected_at_every_k_under_net(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(v2c, "COST_GATE_READING", "net")
     panel = g0_panel(MID_EDGE_C, LOW_SIGMA_C)
     data, r_hat = _ridge_rhat(panel)
     assert _trades_per_k(data, r_hat) == dict.fromkeys(COST_GATE_KS, 0)
 
 
 def test_gate0_d_sub_cost_edge_fails_gate0_and_the_cost_gate_rejects_it(tmp_path) -> None:
+    """Under the gross default (V23 item 1): Gate 0 fails and the true conditional mean (0.5 c)
+    is rejected at every k. The ridge predictions' side of this canary is split below: rejected
+    at every k under the net reading; under the gross reading see the strict xfail (C-1)."""
+    assert v2c.COST_GATE_READING == "gross"
     panel = g0_panel(SUB_EDGE_C, LOW_SIGMA_C)
     tests, verdict = run_gate0(panel, tmp_path, filtered=False)
     assert not verdict.passed
     h60 = [t for t in _b_tests(tests) if t.horizon == "h60"]
     assert h60 and all(t.mean < GATE0_COST_MULTIPLE * t.cost_ticks for t in h60)
-    data, r_hat = _ridge_rhat(panel)  # bypassing Gate 0
-    assert _trades_per_k(data, r_hat) == dict.fromkeys(COST_GATE_KS, 0)
+    data = horizon_data(panel, "h60")
     assert _trades_per_k(data, _oracle_rhat(data, SUB_EDGE_C)) == \
         dict.fromkeys(COST_GATE_KS, 0)
+
+
+def test_gate0_d_sub_cost_edge_ridge_predictions_rejected_at_every_k_under_net(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """The literal net reading (hurdle 2.5 c at k = 1.5): the ridge predictions of a 0.5 c edge,
+    bypassing Gate 0, are rejected at every k (the E.11 canary, pinned)."""
+    monkeypatch.setattr(v2c, "COST_GATE_READING", "net")
+    data, r_hat = _ridge_rhat(g0_panel(SUB_EDGE_C, LOW_SIGMA_C))
+    assert _trades_per_k(data, r_hat) == dict.fromkeys(COST_GATE_KS, 0)
+
+
+@pytest.mark.xfail(strict=True, reason="reported to lead (E.12, V23Coder): under the gross "
+                   "reading's 1.5 c hurdle, ridge's linear extrapolation of a bounded 0.5 c "
+                   "edge (C-1) passes the k = 1.5 gate on a few large-|z| rows (4 in this "
+                   "world); Gate 0 still fails the edge and the true conditional mean is "
+                   "rejected at every k")
+def test_gate0_d_sub_cost_edge_ridge_predictions_rejected_at_every_k_under_gross() -> None:
+    assert v2c.COST_GATE_READING == "gross"
+    data, r_hat = _ridge_rhat(g0_panel(SUB_EDGE_C, LOW_SIGMA_C))
+    assert _trades_per_k(data, r_hat) == dict.fromkeys(COST_GATE_KS, 0)
 
 
 # ------------------------------------------------------------------ window canary ----

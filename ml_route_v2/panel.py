@@ -21,7 +21,7 @@ reports/stage_e11_interfaces.md section 4.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -64,9 +64,9 @@ def assert_window(panel_or_rows: pd.DataFrame | Panel, mode: str = "train") -> N
                           f"(first {days[late].min()})")
 
 
-def _features(ctx: SignalContext) -> tuple[pd.DataFrame, pd.DataFrame, np.ndarray, dict]:
-    sig = compute_signals(ctx)
-    names = tuple(REGISTRY)
+def _features(ctx: SignalContext, names: tuple[str, ...]
+              ) -> tuple[pd.DataFrame, pd.DataFrame, np.ndarray, dict]:
+    sig = compute_signals(ctx, names)
     raw = sig[[f"raw_{n}" for n in names]].to_numpy(np.float64)
     app = sig[[f"app_{n}" for n in names]].to_numpy(np.float64) > 0
     masked = pd.DataFrame(np.where(app, raw, np.nan), index=ctx.rows.index, columns=list(names))
@@ -104,11 +104,17 @@ def _identifiers(rows: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(cols, index=rows.index)
 
 
-def build_panel(ctx: SignalContext, targets: pd.DataFrame, *, mode: str = "train") -> Panel:
+def build_panel(ctx: SignalContext, targets: pd.DataFrame, *, mode: str = "train",
+                signals: Sequence[str] | None = None) -> Panel:
+    """The panel of ``signals`` (REGISTRY order and all of it when None; Stage E.12 lead rule
+    P-1: phase 1 passes only the signals its roots cover, the others enter as no feature)."""
     assert_window(ctx.rows, mode)
     if not targets.index.equals(ctx.rows.index):
         raise ValueError("targets are not aligned to the decision rows")
-    zf, af, drop, extra = _features(ctx)
+    names = tuple(REGISTRY) if signals is None else tuple(signals)
+    if len(set(names)) != len(names):
+        raise ValueError("duplicate signal names")
+    zf, af, drop, extra = _features(ctx, names)
     ids = _identifiers(ctx.rows)
     frame = pd.concat([ctx.rows[list(ROW_COLUMNS)], zf, af, ids, targets], axis=1)
     keep = ~drop
@@ -119,7 +125,6 @@ def build_panel(ctx: SignalContext, targets: pd.DataFrame, *, mode: str = "train
     avail_max = extra["avail_max"][keep]
     if np.any(avail_max > frame["decision_ts_ns"].to_numpy(np.int64)):
         raise RuntimeError("a kept feature is available after its decision time")
-    names = tuple(REGISTRY)
     feature_cols = (tuple(f"z_{n}" for n in names)
                     + tuple(f"app_{n}" for n in names if n not in ALWAYS_APPLICABLE)
                     + tuple(ids.columns))

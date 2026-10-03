@@ -1,9 +1,10 @@
 """Stage E.11 code review C-01 (lead ruling 2026-10-03): every piece of ML route v2's resumable
 state pins the constants fingerprint (ml_route_v2/fingerprint.py), so state written under one set
 of constants is refused under another. Each test writes state under the default
-COST_GATE_READING ("net"), flips it to "gross" with monkeypatch (the freeze session's one-line
-switch, design D-05) and expects the mismatch error: the CPCV unit store, Gate 0 family B's
-state, a pipeline stage file, an engine-path checkpoint and a payout checkpoint. Also: a
+COST_GATE_READING ("gross", the decided default, V23 item 1), flips it to "net" with
+monkeypatch (the one-line switch, design D-05) and expects the mismatch error: the CPCV unit
+store, Gate 0 family B's state, a pipeline stage file, an engine-path checkpoint and a payout
+checkpoint. Also: a
 functools.partial's bound arguments join the callable's name in the CPCV fingerprint. Synthetic
 data only.
 """
@@ -28,8 +29,8 @@ from tests.test_ml_v2_cpcv import RIDGE_H60, make_panel, stub_score
 
 
 def _flip(monkeypatch: pytest.MonkeyPatch) -> None:
-    assert v2c.COST_GATE_READING == "net"
-    monkeypatch.setattr(v2c, "COST_GATE_READING", "gross")
+    assert v2c.COST_GATE_READING == "gross"  # V23 item 1: the built default
+    monkeypatch.setattr(v2c, "COST_GATE_READING", "net")
 
 
 def _boom(*_a, **_k):  # noqa: ANN202 - a computation that must not run
@@ -49,7 +50,7 @@ def test_the_fingerprint_follows_a_constant_changed_at_run_time(
     assert constants_fingerprint() == before
 
 
-def test_cpcv_state_written_under_net_is_refused_under_gross(
+def test_cpcv_state_written_under_gross_is_refused_under_net(
         tmp_path, monkeypatch: pytest.MonkeyPatch) -> None:
     panel = make_panel(n_dates=60, seed=3)
     ledger = ConfigLedger(tmp_path / "l.jsonl")
@@ -61,7 +62,7 @@ def test_cpcv_state_written_under_net_is_refused_under_gross(
         nested_cpcv(panel, RIDGE_H60[:2], stub_score, ledger=ledger, state_dir=tmp_path / "s")
 
 
-def test_gate0_b_state_written_under_net_is_refused_under_gross(
+def test_gate0_b_state_written_under_gross_is_refused_under_net(
         tmp_path, monkeypatch: pytest.MonkeyPatch) -> None:
     panel = make_panel(n_dates=60, seed=4)
     days = np.unique(panel.frame["trade_date"].to_numpy().astype("datetime64[D]")).tolist()
@@ -73,7 +74,7 @@ def test_gate0_b_state_written_under_net_is_refused_under_gross(
         _b_state(panel, tmp_path / "g", blocks, None)
 
 
-def test_stage_file_written_under_net_is_refused_under_gross(
+def test_stage_file_written_under_gross_is_refused_under_net(
         tmp_path, monkeypatch: pytest.MonkeyPatch) -> None:
     first = pipeline._Stages(tmp_path, timing=False)
     assert first.run("filter", lambda: {"x": 1}) == {"x": 1}
@@ -99,7 +100,7 @@ def _schedule() -> pd.DataFrame:
     return pd.DataFrame({"root": ["MNQ"], "horizon": ["h60"], "decision_ts_ns": [1]})
 
 
-def test_engine_path_checkpoint_written_under_net_is_refused_under_gross(
+def test_engine_path_checkpoint_written_under_gross_is_refused_under_net(
         tmp_path, monkeypatch: pytest.MonkeyPatch) -> None:
     engine, sched = _engine_inputs(tmp_path), _schedule()
     risk = pd.DataFrame({"root": ["MNQ"], "horizon": ["h60"], "sigma_ticks": [1.0],
@@ -116,7 +117,7 @@ def test_engine_path_checkpoint_written_under_net_is_refused_under_gross(
         run_engine_paths(engine, {0: sched}, risk, (0,), ckpt, isolate=False)
 
 
-def test_payout_checkpoint_written_under_net_is_refused_under_gross(
+def test_payout_checkpoint_written_under_gross_is_refused_under_net(
         tmp_path, monkeypatch: pytest.MonkeyPatch) -> None:
     calls: list[int] = []
 

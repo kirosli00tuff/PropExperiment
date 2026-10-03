@@ -1,28 +1,33 @@
-# Stage E ML route v2: a quant-style portfolio model (design draft)
+# Stage E ML route v2: a quant-style portfolio model (FROZEN)
 
-**DRAFT. Nothing in this file is frozen, hashed or registered.** Written by the Stage E.11 lead
-(Opus 5.5, xhigh) on 2026-10-03 for the user's review, before any training data is bought and
-before any model is fit. A later session freezes it after the user's decisions (V2.12). It
-replaces running the frozen ML route (docs/STAGE_E_ML_DESIGN.md, "v1") as designed (V20); v1 stays
-frozen and is not edited.
+**FROZEN on 2026-10-03 by the Stage E.12 lead (Opus 5.5, xhigh), with the user's decisions V23
+applied.** Hashed with its build, its tests and its inputs in reports/stage_e12_ml_v2_freeze.json
+before any v2 training data was bought or read and before any fit on real data. Drafted by the
+Stage E.11 lead on 2026-10-03. Only V2.12 item 18 (a Live Funded call-up) stays open; it does not
+touch Gate 0 or any computation. It replaces running the frozen ML route (docs/STAGE_E_ML_DESIGN.md,
+"v1") as designed (V20); v1 stays frozen and is not edited.
 
-**Written before any market data was read.** No bar, quote, cost sample, Stage E screen or
-confirmation figure was read for this draft. The only numbers used come from frozen tables:
+**Written and frozen before any v2 market data was read.** No bar, quote, cost sample, Stage E
+screen or confirmation figure was read for this design (Stage E.12 read web pages for the freeze
+inputs only: Topstep's public pages, the official release calendars, CME's blocked margin pages). The only numbers used come from frozen tables:
 - the D8 cost table, reports/stage_e2a_costs.json, through E.10's cost wall
   reports/stage_e10_research/cost_wall.json (sha256 8ef052dc...);
 - the frozen design docs/STAGE_E_DESIGN.md (D2 to D9);
 - the Topstep facts file reports/stage_e0_topstep_facts.json;
 - the XFA rules engine rules/xfa_rules.py;
-- docs/DECISIONS.md V10 to V22.
+- docs/DECISIONS.md V10 to V23.
 
 Every rule below is a stated rule or a bounded grid searched only on the training window. Nothing is
-"chosen later by looking". Each section ends with **Open** when the user decides something there;
-every open point is collected in V2.12.
+"chosen later by looking". The draft's open points are decided (V23) and marked "Decided (V23 item
+n)" where they stood; V2.12 lists them. The Stage E.12 lead's own rules for applying the design to
+phase 1 (P-1 to P-6) are stated where they apply (V2.1, V2.2b, V2.8, V2.9).
 
 **Decisions in force.** V20 (ML route v2), V18 (a minimum trade count fixed before data), V19
 (account keys and caps), V21 (K9-anncday-01 folded in as a candidate signal; the cost wall, Holm
 K = 10, a 30-trade floor), V22 (the income path, more history not finer data, the two-phase
-purchase, Gate 0 first, the research findings F1 to F13).
+purchase, Gate 0 first, the research findings F1 to F13), V23 (the user's decisions on every V2.12
+item except item 18, the phase-1 purchase pre-approval, the route's unused research-window Holm
+slot).
 
 **What v2 keeps from v1, and what it replaces.**
 
@@ -48,10 +53,12 @@ model calculation for scale, not a forecast.
 - 50K XFA: MLL $2,000 (rules/xfa_rules.py XFA_50K, trailing from -$2,000 up to a $0 lock); optional
   DLL $1,000 (facts F12.2c); payout caps Standard $2,000 and Consistency $3,000, doubled with the
   DLL (F12.2a, F12.2b); scaling plan 2 lots, 3 at $1,500, 5 above $2,000 (xfa_rules).
-- 150K XFA: MLL $4,500 (V22; not in the facts file, so the freeze session confirms it); DLL $3,000
-  (F12.2c); payout caps Standard $5,000 and Consistency $6,000, doubled with the DLL (F12.2a,
-  F12.2b). The 150K scaling schedule is published only as an image (facts F5.2 note); until it is
-  read, the simulator uses the 50K tiers, the conservative reading.
+- 150K XFA: MLL $4,500 (V22, confirmed at the Stage E.12 freeze from Topstep's public page,
+  reports/stage_e12_topstep_150k.md row 1); DLL $3,000 (F12.2c); payout caps Standard $5,000 and
+  Consistency $6,000, doubled with the DLL (F12.2a, F12.2b). Scaling plan, read from the page's
+  image at the freeze (V23 item 12): 3 lots below $1,500, 4 from $1,500, 5 above $2,000, 10 above
+  $3,000, 15 above $4,500 (a balance exactly on $2,000, $3,000 or $4,500 is taken in the lower
+  tier, the conservative reading of an unstated boundary; ml_route_v2/account.py ACCOUNT_150K).
 
 **Sizing gives the daily risk (V2.8).** The target daily P&L sigma is 0.10 x D, where D is the
 distance to the trailing MLL. At the start of an XFA, D = MLL, so sigma_day is $200 (50K) or $450
@@ -165,8 +172,10 @@ slippage, in ticks of the vehicle.
 | K7 | bitcoin | MBT | MBT | 0.5 | 10.87 | 5.44 |
 
 (Tick values and RT_X are copied from cost_wall.json, the "tick_value_usd" and "rt_wall_ticks"
-fields. The table generator is reports/stage_e11_briefs/universe_table.md. The freeze session
-regenerates the table from the JSON and checks it.)
+fields. The table generator is reports/stage_e11_briefs/universe_table.md. Stage E.12 regenerated
+the table from the JSON at the freeze and checked all 28 rows: clusters, paths, tick values and ticks
+exactly, the RT_X $ display to the cent; reports/stage_e12_ml_v2_freeze.json, universe_check. Code
+reads the unrounded rt_wall_ticks.)
 
 **Signal-only roots.** MES is read as a signal leg only, never traded (K8-flight; V16(b)). The
 price-path contracts of other clusters are read for cross-product features (V2.3).
@@ -187,12 +196,12 @@ OHLCV bars suffice for holds of 60 minutes or more.
 
 *Phase 1: the funds already in the two Databento accounts.*
 - Budget: acct-1's headroom first (about $28.41), then acct-2 ($125 after the user raises
-  ACCOUNT_2_CAP_USD to about $249.67, V19). The purchasing session raises the cap; this draft
-  changes nothing.
+  ACCOUNT_2_CAP_USD to about $249.67, V19). Stage E.12 raises the cap to $249.67 in harness v8
+  (V19, V23 item 19); the user pre-approved spending exactly these funds on phase 1 (V23 item 19).
 - Scope per exposure: ohlcv-1m of the price-path contract, training window only (S_X..2024-02-29).
   This departs from V1, under which the route bought the full step 2 range including the holdout-2
   chunks. Holdout-2 for the products the frozen model trades comes in phase 2, sealed on arrival.
-  Open.
+  Decided (V23 item 4).
 - The price path is fixed now, once, before Gate 0 (design review D-06): the full-size contract
   of the table above, for every exposure, in every phase.
   - The owned step 2 store of NG (E.5) is the NG price path itself, so it costs $0.
@@ -207,15 +216,31 @@ OHLCV bars suffice for holds of 60 minutes or more.
   2. Within a tier, sort by c / sigma_proxy ascending, where c = RT_X in dollars per contract and
      sigma_proxy = the CME maintenance margin per contract of the vehicle's front month, in
      dollars, as published on the freeze date. The margin is the volatility proxy: CME sets it from
-     its own risk model, so it reads no market-data window of ours. Open (alternative below).
+     its own risk model, so it reads no market-data window of ours. Decided (V23 item 3).
   3. Cluster round-robin: the first pass takes the best-ranked exposure of each cluster K1..K7 in
      rank order; the second pass takes the rest by rank. Each pass skips an exposure whose fresh
      quote exceeds the remaining budget and goes on to the next.
   4. Stop when no remaining exposure's quote fits. The freeze session quotes the subset fresh
      before buying and logs the quote first (CLAUDE.md).
+  5. How Stage E.12 applies it (lead rule P-4, fixed before the quote; the rule itself is decided,
+     V23 item 2): the overall rank is tier 1 in c / sigma_proxy order, then tier 2 in the same
+     order (ties: the vehicle's alphabetical order). Pass 1 considers exactly the seven
+     cluster-best exposures (the literal reading of step 3), in rank order; pass 2 takes every
+     remaining exposure in rank order. A pick goes on acct-1 if its fresh quote x 1.03 fits acct-1's
+     remaining headroom, else on acct-2 if it fits there, else it is skipped; each exposure's
+     purchase sits on one account. NG's owned store is its price path: quote $0, always fits.
+  6. The proxy in force (Stage E.12, before the freeze): CME's live margin pages refused automated
+     access (HTTP 403, citing its terms), and no public 2026 capture of CME's margin data covered 5
+     of the 28 vehicles (MNQ, M2K, MYM, MCL, NG). That is more than a few, so the WHOLE ranking uses
+     the frozen E|m_1| below (V23 item 3's fallback; never mixed with margins):
+     sigma_proxy = e_abs_move_ticks["1"] x tick_value_usd per vehicle, from
+     reports/stage_e2a_epsilon.json (checked against cost_wall.json's E_abs_m1_ticks_context). The
+     attempt is recorded in reports/stage_e12_cme_margins.json; its figures are not used.
 - Alternative volatility proxy: the frozen E|m_1| of the E.2a epsilon report. It is the vehicle's
   mean absolute day-session move. It is already on disk and closer to intraday volatility, but it
-  was measured on research-window bars (level information of the kind v1 M7.9 allows). Open.
+  was measured on research-window bars (level information of the kind v1 M7.9 allows). Used only
+  if CME's pages block the margin fetch for more than a few vehicles, and then for the whole
+  ranking: the two proxies are never mixed in one ranking (V23 item 3).
 - Expected phase-1 size: about 8 products (the runtime probe's second scale, Task 7). The figure
   is a planning guess, not a rule.
 
@@ -225,7 +250,8 @@ OHLCV bars suffice for holds of 60 minutes or more.
   can trade.
 - A free quote for the full-size contracts from 2010-01-04 to 2019-05-03 as price paths before the
   micros existed (the 2010 extension). Buying it needs a start-rule amendment, because D4's
-  earliest S_X is 2019-05-06, and the user's decision. Open.
+  earliest S_X is 2019-05-06, and the user's decision. Decided (V23 item 5): quoted free at the
+  freeze session, bought only after a Gate 0 pass and with a D4 start-rule amendment.
 
 If Gate 0 fails, nothing more is bought and v2 stops (V2.2b).
 
@@ -241,7 +267,8 @@ decides at a bar's close and fills a market order at the open of a later bar (ap
 fill_pending_at_open). A decision at clock time t therefore uses only bars b_s with s <= t - 1 min,
 which have closed by t, and its entry fills at the open of b_t, or later under the D9.5a fill guard.
 
-**Decision times: three per product per trade date, from D6's session table and D9's flatten F_X.**
+**Decision times: three per product per trade date, from D6's session table and D9's flatten F_X**
+(decided with the horizons below, V23 item 6).
 With O_X the day-session open and k counting 30-minute steps:
 - t1 = O_X + 30 min;
 - t3 = the latest O_X + 30k with t3 + 120 min <= F_X, so that both fixed horizons fit;
@@ -279,7 +306,7 @@ product per trade date, so D9.3's floor of 20 entries and 2-minute holds holds b
 - This replaces D4's union for v2. Every product reads all eight leads, so the union would drop
   every lead's roll dates (CL and MBT roll monthly) for every product: a large share of the
   training dates. D4's union stays in force for the frozen K8 members as trials.
-- Open.
+- Decided (V23 item 7).
 - Early-halt and early-close dates of its group calendar.
 - An entry whose fill would land in the D9.12 CPI window on a mini, which is skipped. No decision
   time here is within [CPI - 5, CPI + 5] with CPI at 07:30 CT, but the engine enforces the rule
@@ -292,16 +319,17 @@ product per trade date, so D9.3's floor of 20 entries and 2-minute holds holds b
   rule.
 - sigma(p,h) is the standard deviation of the gross h-forward return in vehicle ticks over the same
   rows (V2.5).
-- The pair (p,h) is admissible iff c(p,h) / sigma(p,h) <= tau = 0.10. A product with no admissible
-  horizon is dropped.
+- The pair (p,h) is admissible iff c(p,h) / sigma(p,h) <= tau = 0.167 (V23 item 1). A product with
+  no admissible horizon is dropped.
 
-Why 0.10: with the predicted return r_hat = IC x sigma x z, a strong intraday information
-coefficient (0.10) at its 99th-percentile prediction (|z| about 2.5) predicts 0.25 sigma. The
-loosest cost gate (V2.7, k = 1.5) needs a predicted gross of 2.5c. So c/sigma > 0.10 means no
-plausible signal clears the gate.
+Why 0.167: with the predicted return r_hat = IC x sigma x z, a strong intraday information
+coefficient (0.10) at its 99th-percentile prediction (|z| about 2.5) predicts 0.25 sigma. Under the
+gross reading the user chose (V2.7, V23 item 1), the loosest cost gate (k = 1.5) needs a predicted
+gross of 1.5c, so c/sigma > 0.25 / 1.5 = 1/6, stated 0.167, means no plausible signal clears the
+gate. (The literal reading's 2.5c hurdle gave 0.10; it is not used.)
 
 The filter reads volatility only, never a return's sign or mean. It is not a trial and adds nothing
-to N. It is applied once, before Gate 0. Open (tau).
+to N. It is applied once, before Gate 0. Decided (V23 item 1).
 
 ---
 
@@ -353,15 +381,45 @@ Gate 0 results would select on the same data the model is then tuned on.
 **Trial accounting.** Every Gate 0 test counts toward N: |A| = (number of signals) x 3 horizons,
 and |B| = the number of admissible pairs (V2.9).
 
-**How a sub-cost edge behaves (canary semantics).**
-- An edge smaller than the round-trip cost fails bar 1 here.
-- An edge that clears bar 1 (at or above 1.5c on the confident quintile) can still sit below the
-  cost gate's lowest hurdle: a predicted gross of 2.5c at k = 1.5 (V2.7). It then passes Gate 0 and
-  the cost gate rejects it.
-- The canaries test both.
+**The phase-1 test list (Stage E.12 lead rules P-1 to P-3, fixed before any purchase).**
+- Products: the phase-1 exposures the V2.1 subset rule selects (NG included at $0), read by the
+  build from the ranking output (reports/stage_e12_ranking.json, hashed in the build report); a
+  selected exposure whose purchase did not complete (no step 2 store) is dropped by name. There is
+  no operator-chosen product list (freeze review F-3).
+- Roots available to features: those products' price paths plus MES (its frozen confirmation
+  store). The owned micro stores MCL, MGC and MHG are not price paths and are never read. MES's
+  confirmation store has never been read by a Stage E loader: if the frozen loader refuses it (any
+  trade-date or hash refusal), MES is unavailable and the signals reading it are coverage
+  exclusions, logged with the refusal (lead rule P-1a). A refused price-path store stops the run.
+- Signals: every V2.3 signal that can be computed from those roots. A signal that reads a leg
+  outside them (a G17 lead, a K8 leg, a cross-product member leg) is not computed in phase 1 and
+  enters as no feature (V2.3's coverage rule), listed by name. Own-path signals are always computed.
+- Family A = every computed signal x the 3 horizons, on the rows of the admissible pairs at that
+  horizon; a test with fewer than 2 dates of rows has t NaN and p = 1, and is counted.
+  Family B = every admissible (product, horizon) pair at tau 0.167.
+- S_X: D4's frozen start rule per price path (it reads the research and step 2 stores' volume, never
+  a price; MES fixed at D4's 2020-02-03); each root's bars are cut at its S_X.
+- The list (reports/stage_e12_gate0_list.json) is generated from the bars and the filter by this
+  rule, registered in the append-only configuration ledger (ledger/ml_v2_config_ledger.jsonl), and
+  its sha256 recorded, before any Gate 0 statistic is computed. Gate 0 then runs once
+  (`python -m ml_route_v2.phase1 build | register | run`, the package ml_route_v2/phase1/; each
+  step runs the harness preflight and verifies this freeze's manifest first). On real bars the
+  session-grid check of the synthetic pipeline is replaced by the frozen loader's own L-3 booking
+  check, which also refuses holdout, embargo and out-of-store rows.
+
+**How a sub-cost edge behaves (canary semantics under the gross reading, V23 item 1).**
+- An edge smaller than the round-trip cost fails bar 1 here, and so does an edge between 1.0c and
+  1.5c.
+- An edge at or above 1.5c on the confident quintile clears bar 1. Gate 0's bar equals the cost
+  gate's loosest hurdle (a predicted gross above 1.5c at k = 1.5, V2.7), so the k = 1.5 gate does
+  not reject such an edge where the model predicts it above 1.5c. (Under the literal reading the
+  loosest hurdle was 2.5c, and an edge in [1.5c, 2.5c) passed Gate 0 and was rejected by the gate;
+  a test keeps that case with the literal reading pinned.)
+- The canaries: pure noise fails; a planted gross edge passes; an edge between 1.0c and 1.5c fails
+  Gate 0; an edge in [1.5c, 2.5c) passes Gate 0.
 
 **The operative bar** (design review D-14).
-- With families A and B in one Holm family (about 222 tests at 8 products, 282 at 28), the first
+- With families A and B in one Holm family (about 225 tests at 8 products, 285 at 28 (67 signals with K9)), the first
   rejection needs p <= 0.05 / 282, a one-sided z of about 3.57.
 - So bar 2 (t >= 3) is dominated, and the real bar is about 3.6.
 - Without family A in the Holm family, it would be about 3.24.
@@ -369,8 +427,8 @@ and |B| = the number of admissible pairs (V2.9).
 **Coupled with the cost gate and tau** (V2.7; design review D-05). The Gate 0 multiple, the
 cost-gate reading and tau are one decision, collected as V2.12 item 1.
 
-Open: the bar (the 1.5 multiple, t >= 3, the top-20% trade set, Holm at 0.05), and whether family A
-counts in the Holm family.
+Decided (V23 item 1): the bar as written (1.5c, t >= 3, the top-20% trade set, Holm at 0.05, at
+least 30 trades), with family A in the Holm family, under the gross reading with tau 0.167.
 
 ---
 
@@ -456,25 +514,37 @@ calendars known in advance:
   lookback not full; a warm-up not complete. There is no imputation.
 
 **Size (as built, Task 2).**
-- Signals: 51 of the 54 families are coded. The three CP ports are pooled across products: one
+- Signals: 51 of the 54 families are coded (52 with K9-anncday-01, added at the freeze). The three CP ports are pooled across products: one
   feature per port variable, since D6 defines each port as one rule ported to every product. There
   are 24 generic signals (G1-G16, and G17's 8 leads).
 - Excluded, with reasons (reports/stage_e11_signal_coverage.md):
   - K5-fomc-01: the FOMC move is known at 13:05 CT, after the last metals decision time, 12:50;
   - K6-wasdepost-01: the WASDE move is known at 11:15 CT, after the last grain decision time,
     11:00;
-  - K9-anncday-01: its EC-K9 calendar covers only 2025-04..2026-06, and the frozen release calendar
-    has no GDP or ISM-manufacturing rows for 2019-2024. Building EC-K9 for the training window
-    from official sources is a sourced-data task the freeze session can do. Open.
-- Columns: 66 signals, 42 member and 24 generic. Each gives a z-score; 53 applicability flags
+- Added at the freeze (V23 item 8): K9-anncday-01. Its EC-K9 calendar covered only 2025-04..2026-06,
+  so Stage E.12 built it for 2019-05-01..2024-02-29 from the official pages C9 names
+  (reports/stage_e12_ec_k9_2019_2024.json and .md: 240 dates, 884 CAL-E12 source rows from the Fed,
+  BLS, BEA and ISM pages, no uncovered span; FOMC, NFP, CPI and PPI agree exactly with the frozen
+  release calendar, and the same method reproduces the frozen research-window rows exactly). It
+  enters as the flag k9_anncday (1 on an EC-K9 trade date) on its vehicles' rows (MNQ, M2K, MYM),
+  known before the 17:59 CT entry intent the evening before. The member's R-12 exclusion (early-close,
+  early-halt and closure sessions) is carried by V2.2's decision-row exclusions: such dates have no
+  rows (freeze review F-13). Lead rulings on the builder's two
+  questions, both by the member's decision_time (a date counts only if known at the entry intent;
+  catalog R-07): unscheduled FOMC actions (2019-10-11, 2020-03-03, 2020-03-15 and the 2020 notation
+  votes) are not in the set, and neither is 2020-03-18, the scheduled statement day of the meeting
+  cancelled on 2020-03-15.
+- Columns (E.11 count, before K9): 66 signals, 42 member and 24 generic. Each gives a z-score; 53 applicability flags
   remain after the always-1 flags are dropped; and there are 35 identifier one-hots (28 products, 7
   clusters). That makes 154 model columns against about 90,000 rows on 28 products: easily within
   ridge's and LightGBM's range.
-- Family A therefore has 66 x 3 = 198 tests.
+- Family A therefore had 66 x 3 = 198 tests; with K9's flag the library has 67 signals (43
+  member-family, 24 generic), so family A has 67 x 3 = 201 tests at full coverage. In phase 1 it is
+  every computed signal x 3 (V2.2b, lead rule P-2).
 - Family A has one test per signal per horizon (V2.2b). The exact counts are in
   reports/stage_e11_signal_coverage.md.
 
-Open: the generic list.
+Decided (V23 item 8): the generic list as written.
 
 ---
 
@@ -506,7 +576,8 @@ Fixed: the windows 250, 60 and 20, and the clip at 5. No grid.
   140 of its 299 dates would have no rows: sigma_X,d 20 plus the z-score minimum 60, and G9's
   120-date median on top. The window would shrink to 0.63-0.87 years. The power of the t >= 1.0
   screen at S = 1.5 would fall from 0.74 to about 0.58-0.66.
-- Open: skip the gap (proposed), or research-window-only warm-up.
+- Decided (V23 item 9): skip the gap. Its code is written for the research-window test, after
+  phase 1, under this frozen text (freeze review F-7).
 
 ---
 
@@ -555,7 +626,7 @@ For a decision at t with horizon h, in ticks of the vehicle:
   configurations are not independent: the values of k share each fit, so the effective count is
   lower.
 
-Open: the grids.
+Decided (V23 item 10): the grids as written, 45 configurations.
 
 ---
 
@@ -568,22 +639,23 @@ At decision time t, for product p and horizon h of the selected configuration:
   [release, release + 30 min);
 - the predicted net edge is e = |r_hat_ticks| - c.
 
-Trade sign(r_hat) iff e > k x c, with k in {1.5, 2, 3} chosen by nested CPCV (V2.9). This is the
-literal reading of F7: the predicted net edge, after cost, exceeds k round trips, so the gross must
-exceed (1 + k) c.
+Trade sign(r_hat) iff |r_hat_ticks| > k x c, with k in {1.5, 2, 3} chosen by nested CPCV (V2.9).
+This is the gross reading, the user's decision (V23 item 1): the predicted gross exceeds k round
+trips, so the predicted net edge e exceeds (k - 1) c. The literal reading of F7 (e > k x c, so a
+gross above (1 + k) c) stays selectable in code (COST_GATE_READING) for its tests only.
 
 **One coupled decision, with two consistent sets** (design review D-05):
 
-| | Literal reading (built, the default) | Gross reading (|r_hat| > k c) |
+| | Literal reading (not used) | Gross reading (|r_hat| > k c): the built default, V23 item 1 |
 |---|---|---|
 | hurdles on predicted gross at k = 1.5 / 2 / 3 | 2.5c / 3c / 4c | 1.5c / 2c / 3c |
 | tau (V2.2's derivation: 0.25 sigma = the loosest hurdle) | 0.10 | 0.167 |
 | Gate 0 cost multiple | 1.5c (1.0c below the loosest hurdle), or 2.5c to align | 1.5c = the loosest hurdle |
 | k = 2 and k = 3 configurations at IC 0.10 | often below the 30-trade eligibility when c/sigma > 0.083 or 0.0625 | alive |
 
-The code switches between the readings with one constant (COST_GATE_READING). The lead recommends
-the gross reading: it is the usual quant formulation, it aligns Gate 0 with the loosest hurdle, and
-it keeps the k = 3 configurations alive. The user decides (V2.12 item 1).
+The code switches between the readings with one constant (COST_GATE_READING). The user chose the
+gross reading (V23 item 1): it is the usual quant formulation, it aligns Gate 0 with the loosest
+hurdle, and it keeps the k = 3 configurations alive.
 
 At the same clock time, candidates are ranked by e / c, ties going to the root's alphabetical order,
 and taken while V2.8's caps allow.
@@ -596,6 +668,10 @@ and taken while V2.8's caps allow.
   does not admit negative-net trades there, but it does trade an edge below its own hurdle.
 - The canary therefore holds for the planted expected edge (zero trades at every k), and for
   ridge it is kept as a documented expected failure.
+- Under the gross reading (V23 item 1) the same mechanism appears at the 1.5c hurdle: a bounded
+  0.5c edge's ridge predictions pass k = 1.5 on 4 of 2,538 canary rows, while Gate 0 fails that
+  edge and its true conditional mean is rejected at every k (Stage E.12, a second strict expected
+  failure; the literal-reading case is kept with the reading pinned). No rule changes.
 - The verdicts read realized net P&L out of sample, so this affects how much the gate filters,
   not the evaluation's honesty.
 
@@ -624,7 +700,7 @@ force (rules/xfa_rules.py). D_open is D at the start of the trade date.
   one-contract h-sigma exceeds b would be untradeable at that D, whatever its signal. b is $115.47
   at 50K's starting D ($2,000) and $259.81 at 150K's ($4,500), so many full-size vehicles would be
   out at 50K. The band can lift one trade's sigma to about 1.15 x sigma_target. The loss cap and
-  KS1 still bound it. Open.
+  KS1 still bound it. Decided (V23 item 11).
 - Loss cap (F8): n_loss = floor(0.25 x D_now / ((L(p,h) + c) x tick_value)). L(p,h) is the 99th
   percentile of the absolute h-move in ticks on the training window, a constant per pair. The rule
   has no stop orders (D9.4), so "maximum loss on one trade" is this tail quantile, not a guarantee.
@@ -646,12 +722,21 @@ force (rules/xfa_rules.py). D_open is D at the start of the trade date.
   as D9.11 does.
 - Portfolio: open lot-equivalents at most the XFA scaling tier at the prior session's closing
   balance minus 0.1 lot. It is never at full Maximum Position Size, D9.5's purpose (F6.3). At 50K:
-  1.9, 2.9 or 4.9 lots by tier; the 150K tiers are open (V2.0).
+  1.9, 2.9 or 4.9 lots by tier; at 150K: 2.9, 3.9, 4.9, 9.9 or 14.9 (V2.0, read at the freeze).
 - Simultaneous positions: at most 3 in all, and at most 1 per cluster (F11: a cluster's products
   are largely one bet, as K2's six rates contracts are).
 - Everything is flat by 15:08 CT, or the group's earlier F_X. The engine forces it (D9.1).
+- **Release window (V23 item 11; Stage E.12 lead rule P-5).** An entry in product p whose fill lies
+  in [r - 5 min, r + 30 min) of a scheduled release r that concerns p (the release list the
+  event-window cost and D9.5a use for p's vehicle) is refused if open lot-equivalents, including
+  the entry, would exceed half the XFA scaling tier's maximum position size in force (at 50K: 1.0,
+  1.5 or 2.5 lots). Counting the entry itself makes the rule refuse every case the plain wording
+  ("while open lot-equivalents exceed half the tier") refuses, and also an entry that would carry
+  the account past half the tier into the release, which is D9.5's purpose. It restores D9.5's 50%
+  margin near news, where the portfolio cap alone keeps 5% (design review D-11). Refusals are
+  counted with reason "release_window". It applies wherever V2.8's portfolio caps apply.
 
-**Kill switches (F10), with default thresholds (open):**
+**Kill switches (F10), with the thresholds as written (decided, V23 item 13):**
 
 | # | Switch | Trigger | Action | In backtest |
 |---|---|---|---|---|
@@ -755,8 +840,10 @@ multi-leg account.**
 - PBO is the share of combinations where the in-sample best ranks below the out-of-sample median.
 
 **Trial count N for the DSR (F4).** N_total = N_program + 45 + |Gate 0 tests|.
-- N_program is the program's cumulative N at the freeze: 198 after E.9. E.10 screened nothing
-  (V21).
+- N_program is the program's cumulative N at the freeze: 198, read on 2026-10-03 from the
+  program's record (E.9: docs/STAGES.md and reports/E.9_RETURN.md, N = 194 + 4 = 198; E.10
+  screened nothing, V21; E.11 ran on synthetic data only, which adds nothing, C-08). It is the
+  constant N_PROGRAM_AT_FREEZE.
 - |Gate 0 tests| = |A| + |B| (V2.2b).
 - The DSR's Sharpe variance is taken over the 45 configurations' CPCV out-of-sample daily Sharpes:
   the per-date average over the 5 paths, the same matrix as PBO. Two biases pull in opposite
@@ -810,7 +897,8 @@ raises power.
 - D8 is calibrated on 2025-26 books and understates costs in thinner earlier years. That cuts
   against an edge claim made on 2019-2024 (D8's own early-era note).
 - So the nested OOS record is also re-priced at 1.5 x slippage, a stated multiple, not tuned, and
-  reported beside every criterion. The registration decides whether a pass must survive it.
+  reported beside every criterion. Decided (V23 item 14): surviving the 1.5 x slippage re-pricing
+  is a must-survive condition in the holdout-2 registration.
 
 **F4's "final configuration"** (design review D-21). Different outer splits may select different
 configurations, so the nested record measures the procedure. Beside criterion 2, the final
@@ -822,7 +910,7 @@ configuration's own CPCV OOS t and Sharpe (its column of the PBO matrix) are rep
 - **The research-window test is a screen, not an edge claim** (design review D-02, option (a)). It
   makes no Holm rejection. The route's confirmatory control is the DSR at N_total on the nested OOS
   record, plus the registered holdout-2 read. The route's slot in V21's Holm K = 10 is unused on
-  the research window; the freeze session records that in docs/DECISIONS.md. The alternative,
+  the research window, as docs/DECISIONS.md V23 records (2026-10-03). The alternative,
   (b), is a Holm-level bar on the research window: t >= 2.58 at 0.05 / 10, with power 0.17 at
   S = 1.5 and 0.35 at S = 2.0 (V2.12 item 14).
 - Pass needs all of:
@@ -831,22 +919,24 @@ configuration's own CPCV OOS t and Sharpe (its column of the PBO matrix) are rep
   - at least 30 completed round trips (V18, V21);
   - KS4 does not fire.
 - Power at t >= 1.0 on 1.19 years (Phi(S x sqrt(1.19) - 1.0)): about 0.74 at S = 1.5 and 0.88 at
-  S = 2.0. The window cannot do more (V2.0). Open: the bar, or t >= 1.645 (power about 0.50 at
-  S = 1.5 and 0.70 at S = 2.0).
+  S = 2.0. The window cannot do more (V2.0). Decided (V23 item 14): t >= 1.0. (The alternative,
+  t >= 1.645, had power about 0.50 at S = 1.5 and 0.70 at S = 2.0.)
 
 **Then:**
 - a registered holdout-2 read, the user's registration only (REGISTRATION.md), with criteria fixed
   in that registration;
 - then paper trading on a TopstepX Practice account (D9.10) for at least 40 trade dates. Pass:
-  KS4 does not fire, and realized costs are within 1.25 x the modelled D8 costs. Open.
+  KS4 does not fire, and realized costs are within 1.25 x the modelled D8 costs. Decided (V23
+  item 14).
 
 **Portfolio economics, reported for both account sizes.**
 - Daily P&L in dollars at the 50K constraints (the engine) and the 150K constraints (the re-sized
   records), against eps at the portfolio level ($85 a day per 50K account, D3).
 - The 150K figures are a LOWER BOUND on income (design review D-10). The trade set is the 50K
-  run's: trades that only 150K sizing would take are absent, and the CPI micro cap (3, vs 150K's 9),
-  the D9.11 caps and the scaling tiers are 50K's. For ruin they rest on a different trade set
-  from a true 150K run.
+  run's: trades that only 150K sizing would take are absent, the CPI micro cap (3, vs 150K's 9)
+  and the D9.11 caps are 50K's, and the engine run that chose the trades used the 50K scaling
+  tiers (the re-sizing applies the 150K tiers read at the freeze, V2.0). For ruin they rest on a
+  different trade set from a true 150K run.
 - F1's Sharpe lines at 1.0, 1.5 and 2.0.
 
 **Payout simulation (F9; ml_route_v2/payout_sim.py).**
@@ -869,10 +959,18 @@ configuration's own CPCV OOS t and Sharpe (its column of the PBO matrix) are rep
   D >= 0.5 x MLL. The amount is min(cap, x 2 with the DLL; 50% of balance; balance - 0.5 x MLL),
   requested only if it is at least the $125 minimum. A payout therefore never triggers KS2 or KS2b
   by itself. The plain "largest allowed amount" policy halted accounts after small early payouts
-  (Task 4 finding). Open.
-- A breach ends the account. A new XFA would need a new Combine: its cost and delay are parameters
-  the freeze session fills from Topstep's pricing page. Open. Reported as the expected resets per
-  year and their cost.
+  (Task 4 finding). Decided (V23 item 15).
+- A breach ends the account. A new XFA would need a new Combine. Filled at the freeze from
+  Topstep's public pages (reports/stage_e12_topstep_150k.md rows 3-7; V23 item 12):
+  - delay: PAYOUT_RESET_DELAY_DATES = 2 trade dates, Topstep's stated minimum to pass a Combine
+    ("as few as two days"); a lower bound, since passing is neither certain nor usually that quick;
+  - cost per new XFA, one Combine month plus activation: Standard path $49 + $149 = $198 (50K),
+    $199 + $149 = $348 (150K); No Activation Fee path $95 (50K), $229 (150K). Both are reported.
+  - Back2Funded ($829 at 150K, before the first payout only, at most twice per XFA) is not
+    modelled; it is listed for the user.
+  Reported as the expected resets per year and their cost. (The delay is a constant now; the cost
+  figures are applied in the payout report's code at phase 2, under this frozen text. Freeze review
+  F-7.)
 - Five copied accounts are one draw (F11): payouts x 5, the same ruin.
 - Outputs per account size and path type:
   - monthly net payouts (mean, median, 10th and 90th percentiles);
@@ -899,7 +997,7 @@ configuration's own CPCV OOS t and Sharpe (its column of the PBO matrix) are rep
 
 ---
 
-## V2.10 Deployment (open)
+## V2.10 Deployment (decided: (a), V23 item 16)
 
 **(a) Frozen model.**
 - The selected configuration's weights (ridge coefficients, or the LightGBM model file),
@@ -920,11 +1018,12 @@ configuration's own CPCV OOS t and Sharpe (its column of the PBO matrix) are rep
   - it loses the portfolio's combination (the reason v2 exists, V21);
   - and v1's M5 machinery would have to be re-run.
 
-Recommendation (the user decides): (a), a frozen ridge model, if the user accepts V20's open point.
+Decided (V23 item 16): (a), a frozen model, weights fixed and hashed, never retrained live. It
+replaces the "deployed bot runs plain rules" decision of 2026-09-24.
 
 ---
 
-## V2.11 Compute (open)
+## V2.11 Compute (decided: the ThinkPad, V23 item 17)
 
 - ThinkPad: 20 threads, 14 GB, RTX 3050 4 GB, the overnight profile. Ridge and shallow LightGBM
   need no GPU.
@@ -951,9 +1050,45 @@ Recommendation (the user decides): (a), a frozen ridge model, if the user accept
 
 ---
 
-## V2.12 What the user decides (collected)
+## V2.12 The user's decisions (V23, 2026-10-03)
 
-Each item gives the built default and the lead's recommendation. Items 1 to 3 are coupled.
+The user accepted all 19 of the lead's recommendations (docs/DECISIONS.md V23). The decisions in
+force are listed first; the E.11 list of options and recommendations follows as the record. Item 18
+stays open: the user decides it before the first funded account.
+
+**In force (V23):**
+1. The gross cost-gate reading (hurdles 1.5c / 2c / 3c, tau 0.167); Gate 0 at a gross mean of 1.5c
+   on the top-20% confident trades, t >= 3, Holm 0.05 with family A in the Holm family, >= 30
+   trades.
+2. The phase-1 subset rule as written (V2.1; applied by lead rule P-4).
+3. The CME maintenance margin as the volatility proxy; the frozen E|m_1| only if CME's pages block
+   the fetch (then for the whole ranking). CME's pages blocked it in Stage E.12, so the phase-1
+   ranking uses E|m_1| (V2.1 step 6).
+4. Phase 1 covers the training window only; the holdout-2 chunks are deferred to phase 2.
+5. A free quote for the 2010 extension at the freeze; bought only after a Gate 0 pass and with a D4
+   start-rule amendment.
+6. The decision clock and horizons as written.
+7. The roll-blackout rule as written.
+8. The signal library as written, plus the EC-K9 calendar for 2019-2024 built from official pages
+   in the freeze session so K9-anncday-01 enters.
+9. The research-window warm-up skips the sealed gap.
+10. The grids as written, 45 configurations.
+11. The sizing constants as written, plus the release-window rule (V2.8).
+12. The 150K MLL, scaling schedule and reset price read from Topstep's public pages at the freeze
+    (V2.0, V2.8, V2.9).
+13. The kill-switch thresholds as written.
+14. The success criteria as written, with the 1.5 x slippage sensitivity a must-survive condition in
+    the holdout-2 registration.
+15. The payout policy as written.
+16. Deployment (a): a frozen model, weights fixed and hashed, never retrained live.
+17. The ThinkPad as the compute host.
+18. OPEN: whether to accept a Live Funded call-up, decided before the first funded account.
+19. The purchase: the funds already in the two Databento accounts (acct-1's headroom first, then
+    acct-2's $125 after ACCOUNT_2_CAP_USD rises to $249.67), spent on the phase-1 subset in Stage
+    E.12 after a fresh quote logged there, with no further approval and nothing beyond those funds.
+Also V23: the route's slot in the research-window Holm family stays unused (V2.9).
+
+**The record: options and recommendations as offered in E.11.** Items 1 to 3 are coupled.
 
 1. **The Gate 0 bar, the cost-gate reading and tau: one coupled decision** (V2.2, V2.2b, V2.7;
    design review D-05, D-14).

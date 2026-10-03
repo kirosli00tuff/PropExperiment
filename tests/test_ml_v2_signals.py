@@ -119,7 +119,8 @@ def test_every_inventory_family_has_signals_or_a_reason() -> None:
             assert all(n in REGISTRY for n in names) and fam not in EXCLUDED
         else:
             assert EXCLUDED.get(fam, "").strip(), fam
-    assert set(EXCLUDED) == {"K5-fomc-01", "K6-wasdepost-01", "K9-anncday-01"}
+    assert set(EXCLUDED) == {"K5-fomc-01", "K6-wasdepost-01"}  # K9 enters in E.12 (V23 item 8)
+    assert FAMILY_SIGNALS["K9-anncday-01"] == ("k9_anncday",)
 
 
 def test_specs_are_well_formed() -> None:
@@ -131,7 +132,11 @@ def test_specs_are_well_formed() -> None:
         if s.kind == "flag":
             assert not s.normalize
     generic = {s.family for s in REGISTRY.values() if s.kind != "member"}
-    assert generic == {f"G{i}" for i in range(1, 18)}
+    # the generic G1..G17 and K9's announcement-day flag (a member family, kind "flag": V23 item 8)
+    assert generic == {f"G{i}" for i in range(1, 18)} | {"K9-anncday-01"}
+    k9 = REGISTRY["k9_anncday"]
+    assert (k9.family, k9.cluster, k9.kind, k9.normalize, k9.roots_read) == (
+        "K9-anncday-01", "K9", "flag", False, ())
 
 
 # ------------------------------------------------------------------ causality ----
@@ -394,7 +399,7 @@ def test_hand_eiafade(clean: tuple) -> None:
 def test_excluded_reasons_name_their_evidence() -> None:
     assert "13:05" in EXCLUDED["K5-fomc-01"] and "12:50" in EXCLUDED["K5-fomc-01"]
     assert "11:15" in EXCLUDED["K6-wasdepost-01"] and "11:00" in EXCLUDED["K6-wasdepost-01"]
-    assert EXCLUDED["K9-anncday-01"].startswith("input not covered on the training window")
+    assert "K9-anncday-01" not in EXCLUDED  # V23 item 8: the EC-K9 2019-2024 calendar
 
 
 def _iter_member_names() -> Iterator[str]:

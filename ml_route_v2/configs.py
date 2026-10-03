@@ -39,7 +39,7 @@ from ml_route_v2.constants import (
     HORIZONS,
     LGBM_DEPTHS,
     N_CONFIGURATIONS,
-    N_PROGRAM_AT_DRAFT,
+    N_PROGRAM_AT_FREEZE,
     RIDGE_LAMBDAS,
 )
 
@@ -198,7 +198,9 @@ class ConfigLedger:
             raise LedgerError(f"kind {kind!r} not in {LEDGER_KINDS}")
         return sum(1 for k, _ in self._entries.values() if kind is None or k == kind)
 
-    def n_total(self, n_program: int = N_PROGRAM_AT_DRAFT) -> int:
+    def n_total(self, n_program: int = N_PROGRAM_AT_FREEZE) -> int:
+        """n_program (default: the program N at the freeze, constants.N_PROGRAM_AT_FREEZE; V23
+        build) plus every registered entry."""
         if n_program < 0:
             raise LedgerError(f"n_program {n_program!r} must be >= 0")
         return int(n_program) + self.n_registered()

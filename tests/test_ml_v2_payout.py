@@ -72,7 +72,11 @@ def test_account_150k_figures_and_dll_doubling() -> None:
     a = ACCOUNT_150K
     assert (a.mll_usd, a.dll_usd, a.standard_cap_usd, a.consistency_cap_usd) == (
         4500.0, 3000.0, 5000.0, 6000.0)
-    assert a.scaling_tiers == ACCOUNT_50K.scaling_tiers and a.base_lots == 2.0
+    # E.12 (V23 item 12): Topstep's published 150K scaling plan (reports/stage_e12_topstep_150k.md),
+    # replacing the E.11 stand-in (the 50K tiers)
+    assert a.base_lots == 3.0
+    assert a.scaling_tiers == ((1_500.0, True, 4.0), (2_000.0, False, 5.0), (3_000.0, False, 10.0),
+                               (4_500.0, False, 15.0))
     assert payout_cap_usd(a, "standard", True) == 10_000.0
     assert payout_cap_usd(a, "consistency", True) == 12_000.0
     assert payout_cap_usd(ACCOUNT_50K, "standard", True) == 4_000.0
@@ -329,13 +333,17 @@ def test_concurrency_from_entry_and_exit_times() -> None:
 
 
 # ---- the vectorized simulator ------------------------------------------------------------------
-def _base_days(n_days: int, seed: int, with_q_c: bool = False) -> list[DayRecord]:
+def _base_days(n_days: int, seed: int, with_q_c: bool = False,
+               with_rw: bool = False) -> list[DayRecord]:
     """Random dates of up to 4 trades. ``with_q_c``: engine sizes 1..4 and the vehicle's q_c on
-    about two trades in three, drawn from a second stream so the base draws stay the same."""
+    about two trades in three, drawn from a second stream so the base draws stay the same.
+    ``with_rw``: the release-window flag (V23 item 11) on about half the trades, from a third
+    stream."""
     from ml_route_v2.portfolio import vehicle_facts
 
     rng = np.random.default_rng(seed)
     extra = np.random.default_rng(seed + 1000)
+    third = np.random.default_rng(seed + 2000)
     roots = ("MNQ", "MGC", "ZN", "MCL", "6E")
     out = []
     for i in range(n_days):
@@ -354,7 +362,8 @@ def _base_days(n_days: int, seed: int, with_q_c: bool = False) -> list[DayRecord
             trades.append(TradeRecord(
                 root, "h60", D0 + timedelta(i), n_eng, pnl, worst, float(rng.uniform(5, 60)),
                 float(rng.uniform(20, 150)), 2.0, f.tick_value_usd, f.lot_equiv, "",
-                entry * MIN if known else 0, (entry + 60) * MIN if known else 0, q_c))
+                entry * MIN if known else 0, (entry + 60) * MIN if known else 0, q_c,
+                release_window=bool(with_rw and third.random() < 0.5)))
         out.append(DayRecord(D0 + timedelta(i), tuple(trades)))
     return out
 
@@ -591,3 +600,58 @@ def test_the_tier_is_read_at_the_prior_close_before_the_payout_debit() -> None:
     assert arr.n_payouts_first.tolist() == [2]
     assert arr.net_payouts_first[0] == pytest.approx((1500.0 + 1170.0) * ACCOUNT_50K.split,
                                                      abs=1e-9)
+
+
+# ---- V23 item 11 (E.12 lead rule P-5): the release window in the re-sizing ------------------
+def _leg(root: str, entry: int, exit_: int, *, rw: bool = False, known: bool = True
+         ) -> TradeRecord:
+    from ml_route_v2.portfolio import vehicle_facts
+
+    f = vehicle_facts(root)
+    return TradeRecord(root, "h60", D0, 1, 10.0, 0.0, 0.1, 0.1, 0.0, f.tick_value_usd,
+                       f.lot_equiv, "", entry * MIN if known else 0, exit_ * MIN if known else 0,
+                       release_window=rw)
+
+
+def test_resizing_refuses_a_window_trade_above_half_the_tier_and_counts_it() -> None:
+    """Base tier 2 lots (half 1.0). MNQ 10 micros (1 lot) open, then a flagged MGC re-sized to
+    the 9 left would make 1.9 lots: refused (0) and counted. After MNQ closes, the flagged MGC
+    takes 10 micros (1.0 lot, exactly half): kept. Unknown times count MNQ as open: refused.
+    The vectorized simulator agrees, count included."""
+    cases = {
+        "open": ([_leg("MNQ", 540, 600), _leg("MGC", 570, 630, rw=True)], (10, 0), 1),
+        "closed": ([_leg("MNQ", 540, 600), _leg("MGC", 600, 660, rw=True)], (10, 10), 0),
+        "unknown": ([_leg("MNQ", 0, 0, known=False), _leg("MGC", 0, 0, rw=True, known=False)],
+                    (10, 0), 1),
+        "unflagged": ([_leg("MNQ", 540, 600), _leg("MGC", 570, 630)], (10, 9), 0),
+    }
+    for name, (trades, want, n_ref) in cases.items():
+        days = [DayRecord(D0, tuple(trades))]
+        res = run_path(days, ACCOUNT_50K, path_type="standard", dll=False, ks=False)
+        assert (res.contracts[0], res.n_release_window_refusals) == (want, n_ref), name
+        arr = simulate_paths(days, ACCOUNT_50K, np.zeros((1, 1), dtype=np.int64),
+                             path_type="standard", dll=False, ks=False)
+        assert arr.n_release_window_refusals.tolist() == [n_ref], name
+
+
+@pytest.mark.parametrize("path_type,dll,ks,ks2", [
+    ("standard", False, True, None), ("consistency", True, False, None),
+    ("standard", False, False, True)])
+def test_vectorized_paths_equal_run_path_with_release_windows(path_type: str, dll: bool,
+                                                               ks: bool, ks2) -> None:
+    base = _base_days(40, 11, with_q_c=True, with_rw=True)
+    idx = bootstrap_indices(len(base), 32, 90, 5, 7)
+    arr = simulate_paths(base, ACCOUNT_50K, idx, path_type=path_type, dll=dll, ks=ks,
+                         restart=True, ks2_sizing=ks2)
+    total = 0
+    for p in range(idx.shape[0]):
+        res = run_path([base[i] for i in idx[p]], ACCOUNT_50K, path_type=path_type, dll=dll,
+                       ks=ks, restart=True, ks2_sizing=ks2)
+        assert arr.n_release_window_refusals[p] == res.n_release_window_refusals
+        assert arr.net_payouts_all[p] == pytest.approx(sum(x.net_usd for x in res.payouts),
+                                                       abs=1e-9)
+        assert arr.n_breaches[p] == res.n_breaches
+        assert arr.first_ruin_day[p] == (-1 if res.first_ruin_day is None
+                                         else res.first_ruin_day)
+        total += res.n_release_window_refusals
+    assert total > 0  # the comparison covers refusals

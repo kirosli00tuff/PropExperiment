@@ -12,7 +12,7 @@ section 8 (Task 5).
   of the vehicles' clusters reads (``legs_by_vehicle``). The per-minute step sd is set in vehicle
   ticks from the vehicle's nominal D8 round trip (``nominal_cost_ticks``) so that the 60-minute sd
   is ``sigma_cost_multiple`` round trips (default 20: c/sigma = 0.05, admissible under V2.2's
-  tau 0.10); ``vol_ticks`` overrides it per root.
+  tau, constants.C_SIGMA_TAU); ``vol_ticks`` overrides it per root.
 - Bars start ``warmup_dates`` trade dates before ``first`` (history for sigma_X,d, G9's 120-date
   median and the 60-date z-score warm-up, V2.4). ``calendar`` is the training calendar: the union
   of the vehicles' group trade dates in [first, last] (V2.9 "cut from calendars alone"); the
@@ -66,7 +66,7 @@ from ml_route_v2.constants import (
 
 NS_MIN = 60_000_000_000
 WARMUP_DATES = 210  # sigma_X,d 20 + G9 median 120 + z warm-up 60 (V2.4) + margin
-SIGMA_COST_MULTIPLE = 20.0  # default 60-minute sd in round trips (c/sigma 0.05 < tau 0.10)
+SIGMA_COST_MULTIPLE = 20.0  # default 60-minute sd in round trips (c/sigma 0.05 < tau C_SIGMA_TAU)
 SIGNAL_ONLY_VOL_TICKS = 4.0  # per-minute sd of a signal-only root (MES), its own ticks
 START_TICKS = 100_000  # starting price in vendor ticks
 FLOOR_TICKS = 10_000  # reflecting floor of the random walk, vendor ticks

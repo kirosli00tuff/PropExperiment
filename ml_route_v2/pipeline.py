@@ -102,7 +102,7 @@ import pandas as pd
 from ml_route_v2.configs import CONFIGS, Config, ConfigLedger
 from ml_route_v2.constants import (
     COST_SENSITIVITY_SLIPPAGE_MULTIPLE,
-    N_PROGRAM_AT_DRAFT,
+    N_PROGRAM_AT_FREEZE,
     PAYOUT_PATHS,
     UNIVERSE,
 )
@@ -266,8 +266,11 @@ def own_blackout(blackout: Mapping[str, frozenset[date]],
     return exclude_union(blackout, {v: (UNIVERSE[v][1],) for v in vehicles})
 
 
-def build_world_panel(world: Any, *, check_grid: bool = True) -> Any:
-    """Stage 1 (module docstring): the training panel of a synthetic world."""
+def build_world_panel(world: Any, *, check_grid: bool = True,
+                      signals: Sequence[str] | None = None) -> Any:
+    """Stage 1 (module docstring): the training panel of a synthetic world (or of phase 1's real
+    world, ml_route_v2/phase1). ``signals``: the panel's signals (None: all of REGISTRY; phase 1
+    passes the covered ones, Stage E.12 lead rule P-1)."""
     from ml_route_v2.clock import decision_rows, trade_dates_of
     from ml_route_v2.panel import assert_window, build_panel
     from ml_route_v2.signals import SignalContext
@@ -281,7 +284,7 @@ def build_world_panel(world: Any, *, check_grid: bool = True) -> Any:
     ctx = SignalContext(rows, world.bars, world.releases, sigma_d(rows, world.bars),
                         blackout=world.blackout)
     targets = build_targets(rows, world.bars, releases=world.releases, costs=world.costs)
-    panel = build_panel(ctx, targets, mode="train")
+    panel = build_panel(ctx, targets, mode="train", signals=signals)
     keep = pd.to_datetime(panel.frame["trade_date"]).dt.date.isin(set(world.calendar))
     keep = keep.to_numpy()
     counts = dict(panel.counts)
@@ -533,7 +536,7 @@ def run_pipeline(world: Any, *, state_dir: Path, configs: Sequence[Config] = CON
                  timing: bool = True, force_after_gate0_fail: bool = False,
                  stop_after: str | None = None, paths: Sequence[int] | None = None,
                  payout_paths: int = PAYOUT_PATHS,
-                 n_program: int = N_PROGRAM_AT_DRAFT,
+                 n_program: int = N_PROGRAM_AT_FREEZE,
                  isolate_paths: bool = ISOLATE_ENGINE_PATHS) -> PipelineReport:
     """panel -> filter -> Gate 0 -> nested CPCV -> stats -> final -> schedule -> simulate ->
     payouts (module docstring); resumable from state_dir. ``isolate_paths``: each engine path in

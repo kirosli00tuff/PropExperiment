@@ -14,7 +14,7 @@ from ml_route_v2.configs import (
     register_configs,
     tie_break_key,
 )
-from ml_route_v2.constants import COST_GATE_KS, HORIZONS, N_CONFIGURATIONS, N_PROGRAM_AT_DRAFT
+from ml_route_v2.constants import COST_GATE_KS, HORIZONS, N_CONFIGURATIONS, N_PROGRAM_AT_FREEZE
 
 
 def test_grid_has_45_unique_configs_in_documented_order():
@@ -57,7 +57,7 @@ def test_ledger_registers_once_and_counts(tmp_path):
     assert ledger.n_registered() == 47
     assert ledger.n_registered("config") == 45
     assert ledger.n_registered("gate0_A") == 1
-    assert ledger.n_total() == N_PROGRAM_AT_DRAFT + 47
+    assert ledger.n_total() == N_PROGRAM_AT_FREEZE + 47
     assert ledger.n_total(10) == 57
     lines = (tmp_path / "ledger.jsonl").read_text().splitlines()
     assert len(lines) == 47

@@ -24,7 +24,12 @@ P&L and worst intraday excursion per contract in dollars and the V2.8 risk quant
    from the balance at the prior session's close, before that date's payout debit (V2.8; code
    review C-09; a restarted account's prior close is its starting balance); KS2's multiplier
    when ``ks`` or ``ks2_sizing``); with unknown entry/exit times every earlier trade of the date
-   counts as open (conservative). The date starts with the variance budget (0.10 x D_open)^2 and
+   counts as open (conservative). The release window (V23 item 11; E.12 lead rule P-5): a trade
+   whose record carries release_window (its entry fill in [r - 5 min, r + 30 min) of a release of
+   its vehicle's list) is refused (n' = 0) when the lot-equivalents still open at its entry plus
+   its own n' would exceed RELEASE_WINDOW_TIER_FRACTION x that tier
+   (portfolio.release_window_binds), counted in PathResult / PathArrays.n_release_window_refusals.
+   The date starts with the variance budget (0.10 x D_open)^2 and
    each taken trade consumes (n x sigma x tick value)^2 (design review D-03, sizing.py). A trade
    re-sized from the engine's n to n' is re-priced for the beyond-q_c surcharge (design review
    D-08a): per contract, + tick value x (excess(n) - excess(n')) with excess(n) = 2 x (n - q_c)^+
@@ -86,7 +91,7 @@ from ml_route_v2.constants import (
     TRADE_LOSS_FRACTION,
 )
 from ml_route_v2.killswitch import KillSwitches
-from ml_route_v2.portfolio import MARGIN_TENTHS, vehicle_facts
+from ml_route_v2.portfolio import MARGIN_TENTHS, release_window_binds, vehicle_facts
 from ml_route_v2.sizing import (
     FLOOR_GUARD,
     budget_use,
@@ -122,6 +127,9 @@ class TradeRecord:
     entry_ts_ns: int = 0
     exit_ts_ns: int = 0
     q_c: int | None = None  # D2's size of the vehicle (D-08a re-pricing); None: not re-priced
+    # V23 item 11: the entry fill lies in a release window of its vehicle (simulate.trade_records
+    # copies the schedule row's flag); the re-sizing then applies the release-window rule
+    release_window: bool = False
 
     def __post_init__(self) -> None:
         nums = (self.pnl_usd_per_contract, self.worst_usd_per_contract, self.sigma_ticks,
@@ -180,6 +188,7 @@ class PathResult:
     contracts: tuple[tuple[int, ...], ...]  # per date, per trade (0 = not taken)
     stopped: tuple[bool, ...]  # the date ended at a stop (KS1 or DLL)
     first_ruin_day: int | None = None  # D-01: first close with D <= 0.25 x MLL, or a breach
+    n_release_window_refusals: int = 0  # V23 item 11: trades the re-sizing refused, every account
 
     @property
     def first_account_payouts(self) -> tuple[Payout, ...]:
@@ -278,6 +287,7 @@ def run_path(days: Sequence[DayRecord], account: AccountSpec, *, path_type: str,
     n_breaches = 0
     payouts: list[Payout] = []
     bal, flo, pnl_out, n_out, stop_out, ruined = [], [], [], [], [], []
+    n_rw = 0  # V23 item 11 refusals
 
     def record(pnl: float, sizes: tuple[int, ...], stopped: bool) -> None:
         bal.append(acct.balance)
@@ -348,6 +358,10 @@ def run_path(days: Sequence[DayRecord], account: AccountSpec, *, path_type: str,
                           tick_value_usd=tr.tick_value_usd,
                           product_cap=vehicle_facts(tr.root).product_cap,
                           capacity_contracts=capacity, multiplier=mult, budget_var=budget)
+            if n >= 1 and tr.release_window and release_window_binds(
+                    open_tenths + n * tr.lot_tenths, tier):
+                n = 0  # V23 item 11: refused, not re-sized
+                n_rw += 1
             sizes.append(n)
             if n < 1:
                 continue
@@ -392,7 +406,7 @@ def run_path(days: Sequence[DayRecord], account: AccountSpec, *, path_type: str,
         record(day_pnl, tuple(sizes), stopped)
     return PathResult(STATUS_NAMES[status], first_breach, halt_day, n_breaches, tuple(payouts),
                       tuple(bal), tuple(flo), tuple(pnl_out), tuple(n_out), tuple(stop_out),
-                      ruined[0] if ruined else None)
+                      ruined[0] if ruined else None, n_rw)
 
 
 # --------------------------------------------------------------------- vectorized paths ----
@@ -413,6 +427,7 @@ class _Packed:
     xeng: np.ndarray  # excess_cost_ticks at the engine's n (the record's own surcharge)
     closed_before: np.ndarray  # [n_days, K, K]: trade j closed before trade k's entry
     open_before: np.ndarray  # [n_days, K, K]: trade j (j < k) still open at k's entry
+    release_window: np.ndarray  # [n_days, K] bool: V23 item 11 flag (False on padding)
 
 
 def _pack(days: Sequence[DayRecord]) -> _Packed:
@@ -426,6 +441,7 @@ def _pack(days: Sequence[DayRecord]) -> _Packed:
     xeng = np.zeros((n, k))
     closed = np.zeros((n, k, k), dtype=bool)
     open_ = np.zeros((n, k, k), dtype=bool)
+    rw = np.zeros((n, k), dtype=bool)
     for d, day in enumerate(days):
         for j, tr in enumerate(day.trades):
             valid[d, j] = True
@@ -436,11 +452,12 @@ def _pack(days: Sequence[DayRecord]) -> _Packed:
             if tr.q_c is not None:
                 qc[d, j] = float(tr.q_c)
             xeng[d, j] = excess_cost_ticks(tr.contracts, tr.q_c)
+            rw[d, j] = bool(tr.release_window)
             for i, prev in enumerate(day.trades[:j]):
                 c = tr.times_known and prev.times_known and prev.exit_ts_ns <= tr.entry_ts_ns
                 closed[d, j, i], open_[d, j, i] = c, not c
     return _Packed(valid, f["pnl"], f["worst"], f["sigma"], f["loss"], f["cost"], f["tv"],
-                   tenths, pcap, qc, xeng, closed, open_)
+                   tenths, pcap, qc, xeng, closed, open_, rw)
 
 
 def _contracts_vec(d_open, d_now, sigma, loss, cost, tv, pcap, capacity, mult, rem):  # noqa: ANN001,ANN202
@@ -485,6 +502,7 @@ class PathArrays:
     n_breaches: np.ndarray  # with restarts
     net_payouts_all: np.ndarray  # every account of the path
     first_ruin_day: np.ndarray  # D-01: first close with D <= 0.25 x MLL or a breach; -1 if none
+    n_release_window_refusals: np.ndarray  # V23 item 11: trades refused, every account
 
 
 def bootstrap_indices(n_days: int, n_paths: int, horizon: int, block_mean: int,
@@ -529,6 +547,7 @@ def simulate_paths(days: Sequence[DayRecord], account: AccountSpec, idx: np.ndar
     out_all = np.zeros(p)
     first_pay, first_breach, halt_day, first_ruin = (np.full(p, -1) for _ in range(4))
     n_breach = np.zeros(p, dtype=np.int64)
+    n_rw = np.zeros(p, dtype=np.int64)  # V23 item 11 refusals
 
     def reset_window(mask: np.ndarray) -> None:
         w_win[mask], w_net[mask], w_tr[mask], w_sum[mask], w_max[mask] = 0, 0.0, 0, 0.0, -inf
@@ -602,6 +621,10 @@ def simulate_paths(days: Sequence[DayRecord], account: AccountSpec, idx: np.ndar
             n = _contracts_vec(d_open, d_now, pk.sigma[d, k], pk.loss[d, k], pk.cost[d, k],
                                pk.tv[d, k], pk.pcap[d, k], capacity, mult, rem)
             n = np.where(live, n, 0.0)
+            refuse = (live & pk.release_window[d, k] & (n >= 1) & release_window_binds(
+                open_ten + n.astype(np.int64) * pk.tenths[d, k], tier))
+            n = np.where(refuse, 0.0, n)  # V23 item 11: refused, not re-sized
+            n_rw += refuse
             took = n >= 1
             rem = rem - np.where(took, (n * (pk.sigma[d, k] * pk.tv[d, k])) ** 2, 0.0)
             adj = pk.tv[d, k] * (pk.xeng[d, k] - _excess_vec(n, pk.qc[d, k]))
@@ -649,7 +672,7 @@ def simulate_paths(days: Sequence[DayRecord], account: AccountSpec, idx: np.ndar
         # D-01: D at this close (0 after a breach); every path records a close each date
         first_ruin[(bal - flo <= ruin_level) & (first_ruin < 0)] = t
     return PathArrays(out_first, n_first, first_pay, first_breach, halt_day, n_breach, out_all,
-                      first_ruin)
+                      first_ruin, n_rw)
 
 
 # ------------------------------------------------------------------------------ summary ----

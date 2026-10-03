@@ -12,8 +12,12 @@ from ml_route_v2.constants import UNIVERSE
 from ml_route_v2.portfolio import (
     PortfolioInputError,
     accept_trades,
+    admission_record,
     admit,
     fixed_d_daily_pnl,
+    refusal_counts,
+    release_window_binds,
+    release_window_mask,
     vehicle_facts,
 )
 from ml_route_v2.selection_metric import daily_sharpe, score_split
@@ -25,11 +29,11 @@ T0 = 1_577_977_200 * 1_000_000_000  # 2020-01-02 09:00 CT (15:00 UTC)
 
 
 def cand(root: str, t: int, exit_: int, *, side: int = 1, edge: float = 1.0, cost: float = 3.0,
-         horizon: str = "h60", day: str = "2020-01-02") -> dict:
+         horizon: str = "h60", day: str = "2020-01-02", rw: bool = False) -> dict:
     return {"root": root, "cluster": UNIVERSE[root][0], "trade_date": pd.Timestamp(day),
             "decision_ts_ns": T0 + t * MIN, "horizon": horizon, "exit_ts_ns": T0 + exit_ * MIN,
             "side": side, "r_hat_ticks": 10.0 * side, "cost_ticks": cost,
-            "edge_over_cost": edge}
+            "edge_over_cost": edge, "release_window": rw}
 
 
 def risk(roots, sigma: float = 1.0, loss: float = 1.0, horizons=("h60", "h120", "hF")):
@@ -60,7 +64,16 @@ def test_vehicle_facts_come_from_rules_products() -> None:
                                    900_000])
 def test_tiers_agree_with_xfa_rules(cents: int) -> None:
     assert tier_max_tenths(ACCOUNT_50K, cents / 100) == xr.max_position_micros(xr.Phase.XFA, cents)
-    assert tier_max_tenths(ACCOUNT_150K, cents / 100) == tier_max_tenths(ACCOUNT_50K, cents / 100)
+
+
+@pytest.mark.parametrize("balance,tenths", [
+    (0.0, 30), (1_499.99, 30), (1_500.0, 40), (2_000.0, 40), (2_000.01, 50), (3_000.0, 50),
+    (3_000.01, 100), (4_500.0, 100), (4_500.01, 150)])
+def test_150k_tiers_are_topsteps_published_schedule(balance: float, tenths: int) -> None:
+    """E.12 (V23 item 12; reports/stage_e12_topstep_150k.md): 3 / 4 / 5 / 10 / 15 lots, $1,500
+    opening the 4-lot tier and a balance exactly on $2,000, $3,000 or $4,500 in the lower tier
+    (lead ruling). Replaces the E.11 stand-in that pinned the 150K tiers to the 50K ones."""
+    assert tier_max_tenths(ACCOUNT_150K, balance) == tenths
 
 
 # ---- accept_trades ---------------------------------------------------------------------------
@@ -191,7 +204,8 @@ def score_rows() -> pd.DataFrame:
                           "trade_date": pd.Timestamp(d), "decision_ts_ns": T0 + t * MIN,
                           "flatten_ts_ns": T0 + (t + 368) * MIN,
                           "exit_ts_ns_h60": T0 + (t + 60) * MIN, "y_gross_h60": y,
-                          "cost_long_h60": cl, "cost_short_h60": cs, "ok_h60": True}
+                          "cost_long_h60": cl, "cost_short_h60": cs, "ok_h60": True,
+                          "release_window": False}
                          for r, d, t, y, cl, cs in data])
 
 
@@ -213,7 +227,8 @@ def stub_candidates(rows: pd.DataFrame, r_hat: np.ndarray, config) -> pd.DataFra
         "root": rows["root"], "cluster": rows["cluster"], "trade_date": rows["trade_date"],
         "decision_ts_ns": rows["decision_ts_ns"], "horizon": "h60",
         "exit_ts_ns": rows["exit_ts_ns_h60"], "side": side, "r_hat_ticks": r_hat,
-        "cost_ticks": cost, "edge_over_cost": (np.abs(r_hat) - cost) / cost})[take]
+        "cost_ticks": cost, "edge_over_cost": (np.abs(r_hat) - cost) / cost,
+        "release_window": rows["release_window"].to_numpy(dtype=bool)})[take]
 
 
 def test_score_split_hand_computed_with_a_stub_decision_layer() -> None:
@@ -233,7 +248,8 @@ def test_score_split_with_the_real_cost_gate() -> None:
     configs = pytest.importorskip("ml_route_v2.configs")
     cfg = configs.Config("ridge_l0.1_k1.5_h60", configs.ridge_spec(0.1), 1.5, "h60")
     got = decide.candidates(score_rows(), R_HAT, cfg)
-    assert list(got["root"]) == ["MNQ", "MGC"]  # 20 - 3.5 > 1.5 x 3.5; 15 - 2.1 > 1.5 x 2.1
+    # gross (V23 item 1): 20 > 1.5 x 3.5 and 15 > 1.5 x 2.1 trade, 1 does not
+    assert list(got["root"]) == ["MNQ", "MGC"]
     score = score_split(score_rows(), R_HAT, cfg, risk=RISK)
     assert score.n_trades == 2 and score.daily.to_numpy() == pytest.approx(EXPECTED_DAILY)
 
@@ -274,7 +290,7 @@ def test_daily_risk_budget_over_one_day_hand_computed() -> None:
 
 def test_a_spent_budget_refuses_an_entry_by_name() -> None:
     kw = dict(root="MNQ", cluster="K1", sigma_ticks=70.0, loss_ticks=100.0, cost_ticks=3.0,
-              d_open=2000.0, d_now=2000.0, book=(), tier_tenths=19)
+              d_open=2000.0, d_now=2000.0, book=(), tier_tenths=19, release_window=False)
     assert admit(**kw).contracts == 3  # no budget given: sizing alone
     assert admit(**kw, budget_var=40_000.0).contracts == 3
     assert admit(**kw, budget_var=35.0 ** 2).contracts == 1  # exactly one contract's use fits
@@ -352,10 +368,11 @@ def test_a_pair_with_nan_risk_is_skipped_as_risk_unknown_and_counted() -> None:
     out = accept_trades(c, table, ACCOUNT_50K, d_fixed=2000.0)
     assert accepted_pairs(out) == [("MNQ", 0, 10)]
     adm = admit(root="MGC", cluster="K5", sigma_ticks=float("nan"), loss_ticks=1.0,
-                cost_ticks=3.0, d_open=2000.0, d_now=2000.0, book=(), tier_tenths=20)
+                cost_ticks=3.0, d_open=2000.0, d_now=2000.0, book=(), tier_tenths=20,
+                release_window=False)
     assert (adm.contracts, adm.reason) == (0, "risk_unknown")
     zero = admit(root="MGC", cluster="K5", sigma_ticks=0.0, loss_ticks=1.0, cost_ticks=3.0,
-                 d_open=2000.0, d_now=2000.0, book=(), tier_tenths=20)
+                 d_open=2000.0, d_now=2000.0, book=(), tier_tenths=20, release_window=False)
     assert zero.reason == "risk_unknown"  # sd 0: not sizeable either
     rows = score_rows()
     nan_mgc = RISK.assign(loss_ticks=[100.0, np.nan])
@@ -387,3 +404,122 @@ def test_join_risk_prefers_the_candidates_own_sigma_and_loss() -> None:
         ("MNQ", 0, 6)]
     with pytest.raises(PortfolioInputError, match="candidate_partial_risk_columns"):
         join_risk(c.assign(sigma_ticks=35.0), table)
+
+
+# ---- V23 item 11 (E.12 lead rule P-5): the release-window rule ---------------------------------
+R_REL = T0 + 100 * MIN  # a scheduled release concerning MGC
+R_OTHER = T0 + 150 * MIN  # a release concerning 6E only
+
+
+def test_release_window_mask_is_half_open_around_each_release() -> None:
+    rel = np.array([R_REL, R_REL + 300 * MIN])
+    fills = np.array([R_REL - 5 * MIN - 1, R_REL - 5 * MIN, R_REL, R_REL + 29 * MIN,
+                      R_REL + 30 * MIN - 1, R_REL + 30 * MIN, R_REL + 295 * MIN, -1, 0])
+    assert release_window_mask(fills, rel).tolist() == [False, True, True, True, True, False,
+                                                       True, False, False]
+    assert release_window_mask(fills, rel[::-1]).tolist() == release_window_mask(fills,
+                                                                                 rel).tolist()
+    assert not release_window_mask(fills, np.array([], dtype=np.int64)).any()
+
+
+def test_release_window_binds_above_half_the_tier_only() -> None:
+    # 50K tiers 2 / 3 / 5 lots: half = 10 / 15 / 25 tenths
+    assert [bool(release_window_binds(x, 20)) for x in (9, 10, 11)] == [False, False, True]
+    assert [bool(release_window_binds(x, 30)) for x in (15, 16)] == [False, True]
+    assert [bool(release_window_binds(x, 50)) for x in (25, 26)] == [False, True]
+    got = release_window_binds(np.array([10, 11, 15, 16]), np.array([20, 20, 30, 30]))
+    assert got.tolist() == [False, True, False, True]
+
+
+def test_admit_refuses_a_window_entry_only_above_half_the_tier() -> None:
+    """MNQ 5 contracts open (0.5 lot) at the base tier (2 lots: half = 1.0). An MGC entry in its
+    release window of 5 micros (0.5 lot) reaches exactly half and is admitted; 6 micros exceed
+    half and are refused by name. Outside the window the same 6 micros are admitted."""
+    from ml_route_v2.portfolio import OpenPosition
+
+    book = (OpenPosition("MNQ", "K1", 5, T0 + 300 * MIN),)
+    kw = dict(root="MGC", cluster="K5", sigma_ticks=1.0, loss_ticks=1.0, cost_ticks=3.0,
+              d_open=2000.0, d_now=2000.0, book=book, tier_tenths=20)
+    assert admit(**kw, release_window=True, extra_cap=5).contracts == 5
+    refused = admit(**kw, release_window=True, extra_cap=6)
+    assert (refused.contracts, refused.reason) == (0, "release_window")
+    assert admit(**kw, release_window=False, extra_cap=6).contracts == 6
+    # at the 3-lot tier half is 1.5 lots: the same 6 micros fit
+    assert admit(**{**kw, "tier_tenths": 30}, release_window=True, extra_cap=6).contracts == 6
+
+
+def _window_cands(book: bool) -> pd.DataFrame:
+    """MGC entries around its release R_REL, each exiting a minute later, with flags from MGC's
+    own release list; MNQ (1 lot, half the base tier) open over the window when ``book``."""
+    rel_mgc = np.array([R_REL])
+    rows = [cand("MGC", t, t + 1) for t in (94, 95, 129, 130, 150)]
+    if book:
+        rows.insert(0, cand("MNQ", 0, 200, edge=5.0))
+    c = pd.DataFrame(rows)
+    fills = c["decision_ts_ns"].to_numpy(dtype=np.int64)
+    flags = np.where(c["root"] == "MGC", release_window_mask(fills, rel_mgc), False)
+    return c.assign(release_window=flags.astype(bool))
+
+
+def test_accept_trades_refuses_window_entries_above_half_and_counts_them() -> None:
+    """With MNQ's 1.0 lot open (= half the 2-lot base tier), MGC entries at r - 5 min and
+    r + 29 min are refused ("release_window"); r - 6 min and r + 30 min (the half-open end) are
+    admitted; at 6E's release time (not MGC's) the entry is admitted: another product's release
+    does not bind. The record counts the two refusals."""
+    c = _window_cands(book=True)
+    assert c["release_window"].tolist() == [False, False, True, True, False, False]
+    other = release_window_mask(np.array([T0 + 150 * MIN]), np.array([R_OTHER]))
+    assert other.tolist() == [True]  # the same entry would sit in 6E's window
+    rec = admission_record(c, risk(["MNQ", "MGC"]), ACCOUNT_50K, d_fixed=2000.0)
+    assert list(zip(rec["root"], (rec["decision_ts_ns"] - T0) // MIN, rec["contracts"],
+                    rec["reason"], strict=True)) == [
+        ("MNQ", 0, 10, ""), ("MGC", 94, 9, ""), ("MGC", 95, 0, "release_window"),
+        ("MGC", 129, 0, "release_window"), ("MGC", 130, 9, ""), ("MGC", 150, 9, "")]
+    assert refusal_counts(rec) == {"release_window": 2}
+    out = accept_trades(c, risk(["MNQ", "MGC"]), ACCOUNT_50K, d_fixed=2000.0)
+    assert accepted_pairs(out) == [("MNQ", 0, 10), ("MGC", 94, 9), ("MGC", 130, 9),
+                                   ("MGC", 150, 9)]
+    assert "reason" not in out.columns
+
+
+def test_accept_trades_admits_a_window_entry_at_exactly_half_the_tier() -> None:
+    """Without the MNQ book, MGC at r + 29 min takes 10 micros (1.0 lot): exactly half the base
+    tier, not above it, so it is admitted; the window binds only above half."""
+    c = _window_cands(book=False)
+    rec = admission_record(c, risk(["MGC"]), ACCOUNT_50K, d_fixed=2000.0)
+    assert rec["contracts"].tolist() == [10, 10, 10, 10, 10]
+    assert refusal_counts(rec) == {}
+
+
+def test_candidates_need_a_boolean_release_window_flag() -> None:
+    c = pd.DataFrame([cand("MNQ", 0, 60)])
+    with pytest.raises(PortfolioInputError, match="release_window"):
+        accept_trades(c.drop(columns="release_window"), risk(["MNQ"]), ACCOUNT_50K,
+                      d_fixed=2000.0)
+    with pytest.raises(PortfolioInputError, match="candidate_bad_release_window"):
+        accept_trades(c.assign(release_window=1.0), risk(["MNQ"]), ACCOUNT_50K, d_fixed=2000.0)
+
+
+def test_score_split_applies_the_release_window_rule() -> None:
+    """The selection metric reads each row's flag through the decision layer. One date: MNQ at
+    09:00 sized to its 1-lot product cap (sigma 1, loss 1), then MGC at 09:10 with 9 micros (the
+    capacity left under the 1.9-lot portfolio cap): 1.9 lots exceed half the base tier, so a
+    flagged MGC row is refused and only MNQ trades; unflagged, both trade."""
+    base = score_rows().iloc[[0, 2]].reset_index(drop=True)
+    rows = base.assign(trade_date=pd.Timestamp("2020-01-02"),
+                       decision_ts_ns=[T0, T0 + 10 * MIN],
+                       flatten_ts_ns=[T0 + 368 * MIN, T0 + 378 * MIN],
+                       exit_ts_ns_h60=[T0 + 60 * MIN, T0 + 70 * MIN])
+    tight = RISK.assign(sigma_ticks=1.0, loss_ticks=1.0)
+    r_hat = np.array([20.0, -15.0])
+    plain = score_split(rows, r_hat, None, risk=tight, candidates_fn=stub_candidates)
+    flagged = score_split(rows.assign(release_window=[False, True]), r_hat, None, risk=tight,
+                          candidates_fn=stub_candidates)
+    assert plain.n_trades == 2 and flagged.n_trades == 1
+    assert flagged.daily.to_numpy() == pytest.approx([10 * (12.0 - 3.5 - excess(10)) * 0.5])
+
+
+def excess(n: int) -> float:
+    """The beyond-q_c surcharge per contract for MNQ (D-08a): 2 x (n - q_c)^+ / n ticks."""
+    q_c = vehicle_facts("MNQ").q_c
+    return 2.0 * max(n - q_c, 0) / n

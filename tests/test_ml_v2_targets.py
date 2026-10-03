@@ -24,12 +24,13 @@ FIRST, LAST = date(2023, 1, 3), date(2023, 2, 8)
 PU = 4.0  # MNQ ticks per NQ index point: 1 / (vendor factor 1 x tick 0.25)
 
 
-def _releases(instants: list[int]):  # noqa: ANN202 - ReleaseCalendar
+def _releases(instants: list[int], others: list[int] = ()):  # noqa: ANN202 - ReleaseCalendar
     from screening.stage_e_rules import ReleaseCalendar
 
     rel = tuple(sorted(instants))
-    return ReleaseCalendar(MappingProxyType({"MNQ": rel, "NQ": rel}), (), FIRST, LAST, "0" * 64,
-                           "test")
+    return ReleaseCalendar(MappingProxyType({"MNQ": rel, "NQ": rel,
+                                             "MGC": tuple(sorted(others))}), (), FIRST, LAST,
+                           "0" * 64, "test")
 
 
 @pytest.fixture(scope="module")
@@ -151,7 +152,7 @@ def test_layout_warm_up_and_determinism(world: tuple) -> None:
     a = build_targets(rows, {"NQ": bars}, releases=_releases([]), costs=frozen_costs(("MNQ",)))
     b = build_targets(rows, {"NQ": bars}, releases=_releases([]), costs=frozen_costs(("MNQ",)))
     pd.testing.assert_frame_equal(a, b)
-    want = ["entry_price", "entry_ts_ns", "sigma_d"]
+    want = ["entry_price", "entry_ts_ns", "release_window", "sigma_d"]
     for h in HORIZONS:
         want += [f"y_gross_{h}", f"cost_long_{h}", f"cost_short_{h}", f"exit_ts_ns_{h}",
                  f"y_norm_{h}", f"ok_{h}"]
@@ -189,3 +190,27 @@ def test_cost_missing_rows_are_counted_per_root_and_horizon() -> None:
                    "cost_missing_MGC_hF": 1, "cost_missing_MNQ_hF": 2}
     full = frame.assign(**{f"cost_{s}_{h}": 1.0 for s in ("long", "short") for h in HORIZONS})
     assert cost_missing_counts(full) == {}
+
+
+def test_release_window_flag_uses_the_entry_fill_and_the_vehicles_own_list(world: tuple) -> None:
+    """V23 item 11: release_window is True iff the entry fill lies in [r - 5 min, r + 30 min) of
+    a release r of MNQ's own list. A release 5 minutes after t binds; one 30 minutes before t
+    does not (half-open), 29 minutes before does; a deferred fill (D9.5a) is tested at its
+    deferred time; a release on another vehicle's list (MGC) never binds an MNQ row."""
+    bars, rows = world
+    i = len(rows) - 3
+    t = int(rows["decision_ts_ns"].iloc[i])
+
+    def flag(rel: list[int], others: list[int] = ()) -> bool:
+        tg = build_targets(rows, {"NQ": bars}, releases=_releases(rel, others),
+                           costs=frozen_costs(("MNQ",)))
+        assert tg["release_window"].dtype == bool
+        return bool(tg["release_window"].iloc[i])
+
+    assert flag([t + 5 * NS_MIN])
+    assert not flag([t + 5 * NS_MIN + 1])
+    assert flag([t - 29 * NS_MIN])
+    assert not flag([t - 30 * NS_MIN])
+    assert flag([t - NS_MIN])  # the fill is deferred to t + 1 min, still in the window
+    assert not flag([], [t])  # MGC's release: not MNQ's list
+    assert not flag([])

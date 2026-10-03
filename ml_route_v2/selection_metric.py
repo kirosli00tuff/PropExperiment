@@ -5,7 +5,9 @@ On one validation set:
 1. the decision layer (decide.candidates: V2.7's cost gate at the configuration's k and horizon)
    turns the predictions into candidate trades;
 2. portfolio.accept_trades applies every V2.8 cap with D held at the account's MLL ($2,000 at
-   50K), so the metric has no path dependence;
+   50K), so the metric has no path dependence; the caps include the release-window rule (V23
+   item 11; E.12 lead rule P-5) on each candidate's release_window flag (targets.py, carried by
+   the decision layer) against half the base tier;
 3. portfolio.fixed_d_daily_pnl gives the net dollars per trade date at 1.0 x D8 cost plus the
    beyond-q_c surcharge (design review D-08a); ``slippage_multiple`` (default 1.0, design review
    D-08b) scales the slippage part of that cost (cost minus commission / tick value) for the

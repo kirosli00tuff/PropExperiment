@@ -5,7 +5,8 @@ reports/stage_e11_interfaces.md section 4. One row per (root, horizon), over the
 target is formed (ok_<h>):
 - c_ticks: mean of max(cost_long, cost_short), the D8 round trip at size 1 in vehicle ticks;
 - sigma_ticks: sd (ddof 1) of y_gross;
-- ratio = c / sigma; admissible: ratio <= C_SIGMA_TAU;
+- ratio = c / sigma; admissible: ratio <= constants.C_SIGMA_TAU (0.167, V23 item 1: under the
+  gross reading the loosest hurdle 1.5 c is 0.25 sigma; looked up at call time);
 - loss_ticks: the LOSS_QUANTILE quantile of |y_gross|;
 - n_rows.
 The filter reads volatility and cost only, never a return's sign or mean. Both tables refuse a
@@ -23,7 +24,8 @@ from collections.abc import Sequence
 import numpy as np
 import pandas as pd
 
-from ml_route_v2.constants import C_SIGMA_TAU, HORIZONS, LOSS_QUANTILE
+from ml_route_v2 import constants as v2c
+from ml_route_v2.constants import HORIZONS, LOSS_QUANTILE
 from ml_route_v2.panel import Panel, assert_window
 
 COLUMNS = ("root", "horizon", "c_ticks", "sigma_ticks", "ratio", "admissible", "loss_ticks",
@@ -38,6 +40,7 @@ def _frame(panel: pd.DataFrame | Panel) -> pd.DataFrame:
 
 def _table(frame: pd.DataFrame, extra_roots: Sequence[str] = ()) -> pd.DataFrame:
     recs = []
+    tau = v2c.C_SIGMA_TAU  # V23 item 1 (call time)
     roots = frame["root"].to_numpy(object)
     for root in sorted(set(map(str, pd.unique(roots))) | set(map(str, extra_roots))):
         sel = roots == root
@@ -52,7 +55,7 @@ def _table(frame: pd.DataFrame, extra_roots: Sequence[str] = ()) -> pd.DataFrame
             ratio = c_mean / sd if (n >= 2 and sd > 0) else np.nan
             loss = float(np.quantile(np.abs(y), LOSS_QUANTILE)) if n else np.nan
             recs.append((root, h, c_mean, sd, ratio, bool(np.isfinite(ratio)
-                         and ratio <= C_SIGMA_TAU), loss, n))
+                         and ratio <= tau), loss, n))
     return pd.DataFrame.from_records(recs, columns=list(COLUMNS))
 
 

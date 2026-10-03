@@ -62,7 +62,12 @@ produced it, code review C-04; portfolio.join_risk): at each decision time it si
 portfolio.admit (sizing.contracts with D = equity - floor from the account view, and the V2.8
 portfolio caps; a row whose sigma or loss is unknown is skipped as risk_unknown, C-02), issues
 market intents, and exits at the schedule's exit time; an hF trade, or an exit that falls in
-the flatten window, is left to the engine's forced flatten. The daily risk budget (design review
+the flatten window, is left to the engine's forced flatten. The release window (V23 item 11;
+E.12 lead rule P-5): each schedule row carries targets.py's release_window flag (its entry fill
+in [r - 5 min, r + 30 min) of a release of its vehicle's list); portfolio.admit refuses such an
+entry when the open lot-equivalents including it would exceed half the tier at the prior
+session's close, recorded in ``decisions`` with reason "release_window"; the trade records carry
+the flag so payout_sim's re-sizing applies the same rule. The daily risk budget (design review
 D-03): each trade date starts with (0.10 x D_open)^2 and every issued entry consumes
 (n x sigma(p,h) x tick value)^2 (sizing.daily_variance_budget / budget_use); the budget is
 consumed when the intent is issued (an intent the engine then refuses keeps its budget spent:
@@ -202,6 +207,7 @@ class _Plan:
     sigma_ticks: float
     loss_ticks: float
     cost_ticks: float
+    release_window: bool  # V23 item 11: the schedule row's release-window flag (targets.py)
 
 
 @dataclass(frozen=True)
@@ -232,7 +238,8 @@ class PortfolioMember:
             raise ValueError("schedule_duplicate_rows: one row per (root, decision_ts_ns)")
         plans = [_Plan(i, r.root, r.cluster, r.horizon, int(r.side), int(r.decision_ts_ns),
                        int(r.exit_ts_ns), float(r.sigma_ticks), float(r.loss_ticks),
-                       float(r.cost_ticks)) for i, r in enumerate(ranked.itertuples(index=False))]
+                       float(r.cost_ticks), bool(r.release_window))
+                 for i, r in enumerate(ranked.itertuples(index=False))]
         by_ts: dict[int, list[_Plan]] = defaultdict(list)
         for p in plans:
             by_ts[p.decision_ts_ns].append(p)
@@ -356,6 +363,7 @@ class PortfolioMember:
             adm = admit(root=p.root, cluster=p.cluster, sigma_ticks=p.sigma_ticks,
                         loss_ticks=p.loss_ticks, cost_ticks=p.cost_ticks, d_open=self._d_open,
                         d_now=d_now, book=book, tier_tenths=tier,
+                        release_window=p.release_window,  # V23 item 11
                         extra_cap=self._cpi_cap(p.root, ts), budget_var=self._budget)
             if adm.contracts < 1:
                 self.decisions.append(MemberDecision(ts, p.row_id, p.root, 0, adm.reason))
@@ -587,7 +595,8 @@ def trade_records(result: EngineResult, frames: Mapping[str, pd.DataFrame], rule
                                min(worst_pc, net_pc), plan.sigma_ticks, plan.loss_ticks,
                                plan.cost_ticks, facts.tick_value_usd, facts.lot_equiv,
                                plan.cluster, trip.open_ts_ns, trip.close_ts_ns,
-                               int(vehicle.q_c) if vehicle is not None else None))
+                               int(vehicle.q_c) if vehicle is not None else None,
+                               release_window=plan.release_window))
     return tuple(out)
 
 

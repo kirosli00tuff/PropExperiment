@@ -78,6 +78,8 @@ def make_panel(n_dates: int = 120, roots: tuple[str, ...] = ("AA", "BB"), n_sign
     for k in ("K1", "K2"):
         cols[f"id_cluster_{k}"] = (cluster == k).astype(np.float64)
     cols["entry_price"] = np.full(n, 100.0)
+    # targets.py's release-window flag (V23 item 11): no releases in this fake panel
+    cols["release_window"] = np.zeros(n, dtype=bool)
     cols["sigma_d"] = np.full(n, sigma)
     for h, minutes in HORIZON_MIN.items():
         y_norm = edge * z[:, 0] + rng.standard_normal(n)

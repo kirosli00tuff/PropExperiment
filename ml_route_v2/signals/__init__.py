@@ -5,12 +5,14 @@ docs/STAGE_E_ML_V2_DESIGN.md V2.3; contract reports/stage_e11_interfaces.md sect
 list reports/stage_e11_briefs/member_inventory.md (54 rows); coverage and readings
 reports/stage_e11_signal_coverage.md.
 
-- REGISTRY: name -> SignalSpec, in a fixed order (pooled ports CP1-CP3, members K1..K8, generic
-  G1..G17).
+- REGISTRY: name -> SignalSpec, in a fixed order (pooled ports CP1-CP3, members K1..K8, K9's
+  announcement-day flag k9_anncday (V23 item 8; signals/k9.py), generic G1..G17).
 - EXCLUDED: family id -> the logged reason it enters as no feature.
 - FAMILY_SIGNALS: each of the 54 inventory families -> the signal names that carry it ((): an
   EXCLUDED family). The 21 port families map to the pooled port signals (lead ruling); K2-aucpre-01
-  and K2-aucpost-01 share one event and its two signals.
+  and K2-aucpost-01 share one event and its two signals; K9-anncday-01 maps to k9_anncday, a
+  "flag" spec (not normalized), added here by name since only "member" specs are collected
+  automatically (V23 item 8).
 - ALWAYS_APPLICABLE: signals whose applicability is 1 on every decision row by construction (their
   app_ column is left out of the panel's feature_cols, reading PN-1).
 - compute_signals(ctx, names): raw_<name>, app_<name>, avail_<name> per signal, with the V2.2
@@ -29,7 +31,7 @@ from types import MappingProxyType
 import numpy as np
 import pandas as pd
 
-from ml_route_v2.signals import generic, k1, k2, k3, k4, k5, k6, k7, k8, ports
+from ml_route_v2.signals import generic, k1, k2, k3, k4, k5, k6, k7, k8, k9, ports
 from ml_route_v2.signals._core import (
     CausalityError,
     SignalContext,
@@ -39,7 +41,8 @@ from ml_route_v2.signals._core import (
 )
 
 _ALL: tuple[SignalSpec, ...] = (*ports.SPECS, *k1.SPECS, *k2.SPECS, *k3.SPECS, *k4.SPECS,
-                                *k5.SPECS, *k6.SPECS, *k7.SPECS, *k8.SPECS, *generic.SPECS)
+                                *k5.SPECS, *k6.SPECS, *k7.SPECS, *k8.SPECS, *k9.SPECS,
+                                *generic.SPECS)
 if len({s.name for s in _ALL}) != len(_ALL):
     raise ImportError("duplicate signal names in the V2.3 library")
 
@@ -56,12 +59,8 @@ EXCLUDED = MappingProxyType({
         "close(10:59) is known at 11:15 CT (strategy/members/k6/wasdepost.py:44-45), after the "
         "last grain decision time 11:00 CT (V2.2), so its most recent value on the same trade "
         "date is never available at t"),
-    "K9-anncday-01": (
-        "input not covered on the training window: EC-K9 (reports/stage_e10_catalog_K9.json "
-        "members[0].event_dates) covers 2025-04-01..2026-06-17; the frozen release calendar "
-        "(reports/stage_e2b_release_calendar.json) has FOMC, NFP, CPI and PPI rows from "
-        "2019-05 but no GDP or ISM manufacturing rows, so the EC-K9 set cannot be formed on "
-        "2019-05-06..2024-02-29 without new data"),
+    # K9-anncday-01 left this table in E.12 (V23 item 8): the EC-K9 calendar for 2019-2024 is
+    # built from official pages in the freeze session (signals/k9.py)
 })
 
 
@@ -72,6 +71,8 @@ def _family_signals() -> dict[str, tuple[str, ...]]:
             out.setdefault(s.family, []).append(s.name)
     for fam, names in k2.SHARED.items():
         out.setdefault(fam, []).extend(names)
+    for s in k9.SPECS:  # a "flag" spec of a member family (V23 item 8)
+        out.setdefault(s.family, []).append(s.name)
     for fam in EXCLUDED:
         out[fam] = []
     return {k: tuple(v) for k, v in out.items()}

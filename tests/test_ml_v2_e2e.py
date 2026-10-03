@@ -19,7 +19,7 @@ import pytest
 
 from ml_route_v2 import engine_stage, pipeline
 from ml_route_v2.configs import CONFIGS, ConfigLedger
-from ml_route_v2.constants import N_PROGRAM_AT_DRAFT, UNIVERSE
+from ml_route_v2.constants import N_PROGRAM_AT_FREEZE, UNIVERSE
 from ml_route_v2.cost_filter import c_sigma_table
 from ml_route_v2.gate0 import gate0_family_a
 from ml_route_v2.pipeline import (
@@ -146,7 +146,7 @@ def test_ledger_n_is_program_plus_configs_plus_gate0_tests(runs) -> None:
     ledger = ConfigLedger(a.state_dir / pipeline.LEDGER_FILE)
     assert ledger.n_registered("config") == len(e2e_configs())
     assert ledger.n_registered("gate0_A") + ledger.n_registered("gate0_B") == n_gate0
-    expected = N_PROGRAM_AT_DRAFT + len(e2e_configs()) + n_gate0
+    expected = N_PROGRAM_AT_FREEZE + len(e2e_configs()) + n_gate0
     assert ledger.n_total() == expected == a.results["stats"]["n_total"]
 
 

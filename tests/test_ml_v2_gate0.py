@@ -1,4 +1,12 @@
-"""ml_route_v2.gate0: families A and B, Holm, the pass bar, registration (V2.2b). Synthetic only."""
+"""ml_route_v2.gate0: families A and B, Holm, the pass bar, registration (V2.2b). Synthetic only.
+
+Gate 0's canaries under the decided defaults (V23 item 1: gross mean >= 1.5 c on the top-20%
+confident trades, t >= 3, Holm 0.05 with family A, at least 30 trades): pure noise fails; a
+planted gross edge well above cost passes; an edge between 1.0 c and 1.5 c fails (bar 1 binds);
+an edge in [1.5 c, 2.5 c) passes. The cost gate's side of the [1.5 c, 2.5 c) edge (traded by the
+k = 1.5 gate under the gross reading, rejected at every k under the literal net reading) is in
+tests/test_ml_v2_leakage.py, canary (c).
+"""
 
 from __future__ import annotations
 
@@ -8,7 +16,7 @@ import pytest
 
 import ml_route_v2.gate0 as g0
 from ml_route_v2.configs import ConfigLedger
-from ml_route_v2.constants import N_PROGRAM_AT_DRAFT
+from ml_route_v2.constants import GATE0_COST_MULTIPLE, N_PROGRAM_AT_FREEZE
 from ml_route_v2.gate0 import (
     Gate0Rule,
     Gate0Test,
@@ -63,6 +71,21 @@ def test_edge_above_cost_but_below_one_and_a_half_costs_fails(tmp_path):
     assert gate0_verdict(a + b, Gate0Rule(cost_multiple=1.0)).passed  # bar 1 is what binds
 
 
+def test_edge_between_one_and_a_half_and_two_and_a_half_costs_passes(tmp_path):
+    """V23 item 1: Gate 0's bar is a gross mean of 1.5 c, so an edge in [1.5 c, 2.5 c) passes
+    (the same draw: mean g 7.95..10.16 ticks against a 4.6-tick round trip, 1.73..2.21 c). Under
+    the old literal reading such an edge passed Gate 0 and was then rejected by every cost gate;
+    under the gross reading the k = 1.5 gate trades it (tests/test_ml_v2_leakage.py, (c))."""
+    panel = make_panel(n_dates=300, seed=12, edge=0.5, cost=4.6)
+    _, a, b = _run(panel, tmp_path, "mid")
+    for t in b:
+        assert GATE0_COST_MULTIPLE * t.cost_ticks <= t.mean < 2.5 * t.cost_ticks
+        assert t.t >= 3.0 and t.n_trades >= 30
+    verdict = gate0_verdict(a + b)
+    assert verdict.passed
+    assert set(verdict.passing) == {t.test_id for t in b}
+
+
 def test_every_test_is_registered_before_it_is_computed(tmp_path, monkeypatch):
     panel = make_panel(n_dates=60, seed=1)
     ledger = ConfigLedger(tmp_path / "l.jsonl")
@@ -88,7 +111,7 @@ def test_every_test_is_registered_before_it_is_computed(tmp_path, monkeypatch):
     verdict = gate0_verdict(a + b)
     assert verdict.n_tests == len(a) + len(b) == 9 + 6
     assert ledger.n_registered("gate0_A") == 9 and ledger.n_registered("gate0_B") == 6
-    assert ledger.n_total() == N_PROGRAM_AT_DRAFT + 15
+    assert ledger.n_total() == N_PROGRAM_AT_FREEZE + 15
     assert len(verdict.holm) == 15
     assert len(gate0_verdict(a + b, Gate0Rule(holm_includes_a=False)).holm) == 6
 

@@ -1,8 +1,9 @@
-"""Constants of ML route v2 (docs/STAGE_E_ML_V2_DESIGN.md, DRAFT, Stage E.11).
+"""Constants of ML route v2 (docs/STAGE_E_ML_V2_DESIGN.md, Stage E.11 build, V23 applied in E.12).
 
-Every value here is a literal from the v2 design draft (section given beside it). None is read from
-an argument or an environment variable. The draft is not frozen: the freeze session applies the
-user's decisions (V2.12) by editing this file, and its freeze manifest then hashes it.
+Every value here is a literal from the v2 design (section given beside it). None is read from an
+argument or an environment variable. The user's V2.12 decisions (docs/DECISIONS.md V23) are
+applied here; the file is frozen by the Stage E.12 freeze manifest
+(reports/stage_e12_ml_v2_freeze.json), which hashes it.
 """
 
 from __future__ import annotations
@@ -56,7 +57,9 @@ DECISION_TIMES_CT = MappingProxyType({
     "grains": (time(9, 0), time(10, 0), time(11, 0)),
     "livestock": (time(9, 0), time(10, 0), time(11, 0)),
 })
-C_SIGMA_TAU = 0.10  # V2.2 c/sigma filter
+# V2.2 c/sigma filter (V23 item 1): admissible iff c / sigma <= tau. Under the gross reading the
+# loosest hurdle is 1.5 c, and 1.5 c = 0.25 sigma gives tau = 1/6, stated 0.167.
+C_SIGMA_TAU = 0.167
 
 # ---- V2.4 normalization ------------------------------------------------------------------
 Z_WINDOW_DATES = 250
@@ -64,14 +67,14 @@ Z_MIN_DATES = 60
 Z_CLIP = 5.0
 SIGMA_D_DATES = 20  # sigma_X,d (v1 ML-A06)
 
-# ---- V2.2b Gate 0 (parameters fixed at freeze) ----------------------------------------------
-GATE0_COST_MULTIPLE = 1.5
-GATE0_T_MIN = 3.0
-GATE0_FAMILY_ALPHA = 0.05
-GATE0_TOP_FRACTION = 0.20
-GATE0_MIN_TRADES = 30
-GATE0_HOLM_INCLUDES_FAMILY_A = True
-GATE0_RIDGE_LAMBDA = 0.1
+# ---- V2.2b Gate 0 (decided, V23 item 1) ------------------------------------------------------
+GATE0_COST_MULTIPLE = 1.5  # V23 item 1: gross mean of the confident trades >= 1.5 c
+GATE0_T_MIN = 3.0  # V23 item 1: t >= 3
+GATE0_FAMILY_ALPHA = 0.05  # V23 item 1: Holm at 0.05
+GATE0_TOP_FRACTION = 0.20  # V23 item 1: the top 20% confident trades
+GATE0_MIN_TRADES = 30  # V23 item 1: at least 30 trades
+GATE0_HOLM_INCLUDES_FAMILY_A = True  # V23 item 1: family A in the Holm family
+GATE0_RIDGE_LAMBDA = 0.1  # V23 item 1 (Gate 0 as written: ridge at lambda 0.1)
 
 # ---- V2.6 models -------------------------------------------------------------------------
 SEED = 20261003
@@ -85,11 +88,12 @@ LGBM_FIXED = MappingProxyType({
 })
 
 # ---- V2.7 decision layer -----------------------------------------------------------------
-COST_GATE_KS = (1.5, 2.0, 3.0)  # trade iff |r_hat| - c > k c (literal F7 reading)
+COST_GATE_KS = (1.5, 2.0, 3.0)  # V23 item 1: trade iff |r_hat| > k c (hurdles 1.5c / 2c / 3c)
 N_CONFIGURATIONS = (len(RIDGE_LAMBDAS) + len(LGBM_DEPTHS)) * len(COST_GATE_KS) * len(HORIZONS)
-# V2.7: 'net' = literal F7 (|r_hat| - c > k c); 'gross' = |r_hat| > k c;
-# the user decides (V2.12 item 1)
-COST_GATE_READING = "net"
+# V2.7 reading (decided, V23 item 1): 'gross' = |r_hat| > k c, the built default; 'net' = the
+# literal F7 wording (|r_hat| - c > k c), kept selectable by this constant (decide.py reads it at
+# call time).
+COST_GATE_READING = "gross"
 
 # ---- V2.8 sizing, portfolio, kill switches -------------------------------------------------
 DAILY_SIGMA_FRACTION = 0.10  # sigma_target = 0.10 x D_open
@@ -113,6 +117,12 @@ KS5_STALE_ENTRY_MIN = 2
 KS5_STALE_FLATTEN_MIN = 5
 # V2.8 (design review D-08a): each contract beyond D2's q_c pays one extra tick per side
 BEYOND_QC_EXTRA_TICKS_PER_SIDE = 1.0
+# V2.8 release window (V23 item 11; E.12 lead rule P-5): an entry in p whose fill lies in
+# [r - 5 min, r + 30 min) of a scheduled release r concerning p is refused if open lot-equivalents
+# including the entry would exceed 0.5 x the scaling tier's maximum position size in force
+RELEASE_WINDOW_BEFORE_MIN = 5
+RELEASE_WINDOW_AFTER_MIN = 30
+RELEASE_WINDOW_TIER_FRACTION = 0.5
 
 # ---- V2.9 evaluation ---------------------------------------------------------------------
 N_BLOCKS = 6
@@ -120,7 +130,9 @@ N_TEST_BLOCKS = 2  # outer CPCV: 15 splits, 5 paths
 EMBARGO_DATES = 1
 MIN_TRADES = 30  # V18, V21
 PBO_BLOCKS = 16
-N_PROGRAM_AT_DRAFT = 198  # cumulative N after E.9 (E.10 screened nothing, V21); freeze re-reads it
+# The program's cumulative N at the freeze: E.9's 198 (docs/STAGES.md line 114,
+# reports/E.9_RETURN.md line 21); E.10 and E.11 screened nothing (V21; code review C-08)
+N_PROGRAM_AT_FREEZE = 198
 VERDICT_T_MIN = 3.0
 VERDICT_DSR_MIN = 0.95
 VERDICT_PBO_MAX = 0.5
@@ -135,8 +147,10 @@ PAYOUT_BLOCK_MEAN = 10
 N_COPIED_ACCOUNTS = 5  # one draw (F11)
 # V2.0 table "/month (21 d)"; monthly payouts = path total / (252/21) (Task 4)
 TRADE_DATES_PER_MONTH = 21
-# V2.9: a new Combine's delay after a breach, open; the freeze fills it (Task 4)
-PAYOUT_RESET_DELAY_DATES = 0
+# V2.9: a new Combine's delay after a breach, filled at the freeze (V23 item 12): Topstep's stated
+# minimum to pass a Combine, "as few as two days" (reports/stage_e12_topstep_150k.md row 7); a lower
+# bound, since passing is neither certain nor usually that quick
+PAYOUT_RESET_DELAY_DATES = 2
 # V2.9 payout policy: keep D >= 0.5 x MLL after a payout (KS2 threshold), lead ruling 2026-10-03
 PAYOUT_KEEP_D_FRAC = 0.5
 COST_SENSITIVITY_SLIPPAGE_MULTIPLE = 1.5  # V2.9 (design review D-08b): OOS at 1.5 x slippage

@@ -6,9 +6,9 @@ simulator (V2.9) need about one Express Funded Account. Two instances:
 - ``ACCOUNT_50K`` is derived from rules.xfa_rules.XFA_50K (cents to dollars, the same values) plus
   the facts file's DLL ($1,000, F12.2c), the DLL doubling of the payout caps (F12.2b) and the 90/10
   split (F9.1). The frozen engine encodes this account and no other.
-- ``ACCOUNT_150K`` carries the 150K figures of facts F12.2a-c and the V22 MLL ($4,500, which is not
-  in the facts file). Its scaling schedule is published only as an image (facts F5.2 note), so the
-  50K tiers stand in for it, the conservative reading (V2.0; V2.12 item 12).
+- ``ACCOUNT_150K`` carries the 150K figures of facts F12.2a-c, the MLL ($4,500, V22, confirmed at
+  the Stage E.12 freeze) and the 150K scaling plan read from Topstep's page image at the freeze
+  (reports/stage_e12_topstep_150k.md; V23 item 12).
 
 Fields beyond the interfaces file's list (reported to the lead): ``starting_balance_usd``,
 ``mll_lock_usd`` and ``post_payout_floor_usd``, which the trailing floor and the post-payout reset
@@ -94,8 +94,8 @@ ACCOUNT_50K = AccountSpec(
 
 ACCOUNT_150K = AccountSpec(
     name="150K",
-    # V22 (user): MLL $4,500. NOT in reports/stage_e0_topstep_facts.json; the freeze session
-    # confirms it (V2.0).
+    # V22 (user): MLL $4,500, confirmed at the freeze (V23 item 12): "$150K | $4,500"
+    # (reports/stage_e12_topstep_150k.md row 1, help.topstep.com/en/articles/8284204).
     mll_usd=4_500.0,
     dll_usd=3_000.0,  # facts F12.2c: "$150K Account: $3,000"
     standard_cap_usd=5_000.0,  # facts F12.2a: "$150K | $5,000 | $6,000"
@@ -110,10 +110,16 @@ ACCOUNT_150K = AccountSpec(
     standard_winning_day_usd=150.0,  # facts F9.1
     consistency_min_days=3,  # facts F9.1: "3 days traded, 40% consistency target"
     consistency_largest_frac=0.4,  # facts F9.1, F9.2
-    # The 150K scaling schedule is an image (facts F5.2 note): the 50K tiers stand in, the
-    # conservative reading (V2.0; V2.12 item 12).
-    base_lots=float(_X.base_max_minis),
-    scaling_tiers=_tiers_from_xfa(_X),
+    # The 150K scaling plan, read from Topstep's page image at the freeze (V23 item 12;
+    # reports/stage_e12_topstep_150k.md section 2, help.topstep.com/en/articles/8284223, image
+    # "XFA charts - hc.png" fetched 2026-10-03): "Below $1,500 | 3 Lots", "$1,500 - $2,000 | 4",
+    # "$2,000 - $3,000 | 5", "$3,000 - $4,500 | 10", "Above $4,500 | 15". The page does not say
+    # which tier a balance exactly on $2,000, $3,000 or $4,500 is in: the lower one is taken (the
+    # conservative reading), and $1,500 opens the 4-lot tier, as XFA_50K's ">= $1,500" encodes
+    # the same label (E.12 lead ruling).
+    base_lots=3.0,
+    scaling_tiers=((1_500.0, True, 4.0), (2_000.0, False, 5.0), (3_000.0, False, 10.0),
+                   (4_500.0, False, 15.0)),
     # The XFA structure of xfa_rules (start $0, lock at $0, post-payout floor $0), assumed for 150K.
     starting_balance_usd=0.0,
     mll_lock_usd=0.0,

@@ -74,11 +74,11 @@ def priced(frame: pd.DataFrame, day: date, steps: list[tuple[time, float]]) -> p
 
 
 def row(root: str, day: date, t: tuple[int, int], exit_: tuple[int, int], side: int,
-        horizon: str = "h60", cost: float = 3.0, edge: float = 1.0) -> dict:
+        horizon: str = "h60", cost: float = 3.0, edge: float = 1.0, rw: bool = False) -> dict:
     return {"root": root, "cluster": UNIVERSE[root][0], "trade_date": pd.Timestamp(day),
             "decision_ts_ns": ct_ns(day, *t), "horizon": horizon,
             "exit_ts_ns": ct_ns(day, *exit_), "side": side, "r_hat_ticks": 10.0 * side,
-            "cost_ticks": cost, "edge_over_cost": edge}
+            "cost_ticks": cost, "edge_over_cost": edge, "release_window": rw}
 
 
 def risk(spec: dict[str, tuple[float, float]]) -> pd.DataFrame:
@@ -534,3 +534,39 @@ def test_the_member_sizes_from_each_rows_own_risk_and_skips_an_unknown_one() -> 
     trades = [t for d in run.days for t in d.trades]
     assert [(t.root, t.contracts, t.sigma_ticks) for t in trades] == [("MNQ", 4, 55.0),
                                                                       ("MGC", 1, 110.0)]
+
+
+# ---- V23 item 11 (E.12 lead rule P-5): the release window in the engine-run portfolio --------
+def _window_run(flag: bool, with_mnq: bool = True):
+    """MNQ at 09:00 (its 1-lot product cap: sigma 1, loss 1) and MGC at 09:10 whose schedule
+    row carries ``flag`` (targets.py's release_window); 50K base tier 2 lots, half = 1.0."""
+    rows = [row("MGC", DAY, (9, 10), (9, 40), 1, rw=flag)]
+    if with_mnq:
+        rows.insert(0, row("MNQ", DAY, (9, 0), (10, 0), 1, edge=3.0))
+    roots = ("MNQ", "MGC") if with_mnq else ("MGC",)
+    return run_portfolio({r: flat(r) for r in roots}, pd.DataFrame(rows),
+                         risk({"MNQ": (1.0, 1.0), "MGC": (1.0, 1.0)}),
+                         rules_kwargs={"releases": calendar()})
+
+
+def test_the_member_refuses_a_window_entry_above_half_the_tier_and_records_it() -> None:
+    """MNQ's 1.0 lot is open; MGC's 9 micros (the room under the 1.9-lot cap) would make 1.9
+    lots > 1.0: refused with reason "release_window" in the member's decisions. Unflagged, the
+    same MGC entry is admitted (control)."""
+    flagged = _window_run(True)
+    assert [(d.root, d.contracts, d.reason) for d in flagged.decisions] == [
+        ("MNQ", 10, ""), ("MGC", 0, "release_window")]
+    assert sum(d.reason == "release_window" for d in flagged.decisions) == 1
+    plain = _window_run(False)
+    assert [(d.root, d.contracts, d.reason) for d in plain.decisions] == [
+        ("MNQ", 10, ""), ("MGC", 9, "")]
+
+
+def test_a_window_entry_at_half_the_tier_trades_and_its_record_carries_the_flag() -> None:
+    """MGC alone: 10 micros = 1.0 lot, exactly half the base tier, so the flagged entry trades;
+    its TradeRecord carries release_window for payout_sim's re-sizing."""
+    run = _window_run(True, with_mnq=False)
+    assert [(d.root, d.contracts, d.reason) for d in run.decisions] == [("MGC", 10, "")]
+    trades = [t for d in run.days for t in d.trades]
+    assert [(t.root, t.contracts, t.release_window) for t in trades] == [("MGC", 10, True)]
+    assert all(not t.release_window for d in _window_run(False).days for t in d.trades)

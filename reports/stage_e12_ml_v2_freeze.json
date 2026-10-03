@@ -1,0 +1,777 @@
+{
+ "schema": "ml_v2_freeze/1",
+ "stage": "E.12 Task 3",
+ "written_pdt": "2026-10-03T09:25:31-07:00",
+ "design": "docs/STAGE_E_ML_V2_DESIGN.md",
+ "status": "FROZEN (V23)",
+ "decisions": "docs/DECISIONS.md V18-V23 (V23: all V2.12 items decided except item 18)",
+ "git_head_at_write": "8b93e9832dc86de8462b4cf7a7e60ff977aaa470",
+ "harness_at_freeze": {
+  "version": "v7",
+  "manifest_sha256": "eee8a8b92a0210b245429135cf08b42f739b9328fa4eb49bf9034e5b387853d4",
+  "constraint": "Gate 0 runs under harness v8. v8 may change only data/config.py, data/pull_step2.py, docs/ACCESS.md and their tests, and no data/config.py name the phase-1 path imports; the Task 4 v8 review verifies both (review F-4, F-9). Every phase-1 step runs the harness preflight and this manifest's check."
+ },
+ "lead_rules": {
+  "P-1": "Roots available to features: the phase-1 price paths plus MES; micro stores MCL, MGC, MHG never read; a signal is computed iff own_path_only or every root it reads is available, else a coverage exclusion (V2.3), listed.",
+  "P-1a": "If the frozen loader refuses MES's confirmation store, MES is unavailable and its signals are coverage exclusions, logged; a refused price-path store stops the run.",
+  "P-2": "Gate 0 list: A = every panel signal x 3 horizons on admissible-pair rows (a test with < 2 dates has t NaN, p 1, counted); B = every admissible (product, horizon) at tau 0.167; registered in ledger/ml_v2_config_ledger.jsonl and hashed before any statistic.",
+  "P-3": "S_X per price path by D4's frozen start rule (volume only, never a price); MES fixed at 2020-02-03; bars cut at S_X.",
+  "P-4": "Subset rule as applied: tier by vehicle YTD-2026 ADV >= median of 28; c/sigma_proxy ascending within tier (ties alphabetical); pass 1 = the 7 cluster-best in rank order; pass 2 = the rest; acct-1 if quote x 1.03 fits, else acct-2, else skip; NG $0. Proxy: frozen E|m_1| for the whole ranking (CME blocked).",
+  "P-5": "Release window: an entry with a fill in [r - 5, r + 30) of a release concerning p is refused if open lot-equivalents including it would exceed half the tier's maximum position size.",
+  "P-6": "N_program = 198."
+ },
+ "gate0_list_rule": "design V2.2b 'The phase-1 test list' (P-1, P-1a, P-2, P-3); the list itself is generated and hashed at Task 6 (reports/stage_e12_gate0_list.json)",
+ "program_n": {
+  "n_program": 198,
+  "sources": [
+   "docs/STAGES.md line 114 (E.9: N = 198)",
+   "reports/E.9_RETURN.md line 21 (194 + 4 = 198)",
+   "V21: E.10 screened nothing",
+   "code review C-08: E.11 synthetic runs add nothing"
+  ],
+  "note": "no machine-readable program-N ledger exists; read from the stage records"
+ },
+ "constants_fingerprint": "013fa5a4e4ab40b36a45085ce07fae9c59a298d431615c12a0121975c557d0c4",
+ "gate0_and_decided_constants": {
+  "COST_GATE_READING": "gross",
+  "COST_GATE_KS": [
+   1.5,
+   2.0,
+   3.0
+  ],
+  "C_SIGMA_TAU": 0.167,
+  "GATE0_COST_MULTIPLE": 1.5,
+  "GATE0_T_MIN": 3.0,
+  "GATE0_FAMILY_ALPHA": 0.05,
+  "GATE0_TOP_FRACTION": 0.2,
+  "GATE0_MIN_TRADES": 30,
+  "GATE0_HOLM_INCLUDES_FAMILY_A": true,
+  "GATE0_RIDGE_LAMBDA": 0.1,
+  "HORIZONS": [
+   "h60",
+   "h120",
+   "hF"
+  ],
+  "N_BLOCKS": 6,
+  "N_TEST_BLOCKS": 2,
+  "EMBARGO_DATES": 1,
+  "MIN_TRADES": 30,
+  "N_PROGRAM_AT_FREEZE": 198,
+  "N_CONFIGURATIONS": 45,
+  "RELEASE_WINDOW_BEFORE_MIN": 5,
+  "RELEASE_WINDOW_AFTER_MIN": 30,
+  "RELEASE_WINDOW_TIER_FRACTION": 0.5,
+  "PAYOUT_RESET_DELAY_DATES": 2,
+  "TRAIN_LAST": "2024-02-29",
+  "FORBIDDEN_FROM": "2024-03-01"
+ },
+ "universe_check": {
+  "rows_checked": 28,
+  "problems": [],
+  "regenerated": [
+   {
+    "cluster": "K1",
+    "vehicle": "MNQ",
+    "price_path": "NQ",
+    "tick_usd": 0.5,
+    "rt_ticks": 5.41,
+    "rt_usd": 2.71
+   },
+   {
+    "cluster": "K1",
+    "vehicle": "M2K",
+    "price_path": "RTY",
+    "tick_usd": 0.5,
+    "rt_ticks": 6.35,
+    "rt_usd": 3.17
+   },
+   {
+    "cluster": "K1",
+    "vehicle": "MYM",
+    "price_path": "YM",
+    "tick_usd": 0.5,
+    "rt_ticks": 7.52,
+    "rt_usd": 3.76
+   },
+   {
+    "cluster": "K2",
+    "vehicle": "ZT",
+    "price_path": "ZT",
+    "tick_usd": 7.8125,
+    "rt_ticks": 1.32,
+    "rt_usd": 10.31
+   },
+   {
+    "cluster": "K2",
+    "vehicle": "ZF",
+    "price_path": "ZF",
+    "tick_usd": 7.8125,
+    "rt_ticks": 1.31,
+    "rt_usd": 10.23
+   },
+   {
+    "cluster": "K2",
+    "vehicle": "ZN",
+    "price_path": "ZN",
+    "tick_usd": 15.625,
+    "rt_ticks": 1.17,
+    "rt_usd": 18.28
+   },
+   {
+    "cluster": "K2",
+    "vehicle": "TN",
+    "price_path": "TN",
+    "tick_usd": 15.625,
+    "rt_ticks": 1.24,
+    "rt_usd": 19.38
+   },
+   {
+    "cluster": "K2",
+    "vehicle": "ZB",
+    "price_path": "ZB",
+    "tick_usd": 31.25,
+    "rt_ticks": 1.12,
+    "rt_usd": 35.0
+   },
+   {
+    "cluster": "K2",
+    "vehicle": "UB",
+    "price_path": "UB",
+    "tick_usd": 31.25,
+    "rt_ticks": 1.12,
+    "rt_usd": 35.0
+   },
+   {
+    "cluster": "K3",
+    "vehicle": "6E",
+    "price_path": "6E",
+    "tick_usd": 6.25,
+    "rt_ticks": 2.31,
+    "rt_usd": 14.44
+   },
+   {
+    "cluster": "K3",
+    "vehicle": "6A",
+    "price_path": "6A",
+    "tick_usd": 5.0,
+    "rt_ticks": 2.48,
+    "rt_usd": 12.4
+   },
+   {
+    "cluster": "K3",
+    "vehicle": "6B",
+    "price_path": "6B",
+    "tick_usd": 6.25,
+    "rt_ticks": 2.03,
+    "rt_usd": 12.69
+   },
+   {
+    "cluster": "K3",
+    "vehicle": "6C",
+    "price_path": "6C",
+    "tick_usd": 5.0,
+    "rt_ticks": 2.21,
+    "rt_usd": 11.05
+   },
+   {
+    "cluster": "K3",
+    "vehicle": "6J",
+    "price_path": "6J",
+    "tick_usd": 6.25,
+    "rt_ticks": 2.1,
+    "rt_usd": 13.12
+   },
+   {
+    "cluster": "K3",
+    "vehicle": "6S",
+    "price_path": "6S",
+    "tick_usd": 6.25,
+    "rt_ticks": 3.98,
+    "rt_usd": 24.88
+   },
+   {
+    "cluster": "K3",
+    "vehicle": "6N",
+    "price_path": "6N",
+    "tick_usd": 5.0,
+    "rt_ticks": 2.62,
+    "rt_usd": 13.1
+   },
+   {
+    "cluster": "K4",
+    "vehicle": "MCL",
+    "price_path": "CL",
+    "tick_usd": 1.0,
+    "rt_ticks": 4.35,
+    "rt_usd": 4.35
+   },
+   {
+    "cluster": "K4",
+    "vehicle": "NG",
+    "price_path": "NG",
+    "tick_usd": 10.0,
+    "rt_ticks": 2.41,
+    "rt_usd": 24.1
+   },
+   {
+    "cluster": "K5",
+    "vehicle": "MGC",
+    "price_path": "GC",
+    "tick_usd": 1.0,
+    "rt_ticks": 5.6,
+    "rt_usd": 5.6
+   },
+   {
+    "cluster": "K5",
+    "vehicle": "MHG",
+    "price_path": "HG",
+    "tick_usd": 1.25,
+    "rt_ticks": 5.01,
+    "rt_usd": 6.26
+   },
+   {
+    "cluster": "K6",
+    "vehicle": "ZC",
+    "price_path": "ZC",
+    "tick_usd": 12.5,
+    "rt_ticks": 1.5,
+    "rt_usd": 18.75
+   },
+   {
+    "cluster": "K6",
+    "vehicle": "ZW",
+    "price_path": "ZW",
+    "tick_usd": 12.5,
+    "rt_ticks": 1.69,
+    "rt_usd": 21.12
+   },
+   {
+    "cluster": "K6",
+    "vehicle": "ZS",
+    "price_path": "ZS",
+    "tick_usd": 12.5,
+    "rt_ticks": 1.64,
+    "rt_usd": 20.5
+   },
+   {
+    "cluster": "K6",
+    "vehicle": "ZM",
+    "price_path": "ZM",
+    "tick_usd": 10.0,
+    "rt_ticks": 1.79,
+    "rt_usd": 17.9
+   },
+   {
+    "cluster": "K6",
+    "vehicle": "ZL",
+    "price_path": "ZL",
+    "tick_usd": 6.0,
+    "rt_ticks": 2.67,
+    "rt_usd": 16.02
+   },
+   {
+    "cluster": "K6",
+    "vehicle": "HE",
+    "price_path": "HE",
+    "tick_usd": 10.0,
+    "rt_ticks": 1.97,
+    "rt_usd": 19.7
+   },
+   {
+    "cluster": "K6",
+    "vehicle": "LE",
+    "price_path": "LE",
+    "tick_usd": 10.0,
+    "rt_ticks": 2.5,
+    "rt_usd": 25.0
+   },
+   {
+    "cluster": "K7",
+    "vehicle": "MBT",
+    "price_path": "MBT",
+    "tick_usd": 0.5,
+    "rt_ticks": 10.87,
+    "rt_usd": 5.43
+   }
+  ],
+  "ok": true
+ },
+ "inputs_roles": {
+  "reports/stage_e10_research/cost_wall.json": "cost wall: V2.1 RT_X, the universe table",
+  "reports/stage_e12_cme_margins.json": "Task 2a: the CME margin attempt (blocked; not used, V2.1 step 6)",
+  "reports/stage_e12_topstep_150k.md": "Task 2b: 150K MLL, scaling plan, Combine and reset prices",
+  "reports/stage_e12_ec_k9_2019_2024.json": "Task 2c: EC-K9 for the training window (k9_anncday)",
+  "reports/stage_e12_ec_k9_2019_2024.md": "Task 2c: its CAL-E12 source rows",
+  "reports/stage_e10_catalog_K9.json": "EC-K9 research-window rows; K9-anncday-01's vehicles",
+  "reports/stage_e2b_release_calendar.json": "the frozen release calendar (G13-G15, costs, P-5)",
+  "reports/stage_e2a_epsilon.json": "E|m_1|: the phase-1 ranking's proxy (V2.1 step 6)",
+  "reports/stage_e0_liquidity.json": "the D1 ADV census: the ranking's tiers",
+  "reports/stage_e2a_costs.json": "D8 cost surface (c, event-window rule)",
+  "reports/stage_e2a_vehicles.json": "D2 vehicles and q_c",
+  "reports/stage_e2a_vehicle_sizes.json": "D6 sessions (O_X, C_X)",
+  "reports/stage_e0_topstep_facts.json": "Topstep facts (50K, payout caps, DLL)",
+  "reports/stage_d1f_step5_start_rule.json": "MES's D4 start (2020-02-03)",
+  "reports/stage_e12_briefs/rank_phase1.py": "the phase-1 subset rule as applied (lead rule P-4)"
+ },
+ "context_sha256_at_write_informational": {
+  "docs/DECISIONS.md": "75a1c425d76b7ed23873a112053f24714d324f746641bc89ccca0e38f5805990",
+  "docs/prompts/STAGE_E.12.md": "e38345694d079eba1e652842ec453444392ec22af23cab65377c388196c33ee3"
+ },
+ "files": [
+  {
+   "path": "docs/STAGE_E_ML_V2_DESIGN.md",
+   "sha256": "4594a01989d38a05323a696b6f74e66aab98f5b9e8887fdfe0408b04b0a6b1b8",
+   "bytes": 78094
+  },
+  {
+   "path": "ml_route_v2/__init__.py",
+   "sha256": "3f0a66f7b3ba33d36f419d4c74d4e92480c986e59ea175819382f8930466f20f",
+   "bytes": 203
+  },
+  {
+   "path": "ml_route_v2/account.py",
+   "sha256": "d23303567cd20cd8b5833de867b74b8494c061fab61b9228d1ef15421493d4b4",
+   "bytes": 8639
+  },
+  {
+   "path": "ml_route_v2/clock.py",
+   "sha256": "a193aec30f32e522c3da7b5ad5dc2487beca3595593b4f13af7bed3849db7b82",
+   "bytes": 9845
+  },
+  {
+   "path": "ml_route_v2/configs.py",
+   "sha256": "3157e9bb92d531a176344b016ff8d7f65f93354b96406c70943150145235c422",
+   "bytes": 8842
+  },
+  {
+   "path": "ml_route_v2/constants.py",
+   "sha256": "e107d7feb5e4fc4d6933bb3c9d33677149feb8f891613817f1f3b3b8317b9ef4",
+   "bytes": 8407
+  },
+  {
+   "path": "ml_route_v2/cost_filter.py",
+   "sha256": "a754d56f6c2fe702d3dd595ab2128eb6ac384a4286ed75bd99abbba3154323da",
+   "bytes": 3597
+  },
+  {
+   "path": "ml_route_v2/cpcv.py",
+   "sha256": "e270335ec6e322a12f5611a5b43e92e114916a4ef254ef7ca0d504a6b1bc5f7b",
+   "bytes": 38572
+  },
+  {
+   "path": "ml_route_v2/decide.py",
+   "sha256": "872710fc1234a0a2588a865020ab5f2b0557eab73cf41a53bd5f122c23a8bf18",
+   "bytes": 6951
+  },
+  {
+   "path": "ml_route_v2/engine_stage.py",
+   "sha256": "ecd209020e82b6fb06462fbc0b4bc9a422a9a5eb390616656dd19dfe8c7c4407",
+   "bytes": 14808
+  },
+  {
+   "path": "ml_route_v2/fingerprint.py",
+   "sha256": "e862ad61667229f5e2a68a0b3adf7253ed220e9369364887b05315d3f8c4294a",
+   "bytes": 2511
+  },
+  {
+   "path": "ml_route_v2/gate0.py",
+   "sha256": "5d4ce90b36b96c93f70154fb35d9f8990b22675db396819734f2d16dc1d80d17",
+   "bytes": 18314
+  },
+  {
+   "path": "ml_route_v2/killswitch.py",
+   "sha256": "356e1e2f217db2b9627e06c4a2feb028b6e3ba2a83cb2e18dd6323d6f82dea1a",
+   "bytes": 5799
+  },
+  {
+   "path": "ml_route_v2/models.py",
+   "sha256": "c9edbe49afa9e0560b8bc6f9327009128c138906633313c0c807bda472362bc7",
+   "bytes": 7035
+  },
+  {
+   "path": "ml_route_v2/normalize.py",
+   "sha256": "e4cecb157f8979b9c4b0c012177a4237b37845fcf4fc111a8021f03eb47bb26c",
+   "bytes": 5142
+  },
+  {
+   "path": "ml_route_v2/panel.py",
+   "sha256": "8d1a1b59586b0588bfc21970ceede0356796e3908cf85124fd67a8dffca513db",
+   "bytes": 6667
+  },
+  {
+   "path": "ml_route_v2/payout_sim.py",
+   "sha256": "a4bbcd19a3ade8da26594e661000d04d2d910b26a6e20becb03e24ef5fec0d85",
+   "bytes": 37135
+  },
+  {
+   "path": "ml_route_v2/phase1/__init__.py",
+   "sha256": "02993b867f219829e875b7d62b775406fa864d0693d1eac2c5d73163a9fa0d34",
+   "bytes": 1441
+  },
+  {
+   "path": "ml_route_v2/phase1/__main__.py",
+   "sha256": "8c16fe2823840df459e721b9bea1a57a300f1c4a4d571ac87cd6d40cf4947a9a",
+   "bytes": 142
+  },
+  {
+   "path": "ml_route_v2/phase1/_io.py",
+   "sha256": "851686cc6e786ec7b0a2f24d565a71b7da1fc8bfd096ec29cf78f4276c21d995",
+   "bytes": 2462
+  },
+  {
+   "path": "ml_route_v2/phase1/build.py",
+   "sha256": "65e375de86e349ebf8a3fc9cd8da2c720d8f1b79a19d4d12331043fe45df0dcd",
+   "bytes": 16896
+  },
+  {
+   "path": "ml_route_v2/phase1/cli.py",
+   "sha256": "c0df2a93621868655911fb4f4741db03f7535405fa7338d2bfec9a6bdbecf496",
+   "bytes": 5339
+  },
+  {
+   "path": "ml_route_v2/phase1/freeze.py",
+   "sha256": "f42a576b471579d22b1d444a0ac7ecfe90d0c8987ee6ebc04d3c2d472867af6a",
+   "bytes": 4219
+  },
+  {
+   "path": "ml_route_v2/phase1/gate0_stage.py",
+   "sha256": "64292fb7e6f95b6eb0324a25d08d83dffd00743d26d571e0afde1a061f2f8008",
+   "bytes": 17003
+  },
+  {
+   "path": "ml_route_v2/phase1/world.py",
+   "sha256": "86f574a047051107878fce1b4fa6514da2c4c34bce3867de5689fcc72d7b869e",
+   "bytes": 31283
+  },
+  {
+   "path": "ml_route_v2/pipeline.py",
+   "sha256": "4a4e9f81e7e293c868306b4fe993b0ccd08f6c3b564bc7f1f1f5a6b7da97787e",
+   "bytes": 32494
+  },
+  {
+   "path": "ml_route_v2/portfolio.py",
+   "sha256": "b9cc05e78ba8c903342b8ba716b9413fa215457508899a3e6cb2faef03d22ff1",
+   "bytes": 20562
+  },
+  {
+   "path": "ml_route_v2/probe.py",
+   "sha256": "1173a8b2a86d75a5328d73d30db87f9e7546e4dc2f51e8492fd1d12d424ba8a2",
+   "bytes": 14590
+  },
+  {
+   "path": "ml_route_v2/selection_metric.py",
+   "sha256": "69ec806a20cb06f69c522f22c247756e9636c9a2bc6957ecbbb63162561f3e7f",
+   "bytes": 4869
+  },
+  {
+   "path": "ml_route_v2/signals/__init__.py",
+   "sha256": "4c0b506617a5ccd6044ba8bcbed5de969672cb561917cfdcf055ed580ef73979",
+   "bytes": 7493
+  },
+  {
+   "path": "ml_route_v2/signals/_core.py",
+   "sha256": "29bb9c4d8660e56c03c6f1870dc652c6db263c9b3463ef8f6ccd50306afb95c0",
+   "bytes": 20217
+  },
+  {
+   "path": "ml_route_v2/signals/_daily.py",
+   "sha256": "1b77bc37551c662c63f07d08a728164763fc376ea57724b7db8cce11be8e4dc6",
+   "bytes": 7441
+  },
+  {
+   "path": "ml_route_v2/signals/_events.py",
+   "sha256": "b885c762425f79dac83ed4dc05072f09bc49e72cb2f44fc8c3a429e4c9b62244",
+   "bytes": 5364
+  },
+  {
+   "path": "ml_route_v2/signals/generic.py",
+   "sha256": "eb65a060f37c70938a77f83b50b1e9586ecbd1f8aee0f1c273b4f8d5f47ef080",
+   "bytes": 17022
+  },
+  {
+   "path": "ml_route_v2/signals/k1.py",
+   "sha256": "b6663e03c8438278ef34f259119c104096a7dee977d78e14cd395499767ba871",
+   "bytes": 6310
+  },
+  {
+   "path": "ml_route_v2/signals/k2.py",
+   "sha256": "ef5bba8b6c30f0fe59b9fdc5f43262a08973e75617e2e19ca50909969eea8eca",
+   "bytes": 6153
+  },
+  {
+   "path": "ml_route_v2/signals/k3.py",
+   "sha256": "5275097aa0994cc198a99100f347cb8a600d9a26517866532f8952036e220080",
+   "bytes": 7179
+  },
+  {
+   "path": "ml_route_v2/signals/k4.py",
+   "sha256": "3abe4b5a7f4ba0a147ba50b89ef73c002b8bc01973199c5cce6ff03718dc11c0",
+   "bytes": 10303
+  },
+  {
+   "path": "ml_route_v2/signals/k5.py",
+   "sha256": "74395e6ec2cdff66227983e617a23402f830f067560424c30ec61b4548ff4c80",
+   "bytes": 3837
+  },
+  {
+   "path": "ml_route_v2/signals/k6.py",
+   "sha256": "69c58bc6abbeeccf9cbcddeec63d12ee347d2cd3c1e2560edcdf134c5cae380a",
+   "bytes": 9821
+  },
+  {
+   "path": "ml_route_v2/signals/k7.py",
+   "sha256": "8b2575078043cc0e54cc4bd40bc9a484e09ea9934a3b3814f6ae39de8227c4bf",
+   "bytes": 4731
+  },
+  {
+   "path": "ml_route_v2/signals/k8.py",
+   "sha256": "6cdc3bcb0dcdf89a53eeba197ca17c4faeeb79cfdb8718ee0a102c7c174aad6a",
+   "bytes": 7251
+  },
+  {
+   "path": "ml_route_v2/signals/k9.py",
+   "sha256": "3d1d60a90c940be31a43f19053958f6c6437c80368acd27a707343eeef53a005",
+   "bytes": 9531
+  },
+  {
+   "path": "ml_route_v2/signals/ports.py",
+   "sha256": "aafd9f79a789d741ff19ae9e4cf494a56b938b5b26f4bd87e88684d2a1bb9f2e",
+   "bytes": 9858
+  },
+  {
+   "path": "ml_route_v2/signals/synthetic_bars.py",
+   "sha256": "bcc59b5fea5ead9c9e50a3329a56f42109c5f5614c83f0c4ce41442234088d63",
+   "bytes": 4376
+  },
+  {
+   "path": "ml_route_v2/simulate.py",
+   "sha256": "03dccd23ebc9a0226737044574981e1150c2b6832952daa75b0dfaf72b4c85e6",
+   "bytes": 33427
+  },
+  {
+   "path": "ml_route_v2/sizing.py",
+   "sha256": "6b41568253a596cb7fc05dd2770d98b0ef2d702467faad8d005ed494f681d7f4",
+   "bytes": 5964
+  },
+  {
+   "path": "ml_route_v2/synthetic.py",
+   "sha256": "3d1b669b55891fe26ba1f57283763a8225ddebb5a1b88e6bfac41677ac03972e",
+   "bytes": 23196
+  },
+  {
+   "path": "ml_route_v2/targets.py",
+   "sha256": "1ec018f93b155714708d45694fbfbfb5321b0e45c6a0113fd0f672ee8352b473",
+   "bytes": 13207
+  },
+  {
+   "path": "tests/test_ml_v2_blackout.py",
+   "sha256": "8379e6b6c2019f44b90d1df5feb190a5cf00c4dd7ef5a2b6907601a2753db8ff",
+   "bytes": 5237
+  },
+  {
+   "path": "tests/test_ml_v2_clock.py",
+   "sha256": "62939486a150c01f70ba1aced6a18e8ebb50dac4a9066cae8fecdf44a04ff969",
+   "bytes": 4675
+  },
+  {
+   "path": "tests/test_ml_v2_configs.py",
+   "sha256": "f77a3bd0c7b6f6aa46688ae1b85aceb4a5c4d6b2a61082a87648d9496f30a663",
+   "bytes": 3893
+  },
+  {
+   "path": "tests/test_ml_v2_cpcv.py",
+   "sha256": "68786079d691a531259f7ed803bd7d7d85e2db1b9177d534ff86c8a8d99bfc02",
+   "bytes": 27920
+  },
+  {
+   "path": "tests/test_ml_v2_decide.py",
+   "sha256": "eb4678d5cbc9b00498ee672c93a8e1921ca3eaf142b4502f68ae899fc266bc1f",
+   "bytes": 9322
+  },
+  {
+   "path": "tests/test_ml_v2_e2e.py",
+   "sha256": "6f07a511fb4da315041d40ee5bb73b2cbdf4e67735f8d6defe1d5fd90fd904ce",
+   "bytes": 14301
+  },
+  {
+   "path": "tests/test_ml_v2_engine_stage.py",
+   "sha256": "c3346caf17c0af98d446367161bb1dfb31ccdc7547370df3e173ffa509f2c525",
+   "bytes": 8522
+  },
+  {
+   "path": "tests/test_ml_v2_gate0.py",
+   "sha256": "cd3f85396059b726bcdf5aa2a9319852086dc7c98b6073d5a16abe959b114978",
+   "bytes": 10235
+  },
+  {
+   "path": "tests/test_ml_v2_k9.py",
+   "sha256": "00b0b61ff711d59ce711dbed94af5262d782a192d121afe8df0052906dbff11f",
+   "bytes": 8649
+  },
+  {
+   "path": "tests/test_ml_v2_killswitch.py",
+   "sha256": "43ba234d069f53300750baf9576e908d47030cd387a5d56bac26c05c7e8ff5f4",
+   "bytes": 4055
+  },
+  {
+   "path": "tests/test_ml_v2_leakage.py",
+   "sha256": "0841dc2acae94e57f99417d9d62ea65ebef0e1ebf1b2d093338ffb664d3439b9",
+   "bytes": 27257
+  },
+  {
+   "path": "tests/test_ml_v2_models.py",
+   "sha256": "d50ff3b9efa6776301e58f8ef8f1ec662d770adfb0c9488fbb11be49a1439d83",
+   "bytes": 4878
+  },
+  {
+   "path": "tests/test_ml_v2_normalize.py",
+   "sha256": "140c77e2f04f7f8494d4c3e21d713b2206257f63fb6685b5a3e32553e7bc8ee5",
+   "bytes": 6351
+  },
+  {
+   "path": "tests/test_ml_v2_panel.py",
+   "sha256": "293d2737b6f5d286786cb729bb0694834347c7958b4079208bd7cb630d4fa007",
+   "bytes": 7927
+  },
+  {
+   "path": "tests/test_ml_v2_payout.py",
+   "sha256": "fcfe175941045ff87fef34acc3bd39a3c43bc0ba8eb3a2209a3911f5bce23e91",
+   "bytes": 37141
+  },
+  {
+   "path": "tests/test_ml_v2_phase1_freeze.py",
+   "sha256": "21f67a615e583462d4dd81f0f272a22fa829624f290375788cb2b2978532578d",
+   "bytes": 4672
+  },
+  {
+   "path": "tests/test_ml_v2_phase1_gate0.py",
+   "sha256": "cbb95a8e5062e5741fdc5a4a8202a92f8c2312725f204ca37c42c001b06489de",
+   "bytes": 12626
+  },
+  {
+   "path": "tests/test_ml_v2_phase1_support.py",
+   "sha256": "13caa762c5e854ff89129ae9bdcdbb9e0f82491b54078e60a6101f4783760d0d",
+   "bytes": 13473
+  },
+  {
+   "path": "tests/test_ml_v2_phase1_world.py",
+   "sha256": "bc8605d6183dea8ded3cf16aec45a6feba52850c44d09d934560def6eb97a9fd",
+   "bytes": 16859
+  },
+  {
+   "path": "tests/test_ml_v2_portfolio.py",
+   "sha256": "e2168d88627c56ef762c04384cec0fb6823ffda23208afce4af1f98dc1d147d0",
+   "bytes": 29219
+  },
+  {
+   "path": "tests/test_ml_v2_probe.py",
+   "sha256": "6171699ab64242f9ab63e10610303dd330fe15273870bac69bc5ca7358c558e0",
+   "bytes": 4255
+  },
+  {
+   "path": "tests/test_ml_v2_signals.py",
+   "sha256": "9fe3fb4006b9cf5d1e7d9db40443723fd3bc0c41fe3b1034786b545f7df36806",
+   "bytes": 21243
+  },
+  {
+   "path": "tests/test_ml_v2_simulate.py",
+   "sha256": "636fae0c9348c4cb0d4491d423a053df6d8f3eab268656768e109a8c6fa6668d",
+   "bytes": 32425
+  },
+  {
+   "path": "tests/test_ml_v2_sizing.py",
+   "sha256": "1c607ca283b3d90d3166ff7312d03e6a736747bd9ea0c8ff4f4618719cd081f8",
+   "bytes": 8336
+  },
+  {
+   "path": "tests/test_ml_v2_state_fingerprint.py",
+   "sha256": "dba09f2c05b0f736edd503b15ca3b87b7fab04f7d9c2376d88f5d52b12307535",
+   "bytes": 6914
+  },
+  {
+   "path": "tests/test_ml_v2_targets.py",
+   "sha256": "788980d6a508aef0d9f7a3d7df87f0e444fed957a3788c3effee0812d3a928eb",
+   "bytes": 9967
+  },
+  {
+   "path": "tests/ml_v2_fixtures.py",
+   "sha256": "f2f2c89365af994defe4764143353b820ccb7e0d8e6e391c808928ef8de2a83a",
+   "bytes": 9749
+  },
+  {
+   "path": "reports/stage_e10_research/cost_wall.json",
+   "sha256": "8ef052dc958f82f606e40e53da79a5186e5cf108a35b9b08769b46a328772f5d",
+   "bytes": 19919
+  },
+  {
+   "path": "reports/stage_e12_cme_margins.json",
+   "sha256": "9509b66b0c97f87699f010f9cb2263a0d67cf4f90a731e46a23f527dc5e62e5a",
+   "bytes": 48081
+  },
+  {
+   "path": "reports/stage_e12_topstep_150k.md",
+   "sha256": "2d09fff57c5d9037949d3db41436f8a1d80b14328aaa29f28b4ee01ffcfcb1e3",
+   "bytes": 14200
+  },
+  {
+   "path": "reports/stage_e12_ec_k9_2019_2024.json",
+   "sha256": "b9297ae81a2f08df84b2ad9274f8e640b64166a89d809d2c07ca65ee61f86069",
+   "bytes": 653437
+  },
+  {
+   "path": "reports/stage_e12_ec_k9_2019_2024.md",
+   "sha256": "9a7eec6907613c5622a95c48f7dfc4740f04e58d3498b988aaf62c5b43d4e08c",
+   "bytes": 311467
+  },
+  {
+   "path": "reports/stage_e10_catalog_K9.json",
+   "sha256": "0afe64ff97f10958e90f37317acbe912789f35693a5530950b87a0349e1bf92a",
+   "bytes": 41770
+  },
+  {
+   "path": "reports/stage_e2b_release_calendar.json",
+   "sha256": "839f2437bedbeb7b3423d7058a9955a0d4ccd1aebc4b01c62be624ab11d7bcb8",
+   "bytes": 2118589
+  },
+  {
+   "path": "reports/stage_e2a_epsilon.json",
+   "sha256": "4e2c773182a23e7d073305ca4eb0134d3b3ac554ccc8215730bc1e194eaff496",
+   "bytes": 162491
+  },
+  {
+   "path": "reports/stage_e0_liquidity.json",
+   "sha256": "28d2fdac51be883a0fc0d05e9a9ee4a0233276d3a37f49e08fd9804b0ebeb78c",
+   "bytes": 192807
+  },
+  {
+   "path": "reports/stage_e2a_costs.json",
+   "sha256": "f4360bb77272d0335485a9e01c0f6fc6ab99c47d52e640d95f9cd0397296df14",
+   "bytes": 3464293
+  },
+  {
+   "path": "reports/stage_e2a_vehicles.json",
+   "sha256": "1f1cafee4330961799f33d5493e640897cfa79827be98597dbaba23292e29913",
+   "bytes": 168165
+  },
+  {
+   "path": "reports/stage_e2a_vehicle_sizes.json",
+   "sha256": "280d7e9df1953069448ca1762588477146a5d3c35bc53d3e9e2df50272c47325",
+   "bytes": 413592
+  },
+  {
+   "path": "reports/stage_e0_topstep_facts.json",
+   "sha256": "9a8e8d3b1fd5f6d9717fe930bd608d8551e8a892338d982c983c772def5388cc",
+   "bytes": 61969
+  },
+  {
+   "path": "reports/stage_d1f_step5_start_rule.json",
+   "sha256": "4f2870f51a3551651466e919ba2941d11908c45807ba0ee72be63fb71d9bb11c",
+   "bytes": 7333
+  },
+  {
+   "path": "reports/stage_e12_briefs/rank_phase1.py",
+   "sha256": "523dd35d5db5e4f3225e34d6b700dffcc9ec0ad71b029737ccc7176610439d43",
+   "bytes": 7541
+  }
+ ]
+}

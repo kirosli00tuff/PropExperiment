@@ -4,18 +4,23 @@ At decision time, for the selected configuration's horizon h and multiple k:
 - r_hat_ticks = r_hat x sigma_X,d (the caller converts; cpcv.py does it before score_fn);
 - c_long and c_short are the row's D8 round trips at size 1 for each side (cost_long_<h>,
   cost_short_<h>, vehicle ticks);
-- the reading is constants.COST_GATE_READING (design review D-05; read at call time, so the
-  freeze flips it in one line; ``reading=`` overrides it):
-  - "net" (the default, literal F7): long iff r_hat_ticks - c_long > k x c_long; short iff
-    -r_hat_ticks - c_short > k x c_short. The predicted net edge exceeds k round trips, so the
-    predicted gross must exceed (1 + k) c;
-  - "gross": long iff r_hat_ticks > k x c_long; short iff -r_hat_ticks > k x c_short;
+- the reading is constants.COST_GATE_READING (design review D-05; looked up at call time, never
+  a literal here; ``reading=`` overrides it):
+  - "gross" (the built default, decided by the user, V23 item 1): long iff r_hat_ticks > k x
+    c_long; short iff -r_hat_ticks > k x c_short; the hurdles are 1.5 c, 2 c and 3 c;
+  - "net" (the literal F7 wording, kept selectable): long iff r_hat_ticks - c_long > k x c_long;
+    short iff -r_hat_ticks - c_short > k x c_short. The predicted net edge exceeds k round trips,
+    so the predicted gross must exceed (1 + k) c;
   else no trade. With positive costs both sides cannot pass at once.
 - edge_over_cost = the taken side's predicted net edge over its cost, (|r_hat| - c) / c, in both
   readings (V2.7's ranking quantity e / c); NaN where no trade.
+- release_window (V23 item 11; E.12 lead rule P-5): the row's own flag from targets.py (its entry
+  fill lies in [r - 5 min, r + 30 min) of a release r of the vehicle's list), carried unchanged so
+  the portfolio layer can apply the release-window rule.
 
-candidates() returns one row per traded decision row with the section 6 columns, sorted by
-decision_ts_ns, then edge_over_cost descending, then root (V2.7's ranking at one clock time).
+candidates() returns one row per traded decision row with the section 6 columns plus
+release_window, sorted by decision_ts_ns, then edge_over_cost descending, then root (V2.7's
+ranking at one clock time).
 """
 
 from __future__ import annotations
@@ -28,8 +33,9 @@ from ml_route_v2.configs import Config
 
 COST_GATE_READINGS = ("net", "gross")
 
+# interfaces section 6, plus release_window (V23 item 11, the portfolio's release-window rule)
 CANDIDATE_COLUMNS = ("root", "cluster", "trade_date", "decision_ts_ns", "horizon", "exit_ts_ns",
-                     "side", "r_hat_ticks", "cost_ticks", "edge_over_cost")
+                     "side", "r_hat_ticks", "cost_ticks", "edge_over_cost", "release_window")
 
 
 class DecisionError(ValueError):
@@ -106,10 +112,12 @@ def candidates(rows: pd.DataFrame, r_hat_ticks: np.ndarray, config: Config, *,
     """The section 6 candidate trades of one configuration on rows (r_hat aligned to rows)."""
     h = config.horizon
     need = ["root", "cluster", "trade_date", "decision_ts_ns", f"cost_long_{h}",
-            f"cost_short_{h}"]
+            f"cost_short_{h}", "release_window"]
     missing = [c for c in need if c not in rows.columns]
     if missing:
         raise DecisionError(f"rows lack columns {missing}")
+    if not pd.api.types.is_bool_dtype(rows["release_window"]):
+        raise DecisionError(f"release_window is {rows['release_window'].dtype}, not bool")
     r = _vector(r_hat_ticks, "r_hat_ticks", len(rows))
     cl = rows[f"cost_long_{h}"].to_numpy(dtype=np.float64)
     cs = rows[f"cost_short_{h}"].to_numpy(dtype=np.float64)
@@ -126,6 +134,7 @@ def candidates(rows: pd.DataFrame, r_hat_ticks: np.ndarray, config: Config, *,
         "r_hat_ticks": r[take],
         "cost_ticks": np.where(side == 1, cl, cs)[take],
         "edge_over_cost": ratio[take],
+        "release_window": rows["release_window"].to_numpy(dtype=bool)[take],
     }, columns=list(CANDIDATE_COLUMNS))
     out = out.sort_values(["decision_ts_ns", "edge_over_cost", "root"],
                           ascending=[True, False, True], kind="mergesort")

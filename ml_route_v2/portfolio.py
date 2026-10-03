@@ -14,7 +14,18 @@ metric) and simulate.PortfolioMember (D from the engine's account):
 - the daily risk budget (design review D-03): the trade date starts with sigma_target^2 =
   (0.10 x D_open)^2 and each accepted trade consumes (n x sigma(p,h) x tick value)^2
   (sizing.daily_variance_budget / budget_use); n is also at most what fits the remaining budget,
-  and a candidate the budget alone refuses is skipped with reason "risk_budget_spent".
+  and a candidate the budget alone refuses is skipped with reason "risk_budget_spent";
+- the release window (V23 item 11; E.12 lead rule P-5; design V2.8): a candidate whose entry fill
+  lies in [r - RELEASE_WINDOW_BEFORE_MIN, r + RELEASE_WINDOW_AFTER_MIN) of a scheduled release r
+  of its own vehicle's list (the list targets.py's event-window cost and D9.5a deferral use;
+  ``release_window_mask``; the candidate's ``release_window`` column, set by targets.py and
+  carried by decide.candidates) is refused with reason "release_window" when the open
+  lot-equivalents INCLUDING it (n contracts as sized) would exceed RELEASE_WINDOW_TIER_FRACTION x
+  the tier in force (``tier_tenths``: the base tier with D fixed, the tier at the prior session's
+  close in the engine run; 50K: 1.0 / 1.5 / 2.5 lots). The entry is refused, not re-sized.
+  ``admission_record`` keeps every candidate with its size and reason (the refusal counts);
+  simulate.PortfolioMember records the same reasons in its decisions, and payout_sim's
+  re-sizing applies the rule with the path's own tier.
 
 Risk per candidate (code review C-02, C-04): ``join_risk`` gives each candidate sigma_ticks and
 loss_ticks. Candidates that already carry both columns keep them (the row-level values: the
@@ -51,6 +62,9 @@ from ml_route_v2.constants import (
     MAX_OPEN_POSITIONS,
     PER_PRODUCT_LOT_EQUIVALENTS,
     PORTFOLIO_TIER_MARGIN_LOTS,
+    RELEASE_WINDOW_AFTER_MIN,
+    RELEASE_WINDOW_BEFORE_MIN,
+    RELEASE_WINDOW_TIER_FRACTION,
 )
 from ml_route_v2.sizing import (
     budget_use,
@@ -61,14 +75,43 @@ from ml_route_v2.sizing import (
 from rules.products import TENTHS_PER_LOT, member_cap_contracts, product
 
 CANDIDATE_COLUMNS = ("root", "cluster", "trade_date", "decision_ts_ns", "horizon", "exit_ts_ns",
-                     "side", "r_hat_ticks", "cost_ticks", "edge_over_cost")
+                     "side", "r_hat_ticks", "cost_ticks", "edge_over_cost",
+                     "release_window")  # V23 item 11: the row's release-window flag
 RISK_COLUMNS = ("root", "horizon", "sigma_ticks", "loss_ticks")
 RISK_VALUE_COLUMNS = ("sigma_ticks", "loss_ticks")  # row-level values a candidate may carry
 MARGIN_TENTHS = round(PORTFOLIO_TIER_MARGIN_LOTS * TENTHS_PER_LOT)
+NS_PER_MIN = 60_000_000_000
+RELEASE_WINDOW_REASON = "release_window"
 
 
 class PortfolioInputError(ValueError):
     """A candidate or risk frame breaks the interfaces contract (section 6, section 4)."""
+
+
+def release_window_mask(fill_ns: np.ndarray, release_ns: np.ndarray) -> np.ndarray:
+    """True where a fill lies in [r - RELEASE_WINDOW_BEFORE_MIN, r + RELEASE_WINDOW_AFTER_MIN)
+    of some release r in ``release_ns`` (V23 item 11; half-open). A fill <= 0 (no entry) is
+    False. ``release_ns``: one vehicle's release instants, UTC ns (any order)."""
+    fill = np.asarray(fill_ns, dtype=np.int64)
+    rel = np.sort(np.asarray(release_ns, dtype=np.int64))
+    out = np.zeros(fill.shape, dtype=bool)
+    if rel.size == 0 or fill.size == 0:
+        return out
+    # the latest release r with r - before <= fill, i.e. r <= fill + before; it is the one whose
+    # window end r + after lies furthest right among those, so it alone decides
+    j = np.searchsorted(rel, fill + RELEASE_WINDOW_BEFORE_MIN * NS_PER_MIN, side="right") - 1
+    has = (j >= 0) & (fill > 0)
+    out[has] = fill[has] < rel[j[has]] + RELEASE_WINDOW_AFTER_MIN * NS_PER_MIN
+    return out
+
+
+def release_window_binds(open_tenths_with_entry: int | np.ndarray, tier_tenths: int | np.ndarray
+                         ) -> np.bool_ | np.ndarray:
+    """V23 item 11: open lot-equivalents including the entry (tenths) exceed
+    RELEASE_WINDOW_TIER_FRACTION x the tier in force (tenths). Scalars or arrays (payout_sim's
+    vectorized re-sizing uses the same expression)."""
+    return np.greater(np.asarray(open_tenths_with_entry, dtype=float),
+                      RELEASE_WINDOW_TIER_FRACTION * np.asarray(tier_tenths, dtype=float))
 
 
 @dataclass(frozen=True)
@@ -118,11 +161,14 @@ class Admission:
 
 def admit(*, root: str, cluster: str, sigma_ticks: float, loss_ticks: float, cost_ticks: float,
           d_open: float, d_now: float, book: Sequence[OpenPosition], tier_tenths: int,
-          multiplier: float = 1.0, extra_cap: int | None = None,
+          release_window: bool, multiplier: float = 1.0, extra_cap: int | None = None,
           budget_var: float | None = None) -> Admission:
     """The portfolio caps and the V2.8 size for one candidate against the open ``book``;
     ``budget_var`` is the trade date's remaining variance budget (D-03). A candidate whose sigma
-    or loss is unknown (NaN, or sigma <= 0) is skipped with reason "risk_unknown" (C-02)."""
+    or loss is unknown (NaN, or sigma <= 0) is skipped with reason "risk_unknown" (C-02).
+    ``release_window`` (required, V23 item 11): the entry's fill lies in a release window of its
+    own vehicle; the sized entry is then refused ("release_window") if the book's lot-equivalents
+    plus its own would exceed RELEASE_WINDOW_TIER_FRACTION x ``tier_tenths``."""
     if not _risk_known(sigma_ticks, loss_ticks):
         return Admission(0, "risk_unknown")
     if any(p.root == root for p in book):
@@ -132,7 +178,8 @@ def admit(*, root: str, cluster: str, sigma_ticks: float, loss_ticks: float, cos
     if sum(p.cluster == cluster for p in book) >= MAX_OPEN_PER_CLUSTER:
         return Admission(0, "cluster_open")
     facts = vehicle_facts(root)
-    room = tier_tenths - MARGIN_TENTHS - sum(p.tenths for p in book)
+    open_tenths = sum(p.tenths for p in book)
+    room = tier_tenths - MARGIN_TENTHS - open_tenths
     capacity = max(room, 0) // facts.lot_tenths
     cap = facts.product_cap if extra_cap is None else min(facts.product_cap, extra_cap)
     kw = dict(d_open=d_open, d_now=d_now, sigma_ticks=sigma_ticks, loss_ticks=loss_ticks,
@@ -140,6 +187,9 @@ def admit(*, root: str, cluster: str, sigma_ticks: float, loss_ticks: float, cos
               capacity_contracts=capacity, multiplier=multiplier)
     n = contracts(**kw, budget_var=budget_var)
     if n >= 1:
+        if bool(release_window) and release_window_binds(open_tenths + n * facts.lot_tenths,
+                                                         tier_tenths):
+            return Admission(0, RELEASE_WINDOW_REASON)  # V23 item 11: refused, not re-sized
         return Admission(n, "")
     spent = budget_var is not None and contracts(**kw) >= 1
     return Admission(0, "risk_budget_spent" if spent else "size_zero")
@@ -183,6 +233,9 @@ def join_risk(cands: pd.DataFrame, risk: pd.DataFrame) -> pd.DataFrame:
     bad_side = ~cands["side"].isin((-1, 1))
     if bad_side.any():
         raise PortfolioInputError(f"candidate_bad_side: {sorted(set(cands.loc[bad_side, 'side']))}")
+    if len(cands) and not pd.api.types.is_bool_dtype(cands["release_window"]):
+        raise PortfolioInputError(f"candidate_bad_release_window: dtype "
+                                  f"{cands['release_window'].dtype}, not bool")
     r = risk.loc[:, list(RISK_COLUMNS)]
     if r.duplicated(["root", "horizon"]).any():
         raise PortfolioInputError("risk_duplicate_pairs: one row per (root, horizon) expected")
@@ -208,12 +261,13 @@ def rank_candidates(frame: pd.DataFrame) -> pd.DataFrame:
     return keyed.drop(columns="_neg_edge").reset_index(drop=True)
 
 
-def accept_trades(cands: pd.DataFrame, risk: pd.DataFrame, account: AccountSpec, *,
-                  d_fixed: float | None) -> pd.DataFrame:
-    """The accepted candidates in time order, with contracts, sigma_ticks, loss_ticks,
-    tick_value_usd and lot_equiv added. D is held at ``d_fixed`` (the selection metric, V2.9);
-    the tier is then the base tier. Each trade date starts with the variance budget
-    (0.10 x d_fixed)^2 (D-03)."""
+def admission_record(cands: pd.DataFrame, risk: pd.DataFrame, account: AccountSpec, *,
+                     d_fixed: float | None) -> pd.DataFrame:
+    """Every candidate, ranked, with ``contracts`` (0 when skipped) and ``reason`` ("" when
+    admitted, else admit's reason: "release_window", "risk_budget_spent", ...). D is held at
+    ``d_fixed`` (the selection metric, V2.9); the tier is then the base tier. Each trade date
+    starts with the variance budget (0.10 x d_fixed)^2 (D-03). The portfolio's record of the
+    fixed-D path: its reason counts are the refusal counts (V23 item 11)."""
     if d_fixed is None:
         raise PortfolioInputError("accept_trades_needs_d_fixed: a path-dependent D needs the "
                                   "account path; use simulate.run_portfolio")
@@ -222,10 +276,10 @@ def accept_trades(cands: pd.DataFrame, risk: pd.DataFrame, account: AccountSpec,
     ranked = rank_candidates(join_risk(cands, risk))
     tier = base_tier_tenths(account)
     book: tuple[OpenPosition, ...] = ()
-    kept: list[int] = []
     sizes: list[int] = []
+    reasons: list[str] = []
     budget: dict[pd.Timestamp, float] = {}  # trade date -> remaining variance budget (D-03)
-    for i, row in enumerate(ranked.itertuples(index=False)):
+    for row in ranked.itertuples(index=False):
         t = int(row.decision_ts_ns)
         if int(row.exit_ts_ns) <= t:
             raise PortfolioInputError(f"candidate_exit_not_after_decision: {row.root} at {t}")
@@ -235,17 +289,32 @@ def accept_trades(cands: pd.DataFrame, risk: pd.DataFrame, account: AccountSpec,
         adm = admit(root=row.root, cluster=row.cluster, sigma_ticks=float(row.sigma_ticks),
                     loss_ticks=float(row.loss_ticks), cost_ticks=float(row.cost_ticks),
                     d_open=d_fixed, d_now=d_fixed, book=book, tier_tenths=tier,
-                    budget_var=remaining)
+                    release_window=bool(row.release_window), budget_var=remaining)
+        sizes.append(adm.contracts)
+        reasons.append(adm.reason)
         if adm.contracts < 1:
             continue
         budget[day] = remaining - budget_use(adm.contracts, float(row.sigma_ticks),
                                              vehicle_facts(row.root).tick_value_usd)
         book = (*book, OpenPosition(row.root, row.cluster, adm.contracts, int(row.exit_ts_ns)))
-        kept.append(i)
-        sizes.append(adm.contracts)
-    out = ranked.iloc[kept].reset_index(drop=True)
+    return ranked.assign(contracts=np.asarray(sizes, dtype=np.int64),
+                         reason=np.asarray(reasons, dtype=object))
+
+
+def refusal_counts(record: pd.DataFrame) -> dict[str, int]:
+    """Skipped candidates per reason in an ``admission_record`` (admitted rows excluded)."""
+    skipped = record.loc[record["contracts"] < 1, "reason"]
+    return {str(k): int(v) for k, v in skipped.value_counts().sort_index().items()}
+
+
+def accept_trades(cands: pd.DataFrame, risk: pd.DataFrame, account: AccountSpec, *,
+                  d_fixed: float | None) -> pd.DataFrame:
+    """The accepted candidates of ``admission_record`` in time order, with contracts,
+    sigma_ticks, loss_ticks, tick_value_usd and lot_equiv added (the reason column dropped)."""
+    record = admission_record(cands, risk, account, d_fixed=d_fixed)
+    out = record.loc[record["contracts"] >= 1].drop(columns="reason").reset_index(drop=True)
     facts = [vehicle_facts(r) for r in out["root"]]
-    return out.assign(contracts=np.asarray(sizes, dtype=np.int64),
+    return out.assign(contracts=out["contracts"].to_numpy(dtype=np.int64),
                       tick_value_usd=np.asarray([f.tick_value_usd for f in facts], dtype=float),
                       lot_equiv=np.asarray([f.lot_equiv for f in facts], dtype=float))
 
@@ -305,8 +374,9 @@ def fixed_d_daily_pnl(accepted: pd.DataFrame, targets: pd.DataFrame, *,
 
 
 __all__ = [
-    "CANDIDATE_COLUMNS", "MARGIN_TENTHS", "RISK_COLUMNS", "Admission", "OpenPosition",
-    "PortfolioInputError", "VehicleFacts", "accept_trades", "admit", "base_tier_tenths",
-    "fixed_d_daily_pnl", "join_risk", "live_tier_tenths", "rank_candidates", "risk_unknown",
-    "vehicle_facts",
+    "CANDIDATE_COLUMNS", "MARGIN_TENTHS", "RELEASE_WINDOW_REASON", "RISK_COLUMNS", "Admission",
+    "OpenPosition", "PortfolioInputError", "VehicleFacts", "accept_trades", "admission_record",
+    "admit", "base_tier_tenths", "fixed_d_daily_pnl", "join_risk", "live_tier_tenths",
+    "rank_candidates", "refusal_counts", "release_window_binds", "release_window_mask",
+    "risk_unknown", "vehicle_facts",
 ]

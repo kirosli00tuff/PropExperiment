@@ -6,7 +6,7 @@ Not accessed. No credential exists for this project, and none was created, stubb
 
 ## Databento (GLBX.MDP3) — Stage A.1, 2026-09-16
 
-- **Credential.** The key is read from `DATABENTO_API_KEY` in this repo's git-ignored `.env`, through `data/config.py::require_databento_key`. It is the same account key as MLCryptoEngine's `MLCE_DATABENTO_API_KEY`; the match was confirmed by comparing SHA-256 prefixes, and the value was never printed. No key value appears in any source file.
+- **Credential.** Each account has its own key, read from `DATABENTO_API_KEY1` (acct-1) or `DATABENTO_API_KEY2` (acct-2) in this repo's git-ignored `.env`, through `data/config.py::require_databento_key` (the account is named by the caller, `ACTIVE_ACCOUNT` by default; Stage E.11, V19). acct-1's key is the same account key as MLCryptoEngine's `MLCE_DATABENTO_API_KEY`; the match was confirmed by comparing SHA-256 prefixes, and the value was never printed. No key value appears in any source file.
 - **Spend gate.** Every billable request was priced first with `metadata.get_cost` and `metadata.get_billable_size`, then checked against both caps, then committed to `ledger/databento_spend.jsonl` before download. The code is `data/spend_gate.py` and `data/adapter.py`.
   - Session cap: $15.00.
   - Shared account cap: $120.00, counting MLCryptoEngine's `data/vendor/spend_ledger.jsonl`, which is read and never written.

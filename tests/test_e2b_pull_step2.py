@@ -90,6 +90,28 @@ def set_caps(monkeypatch: pytest.MonkeyPatch, session: float, request: float) ->
     monkeypatch.setattr(ps, "STEP2_REQUEST_CAP_USD", request)
 
 
+@pytest.fixture(autouse=True)
+def _full_step2_range(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests exercise the full 71-chunk step 2 path (keeping, sealing, resume), which stays
+    in the code for later phases. Stage E.12's training-window interlock
+    (data.config.STEP2_TRAINING_WINDOW_ONLY) is held off here; tests/test_e2b_pull_step2_e12.py
+    tests it with the config's value."""
+    monkeypatch.setattr(ps, "STEP2_TRAINING_WINDOW_ONLY", False)
+
+
+def gates_for(tmp_path: Path, ledger: Path) -> Any:
+    """main()'s gate_factory (called with account=): each account's step 2 gate on the tmp
+    ledger; acct-1's external ledger is an empty tmp file, so no real ledger is read."""
+    external = tmp_path / "external_ledger.jsonl"
+    external.touch()
+
+    def factory(account: str) -> Any:
+        extra = {"external_ledger_paths": (external,)} if account == config.ACCOUNT_1_ID else {}
+        return ps.step2_gate(account=account, ledger_path=ledger,
+                             access_doc_path=tmp_path / "A.md", **extra)
+    return factory
+
+
 def run(tmp_path: Path, client: Any, plan: list[ps.Chunk], g: Any = None) -> list[dict]:
     _, done = ps.run_buy(client, g or gate(tmp_path), plan, expected_harness_sha256=HARNESS,
                          vendor_root=tmp_path / "v", seal_paths=paths_for(tmp_path),
@@ -183,9 +205,8 @@ def test_quote_set_b2_prices_each_leg_root_once_and_totals_k8(tmp_path: Path) ->
     client = quote_client()
     ledger = tmp_path / "ledger.jsonl"
     out_json, out_md = tmp_path / "q.json", tmp_path / "q.md"
-    rc = ps.main(["--quote-only", "--set", "clusters-legs"], key_loader=lambda: "k",
-                 gate_factory=lambda: ps.step2_gate(ledger_path=ledger,
-                                                    access_doc_path=tmp_path / "A.md"),
+    rc = ps.main(["--quote-only", "--set", "clusters-legs"], key_loader=lambda **kw: "k",
+                 gate_factory=gates_for(tmp_path, ledger),
                  client_factory=lambda key: client, quotes_json=out_json, quotes_md=out_md,
                  log=lambda m: None)
     section = json.loads(out_json.read_text(encoding="utf-8"))["sets"]["clusters-legs"]
@@ -248,14 +269,13 @@ def test_quote_only_issues_no_billable_request_and_ledgers_zero_lines_on_acct2(
     out_json, out_md = tmp_path / "q.json", tmp_path / "q.md"
 
     # Act
-    rc = ps.main(["--quote-only", "--set", "ml-route"], key_loader=lambda: "SECRET-KEY-XYZ",
-                 gate_factory=lambda: ps.step2_gate(ledger_path=ledger,
-                                                    access_doc_path=tmp_path / "A.md"),
+    rc = ps.main(["--quote-only", "--set", "ml-route"], key_loader=lambda **kw: "SECRET-KEY-XYZ",
+                 gate_factory=gates_for(tmp_path, ledger),
                  client_factory=lambda key: client, quotes_json=out_json, quotes_md=out_md,
                  log=lambda m: None)
 
     # Assert: nothing billable touched; every new line a $0.00 quote on acct-2 under the active
-    # step 2 purchase policy's session id (data/config.py; Stage E.5 on, stage-E.5-2026-09-27).
+    # step 2 purchase policy's session id (data/config.py; Stage E.12 on, stage-E.12-2026-10-03).
     assert rc == 0 and client.billable_hits == []
     with pytest.raises(RuntimeError, match="forbidden"):
         client.timeseries.get_range(dataset="GLBX.MDP3")
@@ -268,13 +288,15 @@ def test_quote_only_issues_no_billable_request_and_ledgers_zero_lines_on_acct2(
     assert section["contracts"] == 31 and section["chunks"] == 2178 and section["complete"]
     assert section["first_priced_month"] == {"MBT": "2021-04-01"}
     assert payload["account"]["spent_usd"] == pytest.approx(103.48)
-    assert payload["account"]["cap_headroom_usd"] == pytest.approx(21.52)
+    headroom = config.ACCOUNT_2_CAP_USD - 103.48  # credit left = cap headroom since V19
+    assert payload["account"]["cap_headroom_usd"] == pytest.approx(headroom)
+    assert payload["account"]["credit_left_usd"] == pytest.approx(headroom)
     assert (payload["session_cap_usd"], payload["request_cap_usd"]) == (
         ps.STEP2_SESSION_CAP_USD, ps.STEP2_REQUEST_CAP_USD)  # the active caps, whatever they are
     total = section["total_usd"]
     assert total == pytest.approx(sum(r["usd"] for r in section["per_contract"].values()))
     assert total == pytest.approx(sum(c["usd"] for c in section["per_cluster"].values()))
-    assert section["topup_usd_at_quote"] == pytest.approx(round(max(0, total - 21.52), 2))
+    assert section["topup_usd_at_quote"] == pytest.approx(round(max(0, total - headroom), 2))
     assert set(section["per_cluster"]) == set(ps.CLUSTERS)
     md = out_md.read_text(encoding="utf-8")
     assert "31 contracts, 2178 chunks" in md and "| MBT | K7 |" in md
@@ -330,9 +352,9 @@ def test_the_buy_refuses_when_the_harness_preflight_raises(tmp_path: Path,
     with pytest.raises(harness_freeze.HarnessFreezeError, match="planted"):
         run(tmp_path, client, plan)
     called: list[str] = []
-    rc = ps.main(["--buy", "--ml-route", "--harness-sha256", HARNESS],
-                 key_loader=lambda: called.append("key") or "k",
-                 gate_factory=lambda: gate(tmp_path),
+    rc = ps.main(["--buy", "--ml-route", "--account", "acct-2", "--harness-sha256", HARNESS],
+                 key_loader=lambda **kw: called.append("key") or "k",
+                 gate_factory=lambda **kw: gate(tmp_path),
                  client_factory=lambda k: called.append("client"), log=lambda m: None)
     assert rc == ps.RC_REFUSED and called == []
     assert client.metadata.calls == [] and client.downloads == []
@@ -350,16 +372,18 @@ def test_the_buy_refuses_to_start_with_the_active_zero_caps(
     with pytest.raises(ps.Step2CapError, match="sets its own caps in data/config.py"):
         run(tmp_path, client, ps.plan_step2(["ZN"])[ZN_SUBPLAN], zero)
     assert preflight_ok == [HARNESS]  # the preflight ran first
-    rc = ps.main(["--buy", "--cluster", "K2", "--harness-sha256", HARNESS],
-                 key_loader=lambda: pytest.fail("key loaded"), gate_factory=lambda: zero,
+    rc = ps.main(["--buy", "--cluster", "K2", "--account", "acct-2", "--harness-sha256", HARNESS],
+                 key_loader=lambda **kw: pytest.fail("key loaded"),
+                 gate_factory=lambda **kw: zero,
                  client_factory=lambda k: pytest.fail("client built"), log=lambda m: None)
     assert rc == ps.RC_REFUSED
     assert client.metadata.calls == [] and read_entries(tmp_path / "ledger.jsonl") == []
 
 
 def test_main_buy_requires_the_harness_sha256(tmp_path: Path) -> None:
-    rc = ps.main(["--buy", "--ml-route"], key_loader=lambda: pytest.fail("key"),
-                 gate_factory=lambda: gate(tmp_path), log=lambda m: None)
+    rc = ps.main(["--buy", "--ml-route", "--account", "acct-2"],
+                 key_loader=lambda **kw: pytest.fail("key"),
+                 gate_factory=lambda **kw: gate(tmp_path), log=lambda m: None)
     assert rc == ps.RC_REFUSED
 
 
@@ -457,7 +481,7 @@ def test_a_delivery_above_the_quote_is_settled_pro_rata_sealed_and_stops(
 
 def test_the_account_cap_on_acct2_refuses_and_acct1_spend_does_not_count(
         tmp_path: Path, preflight_ok: list[str]) -> None:
-    # Arrange: acct-1 spend is not acct-2's; acct-2 already at $124.99 of its $125.00 cap.
+    # Arrange: acct-1 spend is not acct-2's; acct-2 already one cent under ACCOUNT_2_CAP_USD.
     ledger = tmp_path / "ledger.jsonl"
     ledger.write_text(json.dumps({"session_id": "old", "event": "commit", "usd": 110.0,
                                   "account": "acct-1", "request": {"a": 1}}) + "\n",
@@ -465,7 +489,8 @@ def test_the_account_cap_on_acct2_refuses_and_acct1_spend_does_not_count(
     chunk = ps.plan_step2(["ZN"])[0]
     run(tmp_path, buy_client(), [chunk])  # acct-1's $110 does not block acct-2
     with ledger.open("a", encoding="utf-8") as fh:
-        fh.write(json.dumps({"session_id": "old", "event": "commit", "usd": 124.99,
+        fh.write(json.dumps({"session_id": "old", "event": "commit",
+                             "usd": round(config.ACCOUNT_2_CAP_USD - 0.01, 2),
                              "account": "acct-2", "request": {"b": 1}}) + "\n")
 
     # Act / Assert
@@ -523,6 +548,7 @@ def test_resume_seals_a_downloaded_holdout_chunk_and_finishes_an_interrupted_sea
         run(tmp_path, buy_client(), [nxt])
     monkeypatch.undo()
     monkeypatch.setattr(harness_freeze, "preflight", lambda e, root=None: e)
+    monkeypatch.setattr(ps, "STEP2_TRAINING_WINDOW_ONLY", False)  # undo() reverted the fixture
     nxt_target = ps.target_path(nxt.params, tmp_path / "v")
     assert not nxt_target.exists()  # purged on failure: no plaintext kept
     assert seal.is_sealed(nxt_target, make("ZN"))
@@ -645,20 +671,25 @@ def test_the_product_stores_sit_beside_mes_holdout2_in_the_repo() -> None:
     assert ho.status_report()["holdout_2"]["products"] == seal.verify_all(ho.HOLDOUT2_PATHS)
 
 
-# ------------------------------------------------ Stage E.5: the active policy ----
-# Lead ruling R-A2-2: the E.5 caps are set in Task B1 (a data/config.py edit only), so these tests
-# pin behavior and hold at 0.00 and at any positive caps; none pins the config's cap values.
+# ---------------------------------------- the active policy (E.5, then E.12) ----
+# Lead ruling R-A2-2: a purchase session's caps are set by a data/config.py edit only, so these
+# tests pin behavior and hold at 0.00 and at any positive caps; none pins the active cap values.
+# Stage E.12 (harness v8) repointed the active names from the E.5 block to the E.12 block; the
+# E.5 block stays as it was.
 E5_SESSION = "stage-E.5-2026-09-27"
+ACTIVE_SESSION = config.STEP2_PURCHASE_SESSION_ID
 CAP_CASES = [(0.0, 0.0), (21.52, 3.00)]
 
 
 @pytest.mark.parametrize("caps", CAP_CASES)
-def test_the_step2_gate_is_the_e5_session_on_acct2_and_reads_the_active_caps(
+def test_the_step2_gate_is_the_active_session_on_acct2_and_reads_the_active_caps(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caps: tuple[float, float]) -> None:
-    # Arrange: the active names point at the E.5 block (the session id does not change in B1).
-    assert config.STAGE_E5_SESSION_ID == E5_SESSION == config.STEP2_PURCHASE_SESSION_ID
+    # Arrange: the active names point at the E.12 block; the E.5 block is kept as it was.
+    assert config.STAGE_E12_SESSION_ID == ACTIVE_SESSION != E5_SESSION
     assert (config.STEP2_SESSION_CAP_USD, config.STEP2_REQUEST_CAP_USD) == (
-        config.E5_SESSION_CAP_USD, config.E5_REQUEST_CAP_USD)
+        config.E12_SESSION_CAP_USD, config.E12_REQUEST_CAP_USD)
+    assert (config.STAGE_E5_SESSION_ID, config.E5_SESSION_CAP_USD, config.E5_REQUEST_CAP_USD) == (
+        E5_SESSION, 21.52, 3.00)
     assert (ps.STEP2_SESSION_CAP_USD, ps.STEP2_REQUEST_CAP_USD) == (
         config.STEP2_SESSION_CAP_USD, config.STEP2_REQUEST_CAP_USD)
     assert config.STAGE_E2B_SESSION_ID == "stage-E.2b-2026-09-26"  # the E.2b block is kept
@@ -668,11 +699,11 @@ def test_the_step2_gate_is_the_e5_session_on_acct2_and_reads_the_active_caps(
     g = ps.step2_gate(ledger_path=tmp_path / "ledger.jsonl", access_doc_path=tmp_path / "A.md")
 
     # Assert
-    assert (g.session_id, g.account_id) == (E5_SESSION, "acct-2")
+    assert (g.session_id, g.account_id) == (ACTIVE_SESSION, "acct-2")
     assert (g.session_cap_usd, g.request_cap_usd) == caps
     assert g.account_cap_usd == config.ACCOUNT_2_CAP_USD
     if caps == (0.0, 0.0):
-        with pytest.raises(ps.Step2CapError, match=E5_SESSION):
+        with pytest.raises(ps.Step2CapError, match=ACTIVE_SESSION):
             ps.require_buy_caps(g)
     else:  # positive caps pass the start check: nothing here depends on 0.00
         ps.require_buy_caps(g)
@@ -685,10 +716,10 @@ def test_the_buy_refuses_before_any_vendor_call_at_zero_caps(
     ledger = tmp_path / "ledger.jsonl"
 
     # Act
-    rc = ps.main(["--buy", "--cluster", "K4", "--harness-sha256", HARNESS],
-                 key_loader=lambda: pytest.fail("key loaded"),
-                 gate_factory=lambda: ps.step2_gate(ledger_path=ledger,
-                                                    access_doc_path=tmp_path / "A.md"),
+    rc = ps.main(["--buy", "--cluster", "K4", "--account", "acct-2", "--harness-sha256", HARNESS],
+                 key_loader=lambda **kw: pytest.fail("key loaded"),
+                 gate_factory=lambda **kw: ps.step2_gate(ledger_path=ledger,
+                                                         access_doc_path=tmp_path / "A.md"),
                  client_factory=lambda k: pytest.fail("client built"), log=lambda m: None)
 
     # Assert: refused after the preflight, before any key, client or ledger line.
@@ -697,7 +728,7 @@ def test_the_buy_refuses_before_any_vendor_call_at_zero_caps(
 
 
 @pytest.mark.parametrize("caps", CAP_CASES)
-def test_quote_only_ledgers_only_zero_lines_under_the_e5_session(
+def test_quote_only_ledgers_only_zero_lines_under_the_active_session(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caps: tuple[float, float]) -> None:
     # Arrange
     before = real_state()
@@ -706,18 +737,17 @@ def test_quote_only_ledgers_only_zero_lines_under_the_e5_session(
     client = quote_client()
 
     # Act
-    rc = ps.main(["--quote-only", "--set", "ml-route"], key_loader=lambda: "k",
-                 gate_factory=lambda: ps.step2_gate(ledger_path=ledger,
-                                                    access_doc_path=tmp_path / "A.md"),
+    rc = ps.main(["--quote-only", "--set", "ml-route"], key_loader=lambda **kw: "k",
+                 gate_factory=gates_for(tmp_path, ledger),
                  client_factory=lambda key: client, quotes_json=tmp_path / "q.json",
                  quotes_md=tmp_path / "q.md", log=lambda m: None)
 
-    # Assert: whatever the caps, only $0.00 quote lines on acct-2 under the E.5 session id.
+    # Assert: whatever the caps, only $0.00 quote lines on acct-2 under the active session id.
     entries = read_entries(ledger)
     assert rc == 0 and client.billable_hits == [] and entries
     assert {(e["event"], e["usd"], e["account"], e["session_id"]) for e in entries} == {
-        ("quote", 0.0, "acct-2", E5_SESSION)}
+        ("quote", 0.0, "acct-2", ACTIVE_SESSION)}
     payload = json.loads((tmp_path / "q.json").read_text(encoding="utf-8"))
-    assert payload["session_id"] == E5_SESSION
+    assert payload["session_id"] == ACTIVE_SESSION
     assert (payload["session_cap_usd"], payload["request_cap_usd"]) == caps
     assert real_state() == before

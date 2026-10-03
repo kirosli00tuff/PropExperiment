@@ -75,7 +75,14 @@ class DatabentoAccount:
 ACCOUNT_1_ID = "acct-1"
 ACCOUNT_2_ID = "acct-2"
 LEGACY_ACCOUNT_ID = ACCOUNT_1_ID  # ledger lines with no "account" field
-ACCOUNT_2_CAP_USD = 125.00
+# acct-2's cumulative cap (V19, V23 item 19; raised in Stage E.12, harness v8). Was 125.00, the
+# credit acct-2 opened with (U5). Arithmetic from the ledger: acct-2's cumulative spend
+# data.spend_gate.account_committed_usd(read_entries(LEDGER_PATH), "acct-2") = 124.673761
+# (ledger/databento_spend.jsonl at 2026-10-03 07:52 PDT: 17,400 lines, sha256
+# 0b5466c4366ca9eaba7e10525545631c83e97c1184a7e745d5ed8ad47a9fe957; recomputed by the v8
+# worker from the same file: 124.673761487003) + the user's $125.00 top-up of 2026-10-02 (V19)
+# = 249.673761, rounded DOWN to the cent so the cap never exceeds the funds: 249.67.
+ACCOUNT_2_CAP_USD = 249.67
 
 ACCOUNTS: MappingProxyType[str, DatabentoAccount] = MappingProxyType({
     ACCOUNT_1_ID: DatabentoAccount(
@@ -126,12 +133,35 @@ STAGE_E5_SESSION_ID = "stage-E.5-2026-09-27"
 E5_SESSION_CAP_USD = 21.52
 E5_REQUEST_CAP_USD = 3.00
 
+# Stage E.12 spend policy (stage prompt docs/prompts/STAGE_E.12.md, V23 item 19, 2026-10-03): the
+# phase-1 purchase of ML route v2's training-window price paths through data.pull_step2, acct-1
+# first up to its headroom under SHARED_ACCOUNT_CAP_USD, then acct-2 up to its headroom under
+# ACCOUNT_2_CAP_USD; each run names its account (--account). The session id is shared by both
+# accounts' gates, so the session cap bounds the two accounts together.
+# The E.12 lead sets E12_SESSION_CAP_USD from the fresh quote-only run before the v8 manifest: the
+# selected subset's quote total x 1.03, never above the combined headroom of the two accounts.
+# 0.00 means the gate refuses every billable request until then, and
+# `python -m data.pull_step2 --buy` refuses to start. Request cap: D13's $3.00 per request.
+STAGE_E12_SESSION_ID = "stage-E.12-2026-10-03"
+# Set by the E.12 lead at 10:02 PDT 2026-10-03 from the fresh --quote-only run (set ml-v2, training
+# window, 1,601 chunks, 0 failed; reports/stage_e12_quotes_phase1.json, $139.340240 for 28 price
+# paths) and the frozen subset rule (reports/stage_e12_ranking.json: all 28 exposures, NG owned at
+# $0): subset total $133.723742 (acct-1 $26.797773, acct-2 $106.925969) x 1.03 = $137.735454, in
+# whole cents $137.73, under the combined headroom $28.407753 + $124.996239 = $153.403992.
+E12_SESSION_CAP_USD = 137.73
+E12_REQUEST_CAP_USD = 3.00
+# V23 item 4: phase 1 buys the training window only, ending with range=2024-02-01_2024-03-01.
+# While True, `python -m data.pull_step2 --buy` without --training-window is refused before any
+# vendor call, and --training-window refuses every chunk starting on or after 2024-03-01.
+STEP2_TRAINING_WINDOW_ONLY = True
+
 # The active step 2 purchase policy: the three names data.pull_step2.step2_gate reads. A later
 # purchase session adds its own block above and repoints these three (a config-only edit, as the
-# E.2b design intended); the blocks of earlier sessions stay as they were.
-STEP2_PURCHASE_SESSION_ID = STAGE_E5_SESSION_ID
-STEP2_SESSION_CAP_USD = E5_SESSION_CAP_USD
-STEP2_REQUEST_CAP_USD = E5_REQUEST_CAP_USD
+# E.2b design intended); the blocks of earlier sessions stay as they were. Stage E.12 on: the
+# E.12 block (Stage E.5 to E.11: the E.5 block).
+STEP2_PURCHASE_SESSION_ID = STAGE_E12_SESSION_ID
+STEP2_SESSION_CAP_USD = E12_SESSION_CAP_USD
+STEP2_REQUEST_CAP_USD = E12_REQUEST_CAP_USD
 
 # One Databento key per account (Stage E.11, V19): .env holds DATABENTO_API_KEY1 and
 # DATABENTO_API_KEY2 only. require_databento_key reads the variable of the account it is asked
@@ -165,7 +195,8 @@ def require_databento_key(env_file: Path = ENV_FILE, account: str | None = None)
     """The Databento key of ``account`` (``ACTIVE_ACCOUNT`` when None), or a clear failure.
 
     The account's variable is read from the environment, else from ``env_file``; a blank
-    environment value does not shadow the file. An account with no registered variable, and a
+    environment value does not shadow the file. The key comes back stripped of surrounding
+    whitespace (E.11 review C-10(b), harness v8). An account with no registered variable, and a
     variable that is missing, empty or whitespace-only, raise MissingSecretError naming the
     account and the variable, never a value.
     """
@@ -184,4 +215,4 @@ def require_databento_key(env_file: Path = ENV_FILE, account: str | None = None)
             f"{name} (the Databento key of account {account_id}) is not set, or is empty, "
             f"in the environment or {env_file.name}"
         )
-    return key
+    return key.strip()

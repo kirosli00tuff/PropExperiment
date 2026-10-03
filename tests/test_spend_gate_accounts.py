@@ -75,7 +75,7 @@ def test_registry_holds_both_accounts_with_their_caps_and_ledgers() -> None:
 
     # Assert
     assert (acct1.cap_usd, acct1.external_ledger_paths) == (120.00, config.EXTERNAL_LEDGER_PATHS)
-    assert (acct2.cap_usd, acct2.external_ledger_paths) == (125.00, ())
+    assert (acct2.cap_usd, acct2.external_ledger_paths) == (config.ACCOUNT_2_CAP_USD, ())
     assert config.ACTIVE_ACCOUNT == "acct-2" and config.LEGACY_ACCOUNT_ID == "acct-1"
     assert config.SHARED_ACCOUNT_CAP_USD == 120.00 and config.SESSION_CAP_USD == 15.00
     assert (config.STAGE_E1_SESSION_ID, config.E1_REQUEST_CAP_USD) == ("stage-E.1-2026-09-24", 3.00)
@@ -141,12 +141,14 @@ def test_account_lines_are_appended_never_rewritten(tmp_path: Path) -> None:
 
 
 # ------------------------------------------------------------------- caps ----
-def test_the_acct_2_cap_refuses_past_125(tmp_path: Path) -> None:
-    # Arrange: acct-2 has 124.00 committed; legacy acct-1 lines do not count against it.
-    _write_ledger(tmp_path / "ledger.jsonl", [_line(124.00, account="acct-2"), _line(50.0)])
+def test_the_acct_2_cap_refuses_past_its_cap(tmp_path: Path) -> None:
+    # Arrange: acct-2 has its cap minus 1.00 committed (ACCOUNT_2_CAP_USD, 125.00 until harness
+    # v8); legacy acct-1 lines do not count against it.
+    committed = round(config.ACCOUNT_2_CAP_USD - 1.00, 2)
+    _write_ledger(tmp_path / "ledger.jsonl", [_line(committed, account="acct-2"), _line(50.0)])
     gate = _acct2(tmp_path, session_cap_usd=1000.0)
 
-    # Act / Assert: 124.00 + 1.00 = 125.00 is allowed; 124.00 + 1.01 is not.
+    # Act / Assert: committed + 1.00 = the cap is allowed; committed + 1.01 is not.
     assert gate.authorize(PARAMS, Quote(PARAMS, 1.00, 56)).allowed
     with pytest.raises(BudgetRefusedError, match="account cap acct-2"):
         gate.authorize(PARAMS, Quote(PARAMS, 1.01, 56))
@@ -174,7 +176,7 @@ def test_the_request_cap_refuses_on_acct_2(tmp_path: Path) -> None:
 def test_a_cap_may_be_tightened_but_never_raised(tmp_path: Path) -> None:
     assert _acct2(tmp_path, shared_cap_usd=10.0).account_cap_usd == 10.0
     with pytest.raises(ValueError, match="never raise"):
-        _acct2(tmp_path, shared_cap_usd=125.01)
+        _acct2(tmp_path, shared_cap_usd=round(config.ACCOUNT_2_CAP_USD + 0.01, 2))
 
 
 # ------------------------------------------------------ fail-closed rules ----

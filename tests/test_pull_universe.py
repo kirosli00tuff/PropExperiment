@@ -390,7 +390,8 @@ def test_quote_only_makes_no_billable_call_and_writes_the_summary(
     out = capsys.readouterr()
     everything = "\n".join(logged) + out.out + out.err + summary_path.read_text()
     assert "SECRET-KEY-DO-NOT-PRINT" not in everything
-    assert "account acct-2 (cap $125.00" in logged[0] and "request cap $3.00" in logged[0]
+    assert f"account acct-2 (cap ${config.ACCOUNT_2_CAP_USD:.2f}" in logged[0]
+    assert "request cap $3.00" in logged[0]
     assert (_lines(config.LEDGER_PATH), config.ACCESS_DOC_PATH.stat().st_size
             if config.ACCESS_DOC_PATH.exists() else 0) == real
 
@@ -437,7 +438,7 @@ def test_buy_refuses_while_the_session_cap_is_zero(tmp_path: Path) -> None:
 def test_the_e1_gate_is_acct_2_with_the_e1_caps(tmp_path: Path) -> None:
     g = pu.e1_gate(ledger_path=tmp_path / "l.jsonl", access_doc_path=tmp_path / "A.md")
     assert (g.session_id, g.account_id, g.account_cap_usd) == (
-        "stage-E.1-2026-09-24", "acct-2", 125.00)
+        "stage-E.1-2026-09-24", "acct-2", config.ACCOUNT_2_CAP_USD)
     assert (g.request_cap_usd, g.session_cap_usd, g.external_ledger_paths) == (3.00, 113.48, ())  # session cap set in E.1 Task 6
 
 

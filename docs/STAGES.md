@@ -119,6 +119,11 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     K9-vixspike-01; design draft docs/STAGE_E_DESIGN_K9_DRAFT.md (K = 10, 30-trip floor, 40-trial budget).
     No market data, nothing bought, nothing frozen; N stays 198 (201 if screened). E.11 freezes after the
     user's decisions.
+  - Stage E.11 — ML route v2: design draft and the pipeline built on synthetic data. Run 2026-10-03 (see
+    reports/E.11_RETURN.md): draft docs/STAGE_E_ML_V2_DESIGN.md (Gate 0 first; ridge and shallow LightGBM, 45
+    configurations, nested CPCV; drawdown-distance sizing, kill switches, payout simulation); ml_route_v2/ with 704
+    synthetic tests, all leakage canaries caught; harness v7 (per-account Databento keys). No market data, nothing
+    bought, frozen or trained; N stays 198. A freeze session follows the user's 19 decisions.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

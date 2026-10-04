@@ -1,0 +1,569 @@
+
+ For the last seven years since I started trading my own account I've pretty much kept the same set of futures markets: around 40 or so, with very occasional changes. The number is limited, as to trade more markets I'd need more capital. The set of markets I have is a compromise between getting a diversified portfolio, avoiding low volatility, not paying too much in trading costs, not incurring excessive data fees, and being able to trade without running into problems with the minimum size required to trade a particular contract. 
+ However, the times they are a' changing. I've been toying with an idea for a new trading system method that will allow me to trade a very large number of markets; to be more precise it will be an optimisation process with a universe of markets that it could  trade, in which I'll only take selective positions that make the best use of my limited capital.
+ A side effect of this is that I will be able to calculate optimal positions for markets I have no intention of trading at all (because they are too expensive, too large, or not sufficiently liquid) and then use that information to make a better decision about what positions I should hold in another market. 
+ A pre-requisite for that is to actually add more markets to my price database. So that's what this post is all about: deciding which markets to add (using the python interactive brokers [IB] API 'layer' I use, ib_insync ), the order to add them in, and explaning the process I follow to include more markets in my open source system, pysystemtrade . 
+ (And yes - one of those markets is Bitcoin!)
+ Of course you don't have to be a pysystemtrade, ib_insync, or python user; or even an Interactive Brokers customer; as much of what I will say will be relevant to all futures traders (and perhaps even to people who trade other things as well).
+ It also goes without saying, I think, that this would be useful for someone who is building a list of markets from scratch rather than adding to an existing list.
+ The initial universe
+ Sadly my broker, interactive brokers (IB), doesn't seem to have a giant .csv file or spreadsheet list of products - at least not externally. So I went on the IB website and basically copied down the list of all the futures products  I could find. I excluded single stock futures, since that would have resulted in an even bigger list and I don't want to go those for now. I also excluded markets that I already trade. The key fields I was after were the IB code and Exchange identifier. For example, Ethanol, has an IB code of 'AC' and the exchange is 'ECBOT'.
+ Here is the initial list. 
+ EDIT: On my initial pass I missed out quite a few of the Singapore SGX instruments (thanks to @HobbyTrading on ET ). These are now included at the end of the file.
+ Resolving duplicates
+ Now the symbol and exchange aren't sufficient to uniquely identify every instrument, since in some markets there are multiple contracts with different multipliers and currencies. So I ran the following code (which doesn't require pysystemtrade, only  ib_insync ):
+ import pandas as pd
+ from ib_insync import Future, IB
+ missing_data = object () def identify_duplicates (symbol, exchange):
+ print ( "%s %s" % (symbol, exchange))
+ future = Future( symbol =symbol, exchange = exchange)
+ contracts = ib.reqContractDetails(future)
+ if len (contracts)== 0 :
+ print ( "Missing data for %s/%s" % (symbol, exchange))
+ return missing_data
+ list_of_ccy= [contract.contract.currency for contract in contracts]
+ list_of_multipliers = [contract.contract.multiplier for contract in contracts]
+ unique_list_of_ccy = list ( set (list_of_ccy))
+ unique_list_of_multipliers= list ( set (list_of_multipliers))
+ if len (unique_list_of_multipliers)> 1 :
+ print ( "%s/%s more than one multiplier %s" %
+ (symbol, exchange, str (unique_list_of_multipliers)))
+ multiplier = str (unique_list_of_multipliers)
+ else :
+ multiplier = unique_list_of_multipliers[ 0 ]
+ if len (unique_list_of_ccy)> 1 :
+ print ( "%s/%s more than one currency %s" %
+ (symbol, exchange, str (unique_list_of_multipliers)))
+ currency = str (unique_list_of_ccy)
+ else :
+ currency = unique_list_of_ccy[ 0 ]
+ return [symbol, exchange, currency, multiplier] 
+ ib=IB()
+ib.connect( '127.0.0.1' , 4001 , clientId = 5 )
+all_market_data = pd.read_csv( '/home/rob/private/projects/new_markets/Initial_market_list.csv' )
+new_market_data = []
+ for row_data in all_market_data.iterrows():
+ new_data = identify_duplicates( symbol =row_data[ 1 ].Symbol, exchange =row_data[ 1 ].Exchange)
+ if new_data is missing_data:
+ continue
+ new_market_data.append(new_data)
+ new_market_data_pd = pd.DataFrame(new_market_data)
+new_market_data_pd.columns=[ 'Symbol' , 'Exchange' , 'Currency' , 'Multiplier' ]
+new_market_data_pd.to_csv( '/home/rob/with_additional_fields.csv' )
+ Perusing the list there don't appear to be any duplicates for currency, only half a dozen or so for multipliers. We don't want to make a decision at this stage about which multiplier to trade, so I manually split those rows out in the spreadsheet (I could do this with python of course, but there aren't enough instances to make it worth writing the code). For example, if I look at 'BRR/CMECRYPTO' I can see the multiplier is both 5 and 0.1; the latter is the new micro contract for Bitcoin, the former figure is for the original massive contract.
+ BRR CMECRYPTO USD ['5', '0.1'] 
+ I split that out so it becomes:
+ BRR CMECRYPTO USD 0.1 
+ BRR CMECRYPTO USD 5 
+ Market selection
+ There are a few characteristics about markets that are important when making a selection:
+ Do they diversify our current set of markets?
+ Are they cheap or expensive to trade?
+ How much money do I need to trade them?
+ What kind of volume is there?
+ Can I get market data for them?
+ Remember that with my new methodology I can still add instruments which don't diversify, are too expensive, too large, or have insufficient volume, I just wouldn't trade them. But in terms of priority I will want to add instruments which I can actually trade first. 
+ Measuring trading volume
+ There are many ways to measure trading volume, but I'm going to do the following. Get the volume for the last 20 business days for all contracts that are currently traded. Divide by 20 to get a daily average. Assuming we have multiple contracts for a given instrument, select the contract with the higest volume (since we'd normally only be trading a single contract at once). 
+ We now want to work out what that is risk adjusted terms, so we need the annualised risk per contract:
+ Risk per contract = 16* (daily standard deviation in price units) * M 
+ For example for Eurodollar (December 2023, which I currently hold) the daily standard deviation in price units is about 0.027 price units, so the risk per contract is around $1100. And now we can work out the volume:
+ Volume in $ risk terms = FX rate * Avg daily volume * risk per contract 
+ So for Eurodollars if the average daily volume was 100,000 contracts then the volume in $ risk terms would about $110 million per day.
+ In terms of data we're going to need, we want:
+ The volumes traded in each contract (we get this from IB)
+ The exchange rate (we can get this from IB)
+ The multiplier (which we already have)
+ The daily standard deviation in price units (we can calculate this, given ~20 business days of closing prices from IB)
+ What is a minimum size for daily volume? Well it depends on your typical trade size, and how much the daily volume you are prepared to use up. 
+ For example, with an account size of $500,000, let's assume that we are only trading a single instrument (which is conservative, of course we'd actually be trading more) with annual risk of 25%. That equates to $125,000 of annual risk. The fastest trading systems I have a turnover of about 25 times a year, so with about 250 business days a year that equates to about 1/10 of annual risk being turned over each trading day: $12,500. If I was willing to be 1% of the market that equates to a minimum volume of $1.25 million a day in risk units. 
+ For Eurodollar we'd only be $25K / $110m = 0.0227% of the market.
+ Clearly I have no problem trading Eurodollar (!), but it would rule out quite a few almost moribund instruments that only trade a couple of contracts a day. Of course with my new system I could still add them as price inputs, but my priority is going to be adding markets I can actually trade first.
+ EDIT: There was an interesting question from Chris (see below) which made me think that I should add an additional filter. It would be possible to meet the $1.25 million limit with only 1 contract in volume per day, if that contract was big enough! To be <1% of the market there must, by construction, be more than 100 contracts traded each day.  
+ Footnote: For some IB contracts (eg Corn) the stated multiplier is actually larger than the actual one. So we need to divide the multiplier used to access the data by contract.priceMagnifier to get the actual multiplier for our calculations.
+ How much money do I need to trade a market
+ We need the annualised risk per contract (again using the contract with the highest volume):
+ Risk per contract = 16* (daily standard deviation in price units) * M 
+ Where M is the contract multiplier. Which we can then convert into dollar terms:
+ Dollar risk per contract = FX rate * risk per contract 
+ For example for Eurodollar (December 2023, which I currently hold) the daily standard deviation in price units is about 0.027 price units, so the annualised risk per contract is around $1100 (the FX rate is irrelevant).
+ What is a maximum size for risk per contract?  
+ As an example, with an account size of $500,000, let's assume that we are only trading a single instrument (which is conservative, of course we'd actually be trading more) with annual risk of 25%. That equates to a maximum $125,000 of annual risk per contract. Now suppose we're happy to hold just a single contract (i.e. we don't get any of the benefits of continous position sizing - again this is very conservative). That means the maximum annualised risk per contract is $125,000 . 
+ Clearly Eurodollar is fine since we could happily hold over 100 contracts on this basis. But we couldn't trade the full size (5 coin) bitcoin future; with annualised risk of nearly $300,000.
+ Measuring trading costs
+ I've talked about how I measure risk adjusted trading costs in some detail elsewhere, but suffice to say I'm going to use the following formula:
+ Cost per trade = C + M * (spread/2) 
+ Where C is the  commission in local currency  (the currency the contract is priced in), M is the contract multiplier, and spread is the normal bid/ask spread.
+ For example for Eurodollar futures (which I trade!) C= 0.85, M = 2500, Spread = 0.005. So the total cost is $7.10.
+ We now want to work out what that is risk adjusted terms, so we need the annualised risk per contract:
+ Risk per contract = 16* (daily standard deviation in price units) * M 
+ For example for Eurodollar (December 2023, which I currently hold) the daily standard deviation in price units is about 0.027 price units, so the risk per contract is around $1100.
+ We can now work out the risk adjusted cost in annual SR units. Here it is for Eurodollar:
+ Cost per trade, SR  = cost per trade / risk per contract = $7.10 / $1100 = 0.0065 
+ In terms of data we're going to need for a given contract, we want:
+ The commission (which I'm just going to paste into my spreadsheet as an extra column)
+ The multiplier (which we already have)
+ The spread (we need to get this from IB)
+ The daily standard deviation in price units (we already need this for volumes)
+ Note that the spread may vary depending on which date of contract we are sampling. For this reason I'm going to focus only on the contract with the highest trading volume.
+ As a rule of thumb anything with a cost above 0.01SR is going to be too expensive (assuming quarterly rolls and a very pedestrian 6 trades per year gets us to 0.10 SR units; just below my absolute maximum 'speed limit' of 0.13: see  my books  for more information). Eurodollar is an expensive contract which comes in a little below this threshold. In practice I'm going to try and avoid more expensive contracts, although once again I can add them to my price inputs but not actually trade them.
+ Running the code to extract market volume and cost data
+ Using this file as the input, the code is here , and the results are here  
+ EDIT: I've modified this code since the original post to include some additional information and the 100 contract minimum volume. 
+ As well as calculating the risk per contract, volume in risk terms, and risk adjusted cost, it will show the "expiry profile": the current contract calendar, plus the relative volumes of each contract (normalised so the highest volume is 1.0). We'll need this when/if we decide to add a given contract.
+ This will take you a while!! There are nearly 300 markets, and we need to get market data from IB for every contract that is traded (the rest of the code is pretty swift). 
+ Note that any market where there is no market data will appear with many NaN values. For me the main markets without data are:
+ NYBOT commodities 
+ NYSELIFFE 
+ Canadian CDE markets
+ Australia SNFE 
+ Hong Kong HKFE
+ Europe MATIF, MONEP, IDEM, MEFFRV, OMS
+ UK ICE: IPE, ICEEU, LMEOTC, ICEEUSOFT
+ At this point you can decide if it's worth buying additional market data from IB. I decided not to bother, since there are such a large number of contracts I'm already subscribed to but haven't yet got in my database.
+ For reference my data subscriptions are:
+ Cboe One - Trader Workstation USD 1.00 / Month 
+ CFE Enhanced - Trader Workstation USD 4.50 / Month 
+ Eurex Core - Trader Workstation EUR 8.75 / Month 
+ Eurex Retail Europe - Trader Workstation EUR 2.00 / Month 
+ Euronext Basic Bundle - Trader Workstation EUR 3.00 / Month 
+ Korea Stock Exchange - Trader Workstation USD 2.00 / Month 
+ Singapore - SGD 2.00 / Month
+ Osaka - 200 Yen / Month
+ Fee waivers:
+ IDEAL FX - Trader Workstation
+ Physical Metals and Commodities - Trader Workstation
+ US and EU Bond Quotes - Trader Workstation
+ Canadian Securities Exchange (CSE) - Trader Workstation
+ US Mutual Funds - Trader Workstation
+ US Reg NMS Snapshot - Trader Workstation
+ US Securities Snapshot and Futures Value Bundle - Trader Workstation 
+ Comes out to about £15 a month. Something like ICE would cost over $100 a month - I don't think that is worth it for my account size.
+ EDIT: In the original post I wasn't subscriped to the SGX and OSAKA data feeds. But as these are only about £2 a month together, it made sense to add these as possible markets. 
+ For completeness I also ran the above methodology on my existing markets. The results are here . Although there are no problems with volume, there are a few contracts that have crept over my cost limit (Shatz which I don't trade currently, and US 2 year bonds which I do), and the Palladium contract is over my size limit. This just goes to show that even those with a limited set of markets should review them more often than every 7 years!
+ Deciding on a market priority order
+ I firstly grouped the results into 3 buckets:
+ Don't add: Markets without data subscriptions (89 markets) *
+ Add later: Markets which fail eithier the maximum cost test (0.01SR), maximum risk per contract ($125,000) or minimum volume ($1.25 million per day in risk units, and 100 contracts per day)  (96 markets)
+ Add first: Markets that passed all the filters (98 markets)
+ * It might be possible to get end of day data from Barchart, and still include these markets in my universe as non-traded markets, or as traded markets where execution is done 'blind' (which rules out the use of a tactical execution algo) 
+ Incidentally most of the markets which failed my filters did so because they had low volume (45 instruments), were too expensive to trade (7 instruments), or both (41 instruments). Only three contracts were too large: Lumber, the large BTC contract, and the Ethereum contract.
+ Then within 'add first' I looked for market groupings that were most diversifying. Now if I was starting from scratch I'd have a different decision to make here, but as a reminder my current market list includes the following asset classes:
+ A small number of commodities
+ Government bonds
+ Volatility (just two)
+ Stock indices
+ IMM FX
+ Metals
+ Energy markets (just two)
+ STIR (just one)
+ Clearly my first priority should be adding new asset classes. Perusing the list some assets that are missing but which are in my potential new markets include:
+ Bitcoin and Ether
+ Real estate 
+ Interest rate swaps [will be highly correlated with bonds, but useful for fixed income RV trading one of my possible future systems]
+ Stock sector indices [will be correlated to stock indices]
+ Corporate bonds (iBoxx) [though will be correlated with bonds, and have insufficient volume]
+ There are also some asset classes where I'm pretty light on instruments, and in which there are plenty I could be adding. In particular there are a lot of weird and wonderful commodities I could be trading; and these are likely to be very diversifying. 
+ Then of course there are asset classes where I'm doing okay, but where it wouldn't hurt to add some markets I don't have (eg DAX, is pretty similar to Eurostoxx, but won't be 100% correlated).
+ Finally it's worth noting that there are some markets which are exact duplicates of markets I'm already trading, but with different contract sizes. So for example I'm trading the 'E-mini' S&P 500, but there is also a micro contract which I don't trade. It's probably worth picking the instrument with the best cost and volume profile and only trading one of those - ideally that would be the contract with the smallest size. 
+ When I checked I found that there 7 smaller sized contracts that I could use to replace my existing instruments: Mini Crude, Mini Gas, Mini Copper, Micro Gold, Mini KOSPI, Micro NASDAQ and Micro S&P 500. All are more expensive than my current contracts (though they passed the cost filter with flying colours), but the benefit of better position granulation should outweigh that. 
+ Now I could probably come up with some quantitative way to work out which markets were the most diversifying, but I figure I'd already punished my IB data feed enough. So instead I ranked the markets in the 'add first' group by hand.
+ Priority 'zero' (in practice will come a bit later as will require some careful surgery of my configuration files when rolling - I won't actually be downloading more prices): Mini and micro contracts that replace existing instruments (7 instruments)
+ Bitcoin and Real estate (2 instruments)
+ Swaps (2) 
+ Stock sectors (22)
+ New commodity, energy and metals (13)
+ New currencies and Spanish BONOS, New stock indices (14)
+ Currency crosses, and missing points off the German,Italian and US bond curve. KOSDAQ150 (8)
+  'Last day' crude and gas (2)
+ Total of 69 instruments.
+ Then there are some other contracts which I won't be adding:
+ Two I already trade which got included in the list by accident
+ Another 5 year IRS: I don't need two five year swaps, thanks.
+ Larger versions of contracts where I've opted to trade the micro or mini
+ Dollar NIKKEI 225 (I will trade the Yen version for reasons discussed in 'Smart Portfolios')
+ A case study: Bitcoin
+ Well let's make a start with the very first contract on the list: the small Bitcoin future, which only started trading very recently. Now it's well known that I don't like Bitcoin . Really I don't . However that doesn't preclude me from trading it. What precludes me from trading it is the hassle and risk of trading it 'cash/spot'.
+ I've said a ~1000 times I would trade Bitcoin futures if the risk wasn't so big on the full size contract ($278,000 in annualised risk according to my calculations). Well the small contract is only 1/10 of a coin: 1/20 of the size, so it's risk is a mere $5,000 or so (not exactly 1/20 as the measured price standard deviations are different; the one for the small coin is only using a few days of data). Volume is $14m a day and cost is just 0.0018SR units. Finally, to finish with what I can see in the analysis file contracts are monthly, but only the nearest contract appears to be liquid (though of course it is very  early days).  
+ So the time has come for me to trade Bitcoin, or futures at least.
+ Backfilling prices with barchart
+ Before we turn on price collection in the trading system, we need to backfill the price with historic data.
+ Now of course as it is very new we can't backfill the price very much, but I think we can use the large contract as a proxy which has been trading for longer. Note we can't use bitcoin spot as we'd need to adjust it for borrowing and lending rates; a lot of effort even if accurate data was readily available. The large contract goes back a few years (to December 2017 to be exact; the first contract was January 2018).  Not long enough to conduct serious backtesting, but one advantage of the way I trade is that we don't need more than a year or so of data for a new market (just enough to ensure the slowest momentum is reasonably accurate).
+ However one issue with using IB to provide price data is that they don't give you prices for expired contracts! So even to get a year of data we're going to need to look elsewhere.
+ EDIT: HobbyTrader on elitetrader.com has pointed out: 
+ For any futures instrument can you ask for a list of conid's, including those which expired within the last two years. This can be done by using the code contract.includeExpired(true); the default value is false. Of this list of conid's you can get the historical data.  
+ There are many places where we could get this, but since I have a subscription to Barchart I'm going to use them.
+ Barchart have an API but I use the old school method (not very factory like I know) of manually downloading the prices. I'm limited to 100 downloads a day, but I'm going to need less than half of that for Bitcoin. I download hourly data, since my system now collects hourly data (although currently only uses end of day data). I end up with files covering each contract from January 2018 to July 2021.
+ First thing we have to do is rename the Barchart .csv files so they have the format 'BITCOIN_YYYYMMDD' which is expected by my code (note from now on the code has a dependency on pysystemtrade ):
+ import os
+ from syscore.fileutils import files_with_extension_in_pathname
+ from syscore.dateutils import month_from_contract_letter
+ def strip_file_names (pathname):
+ file_names = files_with_extension_in_pathname(pathname)
+ for filename in file_names:
+ identifier = filename.split( "_" )[ 0 ]
+ yearcode = int (identifier[ len (identifier)- 2 :])
+ monthcode = identifier[ len (identifier)- 3 ]
+ if yearcode> 50 :
+ year = 1900 +yearcode
+ else :
+ year = 2000 +yearcode
+ month = month_from_contract_letter(monthcode)
+ marketcode = identifier[: len (identifier)- 3 ]
+ instrument = market_map[marketcode]
+ datecode = str (year)+ '{0:02d}' .format(month)
+ new_file_name = "%s_%s00.csv" % (instrument, datecode)
+ new_full_name = "%s%s" % (pathname, new_file_name)
+ old_full_name = "%s%s.csv" % (pathname, filename)
+ print ( "Rename %s to \n %s" % (old_full_name, new_full_name))
+ os.rename(old_full_name, new_full_name)
+ return None
+ market_map = dict (
+ BT = "BITCOIN" )
+ strip_file_names("mypathname") 
+ Now it's pretty trivial to read in the data, since my .csv data object reader is very flexible and can cope even with the slightly tortured formatting of the barchart files. In fact the main 'gotcha' this code is coping with is the fact that the Barchart files are in a different timezone to the UTC that all my data is aligned to.
+ import pandas as pd
+ from syscore.dateutils import adjust_timestamp_to_include_notional_close_and_time_offset
+ from sysdata.csv.csv_futures_contract_prices import csvFuturesContractPriceData, ConfigCsvFuturesPrices
+ from sysobjects.futures_per_contract_prices import futuresContractPrices
+ from sysobjects.dict_of_futures_per_contract_prices import dictFuturesContractPrices
+ def process_barchart_data (instrument):
+ config = ConfigCsvFuturesPrices( input_date_index_name = "Date Time", datapath= "/home/rob/data/barchart_csv", input_skiprows = 1 , input_skipfooter = 1 ,
+ input_column_mapping = dict ( OPEN = 'Open' ,
+ HIGH = 'High' ,
+ LOW = 'Low' ,
+ FINAL = 'Close' ,
+ VOLUME = 'Volume'
+ ))
+ csv_futures_contract_prices = csvFuturesContractPriceData( datapath = datapath ,
+ config = config)
+ all_barchart_data_original_ts=csv_futures_contract_prices.get_all_prices_for_instrument(instrument)
+ all_barchart_data= dict ([(contractid, index_to_closing(data, csv_time_offset, original_close, actual_close))
+ for contractid, data in all_barchart_data_original_ts.items()])
+ all_barchart_data=dictFuturesContractPrices([(key, futuresContractPrices(x)) for key, x in all_barchart_data.items()])
+ return all_barchart_data
+ def index_to_closing (data_object, time_offset, original_close, actual_close):
+ """
+ Allows us to mix daily and intraday prices and seperate if required
+ If index is daily, mark to actual_close
+ If index is original_close, mark to actual_close
+ If index is intraday, add time_offset
+ :param data_object: pd.DataFrame or Series
+ :return: data_object
+ """
+ new_index = []
+ for index_entry in data_object.index:
+ # Check for genuine daily data
+ new_index_entry = adjust_timestamp_to_include_notional_close_and_time_offset(index_entry, actual_close, original_close, time_offset)
+ new_index.append(new_index_entry)
+ new_data_object=pd.DataFrame(data_object.values, index =new_index, columns =data_object.columns)
+ new_data_object = new_data_object.loc[~new_data_object.index.duplicated( keep = 'first' )]
+ return new_data_object
+# slightly weird this stuff, but basically to ensure we get onto UTC time
+original_close = pd.DateOffset( hours = 23 , minutes = 0 , seconds = 1 )
+csv_time_offset = pd.DateOffset( hours = 6 )
+actual_close = pd.DateOffset( hours = 0 , minutes = 0 , seconds = 0 )
+ barchart_data = process_barchart_data("BITCOIN") barchart_prices_final = barchart_prices.final_prices()
+barchart_prices_final_as_pd = pd.concat(barchart_prices_final, axis = 1 )
+barchart_prices_final_as_pd.plot()
+ We can now look at the prices:
+ Each colour is a different contact. Importantly there are no gaps. Let's look at the percentage change to see if there are any obvious outliers:
+ perc=barchart_prices_final_as_pd.diff()/barchart_prices_final_as_pd.shift( 1 )
+perc.plot() 
+ OK it ocasionally gets a bit tasty, but hey - it's bitcoin! And the fun and games in March 2020 isn't a surprise to anyone.
+ I think we can now write the individual futures prices to our database. I'm using a copy of my production database on my laptop for now; obviously be very careful with this sort of thing on a live machine: I won't be writing to my production machine until I've done plenty of testing.
+ from sysdata.arctic.arctic_futures_per_contract_prices import arcticFuturesContractPriceData
+ from sysobjects.futures_per_contract_prices import futuresContractPrices
+ from sysobjects.contracts import futuresContract
+ def write_barchart_data (instrument, barchart_prices, delete_first= False ):
+ artic_futures_price_data = arcticFuturesContractPriceData()
+ # want a clean sheet
+ if delete_first:
+ artic_futures_price_data.delete_all_prices_for_instrument_code(instrument, areyousure = True )
+ list_of_contracts = barchart_prices.keys()
+ for contractid in list_of_contracts:
+ futures_contract = futuresContract(instrument, contractid)
+ artic_futures_price_data.write_prices_for_contract_object(futures_contract, barchart_prices[contractid])
+write_barchart_data( "BITCOIN" , barchart_prices)
+ Multiple and adjusted prices
+ The next step is to build the 'multiple' price series. This is effectively a dataframe showing which contracts we're currently using for pricing, the next contract in line (the forward contract) and the contract used to calculate carry. 
+ So we need to make some decisions about the roll configuration . Our roll cycles are easy: we'll trade every month. When do contracts expire, relative to the first of the month? According to the CME it's on the last Friday . So as an approximation let's say 3 days before the end of the month.
+ When should we roll? Well it's a bit soon to tell for the BTC micro contract, but for the big contract let's look at what happened to daily volumes of the current and previous contract during the last roll:
+ barchart_prices[ '20210400' ].VOLUME.resample( "1B" ).sum().plot()
+barchart_prices[ '20210500' ].VOLUME.resample( "1B" ).sum().plot() 
+ It looks like we'd need to roll no more than a week or so before expiry; this is very much like a stock index future where we trade the front contract until it is just about to expire. There isn't enough volume in the next contract to roll early, or to hold the second contract consistently. 
+ Finally we need the carry offset: do we use the previous contract (like with commodities) or the following contract (as with stocks and bonds)? The former is better, but since we are going to be trading the first contract we're going to have to use the latter method. This isn't always going to be accurate, since there is no guarantee (unlike for say Gold) that the slope between spot and first contract (the true carry for the first contract) will be the same as between the first and second contract.
+ We need to add these parameters to a .csv file :
+ Instrument HoldRollCycle RollOffsetDays CarryOffset PricedRollCycle ExpiryOffset 
+ BITCOIN FGHJKMNQUVXZ -4 1 FGHJKMNQUVXZ -4 
+ Now I run this script  to add the parameters to my database.
+ Next we need to generate a 'roll calendar'.   This basically shows when we actually roll in the backtest price series from one contract to the next.
+ from sysinit.futures.rollcalendars_from_arcticprices_to_csv import *
+build_and_write_roll_calendar( "BITCOIN" ) 
+ Weird extra step required because of my python environment (shell)
+ cp ~/.local/lib/python3.8/site-packages/pysystemtrade-0.85.0-py3.8.egg/data/futures/roll_calendars_csv/BITCOIN.csv ~/pysystemtrade/data/futures/roll_calendars_csv/ 
+ Now I can actually generate the multiple prices :
+ from sysinit.futures.multipleprices_from_arcticprices_and_csv_calendars_to_arctic import *
+process_multiple_prices_single_instrument( "BITCOIN" , ADD_TO_CSV = True ) 
+ Let's check:
+ from sysdata.arctic.arctic_multiple_prices import arcticFuturesMultiplePricesData
+a = arcticFuturesMultiplePricesData()
+price = a.get_multiple_prices( "BITCOIN" ) 
+ Now for the backadjusted prices :
+ from sysinit.futures.adjustedprices_from_mongo_multiple_to_mongo import *
+process_adjusted_prices_single_instrument( "BITCOIN" , ADD_TO_CSV = True )
+ More script mumbo jumbo (not actually required for this to work, but will ensure the repo has the BITCOIN prices in .csv format for the simulation):
+  cp ~/.local/lib/python3.8/site-packages/pysystemtrade-0.85.0-py3.8.egg/data/futures/multiple_prices_csv/BITCOIN.csv ~/pysystemtrade/data/futures/multiple_prices_csv/ 
+ cp ~/.local/lib/python3.8/site-packages/pysystemtrade-0.85.0-py3.8.egg/data/futures/adjusted_prices_csv/BITCOIN.csv ~/pysystemtrade/data/futures/adjusted_prices_csv/ 
+ And we check again:
+ from sysdata.arctic.arctic_adjusted_prices import *
+a = arcticFuturesAdjustedPricesData()
+a.get_adjusted_prices( "BITCOIN" ).plot() 
+ Bitcoin in simulation
+ The next step is to see what a backtest for Bitcoin looks like. Importantly this is not  so we can make a decision about whether to trade it or not, based on performance. That would be implicit, in-sample, fitting and a very bad thing. No, it's so we can check all the 'plumbing' is working. 
+ First we need to update this file so the simulation knows about Bitcoin:
+ Instrument Pointsize AssetClass Currency Slippage PerBlock Percentage PerTrade Description 
+ BITCOIN 0.1 Metals USD 5 1 0 0 Micro Bitcoin 
+ You could argue that Bitcoin should be a different asset class, but at this stage it isn't going to make much difference.
+ Let's check all the rawdata is feeding through:
+ from systems.provided.futures_chapter15.basesystem import *
+system = futures_system()
+system.config.instrument_weights= dict ( BITCOIN = 1.0 ) system.data.get_raw_price( "BITCOIN" )
+system.data.get_instrument_raw_carry_data( "BITCOIN" )
+system.data.get_raw_cost_data( "BITCOIN" )
+ Do a bunch of plots and make sure they are vaguely sensible:
+ system.rules.get_raw_forecast( "BITCOIN" , "ewmac64_256" ).plot()
+system.rules.get_raw_forecast( "BITCOIN" , "carry" ).plot()
+system.combForecast.get_combined_forecast( "BITCOIN" ).plot()
+system.positionSize.get_subsystem_position( "BITCOIN" ).plot() 
+ Let's do a sense check on the position sizing. 
+ system.positionSize.get_volatility_scalar( "BITCOIN" ) 
+ 2021-04-29    12.135829
+ 2021-04-30    11.984527
+ 2021-05-03    12.291325
+ 2021-05-04    11.987441
+ 2021-05-05    12.237734
+ This is the position we'd take with a forecast of 10. 
+ system.config.notional_trading_capital 250000 
+ system.config.percentage_vol_target 20.0 system.config.base_currency 'USD' 
+ That equates to a risk target of $50,000 a year. If we have 12 contracts, each one must have risk of $4167. That's pretty close to the $5000 I calculated above, which was using slightly different data in any case. Now let's check the costs:
+ system.accounts.get_SR_cost_per_trade_for_instrument("BITCOIN") 
+ 0.0017412069830178192 
+ Again that's pretty close to what I worked out before.
+ Oh, I can't resist. Did we make money?
+ system.accounts.pandl_for_instrument( "BITCOIN" ).curve().plot() 
+It's quite a short period of time, and too short to make any judgements. But it doesn't do anything crazy, which is the important thing.
+ Calibrating an instrument
+ At this stage if I was doing things normally I'd include some optimisation to work out the correct forecast weights and instrument weight for Bitcoin. However, I'm going to do something a bit different. My long term isn't to add just Bitcoin, but to start doing things very differently, but for the purposes of this post I think it would be nice to actually take the implementation all the way through to completion; basically by adding Bitcoin to my current system. And the easiest way of doing that is to replace an existing instrument.
+ Remember earlier when I noted that the Palladium contract was just way too big for me now? So 
+ I'm going to reallocate the Palladium instrument weight (4%) to Bitcoin. Palladium is actually twice as expensive to trade as Bitcoin, so just re-using the Palladium forecast weights is going to be conservative. Plus I've categorised Bitcoin as a 'metal', so why not.
+ Production trading configuration
+ Before we go any further, we need to set up the instrument in the production system. 
+ First I create some instrument configuration , which will copy from  this file , by running this script .
+ I also need to modify my production system .yaml file, basically searching and replacing PALLAD-> BITCOIN.
+ Finally I need to add the instrument to the IB configuration file :
+ Instrument IBSymbol IBExchange IBCurrency IBMultiplier MyMultiplier IgnoreWeekly 
+ BITCOIN BRR CMECRYPTO USD 0.1 1 FALSE 
+ Live sampling
+ In theory, everything should now be setup for live sampling. So in bash, first let's make sure we have the right contracts:
+ ~/pysystemtrade/sysproduction/linux/scripts$ . update_sampled_contracts  
+ 2021-05-06:1525.02 {'type': '', 'component': 'mongoFuturesContractData', 'instrument_code': 'AUD', 'contract_date': '20210300'}  Added contract AUD 20210300 
+ 2021-05-06:1525.03 {'type': '', 'broker': 'IB', 'clientid': 138, 'instrument_code': 'AUD', 'contract_date': '20210300'}  Contract AUD/20210300 has expired so now stopped sampling 
+ 2021-05-06:1525.05 {'type': '', 'component': 'mongoFuturesContractData', 'instrument_code': 'BITCOIN', 'contract_date': '20210200'}  Added contract BITCOIN 20210200 
+ 2021-05-06:1525.07 {'type': '', 'broker': 'IB', 'clientid': 138, 'instrument_code': 'BITCOIN', 'contract_date': '20210200'}  Contract BITCOIN/20210200 now added to database and sampling 
+ 2021-05-06:1525.08 {'type': '', 'component': 'mongoFuturesContractData', 'instrument_code': 'BITCOIN', 'contract_date': '20210700'}  Added contract BITCOIN 20210700 
+ 2021-05-06:1525.10 {'type': '', 'broker': 'IB', 'clientid': 138, 'instrument_code': 'BITCOIN', 'contract_date': '20210700'}  Contract BITCOIN/20210700 now added to database and sampling 
+ ... and so on.... 
+ Don't worth about this sort of thing, it's just because I conservatively generate a list of contracts including ones that have expired: 
+ Error 200, reqId 14: No security definition has been found for the request, contract: Future(symbol='BRR', lastTradeDateOrContractMonth='202102', multiplier='0.1', exchange='CMECRYPTO', currency='USD') 
+ 2021-05-06:1525.25 {'type': '', 'broker': 'IB', 'clientid': 138, 'component': 'ibFuturesContractData'} [Warning] Reqid 14: 200 No security definition has been found for the request  (BRR/202102) 
+ 2021-05-06:1525.26 {'type': '', 'broker': 'IB', 'clientid': 138, 'component': 'ibFuturesContractData'} [Warning] futuresInstrumentWithIBConfigData(instrument=BITCOIN, ib_data=ibInstrumentConfigData(symbol='BRR', exchange='CMECRYPTO', currency='USD', ibMultiplier=0.1, myMultiplier=1, ignoreWeekly=False)) could not resolve contracts: No contracts found matching pattern 
+ 2021-05-06:1525.28 {'type': '', 'broker': 'IB', 'clientid': 138, 'component': 'ibFuturesContractData', 'instrument_code': 'BITCOIN', 'contract_date': '20210200'} [Warning] Contract is missing can't get expiry 
+ 2021-05-06:1525.29 {'type': '', 'broker': 'IB', 'clientid': 138, 'instrument_code': 'BITCOIN', 'contract_date': '20210200'}  Can't find expiry for BITCOIN/20210200, could be a connection problem but could be because contract has already expired 
+ Now let's get some prices, this time from interactive brokers. Importantly these will be the price of the 0.1 coin, not the 5 coin future. My price filters will bark if the prices are too different, which is one last check:
+ rob@TradingPC2:~/pysystemtrade/sysproduction/linux/scripts$ . interactive_manual_check_historical_prices  
+ sysproduction.interactive_manual_check_historical_prices.interactive_manual_check_historical_prices: 
+ Do a daily update for futures contract prices, using IB historical data 
+ If any 'spikes' are found, run manual checks 
+ :return: Nothing 
+ Arguments: 
+ [] 
+ Instrument code?BITCOIN 
+ .....
+ Now let's have a look at them:
+ rob@TradingPC2:~/pysystemtrade/sysproduction/linux/scripts$ . interactive_diagnostics  
+  INTERACTIVE DIAGONSTICS 
+ 0: backtest objects 
+ 1: reports 
+ 2: logs, emails, and errors 
+ 3: View prices 
+ 4: View capital 
+ 5: View positions & orders 
+ 6: View instrument configuration 
+ Your choice? <RETURN for EXIT> 3 
+ 30: Individual futures contract prices 
+ 31: Multiple prices 
+ 32: Adjusted prices 
+ 33: FX prices 
+ Your choice? <RETURN for Back> 30 
+ Instrument code?BITCOIN 
+ Available contract dates ['20180100', '20180200', '20180300', '20180400', '20180500', '20180600', '20180700', '20180800', '20180900', '20181000', '20181100', '20181200', '20190100', '20190200', '20190300', '20190400', '20190500', '20190600', '20190700', '20190800', '20190900', '20191000', '20191100', '20191200', '20200100', '20200200', '20200300', '20200400', '20200500', '20200600', '20200700', '20200800', '20200900', '20201000', '20201100', '20201200', '20210100', '20210200', '20210300', '20210400', '20210500p', '20210600f', '20210700'] 
+ p = currently priced, c=current carry, f= current forward 
+ Contract date? [yyyymm or yyyymmdd] (ignore suffixes)20210500 
+                         OPEN     HIGH      LOW    FINAL  VOLUME 
+ index                                                           
+ 2021-03-01 07:00:00  47615.0  47615.0  47615.0  47615.0       1 
+ 2021-03-01 09:00:00  48920.0  48920.0  48920.0  48920.0       2 
+ 2021-03-01 11:00:00  49145.0  49185.0  49145.0  49185.0       3 
+ 2021-03-01 12:00:00  49500.0  49525.0  49500.0  49525.0       2 
+ 2021-03-01 13:00:00  49580.0  49755.0  49580.0  49730.0       7 
+ ...                      ...      ...      ...      ...     ... 
+ 2021-05-06 11:00:00  57000.0  57530.0  56960.0  57465.0     202 
+ 2021-05-06 12:00:00  57455.0  58580.0  57375.0  58245.0    2389 
+ 2021-05-06 13:00:00  58140.0  58330.0  57830.0  58100.0     316 
+ 2021-05-06 14:00:00  58230.0  58230.0  57675.0  57830.0     737 
+ 2021-05-06 15:00:00  57825.0  57920.0  57185.0  57390.0    1304 
+ [965 rows x 5 columns] 
+ .... 
+ Instrument code?BITCOIN 
+ ..... 
+ Contract date? [yyyymm or yyyymmdd] (ignore suffixes)20210400 
+                       OPEN   HIGH    LOW  FINAL  VOLUME 
+ index                                                   
+ 2020-12-01 11:00:00  20385  20385  20385  20385       2 
+ 2020-12-01 15:00:00  20175  20175  20175  20175       1 
+ 2020-12-01 17:00:00  19840  19840  19840  19840       1 
+ 2020-12-01 20:00:00  19790  19790  19790  19790       1 
+ 2020-12-04 14:00:00  19880  19880  19880  19880       8 
+ ...                    ...    ...    ...    ...     ... 
+ 2021-04-30 11:00:00  54435  54500  54435  54500       3 
+ 2021-04-30 12:00:00  54310  54310  54200  54240       8 
+ 2021-04-30 13:00:00  54225  54740  54225  54740      21 
+ 2021-04-30 14:00:00  54800  56000  54510  56000     123 
+ 2021-04-30 15:00:00  56190  56565  55950  56110     189 
+ [1754 rows x 5 columns] 
+ .... 
+ Contract date? [yyyymm or yyyymmdd] (ignore suffixes)20210600 
+                         OPEN     HIGH      LOW    FINAL  VOLUME 
+ index                                                           
+ 2021-01-05 17:00:00  34730.0  34730.0  34730.0  34730.0       1 
+ 2021-01-08 21:00:00  42030.0  42030.0  42030.0  42030.0       1 
+ 2021-01-11 15:00:00  35350.0  35350.0  35350.0  35350.0       1 
+ 2021-01-11 16:00:00  33600.0  33600.0  33600.0  33600.0       2 
+ 2021-01-11 17:00:00  35600.0  35600.0  35600.0  35600.0       1 
+ ...                      ...      ...      ...      ...     ... 
+ 2021-05-06 10:00:00  57625.0  57625.0  57395.0  57395.0       2 
+ 2021-05-06 11:00:00  57480.0  57515.0  57425.0  57515.0       3 
+ 2021-05-06 12:00:00  58340.0  58930.0  58340.0  58930.0      19 
+ 2021-05-06 14:00:00  58445.0  58450.0  58085.0  58235.0      28 
+ 2021-05-06 15:00:00  57785.0  57975.0  57470.0  57470.0      17 
+ [1083 rows x 5 columns] 
+ Now to update adjusted prices
+ rob@TradingPC2:~/pysystemtrade/sysproduction/linux/scripts$ . update_multiple_adjusted_prices  
+ rob@TradingPC2:~/pysystemtrade/sysproduction/linux/scripts$ . interactive_diagnostics  
+ 0: backtest objects 
+ 1: reports 
+ 2: logs, emails, and errors 
+ 3: View prices 
+ 4: View capital 
+ 5: View positions & orders 
+ 6: View instrument configuration 
+ Your choice? <RETURN for EXIT> 3 
+ 30: Individual futures contract prices 
+ 31: Multiple prices 
+ 32: Adjusted prices 
+ 33: FX prices 
+ Your choice? <RETURN for Back> 31 
+ BInstrument code?ITCOIN 
+                        CARRY CARRY_CONTRACT    PRICE PRICE_CONTRACT  FORWARD FORWARD_CONTRACT 
+ index                                                                                         
+ 2017-12-22 02:00:00  15080.0       20180300  14115.0       20180200  15080.0         20180300 
+ 2017-12-22 03:00:00  14065.0       20180300  14505.0       20180200  14065.0         20180300 
+ 2017-12-22 04:00:00  15050.0       20180300  15010.0       20180200  15050.0         20180300 
+ 2017-12-22 05:00:00      NaN       20180300  14425.0       20180200      NaN         20180300 
+ 2017-12-22 07:00:00  13540.0       20180300  13095.0       20180200  13540.0         20180300 
+ ...                      ...            ...      ...            ...      ...              ... 
+ 2021-05-06 11:00:00  57515.0       20210600  57465.0       20210500  57515.0         20210600 
+ 2021-05-06 12:00:00  58930.0       20210600  58245.0       20210500  58930.0         20210600 
+ 2021-05-06 13:00:00      NaN       20210600  58100.0       20210500      NaN         20210600 
+ 2021-05-06 14:00:00  58235.0       20210600  57830.0       20210500  58235.0         20210600 
+ 2021-05-06 15:00:00  57470.0       20210600  57390.0       20210500  57470.0         20210600 
+ [15191 rows x 6 columns] 
+ 30: Individual futures contract prices 
+ 31: Multiple prices 
+ 32: Adjusted prices 
+ 33: FX prices 
+ Your choice? <RETURN for Back> 32 
+ Instrument code?BITCOIN 
+ index 
+ 2017-12-22 02:00:00    17930.0 
+ 2017-12-22 03:00:00    18320.0 
+ 2017-12-22 04:00:00    18825.0 
+ 2017-12-22 05:00:00    18240.0 
+ 2017-12-22 07:00:00    16910.0 
+                         ...    
+ 2021-05-06 11:00:00    57465.0 
+ 2021-05-06 12:00:00    58245.0 
+ 2021-05-06 13:00:00    58100.0 
+ 2021-05-06 14:00:00    57830.0 
+ 2021-05-06 15:00:00    57390.0 
+ Name: price, Length: 15180, dtype: float64 
+ Incidentally, if this was an instrument for which I didn't have barchart data I'd obviously have skipped straight to setting up live sampling; and then got myself as much data as IB could give me.
+ Live system 'backtest' and optimal trades
+ rob@TradingPC2:~/pysystemtrade/sysproduction/linux/scripts$ . update_system_backtests  
+ rob@TradingPC2:~/pysystemtrade/sysproduction/linux/scripts$ . interactive_diagnostics  
+ 0: backtest objects 
+ 1: reports 
+ 2: logs, emails, and errors 
+ 3: View prices 
+ 4: View capital 
+ 5: View positions & orders 
+ 6: View instrument configuration 
+ Your choice? <RETURN for EXIT> 1 
+ 10: Roll report 
+ 11: P&L report 
+ 12: Status report 
+ 13: Trade report 
+ 14: Reconcile report 
+ 15: Strategy report 
+ 16: Risk report 
+ Your choice? <RETURN for Back> 14 
+ =============================================================
+ Optimal versus actual positions 
+=============================================================
+ current optimal breaks
+..... medium_speed_TF_carry PALLAD 0.0 -0.017/0.017 False
+medium_speed_TF_carry BITCOIN 0.0 0.517/1.111 True 
+ Let's buy some bitcoin then
+ You should make sure you have trading permissions set up for Bitcoin futures. And if you are based in the UK, you need to make sure your Mfid categorisation is 'Professional' to trade crypto derivatives.
+ rob@TradingPC2:~/pysystemtrade/sysproduction/linux/scripts$ . update_strategy_orders  
+ 2021-05-06:1547.12 {'type': '', 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'instrument_order_id': ''}  Upper 1.11 Lower 0.52 Current 0 Required position 1 Required trade 1 Reference price 57390.000000  for contract 20210500 
+ 2021-05-06:1550.42 {'type': '', 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'instrument_order_id': 30837}  Added order (Order ID:no order ID) Type best for medium_speed_TF_carry BITCOIN, qty [1], fill [0]@ price, None Parent:no parent Children:no_children to instrument order stack with order id 30837 
+ Now the order is executed:
+ 2021-05-10:1123.16 {'type': '', 'broker': 'IB', 'clientid': 152, 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'contract_order_id': 30903, 'instrument_order_id': 30844}  Created a broker order (Order ID:no order ID) Type limit for medium_speed_TF_carry/BITCOIN/20210500, qty [1], fill [0]@ price, None Parent:30903 Children:no_children (not yet submitted or written to local DB) 
+ 2021-05-10:1123.18 {'type': '', 'broker': 'IB', 'clientid': 152, 'component': 'ibExecutionStackData', 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'contract_order_id': 30903, 'broker_order_id': ''}  Going to submit order (Order ID:no order ID) Type limit for medium_speed_TF_carry/BITCOIN/20210500, qty [1], fill [0]@ price, None Parent:30903 Children:no_children to IB 
+ 2021-05-10:1123.20 {'type': '', 'broker': 'IB', 'clientid': 152, 'component': 'ibExecutionStackData', 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'contract_order_id': 30903, 'broker_order_id': ''}  Order submitted to IB 
+ 2021-05-10:1123.21 {'type': '', 'broker': 'IB', 'clientid': 152, 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'contract_order_id': 30903, 'instrument_order_id': 30844, 'broker_order_id': ''}  Submitted order to IB (Order ID:no order ID) Type limit for medium_speed_TF_carry/BITCOIN/20210500, qty [1], fill [0]@ price, None Parent:30903 Children:no_children 
+ 2021-05-10:1123.23 {'type': '', 'broker': 'IB', 'clientid': 152, 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'contract_order_id': 30903, 'broker_order_id': 30844}  Managing trade (Order ID:30844) Type limit for medium_speed_TF_carry/BITCOIN/20210500, qty [1], fill [0]@ price, None Parent:30903 Children:no_children with algo 'original-best' 
+ 2021-05-10:1123.30 {'type': '', 'broker': 'IB', 'clientid': 152, 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'contract_order_id': 30903, 'broker_order_id': 30844}  Switch to aggressive because Adverse price movement 
+ 2021-05-10:1123.31 {'type': '', 'broker': 'IB', 'clientid': 152, 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'contract_order_id': 30903, 'broker_order_id': 30844}  Tried to change limit price to 58215.000000 
+ 2021-05-10:1123.33 {'type': '', 'broker': 'IB', 'clientid': 152, 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'contract_order_id': 30903, 'broker_order_id': 30844}  Trade completed 
+ 2021-05-10:1123.35 {'type': '', 'component': 'mongoContractOrderStackData', 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'contract_order_id': 30903, 'instrument_order_id': 30844}  Changed fill qty from [0] to [1] for order (Order ID:30903) Type best for medium_speed_TF_carry/BITCOIN/20210500, qty [1], fill [0]@ price, None Parent:30844 Children:[30844] 
+ 2021-05-10:1123.36 {'type': '', 'broker': 'IB', 'clientid': 152, 'instrument_code': 'BITCOIN', 'contract_date': '20210500'}  Updated position of BITCOIN/20210500 from 0 to 1; new position in db is 1 
+ 2021-05-10:1123.38 {'type': '', 'broker': 'IB', 'clientid': 152, 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'contract_order_id': 30903, 'instrument_order_id': 30844}  Updated position of BITCOIN/20210500 because of trade (Order ID:30903) Type best for medium_speed_TF_carry/BITCOIN/20210500, qty [1], fill [0]@ price, None Parent:30844 Children:[30844] ID:30903 with fills 1 
+ 2021-05-10:1123.40 {'type': '', 'broker': 'IB', 'clientid': 152, 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'instrument_order_id': 30844}  Updated position of medium_speed_TF_carry BITCOIN from 0 to 1 because of trade (Order ID:30844) Type best for medium_speed_TF_carry BITCOIN, qty [1], fill [0]@ price, None Parent:no parent Children:[30903] 30844 fill [1] 
+ 2021-05-10:1123.41 {'type': '', 'component': 'mongoInstrumentOrderStackData', 'strategy_name': 'medium_speed_TF_carry', 'instrument_code': 'BITCOIN', 'instrument_order_id': 30844}  Changed fill qty from [0] to [1] for order (Order ID:30844) Type best for medium_speed_TF_carry BITCOIN, qty [1], fill [0]@ price, None Parent:no parent Children:[30903] 
+ Almost certainly the top of the market, but I am now the proud (?!) owner of one micro bitcoin future.
+ Apologies if this post has gone a bit tedious, but I'm trying to illustrate the number of careful checks required when you are doing this sort of exercise. Some of this work can be batched (eg copying configuration into databases), but otherwise it's definitely worth checking the data at each step. Once you have bad data in your database, it's a pain to get it out!
+ Summary
+ So, hopefully this has been interesting. For me there are some key points:
+ It's quite nice to just use raw IB_insync for simple work
+ You can see the power of 'risk adjusting everything' when creating some filters to use when deciding which market to trade.
+ There are a lot of futures markets out there which are reasonably liquid, not expensive, and not too big! Even without paying a fortune for market data.
+ The mini/micro futures are a lot cheaper and more liquid than when I first looked at them, so I really ought to be trading them.
+ It's worth rechecking that your instruments still pass filters, probably more than once every seven years
+ Actually adding markets is something you should do carefully.
+ By all means backtest a new market to make sure the sizing and 'plumbing' is correct, but don't make in sample decisions, especially based on just a few years of data.
+ Next steps: I will now carry on adding markets! This is obviously going to take a while, although (and I won't be able to get barchart data for everything). 
+ I will also be replacing the 'full fat' contracts I already trade with the micro or mini versions. That's a bit easier: it just involves changing one file, but it's safest to do this when I have zero positions (which might involve waiting for a roll to happen). 
+ Then I'll be moving on to the issue of trading all of these markets with just the paltry amount of capital I've got. I hope to be covering that in my next blog post.

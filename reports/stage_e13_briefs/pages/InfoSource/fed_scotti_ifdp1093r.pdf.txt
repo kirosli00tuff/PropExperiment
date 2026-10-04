@@ -1,0 +1,3462 @@
+Board of Governors of the Federal Reserve System
+International Finance Discussion Papers
+Number 1093r
+This Version: May 2016
+Original Version: November 2013
+
+Surprise and Uncertainty Indexes:
+Real-Time Aggregation of Real-Activity Macro Surprises
+
+Chiara Scotti
+
+NOTE: International Finance Discussion Papers are preliminary materials circulated to stimulate
+discussion and critical comment. References in publications to International Finance Discussion Papers
+(other than an acknowledgment that the writer has had access to unpublished material) should be cleared
+with the author or authors. Recent IFDPs are available on the Web at www.federalreserve.gov/pubs/ifdp/.
+This paper can be downloaded without charge from Social Science Research Network electronic library at
+http://www.ssrn.com/.
+
+Surprise and Uncertainty Indexes:
+Real-time Aggregation of Real-Activity Macro Surprises
+Chiara Scotti
+Federal Reserve Board
+
+Abstract
+I construct two daily, real-time, real activity indexes for the United States,
+Euro area, the United Kingdom, Canada, and Japan: (i) a surprise index that
+summarizes recent economic data surprises and measures optimism/pessimism
+about the state of the economy, and (ii) an uncertainty index that measures
+uncertainty related to the state of the economy. The surprise index preserves the
+properties of the underlying series in affecting asset prices, with the advantage
+of being a parsimonious summary measure of real-activity surprises. For the
+United States, the real-activity uncertainty index is compared to other proxies
+commonly used to measure uncertainty to show that when uncertainty is strictly
+related to real activity, it has a potentially milder impact on economic activity
+than when it also relates to the financial sector.
+Keywords: Business cycle, Dynamic factor model, State space model,
+Forecasting weights
+JEL: C38, E32
+
+Email address: chiara.scotti@frb.gov I would like to thank for their useful
+comments Boragan Aruoba, David Bowman, Celso Brunetti, Domenico Giannone,
+Raffaella Giacomini, Rob Martin, Andrew Patton, Barbara Rossi, Jonathan Wright,
+Clara Vega as well as anonymous referees and various participants of conferences
+and seminars: 2012 Computing in Economics and Finance; 2012 European Meeting of
+the Econometric Society; 2012 Conference on Real-Time Data Analysis, Methods, and
+Applications at the Philadelphia Fed; 2012 NBER-NSF Time Series Conference; Third
+IFO conference on Macroeconomics and Survey Data; 2013 Econometric Society
+Australasian Meeting; Dallas Fed Conference on The Causes and Macroeconomic
+Consequences of Uncertainty; Boston College; and Board of Governors of the
+Federal Reserve System. For outstanding research assistance I thank Rebecca
+DeSimone, Eric English, Olivia Kim, and Margaret Yellen. The views expressed in
+this paper are solely the responsibility of the author and should not be
+interpreted as reflecting the view of the Board of Governors of the Federal
+Reserve System or of any other person associated with the Federal Reserve System.
+(Chiara Scotti)
+
+Preprint submitted to IFDP
+
+May 16, 2016
+
+1. Introduction
+This paper proposes a new methodology to construct two real-time, real
+activity indexes: (i) a surprise index that summarizes recent economic data
+surprises and measures deviation from consensus expectations and (ii) an uncertainty index that measures uncertainty related to the state of the economy.
+The indexes, on a given day, are weighted averages of the surprises or squared
+surprises from a set of releases, where the weights depend on the contribution of
+the associated real activity indicator to a business condition index à la Aruoba
+et al. (2009). The surprise index measures whether agents are ex-post more
+optimistic or pessimistic about the real economy than indicated by actual data
+releases.1 A positive (negative) reading of the surprise index suggests that economic releases have on balance been higher (lower) than consensus, meaning
+that agents were more pessimistic (optimistic) about the economy. The uncertainty index measures how uncertain agents are ex-post about current real
+activity conditions. A greater (smaller) reading of the uncertainty index suggests that agents have on balance been more (less) uncertain about the state
+of the economy. I apply this methodology to construct indexes for the United
+States, Euro Area, the United Kingdom, Canada, Japan, and an aggregate of
+the five countries over the 2003-2012 period.
+The Aruoba, Diebold, and Scotti (ADS) index maintained by the Federal
+Reserve Bank of Philadelphia has proven to be a successful economic indicator
+and as such it has been classified by the Wall Street Journal among the 50
+economic indicators that really matter (Constable and Wright (2011)) and has
+been added by Bloomberg to the data that can be followed in real time through
+its platform (ADS BCI Index).2 The ADS index measures the state of the economy and serves as a summary statistic of the information market participants
+have received thus far about real activity. However, in efficient markets, asset
+prices react to new information. Thus it is important to measure the surprise
+1 Ex-post optimism or pessimism differs from ex-ante optimism or pessimism. If we consider the weather, for example, the optimal, model-consistent forecast for the temperature
+tomorrow could be 15 degrees Fahrenheit. I could be ex-ante optimistic and expect it to be 20
+degrees Fahrenheit. If the forecast turns out to be wildly wrong, and the temperature turns
+up at a toasty 25 degrees, I was still ex-ante optimistic, even though, ex-post, my forecast
+looks pessimistic. Ex-post optimism or pessimism is neither necessary nor sufficient to say
+anything about ex-ante beliefs. Another definition that I think captures well these measures
+is realized optimism or pessimism.
+2 http://www.philadelphiafed.org/research-and-data/real-time-center/business-conditionsindex/
+
+2
+
+component of the information that has just arrived and the uncertainty surrounding that information. To this end, the surprise index presented in this
+paper aggregates the information contained in the surprises to construct a summary measure of the deviation of the real economy from consensus expectations,
+and the uncertainty index quantifies economic uncertainty, which is otherwise
+challenging to measure. The indexes are not competitors but complements to
+the existing business condition indicators such as the ADS index and to existing
+uncertainty indexes.
+This paper relates to several branches of the literature. First and foremost
+is the uncertainty literature, which has thrived in recent years. Because uncertainty is not observable, a number of proxies have been used to measure it, ranging from stock market realized and implied volatilities (Bloom (2009)), to the
+cross-sectional dispersion of survey-based forecasts (Bachmann et al. (2013)),
+the frequency of newspaper references to economic policy uncertainty (Baker
+et al. (2015)), or the common variability in the purely unforecastable component of the future value of a big number of variables (Jurado et al. (2015)).
+However, these measures tend to combine economic uncertainty with other notions. For example, stock return volatility combines information about stock
+market volatility with economic uncertainty, and forecast disagreement could
+measure divergence of opinions among forecasters rather than just the underlying uncertainty about the economy. My paper contributes to this literature by
+providing a daily macroeconomic information uncertainty measure which quantifies the part of uncertainty that specifically relates to the state of the real
+economy. It also contributes by helping to disentangle the impact of purely
+macro uncertainty from more general uncertainty. The index is daily in that it
+gets updated every time new information about the state of the economy gets
+released. Second, this paper relates to those papers that study the impact of
+news surprises on asset price such as Andersen et al. (2003), Andersen et al.
+(2007), and Gilbert et al. (2012), and contributes to this literature by providing a parsimonious summary measure of real-activity macroeconomic surprises.
+The paper also relates to papers that use similar factors models to extract a
+business condition index (Aruoba et al. (2009), and Banbura et al. (2010) among
+others). It also employs the idea of forecasting weights developed in Koopman
+and Harvey (2003) and applied by Banbura and Runstler (2010) and Camacho
+and Perez-Quiroz (2009), among others, to study the impact of news releases
+on GDP forecast revisions.
+In order to construct the surprise and uncertainty indexes, I first employ a
+3
+
+dynamic factor model to estimate monthly business condition indexes for the
+aforementioned countries and compute the weights representing the contribution
+of the economic indicators to these business condition indexes. I then use those
+weights to average the surprises or squared surprises in order to construct the
+surprise and the uncertainty indexes, respectively. The weights depend on (i)
+the time elapsed since the release of the associated information and (ii) the
+unbalancedness pattern of the underlying releases. The former is a time decay
+feature that reduces the contribution of each surprise over time. The latter is
+a missing data characteristic that sets to zero the contributions of an indicator
+in months in which no data is available.
+I find that surprise indexes tend to be negative during the recession associated with the 2008 financial crisis, the so-called Great Recession, suggesting
+that agents were more optimistic about the real economy than it warranted.3
+There appear to be other episodes when the indexes are negative. Of note are
+several declines in the euro-area surprise index after 2011, the sharp drop in the
+Japanese surprise index after the March 2011 earthquake, and the prolonged
+low levels of the U.K. index in 2010 and 2011. On the other hand, there are
+also several instances where the surprise indexes are positive, especially coming
+out of the recession in the United States, the United Kingdom and Canada. I
+show that the surprise index preserves the properties of the underlying series
+in affecting asset prices, with the advantage of being a parsimonious summary
+measure of real-activity surprises. In light of this, Demiralp et al. (2013) make
+use of it as a control variable when investigating the effects of political commentaries on policy rate decisions and policy expectations in the United States and
+the Euro Area, and find it to be significant determinant of policy expectations.
+Similarly, Brunetti et al. (2013) employ it as a control variable in studying the
+impact of speculation activity in the crude oil market.
+The uncertainty indexes tend to be higher during recession periods. Interestingly, the euro-area uncertainty index reaches its highest values just before
+and after the 2008-2009 recession, suggesting that agents were more uncertain
+about the economy as the Euro Area was entering and exiting the recession. The
+daily U.S. uncertainty index looks somewhat similar to the U.S. stock market
+implied volatility as measured by the VIX. Implied volatility, a forward-looking
+3 Unfortunately, we are not able to see whether this is a characteristic of all recessions
+because the surprise indexes only start in 2003 and hence only cover one recession episode.
+Expectation data are available from Bloomberg for all countries since 2003.
+
+4
+
+measure, is computed from option prices. The uncertainty index, a historical
+measure, is calculated from current and past macroeconomic news surprises.
+The former is a wider measure that combines information about risk aversion
+and future stock market volatility/uncertainty, and to the extent that these two
+move with news surprises, the VIX also contains information about current and
+future economic uncertainty. Although understanding the exact linkages goes
+beyond the scope of this paper, I also decompose the VIX following Bakaert
+et al. (2013) into stock market uncertainty and variance risk premium, and observe that the VIX patterns are mainly driven by the Bakaert et al. (2013) stock
+market uncertainty during the period analyzed.4
+In a bivariate VAR exercise with employment and uncertainty proxies for
+the United States over the last decade, I find that, when uncertainty is strictly
+related to real activity as measured by the real-activity uncertainty index, it has
+a potentially milder impact on economic activity. Just flipping the argument,
+when uncertainty is more generally related to economic and financial conditions
+as measured by the VIX or Bakaert et al. (2013) stock market uncertainty
+proxy, its impact on real-activity variables seems to be stronger and faster.
+This finding supports recent work by Caldara et al. (2013) which finds that the
+financial channel is key in the transmission of uncertainty shocks. Of course,
+the different impact could also be more generally due to the fact that the VIX
+measures a more wide-ranging notion of uncertainty.
+The surprise and uncertainty indexes tend to be negatively correlated, meaning that bad news occurs together with increased volatility.5 This result is
+similar to the inverse relationship between first and second moments of asset returns found in the financial literature, a phenomenon that Fostel and Geanakoplos (2012) provide a theoretical explanation for, together with explaining a
+decrease in leverage.
+The remainder of the paper is organized as follows: section 2 presents the
+data and the rationale behind using Bloomberg forecasts; section 3 presents
+the details of the model’s forecasting weights and the construction of the surprise and uncertainty indexes; section 4 covers the estimation details; section 5
+presents the results; section 6 shows some applications; and section 7 concludes.
+4 The correlation between the daily U.S. uncertainty index and the VIX is 53 percent over
+
+the sample period analyzed.
+5 The correlation ranges between -0.26 to -0.45 for the United States, Euro Area, the United
+Kingdom and Japan, whereas it is positive in Canada over the sample period analyzed in the
+paper.
+
+5
+
+2. Data
+Before getting into the model, this section presents information about the
+data used to construct the surprise and uncertainty indexes. I use two different
+types of data: the actual first release of the macroeconomic variable, say gross
+domestic product (GDP) or nonfarm payroll, and its forecast as measured by
+the Bloomberg median expectation. Of note, Bloomberg expectations generally
+do not run the risk of being stale forecasts as they can be updated until one
+hour before the data release. The forecast that I use is the latest one recorded
+by Bloomberg.6 The actual releases of macroeconomic variables are used to
+estimate the underlying factor model from which I gather the weights. The
+difference between actual releases and Bloomberg expectations, also known as
+news surprise or forecast error, is then used together with the weights to construct the surprise and uncertainty indexes. In what follows, I describe the
+details of the data and study some of the properties of the news surprises.
+The analysis covers five countries: the United States, the Euro Area, the
+United Kingdom, Canada, and Japan. I use five indicators for each country,
+except the United States for which I use six. Several considerations guide the
+choice of variables. First, I want to use those variables that are regarded as the
+main real activity indicators and as such followed by the business community,
+governments, and central banks as indication of the state of the economy. Second, I choose indicators for which analysts form expectations that are publicly
+available (see Table B1 in the online Appendix).7
+The analysis for the surprise and uncertainty indexes covers the period from
+May 15, 2003 through March 31, 2016. However, a longer dataset is used to
+estimate the underlying business condition indexes: January 1980 to March 31,
+2016, except for the Euro area where the sample starts in January 1985.
+The first indicator is quarterly real GDP. For each country, the first GDP
+release for the corresponding quarter is used. The second indicator is industrial
+production (IP), which is a monthly indicator. The third indicator is employees
+on nonagricultural payrolls, when available, or the unemployment rate.8 The
+6 The survey is done on a rolling basis and the Bloomberg news team run tables every
+
+weekday morning, as they get the forecasts. Economists can usually make changes up to an
+hour before release time.
+7 The table lists the indicators, together with their frequency, publication lags and transformations that I use to construct the real activity factor. The two rightmost columns list the
+source of the data series that I use to construct the factor, and the corresponding Bloomberg
+data series that I use to construct the surprise and uncertainty indexes.
+8 Employment data and expectations are available only for the United States and Canada.
+
+6
+
+former tends to be more timely than the latter, but unfortunately it is not
+available for all countries.9 The fourth indicator is retail sales, which is another
+monthly variable. The fifth indicator is a survey measure of the manufacturing
+sector or the overall economy (composite) depending on the availability of the
+Bloomberg forecast. I use the ISM manufacturing index for the United States,
+the composite PMI for the Euro Area, the manufacturing PMI for the United
+Kingdom and Canada (Ivy survey), and the Tankan survey for Japan. The
+Tankan survey is a quarterly series, whereas the other surveys are all monthly.10
+Although monthly series are generally preferred when available, the Tankan
+survey has the advantage of being very timely, as it is released on average four
+days before the end of the quarter it refers to.11 The average publication lag for
+the other series vary a lot as shown in table B1 in the online Appendix. Survey
+measures are the most timely of all: the euro-area Flash composite PMI is the
+first indicator to be released, followed by the Japanese Tankan survey, the U.S.
+ISM and the U.K. PMI. On the other hand, GDP and IP data tend to be the
+last information to be released.
+The additional indicator for the United States is the Bureau of Economic
+Analysis (BEA) personal income. Household income or personal income are
+generally available for the other countries but because their expectation is not,
+I drop them from the dataset.
+As already mentioned, while the announcement itself is used in constructing
+the real activity factor, the news surprise, that is the difference between announcement realizations (yti ) and their corresponding Bloomberg expectations
+(E[yti |Ft ]), is used in constructing the surprise and uncertainty indexes. Because units of measurement vary across macroeconomic variables, I standardize
+the resulting surprises by dividing each of them by their sample standard deviation (σ i ). The standardized news surprise associated with the macroeconomic
+
+For the other countries we use the unemployment rate.
+9 To avoid confusion, because for all the indicators a higher number means that the economy
+is doing well, I feed the negative of the unemployment rate into the model.
+10 For Canada, Bloomberg used to provide expectations for the non-seasonally-adjusted IVY
+index, but as of March 2011, it started to provide expectations for the seasonally adjusted
+series. I splice the two series together being aware of the break point.
+11 The Tankan survey has an average publication lag of -4 days, but only Q4 numbers are
+released before the end of the quarter (around mid-December). Other releases occur at the
+beginning of the following quarter.
+
+7
+
+indicator y i at time t is therefore computed as:
+sit =
+
+yti − E[yti |Ft ]
+.
+σi
+
+(1)
+
+2.1. News Surprises
+Market participants watch, and react to, scheduled macroeconomic announcements because these announcements potentially contain new information that
+was not previously incorporated into market participants’ expectations about
+the state of the economy. Several studies have looked into the forecast efficiency,
+or rationality, of market expectations. Under rationality, the surprise component, measured as difference between the actual release and its forecast, should
+truly represent “news,” meaning that market agents optimally use available
+information in forming their forecasts, and therefore the forecast error should
+be orthogonal to information available when the forecast is produced. This is
+equivalent to testing whether the error term εit is orthogonal to the forecast
+yti,f = E[yti |Ft ] in the equation
+yti,f = yt + εit .
+
+(2)
+
+In particular, testing for forecast efficiency boils down to testing that αi = β i =
+0 in the regression
+sit = αi + β i yti,f + uit
+
+(3)
+
+where sit = yti − yti,f is the forecast error, a.k.a news surprise. This is sometimes
+known as the Mincer−Zarnowitz test (Mincer and Zarnowitz (1969)). Several
+earlier papers have applied these tests mainly using data revisions (among others, see Croushore and Stark (2001) and Faust et al. (2005)). Table 1 reports
+evidence from the baseline tests of forecast rationality − tests of the hypothesis
+that αi = β i = 0 in equation (3). As can be seen in the middle columns, αi and
+β i are very often significantly different from zero and the F test fails to reject
+the null hypothesis that αi = β i = 0 only in 1/3 of the cases.
+But given that Bloomberg median forecasts are not efficient, why are they so
+important? Why do I use them rather than using efficient forecasts that I could
+construct within the factor model? The answer is simple: financial markets
+react neither to my own private forecast nor yours; financial markets react to
+Bloomberg forecasts, which are public and everyone can see.
+A wide literature has documented the asset price response to macroeconomic
+
+8
+
+news announcements. Andersen et al. (2007) and Gilbert et al. (2012) among
+others have looked into this question. Table 2 displays the results of univariate
+regressions of foreign exchange returns on the individual macro announcement
+surprises over the sample period 2003-2012. These results do not necessarily
+correspond to what reported in the existing literature because of the different
+samples used. However, they clearly state the point that Bloomberg forecasts
+(and surprises) are important because financial markets react to them.
+3. The Model
+I use a standard dynamic factor model at a monthly frequency which explicitly accounts for missing data and temporal aggregation (details can be found
+in the appendix). With it, each of the real-activity variables is used to extract
+information about the common (unobserved) factor.
+3.1. Forecasting Weights
+The contribution of each real-activity variable to the determination of the
+factor represents the weight applied to construct the surprise index. As shown
+in Koopman and Harvey (2003), the weights wj (αt|t ) are used to calculate the
+estimator of the state vector based on information available as of time t and can
+therefore be used to compute the contribution of variable yji in forecasting the
+factor x at time t:
+xt|t =
+
+t−1
+X
+
+wj (αt|t )yj .
+
+(4)
+
+j=1
+
+As in the previous section, yt can contain vectors of monthly or quarterly series
+(ytM , ytQ ). Each series is indicated by y i . wj is the vector of weights at time t
+referring to the monthly and quarterly series.
+I consider the real-time release schedule of each real activity series y i . For
+example, if I want to calculate the factor for the month of March 2012, information about that month will be released gradually. In the United States, the ISM
+index will be the first series to be released, most likely followed by employment,
+retail sales, industrial production, and personal income. The advance reading
+of GDP for the first quarter (i.e. the one which includes January) will be released with an average delay of 29 days from the end of the quarter. Based on
+this real-time schedule, I can recursively compute the underlying unobserved
+factor at time t based on the data availability until day t, that is xt|t . Equation
+(4) displays the factor at time t as a weighted average of the data y released
+9
+
+between day 1 and t. The weights implicitly display a time decay feature with
+more recent data exhibiting higher importance in determining the factor.
+For each data series included in y, say y i , there exist a time series of weights
+wji , so that cumulative forecast weights can be computed as in Banbura and
+Rünstler (2010)
+i
+wcum
+=
+
+t
+X
+
+wji .
+
+(5)
+
+j=1
+
+Forecast weights do not depend on time t, but depend on the forecast horizon
+and the real-time release pattern of the data. In this paper, I abstract from
+data revisions.
+An alternative to using the forecast weights as outlined above, would be to
+use the weights as described in Banbura and Modugno (2014). In this case,
+the weights would have a different interpretation, as they would represent the
+contribution of the news releases to the factor revision from period t to t + 1.
+The Banbura and Modugno (2014) weights are represented by the bν+1,j in:
+Jν+1
+
+E[xit |Ων+1 ] − E[xit |Ων ] =
+
+X
+
+bν+1,j (yt − E[yti |Ων ])
+
+(6)
+
+j=1
+
+where E[xit |Ων+1 ] − E[xit |Ων ] represents the revision to the factor implied by
+the new data release, (yt − E[yti |Ων ]) is the news surprise, and Ων and Ων+1 are
+two consecutive data vintages with Ων ⊂ Ων+1 . In the Banbura and Modugno
+(2014) framework, E[yti |Ων ] is the model implied expectation of the variable y,
+while in my framework E[yti |Ων ] would be the Bloomberg expectation for the
+macro variable y. The advantage of their set-up is that the weights represents
+the impact of the news release of a variable y on the underlying factor forecast,
+rather than the importance of the underlying series y in determining the factor.
+The drawback, however, is that the weight b is practically the Kalman gain
+and as such, this set-up does not provide me with a time series of the weights
+similar to what I have in my framework. A way to overcome this issue could be
+to apply some arbitrary time decay feature similar to what applied by Citigroup
+to construct the so-called “Citigroup Economic Surprise Indexes.” These indexes
+are defined as weighted historical standard deviations of data surprises where
+the weights of economic indicators are derived from the announcement’s impact
+that these data surprises have on foreign exchange markets to which a subjective
+decay function is applied.
+
+10
+
+3.2. The Surprise Index
+I construct the surprise index starting from equation (4). With the idea that
+forecast weights represent the importance of the series in determining the underlying unobservable factor, I use those same weights to combine the standardized
+surprises so that the surprise index S at time t is:
+St =
+
+t
+X
+
+wj sj
+
+(7)
+
+j=1
+Q 0
+i
+where sj = (sM
+t , st ) contains the vectors of the standardized surprise s corre-
+
+sponding to each data series y i . 12 In the application, I construct the underlying
+series that feed into the factor so that a higher (lower) number means that the
+economy is doing better (worse). Likewise, I construct each surprise such that
+a positive surprise means good (bad) news for the economy. This implies that
+the weights should be positive.
+The surprise indexes are daily: every time new information becomes available, i.e. new data are released, the surprise index gets updated. If there are no
+new data, the index is equal by construction to its value on the previous day.
+Of course, more data releases imply that the surprise index gets updated more
+frequently.
+3.3. The Uncertainty Index
+The uncertainty index is computed starting from equation (4) and averaging
+squared surprises
+v
+u t
+uX
+Ut = t
+wj s2 .
+j
+
+(8)
+
+j=1
+
+The link with realized volatility is straightforward. Just like realized volatility is computed as the square root of the average of squared returns, RVn =
+q
+Pn
+1
+2
+t=1 rett , the uncertainty index is computed as the square root of the
+n
+weighted average of the squared surprises.13 The weights are not simply 1/n
+12 Because s and w are vectors, I am practically aggregating over variables (through the
+P
+product of s and w) and over time (with tj=1 ).
+q P
+2
+1
+1 P
+13 Realized volatility is more precisely defined as vol =
+ret2i − n
+reti but ben
+cause the second term, the average return, tends to be zero it is frequently dropped. Similarly,
+P
+2
+t
+we abstract from using the second term,
+in the definition of the uncertainty
+j=1 wj sj
+index. In practice, this term is very close to zero.
+
+11
+
+but are time varying. Moreover, unlike the volatility which is computed on one
+instrument at a time using the history from t = 1, . . . , n, the uncertainty index
+is computed across different instruments/surprises as well as across time.
+As mentioned in the introduction, these surprise and uncertainty indexes
+are ex-post, realized measures. Moreover, these indexes measure how optimistic / pessimistic or uncertain agents are about recent economic conditions.
+Bloomberg forecasts are constructed in such a way that contributors can submit
+and continuously revise their forecasts until one hour before the data release.
+The forecasts that I use are screen-shots of the latest submitted forecasts. For
+example, if we consider nonfarm payroll, a contributor can submit her forecast
+until 7:30 am ET of the first Friday of the month for the release of nonfarm payroll referring to the previous month. In this sense, these measures are backward
+looking measures as they use today’s best guess (forecast) about the state of the
+economy in the recent past. Because the Bloomberg forecasts refer to the latest
+macroeconomic statistics only, it is not possible to compute these measures for
+different horizons, say t + 1, t + 2, ... In fact, the macroeconomic announcements
+analyzed in this paper are all released with a reporting lag, meaning that they
+are announced after the end of the period they refer to. Practically, this uncertainty measure can even be considered as a nowcasting/backcasting exercise in
+that it uses weighed forecast errors from the recent past.
+Similarly to the surprise indexes, the uncertainty indexes are also daily in
+that they get updated every time new information become available.
+4. Estimation
+The construction of the indexes requires three steps:
+(i) estimation of the state space model,
+(ii) determination of the weights wj as defined in equation (4) and
+(iii) construction of the indexes as for equations (7) and (8).
+For step (i), the estimation of the model described in the online Appendix
+A and B requires estimation of the parameters θ = {µ, Z, T, Σ}. The missing
+data pattern complicates the estimation of the model. Missing data occur both
+because the data are at different frequencies and because indicators are released
+at different times after the end of the reference period (ragged edge). A number
+of papers have dealt with different frequencies and missing observations either
+
+12
+
+within a Kalman filter framework (see among others Aruoba et al. (2009), Giannone et al. (2008), and Banbura and Modugno (2014)) or within a mixed data
+sampling (MIDAS) regression framework (Andreou et al. (2011)). I estimate
+the parameters by maximum likelihood implemented by the Expectation Maximization (EM) algorithm as proposed by Doz et al. (2012) and extended by
+Banbura and Modugno (2014) to deal with missing observations and idiosyncratic dynamics.14 The EM algorithm iterates over two steps: in the expectation
+step, the log-likelihood conditional on the data is calculated using the estimated
+parameters from the previous iteration; in the maximization step, the parameters are re-estimated by maximizing the expected log-likelihood with respect to
+θ. Following Doz et al. (2011) and Doz et al. (2012), the initial parameters θ(0)
+are obtained through principal components and the iteration between the two
+steps is stopped when the increase in likelihood between two steps is small.
+In step (ii), once the parameters θ are estimated, the weights can be computed by running the algorithm defined in Koopman and Harvey (2003) to get
+the smoothed weights. The history of weights wj (αt|t ) for j = 1, ..., t is computed in real time for any t based on the information available up until that
+time.
+Finally, in step (iii), the surprise and uncertainty indexes are computed based
+on (7) and (8).
+Each country is estimated separately. The estimation of the underlying business condition index is based on the longest common sample across countries
+(1980-2012), except for the euro area for which not enough indicators are available before 1985. The Kalman filter is then run based on the estimated parameters in a real time framework (i.e. based on data that are released sequentially),
+and steps (ii) and (iii) are repeated to get the smoothed weight matrix and the
+real-time surprise and uncertainty indexes for each day from May 15, 2003 to
+September 30, 2012.15 Step (i) is run over the entire sample, unlike steps (ii)
+and (iii), because for countries in which data series become available later in
+the sample estimates are not accurate at first.16 For the United States, where
+there are no issues of data availability, there are no significant differences in the
+14 I thank Banbura, Giannone and Reichlin for sharing their EM codes.
+15 The surprise index is computed on a shorter sample due to the limited availability of
+expectation data for all the countries.
+16 The underlying real activity factor is estimated on the full sample to avoid parameter
+instability problems due to the fact that, for some of the countries, some macroeconomic
+releases become available later in the sample (namely retail sales and PMI series).
+
+13
+
+surprise indexes constructed according to the two methodologies.17
+5. Results
+Here I discuss the results following the steps described in the estimation
+section.
+5.1. Real Activity Indexes
+The real activity indexes that I estimate based on the indicators described
+above are displayed in figure 1. As mentioned, I use a longer history for the
+estimation of these factors in order to have more reliable estimates. The figure
+shows the latest factors, which include information as of March 31, 2016, for
+the United States, the Euro Area, the United Kingdom, Canada, Japan, and an
+aggregate of the five countries.
+The average value of each index is zero by construction. Therefore, a value
+of zero is interpreted as average economic activity for that country, whereas
+progressively bigger positive values indicate progressively better-than-average
+conditions and progressively more negative values indicate progressively worsethan-average conditions. Importantly, average conditions differ across countries.
+For example, a value of zero for Japan corresponds to a number akin to 0.7
+percent annual real GDP growth while a value of zero in the United States
+corresponds to around 2.5 percent annual real GDP growth. The shaded areas
+in the panels represent official recessions as defined by the NBER, CEPR, and
+ECRI. The indexes fall sharply during recessions and tend to reach relatively
+high values during good times, for example the late 1990s. As expected, the
+U.S. business condition index is very similar to the ADS index maintained by the
+Federal Reserve Bank of Philadelphia, with the difference that the ADS index
+is daily and also includes weekly data such as initial jobless claims. Because the
+other countries do not have relevant weekly data, I opted here for a monthly
+frequency. The last panel shows the aggregate business condition index, which
+is created by aggregating the other indexes weighing them by each country’s
+GDP.
+17 That means, running (i), (ii) and (iii) in real time versus running (i)over the entire sample,
+and (ii) and (iii) in real time does not give significant differences for the United States.
+
+14
+
+5.2. Weights
+To gauge the importance of the various indicators in constructing the surprise
+and uncertainty indexes, I consider two different standpoints in analyzing the
+weights: (i) I construct the cumulative weights as in equation (5) and (ii) I
+analyze, at each time t, the vector of t × 1 weights, wtj , that are multiplied by
+the announcements to get the time t surprise index based on equation (7).
+To be clear, for t = te, the variable w that represents the weights in equation
+(7) is a matrix of dimension te× M Q which contains those weights applied to all
+the announcements available up to time e
+t that are used in the construction of
+the index. The sum of these weights over time represents the cumulative weight
+Pte
+i
+= j=1 wji .
+for indicator i at time te, that is wcum
+Average cumulative weights computed over the 2003-2016 sample show that
+employment (or unemployment) and industrial production have the highest
+value in the United States, the Euro Area, and in the United Kingdom. In
+Canada, most of the weight is concentrated on employment. In Japan, industrial production is the most important series followed by unemployment and
+retail sales.18 Cumulative weights, however, are not constant over time and
+therefore looking at their mean is not enough. They are affected by the pattern
+of missing observations due to the different release schedules of the underlying
+indicators (ragged edge). Figure 2 shows the evolution of the cumulative forecast
+i
+weights wcum
+for each indicator over the first quarter of 2012. Each panel in the
+
+figure displays the weights for a specific country. A clear pattern stands out: as
+soon as new information about an indicator becomes available, the contribution
+of that particular indicator increases. So, for example, the weight of the U.S.
+nonfarm payroll series (NFP), represented by the green line in the top leftmost
+panel, increases on January 6, February 3, and March 9 (solid vertical lines)
+when the December, January and February figures are announced. Until the IP
+numbers are released (dotted vertical lines), nonfarm payroll has the biggest
+weight. With the release of the IP figures, the weight for IP (red line) increases
+and becomes the highest of all. However, as additional information about real
+activity in the United States is released, nonfarm payroll and IP weights start
+to decline gradually. A similar pattern can be observed in the other countries:
+as the more timely information becomes available, its weight jumps up and it
+18 Details of the average cumulative weights are reported in table B2 in the online Appendix.
+For comparability across countries, the table shows standardized weights so that the sum of
+all weights in each country is equal to 1.
+
+15
+
+declines as other indicators are subsequently released. In the euro area (the top
+rightmost panel), unemployment tends to have the highest weight overall, but
+when IP numbers are released, IP weights become slightly bigger than those of
+the unemployment data. In the United Kingdom, IP weights are always bigger
+than any other weight. In Canada unemployment is consistently and by far the
+highest weight. Finally, in Japan, the Tankan survey has the highest weight at
+the beginning of the quarter when it represents the only available information
+for that quarter, but its weight is immediately overtaken as other information
+become available and, in particular, as IP numbers are released.
+Turning to (ii), figure 3 shows the weights w when computed on March 31,
+2012 for the six months prior to that day.19 The weights in all the countries
+display a time decay feature. For the United States, nonfarm payroll and IP
+(the green and red bars) have the highest weight for the month of February
+based on information as of March 31, 2012. Interestingly, IP weights are more
+persistent than the others, suggesting that past IP information continues to be
+important whereas the nonfarm payroll information value is limited to the latest
+available month. Because no data about March are released as of March 31, all
+the weights are zero for the month of March. Weights are close to zero for
+all indicators after about six months. Of note, the time decay feature implies
+that an increase in the index might be due to a smaller weight given to an old
+negative surprise or to a new positive surprise.
+The Euro Area represents an interesting case because as of March 31, 2012,
+flash euro-area PMI numbers for February and March are available, whereas
+any other real activity information refers to January. While past PMI numbers
+have a very small weight, the February and March PMI figures have a relatively
+high weight. Once more, the weights for IP are the slowest to decline, and the
+last available unemployment data displays the highest weight.
+The United Kingdom seems to have the slowest time decay in its weights
+compared to the other countries. In Canada, the employment weights dominate
+every other weight. Japan displays the quickest time decay with weights reaching practically zero already after only four months. Unlike the other countries,
+unemployment does not have the highest weight.
+These weights are computed based on the available information as of March
+31, 2012. Of course, the pattern would be different if the weights were to be
+19 The idea is that w i represents the bars in figure 3, while w i
+cum represent the lines in figure
+j
+
+2.
+
+16
+
+computed on another day when different information was available.
+5.3. Surprise Indexes
+The news surprise indexes for the United States, the Euro area, the United
+Kingdom, Canada, Japan, and the aggregate of the five countries are displayed
+in figure 4 (solid lines).20 A positive (negative) reading of the surprise index
+suggests that economic releases have on balance been higher (lower) than consensus, meaning that agents were ex-post more pessimistic (optimistic) about
+the economy. A positive number does not mean the economy is doing well on any
+ordinary measure, but merely that economic forecasts were overly pessimistic.
+The surprise index reaches its lowest value during the global financial crisis of
+2008-2009 in most countries. This suggests that, as the crisis was unfolding,
+agents were less pessimistic about its possible outcome and its impact on the
+real economy, while the actual data turned out to depict a grimmer picture of
+the stance of economic activity around the globe.
+The euro-area surprise index dropped sharply in March 2012. As agents
+became more optimistic on a resolution of the European debt crisis with the
+bond exchange taking place in Greece, real activity indicators for 2012 that
+were released in March were disappointing. The January unemployment rate,
+released on March 1, was 10.70 percent versus an expectation of 10.40 percent.
+The February and March euro-area PMIs released on February 22 and March
+22 were 49.70 and 48.70 respectively, versus expected values of 50.50 and 49.60,
+respectively. Finally, based on data released on March 14, euro-area industrial
+production increased 0.2 percent from December 2011 to January 2012 versus
+an expectation of a 0.5 increase.
+Interestingly, the U.K. index dropped sharply on January 25, 2011 when
+a very disappointing Q4 GDP for 2010 was released (-0.5 percent versus an
+expectation of +0.5 percent). Although subsequent data helped the index to
+move higher, it continued to be depressed until the second half of 2011. Agents
+reportedly attributed the slowdown to a series of temporary factors (such as bad
+weather, the Japanese earthquake, and the royal wedding) that were believed
+to be short-lived. The transitory nature of these events most probably made
+agents mark up their economic outlook, but, as a series of temporary factors
+occurred, these expectation were always disappointed.
+20 The indexes continue to be updated daily and are available from the author upon request.
+
+17
+
+The Japanese surprise index dropped sharply on April 27, 2011 as the actual
+number for IP turned out to be a lot lower than expected following the March
+2011 earthquake: IP decreased 15.30 percent between February and March versus the expectation of a 10.60 percent decrease.
+On the other hand, there are also several instances where the surprise indexes
+are positive, especially coming out of the recession in the United States, the
+United Kingdom, and Canada.
+More generally, the surprise indexes seem to be autocorrelated. Part of
+this feature comes from the fact that old surprises continue to receive a positive weight for some time after their release. Except for Canada, the surprise
+indexes are on average slightly negative, with a more negative value during recessions suggesting that, in the period considered, agents were on average overly
+optimistic about the state of the economy.
+For comparison, the dotted lines in figure 4 show the Citi Economic Surprise
+Indexes (CESI). Although CESIs also measure economic news, they are constructed based on a different methodology. CESIs are defined as weighted historical standard deviations of data surprises (actual releases versus Bloomberg
+median survey) and are calculated daily in a rolling three-month window. The
+weights of the economic indicators are derived from relative high-frequency spot
+foreign exchange impacts of 1 standard deviation data surprises adjusted to include a time decay feature so as to replicate the limited memory of markets.
+Because the index constructed in this paper does not rely on the impact that
+macroeconomic surprises have on asset prices, it represents a more objective
+measure of deviation from consensus expectations. Although the two indexes
+follow very similar patterns for all the countries, they also present some differences because both the set of indicators and the weights are different. For
+example, the euro-area surprise index tends to lag the CESI especially during
+the shaded area which represents the 2008-2009 recession.
+5.4. Uncertainty Indexes
+The uncertainty indexes for the United States, the Euro area, the United
+Kingdom, Canada, Japan and the aggregate of the five countries are displayed
+in figure 5 (solid lines). These indexes measure how uncertain agents are about
+realized real activity conditions. A greater (smaller) reading of the uncertainty
+index suggests that agents have on balance been more (less) uncertain about the
+state of the current economy. The indexes tend to be elevated during recessions,
+although there are other episodes when the indexes spike up. In the United
+18
+
+States, economic uncertainty was also relatively high in 2004 and a big jump was
+observed at the end of 2005 and in 2012. The euro-area uncertainty index reaches
+its highest values just before and after the 2008-2009 recession, suggesting that
+agents were more uncertain about the economy as the euro-zone was entering
+and exiting the recession. Increased macro uncertainty characterized also the
+beginning of 2010, when the Greece “problem” started to emerge, and the period
+between the end of 2011 and the start of 2012. Uncertainty in the United
+Kingdom has been particularly elevated since early 2009, when compared to its
+value in the first part of the sample. Canada has experienced several episodes
+of elevated economic uncertainty, whereas in Japan, the period after the March
+2011 earthquake was by far the one with the highest uncertainty regarding
+the state of the Japanese economy. Interestingly, higher volatility is associated
+with negative surprises. The correlation between the surprise index and the
+uncertainty index tends to be stronger when the surprise index is negative.
+The dotted lines in the panels show stock market implied volatilities in the
+United States, Euro Area, United Kingdom, Canada, and Japan as represented
+by the VIX, VSTOXX, VTFSE, VIXC and VXJ. The dashed lines display the
+stock market realized volatilities for the respective countries. Notably, especially in the latter part of the sample, the uncertainty index and the VIX look
+somewhat similar, whereas the uncertainty index of the euro area differs from
+the VSTOXX.21 The two measures (implied volatility and uncertainty index)
+are constructed in completely independent ways. Implied volatility, a forwardlooking measure, is computed from option prices. The uncertainty index, a
+historical measure, is calculated from current and past macroeconomic news
+surprises. The former is a wider measure that combines information about risk
+aversion and future stock market volatility, and to the extent that these two
+move with news surprises, the VIX also contains information about current and
+future economic uncertainty. On the other hand, the uncertainty index presented here is a clean measure of agents’ uncertainty about the current state of
+the economy. In the analysis that follows, I will decompose the VIX into stock
+market uncertainty and variance risk premium, following Bakaert et al. (2013),
+to use the part of the VIX that is most comparable to uncertainty.
+21 Table B3 in the online Appendix displays the correlation between the uncertainty measure
+
+and the implied and realized volatilities for each country.
+
+19
+
+6. Applications
+In this section, I present a couple of applications for the surprise and uncertainty indexes. In the first application, the surprise index is shown to preserve
+the properties of the underlying macro series in affecting asset prices in replicating the regressions shown in table 2. Combining several macro series into one,
+the surprise index has the advantage of being potentially easier to use and very
+parsimonious. In light of this, Demiralp et al. (2013) make use of it as a control variable when investigating the effects of political commentaries on policy
+rate decisions and policy expectations in the United States and the Euro Area,
+and find it to be a significant determinant of policy expectations. Similarly,
+Brunetti et al. (2013) employ it as a control variable in studying the impact of
+speculation activity in the crude oil market.
+In the second application, the U.S. uncertainty index is compared to other
+uncertainty measures commonly used in the literature. The uncertainty index
+has a negative impact on real-activity series. Papers like Bloom (2009), Baker
+et al. (2015), and Bachmann et al. (2013) have documented a similar analysis
+with different measures of uncertainty. I find that, in the United States over the
+last decade, when uncertainty is strictly related to the state of the economy as
+measured by real activity, it has a potentially milder impact on macro activity
+than when the uncertainty is related to both the macro and the financial sectors
+as measured by the VIX.
+6.1. Surprise Indexes and News Impact on Foreign Exchanges
+As shown in section 2, macroeconomic news announcements affect asset
+prices. The surprise index presented in this paper represents a nice summary
+measure that can be used to parsimoniously control for news announcement
+surprises in more general models.
+Table 3 presents the results of a set of regressions where the euro/$, GBP/$,
+CAD/$, and JPY/$ exchange rate returns are regressed on the U.S. surprise
+index and the respective foreign surprise index, i.e. the euro/$ return is regressed
+on the U.S surprise index and the euro-area surprise index, the GBP/$ return
+is regressed on the U.S surprise index and the U.K. surprise index, etc. I cover
+approximately the sample period for which the surprise indexes are available
+(July 2003 to March 2016).22 As shown in the table, the surprise indexes tend
+22 For comparison with the exercise in table 2, I run the regression only on days in which
+
+20
+
+to have the right sign and be significant: a positive change in the U.S. surprise
+index (i.e. the U.S. economy doing better than expected) appreciates the U.S.
+dollar versus the foreign currency, whereas a positive change in the foreign
+surprise index depreciates the U.S. dollar.
+6.2. Uncertainty Measures and the Business Cycle
+A “true” measure of economic uncertainty does not exist and stock market
+realized and implied volatilities have been commonly used as proxies for uncertainty. Bloom (2009), for example, uses the Chicago Board of Option Exchange
+VXO index as a proxy for uncertainty.23 More recently, a growing literature
+has focused on finding new measures of macroeconomic uncertainty. Bachmann
+et al. (2013) use survey expectation data to construct time-varying business-level
+uncertainty. For Germany and the United States, they construct a measure of
+uncertainty with forecast disagreement from the IFO Business Climate Survey
+and the Business Outlook Survey, respectively. Baker et al. (2015) create an
+economic policy uncertainty (EPU) measure based on the frequency of newspaper references to economic policy uncertainty, the number and size of the federal
+tax code provisions set to expire in future years, and the disagreement among
+economic forecasters about policy relevant variables. Leduc and Liu (2012) use
+a measure of perceived uncertainty of consumers and businesses from the Thomson Reuters/University of Michigan Surveys of Consumers in the United States
+and the Confederation of British Industry (CBI) Industrial Trends Survey in
+the United Kingdom. Bakaert et al. (2013) decompose the VIX into variance
+risk premium, a measure of risk aversion, and stock market uncertainty. Jurado
+et al. (2015) define uncertainty as the variability in the purely unforecastable
+component of the future value of a variable and measure macro uncertainty as
+the uncertainty factors common to individual measures of uncertainty across
+a large number of series. Similarly to Jurado et al. (2015), my measure uses
+forecast errors, which, however, are not the objective and efficient forecast errors from a model. Instead they are market based forecast errors and as such
+my uncertainty index measures the perceived uncertainty about the state of the
+
+there are news releases. This implies that I will have 556, 423, 443, 417, and 298 observations
+for the U.S., euro-area, U.K., Canadian and Japanese news, respectively.
+23 The VXO is equivalent to the VIX series that I use. The VIX was launched in 1993. In
+2003, its formula was modified substantially. Data from the new 2003 VIX formula, also used
+to reconstruct historical data going back to 1990, is known as the VIX. The data associated
+with the original and revised VIX formulae is known as VXO. In my sub-sample VIX and
+VXO coincide.
+
+21
+
+economy. Agents base decisions on their perceived uncertainty rather than an
+objective uncertainty that they do not observe.
+Figure 6 compares the real-activity uncertainty index developed here against
+some of the available other measures of uncertainty for the United States. All
+measures are de-meaned and standardized for comparison; they are all countercyclical, rising during economic downturns. The correlation of the uncertainty
+index ranges from about 20 percent between with the Baker, Bloom, and Davis
+EPU to over 60 percent with the VIX.24 The uncertainty index exceeds 1.65
+standard deviations above its mean only few times but the peaks do not always
+correspond with the peaks of the other series suggesting that these uncertainty
+measures might indeed carry slightly different information.
+A growing literature has also focused on analyzing the relationship between
+real activity and uncertainty, and the latter has been generally found to have a
+significant role in firms’ hiring decisions (employment) and output. To estimate
+such effects, I estimate a bivariate VAR with log employment and each one of
+the uncertainty proxies from figure 6, separately. Because of the short data set
+(monthly data from May 2003 to March 2016), the bivariate VAR represents
+a parsimonious way to model the joint dynamics between these variables. As
+shown in Bachmann et al. (2013), the results are robust to estimating a larger
+VAR similar to Bloom (2009).25 Each VAR is estimated selecting the lag length
+based on the Schwarz Information Criterion; employment enters in log levels,
+while uncertainty measures in levels.
+Figure 7 shows the recursive impulse responses of employment to a onestandard-deviation uncertainty shock as measured by the different proxies, where
+uncertainty is ordered first. The shaded region is the +/- one standard error
+confidence interval for the real-activity uncertainty shock. Employment decreases after an uncertainty shock, no matter which uncertainty proxy is used.
+However, how quickly and how deeply varies across measures, with shocks to the
+VIX or the Bakaert et al. (2013) stock market uncertainty being the most quick
+to materialize and the ones with the deepest trough. Shocks to the macroeconomic uncertainty index, to the Baker et al. (2015) EPU measure and the
+24 The smallest correlation is between Bachmann, Elstner, and Sims and Baker, Bloom, and
+Davis measures (about 10 percent). The highest correlations are between the VIX and the
+Bakaert uncertainty/variance risk premium decomposition of the VIX (about 85-90 percent),
+followed by the correlation between the VIX between Baker, Bloom, and Davis EPU measure
+(about 70 percent).
+25 Given the short dataset, I only estimate the bivariate VAR.
+
+22
+
+Bachmann et al. (2013) dispersion measure elicit a progressively lower impact
+on employment over this period. This result suggests that when uncertainty
+is strictly related to real activity, it has potentially milder impact on economic
+activity. Just flipping the argument, when uncertainty is more generally related to economic as well as financial conditions as measured by the VIX or
+the Bakaert et al. (2013) measure of stock market uncertainty, its impact on
+real-activity variables appears to be stronger.26 This finding supports recent
+work by Caldara et al. (2013) which finds that the financial channel is key in
+the transmission of uncertainty shocks. Although I do not explicitly introduce
+a financial channel, using the real-activity uncertainty index, the VIX and the
+Bakaert stock market uncertainty measure allows me to distinguish between
+purely macro versus the more general macro and financial uncertainty. Interestingly, the variance risk premium (not shown) does not seem to play a very
+important role.27 An analysis of the fraction of the VAR forecast error variance
+of employment that is attributable to innovations in each of the uncertainty
+series over different forecast horizons confirms the results: the VIX and the
+Bakaert stock market uncertainty decomposition explain about 2-3 times the
+share of the forecast error of employment compared to the real-activity uncertainty index.
+For robustness, some alternative specifications are considered. The result
+just described holds true with other measures of real activity, such as industrial
+production or unemployment rate. Although a similar comparison is not shown
+for the other countries, the negative impact of an uncertainty shock on employment is generally significant across countries. As a robustness check, I estimate
+generalized impulse responses from Pesaran and Shin (1998) which do not depend on the ordering of the variables and the results remain quite consistent
+across uncertainty proxies and variables.
+7. Summary and Concluding Remarks
+The goal of this paper is to construct measures of (i) real-time economic
+news and their deviation from consensus expectations and (ii) real-time uncertainty about the state of the economy. I view this paper as a “complement”
+26 Figure A1 shows the confidence intervals for the real-activity uncertainty index and the
+VIX.
+27 The variance risk premium, computed as in Bakaert et al. (2013), elicits an impulse
+response to employment similar to that of Baker et al. (2015) EPU.
+
+23
+
+to the Aruoba et al. (2009) business condition index updated on a daily basis
+by the Federal Reserve Bank of Philadelphia. While the ADS index is a real
+time measurement of the state of the economy, the surprise index presented
+in this paper measures agents’ optimism or pessimism about the economy by
+combining macroeconomic news surprises, and the uncertainty index measures
+agents’ uncertainty about the current state of the economy. This paper is also a
+“complement” to other papers that develop uncertainty measures in that it only
+measures perceived uncertainty about the state of the economy and as such is
+mostly linked to Bachmann et al. (2013).
+I look forward to a variety of variations and extensions of this basic theme,
+including but not limited to:
+• constructing indexes for nominal variables to gauge optimism/pessimism
+about inflation stance
+• incorporating additional indicators and surprises for each country to construct a summary measure of real and nominal variables
+• extending the framework to include U.S. macro surprises into foreign
+economies frameworks to exploit the correlation/causation across business
+cycles
+• including vintages of data so that the indexes change not only when new
+information is released but also when past information is revised
+• expanding the dataset to construct indexes with a longer history
+• analyzing in more depth the impact of different types of uncertainty.
+References
+Andersen, T. G., Bollerslev, T., Diebold, F. X., Vega, C., 2003. Micro effects of
+macro announcements: Real-time price discovery in foreign exchange. American Economic Review 93, 38–62.
+Andersen, T. G., Bollerslev, T., Diebold, F. X., Vega, C., 2007. Real-time price
+discovery in stock. Journal of International Economics 73, 251–27.
+Andreou, E., Kourtellos, A., Ghysels, E., 2011. Forecasting with mixedfrequency data. Oxford Handbook of Economic Forecasting, Chapter 8.
+
+24
+
+Aruoba, B. S., Diebold, F. X., Scotti, C., 2009. Real-time measurement of business conditions. Journal of Business and Economic Statistics 27, 417–42.
+Bachmann, R., Elstner, S., Sims, E., 2013. Uncertainty and economic activity:
+
+Evidence from business survey data. American Economic Jour-
+
+nal:Macroeconomics 5 (2), 217–24.
+Bakaert, G., Hoerova, M., Lo Duca, M., 2013. Risk, uncertainty and monetary
+policy. Journal of Monetary Economics 60, 771–788.
+Baker, S. R., Bloom, N., Davis, S. J., 2015. Measuring economic policy uncertainty, working Paper.
+Banbura, M., Giannone, D., Reichlin, L., 2010. Nowcasting. In: Clements, M.,
+Hendry, D. (Eds.), Handbook on Economic Forecasting. Oxford.
+Banbura, M., Modugno, M., 2014. Maximum likelihood estimation of large factor model on dataset with arbitrary pattern of missing data. Internationa
+Journal of Forecasting 29, 133–16.
+Banbura, M., Runstler, G., 2010. A look into the factor model black box: Publication lags and the role of hard and soft data in forecasting gdp. International
+Journal of Forecasting 27, 333–346.
+Bloom, N., 2009. The impact of uncertainty shocks. Econometrica 77, 623–68.
+Brunetti, C., Buyuksahin, B., Harris, J., 2013. Do institutional traders predict
+bull and bear markets?, working Paper.
+Caldara, D., Fuentes-Albero, C., Gilchrist, S., Zakrajsek, E., 2013. On the identification of financial and uncertainty shocks, mimeo.
+Camacho, M., Perez-Quiroz, G., 2009. Introducing the euro-sting: Short-term
+indicator of euro area growth. Journal of Applied Econometrics 25, 663–69.
+Constable, S., Wright, R. E., 2011. The WSJ Guide to the 50 Economic Indicators That Really Matter: From Big Macs to Zombie Banks, the Indicators
+Smart Investors Watch to Beat the Market. Harper Collins.
+Croushore, D., Stark, T., 2001. A real-time dataset for macroeconomists. Journal of Econometrics 105, 111–13.
+
+25
+
+Demiralp, S., King, S., Scotti, C., 2013. Does anyone listen when politicians
+talk? the impact of political commentaries on policy rate decisions and expectations, mimeo.
+Doz, C., Giannone, D., Reichlin, L., 2011. A two-step estimator for large approximate dynamic factor models based on kalman filtering. Journal of Econometrics 64 (1), 188–20.
+Doz, C., Giannone, D., Reichlin, L., 2012. A quasi maximum likelihood approach for large approximate dynamic factor models. Review of Economics
+and Statistics 94 (4), 1014–102.
+Faust, J., Rogers, J. H., Wright, J., 2005. News and noise in g-7 gdpannouncements. Journal of Money 37 (3), 403–41.
+Fostel, A., Geanakoplos, J., 2012. Why does bad news increase volatility and
+decrease leverage? Journal of Economic Theory 147 (2), 501–52.
+Giannone, D., Reichlin, L., Small, D., 2008. Nowcasting: The real-time informational content of macroeconomic data. Journal of Monetary Economics 55 (4),
+665–67.
+Gilbert, T., Scotti, C., Strasser, G., Vega, C., 2012. Why do certain macroeconomic news announcements have a big impact on asset prices?, mimeo.
+Jurado, K., Ludvigson, S., Ng, S., 2015. Measuring uncertainty. American Economic Review 105 (3), 1177–1216.
+Koopman, S. J., Harvey, A., 2003. Computing observation weights for signal
+extraction and filtering. Journal of Economic Dynamics (27), 1317–1333.
+Leduc, S., Liu, Z., 2012. Uncertainty shocks are aggregate demand shocks,
+fRBSF Working Paper.
+Mincer, J., Zarnowitz, V., 1969. The evaluation of economic forecasts. In: Mincer, J. (Ed.), Economic Forecast and Expectations. New York: National Bureau of Economic Research, pp. 81–111.
+Pesaran, H., Shin, Y., 1998. Generalized impulse response analysis in linear
+multivariate models. Economics Letters 58 (1), 17–29.
+
+26
+
+Table 1: Forecast efficiency regression results (July 2003 - March 2016)
+
+Country
+United States
+
+sit = αi + β i yti,f + uit
+Series Name α
+β
+
+F
+
+pvalue
+
+GDP
+IP
+Employment
+Retail Sales
+ISM
+
+-0.05
+-0.09∗∗∗
+-12.70 ∗∗
+-0.05
+1.12
+
+-0.02
+0.27∗∗∗
+-0.01
+0.18∗∗∗
+-0.02
+
+0.65
+12.55
+2.87
+5.15
+0.67
+
+0.53
+0.00
+0.06
+0.01
+0.51
+
+Personal Income
+GDP
+IP
+Unemployment
+Retail Sales
+PMI
+
+0.04 ∗
+-0.02
+-0.08∗
+0.10 ∗∗
+-0.07
+1.03
+
+-0.11∗∗∗
+0.11 ∗∗∗
+-0.11∗∗
+-0.01∗∗
+-0.13∗
+-0.02
+
+4.17
+3.31
+3.81
+3.13
+1.93
+0.42
+
+0.02
+0.04
+0.02
+0.05
+0.15
+0.66
+
+Canada
+
+GDP
+IP
+Unemployment
+Retail Sales
+PMI
+GDP
+
+-0.14 ∗∗∗
+-0.21∗∗∗
+0.05∗∗∗
+0.20 ∗∗∗
+3.28 ∗
+0.06
+
+0.26∗∗∗
+-0.01∗∗∗
+-0.02∗∗∗
+0.11 ∗∗∗
+-0.06 ∗∗
+-0.01
+
+6.58
+9.22
+7.73
+5.88
+1.93
+0.23
+
+0.00
+0.00
+0.00
+0.00
+0.15
+0.80
+
+Japan
+
+IP
+Employment
+Retail Sales
+Ivey Survey
+GDP
+
+-0.06 ∗∗∗
+5.17
+-0.07
+19.95 ∗∗∗
+0.01
+
+0.06 ∗∗∗
+0.12∗∗∗
+0.35 ∗∗∗
+-0.34∗∗∗
+-0.05
+
+7.00
+2.98
+5.78
+7.23
+0.25
+
+0.00
+0.05
+0.00
+0.00
+0.78
+
+IP
+Unemployment
+Retail Sales
+Tankan
+
+-0.42∗∗∗
+0.17∗
+0.04
+0.16
+
+0.04∗∗∗
+-0.05∗∗∗
+0.21 ∗∗∗
+0.01
+
+10.66
+4.57
+6.02
+0.27
+
+0.00
+0.01
+0.00
+0.76
+
+Euro area
+
+United Kingdom
+
+* 10 percent significance, ** 5 percent significance, and *** 1 percent significance.
+
+27
+
+Table 2: Results of univariate regressions in which exchange rate returns are regressed on each
+individual macroeconomic news announcement surprise (July 2003 - March 2016)
+
+dlog(F Xt ) = α + β ∗ sit + εt
+Euro/$
+GBP/$
+CAD/$
+Beta
+R2
+Beta
+R2
+Beta
+R2
+US
+IP
+Employment
+Retail sales
+Personal income
+PMI
+GDP
+Foreign
+IP
+Empl/unempl
+Retail sales
+PMI/Ivey/Tankan
+GDP
+
+JPY/$
+Beta
+R2
+
+0.029
+0.271∗∗∗
+
+0.003
+0.125
+
+0.021
+0.214∗∗∗
+
+0.001
+0.130
+
+0.043∗∗
+0.002
+
+0.005
+0.000
+
+-0.034
+0.342∗∗∗
+
+0.003
+0.214
+
+0.063
+0.009
+0.050
+0.219∗∗∗
+
+0.013
+0.000
+0.006
+0.097
+
+0.100∗∗∗
+-0.040
+0.035
+0.017
+
+0.030
+0.004
+0.001
+0.000
+
+-0.062
+0.020
+-0.013
+0.084∗∗∗
+
+0.010
+0.001
+0.000
+0.011
+
+0.198∗∗∗
+-0.038
+0.169∗∗∗
+0.059
+
+0.099
+0.004
+0.067
+0.005
+
+-0.066∗∗∗
+0.064
+-0.106
+0.005
+-0.113∗∗
+
+0.023
+0.066
+0.023
+0.000
+0.038
+
+-0.147∗∗∗
+-0.039
+-0.148∗∗∗
+-0.238∗∗∗
+-0.371∗∗∗
+
+0.059
+0.006
+0.069
+0.110
+0.300
+
+-0.028
+-0.252∗∗∗
+-0.013
+-0.064
+-0.090
+
+0.005
+
+0.077
+0.009
+-0.013
+0.020
+-0.005
+
+0.023
+0.001
+0.004
+0.001
+0.000
+
+-0.125
+0.071
+0.006
+0.025
+
+* 10 percent, ** 5 percent, and *** 1 percent significance with Newey-West standard errors.
+
+Table 3: Results of univariate regressions in which exchange rate returns are regressed on
+the change in the surprise index (July 2003 - March 2016)
+
+dlog(F Xt ) = α + β ∗ d(St ) + εt
+Euro/$
+GBP/$
+CAD/$
+β
+R2
+β
+R2
+β
+R2
+US surprise index
+Foreign surprise index
+
+0.418∗∗∗
+-0.358∗∗∗
+
+0.032
+0.016
+
+0.303∗∗∗
+-0.424
+
+0.019
+0.005
+
+-0.061
+-0.830∗∗∗
+
+0.000
+0.048
+
+* 10 percent, ** 5 percent, and *** 1 percent significance with Newey-West standard errors.
+
+28
+
+JPY/$
+β
+R2
+0.482∗∗∗
+0.114
+
+0.037
+0.000
+
+Figure 1: Real Activity Indexes (factors) for the United States, Euro Area, United Kingdom,
+Canada, Japan, and aggregate of the five countries, as of March 31, 2016. The average
+value of each index is zero by construction. A value of zero is interpreted as average economic
+activity for that country, whereas progressively bigger (more negative) positive values indicate
+progressively better-than-average (worse-than-average) conditions.
+
+United States
+
+Euro Area
+
+0 = average economic activity
+
+0 = average economic activity
+
+4
+
+4
+
+2
+
+2
+
+3
+
+3
+
+1
+
+1
+
+2
+
+2
+
+0
+
+0
+
+1
+
+1
+
+−1
+
+−1
+
+0
+
+0
+−2
+
+−2
+
+−1
+
+−1
+
+−2
+
+−2
+
+−3
+
+−3
+
+−3
+
+−3
+
+−4
+
+−4
+
+−4
+
+−4
+
+−5
+
+−5
+
+−5
+
+−5
+
+−6
+
+1980
+
+1986
+
+1992
+
+1998
+
+2004
+
+2010
+
+2016
+
+−6
+1985
+
+1990
+
+1995
+
+United Kingdom
+
+2000
+
+2
+
+1
+
+1
+
+0
+
+0
+
+−1
+
+−1
+
+−2
+
+−2
+
+−3
+
+−3
+
+−4
+
+−4
+1992
+
+1998
+
+2004
+
+2015
+
+0 = average economic activity
+
+2
+
+1986
+
+2010
+
+Canada
+
+0 = average economic activity
+
+1980
+
+2005
+
+2010
+
+2
+
+2
+
+1
+
+1
+
+0
+
+0
+
+−1
+
+−1
+
+−2
+
+−2
+
+−3
+
+2016
+
+−3
+1980
+
+1986
+
+1992
+
+Japan
+
+1998
+
+2004
+
+2010
+
+2016
+
+Aggregate
+0 = average economic activity
+
+0 = average economic activity
+
+3
+
+3
+
+3
+
+3
+
+2
+
+2
+
+2
+
+2
+
+1
+
+1
+
+1
+
+1
+
+0
+
+0
+
+0
+
+0
+
+−1
+
+−1
+
+−1
+
+−1
+
+−2
+
+−2
+
+−2
+
+−2
+
+−3
+
+−3
+
+−3
+
+−3
+
+−4
+
+−4
+
+−4
+
+−4
+
+−5
+
+−5
+
+−5
+
+1980
+
+1986
+
+1992
+
+1998
+
+2004
+
+2010
+
+2016
+
+−5
+1980
+
+29
+
+1986
+
+1992
+
+1998
+
+2004
+
+2010
+
+2016
+
+Figure 2: Average cumulative weights for the United States, Euro Area, United Kingdom,
+Canada, and Japan over the first quarter of 2012.
+
+United States
+
+Euro Area
+0.7
+
+0.6
+
+0.6
+
+0.5
+
+0.5
+
+0.4
+
+0.4
+0.3
+0.3
+0.2
+
+0.2
+
+0.1
+
+0.1
+0.0
+Jan 01 Jan 18
+
+Feb 05 Feb 23 Mar 12 Mar 30
+
+0.0
+Jan 01 Jan 18
+
+United Kingdom
+
+Feb 05 Feb 23 Mar 12 Mar 30
+
+Canada
+0.5
+
+0.8
+0.7
+
+0.4
+
+0.6
+0.5
+
+0.3
+
+0.4
+0.2
+
+0.3
+0.2
+
+0.1
+
+0.1
+0.0
+Jan 01 Jan 18
+
+Feb 05 Feb 23 Mar 12 Mar 30
+
+0.0
+Jan 01 Jan 18
+
+Feb 05 Feb 23 Mar 12 Mar 30
+
+Japan
+0.40
+0.35
+0.30
+0.25
+0.20
+0.15
+0.10
+0.05
+0.00
+Jan 01 Jan 18
+
+Feb 05 Feb 23 Mar 12 Mar 30 ●
+
+30
+
+IP, Monthly GDP
+Employment, unemployment
+Surveys (ISM, PMI, IVEY, Tankan)
+Retail Sales
+GDP
+Personal Income
+
+Figure 3: Time series of weights for each indicator over the 6-month period October 2011March 2012, based on the information available as of March 31, 2012.
+
+United States
+
+Euro Area
+0.35
+
+0.35
+
+0.30
+
+0.30
+
+0.25
+
+0.25
+
+0.20
+
+0.20
+
+0.15
+
+0.15
+
+0.10
+
+0.10
+
+0.05
+
+0.05
+
+0.00
+Oct
+
+Nov
+
+Dec
+
+Jan
+
+2011
+
+Feb
+
+Mar
+
+0.00
+Oct
+
+2012
+
+Nov
+
+Dec
+
+Jan
+
+2011
+
+United Kingdom
+
+Feb
+
+Mar
+
+2012
+
+Canada
+0.20
+
+0.40
+0.35
+
+0.15
+
+0.30
+0.25
+
+0.10
+
+0.20
+0.15
+
+0.05
+
+0.10
+0.05
+
+0.00
+Oct
+
+Nov
+
+Dec
+
+Jan
+
+2011
+
+Feb
+
+Mar
+
+0.00
+Oct
+
+2012
+
+Nov
+
+Dec
+
+2011
+
+Jan
+
+Feb
+
+Mar
+
+2012
+
+Japan
+0.25
+
+0.20
+
+0.15
+
+0.10
+
+0.05
+
+0.00
+Oct
+
+Nov
+
+2011
+
+Dec
+
+Jan
+
+Feb
+
+2012
+
+Mar
+●
+
+31
+
+IP, Monthly GDP
+Employment, unemployment
+Surveys (ISM, PMI, IVEY, Tankan)
+Retail Sales
+GDP
+Personal Income
+
+Figure 4: The solid lines show the surprise indexes for the United States, Euro Area, United
+Kingdom, Canada, Japan, and the aggregate of the five countries, as of March 31, 2016. The
+dotted lines show the Citigroup Economic Surprise Indexes for the corresponding country
+(left axis). A positive (negative) reading of the surprise index suggests that economic releases
+have on balance been higher (lower) than consensus, meaning that agents were ex-post more
+pessimistic (optimistic) about the economy.
+United States
+200
+
+Euro Area
+3
+
+200
+
+2
+
+2
+100
+
+100
+
+1
+
+0
+
+0
+
+−100
+
+−1
+
+1
+0
+
+0
+−1
+
+−100
+−2
+−200
+
+−3 −200
+2003 2005 2007 2009 2011 2013 2015
+
+United Kingdom
+200
+
+−2
+2003 2005 2007 2009 2011 2013 2015
+
+Canada
+2
+
+200
+
+100
+
+1
+
+0
+
+0
+
+−100
+
+2
+
+100
+
+1
+
+0
+
+0
+
+−100
+
+−1
+
+−200
+
+−2
+
+−1
+
+−200
+
+−2 −300
+2003 2005 2007 2009 2011 2013 2015
+
+Japan
+100
+
+−3
+2003 2005 2007 2009 2011 2013 2015
+
+Aggregate
+1
+
+100
+
+0.4
+
+80
+0.2
+
+60
+50
+
+0.5
+
+40
+
+0.0
+
+20
+0
+
+0.0
+
+0
+
+−0.2
+
+−20
+
+−0.4
+
+−40
+−0.6
+
+−0.5 −60
+−80
+
+−50
+
+−0.8
+
+−100
+−100
+
+−1.0 −120
+2003 2005 2007 2009 2011 2013 2015
+
+−1.0
+2003 2005 2007 2009 2011 2013 2015
+
+32
+
+Figure 5: The solid lines show the uncertainty indexes for the United States, Euro Area, United
+Kingdom, Canada, Japan, and the aggregate of the five countries, as of March 31, 2016. The
+dotted and dashed lines show stock market implied and realized volatilities respectively (left
+axis).
+United States
+
+Euro Area
+
+100
+
+4
+
+90
+
+90
+
+3.5
+
+80
+
+80
+3.0
+70
+60
+
+2.5
+
+50
+
+2.0
+
+40
+
+1.5
+
+2.5
+
+2.0
+
+70
+60
+
+1.5
+
+50
+40
+
+30
+1.0
+20
+10
+0
+
+1.0
+
+30
+20
+
+0.5
+
+10
+
+0.0
+
+0
+
+2003 2005 2007 2009 2011 2013 2015
+
+0.5
+
+0.0
+2003 2005 2007 2009 2011 2013 2015
+
+United Kingdom
+90
+
+Canada
+2.5
+
+80
+
+70
+
+2
+
+60
+2.0
+
+70
+
+1.5
+
+50
+
+60
+1.5
+
+50
+
+40
+1.0
+
+40
+
+1.0
+
+30
+
+30
+20
+
+20
+
+0.5
+
+0.5
+10
+
+10
+0
+
+0.0
+
+0
+
+2003 2005 2007 2009 2011 2013 2015
+
+0.0
+2003 2005 2007 2009 2011 2013 2015
+
+Japan
+100
+
+Aggregate
+2.5
+
+90
+
+80
+70
+
+80
+
+1.8
+
+1.6
+
+2.0
+60
+
+70
+60
+
+1.5
+
+50
+
+1.4
+
+50
+40
+
+40
+
+1.0
+
+1.2
+
+30
+
+1.0
+
+30
+20
+20
+
+0.5
+
+0.8
+
+10
+
+10
+0
+
+0.0
+2003 2005 2007 2009 2011 2013 2015
+
+0
+
+0.6
+2003 2005 2007 2009 2011 2013 2015
+
+33
+
+Figure 6: The solid line represents the uncertainty index which is compared against other
+common proxies for uncertainty, namely Bakaert et al. (2013) stock market uncertainty, Baker
+et al. (2015) economic policy uncertainty index, Bachmann et al. (2013) dispersion measure
+and the VIX. All series are demeaned and standardized. The horizontal line represents the
+1.65 standard deviation limit.
+
+8
+VIX
+Uncertainty Index
+Bakaert et al
+Baker et al
+Bachmann et al
+
+6
+
+4
+
+2
+
+0
+
+-2
+
+-4
+2003
+
+2004
+
+2005
+
+2006
+
+2007
+
+2008
+
+34
+
+2009
+
+2010
+
+2011
+
+2012
+
+2013
+
+2014
+
+2015
+
+Figure 7: Employment response to a 1 standard deviation shock in the different uncertainty
+proxies, namely the uncertainty index, the Bakaert et al. (2013) stock market uncertainty,
+Baker et al. (2015) economic policy uncertainty index, Bachmann et al. (2013) dispersion
+measure and the VIX.
+
+.4
+
+VIX
+Baker et al EPU
+Bachmann et al
+Bakaert et al Uncertainty
+Uncertainty Index
+
+.2
+.0
+-.2
+-.4
+-.6
+-.8
+5
+
+10
+
+15
+
+20
+
+35
+
+25
+
+30
+
+35
+
+40
+
+45
+
+50
+
+55
+
+60
+
+Online Material – Appendix A: The Dynamic Factor Model
+I model the unobserved factor as a VAR process of order p:
+xt+1
+
+=
+
+ηt
+
+Λxt + η t ,
+
+(.1)
+
+∼ i.i.d.N (0, σ η ).
+
+(.2)
+
+The model includes both monthly and quarterly variables. The monthly
+variables ytM follow a single factor model representation of the type:
+ytM
+εM
+t
+
+= µM + Z M xt + εM
+t
+=
+
+M
+αεM
+t−1 + et
+
+(.3)
+(.4)
+
+where xt represents the underlying real activity factor, εt is a vector of idiosyncratic components, and Z M represent the factor loadings for the monthly
+variables. εt follows an AR(1) process, as shown in equation (.4), and eM
+t ∼
+i.i.d.N (0, ΣM
+e ).
+The quarterly variables ytQ follow a similar factor model representation:
+ytQ
+
+= µQ + Z Q xt + εQ
+t
+
+(.5)
+
+εQ
+t
+
+Q
+ρεQ
+t−1 + et
+
+(.6)
+
+=
+
+Q
+with eQ
+t ∼ i.i.d.N (0, Σe ). Quarterly variables in the model are GDPs for all
+
+countries and the Japanese Tankan survey. I follow Mariano and Murasawa
+(2003) in the way I incorporate quarterly GDP into the monthly factor model.
+I define YtQ = 100 log(GDP ), then
+(
+ytQ =
+
+Q
+YtQ − Yt−3
+
+NA
+
+if t = 3, 6, 9, 12
+otherwise,
+
+(.7)
+
+and using the Mariano and Murasawa (2003) approximation I get that for
+t = 3, 6, 9, 12
+Q
+M
+M
+M
+M
+M
+YtQ −Yt−3
+≈ (YtM +Yt−1
++Yt−2
+)−(Yt−3
++Yt−4
++Yt−5
+) = yt +2yt−1 +3yt−2 +2yt−3 +yt−4 .
+
+(.8)
+
+1
+
+Based on this I can link the quarterly variables to the monthly factor as
+ytQ
+
+=
+
+µQ + ZtQ xt + 2ZtQ xt−1 + 3ZtQ xt−2 + 2ZtQ xt−3 + ZtQ xt−4
+
+(.9)
+
+Q
+Q
+Q
+Q
++εQ
+t + 2εt−1 + 3εt−2 + 2εt−3 + εt−4
+
+A similar treatment can be applied to any other quarterly series in the dataset.1
+Stacking monthly and quarterly variables, this model can be easily cast in a
+state space representation:2
+
+yt
+
+= µ + Zαt
+
+αt
+
+= T αt−1 + ut ,
+
+(.10)
+ut ∼ i.i.d.N (0, Σ)
+
+(.11)
+
+where yt = (ytM , ytQ )0 , µ = (µM , µQ )0 and the state vector includes both the
+common factor and the idiosyncratic components:
+
+
+0
+Q Q
+Q
+Q
+Q
+αt = xt , xt−1 , xt−2 , xt−3 , xt−4 , εM
+,
+ε
+,
+ε
+,
+ε
+,
+ε
+,
+ε
+t
+t
+t−1 t−2 t−3 t−4
+
+(.12)
+
+We define the total number of indicators as nM Q . Of course, the model
+could be extended to a multiple factor model.
+
+Online Material – Appendix B: The State Space Representation
+We report below the details of the state space representation as specified by
+equations (.10) and (.11) when the only quarterly variable is GDP:
+1 The other quarterly series in the dataset is the Japanese Tankan survey. Because it is
+an index, I do not compute the log difference (growth rate) as for GDP. By defining YtQ =
+Q
+T ankannt and ytQ = YtQ −Yt−3
+= T ankannt −T ankannt−3 , the same argument goes through
+and equation (.8) holds exactly.
+2 Details about the state space representation can be found in appendix B.
+
+2
+
+
+
+"
+
+ytM
+
+#
+
+ytQ
+
+"
+=
+
+| {z }
+
+µM
+
+#
+
+"
++
+
+Q
+
+µ
+
+ZM
+Z
+
+0
+
+Q
+
+2Z
+
+0
+Q
+
+3Z
+
+0
+Q
+
+|
+
+yt
+
+2Z
+{z
+
+Q
+
+0
+
+InM
+
+Q
+
+0
+
+Z
+
+xt
+
+
+
+
+
+ xt−1 
+
+
+ xt−2 
+
+
+
+
+ xt−3 
+
+
+# xt−4 
+
+0 0 0 0 0  M 
+
+ εt 
+
+1 2 3 2 1  Q 
+} εt 
+
+ Q 
+ εt−1 
+ Q 
+
+ ε
+ t−2 
+ Q 
+ εt−3 
+εQ
+t−4
+| {z }
+
+Z
+
+αt
+
+
+
+
+
+
+
+Λ
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+ 
+
+ xt−1   1
+ 
+
+ xt−2   0
+ 
+
+ 
+
+ xt−3   0
+ 
+
+ xt−4   0
+ 
+
+ M  
+ εt  =  0
+ Q  
+ 
+ ε
+ t   0
+ Q  
+ εt−1   0
+ Q  
+ 
+ ε
+ t−2   0
+ Q  
+ εt−3   0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+1
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+1
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+1
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+diag(α1 , ..., αnM )
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+αQ
+
+0
+
+0
+
+0
+
+0
+
+0
+
+1
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+{z
+
+0
+
+xt
+
+εQ
+t−4
+
+0
+|
+
+0
+
+0
+
+0
+
+
+
+xt−1
+
+0
+
+ut
+
+T
+
+M
+
+0
+
+M
+
+M
+
+0
+
+Q
+
+Q
+
+0
+
+1
+n
+1
+n
+1
+n
+εM
+, eM
+, εQ
+and eQ
+t = εt , ..., εt
+t =
+t = εt , ..., εt
+t = et , ..., et
+ Q
+
+Q 0
+e1t , ..., ent
+. Because we are considering the case of only one quarterly vari
+ Q
+ Q
+ M
+M
+Q
+1
+able, εt = ε1t
+and eQ
+. Also Z M = Z 1 , ..., Z n
+and
+t = et
+
+3
+
+ηt
+
+
+
+
+
+ 
+0   xt−2   0 
+
+
+ 
+
+ 
+
+0 0 0 0 
+  xt−3   0 
+
+
+ 
+0 0 0 0   xt−4   0 
+
+
+ 
+
+ 
+
+0 0 0 0 
+  xt−5   0 
+ M   M 
+0 0 0 0   εt−1 + et 
+ Q   Q 
+
+ 
+
+0 0 0 0 
+  εt−1   et 
+
+ Q  
+0 0 0 0   εt−2   0 
+
+ Q  
+
+ 
+
+1 0 0 0 
+  εt−3   0 
+
+ Q  
+0 1 0 0   εt−4   0 
+0
+0 0 1 0
+εQ
+t−5
+| {z }
+}
+0
+
+M
+with n
+and nQ representing
+the
+
+ number of monthlyand quarterly
+ variables,
+M
+
+ 
+
+
+
+ση
+
+
+
+
+ .
+V ar(ut ) = Σ =  ..
+
+
+
+0
+
+
+
+···
+
+0
+
+ΣM
+e
+
+
+
+
+σ 1M
+
+ e
+.. 
+
+with ΣeM =  0
+. 
+
+
+0
+
+0
+
+0
+σQ
+e
+···
+
+0
+
+0
+
+
+
+..
+
+.
+
+0
+
+ 3
+.
+
+
+0
+
+σ enM
+
+o
+n
+Q
+M
+.
+The parameters to be estimated are θ = µM , µQ , Z M , Z Q , Λ, α1 , ..., αnM , αQ , σ η , σ M
+e1 , ..., σ enM , σ e
+
+3 We use the notation Σ to indicate a variance-covariance matrix and σ to indicate its
+elements.
+
+4
+
+5
+Level, percent
+Level
+Index
+
+Unemployment rate
+Retail Sales
+Tankann Survey
+
+Index
+Real GDP, level
+Index, level
+
+GDP
+IP
+
+Ivey PMI
+
+Japan
+
+Real GDP, level
+Index, level
+Level
+Level
+
+GDP
+IP (monthly GDP)
+Employment
+Retail Sales
+
+Canada
+
+Real GDP, level
+Index, level
+Level, percent
+Level
+Index
+
+GDP
+IP
+Unemployment rate
+Retail Sales
+PMI Manufacturing
+
+Level, percent
+Level
+Index
+
+Unemployment rate
+Retail Sales
+PMI Composite (Flash)
+
+level
+Real GDP, level
+Index, level
+
+Personal Income
+GDP
+IP
+
+Real GDP, level
+Index, level
+Level
+Level
+Index
+
+Description
+
+GDP
+IP
+Employment
+Retail Sales
+ISM Manufacturing
+
+Series Name
+
+United
+Kingdom
+
+Euro Area
+
+United
+States
+
+Country
+
+M
+M
+Q
+
+Q
+M
+
+M
+
+Q
+M
+M
+M
+
+Q
+M
+M
+M
+M
+
+M
+M
+M
+
+Q
+M
+
+M
+
+Q
+M
+M
+M
+M
+
+Frequency
+
+28
+27
+-4
+
+46
+28
+
+6
+
+61
+60
+7
+52
+
+24
+38
+15
+20
+2
+
+32
+41
+-9
+
+48
+46
+
+29
+
+29
+16
+5
+13
+2
+
+Publication
+Lag(days)
+
+log diff
+log diff
+diff
+
+log diff
+log diff
+
+diff
+
+log diff
+log diff
+log diff
+log diff
+
+log diff
+log diff
+log diff
+log diff
+diff
+
+log diff
+log diff
+diff
+
+log diff
+log diff
+
+log diff
+
+log diff
+log diff
+log diff
+log diff
+diff
+
+Transformation
+for factor
+
+MIC
+METI
+BoJ
+
+ESRI
+METI
+
+PMAC
+
+STCA
+STCA
+STCA
+STCA
+
+UK ONS
+UK ONS
+UK ONS
+UK ONS
+Markit
+
+EUROSTAT
+EUROSTAT
+Markit
+
+EUROSTAT
+EUROSTAT
+
+BEA
+
+BEA
+FRB
+BLS
+ISM
+ISM
+
+Source
+
+JNUE
+JNRETMOM
+JNTSMFG
+
+JGDPAGDP
+JNIPMOM
+
+IVEY
+
+CGE9ANN
+CAIPMOM
+CANLNETJ
+CARSCHNG
+
+UKGRABIQ
+UKIPIMOM
+UKUER
+UKRVAMOM
+PMITMUK
+
+UMRTEMU
+RSSAEMUM
+ECPMICOU
+
+EUGNEMUQ
+EUITEMUM
+
+PITLCHNG
+
+GDP CQOQ
+IP CHNG
+NFP TCH
+RSTAMOM
+NAPMPMI
+
+Bloomberg
+Mnemonic
+
+Table B1: Summary information of the real activity indicators used in the paper to construct the surprise and uncertainty indexes for the United
+States, Euro Area, United Kingdom, Canada, and Japan
+
+Table B2: Average cumulative weights for each indicator used to construct the surprise index.
+For comparability across countries, weights are standardized so that the sum of all weights in
+each country is equal to 1. The average is computed over the entire sample.
+
+GDP
+IP
+Employment/Unemployment
+Retail Sales
+PMI
+Personal Income
+
+United
+States
+
+Euro
+area
+
+United
+Kingdom
+
+Canada
+
+Japan
+
+0.03
+0.36
+0.26
+0.18
+0.06
+0.10
+
+0.07
+0.39
+0.26
+0.18
+0.10
+
+0.11
+0.46
+0.27
+0.11
+0.05
+
+0.00
+0.02
+0.91
+0.01
+0.04
+
+0.01
+0.53
+0.20
+0.14
+0.12
+
+Table B3: Correlation between the uncertainty measure and the implied and realized volatilities for each country.
+
+Correlation of Uncertainty vs:
+United
+States
+
+Euro
+area
+
+United
+Kingdom
+
+Canada
+
+Japan
+
+Implied Volatility
+
+0.52
+
+0.11
+
+0.35
+
+0.32
+
+-0.01
+
+Realized Volatility
+
+0.53
+
+0.11
+
+0.31
+
+0.33
+
+0.06
+
+Correlations are all significant except in the case of Japanese uncertainty vs. implied volatility.
+
+6
+
+Figure A1: +/- one standard error confidence interval for the real-activity uncertainty shock
+and the VIX
+
+.02
+
+.00
+
+-.02
+
+-.04
+
+-.06
+
+-.08
+5
+
+10
+
+15
+
+20
+
+25
+
+30
+
+35
+
+Uncertainty Index
+
+7
+
+40
+VIX
+
+45
+
+50
+
+55
+
+60
+
+

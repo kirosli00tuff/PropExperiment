@@ -1,0 +1,333 @@
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>We'll Be Right Back!</title><style>
+    :root{
+      --bg0: #07080c;
+      --bg1: #0b1020;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.10);
+      --stroke: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.72);
+
+      --accent: #ffd36a;
+      --accent2:#ff8a3d;
+      --good: #57f2c6;
+
+      --shadow: 0 24px 80px rgba(0,0,0,.55);
+      --radius: 18px;
+      --maxw: 980px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(255, 211, 106, 0.18), transparent 55%),
+        radial-gradient(900px 700px at 85% 20%, rgba(255, 138, 61, 0.14), transparent 52%),
+        radial-gradient(900px 700px at 55% 95%, rgba(87, 242, 198, 0.10), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
+      overflow-x:hidden;
+    }
+
+    .wrap{
+      min-height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px 18px;
+    }
+
+    .shell{
+      width:100%;
+      max-width:var(--maxw);
+      position:relative;
+    }
+
+    .glowline{
+      position:absolute;
+      inset:-80px -30px auto -30px;
+      height:240px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(255,211,106,.22),
+        rgba(255,138,61,.18),
+        rgba(87,242,198,.12),
+        transparent);
+      filter: blur(18px);
+      opacity:.65;
+      transform: rotate(-6deg);
+      animation: drift 10s ease-in-out infinite;
+      pointer-events:none;
+    }
+    @keyframes drift{
+      0%,100%{transform:translateY(0) rotate(-6deg)}
+      50%{transform:translateY(22px) rotate(-6deg)}
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card2), var(--card));
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:18px 22px;
+      border-bottom:1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.12);
+    }
+
+    .brand{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      min-width:0;
+    }
+
+    /* Logo box kept, but no "A" fallback inside */
+    .logo{
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: radial-gradient(circle at 30% 20%, rgba(255,211,106,.35), transparent 55%),
+                  radial-gradient(circle at 70% 70%, rgba(255,138,61,.28), transparent 55%),
+                  rgba(255,255,255,0.04);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+    .logo img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      padding:7px;
+      display:none;
+    }
+
+    .brandtext{
+      line-height:1.05;
+      min-width:0;
+    }
+    .brandtext strong{
+      display:block;
+      font-weight:800;
+      letter-spacing:0.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .brandtext span{
+      display:block;
+      font-size:12.5px;
+      color:var(--muted);
+      margin-top:4px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color:var(--muted);
+      font-size:13px;
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+    .dot{
+      width:9px;height:9px;border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(255,211,106,.12);
+    }
+
+    .content{ padding:34px 22px 22px; }
+
+    h1{
+      margin:0 0 10px;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing:-0.6px;
+    }
+
+    .lead{
+      margin:0 0 22px;
+      color:var(--muted);
+      font-size: clamp(15px, 1.35vw, 18px);
+      max-width:70ch;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap:18px;
+      margin-top:18px;
+    }
+    @media (max-width: 860px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .panel{
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.16);
+      border-radius:14px;
+      padding:18px;
+    }
+    .panel h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:0.9px;
+      text-transform:uppercase;
+      color: rgba(255,255,255,0.78);
+    }
+    .panel p{
+      margin:0;
+      color:var(--muted);
+      font-size:14.5px;
+      line-height:1.5;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color:var(--text);
+      padding:12px 14px;
+      border-radius:12px;
+      text-decoration:none;
+      font-weight:650;
+      font-size:14px;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(255,255,255,0.20);
+    }
+    .btn.primary{
+      border-color: rgba(255,211,106,0.35);
+      background: linear-gradient(180deg, rgba(255,211,106,0.18), rgba(255,255,255,0.06));
+    }
+    .btn.primary:hover{ border-color: rgba(255,211,106,0.55) }
+
+    .icon{ width:18px;height:18px; display:inline-block; }
+
+    .footer{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      padding:14px 22px 18px;
+      border-top:1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.55);
+      font-size:12.5px;
+    }
+
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      padding:2px 8px;
+      border-radius:8px;
+      color: rgba(255,255,255,0.70);
+    }
+  </style></head><body>
+  <div class="wrap">
+    <div class="shell">
+      <div class="glowline" aria-hidden="true"></div>
+
+      <main class="card" role="main"><header class="topbar"><div class="brand">
+            <div class="logo" aria-label="Apex logo">
+              <img id="logoImg" alt="Apex Trader Funding logo"></div>
+            <div class="brandtext">
+              <strong>Apex Trader Funding</strong>
+              <span>Infinite possibilities — site temporarily offline</span>
+            </div>
+          </div>
+
+          <div class="pill" title="Maintenance status">
+            <span class="dot" aria-hidden="true"></span>
+            Scheduled maintenance in progress
+          </div>
+        </header><section class="content"><h1>We'll Be Right Back!</h1>
+          <p class="lead">Our site is currently undergoing maintenance. We’re working hard to bring you a better experience. Thank you for your patience and understanding.</p>
+
+          <div class="actions">
+            <a class="btn primary" href="/" rel="noopener">
+              <svg class="icon" viewbox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><path d="M20 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              Try again
+            </a>
+
+            <a class="btn" href="https://support.apextraderfunding.com/hc/en-us" target="_blank" rel="noopener noreferrer">
+              <svg class="icon" viewbox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22a9 9 0 1 0-9-9" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><path d="M3 13v8h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              Visit Help Center
+            </a>
+
+            <a class="btn" href="mailto:support@apextraderfunding.com">
+              <svg class="icon" viewbox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path></svg>
+              Contact Support
+            </a>
+          </div>
+
+          <div class="grid" aria-label="Details grid">
+            <div class="panel">
+              <h2>What’s happening</h2>
+              <p>If all goes to plan, we’ll be back online in <strong>8 hours</strong> or less. 🚀</p>
+              <p style="margin-top:10px;">
+                If you’re in the middle of an important flow, please refresh after a few minutes.
+                We appreciate your patience.
+              </p>
+            </div>
+
+            <div class="panel">
+              <h2>Quick tips</h2>
+              <p>
+                • Keep this tab open and refresh with <span class="kbd">Ctrl</span> + <span class="kbd">R</span>.<br>
+                • If login is impacted, try again shortly.<br>
+                • For platform questions, the Help Center is always available.
+              </p>
+            </div>
+          </div>
+        </section><footer class="footer"><span>© <span id="year">2026</span> Apex Trader Funding Inc. All rights reserved.</span>
+          <span>Need help? Visit the Help Center.</span>
+        </footer></main></div>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Optional: Set a logo URL (CDN recommended) if you ever want the real logo displayed.
+    // const LOGO_URL = "https://YOUR-CDN/brand/apex-logo.svg";
+    const LOGO_URL = "";
+
+    const img = document.getElementById('logoImg');
+    if (LOGO_URL) {
+      img.src = LOGO_URL;
+      img.onload = () => { img.style.display = "block"; };
+      img.onerror = () => { img.style.display = "none"; };
+    }
+  </script><script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a44f1400db932c71',t:'MTc5MTA2MzM0Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; visibility: hidden;"></iframe><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"7a04d457fc1b4296acbaefe30e94c376","spa":2}' crossorigin="anonymous"></script></body></html>

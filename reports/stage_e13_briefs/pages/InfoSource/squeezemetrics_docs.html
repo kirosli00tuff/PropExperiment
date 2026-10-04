@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>sqzme | Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="/monitor/static/images/favicon.png">
+    <link rel="stylesheet" type="text/css" href="/monitor/static/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/monitor/static/css/pure/pure.css">
+    <link rel="stylesheet" type="text/css" href="/monitor/static/css/pure/grids-responsive.css">
+    <link rel="stylesheet" type="text/css" href="/monitor/static/css/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="/monitor/static/css/main.css?_t=2e73a196018a250ce32291a322bf7f02" media="screen">
+
+    <script type="text/javascript" src="/monitor/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/monitor/static/js/select2.min.js"></script>
+  </head>
+  <body>
+    <div class="sqzme-container">
+      <div class="sqzme-navigation pure-g" id="menu">
+        <style>
+.fa-rotate-45 {
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+</style>
+
+<div class="pure-u-1 pure-u-md-4-24">
+  <div class="pure-menu">
+    <a href="/monitor" class="pure-menu-heading custom-brand" style="padding:0.2em 1em 0.25em 1em;">
+      <i class="sqzme-yellow fa fa-lemon-o"></i>
+        <span style="font-size:1.2em;text-transform:none;">
+          <span style="color: #868e97;">sqz<span style="color: #e3e3e3;">me</span>
+        </span>
+    </a>
+    <a href="#" class="custom-toggle" id="toggle"><s class="bar"></s><s class="bar"></s></a>
+  </div>
+</div>
+<div class="pure-u-1 pure-u-xl-16-24">
+  <div class="pure-menu pure-menu-horizontal custom-can-transform">
+    <ul class="pure-menu-list">
+      <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/benefits">Benefits</a></li>
+      <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/plans">Plans</a></li>
+      <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/docs">Documentation</a></li>
+    </ul>
+  </div>
+</div>
+<div class="pure-u-1 pure-u-md-4-24">
+  <div class="pure-menu pure-menu-horizontal custom-menu-3 custom-can-transform">
+    <ul class="pure-menu-list">
+      <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/signup">Signup</a></li>
+      <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/login">Login</a></li>
+    </ul>
+  </div>
+</div>
+
+      </div>
+      <div class="sqzme-content">
+        
+<style>
+h2 h3 h4 {
+  margin-top: 0; /* anchors need space */
+}
+h4.indent  {
+  margin-left:2em; /* indent */
+}
+h2 {
+  font-variant: small-caps;
+  margin: 0;
+}
+
+li {
+  margin: 10px 0;
+}
+
+.math-svg{
+  width:100%;      /* scales to the width of the pill-card */
+  height:auto;
+  display:block;   /* removes the inline gap below images */
+}
+
+/* Container */
+.toggle-box{
+  display:inline-block;               /* width = just the content */
+  background:#f8f8fb;
+  border:1px solid #ddd;
+  border-radius:1rem;
+  padding:.75rem 1rem .5rem;          /* bottom less to hug button */
+  font-size:1rem;                     /* inherit nicely inside <p> */
+}
+/* Views */
+.view{display:none; margin:0;}
+.view.active{display:block;}
+
+/* Code styling */
+pre{margin:0; font:0.9rem/1.3rem "SFMono-Regular",Consolas,monospace;}
+code{white-space:pre;}
+
+/* Button styling */
+.togglebutton{
+  display:block;
+  margin:.5rem auto 0;
+  background:#e9ecff;
+  border:none;
+  border-radius:.75rem;
+  padding:.25rem .75rem;
+  cursor:pointer;
+  font-size:.9rem;
+}
+.togglebutton:hover{background:#d7dcff;}
+</style>
+
+<div class="sqzme-faq-wrapper">
+<h2 style="margin:1em 0 0.25em 0.25em;">Documentation</h2>
+<hr style="margin-top:0em;">
+<div class="pure-g">
+
+<div class="pure-u-1">
+  <ol type="I">
+    <li><a href="#axes" class="docs">The Four Axes</a></li>
+      <ol type="a">
+        <li><a href="#axes1" class="docs">P (price-trend)</a></li>
+        <li><a href="#axes2" class="docs">V (volatility-trend)</a></li>
+        <li><a href="#axes3" class="docs">G (gamma-ratio)</a></li>
+        <li><a href="#axes4" class="docs">D (dark-ratio)</a></li>
+      </ol>
+    <li><a href="#charts" class="docs">The Chart</a></li>
+    <li><a href="#sheets" class="docs">The Sheets (and the API)</a></li>
+    <li><a href="#research" class="docs">The Ideas Page</a></li>
+  </ol>
+</div>
+
+<div class="pure-u-1">
+
+  <h2 id="axes" class="anchor">I. The Four Axes</h2>
+  <p>There are four indicators that work very nicely together&#8212;<em>(a) price-trend, (b) volatility-trend, (c) gamma-ratio,</em> and <em>(d) dark-ratio</em>. Let's describe each as clearly as possible.</p>
+
+  <h4 id="axes1" class="anchor"><em>P</em> (price-trend)</h4>
+
+<p>
+<img class="pure-img" src="/monitor/static/images/P.png" />
+We need a de-trended variable here to show us whether price has been rising or falling recently. Are we trending up or down, and by how much?
+</p>
+<p>
+Importantly, we want it to be volatility-adjusted, so that a small absolute upside or downside move in conditions of low realized volatility registers the same as a large upside or downside move in high realized volatility. Here's how we do that.
+</p>
+
+<p>
+  <div class="toggle-box">
+
+    <!-- Handwritten math, inline SVG -->
+    <span class="math-view view active">
+      <img src="/monitor/static/images/Pmath.svg"
+       alt="Hand-written derivation of the price indicator"
+       class="math-svg">
+    </span>
+
+    <!-- Python version -->
+    <pre class="code-view view"><code>
+
+#!/usr/bin/python3
+
+import numpy as np
+
+def period_change(a, n=1):
+    chg = ((a - np.roll(a, n)) / np.roll(a, n))
+    chg[:n] = np.nan
+    return chg
+
+ccr = period_change(closes, 1)		# Day-to-day % changes, 0th = nan
+ccv = np.abs(ccr)			# Same-period absolute-ized (volatility)
+
+def moving_average(a, n=21):
+    ret = np.cumsum(a, dtype=float)
+    ret[n:] = ret[n:] - ret[:-n]
+    ret[:n] = np.nan
+    return ret / n
+
+ma   = moving_average(ccr, 21)		# 1-month moving average of % changes
+mad  = moving_average(ccv, 21)		# 1-month moving average of abs(%)
+
+P = ma / mad				# "price-trend" indicator
+
+    </code></pre>
+
+    <!-- Toggle control -->
+    <button aria-controls="math-view code-view" class="togglebutton">
+      Show code
+    </button>
+  </div> <!--toggle-box-->
+</p>
+
+<p>
+The result is an indicator that oscillates primarily between +1 and –1, where +1 suggests that nearly every daily move in the past month was up (–1 indicates down). Since we're normalizing by volatility, this indicator is comparable between time periods as well as between assets.
+</p>
+
+
+  <h4 id="axes2" class="anchor"><em>V</em> (volatility-trend)</h4>
+
+<p>
+<img class="pure-img" src="/monitor/static/images/V.png" />
+We need another de-trended variable here to show us whether realized volatility has been rising or falling recently. Are we trending up or down, and by how much?
+</p>
+<p>
+</p>
+
+<p>
+  <div class="toggle-box">
+
+    <!-- Handwritten math, inline SVG -->
+    <span class="math-view view active">
+      <img src="/monitor/static/images/Vmath.svg"
+       alt="Hand-written derivation of the volatility indicator"
+       class="math-svg">
+    </span>
+
+    <!-- Python version -->
+    <pre class="code-view view"><code>
+
+#!/usr/bin/python3
+
+import numpy as np
+
+def period_change(a, n=1):
+    chg = ((a - np.roll(a, n)) / np.roll(a, n))
+    chg[:n] = np.nan
+    return chg
+
+ccr = period_change(closes, 1)		# Day-to-day % changes, 0th = nan
+ccv = np.abs(ccr)			# Same-period absolute-ized (volatility)
+
+def moving_average(a, n=21):
+    ret = np.cumsum(a, dtype=float)
+    ret[n:] = ret[n:] - ret[:-n]
+    ret[:n] = np.nan
+    return ret / n
+
+ma    = moving_average(ccr, 21)		# 1-month moving average of % changes
+mad   = moving_average(ccv, 21)		# 1-month moving average of abs(%)
+madMA = moving_average(mad, 21)		# 1-month MA of 1-month MA of abs(%)
+
+V = mad - madMAD			# "volatility-trend" indicator
+
+    </code></pre>
+
+    <!-- Toggle control -->
+    <button aria-controls="math-view code-view" class="togglebutton">
+      Show code
+    </button>
+  </div> <!--toggle-box-->
+</p>
+
+<p>
+The result is an indicator that oscillates primarily between +1 and –1, where the units are exactly the same (1-month average daily moves) as with the P indicator.
+</p>
+<p>
+When V is positive, realized volatility denominated in average daily moves is trending up; and when V is negative, realized volatility denominated in average daily moves is trending down.
+</p>
+
+
+  <h4 id="axes3" class="anchor"><em>G</em> (gamma-ratio)</h4>
+
+<p>
+<img class="pure-img" src="/monitor/static/images/G.png" />
+We want to know where there's more call gamma or put gamma, because we want to know whether convexity is leaning toward upside or downside structures. Are we call-driven or put-driven?
+<p>
+Specifically, we want a constant-volatility BSM-delta–derived number, since we want to use a percent gamma (Pgamma), and we don't want to factor in skew or ignore lower-liquidity options.
+</p>
+
+<p>
+  <div class="toggle-box">
+
+    <!-- Handwritten math, inline SVG -->
+    <span class="math-view view active">
+      <img src="/monitor/static/images/Gmath.svg"
+       alt="Hand-written derivation of the volatility indicator"
+       class="math-svg">
+    </span>
+
+    <!-- Python version -->
+    <pre class="code-view view"><code>
+
+#!/usr/bin/python3
+
+import numpy as np
+from scipy.stats import norm
+
+def delta(cp_flag, S, K, T, r, v):
+    d1 = (np.log(S/K)+(r+v*v/2.)*T)/(v*np.sqrt(T))
+    if cp_flag == 'c' or cp_flag == 'C':
+        return norm.cdf(d1)
+    else:
+        return -norm.cdf(-d1)
+
+call_gamma = 0
+for c in calls:
+    delta    = delta('C', c['S'], c['K'], c['T'], 0.00, 0.20)
+    up_delta = delta('C', c['S']*1.01, c['K'], c['T'], 0.00, 0.20)
+    Pgamma = up_delta - delta
+    call_gamma += Pgamma * c['OI']	# multiply by open interest
+
+put_gamma = 0
+for p in puts:
+    delta    = delta('P', p['S'], p['K'], p['T'], 0.00, 0.20)
+    down_delta = delta('P', p['S']*0.99, p['K'], p['T'], 0.00, 0.20)
+    Pgamma = down_delta - delta
+    put_gamma += abs(Pgamma * p['OI'])	# ensure absolute value of put gamma
+
+total_gamma = call_gamma + put_gamma
+
+G = call_gamma / total_gamma		# "gamma-ratio"
+
+    </code></pre>
+
+    <!-- Toggle control -->
+    <button aria-controls="math-view code-view" class="togglebutton">
+      Show code
+    </button>
+  </div> <!--toggle-box-->
+</p>
+
+<p>
+The result is an indicator that moves between 0 and 1, telling us the proportion of call gamma to total gamma. A G of 0.5 means call and put gamma are balanced. A G of 1.0 means it's all calls (0.0 all puts).
+</p>
+
+
+  <h4 id="axes4" class="anchor"><em>D</em> (dark-ratio)</h4>
+
+<p>
+<img class="pure-img" src="/monitor/static/images/D.png" />
+We want to know whether there is more short-selling or long-selling in daily OTC (dark) volume. Generally, short sales are indicative of non-aggressive buying behavior.
+</p>
+
+<p>
+  <div class="toggle-box">
+
+    <!-- Handwritten math, inline SVG -->
+    <span class="math-view view active">
+      <img src="/monitor/static/images/Dmath.svg"
+       alt="Hand-written derivation of the volatility indicator"
+       class="math-svg">
+    </span>
+
+    <!-- Python version -->
+    <pre class="code-view view"><code>
+
+#!/usr/bin/python3
+
+import numpy as np
+
+q_short = np.array(load_column("finra_short.csv"))
+q_total = np.array(load_column("finra_total.csv"))
+
+dark_ratio = q_short / q_total
+
+def moving_average(a, n=5):
+    ret = np.cumsum(a, dtype=float)
+    ret[n:] = ret[n:] - ret[:-n]
+    ret[:n] = np.nan
+    return ret / n
+
+dark_5dma = moving_average(dark_ratio, 5)	# Nice and smooth, but not too smooth
+
+    </code></pre>
+
+    <!-- Toggle control -->
+    <button aria-controls="math-view code-view" class="togglebutton">
+      Show code
+    </button>
+  </div> <!--toggle-box-->
+</p>
+
+<p>
+The result is an indicator that moves between 0 and 1, telling us the proportion of short sales in all dark venues over the past week.
+</p>
+
+
+  <h2 id="charts" class="anchor">II. The Chart</h2>
+  <img class="pure-img" src="/monitor/static/images/docs_thechart.png" />
+<p>
+Well, you can just click the "Nearest" button, which runs a k-nearest-neighbor (k-NN) algorithm on each of the four axes to find out which data, historically, is nearest to today's data, and iteratively updates the forecast in the top-right. This is the lazy way.
+</p>
+<p>
+Or you can take it a step further and try to figure out for yourself what data seems to work and why. To do this, you can click on the "Best" ("Worst") button to see what combination of data has given us the best (worst) performance in the past. Are we currently in a "best" / "worst" scenario? What would it take to get there?
+</p>
+<p>
+Or you can click-and-drag on the scatterplots yourself, and see how returns change as you home in on a particular combination of data. Add and remove yourself. Take your own slice. What are the <em>characteristics</em> of a given stock? Yes, falling price-trend (P) is bullish for Verizon, but 1-month forward returns <em>double</em> when we combine low P with low G, suggesting that put options play a big role in generating rallies.
+</p>
+<p>
+Whichever way you want to approach it, there are a few things to keep in mind:
+<ol>
+  <li>Use the context plot at the top of the page to test whether patterns have changed over time, and how. You'll notice that higher prices, listed options, and "meme" status can dramatically change the way a stock trades, and which indicators are more predictive. Try looking at discrete timeframes!</li>
+  <li>By default, the scatterplots are set to look at 21-day (1-month) returns. You can switch that to 5-day (1-week) by clicking on the 5-day dot in the forecast pane.</li>
+  <li>You can change the ticker you're looking at by clicking on the ticker to the left of the stock chart. You can <em>also</em> change the indicators you're looking at by clicking on the letter to the left of the indicator charts—a little drop-down will show up. Right now, we also have IV (1-month ATM straddle) as an option that you can look at.</li>
+</ol>
+If there's something not intuitive about any of this, just ask!
+</p>
+
+
+  <h2 id="sheets" class="anchor">III. The Sheets (and the API)</h2>
+  <p>Every security in our database can be exported as a spreadsheet document (CSV). Here are the columns in those spreadsheets, and some numerical methods for extending the data:</p>
+  <ul>
+
+<li>
+<strong>DATE</strong>:
+<br>
+YYYY-MM-DD
+</li>
+
+<li>
+<strong>P</strong>:
+<br>
+The raw 'price-trend' indicator.
+</li>
+
+<li>
+<strong>P_NORM</strong>:
+<br>
+The normalized 'price-trend' indicator.
+</li>
+
+<li>
+<strong>V</strong>:
+<br>
+The raw 'volatility-trend' indicator.
+</li>
+
+<li>
+<strong>V_NORM</strong>:
+<br>
+The normalized 'volatility-trend' indicator.
+</li>
+
+<li>
+<strong>G</strong>:
+<br>
+The raw 'gamma-ratio' indicator.
+</li>
+
+<li>
+<strong>G_NORM</strong>:
+<br>
+The normalized 'gamma-ratio' indicator.
+</li>
+
+<li>
+<strong>D</strong>:
+<br>
+The raw 'dark-ratio' indicator.
+</li>
+
+<li>
+<strong>D_NORM</strong>:
+<br>
+The normalized 'dark-ratio' indicator.
+</li>
+
+<li>
+<strong>IV</strong>:
+<br>
+The raw implied volatility, derived from interpolated ATM straddle prices and expressed as an annualized standard deviation (like you're used to).
+</li>
+
+<li>
+<strong>IV_NORM</strong>:
+<br>
+The normalized implied volatility indicator.
+</li>
+
+<li>
+<strong>P_NN</strong>:
+<br>
+The historical nearest-neighboring 'price-trend' (P) indicators from the 1/6th (12.5%) of data nearest to today's data (in terms of P, V, G, D, and IV). This is a normalized 1-month price forecast. 
+</li>
+
+<li>
+<strong>OPEN, HIGH, LOW, CLOSE</strong>:
+<br>
+You know how it works.
+</li>
+
+<li>
+<strong>VOLUME</strong>:
+<br>
+Total (lit and dark tapes) daily volume.
+</li>
+
+<li>
+<strong>ADM21</strong>:
+<br>
+The 21-day (1-month) average daily move (%). A measure of realized volatility.
+</li>
+
+<li>
+<strong>R_21F</strong>:
+<br>
+The 21-day (1-month) forward return (%).
+</li>
+
+<li>
+<strong>P_21F</strong>:
+<br>
+The 21-day (1-month) forward normalized price-trend (P).
+</li>
+
+  <p>All normalization uses a hyperbolic tangent (tanh) function to map a 1-year rolling window of data to the domain [–1, +1].</p>
+  <p>Learn how to navigate the API <a href="/monitor/p/api/" class="xlink", target="_blank">here</a>.</p>
+
+  <h2 id="research" class="anchor">IV. The Ideas Page</h2>
+  <p>All securities are presented and automatically sorted by their "P_NN" (the historical price-trends most closely associated with the current data). You're able to change the sorting method, select only bullish (bearish) names, select only rising (falling) names, remove ETFs, or remove short-term-rates-adjacent tickers.</p>
+  <p>If you have the need to add some complexity to this process, or to apply your own sorting and weighting schemes, there's an <a href="/monitor/p/api" class="xlink" target="_blank">API call</a> (/latest) that returns all of the most recent day's data, in JSON or CSV format.</p>
+
+</div>  <!--pure-u-1-->
+
+</div>  <!--wrapper-->
+
+
+<script>
+document.querySelectorAll('.togglebutton').forEach(btn =>{
+  const box  = btn.closest('.toggle-box');
+  const math = box.querySelector('.math-view');
+  const code = box.querySelector('.code-view');
+
+  btn.addEventListener('click', () =>{
+    const showMath = math.classList.toggle('active');
+    code.classList.toggle('active');
+    btn.textContent = showMath ? 'Show code' : 'Show math';
+  });
+});
+</script>
+
+      </div>
+    </div>
+    <div class="sqzme-footer">
+      <div class="sqzme-footer-links">
+
+  <div class="sqzme-footer-left">
+    <div class="pure-menu">
+      <ul class="pure-menu-list">
+        <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/docs">Documentation</a></li>
+        <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/p/api/">API</a></li>
+        <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/p/chart">Chart</a></li>
+        <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/p/research">Research</a></li>
+        <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/benefits">Benefits</a></li>
+        <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/plans">Plans</a></li>
+
+        <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/signup">Signup</a></li>
+
+        <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/contact">Contact</a></li>
+        <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/terms">Terms</a></li>
+
+        <li class="pure-menu-item"><a class="pure-menu-link" href="/monitor/login">Login</a></li>
+
+      </ul>
+    </div> <!--pure-menu-->
+  </div> <!--footer-menu-->
+
+  <div class="sqzme-footer-right">
+    <div class="sqzme-footer-logo">
+      <!-- <a href='/'>
+        <img src="/monitor/static/images/lemonCheeky.svg" height="90px"/>
+      </a> -->
+    🍋
+    <div class="sqzme-footer-copyright">
+      <small>A product of SqueezeMetrics.<br>Copyright &copy; 2015&#8211;2026<br>Prior Analytics LLC</small>
+    </div>
+  </div>
+
+</div> <!--footer-links-->
+
+    </div>
+    <div>
+  </body>
+    <script type="text/javascript" src="/monitor/static/js/main.js"></script>
+    <script>
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-72503531-1', 'auto');
+ga('send', 'pageview');
+
+    </script>
+</html>

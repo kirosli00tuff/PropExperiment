@@ -128,6 +128,13 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     reports/E.12_RETURN.md): v2 frozen (9466f2e) with V23; harness v8 and, by the user's decision on 24 held
     closure bars, v9; all 28 exposures' training windows bought for $133.72; Gate 0 FAIL (best NG h60, 3.25x
     cost, t 2.51, not Holm-rejected), verified by Fable; v2 stops; N = 471.
+  - Stage E.13 — what is left to search: research and scoping, no market data, no purchase. Run 2026-10-03/04 (see
+    reports/E.13_RETURN.md): venues for multi-day automated futures (only The Trading Pit Classic and, for a
+    personal account, IBKR Canada permit it outright; Phidias human-in-the-loop), trend and carry after
+    publication (SG Trend 0.24 net since 2010; carry gone since 2013; fails prop drawdowns), new information
+    sources (dealer gamma, GFS revisions), a backward NG replication draft ($59 of data, 12% odds); ranking C1 NG
+    replication > C2 GEX late-session momentum > C3 trend+carry personal; two pre-registration drafts, nothing
+    frozen; Fable review BLOCK then R-01 closed; N stays 471.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

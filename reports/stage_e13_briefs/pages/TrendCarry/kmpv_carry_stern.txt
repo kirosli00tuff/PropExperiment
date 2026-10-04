@@ -1,0 +1,2726 @@
+                                            Carry∗
+
+                    Ralph S.J. Koijen†                 Tobias J. Moskowitz§
+
+                  Lasse Heje Pedersen‡                     Evert B. Vrugt¶
+
+
+                                Current Version: July 2012
+                               Preliminary and Incomplete
+
+
+                                               Abstract
+           A security’s expected return can be decomposed into its “carry” and its expected
+       price appreciation, where carry can be measured in advance without an asset pricing
+       model. We find that carry predicts returns both in the cross section and time series
+       for a variety of different asset classes that include global equities, bonds, currencies,
+       and commodities, as well as within US Treasuries, credit, and equity index options.
+       This predictability underlies the strong returns to “carry trades” that go long high-
+       carry and short low-carry securities, which have been applied almost exclusively
+       to currencies. Decomposing carry returns into static and dynamic components, we
+       investigate the nature of this predictability across asset classes. We identify “carry
+       downturns”—when carry strategies across all asset classes do poorly—and show
+       that these episodes coincide with global recessions and liquidity crises.
+
+
+Keywords: Carry Trade, Stocks, Bonds, Currencies, Commodities, Corporate Bonds, Options,
+Global Recessions
+
+
+   ∗
+     We are grateful for helpful comments from Jules van Binsbergen, John Cochrane, Pierre Collin-
+Dufresne (discussant), Kent Daniel (discussant), John Heaton, Lubos Pastor, Stijn Van Nieuwerburgh,
+Moto Yogo, as well as from seminar participants at the 2012 American Finance Association Conference
+meetings (Chicago), Chicago Booth, the Chicago Mercantile Exchange, the University of Exeter, NOVA
+(Portugal), State Street Global Markets, and the fifth annual Paul Woolley Centre conference. We thank
+Rui Mano and Adrien Verdelhan for their help with the currency data, and we thank Rui Cui, Laszlo
+Jakab, and Minsoo Kim for excellent research assistance.
+   †
+     University of Chicago, Booth School of Business, and NBER.
+http://faculty.chicagobooth.edu/ralph.koijen/.
+   ‡
+     NYU Stern School of Business, Copenhagen Business School, CEPR, NBER, and AQR Capital
+Management. http://people.stern.nyu.edu/lpederse/.
+   §
+     University of Chicago, Booth School of Business, and NBER.
+http://faculty.chicagobooth.edu/tobias.moskowitz/.
+   ¶
+     VU University Amsterdam, PGO-IM, The Netherlands. http://www.EvertVrugt.com.
+    We decompose a security’s expected return into its “carry”, which is observable ex
+ante and model-free, and its expected price appreciation. We define an asset’s “carry” as
+its expected return assuming its price does not change. For any asset,
+
+               return = carry + E(price appreciation) +unexpected price shock,             (1)
+                        |            {z             }
+                               expected return
+
+where the expected return is the carry on the asset plus its expected price appreciation.
+Using this concept of carry, we unify and extend the set of predictors of returns across a
+variety of assets that include global equities, bonds, commodities, and currencies. While
+the concept of “carry” has been applied almost exclusively to currencies, where it simply
+represents the interest rate differential between two countries, equation (1) shows that
+carry is a more general phenomenon that can be applied to any asset.
+    We decompose a security’s return into its carry plus its price appreciation across a
+broad set of assets. Carry is a model-free measure of a component of expected returns that
+can be observed directly, whereas the part of the expected return coming from expected
+price appreciation must be estimated from a model. Carry is therefore a measurable
+characteristic of a security that we examine in relation to its expected return for a variety
+of different assets.
+    This simple measure of a component of expected returns provides a unifying framework
+for return predictability across asset classes. First, we find that carry is closely and
+positively related to total expected returns in each of the major asset classes we study.
+Since carry varies over time and across assets, this result implies that expected returns
+vary through time and can be predicted by carry. Second, carry provides a unified
+framework for understanding well-known predictors of returns across global asset classes.
+For instance, we show how carry in bonds is very much related to the slope of the yield
+curve used in the bond literature, how carry in commodities is related to the convenience
+yield, and how carry is a forward looking measure related to dividend yields in equities. 1
+However, carry is also somewhat different than these measures, and we find empirically
+that the predictability of carry is sometimes stronger than that of these traditional
+predictors. Hence, carry not only provides a unified conceptual framework for thinking
+about these traditional predictors, but may also improve upon return predictability within
+each asset class. Finally, because carry is a general concept, we also apply it to other asset
+markets that have not been extensively studied for return predictability. We examine the
+cross-section of US Treasuries across maturities, US credit portfolios, and US equity index
+  1
+      See Cochrane (2011) and Ilmanen (2011) and references therein.
+
+
+
+                                                   2
+options across moneyness and find equally strong predictability from our carry measure
+in each of these markets, highlighting the generalizability and predictability of carry.
+    While we find consistent and ubiquitous evidence that carry predicts total expected
+returns, economic theory is ambiguous about the nature of the relation between carry
+and total expected returns. For example, an asset’s carry can change even when expected
+returns are constant, where carry is being offset by an equal but opposite-signed expected
+price appreciation. Carry could also be positively related to expected price appreciation,
+amplifying its relation to expected returns. Or, carry could be negatively related to total
+expected returns, depending upon the strength and nature of its relation with expected
+price appreciation/depreciation. We show empirically that carry is closely and positively
+related to expected returns in each of the major asset classes we study, and since carry
+varies over time, this result implies that expected returns vary through time and are
+predicted by carry.
+    We start by analyzing “carry trades” in each asset class, which go long high carry
+securities and short low ones. The sample periods we consider differ across asset classes—
+the longest (shortest) for commodities (government bonds)—but in all cases the sample
+contains more than 20 years of data. We find that a carry trade within each asset class
+earns an annualized Sharpe ratio between 0.6 to 0.9, and a portfolio of carry strategies
+across all asset classes earns a Sharpe ratio of 1.5. This evidence suggests a strong cross-
+sectional link between carry and expected returns, as well as diversification benefits from
+applying carry more broadly across different asset classes. The enormous Sharpe ratio
+from the portfolio of carry strategies across all asset classes presents a significantly greater
+challenge for asset pricing models that already struggle to explain the equity premium and
+many stock market strategies such as value and momentum. This Sharpe ratio represents
+an even higher hurdle for asset pricing models to meet (see Hansen and Jagannathan
+(1997)).
+    In addition, by studying multiple asset classes at the same time, we provide some
+out-of-sample evidence of existing theories, as well as some guidance for new theories to
+be developed on what might be driving carry returns. The common feature we highlight
+is that all carry strategies produce high Sharpe ratios. However, the crash risk commonly
+documented for currency carry trades (Brunnermeier, Nagel, and Pedersen (2008)) is
+largely absent in other asset classes. Moreover, a diversified carry strategy across all asset
+classes does not exhibit negative skewness. Hence, theories of carry return premia being
+compensation for crash risk do not appear to hold in other asset classes or generally in a
+diversified carry strategy.
+    The question remains whether other risks inherent in carry strategies extend across
+
+
+                                               3
+asset classes at the same time and whether the high average returns to carry strategies
+are compensation for those risks. We examine the extent to which the time-varying
+risk premia we find linked to carry are driven by macroeconomic risk (Lucas (1978),
+Campbell and Cochrane (1999), Bansal and Yaron (2004)), market liquidity risk (Pastor
+and Stambaugh (2003) and Acharya and Pedersen (2005)) or funding liquidity risk
+(Brunnermeier and Pedersen (2009), Gârleanu and Pedersen (2011)).
+    We decompose the returns to carry in each asset class into a passive and a dynamic
+component to better understand the return premia associated with carry. The passive
+component is due to being long (short) on average high (low) unconditional expected
+return securities and the dynamic component captures how well carry predicts future price
+appreciation. We find that the dynamic component contributes to most of the returns
+to the equity carry strategy, a little more than half of the returns to the bond carry
+strategy, and about half of the returns to the currency and commodity carry strategies.
+The substantial dynamic component in every asset class indicates that carry fluctuates
+over time and across assets, and that these fluctuations are associated with variation in
+expected returns.
+    We then consider a series of predictive regressions of future returns of each asset on
+its carry, and also find strong evidence of time-varying risk premia, where carry predicts
+future returns with a positive coefficient in every asset class. However, the magnitude
+of the predictive coefficient differs across asset classes and identifies whether carry is
+positively or negatively related to future price appreciation. For equities, carry positively
+predicts future price appreciation and thus enhances expected returns beyond the carry
+itself. The same is true for bonds, but to a lesser extent. For currencies and commodities,
+carry has no additional predictability for future price appreciation. These results are
+consistent with those from the static/dynamic decomposition, where asset classes with
+the greatest return predictability from carry derive the bulk of their carry trade profits
+from dynamic trading.
+    We then investigate how carry and the returns to carry vary with macroeconomic
+business cycle risk and liquidity risk, and whether the dynamic or static component of
+carry returns is more sensitive to these risks. Despite the very high Sharpe ratios of our
+carry strategies, we find that they are far from riskless and exhibit sizeable declines that
+occur simultaneously across asset classes, for extended periods of time. Examining the
+carry strategy’s downside returns across asset classes, we find they coincide with plausibly
+bad aggregate states of the global economy. For example, carry returns tend to be low
+during global recessions, and this feature appears to hold uniformly across markets.
+    Flipping the analysis around, we also identify the worst and best carry return episodes
+
+
+                                              4
+for the global carry strategy applied across all asset classes, which we term carry
+“downturns” and “expansions.” We find that the three biggest global carry downturns
+(September 1992 to December 1992, May 1997 to September 1998, and November 2007
+to January 2009) coincide with major global business cycle and macroeconomic events
+and are also characterized by lower levels of global liquidity. Reexamining each individual
+carry strategy within each asset class, we further find that individual carry strategies in
+each asset class separately do poorly during these times as well. Specifically, we find
+that during carry downturns, equity, currency (except Asia) and commodities markets do
+poorly, while fixed income markets do well. Carry strategies therefore appear risky since
+they are long equity, currency, and commodity markets that decline more during these
+episodes and are short the securities that decline less during these times. For fixed income,
+the opposite is true as fixed income does well overall during carry downturns. Hence, part
+of the return premium earned on average for going long carry may be compensation for
+this exposure that generates large losses during extreme times of global recessions and
+liquidity crunches.
+    Our work relates to the extensive literature on the currency carry trade and the
+associated failure of uncovered interest rate parity. 2 Recently, several theories have
+been put forth to explain the currency carry trade premium. Brunnermeier, Nagel, and
+Pedersen (2008) show that the currency carry trade is exposed to liquidity risk, which
+is enhanced by occasional crashes that could lead to slow price adjustments. Bacchetta
+and van Wincoop (2010) present a related explanation based on infrequent revisions of
+investor portfolio decisions. Lustig and Verdelhan (2007) suggest that the currency carry
+trade is exposed to consumption growth risk from the perspective of a U.S. investor and
+Farhi and Gabaix (2008) develop a theory of consumption crash risk (see also Lustig,
+Roussanov, and Verdelhan (2010)).
+    Our study offers a much broader concept of carry that not only captures the currency
+carry trades focused on in the literature, but also an array of assets from many different
+asset classes. We highlight the characteristics that are unique and common across these
+asset classes that may help identify explanations for the carry return premium. For
+example, the crashes that characterize currency carry trades and are prominent features
+of models seeking to explain currency carry returns, are unique to currencies and are not
+exhibited in the carry trades of other asset classes. While this may possibly be linked to
+currency carry trades also having the most significant funding liquidity risk exposure, it
+also indicates that this feature is not a robust explanation for carry strategies in general
+  2
+   This literature goes back at least to Meese and Rogoff (1983). Surveys are presented by Froot and
+Thaler (1990), Lewis (1995), and Engel (1996).
+
+
+
+                                                 5
+outside of currencies.
+    Our study also relates to the literature on return predictability that seems to be
+somewhat segmented across asset classes. In addition to the currency literature above,
+the literature on bonds has its own set of predictors, as do commodities, and equities. 3
+We show that many of these seemingly different and unrelated variables are in fact related
+and can be captured by our simple concept of carry. Moreover, using this unifying concept
+of carry, we also identify similar return patterns in markets not previously explored along
+this dimension: US Treasuries, US credit, and US equity index options. These additional
+asset classes are also shown to be linked to international equities, bonds, currencies, and
+commodities through carry. This unifying framework allows us to study carry jointly
+across markets to understand how carry returns behave simultaneously across markets
+and what features of carry are common across very different asset classes.
+    Our paper contributes to a growing literature on global asset pricing that analyzes
+mutiple markets jointly.        Asness, Moskowitz, and Pedersen (2012) study cross-
+sectional value and momentum strategies within and across individual equity markets,
+country equity indices, government bonds, currencies, and commodities simultaneously.
+Moskowitz, Ooi, and Pedersen (2012) also document time-series momentum in equity
+index, currency, commodity, and bond futures that is distinct from cross-sectional
+momentum. Fama and French (2011) study the relation between size, value, and
+momentum in global equity markets across four major regions (North America, Europe,
+Japan, and Asia Pacific). By jointly studying different markets simultaneously, these
+papers help identify and rule out various explanations for the existence of return premia
+globally across markets. Our joint approach to carry seeks to do the same, and offers
+a new set of related results in markets not previously studied that are all linked by the
+simple concept of carry.
+    The remainder of the paper is organized as follows. Section 1 defines carry and
+how it relates to expected returns and how we measure carry for each asset class.
+Section 2 describes the data and the returns of carry strategies globally across asset
+classes. Section 3 analyzes the predictability of carry for returns, including the dynamic
+   3
+    Studies focusing on international equity returns include Chan, Hamao, and Lakonishok (1991), Griffin
+(2002), Griffin, Ji, and Martin (2003), Hou, Karolyi, and Kho (2010), Rouwenhorst (1998), Fama and
+French (1998), and further references in Koijen and Van Nieuwerburgh (2011). Studies focusing on
+government bonds across countries include Ilmanen (1995) and Barr and Priestley (2004). Studies focusing
+on commodities returns include Fama and French (1987), Bailey and Chan (1993), Bessembinder (1992),
+Casassus and Collin-Dufresne (2005), Erb and Harvey (2006), Acharya, Lochstoer, and Ramadorai (2010),
+Gorton, Hayashi, and Rouwenhorst (2007), Tang and Xiong (2010), and Hong and Yogo (2010). All of
+these studies focus on a single asset class or market at a time and ignore how different asset classes or
+markets behave simultaneously.
+
+
+
+                                                   6
+and static components of a carry trade and the relation between carry and expected
+price appreciation. Section 4 investigates how carry relates to global business cycle and
+liquidity risk. Section 5 applies the concept of carry to asset classes not previously studied.
+Section 6 concludes.
+
+
+1     Understanding Carry: A Characteristic of Any Asset
+
+We decompose the return to any security into the security’s carry and its price
+appreciation. The carry return can be thought of as the return to the security assuming
+prices stay constant, and is therefore often easy to observe in advance. We detail below the
+decomposition of different securities’ returns into carry versus price appreciation across
+four diverse asset classes: currencies, equities, bonds, and commodities. Since we examine
+futures contracts across these various asset classes, it is instructive to consider the carry
+of a futures contract in general, which we can then apply across different asset classes.
+    Consider a futures contract that expires in period t + 1 with a current futures price
+Ft and spot price of the underlying security St . We first define the return of the futures.
+Assume an investor allocates Xt dollars today of capital to finance each futures contract
+(where Xt must be at least as large as the margin requirement). Next period, the value
+of the margin capital and the futures contract is equal to Xt (1 + rtf ) + Ft+1 − Ft , where rtf
+is the risk-free interest rate today that is earned on the margin capital. Hence, the return
+per allocated capital over one period is
+
+                                  Xt (1 + rtf ) + Ft+1 − Ft − Xt   Ft+1 − Ft
+                 total return
+                rt+1          =                                  =           + rtf           (2)
+                                                 Xt                   Xt
+
+Therefore, the return in excess of the risk-free rate is
+
+                                                   Ft+1 − Ft
+                                          rt+1 =             .                               (3)
+                                                      Xt
+
+    The carry Ct of the futures contract is then computed as the futures excess return under
+the assumption of a constant spot price from t to t + 1. (The carry can alternatively be
+defined as the total return under this assumption.) Given that the futures price expires at
+the future spot price (Ft+1 = St+1 ) and the assumption of constant spot prices (St+1 = St ),
+we have that Ft+1 = St . Therefore, the carry is
+
+                                                   St − F t
+                                            Ct =            .                                (4)
+                                                     Xt
+
+
+
+                                                    7
+For most of our analysis, we compute returns and carry based on a “fully-collateralized”
+position, meaning that the amount of capital allocated to the position is equal to the
+futures price, Xt = Ft .4
+   The carry of a fully-collateralized position is naturally
+
+                                                   St − F t
+                                            Ct =            .                                       (5)
+                                                      Ft
+
+We can explicitly decompose the (fully-collateralized) return into its expected return plus
+an unexpected price shock to gain insight into how carry relates to expected returns.
+Using the definition of carry, we can decompose the excess return on the futures as
+                                                       
+                                                  ΔSt+1
+                                 rt+1 = Ct + Et           +ut+1 ,                                   (6)
+                                                   Ft
+                                        |       {z      }
+                                                Et (rt+1 )
+
+
+where ΔSt+1 = St+1 − St and ut+1 = (St+1 − Et (St+1 ))/Ft is the unexpected price shock.
+    We see that the carry Ct is related to the expected return Et (rt+1 ), but the two are
+not necessarily the same. The expected return on an asset is comprised of both the
+carry on the asset and the expected price appreciation of the asset, which depends on the
+specific asset pricing model used to form expectations and the discount rate, including
+risk premia, applied to future cash flows. The carry component of a futures contract’s
+expected return, however, can be measured in advance in a straightforward “mechanical”
+way without the need to specify a model or stochastic discount factor. Put differently,
+carry is a simple observable characteristic, which is a component of the expected return on
+an asset. Further, carry may be relevant for predicting expected price changes which also
+contribute to the expected return on an asset. That is, Ct may also provide information
+for predicting Et (ΔSt+1 /Ft ), which we investigate empirically in the paper.
+   We next discuss in more detail how to interpret the carry for the asset classes we
+study. Applying this general approach to carry for each specific asset class provides a
+unifying framework for carry and its link to risk premia. The rest of the paper explores
+these relations empirically.
+
+
+1.1     Currency Carry
+We begin with the classic carry trade studied in the literature—the currency carry trade—
+which is a trade that goes long high carry currencies and short low carry currencies. For
+   4
+     However, when considering for instance yield curve positions with fundamentally different levels of
+risk, we can choose the position sizes Xt to equalize risk across positions.
+
+
+                                                    8
+a currency, the carry is simply the local interest rate in the corresponding country. For
+instance, investing in a currency by literally putting cash into a country’s money market
+earns the interest rate if the exchange rate (the “price of the currency”) does not change.
+    Most speculators get foreign exchange exposure through a currency forward and our
+data on currencies comes from 1-month currency forward contracts (detailed in the next
+section). To derive the carry of a currency from forward rates, recall that the no-arbitrage
+price of a currency forward contract with spot exchange rate St (measured in number of
+local currency per unit of foreign currency), local interest rate rf , and foreign interest
+rate rf ∗ is Ft = St (1 + rtf )/(1 + rtf ∗ ). Therefore, the carry of the currency is
+
+                                    St − Ft  f ∗      1
+                             Ct =          = rt − rtf          .                           (7)
+                                       Ft              1 + rtf
+
+The carry of investing in a forward in the foreign currency is the interest-rate spread,
+rf ∗ − rf , adjusted for a scaling factor close to one, (1 + rtf )−1 . The carry is the foreign
+interest rate in excess of the local risk-free rate rf because the forward contract is a
+zero-cost instrument whose return is an excess return. (The scaling factor simply reflects
+that a currency exposure using a futures contract corresponds to buying 1 unit of foreign
+currency in the future, which corresponds to buying (1 + rtf )−1 units of currency today.
+The scaling factor could be eliminated if we changed the assumed leverage, that is, the
+denominator in the carry and return calculations.)
+     There is an extensive literature studying the carry trade in currencies. The historical
+positive return to currency carry trades is a well known violation of the so-called uncovered
+interest-rate parity (UIP). The UIP is based on the simple assumption that all currencies
+should have the same expected return, but many economic settings would imply differences
+in expected returns across countries. For instance, differences in expected currency returns
+could arise from differences in consumption risk (Lustig and Verdelhan (2007)), crash risk
+(Brunnermeier, Nagel, and Pedersen (2008), Burnside, Eichenbaum, Kleshchelski, and
+Rebelo (2006)), liquidity risk (Brunnermeier, Nagel, and Pedersen (2008)), and country
+size (Hassan (2011)), where a country with more exposure to consumption or liquidity
+risk could have both a high interest rate and a cheaper exchange rate.
+     While we investigate the currency carry trade and its link to macroeconomic and
+liquidity risks, the goal of our study is to investigate the role of carry more broadly across
+asset classes and identify the characteristics of carry returns that are common and unique
+to each asset class. As we show in the next section, some of the results in the literature
+pertaining to currency carry trades, such as crashes, are not evident in all other asset
+classes, while other characteristics, such as business cycle variation, are more common to
+
+
+                                              9
+carry trades in general across all asset classes.
+
+
+1.2     Global Equity Carry
+For equities, carry is simply the expected dividend yield. If stock prices and dividends do
+not change, then the return on equities comes solely from dividends—hence, carry is the
+dividend yield today.
+    We implement a global equity carry strategies via futures, which leads to another
+measure of carry. While we do not always have an equity futures contract with exactly
+one month to expiration, we interpolate between the two nearest-to-maturity futures
+prices to compute consistent series of synthetic one-month equity futures prices.
+    The no-arbitrage price of a futures contract is Ft = St (1 + rtf ) − EtQ (Dt+1 ), where the
+expected divided payment D is computed under the risk-neutral measure Q, and rtf is the
+risk-free rate at time t in the country of the equity index. 5 Substituting this expression
+back into equation (5), the carry for an equity future can be rewritten as
+                                                                         !
+                                    S t − Ft         EtQ (Dt+1 )             St
+                               Ct =          =                   − rtf          .                         (8)
+                                        Ft                St                 Ft
+
+In words, the carry of an equity futures contract is simply the expected dividend yield
+minus the (local) risk-free rate, multiplied by a scaling factor which is close to one, St /Ft .
+    To further see the relationship between carry and expected returns, consider Gordon’s
+growth model for the price St of a stock with dividend growth g and expected return E(R),
+St = D/(E(R) − g). This standard equity pricing equation implies that the expected
+return is the dividend yield plus the expected dividend growth, E(R) = D/S + g. Or,
+the expected return is the carry, D/S, plus the expected price appreciation arising from
+the expected dividend growth, g. If the dividend yield varies independently of g, then
+the dividend yield is clearly a signal of expected returns. If, on the other hand, dividend
+growth is high when the dividend yield is low, then the dividend yield would not necessarily
+predict expected returns, as the two components of E(R) would offset each other.
+    If expected returns do vary, then it is natural to expect carry to be positively related
+to expected returns: If a stock’s expected return increases while dividends stay the same,
+then its price drops and its dividend yield increases. Hence, a high expected return
+leads to a high carry. Indeed, this discount-rate mechanism follows from standard macro-
+   5
+    Binsbergen, Brandt, and Koijen (2012) and Binsbergen, Hueskes, Koijen, and Vrugt (2010) study
+the asset pricing properties of dividend futures prices, EtQ (Dt+n ), n = 1, 2, . . . , in the US, Europe, and
+Japan.
+
+
+
+                                                     10
+finance models, such as Bansal and Yaron (2004), Campbell and Cochrane (1999), Gabaix
+(2009), Wachter (2010), and models of time-varying liquidity risk premia (Acharya and
+Pedersen (2005), Brunnermeier and Pedersen (2009), Gârleanu and Pedersen (2011)). We
+investigate in the next section the relation between carry and expected returns for each
+asset class and whether these relations are consistent with theory. We also discuss in
+Section 5 the link with the standard dividend yield that sums a year of dividends and
+divides it by the current price (Fama and French (1988)) and our measure for the equity
+carry.
+
+
+1.3    Commodity Carry
+If you make a cash investment in a commodity by literally buying and holding the physical
+commodity itself, then the carry is the convenience yield or net benefits of use of the
+commodity in excess of storage costs. While the actual convenience yield is hard to
+measure (and may depend on the specific investor), the carry of a commodity futures or
+forward can be easily computed. Similar to the dividend yield on equities, where the actual
+dividend yield may be hard to measure since future dividends are unknown in advance, the
+expected dividend yield can be backed out from futures prices on equities easily. Indeed,
+one of the reasons we employ futures contracts for the part of our empirical analysis is to
+easily and consistently compute the carry across asset classes. The no-arbitrage price of
+a commodity futures contract is Ft = St (1 + rtf − δ), where δ is the convenience yield in
+excess of storage costs. Hence, the carry for a commodity futures contract is,
+
+                                  St − F t               1
+                           Ct =            = δ − rf               ,                     (9)
+                                     Ft               1 + rtf − δ
+
+where the commodity carry is the convenience yield of the commodity in excess of the
+risk free rate (adjusted for a scaling factor that is close to one).
+    To compute the carry from equation (9), we need data on the current futures price
+Ft and current spot price St . However, commodity spot markets are often highly illiquid
+and clean spot price data on commodities is often unavailable. To combat this data issue,
+instead of examining the “slope” between the spot and futures prices, we consider the
+slope between two futures prices of different maturity. Specifically, we consider the price
+of the nearest-to-maturity commodity futures contract with the price of the next-nearest
+available futures contract on the same commodity. For example, suppose that the nearest
+to maturity futures price is Ft1 with T1 months to maturity and the second futures price
+is Ft2 with T2 months to maturity, where T2 > T1 . In general, the no-arbitrage futures
+
+
+                                              11
+price can be written as FtTi = St (1 + (rf − δ)Ti ). Thus, the carry of holding the second
+contract can be computed by assuming that its price will converge to Ft1 after T2 − T1
+months, that is, assuming that the price of a T1 -month futures stays constant:
+
+                                          Ft1 − Ft2                S
+                                                                 f     t
+                                 Ct =                  =   δ − r t       ,                             (10)
+                                        Ft2 (T2 − T1 )               Ft2
+
+where we divide by T2 −T1 to compute the carry on a per-month basis. Following Equation
+(10), we can simply use data from the futures markets—specifically, the slope of the futures
+curve—to get a measure of carry that captures the convenience yield. 6
+
+
+1.4     Global Fixed Income Carry
+Calculating carry for bonds is perhaps the most difficult since there are several reasonable
+ways to define carry for fixed income instruments. For example, consider a bond with T -
+months to maturity, coupon payments of D, par value Pˉ , price PtT , and yield to maturity
+ytT . There are several different ways to define the carry of this bond. Assuming that its
+price stays constant, the carry of the bond would be the current yield, D/PtT , if there is a
+coupon payment over the next time period, otherwise it is zero. However, since a bond’s
+maturity changes as time passes, it is not natural to define carry based on the assumption
+that the bond price stays constant (especially for zero-coupon bonds).
+     A more compelling definition of carry arises under the assumption that the bond’s
+yield to maturity stays the same over the next time period. The carry could then be
+defined as the yield to maturity (regardless of whether there is a coupon payment). To
+see this, note that the price today of the bond is,
+                                  X
+                    PtT =                        D(1 + ytT )−(i−t) + Pˉ (1 + ytT )−(T −t) ,            (11)
+                            i∈{coupon dates>t}
+
+
+and if we assume that the yield to maturity stays the same, then the same corresponding
+                                                     T −1
+formula holds for the bond next period as well, Pt+1      . Thus, the value of the bond
+   6
+     Another interpretation of Equation (10) is as follows: Derive synthetic spot and 1-month futures
+prices by linearly interpolating the two available futures prices, F 1 and F 2 , and then compute the 1-
+month carry as before using these synthetic prices. It is easy to see that this yields the same expression
+for carry as equation (10). In principal, we could also compute carry in other asset classes using this
+method based on two points on the futures curve (i.e., not rely on spot prices). However, since spot price
+data is readily available in the other asset classes, this is unnecessary. Moreover, we find that the carry
+calculated from the futures curve in the other asset classes is nearly identical to the carry computed from
+spot and futures prices in those asset classes. Hence, using the futures curve to calculate carry appears to
+be equivalent to using spot-futures price differences, justifying our computation for carry in commodities.
+
+
+
+
+                                                       12
+including coupon payments next period is,
+                                           X
+   T −1
+ Pt+1   +D∙1[t+1∈{coupon dates}] =                        D(1+ytT )−(i−t−1) + Pˉ (1+ytT )−(T −t−1) . (12)
+                                     i∈{coupon dates>t}
+
+
+Hence, the carry is
+                               T −1
+                             Pt+1   + D ∙ 1[t+1∈{coupon dates}] − PtT
+                      Ct =                                            = ytT .                       (13)
+                                               PtT
+
+The carry on a funded position (the carry in excess of the short-term risk-free rate) is
+then the term spread:
+                                    Ct = ytT − rtf .                                (14)
+
+    Perhaps the most compelling definition of carry is the return on the bond if the entire
+                                                          τ
+term structure of interest rates stays constant, i.e., yt+1  = ytτ for all maturities τ . In this
+case, the carry is the bond return assuming that the yield to maturity changes from ytT
+to ytT −1 . In this case, the carry (in terms of excess returns) is
+
+                                  T −1
+                               Pt+1    + D ∙ 1[t+1∈coupon dates] − PtT
+                      Ct =                         T
+                                                                        − rtf
+                                                 Pt
+                                             T −1 T −1         T −1 T
+                                           P     (y ) − Pt+1       (yt )
+                           =   ytT − rtf + t+1 t           T
+                                                                                                    (15)
+                                                         Pt
+                                                              
+                           ∼
+                           =     T     f
+                               yt − rt −D    mod    T −1
+                                                  yt − ytT
+                               | {z } |           {z          }
+                                  slope            roll down
+
+
+where the latter approximation involving the modified duration, Dmod , yields a simple way
+to think of carry. Intuitively, equation (15) shows that if the term structure of interest
+rates is constant, then the carry is the bond yield plus the “roll down,” which captures
+the price increase due to the fact that the bond rolls down the yield curve. As the bond
+rolls down the yield curve, the yield changes from ytT to ytT −1 , resulting in a return which
+is minus the yield change times the modified duration.
+    To be consistent with the other asset classes, we would like to compute the bond carry
+using futures data. Unfortunately, liquid bond futures contracts are only traded in a
+few countries and, when they exist, there are often very few contracts (often only one).
+Further complicating matters is the fact that different bonds have different coupon rates
+and the futures price is subject to cheapest-to-deliver options. To simplify matters and
+create a broader global cross-section, we derive synthetic futures prices based on data on
+
+
+
+
+                                                   13
+zero-coupon rates as follows. 7
+    We want to compute the carry of a synthetic one-month futures. Hence, consider
+a futures contract that gives the obligation to buy a 9-year-and-11-months zero-coupon
+bond in one month from now. The current price of this one-month futures is Ft =
+(1 + rtf )/(1 + yt10Y )10 , where yt10Y is the current yield on a 10-year zero-coupon bond.
+(This expression for the futures price follows from that fact that the futures payoff can be
+replicated by buying a 10-year bond.) The current “spot price” is naturally the current
+price of a 9-year-and-11-month zero-coupon bond, St = 1/(1 + yt9Y 11M )9+11/12 . Hence, the
+carry using the standard formula is given by
+
+                                  S t − Ft   1/(1 + yt9Y 11M )9+11/12
+                           Ct =            =                           − 1.                          (16)
+                                      Ft     (1 + rtf )/(1 + yt10Y )10
+
+While we compute the carry using this exact formula, we can get an intuitive expression
+using the same approximation as before
+
+                             Ct ≃ yt10Y − rtf − Dmod (yt10Y − yt9Y 11M ).                            (17)
+
+Hence, the futures-based carry calculation corresponds to the assumption that the entire
+term structure of interest rates stays constant.
+
+
+1.5     Carry: A Broad Framework
+We define carry as the return if the nominal price stays the same. However, as is the
+case for bond carry, it is sometimes necessary to decide which price is assumed constant
+(e.g., the price of the bond or the yield curve?). Further, one could alternatively compute
+carry as the return if the real (i.e., inflation-adjusted) price stays constant. For example
+for currencies, if we define carry as the return if the real exchange rate stays the same,
+it is straightforward to see that a currency’s carry is its real interest rate. Hence, carry
+can be viewed broadly as a framework for computing a simple, observable, measure of the
+income an investor receives if market conditions stay constant, however defined. We focus
+on a consistent definition of carry based on futures prices for all asset classes because it
+mitigates estimation issues, but we provide several other examples in Section 5 based on
+different cross-sections of assets that do not use futures contracts.
+    Appendix A also shows that the same carry measures can be used for foreign-
+denominated futures contracts assuming the currency risk is hedged, as we do empirically.
+   7
+    For countries with actual, valid bond futures data, the correlation between actual futures returns and
+our synthetic futures returns is greater than 0.95.
+
+
+                                                   14
+1.6    The Carry of a Portfolio
+We compute the carry of a portfolio of securities as follows. Consider a set of securities
+indexed by i = 1, ..., Nt , where Nt is the number of available securities at time t. Security
+i has a carry of Cti computed at the end of month t and that is related to the return
+ i
+rt+1 over the following month t + 1. Letting the portfolio weight of security i be wti ,
+the return of the portfolio is naturally the weighted sum of the returns on the securities,
+       P
+rt+1 = i wti rt+1
+              i
+                  . Similarly, since carry is also a return (under the assumption of no price
+changes), the carry of the portfolio is simply computed as,
+                                                         X
+                                    Ctportf olio =            wti Cti .                   (18)
+                                                         i
+
+
+1.7    Defining a Carry Trade Portfolio
+A carry trade is a trading strategy that goes long high-carry securities and shorts low-carry
+securities. There are various ways of choosing the exact carry-trade portfolio weights, but
+our main results are robust across a number of portfolio weighting schemes. One way to
+construct the carry trade is to rank assets by their carry and go long the top 20, 25 or
+30% of securities and short the bottom 20, 25 or 30%, with equal weights applied to all
+securities within the two groups, and ignore (e.g., place zero weight on) the securities in
+between these two extremes. Another method, which we primarily focus on, is a carry
+trade specification that takes a position in all securities weighted by their carry ranking.
+Specifically, the weight on each security i at time t is given by
+                                                                          
+                                                          Nt + 1
+                              wti = zt       rank(Cti ) −                      ,          (19)
+                                                                   2
+
+where the scalar zt ensures that the sum of the long and short positions equals 1 and −1,
+respectively. This weighting scheme is similar to that used by Asness, Moskowitz, and
+Pedersen (2012) and Moskowitz, Ooi, and Pedersen (2012), who show that the resulting
+portfolios are highly correlated with other zero-cost portfolios that use different weights.
+   By construction, the carry trade portfolio always has a positive carry itself. The
+carry of the carry trade portfolio is equal to the weighted-average carry of the high-carry
+securities minus the average carry among the low-carry securities:
+                                         X                    X
+                      Ctcarry trade =             wti Cti −            |wti |Cti   > 0.   (20)
+                                         wti >0               wti <0
+
+
+Hence, the carry of the carry trade portfolio depends on the cross-sectional dispersion of
+
+                                                    15
+carry among the constituent securities.
+
+
+2     Carry Trade Returns Across Asset Classes
+Following Equation (19), we construct carry trade portfolio returns for each asset class
+as well as across all the asset classes we examine. First, we briefly describe our sample
+of securities in each asset class and how we construct our return series, then we consider
+the carry trade portfolio returns within and across the asset classes and examine their
+performance over time.
+
+
+2.1    Data and Summary Statistics
+Appendix B details the data sources we use for the country equity index futures, currency
+forward rates, commodity futures, and synthetic bond futures returns (as described
+above). Table 1 presents summary statistics for returns and the carry for each of the
+instruments we use, including the starting date for each of the series.
+    There are 13 country equity index futures: the U.S. (S&P 500), Canada (S&P TSE
+60), the UK (FTSE 100), France (CAC), Germany (DAX), Spain (IBEX), Italy (FTSE
+MIB), The Netherlands (EOE AEX), Norway (OMX), Switzerland (SMI), Japan (Nikkei),
+Hong Kong (Hang Seng), and Australia (S&P ASX 200).
+    There are 20 foreign exchange forward contracts covering the period November 1983
+to February 2011 (with some currencies starting as late as February 1997 and the Euro
+beginning in February 1999). We also include the U.S. as one of the countries for which
+the currency return is, by definition, equal to zero.
+    The commodities sample covers 24 commodities futures dating as far back as January
+1980 (through February 2011). Not surprisingly, commodities exhibit the largest cross-
+sectional variation in mean and standard deviation of returns since they contain the most
+diverse assets, covering commodities in metals, energy, and agriculture/livestock.
+    Finally, the fixed income sample covers 10 government bonds starting as far back as
+November 1991, but beginning in January 1995 for most countries, through February
+2011. Bonds exhibit the least cross-sectional variation across markets, but there is still
+substantial variation in average returns and volatility across the markets.
+
+
+2.2    Carry Trade Portfolio Returns within an Asset Class
+For each global asset class, we construct a carry strategy that invests in high-carry
+securities while short selling low-carry instruments, where each instrument is weighted
+
+                                           16
+by the rank of its carry and the portfolio is rebalanced each month end following
+equation (19).
+    We consider two measures of carry: (i) The “current carry”, which is measured at
+the end of each month, and (ii) “carry1-12”, which is a moving average of the current
+carry over the past 12 month ends (including the most recent one). We include carry1-12
+because of potential seasonal components that can arise in calculating carry for certain
+assets. For instance, the equity carry over the next month depends on whether most
+companies are expected to pay dividends in that specific month, and countries differ
+widely in their dividend calendar (e.g., Japan vs. US). Current carry will tend to go long
+an equity index if that country is in its dividend season, whereas carry1-12 will go long an
+equity index that has a high overall dividend yield for that year regardless of what month
+those dividends were paid. In addition, some commodity futures have strong seasonal
+components that are also eliminated by using carry1-12. Averaging over the past year
+helps eliminate the potential influence of these seasonal components. Fixed income (the
+way we compute it) and currencies do not exhibit much seasonal carry pattern, but we
+also consider strategies based on both their current carry and carry1-12 for robustness.
+Table 1 also reports the mean and standard deviation of the carry for each asset, which
+range considerably across assets within an asset class (especially commodities) and across
+asset classes.
+    Table 2 reports the annualized mean, standard deviation, skewness, excess kurtosis,
+and Sharpe ratio of the carry strategies within each asset class. For comparison, the
+same statistics are reported for the returns to a passive long investment in each asset
+class, which is just an equal weighted portfolio of all the securities in each asset class.
+The sample period for equities is March 1988 to February 2011, for fixed income it is
+November 1991 to February 2011, for commodities it is February 1980 to February 2011,
+and for currencies it is November 1983 to February 2011.
+    Table 2 indicates that all the carry strategies in all asset classes have significant positive
+returns. Using current carry, the average returns range from 5.1% for the fixed income
+trade to 11.7% for the commodity carry trade. Using carry1-12, the average returns
+range from 3.0% for the fixed income carry trade to 13% for the commodity carry trade.
+Sharpe ratios for the current carry range from 0.62 in commodities to 0.93 for equities and
+for carry1-12 they range from 0.48 in bonds to 0.67 in commodities. The current carry
+portfolio exhibits stronger performance than carry1-12 for equities, 8 bonds, and slightly
+for currencies, which may reflect that more timely data provides more predictive power
+   This suggests that expected returns may vary over the dividend cycle, which can potentially be tested
+   8
+
+more directly using dividend futures as in Binsbergen, Hueskes, Koijen, and Vrugt (2010).
+
+
+
+                                                  17
+for returns. However, for commodities, carry1-12 performs better, which may be due to
+the strong seasonal variation in commodity carry that is not necessarily related to returns.
+    The robust performance of carry strategies across asset classes indicates that carry is
+an important component of expected returns. The previous literature focuses on currency
+carry trades, finding similar results to those in Table 2. However, we find that a carry
+strategy works at least as well in other asset classes, too. In fact, the current carry
+strategy performs markedly better in equities and fixed income than currencies, and the
+carry1-12 strategy performs slightly better in equities and commodities than currencies.
+Hence, carry is a broader concept that can be applied to many assets in general and is
+not unique to currencies. 9
+    Both the current carry and carry1-12 portfolios also seem to outperform a passive
+investment in each asset class. For example, in equities, the Sharpe ratio of a passive
+long position in all equity futures is only 0.37, compared to 0.93 for the current carry
+strategy and 0.61 for the carry1-12 strategy. In commodities, the passive portfolio delivers
+only a 0.10 Sharpe ratio, while the carry portfolios achieve 0.62 and 0.67 Sharpe ratios,
+respectively. Consistent with the literature, currency carry strategies also outperform a
+passive investment in currencies. For fixed income, the carry strategy appears to perform
+about the same as a passive long investment. However, these comparisons are misleading
+because the beta of a carry strategy is typically close to zero. As we show below, the
+alphas of the carry strategies with respect to these passive benchmarks are all consistently
+and significantly positive, even for fixed income.
+    Examining the higher moments of the carry trade returns in each asset class, we find
+the strong negative skewness associated with the currency carry trade documented by
+Brunnermeier, Nagel, and Pedersen (2008). However, negative skewness is not a feature
+of carry trades in other asset classes, such as equities and fixed income. Commodity carry
+portfolios seem to exhibit some negative skewness, but not as extreme as currencies.
+Hence, the “crashes” associated with currency carry trades do not seem to be as strong a
+feature in carry trades in other asset classes. Thus, explanations for the return premium
+to carry trades in currencies that rely on crash risk may not be suitable for explaining
+return premia to carry in other asset classes. All carry portfolios in all asset classes seem
+to exhibit excess kurtosis, however.
+    Figure 2 plots the cumulative monthly returns to each carry strategy in each asset
+class over their respective sample periods. The currency carry trade “crashes” are evident
+on the graphs, but there is less evidence for sudden crashes among carry strategies in
+  9
+   Several recent papers also study carry strategies for commodities in isolation, see for instance
+Szymanowska, de Roon, Nijman, and van den Goorbergh (2011) and Yang (2011).
+
+
+
+                                                18
+other asset classes. In addition, the graphs also plot the cumulative carry itself, which
+represents the component of the carry portfolios’ expected return that is observable ex ante
+and would comprise the total expected return if underlying spot prices remained constant.
+Hence, the difference between the two lines on each graph represents the component of
+expected returns to the carry trade that come from price appreciation. In the next section,
+we investigate in more detail the relationship between carry, expected price changes, and
+total expected returns.
+
+
+2.3    Diversified Carry Trade Portfolio
+Table 2 also reports the performance of a diversified carry strategy across all asset classes,
+which is constructed as the equal-volatility-weighted average of carry portfolio returns
+across the asset classes. Specifically, we weight each asset classes’ carry portfolio by the
+inverse of its sample volatility so that each carry strategy in each asset class contributes
+roughly equally to the total volatility of the diversified portfolio. This procedure is
+similar to that used by Asness, Moskowitz, and Pedersen (2012) and Moskowitz, Ooi,
+and Pedersen (2012) to combine returns from different asset classes with very different
+volatilities. Since commodities have roughly two to three times the volatility of fixed
+income, a simple equal-weighted average of carry returns across asset classes will have its
+variation dominated by commodity carry risk and under-represented by bond carry risk.
+Volatility-weighting the asset classes into a diversified portfolio gives each asset class more
+equal representation.
+    As the bottom of Table 2 reports, the diversified carry trade based on the current carry
+has a remarkable Sharpe ratio of 1.49 per annum and the diversified carry1-12 portfolio
+has an impressive 0.95 Sharpe ratio. A diversified passive long position in all asset classes
+produces only a 0.75 Sharpe ratio. These numbers suggest carry is a strong predictor of
+expected returns globally across asset classes. Moreover, the substantial increase in Sharpe
+ratio for the diversified carry portfolio relative to the individual carry portfolio Sharpe
+ratios in each asset class, indicates that the correlations of the carry trades across asset
+classes are quite low. Hence, sizeable diversification benefits are obtained by applying
+carry trades universally across asset classes.
+    Table 3 reports the correlations of carry trade returns across the four asset classes.
+Except for the correlation between currency carry and bond carry, the correlations are
+all very close to zero, and even for bonds and currencies, the correlation of their carry
+returns is only 23%. The low correlations among carry strategies in other asset classes
+not only lowers the volatility of the diversified portfolio substantially, but also mutes the
+
+
+                                              19
+negative skewness associated with currency carry trades and mitigates the excess kurtosis
+associated with all carry trades. In fact, the negative skewness and excess kurtosis of
+the diversified portfolio of carry trades is smaller than those of the passive long position
+diversified across asset classes. Hence, the diversification benefits applying carry across
+asset classes seem to be larger than those obtained from investing passively long in the
+same asset classes. The magnitude of the Sharpe ratios of the diversified carry strategy
+presents a daunting challenge for current asset pricing models that already struggle to
+explain the significantly smaller Sharpe ratios typically examined within a single asset
+class (e.g., currencies). A diversified carry portfolio across asset classes is also less prone
+to crashes, which also challenges risk-based stories.
+
+
+2.4    Risk-Adjusted Performance and Exposure to Other Factors
+Table 4 reports regression results for each carry portfolio’s returns in each asset class on
+a set of other portfolio returns or factors.
+     For both the current carry and carry1-12 portfolios in each asset class, we regress the
+time series of their returns on the passive long portfolio returns (equal-weighted average of
+all securities) in each asset class, the value and momentum “everywhere” factors of Asness,
+Moskowitz, and Pedersen (2012), which are diversified portfolios of value and cross-
+sectional momentum strategies in global equities, equity indices, bonds, commodities,
+and currencies, and the time-series momentum (TSMOM) factor of Moskowitz, Ooi, and
+Pedersen (2012) which is a diversified portfolio of time-series momentum strategies in
+futures contracts in the same asset classes we examine here for carry.
+     Panel A of Table 4 reports both the intercepts or alphas from these regressions as well
+as the betas on the various factors to evaluate the exposure of the carry trade returns to
+these other known strategies or factors. The first two columns of each panel of Table 4
+report the results from regressing the carry trade portfolio returns in each asset class
+(both for the current carry, “CC,” and for the carry1-12, “C1-12,” strategies) on the
+equal-weighted passive index for that asset class (e.g., CAPM for the asset class). The
+alphas for every carry strategy in every asset class are positive and statistically significant,
+indicating that in every asset class a carry strategy provides abnormal returns above and
+beyond simple passive exposure to that asset class. Put differently, carry trades offer
+excess returns over the “local” market return in each asset class. Examining the betas of
+the carry portfolios on the local market index for each asset class, we see that the betas
+are not significantly different from zero. Hence, carry strategies provide sizeable return
+premia without much market exposure to the asset class itself. The last two rows of each
+
+
+                                              20
+panel of Table 4 report the R2 from the regression and the information ratio, IR, which
+is the alpha divided by residual volatility from the regression, of each carry strategy. The
+IRs are quite large, reflecting high risk-adjusted returns to carry strategies even after
+accounting for its exposures to standard risk factors.
+    Looking at the value and momentum everywhere and time-series momentum factor
+exposures we find mixed evidence across the asset classes. For instance, in equities,
+we find that carry strategies have a positive value exposure, but no momentum or
+time-series momentum exposure. The positive exposure to value reduces the alpha
+slightly, especially for carry1-12, but the remaining alpha and information ratio are still
+significantly positive. In commodities, a carry strategy loads significantly negatively on
+value and significantly positively on cross-sectional momentum, but exhibits little relation
+to time-series momentum. The exposure to value and cross-sectional momentum captures
+a significant fraction of the variation in commodity carry’s returns, as the R2 jumps from
+less than 1% to more that 25% when the value and momentum everywhere factors are
+included in the regression. However, because the carry trade’s loadings on value and
+momentum are of opposite sign, the impact on the alpha of the commodity carry strategy
+is small since the exposures to these two positive return factors offset each other. The
+alphas diminish by about 20-30 basis points per month, but remain economically large
+and statistically significant. Finally, for both fixed income and currency carry strategies,
+there is no reliable loading of the carry strategies’ returns on value, momentum, or time-
+series momentum (except current carry for bonds seems to have a negative loading on
+TSMOM), and consequently the alphas of bond and currency carry portfolios remain
+significant.
+    The regression results in Table 4 only highlight the average exposure of the carry
+trade returns to these factors. However, these may mask significant dynamic exposures to
+these factors. To see if the risk exposures vary significantly over time, Figure 3 examines
+the variation over time in the carry portfolio’s returns to the market by plotting the
+three-year rolling correlations (using monthly returns data) of each carry trade’s returns
+with the passive portfolio for that asset class. As the figure shows, the carry trade’s
+correlation to the market in all asset classes varies significantly over time, perhaps most
+evident for currencies. Although on average the market exposure of each carry trade is
+insignificantly different from zero, there are times when the carry trade in every asset class
+has significant positive exposure to the market and other times when it has significant
+negative market exposure. We further explore the dynamics of carry trade positions in
+the following section.
+
+
+
+                                             21
+3     How Does Carry Relate to Expected Returns?
+In this section we investigate further how carry relates to expected returns and the nature
+of carry’s predictability for future returns. We begin by decomposing carry trades into
+static and dynamic components.
+
+
+3.1    Does the Market Take Back Part of the Carry?
+The significant returns to the carry trade indicate that carry is indeed a signal of expected
+returns. However, to better understand the relation between carry and expected returns
+it is instructive to go back to equation (1), which decomposes expected returns into carry
+and expected price appreciation. To do this formally, we run the following panel regression
+for each asset class:
+                                   i
+                                  rt+1 = ai + bt + cCti + εit+1 ,                        (21)
+
+where ai is an asset-specific intercept (or fixed effect), bt are time fixed effects, Cti is the
+carry on asset i at time t, and c is the coefficient of interest that measures how well carry
+predicts returns.
+    To interpret this regression, we note that there are several interesting hypotheses
+to consider. First, c = 0 means that carry does not predict returns, consistent with
+a generalized notion of the “expectations hypothesis.” Second, c = 1 means that the
+expected return moves one-for-one with carry. While c = 0 means that the total return
+behaves like a random walk, c = 1 means that the price (not including carry) is a random
+walk. Third, c ∈ (0, 1) means that a high carry is associated with a low expected price
+appreciation such that the market “takes back” part of the carry, but not all. Fourth,
+c > 1 means that a high carry is associated with a high expected price appreciation so
+that you get your carry and price appreciation too. Lastly, c < 0 implies that the price
+appreciation/depreciation more than offsets the effect of the carry.
+    Table 5 reports the results for each asset class, for current carry and carry1-12, and
+with and without fixed effects. Without asset and time fixed effects, c represents the
+total predictability of returns from carry from both its passive and dynamic components.
+Including time fixed effects removes the time-series predictable return component coming
+from general exposure to assets at a given point in time. Similarly, including asset-
+specific fixed effects removes the predictable return component of carry coming from
+passive exposure to assets with different unconditional average returns. By including
+both asset and time fixed effects, the slope coefficient c in equation (21) represents the
+predictability of returns to carry coming purely from variation in carry.
+
+
+                                              22
+    The results in Table 5 indicate that carry is a strong predictor of expected returns, with
+consistently positive and statistically significant coefficients on carry, save for the current
+carry commodity strategy, which may be tainted by strong seasonal effects in carry for
+commodities. The carry1-12 strategy, which mitigates seasonal effects, is a ubiquitously
+positive and significant predictor of returns, even in commodities.
+    Focusing on the magnitude of the predictive coefficient, Table 5 shows that the point
+estimate of c is greater than one for equities and fixed income, and smaller than one
+for commodities and around one for currencies (depending on whether fixed effects are
+included). These results imply that for equities, for instance, when the dividend yield is
+high, not only is an investor rewarded by directly receiving large dividends (relative to
+the price), but also equity prices tend to appreciate more than usual. Hence, expected
+stock returns appear to be comprised of both high dividend yields and additionally high
+expected price appreciation. Similarly for fixed income securities, buying a 10-year bond
+with a high carry provides returns from the carry itself (i.e., from the yield spread over
+the short rate and from rolling down the yield curve), and, further, yields tend to drop,
+not rise, leading to additional price appreciation. The is somewhat surprising as the
+expectations hypothesis suggests that a high term spread implies short and long rates
+are expected to increase, but this is not what we find. However, these results must
+be interpreted with caution as the predictive coefficient is not statistically significantly
+different from one in all but a few cases.
+    For currencies, the predictive coefficient is close to one, which means that high-interest
+currencies neither depreciate, nor appreciate, on average. Hence, the currency investor
+earns the interest-rate differential on average. This finding goes back to Fama (1984),
+who ran these regressions slightly differently. Fama (1984)’s well-known result is that
+the predictive coefficient has the “wrong” sign relative to uncovered interest rate parity,
+which corresponds to a coefficient larger than one in our regression.
+    For commodities, the predictive coefficient is significantly less than one, so that when
+a commodity has a high spot price relative to its futures price, implying a high carry, the
+spot price tends to depreciate on average, thus lowering the realized return on average
+below the carry.
+    Looking back at Figure 2, which plots the carry trades’ cumulative returns and their
+cumulative carries, the difference between the two return series highlights the relation
+between carry and expected returns. Since carry is similar to a return (namely, it is the
+hypothetical return if the price does not change), the cumulative carry can be computed
+and interpreted just like any cumulative return. For simplicity, we compute the cumulative
+returns and cumulative carry by summation: for instance, the cumulative carry at time t
+
+
+                                              23
+                P
+is computed as tτ =1 Cτ . Consistent with the regression results in Table 5, the cumulative
+carry is greater than the cumulative return for equities and fixed income, carry is similar
+to returns for currencies, and carry is substantially lower than returns for commodities.
+These plots indicate that carry “under-predicts” returns on average in equities and fixed
+income, “over-predicts” in commodities, and neither really over- or under-predicts in
+currencies.
+    We can also examine how the predictive coefficient changes across the different
+regression specifications with and without fixed effects to see how the predictability of
+carry changes once the passive exposures are removed. For example, the coefficient on
+carry for equities drops very little when including asset and time fixed effects, which
+is consistent with the dynamic component to equity carry strategies dominating the
+predictability of returns. We also see that currency carry predictability is cut roughly
+in half when the fixed effects are included, implying that the dynamic component of the
+currency carry strategy contributes to about half of the return predictability.
+    Finally, for robustness, Table C in the appendix shows the results from similar
+predictive regressions where the value of each security’s carry is replaced by its cross-
+sectional rank (scaled by the number of securities Nt ) to rely less on the magnitude of the
+carry. More specifically, we consider the following panel regression:
+
+                             i                    rank(Cti )
+                            rt+1 = a i + bt + c              + εit+1 .                 (22)
+                                                     Nt
+
+The predictive power of these rank-based carry weights is even stronger than the carry
+itself, particularly for commodities, which provides the weakest results when using the
+magnitude of the carry to weight securities. However, the drawback of using rank-based
+carry weights is that the magnitudes of the coefficients from these regressions are more
+difficult to interpret. The additional predictive power we get from using ranks instead
+of the magnitude of the carry itself may be due to the benefits of trimming outliers in
+measured carry. This explanation is consistent with the biggest improvement coming for
+commodities, where their seasonal components and their heterogeneity likely generate the
+most noisy carry measures. On the other hand, the stronger predictive power of ranks may
+also indicate that a very large value of the carry is not associated with a commensurately
+high expected return, an issue we study further below.
+
+
+
+
+                                             24
+3.2    How Far Into the Future Does Carry Predict Returns?
+It is also interesting to consider how far into the future carry predicts returns. To address
+this question, we run the following regression
+
+                                i
+                               rt+1 = ai + bt + cCt+1−k
+                                                  i
+                                                        + εit+1 ,                          (23)
+
+where we consider carry with k = 1 as well as lagged values of the carry for k = 3, 6, 12,
+and 24. Figure 4 reports the regression coefficients and their 95%−confidence intervals.
+We include both asset and time fixed effects and use the carry1-12.
+   All of the coefficients for the most recent value of carry are significantly positive,
+consistent with the results in Table 5 and, in most cases, the predictive strength of carry
+declines over the course of one year. Hence, carry’s predictive power for returns seems to
+extend to about a year before dissipating for every asset class.
+   The fact that carry predicts returns only for a relatively short time period suggests
+that a carry trade portfolio changes frequently and that a large part of the return comes
+from this dynamic rebalancing, consistent with our previous results. We next study in
+more detail the importance of this dynamic return component relative to the passive
+component.
+
+
+3.3    Does the Carry of the Carry Trade Predict Returns?
+Table 6 reports how the carry of the carry trade predicts the returns of the carry trade.
+Specifically, we report results from the following regression
+
+                              carry trade
+                             rt+1         = a + bCtcarry trade + εit+1 ,                   (24)
+
+where rtcarry trade is the return of the carry trade and Ctcarry trade is the carry of the carry
+trade portfolio at time t. As Table 6 reports, the carry of the carry trade does not predict
+the returns to the carry trade, except marginally in equities. Hence, while carry predicts
+returns in general, such that the carry trade makes money on average in all asset classes,
+it does not appear to be the case that a larger spread in the carry itself is associated with
+larger expected returns. That is, timing the carry strategy using the size of the carry
+
+
+
+
+                                                 25
+itself does not seem to yield much predictive power. 10,11
+    Table 6 also shows how the average carry in each asset class predicts the return to
+the passive long position in each asset class. This is similar to the panel regression of
+equation (21), with the exception that it only relies on time series information for a single
+diversified portfolio, whereas the previous regressions used all the information from all the
+securities as well as their cross-sectional differences. The point estimates of the predictive
+coefficients for the passive index in each asset class are positive, but are significant only
+for equities and currencies.
+
+
+4      How Risky Are Carry Strategies?
+In this section we investigate whether the high returns to carry strategies compensate
+investors for certain risk factors.
+
+
+4.1     Risk Exposure of Carry Strategies
+A large and growing literature studying the currency carry strategy suggests that carry
+returns may compensate investors for crash risk, liquidity risk, US business cycle risk,
+or global volatility risk. By studying multiple asset classes at the same time, we provide
+some out-of-sample evidence of existing theories, as well as some guidance for new theories
+to be developed. The common feature we highlight is that all carry strategies produce
+high Sharpe ratios. However, the crash risk for currency carry appears to be unique to
+currencies, and does not extend to other asset classes. The question remains whether other
+risks inherent in carry strategies extend across asset classes at the same time and whether
+the high average returns to carry strategies can be plausibly explained as compensation
+for those risks.
+    To identify the risk in carry strategies, we focus on the global carry factor in which
+we combine all four carry strategies across all asset classes. We argue that the carry1-12
+  10
+     This might be due to a non-linear effect, where a very large difference in carry across securities
+in an asset class might suggest that the higher-carry securities are exposed to risks or expected price
+depreciation. For instance, a currency under attack tends to have a high carry but may also have a
+low expected return. For example, when George Soros attacked the British pound in 1992, the Bank of
+England raised interest rates to defend the currency, thus making the pound a high-carry currency, but,
+as judged by Soros and other speculators, the expected return was still quite low, and, as it turned out,
+so was the realized return when the British Pound eventually plummeted.
+  11
+     The results of the predictive regression may be weakened by the fact that certain contracts enter,
+and drop from, the sample, which may lead to breaks in the time series of the carry of the carry portfolio.
+Consistent with this view, we find that the carry of the carry portfolio predicts the Treasuries and credit
+carry returns in Section 5, for which the cross-section of contracts is stable over time.
+
+
+
+                                                    26
+strategy is more plausibly related to macro-economic risk than the current carry strategy,
+which moves at a higher frequency and is more susceptible to seasonal features. In the
+top panel of Figure 5 we plot the cumulative return on the global carry1-12 strategy.
+The bottom panel removes a linear time trend from the cumulative returns and plots the
+cyclical component of returns over time. We find that, despite the high Sharpe ratio,
+the global carry strategy is far from riskless and exhibits sizeable declines for extended
+periods of time.
+    Examining the carry strategy’s downside returns, the most striking feature is that the
+downturns tend to coincide with plausibly bad aggregate states of the global economy,
+which we measure using a global recession indicator, which is a GDP-weighted average
+of the regional recession dummies. Global carry returns tend to be low during global
+recessions. The figure also indicates that the timing between real variables and asset
+prices differs per recession. Hence, it may not be best to focus on recessions as measured
+by the NBER methodology.
+    As an alternative approach, we identify what we call carry “downturns” and
+“expansions.” We first compute the maximum draw-down of the global carry strategy,
+which is defined as:
+                                     X t                Xu
+                              Dt ≡       rs − max            rs ,
+                                                u∈{1,...,t}
+                                   s=1                        s=1
+
+where rs denotes the return on the global carry1-12 strategy. The draw-down dynamics are
+presented in Figure 6. Three carry downturns stand out: September 1992 to December
+1992, May 1997 to September 1998, and November 2007 to January 2009. The first
+period is identified as a recession in Continental Europe and Asia. The second period
+coincides with the Asian crisis. The third carry downturn, November 2007 to January
+2009, coincides with the recent “Great Recession.” This preliminary evidence suggests
+carry strategies are exposed to global business cycles.
+    To show that these downturns are indeed shared among all four asset classes, we
+further explore the return properties of the different asset classes in Table 7. The top
+panel reports average annualized returns on the current carry and the carry1-12 strategy
+for each asset class during carry downturns and carry expansions. For all strategies in
+all asset classes, the returns are lower during carry downturns. This implies that the
+downturns of the global carry factor are not particular to a single asset class.
+    The middle panel breaks the average returns down for each of the three downturns
+and for all strategies. The returns are below the average returns for 23 out of 24 cases.
+This evidence implies that carry downturns are bad periods for all carry strategies at the
+same time across all asset classes.
+
+
+                                           27
+     The bottom panel then illustrates that these are also periods in which global economic
+activity, as measured by the global recession indicator, slows down. During carry
+downturns, the average value of the global recession indicator equals 0.41 versus 0.17
+during carry expansions. The difference is statistically significant at the 5%-significance
+level. We further show that carry downturns are characterized by lower levels of global
+liquidity as well. If we average global liquidity shocks (obtained from Asness, Moskowitz,
+and Pedersen (2012)) during carry downturns and carry expansions, we find that the
+average level of liquidity is lower during carry downturns. The difference is again
+significant at the 5%-significance level.
+     Figure 7 displays the drawdowns per carry strategy, based on the broad regions
+or groups, alongside the drawdown dynamics of the global carry factor. The shaded
+areas indicate the carry drawdowns identified before. The drawdown dynamics of the
+different strategies tend to coincide with the drawdown dynamics of the global carry
+factor, consistent with the evidence in Table 7. Furthermore, the figure highlights that
+there are severe drawdowns that are specific to a single asset class, such as in 2001 for
+equities and in 2003 for commodities.
+     To further illustrate that carry downturns correspond to bad aggregate states, we study
+the returns in all asset classes by five broad geographic regions and three broad groups
+of commodities during carry downturns and expansions. The results are summarized in
+Table 8. The average return for equities, currencies, and commodities are much lower
+during carry downturns. Fixed income returns, by contrast, are much higher, reflecting
+the fact that the yield curve tends to flatten during recessions. This implies that equally
+weighted strategies do poorly during carry episodes as well for equities, currencies, and
+commodities, while fixed income is a hedge.
+     At a more micro level, we see that for equities, commodities, and fixed income, this
+pattern emerges for each and every region or group. For currencies, the returns are lower
+for all regions, apart from Asia, where the Japanese Yen tends to appreciate during carry
+downturns. Carry strategies do poorly during these episodes as, for instance for equities,
+it is long the regions that decline most and short the regions that do not decline as much.
+This makes carry strategies risky bets on global business cycles.
+
+
+4.2    Static and Dynamic Risk Exposure
+The average return of the carry trade depends on two sources of exposure: (i) a “passive”
+return component due to the average carry trade portfolio being long (short) securities
+that have high (low) unconditional returns, and (ii) a “dynamic” return component that
+
+
+                                            28
+captures how strongly variation in carry predicts returns.
+   The estimate of the expected return on a carry strategy can be written as:
+
+                                                  T   N
+                                                1 XX ∗
+                                  E (rp,t+1 ) =          w rn,t+1 ,
+                                                T t=1 n=1 n,t
+
+         ∗                                                 ∗
+where wn,t  = wn,t when the contract is available and wn,t    = 0 otherwise. N denotes
+the total number of contracts that are used at any point in the strategy (potentially at
+different points in time). We define the set of dates for which the weight at time t and
+the return at time t + 1 are available for security n by Tn . The number of observations
+for contract n are denoted by Tn . It then follows:
+
+                N
+                X Tn
+E (rp,t+1 ) =             E n (wn,t rn,t+1 )                                                  (25)
+                n=1
+                      T
+                XN                          N
+                                            X
+                 Tn n          n              Tn n
+           =        E (wn,t ) E (rn,t+1 ) +     E [(wn,t − E n (wn,t )) (rn,t+1 − E n (rn,t+1 ))],
+             n=1 |
+                  T       {z           } n=1 |T                    {z                           }
+                            Static component                          Dynamic component
+
+                                   P           
+where we define E n (xn,t ) ≡ Tn−1    t∈Tn xn,t , for any n and time series xx,t .
+    Here, E(wn,t ) is the portfolio’s “passive exposure” to asset i, while the “dynamic
+exposure” wn,t − E(wn,t ) is zero on average over time, representing a timing strategy in
+the asset that goes long and short according to the asset’s carry.
+    Table 9 reports the results of this decomposition, where we estimate the static and
+dynamic components of returns according to equation (26). For equities, the dynamic
+component comprises the entirety of the current carry trade’s returns and 87% of the
+carry1-12 portfolio returns. The results for commodities, fixed income, currencies are less
+extreme, where a little more than half of the bond and commodities carry returns come
+from the dynamic component and for the currency carry returns the split between passive
+and dynamic components is approximately equal. Overall, carry trade returns appear to
+be due to both passive exposures and dynamic rebalancing, with some variation across
+asset classes in terms of the importance of these two components.
+    Lastly, we study whether the poor returns of carry strategies are the result of the
+passive or the dynamic component of carry strategies. For instance, for equities, are the
+poor returns driven by the fact that regions with a high average carry (and hence on
+average held long in the carry strategy) experience larger declines in their stock market
+during carry downturns? Or, does the carry shift during carry downturns such that carry
+strategies become risky during these bad aggregate states?
+
+
+                                                 29
+    In Table 10, we decompose the return during carry expansions and downturns into the
+passive and dynamic components. We find that carry downturns are largely driven by the
+passive component, in particular for equities. Hence, hedging out the passive component
+of carry strategies could mitigate the impact of carry downturns.
+
+
+5     What Is New About Carry?
+In this paper, we generalize the concept of carry, typically only applied to currencies, and
+apply it to a broader set of assets that include global equities, global fixed income, and
+commodities, in addition to currencies. In addition, we also discuss how carry provides a
+unifying framework that synthesizes much of the return predictability evidence found in
+these other asset classes and mostly treated disjointly across those asset classes.
+    For example, we discuss how the concept of carry and our carry measures relate to
+standard predictor variables in each of the asset classes, such as the dividend yield for
+global equities, the yield spread for global fixed income, and the convenience yield for
+commodities. These predictors are typically treated as separate and unrelated phenomena
+in each asset class, but we show how carry provides a unifying characteristic that can
+capture much of this evidence and provides a related theme across all asset classes.
+    However, we also show that carry can be quite different from standard predictors and
+therefore adds to the predictability literature. For example, for global equities the carry
+is the expected dividend yield which can be quite different from the standard historical
+dividend yield.
+    In addition to unifying and extending the set of standard predictor variables, we
+also illustrate how the concept of carry provides useful predictor variables for other cross-
+sections of assets not previously examined. We focus on the cross-section of US Treasuries,
+the cross-section of US credit portfolios, and the cross-section of US index options. It may
+be interesting for future research to explore alternative carry strategies for different cross-
+sections of assets using the same concept of carry as we propose in this paper.
+
+
+5.1    Link to Standard Predictor Variables
+Global Fixed Income For fixed income, a standard predictor of bond returns in the
+time series is the yield spread (Fama and Bliss (1987) and Campbell and Shiller (1991)).
+As we show in Section 1, the fixed income carry equals the yield spread plus a roll-down
+component. To understand the importance of the roll-down component, we also compute
+the yield spread between the 10-year and 3-month bond yields. In our sample, the average
+
+
+                                              30
+(across countries) time-series correlation between the yield spread and the carry signal
+is 0.90. If we use the yield spread, instead of the carry, as a signal, the returns, not
+surprisingly, look very similar. The correlation between the returns generated from yield
+spreads and those from the current carry signal is 0.91 and for the carry1-12 signal is 0.95.
+
+Global Equities For global equities, Section 1 shows that the carry signal
+approximately equals Ct = EtQ (Dt+1 ) /St − rtf , where rtf is the local short rate. Based on
+this insight, it appears that carry strategies sort countries on dividend yields and hence
+closely resemble a value strategy. We illustrate that the carry strategy is in fact quite
+different from a standard value strategy that sorts on dividend yields.
+    First, we show for the US equity market, using a long time series, that the dynamics of
+carry are different from the standard dividend yield. Second, we sort countries directly on
+the dividend yield rather than on carry. The resulting return series has a low correlation
+with our carry strategy.
+    To construct the dividend yield for the US, we use the standard CRSP value-weighted
+index that includes all stocks on AMEX, Nasdaq, and NYSE. We construct the dividend
+yield as the sum of 12 months of dividends, divided by the current index level following
+Fama and French (1988). 12
+    To construct a long time series of carry, we make the following assumptions. First,
+we measure rtf by the 30-day T-bill rate. Second, we approximate Dt+1 = EtQ (Dt+1 ). As
+most firms announce dividends one to three months in advance, index level dividends are
+highly predictable one month ahead. This implies that we measure Ct ≃ Dt+1 /St − rtf .
+    The time series of the dividend yield and equity carry are displayed in Figure 8 for
+the period January 1945 until December 2011. To highlight the differences, the bottom
+panel of Figure 8 standardizes both series.
+    At least three aspects are worth mentioning. First, the average short rate is about
+the same as the average dividend yield. This implies that the average carry equals -
+7bp during this sample period, while the average dividend yield equals 3.36%. Second,
+the current carry (CC) displays important seasonal variation as a result of the payout
+behavior of firms that is concentrated in several months. The importance of seasonalities
+declines substantially over time. Third, the variation in the interest rate can contribute
+substantially to the variation in the equity carry. For instance, during episodes of high
+interest rates, like for instance in the 1980s, both series move in opposite directions.
+    The time series correlation between the dividend yield and the current carry is 0.30,
+  12
+     Binsbergen and Koijen (2010) show that dividend yield dynamics are very similar if instead of simply
+summing the monthly dividends, the dividends are invested at the 30-day T-bill rate.
+
+
+
+                                                   31
+and between the dividend yield and the carry1-12 it is 0.36, while the correlation between
+both carry measures equals 0.80. Hence, the time-series correlation between carry and
+value signals is quite different, even for the carry1-12 signal. This is for two reasons.
+First, we subtract (and average) the one-month interest rate. Second, and more subtle,
+we average Dt+1 /Pt over 12 months. For the dividend yield, by contrast, we sum 12
+                                                              P
+months of dividends and divide by the current price, DPt = 11    s=0 Dt−s /Pt . This implies
+that the carry signal smooths both prices and dividends, while in case of the dividend
+yield, only the dividends are smoothed.
+    We next verify to what extent carry and value signals produce different portfolio
+returns. We collect cash returns from Bloomberg and construct the dividend yield for
+the cross-section of countries we consider as described above. The sample for which
+Bloomberg reports cash returns is smaller than the sample for which we can compute the
+carry. To ensure comparability, we only take positions in contracts for which both the
+carry and the dividend yield are available. 13
+    The results are reported in Table 11. The top panel reports the summary statistics of
+the strategies and the middle panel reports the correlations between the strategy returns.
+All strategies produce substantial Sharpe ratios, although the carry1-12 strategy performs
+worse for the restricted sample. The return correlations are low. The correlation between
+the current carry and the dividend yield strategy is only 0.07; it is 0.29 for the carry1-
+12 and the dividend strategy. The bottom panel illustrates the results of a time-series
+regression in which we try to explain the returns on the carry strategies with the value
+factor. Consistent with the evidence in Table 4, the betas are close to zero for the current
+carry strategy and about 0.3 for the carry1-12 strategy (despite the fact that all strategies
+have about the same return volatility). Hence, we conclude that the carry signals contain
+important independent information beyond the standard value signals studied extensively
+in the literature.
+
+
+5.2      Illustrations of Alternative Carry Strategies
+US Treasuries As a first example of an alternative carry strategy, we implement the
+carry strategy for US Treasuries. We use standard CRSP bond portfolios with maturities
+equal to 1 to 12, 13 to 24, 25 to 36, 37 to 48, 49 to 60, 61 to 120 months. The sample
+period is January 1971 to February 2011. To compute the carry, we use the bond yields
+of Gurkaynak, Sack, and Wright. 14 We use the average maturity to compute the price
+of a zero-coupon bond, and compute the carry of a Treasury bond of maturity τ as
+ 13
+      [IN PROGRESS: EXPAND THE SAMPLE OF DIVIDEND YIELD DATA].
+ 14
+      See http://www.federalreserve.gov/econresdata/researchdata.htm.
+
+
+                                             32
+Ctτ = Ptτ −1 /Ptτ − 1.
+    The results are presented in the left panel of Table 12. The top panel shows that the
+carry strategy based on US Treasuries has a Sharpe ratio of about 0.35. However, due
+to the different volatilities of the contracts, this strategy is not neutral to the Treasury
+market, which we define as the difference between the return on an equally-weighted
+portfolio of all Treasury bonds and the LIBOR rate. The beta is about 0.45 for the
+current carry strategy and 0.3 for the carry1-12 strategy. The resulting information ratios
+are about 0.3.
+    In the middle panel, we report the results of a predictive regression in which we use
+the carry of the carry portfolio to predict carry returns. We find that for both carry
+strategies, the carry of the carry portfolio predicts returns at a 10% significance level.
+    Lastly, we measure the returns during carry expansions and downturns. We find, in
+contrast to the other carry strategies, that the carry strategy based on the cross-section
+of U.S. Treasuries performs well during carry recessions. This result is in part driven by
+the positive beta, but this result survives even if we control for the exposure to the overall
+Treasury market.
+
+US Credit Portfolios As a second example, we form carry portfolios based on eight
+US credit portfolios sorted by maturity and credit quality. We use the Barclays’ corporate
+bond indices from Datastream for “Intermediate” (average duration about 5 years)
+and “Long-term” (average duration about 10 years) maturities. In addition, we have
+information on the average maturity within a given portfolio and the average bond yield.
+In terms of credit quality, we consider AAA, AA, A, and BAA. The sample period is
+January 1973 to February 2011. We compute the carry in the same way as for Treasuries.
+    The results are presented in the right panel of Table 12. The Sharpe ratios, betas, 15
+and information ratios are very similar to the results for Treasuries, although the return
+distribution of the carry1-12 strategy displays substantial negative skewness.
+    For credit portfolios, we find even stronger evidence that the carry of the carry portfolio
+predicts carry returns, with t-statistics on the predictive coefficient of about 3 for monthly
+returns as reported in the middle panel.
+    In the bottom panel, we verify the performance of the credit carry strategies during
+carry recessions and downturns. For credits we find, consistent with the other asset classes,
+that credit carry strategies perform poorly during carry downturns.
+  15
+    As before, we define the market as the equally-weighted average of all credit portfolios in excess of
+the LIBOR rate.
+
+
+
+
+                                                   33
+US Index Options As a third example of an alternative carry strategy, we apply the
+concept of carry to U.S. index options.
+   We define the price of a call option at time t with maturity T , strike K, implied
+volatility σ T , and underlying Sit as FtC (Sit , K, T, σ T ). The equivalent put price is denoted
+by FtP (Sit , K, T, σ T ) . We apply the same concept of carry as before, that is, the return
+on a security if prices do not change.
+   In the context of options, this implies for the definition of carry (j = C, P ):
+
+                          j                 Ftj (Sit , K, T − 1, σ T −1 )
+                         Cit (K, T, σ T ) =                               − 1,                                 (26)
+                                                 Ftj (Sit , K, T, σ T )
+
+which depends on the maturity, the strike, and the type of option traded. We could
+subtract the risk-free rate from this expression, but all options are traded in US markets
+and hence this will not change the rank of the signals in our cross-sectional strategies. 16
+
+   We can write the carry in terms of the option’s theta (θ) and vega (ν). We first
+approximate:
+
+      Ftj (Sit , K, T − 1, σ T −1 ) ≃ Ftj (Sit , K, T, σ T )                                                   (27)
+                                           −θjt (Sit , K, T, σ T ) − ν jt (Sit , K, T, σ T )(σ T − σ T −1 ).
+
+This allows us to write the option carry as:
+
+                                 −θjt (Sit , K, T, σ T ) − ν jt (Sit , K, T, σ T )(σ T − σ T −1 )
+           Citj (K, T, σ T ) ≃                                                                    .            (28)
+                                                      Ftj (Sit , K, T, σ T )
+
+The size of the carry is therefore driven by the time value (via θ) and the “roll-down”
+component of the volatility curve (via ν). The option contracts we consider differ in terms
+of moneyness and whether it is a put or call option.
+   We use data from OptionMetrics starting in January 1996 through February 2011.
+We use the following indices: Dow Jones Industrial Average (DJX), NASDAQ 100 Index
+(NDX), CBOE Mini-NDX Index (MNX), AMEX Major Market Index (XMI), S&P500
+Index (SPX), S&P100 Index (OEX), S&P Midcap 400 Index (MID), S&P Smallcap 600
+Index (SML), Russell 2000 Index (RUT), and PSE Wilshire Smallcap Index (WSX).
+   We take positions in options between 30 and 60 days to maturity at the last trading
+day of each month. We exclude options with non-standard expiration dates. We hold the
+  16
+     Our equity strategies are a special case of the call options carry strategy, where lim K → 0 and T = 1.
+In this case, limK→0 F C = limK→0 E(M (S − K)+ ) = E(M S), which is the forward price of equities.
+
+
+
+
+                                                        34
+positions for one month. 17
+       We then construct two delta groups: 18
+
+   1. Out of the money: Δ ∈ [0.2, 0.4) or Δ ∈ [−0.4, −0.2)
+
+   2. At the money: Δ ∈ [0.4, 0.6) or Δ ∈ [−0.6, −0.4)
+
+We implement the carry strategies separately for call and put options. We select one
+option per delta group for each index. If multiple options are available, we first select the
+contract with the highest volume. If there are still multiple contracts available, we select
+the contracts with the highest open interest. In some rare cases, we still have multiple
+matches, and we then choose the option with the highest price, that is, the option that is
+most in the money (in a given moneyness group). Furthermore, we do not take positions
+in options for which the volume or open interest are zero for the contracts that are required
+to compute the carry. 19
+    The results are presented in Table 13, where we focus on the current-carry strategy.
+We find that for both options carry strategies, the return distribution displays substantial
+negative skewness. The Sharpe ratio for call options equals 0.3, but is much higher for put
+options at 1.7. If we were to apply the carry strategy to a single index, the carry strategy
+tends to short out-of-the money put options, and is long at-the-money options, which is
+known to be a profitable strategy with occasionally large drawdowns. This illustrates once
+more that the concept of carry connects and extends predictor variables and investment
+strategies across many different asset classes.
+    We furthermore find that the carry of the carry portfolio significantly predicts returns
+on the carry portfolio for put options. This is perhaps even more surprising given that
+the sample is relatively short as it starts only in 1996.
+    Interestingly, if we study the performance of carry strategies during carry downturns,
+we find that the options carry strategies behave differently during these episodes. The
+put options strategy, which generates the largest Sharpe ratios, performs poorly during
+carry downturns, but does well during carry expansions. The opposite is true for the carry
+strategy using call options. It may therefore be valuable to combine both strategies.
+  17
+     The screens largely follow from Frazzini and Pedersen (2011), but the contracts included in the
+strategy become less liquid.
+  18
+     Results are stronger if we include all five delta groups as defined in Frazzini and Pedersen (2011).
+  19
+     [IN PROGRESS: DELTA-HEDGED CARRY STRATEGIES AND CARRY STRADDLES]
+
+
+
+
+                                                   35
+6    Conclusion: Caring about Carry
+A security’s expected return can be decomposed into its “carry” and its expected price
+appreciation, where carry can be measured in advance without an asset pricing model.
+We find that carry predicts returns both in the cross section and time series for a variety
+of different asset classes that include global equities, bonds, currencies, and commodities,
+as well as within US Treasuries, credit, and equity index options.
+    This predictability underlies the strong returns to “carry trades” that go long
+high-carry and short low-carry securities, which have been applied almost exclusively
+to currencies. Decomposing carry returns into static and dynamic components, we
+investigate the nature of this predictability across asset classes. We identify “carry
+downturns”—when carry strategies across all asset classes do poorly—and show that
+these episodes coincide with global recessions and liquidity crises.
+
+
+
+
+                                            36
+Appendix
+
+
+A      Foreign-Denominated Futures
+Here we briefly explain how we compute the US-dollar return and carry of a futures
+contract which is denominated in foreign currency. Suppose that the exchange rate is et
+(measured in number of local currency per unit of foreign currency), the local interest
+rate is rf , the foreign interest rate is rf ∗ , the spot price is St , and the futures price is Ft ,
+where both St and Ft are measured in foreign currency.
+    Suppose that a U.S. investor allocates Xt dollars of capital to the position. This
+capital is transferred into Xt /et in a foreign-denominated margin account. One time
+period later, the investor’s foreign denominated capital is (1 + rf ∗ )Xt /et + Ft+1 − Ft so
+                                                                  
+that the dollar capital is et+1 (1 + rf ∗ )Xt /et + Ft+1 − Ft . Assuming that the investor
+hedges the currency exposure of the margin capital and that covered interest-rate parity
+holds, the dollar capital is in fact (1 + rf )Xt + et+1 (Ft+1 − Ft ). Hence, the hedged dollar
+return in excess of the local risk-free rate is
+
+                                              et+1 (Ft+1 − Ft )
+                                     rt+1 =                                                   (A.1)
+                                                     Xt
+
+For a fully-collateralized futures with Xt = et Ft , we have
+
+                                   et+1 (Ft+1 − Ft )
+                          rt+1 =
+                                          et Ft
+                                   (et+1 − et + et )(Ft+1 − Ft )
+                                 =
+                                                 et Ft
+                                   Ft+1 − Ft et+1 − et Ft+1 − Ft
+                                 =              +                                             (A.2)
+                                       Ft              et       Ft
+
+We compute the futures return using this exact formula, but we note that it is very similar
+to the simpler expression (Ft+1 − Ft )/Ft ) as this simpler version is off only by the last
+term of (A.2) which is of second-order importance (as a product of returns).
+   We compute the carry of a foreign denominated futures as the return if the spot price
+stays the same such that Ft+1 = St and if the exchange rate stays the same, et+1 = et .
+
+
+
+
+                                                 37
+Using this together with Equation (A.2), we see that the carry is 20
+
+                                                     St − Ft
+                                           Ct =              .                                     (A.3)
+                                                        Ft
+
+
+B      Data Sources
+We describe below the data sources we use to construct our return series. Table 1 provide
+summary statistics on our data, including sample period start dates.
+
+Equities We use equity index futures data from 13 countries: the U.S. (S&P 500),
+Canada (S&P TSE 60), the UK (FTSE 100), France (CAC), Germany (DAX), Spain
+(IBEX), Italy (FTSE MIB), The Netherlands (EOE AEX), Norway (OMX), Switzerland
+(SMI), Japan (Nikkei), Hong Kong (Hang Seng), and Australia (S&P ASX 200). The data
+source is Bloomberg. We collect data on spot, nearest-, and second-nearest-to-expiration
+contracts to calculate the carry as described in Section 1. We calculate the returns on the
+most active equity futures contract for each market (which is typically the front-month
+contract). This procedure ensures that we do not require any form of interpolation to
+compute returns.
+
+Currencies The currency data consist of spot and one-month forward rates for 19
+countries: Austria, Belgium, France, Germany, Ireland, Italy, The Netherlands, Portugal
+and Spain (replaced with the euro from January 1999), Australia, Canada, Denmark,
+Japan, New Zealand, Norway, Sweden, Switzerland, the United Kingdom, and the United
+States. Our basic dataset is obtained from Barclays Bank International (BBI) prior to
+1997:01 and WMR/Reuters thereafter and is similar to the data in Burnside, Eichenbaum,
+Kleshchelski and Rebelo (2011), Lustig, Roussanov and Verdelhan (2011), and Menkhoff,
+Sarno, Schmeling and Schrimpf (2010). However, we verify and clean our quotes with data
+obtained from HSBC, Thomson Reuters, and data from BBI and WMR/Reuters sampled
+one day before and one day after the end of the month using the algorithm described
+below.
+    At the start of our sample in 1983:10, there are 6 pairs available. All exchange rates
+are available since 1997:01, and following the introduction of the euro there are 10 pairs
+in the sample since 1999:01.
+  20
+    It is straightforward to compute the carry if the investor does not hedge the interest rate. In this
+case, the carry is adjusted by a term rf∗ − rf , where rf∗ denotes the interest rate in the country of the
+index and rf the US interest rate.
+
+
+
+                                                   38
+    There appear to be several data errors in the basic data set. We use the following
+algorithm to remove such errors. Our results do not strongly depend on removing these
+outliers. For each currency and each date in our sample, we back out the implied foreign
+interest rate using the spot- and forward exchange rate and the US 1-month LIBOR. We
+subsequently compare the implied foreign interest rate with the interbank offered rate
+obtained from Global Financial Data and Bloomberg. If the absolute difference between
+the currency-implied rate and the IBOR rate is greater than a specified threshold, which
+we set at 2%, we further investigate the quotes using data from our alternative sources.
+More specifically:
+
+   • before (after) 1997:01, if data is available from WMR/Reuters (BBI) and the
+     absolute difference of the implied rate is below the threshold, replace the default
+     source BBI (WMR/Reuters) with WMR/Reuters (BBI)
+
+        – if data is available from WMR/Reuters (BBI) and the absolute difference
+          of the implied rate is also above the threshold, keep the default source BBI
+          (WMR/Reuters)
+
+   • else, if data is available from HSBC and the absolute difference of the implied rate
+     is below the threshold, replace the default source with HSBC
+
+        – if data is available from HSBC and the absolute difference of the implied rate
+          is also above the threshold, keep the default source
+
+   • else, if data is available from Thomson/Reuters and the absolute difference
+     of the implied rate is below the threshold, replace the default source with
+     Thomson/Reuters
+
+        – if data is available from Thomson/Reuters and the absolute difference of the
+          implied rate is also above the threshold, keep the default source
+
+    If none of the other sources is available, we compare the end-of-month quotes with
+quotes sampled one day before and one day after the end of the month and run the same
+checks.
+    In cases where the interbank offered rate has a shorter history than our currency data,
+we include the default data if the currency-implied rate is within the tolerance of the
+currency-implied rate from any of the sources described above.
+    There are a few remaining cases, for example where the interbank offered rate is not
+yet available, but the month-end quote is different from both the day immediately before
+
+
+                                            39
+and after the end of the month. In these cases, we check whether the absolute difference
+of the implied rates from these two observations is within the tolerance, and take the
+observation one day before month-end if that is the case.
+    Figure 1 for Sweden illustrates the effects of our procedure by plotting the actual
+interbank offered rate (“Libor BB”) with the currency-implied rate from the original
+data (“Libor implied”) and the currency-implied rate after our data cleaning algorithm
+has been applied (“Libor implied NEW”). Sweden serves as an illustration only, and the
+impact for other countries is similar.
+
+                                                 SWEDEN
+                  30
+                                                                    Libor BB
+                                                                    Libor implied
+                                                                    Libor implied NEW
+                  25
+
+
+
+                  20
+
+
+
+                  15
+
+
+
+                  10
+
+
+
+                   5
+
+
+
+                   0
+
+                   1985       1990        1995        2000        2005         2010
+
+
+
+
+Figure 1: Libor rates for Sweden. The figure shows the dynamics of three Libor rates: From Bloomberg
+(“Libor BB”), the one implied by currency data (“Libor implied”), and the one implied by our corrected
+currency data (“Libor implied NEW”).
+
+
+    Some of the extreme quotes from the original source are removed (for instance, October
+1993), whereas other extremes are kept (like the observations in 1992 during the banking
+crisis).
+
+Commodities Since there are no reliable spot prices for commodities, we use the
+nearest-, second-nearest, and third-nearest to expiry futures prices from Bloomberg. Our
+commodities data set consists of 24 commodities: 7 in metals (aluminum, copper, nickel,
+zinc, lead, gold, and silver), 6 in energy (brent crude oil, gasoil, WTI crude, RBOB gasoline
+(spliced with the unleaded gasoline contract which was delisted at the end of 2006),
+heating oil, and natural gas), 8 in agriculture (cotton, coffee, cocoa, sugar, soybeans,
+
+                                                 40
+Kansas wheat, corn, and wheat), and 3 in livestock (lean hogs, feeder cattle, and live
+cattle).
+    The industrial metals contracts (from the London Metals Exchange, LME) are different
+from the other contracts, as futures contracts can have daily expiration dates up to 3
+months out. We collect cash- and 3-month (constant maturity) futures prices and use
+linear interpolation to calculate returns.
+
+Fixed income Bond futures are only available for a very limited number of countries
+and for a relatively short sample period. We therefore create synthetic futures returns
+for 10 countries: the US, Australia, Canada, Germany, the UK, Japan, New Zealand,
+Norway, Sweden, and Switzerland. We collect zero coupon 10-year, 9-year, and 3-month
+constant maturity yields from Bloomberg. Each month, we calculate the price of the 10-
+year zero coupon bond and a bond with a remaining maturity of nine year and 11 months
+(by linearly interpolating the 9- and 10-year yields). Our fixed income carry measure is
+the percent price difference between these two bonds, minus the short rate (to make it
+comparable to a non-funded basis like a futures contract). The rate of return is defined
+similarly. For countries with bond futures data, the correlation between actual futures
+returns and our synthetic futures returns is in excess of 0.95.
+
+
+C     Predictive Regressions Using Ranks
+The table below shows the results from predictive regressions where the value of each
+security’s carry is replaced by the cross-sectional rank of its carry (scaled by the number
+of securities Nt ) to rely less on the magnitude of the carry. More specifically,
+
+                              i                    rank(Cti )
+                             rt+1 = ai + b t + c              + εit .                (C.1)
+                                                      Nt
+
+
+
+
+                                             41
+                                   Global Equities                      Commodities
+     Slope current carry   1.16%    1.15% 1.28% 1.25%           1.42%   1.47% 0.87%     0.96%
+     t-stat                 4.32     4.12   4.64   4.34          3.12    3.09  1.72      1.81
+
+     Slope carry 1-12      0.69%    0.68%   0.94%       0.95%   1.52%   1.57%   0.87%   0.97%
+     t-stat                 2.50     2.36    2.73        2.65    3.32    3.27    1.72    1.81
+
+     Contract FE            No       No      Yes         Yes     No      No      Yes     Yes
+     Time FE                No       Yes     No          Yes     No      Yes     No      Yes
+
+
+                                   Fixed Income                          Currencies
+     Slope current carry   0.62%   0.62% 0.66% 0.68%            0.56%   0.58% 0.79%     0.97%
+     t-stat                 3.92    3.79   3.61 3.52             2.82    2.80  2.26      2.70
+
+     Slope carry 1-12      0.32%    0.32%   0.23%       0.26%   0.46%   0.47%   0.54%   0.72%
+     t-stat                 2.04     1.94    1.25        1.33    2.39    2.38    1.56    2.07
+
+     Contract FE            No       No      Yes         Yes     No      No      Yes     Yes
+     Time FE                No       Yes     No          Yes     No      Yes     No      Yes
+
+Table B.1: How Carry Predicts Returns: Using Ranks.
+
+
+
+
+                                                   42
+References
+Acharya, Viral, Lars Lochstoer, and Tarun Ramadorai, 2010, Limits to arbitrage and
+  hedging: Evidence from commodity markets, Working paper.
+
+Acharya, Viral V., and Lasse Heje Pedersen, 2005, Asset pricing with liquidity risk,
+  Journal of Financial Economics 77, 375–410.
+
+Asness, Cliff, Tobias Moskowitz, and Lasse Heje Pedersen, 2012, Value and momentum
+  everywhere, forthcoming, Journal of Finance.
+
+Bacchetta, Philippe, and Eric van Wincoop, 2010, Infrequent portfolio decisions: A
+  solution to the forward discount puzzle, American Economic Review 100, 837–869.
+
+Bailey, Warren, and K. C. Chan, 1993, Macroeconomic influences and the variability of
+  the commodity futures basis, Journal of Finance 48, 555–573.
+
+Bansal, Ravi, and Amir Yaron, 2004, Risks for the long-run: A potential resolution of
+  asset pricing puzzles, Journal of Finance 59, 1481–1509.
+
+Barr, David G., and Richard Priestley, 2004, Expected returns, risk and the integration
+  of international bond markets, Journal of International Money and Finance 23, 71–97.
+
+Bessembinder, Hendrik, 1992, Msystematic risk, hedging pressure, and risk premiums in
+  futures markets, Review of Financial Studies 4, 637–667.
+
+Binsbergen, Jules H. van, and Ralph S.J. Koijen, 2010, Predictive regressions: A present-
+  value approach, Journal of Finance 65, 1439–1471.
+
+Binsbergen, Jules van, Michael W. Brandt, and Ralph S.J. Koijen, 2012, On the timing
+  and pricing of dividends, American Economic Review 102(4), 1596–1618.
+
+Binsbergen, Jules van, Wouter Hueskes, Ralph S.J. Koijen, and Evert B. Vrugt, 2010,
+  Equity yields, Working Paper: Northwestern University and University of Chicago.
+
+Brunnermeier, Markus K., Stefan Nagel, and Lasse H. Pedersen, 2008, Carry Trades and
+  Currency Crashes, NBER Macroeconomics Annual 23, 313–348.
+
+Brunnermeier, Markus .K., and Lasse H. Pedersen, 2009, Market Liquidity and Funding
+  Liquidity, Review of Financial Studies 22, 2201–2238.
+
+Burnside, Craig, Martin Eichenbaum, Isaac Kleshchelski, and Sergio Rebelo, 2006, The
+  returns to currency speculation, Working Paper.
+
+                                           43
+Campbell, John Y., and John H. Cochrane, 1999, By force of habit: A consumption-
+  based explanation of aggregate stock market behavior, Journal of Political Economy
+  107, 205–251.
+
+Campbell, John Y., and Robert J. Shiller, 1991, Yield spreads and interest rates: A bird’s
+  eye view, Review of Economic Studies 58, 495–514.
+
+Casassus, J., and P. Collin-Dufresne, 2005, Stochastic convenience yield implied from
+  commodity futures and interest rates, The Journal of Finance 60, 2283–2331.
+
+Chan, Louis K. C., Yasushi Hamao, and Josef Lakonishok, 1991, Fundamentals and stock
+  returns in japan, Journal of Finance 46, 1739–1764.
+
+Cochrane, John H., 2011, Discount rates, The Journal of Finance 66, 1047–1108.
+
+Engel, Charles, 1996, The forward discount anomaly and the risk permium: A survey of
+  recent evidence, Journal of Empirical Finance 3, 123–192.
+
+Erb, C.B., and C.R. Harvey, 2006, The strategic and tactical value of commodity futures,
+  Financial Analysts Journal pp. 69–97.
+
+Fama, Eugene F., 1984, Forward and spot exchange rates, Journal of Monetary Economics
+  14, 319–338.
+
+      , and Robert H. Bliss, 1987, The information in long-maturity forward rates,
+  American Economic Review 77, 680–692.
+
+Fama, Eugene F., and Kenneth R. French, 1987, Commodity futures prices: Some
+  evidence on forecast power, premiums, and the theory of storage, Journal of Business
+  60, 55–73.
+
+       , 1988, Dividend yields and expected stock returns, Journal of Financial
+  Economics 22, 3–27.
+
+       , 1998, Value versus growth: The international evidence, Journal of Finance 53,
+  1975–1999.
+
+       , 2011, Size, value, and momentum in international stock returns, Working Paper.
+
+Farhi, Emmanuel, and Xavier Gabaix, 2008, Rare disasters and exchange rates, working
+  paper.
+
+
+
+                                           44
+Frazzini, Andrea, and Lasse Heje Pedersen, 2011, Embedded leverage, AQR Capital
+  Management and New York University.
+
+Froot, Kenneth A., and Richard H. Thaler, 1990, Anomalies: Foreign exchange, Journal
+  of Economic Perspectives 4, 179–192.
+
+Gabaix, Xavier, 2009, Variable rare disasters: An exactly solved framework for ten puzzles
+  in macro-finance, Working paper, NYU.
+
+Gârleanu, Nicolae, and Lasse Heje Pedersen, 2011, Margin-Based Asset Pricing and
+  Deviations from the Law of One Price, Review of Financial Studies 24, 1980–2022.
+
+Gorton, Gary, Fumio Hayashi, and Geert Rouwenhorst, 2007, The fundamentals of
+  commodity futures returns, Working paper.
+
+Griffin, John M., 2002, Are the fama and french factors global or country specific?, Review
+  of Financial Studies 15, 783–803.
+
+        , Xiuqing Ji, and J. Spencer Martin, 2003, Momentum investing and business
+  cycle risk: Evidence from pole to pole, Journal of Finance 58, 2515–2547.
+
+Hansen, Lars Peter, and Ravi Jagannathan, 1997, Assessing specific errors in stochastic
+  discount factor models, Journal of Finance 52, 557–590.
+
+Hong, Harrison, and Mothiro Yogo, 2010, What does futures market interest tell us about
+  the macroeconomy and asset prices?, Working paper.
+
+Hou, Kewei, G. Andrew Karolyi, and Bong Chan Kho, 2010, What factors drive global
+  stock returns?, Working Paper.
+
+Ilmanen, Antti, 1995, Time-varying expected returns in international bond markets,
+   Journal of Finance 50, 481–506.
+
+       , 2011, Expected Returns (John Wiley: United Kingdom).
+
+Koijen, Ralph S.J., and Stijn Van Nieuwerburgh, 2011, Predictability of stock returns and
+  cash flows, Annual Review of Financial Economics 3, 467–491.
+
+Lewis, K.K., 1995, Puzzles in international financial markets, in Gene M. Grossman, and
+  Kenneth Rogoff, ed.: Handbook of International Economics vol. 3 (North Holland:
+  Amsterdam) Chap. 37.
+
+Lucas, Robert, 1978, Asset prices in an exchange economy, Econometrica 46, 1429–1446.
+
+                                            45
+Lustig, Hanno, Nicholas Roussanov, and Adrien Verdelhan, 2010, Countercyclical
+  currency risk premia, Working Paper.
+
+Lustig, Hanno, and Adrien Verdelhan, 2007, The cross-section of foreign currency risk
+  premia and us consumption growth risk, American Economic Review 97, 89–117.
+
+Meese, R.A., and K. Rogoff, 1983, Empirical exchange rate models of the seventies:: Do
+ they fit out of sample?, Journal of international economics 14, 3–24.
+
+Moskowitz, Tobias J., Yao Hua Ooi, and Lasse Heje Pedersen, 2012, Time series
+ momentum, Journal of Financial Economics 104, 228–250.
+
+Pastor, Lubos, and Robert F. Stambaugh, 2003, Liquidity risk and expected stock returns,
+  Journal of Political Economy 111, 642–685.
+
+Rouwenhorst, K. Geert, 1998, International momentum strategies, Journal of Finance 53,
+  267–284.
+
+Szymanowska, Marta, Frans de Roon, Theo E. Nijman, and Rob van den Goorbergh, 2011,
+  An anatomy of commodity futures risk premia, Working Paper: Erasmus University.
+
+Tang, Ke, and Wei Xiong, 2010, Index investment and financialization of commodities,
+  Working paper.
+
+Wachter, Jessica A., 2010, Can time-varying risk of rare disasters explain aggregate stock
+ market volatility?, Working Paper.
+
+Yang, Fan, 2011, Investment shocks and the commodity basis spread, Working Paper:
+  University of Minnesota.
+
+
+
+
+                                           46
+        Tables
+
+Instrument    Begin       Return            Carry               Instrument      Begin       Return            Carry
+              sample   Mean St.dev.      Mean St.dev.                           sample   Mean St.dev.      Mean St.dev.
+
+Equities                                                        Commodities
+SPX           Mar-88      5.8     14.9     -1.6      0.7        Crude Oil       Feb-99     22.8     33.0     0.2    5.7
+SPTSX60       Oct-99      7.4     16.3     -1.0      0.8        Gasoil          Feb-99     22.5     34.2     2.7    5.6
+UKX           Mar-88      3.7     15.2     -2.0      1.4        WTI Crude       Feb-87     12.6     33.7     1.9    7.2
+CAC           Jan-89      4.1     19.8     -0.9      1.9        Unl. Gasoline   Nov-05      9.4     39.0    -7.6    9.8
+DAX           Dec-90      6.2     21.6     -3.7      1.1        Heating Oil     Aug-86     12.6     33.3    -0.2    8.5
+IBEX          Aug-92      9.6     21.6      1.1      2.0        Natural Gas     Feb-94    -15.0     54.9   -26.2   22.1
+FTSEMIB       Apr-04      2.4     20.3      1.0      1.5        Cotton          Feb-80      2.5     24.8    -4.6    7.0
+AEX           Feb-89      7.2     20.6     -0.1      1.5        Coffee          Feb-81      4.2     38.0    -4.8    5.1
+OMX           Mar-05     10.1     19.5      1.3      2.2        Cocoa           Feb-84     -2.9     28.9    -6.8    3.4
+SMI           Nov-91      5.3     15.1     -0.1      1.2        Sugar           Feb-80      1.3     39.8    -3.4    6.1
+NKY           Oct-88     -3.1     22.4     -0.5      1.7        Soybeans        Feb-80      2.0     23.4    -2.7    5.7
+HIS           May-92     12.5     27.9      1.2      2.3        Kansas Wheat    Feb-99      1.5     28.6    -8.6    3.4
+AS51          Jun-00      5.0     13.4      0.7      1.0        Corn            Feb-80     -4.4     24.7   -10.8    5.3
+                                                                Wheat           Feb-80     -5.2     24.5    -8.0    5.8
+Currencies                                                      Lean Hogs       Jun-86     -2.7     24.8   -14.1   19.9
+Australia     Jan-85      4.6     11.9      3.1      0.8        Feeder Cattle   Feb-02      3.2     15.0     0.6    4.7
+Austria       Feb-97     -2.6      8.7     -2.1      0.0        Live Cattle     Feb-80      2.5     14.1     0.4    6.1
+Belgium       Feb-97     -2.7      8.7     -2.1      0.1        Gold            Feb-80     -1.7     17.3    -5.5    1.1
+Canada        Jan-85      2.2      7.1      0.8      0.5        Silver          Feb-80     -1.5     30.2    -6.4    1.8
+Denmark       Jan-85      4.4     11.1      1.0      0.9        Aluminum        Feb-91     -1.2     19.1    -5.0    1.6
+Euro          Feb-99      1.8     10.8     -0.4      0.4        Nickel          Feb-93     14.8     35.6     0.5    2.6
+France        Nov-83      4.6     11.2      1.6      0.9        Lead            Feb-95     10.9     29.9    -0.7    2.8
+Germany       Nov-83      2.8     11.7     -0.9      0.9        Zinc            Feb-91      2.1     25.6    -4.8    2.1
+Ireland       Feb-97     -2.5      8.9      0.5      0.2        Copper          May-86     16.8     28.1     4.6    3.4
+Italy         Apr-84      5.1     11.1      4.3      0.8
+Japan         Nov-83      1.6     11.6     -2.9      0.6        Fixed income
+Netherlands   Nov-83      3.0     11.6     -0.7      0.9        Australia       Jan-95      4.5     10.6     1.3    0.4
+New Zealand   Jan-85      6.8     12.4      4.4      1.2        Canada          Jan-95      6.5      7.9     2.6    0.5
+Norway        Jan-85      4.5     10.9      2.3      1.0        Germany         Nov-91      4.6      7.0     1.9    0.5
+Portugal      Feb-97     -2.3      8.4     -0.6      0.2        UK              Jan-95      4.2      8.2     0.9    0.7
+Spain         Feb-97     -1.5      8.5     -0.7      0.2        Japan           Nov-91      5.6      7.0     2.9    0.3
+Sweden        Jan-85      3.5     11.4      1.7      1.0        New Zealand     Jan-95      2.6      9.8     0.6    0.6
+Switzerland   Nov-83      2.0     11.9     -2.0      0.7        Norway          Aug-98      2.5      7.6     1.1    0.5
+UK            Nov-83      2.9     10.5      2.0      0.6        Sweden          Jan-95      7.3      8.9     2.3    0.4
+US            Nov-83      0.0      0.0      0.0      0.0        Switzerland     Jan-95      4.9      5.7     2.7    0.3
+                                                                US              Jan-95      5.1     10.0     1.8    0.6
+
+
+        Table 1: Summary Statistics. This table contains all the instruments that we use, the date as of which
+        the returns and carry are available, and the annualized mean and standard deviation of the return and
+        the carry.
+
+
+
+
+                                                           47
+                              Carry Trade:    Carry Trade:       Passive Long:
+                              Current Carry    Carry 1-12       Equal Weighted
+
+                                              Global Equities
+                   Average         9.9%           6.5%               5.8%
+                   St.dev.        10.6%          10.7%              15.8%
+                   Skewness        0.17           0.11               -0.63
+                   Kurtosis        4.79           3.82                4.01
+                   SR              0.93           0.61               0.37
+
+                                               Commodities
+                   Average        11.7%          13.0%               1.3%
+                   St.dev.        19.0%          19.5%              13.3%
+                   Skewness        -0.41         -0.83              -0.66
+                   Kurtosis         4.53          5.74               6.52
+                   SR              0.62           0.67               0.10
+
+                                           Global Fixed Income
+                   Average        5.1%            3.0%              5.0%
+                   St.dev.        6.3%            6.3%              6.5%
+                   Skewness       -0.11           0.05              0.02
+                   Kurtosis        5.03           4.86              3.12
+                   SR             0.82            0.48              0.77
+
+                                                Currencies
+                   Average        5.3%           4.2%               3.0%
+                   St.dev.        7.8%           7.6%               8.0%
+                   Skewness       -0.75          -1.07              -0.10
+                   Kurtosis        4.64           6.42               3.41
+                   SR             0.68           0.55               0.37
+
+                                    Diversified Across All Asset Classes
+                   Average        7.3%             4.8%             4.0%
+                   St.dev.        4.9%             5.1%             5.4%
+                   Skewness       -0.22            -0.53            -1.07
+                   Kurtosis        3.81             5.06             8.17
+                   SR             1.49             0.95             0.75
+
+
+Table 2: The Returns to Global Carry Strategies. For each asset class, we construct long/short
+carry trades and this table reports the average, standard deviation, skewness, and kurtosis.
+
+
+
+
+                                              48
+                          Correlations of Carry Trades: Current Carry
+
+                                 Equities   Commodities     Fixed Income     Currencies
+
+                 Equities           100%
+                 Commodities         -5%            100%
+                 Fixed Income        -2%              4%            100%
+                 Currencies           4%              3%             23%          100%
+
+                            Correlations of Carry Trades: Carry1-12
+
+                                 Equities   Commodities     Fixed Income     Currencies
+                 Equities          100%
+                 Commodities        -1%             100%
+                 Fixed Income        6%             -11%            100%
+                 Currencies         14%              12%             21%          100%
+
+
+Table 3: The Correlation across Global Carry Strategies. The reports the monthly return
+correlation between carry strategies. The top panel reports the results for the current carry strategies;
+the bottom panel for the carry1-12 strategies.
+
+
+
+
+                                                   49
+                             Global Equities
+
+                                CC    C1-12       CC    C1-12       CC    C1-12       CC    C1-12       CC    C1-12
+     Alpha                   0.86%    0.53%    0.82%    0.39%    0.85%    0.39%    0.86%    0.40%    0.85%    0.40%
+     t-stat                    4.67     2.81     4.46     1.96     4.63     1.93     4.73     2.01     4.62     2.01
+     Passive long             -0.07     0.03    -0.08     0.03    -0.07     0.03    -0.10     0.02    -0.10     0.02
+     t-stat                   -1.29     0.59    -1.40     0.52    -1.25     0.54    -1.69     0.44    -1.74     0.40
+     Value “everywhere”                          0.12     0.32     0.14     0.33     0.08     0.30     0.08     0.30
+     t-stat                                      1.19     3.64     1.38     3.71     0.81     3.39     0.85     3.43
+     Momentum “everywhere”                       0.02     0.09     0.06     0.09     0.02     0.10     0.01     0.09
+     t-stat                                      0.20     1.11     0.69     1.18     0.19     1.22     0.08     1.19
+     TS momentum                                                  -0.04     0.00
+     t-stat                                                       -1.42    -0.16
+     Funding liquidity                                                              0.01      0.00
+     t-stat                                                                         1.50     -0.02
+     Market liquidity                                                                                  0.00     0.00
+     t-stat                                                                                            1.10     0.14
+50   R-square                 1.1%     0.3%     1.9%     5.8%     2.7%     5.8%     2.5%     5.0%     2.4%     5.0%
+     IR                        0.98     0.59     0.93     0.45     0.96     0.45
+
+
+                             Commodities
+
+                                CC    C1-12       CC    C1-12       CC    C1-12       CC    C1-12       CC    C1-12
+     Alpha                   0.98%    1.09%    0.85%    0.97%    0.73%    0.82%    0.71%    0.57%    0.68%    0.53%
+     t-stat                    3.45     3.75     3.47     3.88     2.76     3.23     2.68     2.16     2.55     2.00
+     Passive long              0.00    -0.08    -0.07    -0.17    -0.03    -0.11    -0.04    -0.16    -0.01    -0.11
+     t-stat                   -0.03    -0.75    -0.96    -1.82    -0.39    -1.12    -0.42    -1.73    -0.11    -1.15
+     Value “everywhere”                         -0.17    -0.24    -0.21    -0.27    -0.19    -0.21    -0.18    -0.21
+     t-stat                                     -2.81    -4.21    -3.11    -4.73    -2.61    -3.66    -2.49    -3.83
+     Momentum “everywhere”                       0.29     0.33     0.33     0.38     0.28     0.36     0.29     0.36
+     t-stat                                      4.96     6.32     4.05     5.33     4.24     6.95     4.38     6.89
+     TS momentum                                                  -0.11    -0.11
+     t-stat                                                       -0.93    -1.09
+     Funding liquidity                                                              0.01     0.02
+     t-stat                                                                         0.91     2.68
+     Market liquidity                                                                                  0.00     0.01
+     t-stat                                                                                            0.04     1.40
+     R-square                 0.0%     0.3%    18.1%    25.8%    21.0%    30.1%    20.3%    30.9%    19.8%    29.7%
+     IR                        0.61     0.67     0.59     0.69     0.53     0.63
+                                 Global Fixed Income
+
+                                    CC    C1-12       CC    C1-12       CC    C1-12       CC    C1-12       CC    C1-12
+      Alpha                      0.40%    0.28%    0.42%    0.27%    0.45%    0.28%    0.41%    0.28%    0.42%    0.29%
+      t-stat                       3.11     2.18     3.12     2.08     3.51     2.17     2.96     2.08     3.05     2.17
+      Passive long                 0.06    -0.07     0.05    -0.07     0.20    -0.04     0.06    -0.07     0.05    -0.08
+      t-stat                       0.79    -0.82     0.60    -0.83     1.81    -0.34     0.66    -0.84     0.54    -0.98
+      Value “everywhere”                            -0.04     0.05    -0.07     0.04    -0.05     0.05    -0.05     0.04
+      t-stat                                        -0.27     0.31    -0.48     0.27    -0.29     0.29    -0.31     0.27
+      Momentum “everywhere”                          0.12     0.07     0.21     0.09     0.10     0.05     0.11     0.06
+      t-stat                                         0.95     0.47     1.67     0.59     0.82     0.34     0.89     0.40
+      TS momentum                                                     -0.06    -0.01
+      t-stat                                                          -2.41    -0.49
+      Funding liquidity                                                                 0.00     0.00
+      t-stat                                                                            1.24     1.28
+      Market liquidity                                                                                     0.00     0.00
+      t-stat                                                                                              -0.81    -1.28
+      R-square                    0.4%     0.5%     1.3%     0.7%     4.5%     0.8%     1.8%     1.4%     1.4%     1.2%
+      IR                           0.77     0.53     0.80     0.52     0.88     0.53
+
+51
+                                 Currencies
+
+                                    CC    C1-12       CC    C1-12       CC    C1-12       CC    C1-12       CC    C1-12
+      Alpha                      0.41%    0.32%    0.37%    0.32%    0.31%    0.26%    0.35%    0.30%    0.35%    0.29%
+      t-stat                       3.27     2.57     2.89     2.57     2.23     1.95     2.73     2.42     2.60     2.26
+      Passive long                 0.12     0.11     0.14     0.11     0.18     0.15     0.16     0.13     0.20     0.17
+      t-stat                       1.72     1.41     2.16     1.70     2.67     2.12     2.29     1.84     2.61     2.19
+      Value “everywhere”                             0.07     0.00     0.11     0.02     0.15     0.08     0.08    -0.01
+      t-stat                                         0.72    -0.04     0.99     0.19     1.90     1.04     0.86    -0.08
+      Momentum “everywhere”                          0.03     0.01     0.00    -0.01     0.13     0.11     0.14     0.11
+      t-stat                                         0.39     0.14     0.00    -0.11     1.99     1.58     1.68     1.33
+      TS momentum                                                      0.02     0.02
+      t-stat                                                           0.43     0.34
+      Funding liquidity                                                                 0.03     0.03
+      t-stat                                                                            6.09     5.90
+      Market liquidity                                                                                     0.01     0.01
+      t-stat                                                                                               2.79     3.03
+      R-square                    1.6%     1.4%     2.2%     1.5%     3.5%     2.2%    17.8%    22.6%    10.0%    13.1%
+      IR                           0.64     0.51     0.58     0.51     0.47     0.41
+
+
+     Table 4: Carry Trade Risk Exposures. The table reports the exposires to various risk factors. “CC” corresponds to the current-carry strategies;
+     “C1-12” to the carry1-12 strategies.
+                         Global Equities                 Commodities
+Slope current carry   1.50 1.22 1.55 1.26         0.06    0.07 0.01 0.01
+t-stat                3.57 4.29 3.52 4.31         0.75    0.84 0.12 0.15
+
+Slope carry1-12       2.47   1.46   2.92   1.76   0.37    0.42   0.24   0.29
+t-stat                3.55   2.87   3.52   2.86   3.15    3.57   1.86   2.19
+
+Contract FE            No    No     Yes    Yes     No      No    Yes    Yes
+Time FE                No    Yes    No     Yes     No      Yes   No     Yes
+
+                      Global Fixed Income                 Currencies
+Slope current carry   1.52 1.64 1.54 1.83         1.28    0.80 1.62 1.10
+t-stat                2.59 3.78 2.19 3.61         3.19    2.93 2.68 2.67
+
+Slope carry1-12       1.51   1.07   1.54   1.02   1.09    0.59   1.38   0.69
+t-stat                2.44   2.38   2.03   1.91   3.03    1.96   2.48   1.37
+
+Contract FE            No    No     Yes    Yes     No      No    Yes    Yes
+Time FE                No    Yes    No     Yes     No      Yes   No     Yes
+
+
+            Table 5: How Does Carry Predict Returns?
+
+
+
+
+                                     52
+            Current carry returns   Carry 1-12 returns   Passive long returns   Passive long returns
+              predicted by its       predicted by its      predicted by its       predicted by its
+                current carry           carry 1-12          current carry            carry 1-12
+
+                                                Global Equities
+Intercept          -0.2%                  -0.5%                 0.6%                   0.8%
+t-stat              -0.45                  -1.24                2.21                   2.67
+Carry                1.32                   2.52                1.90                   3.47
+t-stat               2.64                   2.65                1.53                   2.16
+R-square            3.1%                   3.2%                 1.1%                   1.6%
+
+                                                  Commodities
+Intercept           1.1%                  0.8%                  0.2%                   0.3%
+t-stat               1.43                 0.60                  0.86                   1.36
+Carry               -0.05                 0.14                  0.14                   0.39
+t-stat              -0.22                 0.26                  0.44                   0.83
+R-square            0.0%                  0.0%                  0.1%                   0.2%
+
+                                            Global Fixed Income
+Intercept           0.3%                  0.3%               0.3%                      0.3%
+t-stat              0.61                   0.48              1.69                      1.32
+Carry               0.52                  -0.12              0.64                      1.06
+t-stat              0.28                  -0.05              0.57                      0.91
+R-square            0.1%                  0.0%               0.1%                      0.3%
+
+                                                   Currencies
+Intercept           0.5%                  0.5%                  0.1%                   0.1%
+t-stat               1.81                  1.60                 0.60                   0.64
+Carry               -0.22                 -0.38                 2.41                   2.32
+t-stat              -0.35                 -0.53                 2.60                   2.80
+R-square            0.0%                  0.1%                  2.9%                   2.5%
+
+
+            Table 6: How the Carry of a Portfolio Predicts the Portfolio Return.
+
+
+
+
+                                                  53
+                                                                Carry Trade:                                           Carry Trade:
+                                                                Current Carry                                           Carry 1-12
+
+     Average return                          Equities   Fixed income    Currencies   Commodities   Equities   Fixed income    Currencies   Commodities
+     Carry expansions                         11.1%             5.9%         8.9%         16.2%       8.4%             4.0%        8.6%         13.0%
+     Carry downturns                           1.2%             1.3%       -15.7%          1.6%      -8.4%            -2.5%      -19.6%         -8.8%
+
+     Average return per carry downturn       Equities   Fixed income    Currencies   Commodities   Equities   Fixed income    Currencies   Commodities
+     September 1992 - December 1992            -7.6%            -4.4%      -47.8%         -7.8%       4.9%            -4.4%      -52.7%         -4.9%
+     May 1997 - September 1998                  3.8%             3.4%       -2.7%        -12.6%     -13.2%            -0.6%       -2.7%         -6.7%
+     November 2007 - January 2009               0.5%             0.3%      -21.8%         20.1%      -6.4%            -4.0%      -29.9%        -12.2%
+     Number of downturns below average              3               3            3             2          3               3            3             3
+
+     Average macro and liquidity variables         Carry expansions             Carry downturns
+     Global recession dummy                                    0.17                        0.41
+     Global liquidity shocks                                   0.02                       -0.17
+
+54
+               Table 7: The Returns to Global Carry Strategies across Regions During Carry Recessions and Expansions.
+                                North          Continental        United      Asia       Australia /    Average
+                               America             Europe       Kingdom                 New Zealand
+Equities          Downturn       -8.59              -11.82          -7.37    -34.79          -50.55       -22.62
+                  Expansion      10.62                9.98           5.50     10.84           12.28         9.84
+Fixed income      Downturn       15.42               12.20          15.08     10.03           18.24        14.20
+                  Expansion       3.86                3.69           2.05      4.80            0.66         3.01
+Currencies        Downturn       -6.68               -9.06         -16.70      2.70          -21.15       -10.18
+                  Expansion       1.96                4.05           4.81     -0.54            9.13         3.88
+
+                                Energy       Agricultural /       Metals                                Average
+                                                 Livestock
+Commodities       Downturn          -35.13           -15.56        -31.59                                 -27.42
+                  Expansion          12.25             3.27         15.06                                  10.19
+
+
+    Table 8: The Returns across Regions During Carry Downturns and Expansions.
+
+
+
+
+                   Mean    Static     Dynamic     % dynamic          Mean      Static    Dynamic       % dynamic
+
+                              Global Equities                                     Commodities
+Current carry     0.83%    0.01%     0.82%                99%        0.98%    0.35%   0.63%                 64%
+Carry 1-12        0.55%    0.07%     0.48%                87%        1.08%    0.43%   0.66%                 60%
+
+                           Global Fixed Income                                     Currencies
+Current carry     0.43%    0.10%     0.33%                77%        0.44%    0.18%     0.26%               59%
+Carry 1-12        0.25%    0.12%     0.14%                54%        0.35%    0.18%     0.17%               48%
+
+
+  Table 9: Decomposing Carry Trade Returns into Static and Dynamic Components.
+
+
+                                                      Total       Static    Dynamic      % dynamic
+             Global equities         Downturn       -8.38%       -8.09%      -0.28%             3%
+                                     Expansion       8.43%        2.33%       6.11%           72%
+             Global fixed income     Downturn       -2.46%       -2.55%       0.09%            -4%
+                                     Expansion       4.02%        2.11%       1.91%           48%
+             Currencies              Downturn      -19.59%      -11.52%      -8.07%           41%
+                                     Expansion       8.56%        4.14%       4.42%           52%
+             Commodities             Downturn       -8.75%       -4.63%      -4.12%           47%
+                                     Expansion      12.95%        8.44%       4.51%           35%
+
+                                                     Total        Static    Dynamic      % dynamic
+             Average                 Downturn                                                 22%
+                                     Expansion                                                52%
+
+
+       Table 10: Return Decomposition during Carry Downturns and Expansions.
+
+
+
+
+                                                     55
+                                         Current carry   Carry1-12    Dividend yield
+                   Mean                         0.75%       0.30%             0.46%
+                   St.dev.                      3.02%       3.14%             3.17%
+                   Skewness                       0.25       -0.35              0.06
+                   SR                             0.87        0.33              0.50
+
+                   Correlation matrix    Current carry   Carry1-12    Dividend yield
+                   Current carry                 100%         41%                7%
+                   Carry1-12                      41%        100%               29%
+                   Dividend yield                  7%         29%             100%
+
+                                         Current carry   Carry1-12
+                   alphas                       8.70%       2.03%
+                   beta                           0.07        0.28
+                   IR                             0.83        0.19
+
+Table 11: Using the Equity Carry or the Dividend Yield. The top panel reports the summary
+statistics of three strategies using either the current carry, the carry1-12 or the dividend yield as the
+signal.
+
+
+
+
+        Cross-section of U.S. Treasuries                     Cross-section of U.S. Credit portfolios
+
+ Summary statistics                     CC    C1-12      Summary statistics                      CC     C1-12
+ Mean                                1.25%    1.36%      Mean                                 1.54%     1.75%
+ St.dev.                             3.81%    3.88%      St.dev.                              4.21%     4.31%
+ Skewness                              0.15     0.02     Skewness                              -0.03     -1.03
+ SR (annualized)                       0.33     0.35     SR (annualized)                        0.37      0.41
+ Market beta                           0.45     0.29     Market beta                            0.23      0.29
+ IR (annualized)                       0.27     0.33     IR (annualized)                        0.28      0.30
+
+ Predictive regressions                 CC    C1-12      Predictive regressions                  CC
+ Predictive coefficient                1.13     1.02     Predictive coefficient                 4.64      4.44
+ T-statistic                           1.72     1.68     T-statistic                            2.96      3.05
+ R-squared                           0.86%    0.61%      R-squared                            3.98%     2.66%
+
+ Decomposition carry returns            CC    C1-12      Decomposition carry returns              CC    C1-12
+ Returns during carry downturns      4.91%    4.97%      Returns during carry downturns       -2.03%   -0.23%
+ Returns during carry expansions     1.18%    1.10%      Returns during carry expansions       2.15%    2.09%
+
+
+  Table 12: Carry Strategies Based on the Cross-section of U.S. Treasuries and Credits.
+
+
+
+
+                                                   56
+               Summary statistics                Call options   Put options
+               Mean                                     4.3%         14.6%
+               St.dev.                                 50.4%         29.2%
+               Skewness                                 -2.81         -1.74
+               SR (annualized)                           0.30          1.73
+
+               Predictive regressions            Call options   Put options
+               Predictive coefficient                   -0.19          0.78
+               T-statistic                              -0.27          2.09
+               R-squared                               0.04%         2.39%
+
+               Decomposition carry returns       Call options   Put options
+               Returns during carry downturns            13%         -1.3%
+               Returns during carry expansions            2%         18.0%
+
+
+Table 13: Current-Carry Strategies Based on the Cross-section of U.S. Index Options.
+
+
+
+
+                                           57
+Figures
+
+
+
+
+          58
+                                                                   Panel A: Current Carry
+                                                    Equities                                                                       Commodities
+             2.5                                                                                   15
+                             Cumulative returns
+                             Cumulative carry
+               2
+
+                                                                                                   10
+             1.5
+
+
+               1
+                                                                                                    5
+             0.5
+
+
+               0
+                                                                                                    0
+                      1990            1995            2000              2005          2010                      1985      1990          1995     2000    2005   2010
+
+
+
+                                                  Fixed income                                                                      Currencies
+
+               1
+                                                                                                   1.5
+             0.8
+
+             0.6                                                                                    1
+
+             0.4
+                                                                                                   0.5
+             0.2
+
+               0
+                                                                                                    0
+            -0.2
+               1992    1994    1996    1998   2000     2002      2004   2006   2008   2010               1985      1990          1995          2000     2005    2010
+
+
+
+
+                                                                         Panel B: Carry1-12
+                                                    Equities                                                                       Commodities
+
+
+             1.5
+                                                                                                    8
+
+
+               1                                                                                    6
+
+
+                                                                                                    4
+             0.5
+
+                                                                                                    2
+                                                                         Cumulative returns
+               0                                                         Cumulative carry
+                                                                                                    0
+                      1990            1995            2000              2005          2010                      1985      1990          1995     2000    2005   2010
+
+
+
+                                                  Fixed income                                                                      Currencies
+             0.6
+                                                                                                   1.5
+             0.5
+
+             0.4
+                                                                                                    1
+             0.3
+
+             0.2
+
+             0.1                                                                                   0.5
+
+               0
+
+            -0.1                                                                                    0
+            -0.2
+               1992    1994    1996    1998   2000     2002      2004   2006   2008   2010               1985      1990          1995          2000     2005    2010
+
+
+
+
+Figure 2: Cumulative Return and Cumulative Carry of the Global Carry Trades. The figure
+shows the cumulative return on carry strategies and the cumulative carry for equities (top-left panel), fixed
+income (bottom-left panel), commodities (top-right panel), and currencies (bottom-right panel). Panel A
+uses the current carry to construct the carry trade and to compute the cumulative carry, whereas Panel
+B uses carry1-12 for both of these. The sample period is February 1988 - February 2011 for equities,
+October 1991 - February 2011 for fixed income, January 1980 - February 2011 for commodities, and
+October 1983 - February 2011 for currencies.
+
+                                                                                              59
+                                Equities                                                                      Commodities
+   1                                                                              1
+                                              Significant correlation
+                                              Insignificant correlation
+ 0.5                                                                            0.5
+
+
+
+   0                                                                              0
+
+
+
+-0.5                                                                           -0.5
+
+
+
+ -1                                                                             -1
+         1992 1994 1996 1998 2000 2002 2004 2006 2008 2010                            1985      1990          1995          2000    2005   2010
+
+
+
+                              Fixed income                                                                    Currencies
+   1                                                                              1
+
+
+
+ 0.5                                                                            0.5
+
+
+
+   0                                                                              0
+
+
+
+-0.5                                                                           -0.5
+
+
+
+ -1                                                                             -1
+        1995           2000                  2005                  2010                  1990          1995          2000          2005    2010
+
+
+
+
+       Figure 3: Rolling Correlations of Carry Strategies with the Stock Market. The figure shows
+       the 3-year rolling correlation between carry returns and the passive, equal-weighted strategy for equities
+       (top-left panel), fixed income (bottom-left panel), commodities (top-right panel), and currencies (bottom-
+       right panel). We use the current carry in the carry strategies. The sample period is February 1988 -
+       February 2011 for equities, October 1991 - February 2011 for fixed income, January 1980 - February 2011
+       for commodities, and October 1983 - February 2011 for currencies.
+
+
+
+
+                                                                          60
+                         Global equities                                              Commodities
+ 2.5                                                             0.8
+
+   2
+                                                                 0.6
+ 1.5
+                                                                 0.4
+   1
+
+ 0.5                                                             0.2
+
+   0
+                                                                   0
+-0.5
+
+ -1                                                             -0.2
+       0        5        10           15   20       25                 0    5       10                15   20   25
+
+
+
+                          Fixed Income                                                   Currencies
+   2                                                             1.2
+
+                                                                   1
+ 1.5
+                                                                 0.8
+
+   1                                                             0.6
+
+                                                                 0.4
+ 0.5
+
+                                                                 0.2
+   0
+                                                                   0
+
+-0.5                                                            -0.2
+       0        5        10           15   20       25                 0    5       10                15   20   25
+
+
+
+
+       Figure 4: Carry Predicts Returns: Panel Regression. The figure shows the predictive coefficient
+       (c) of panel regressions of the form ri,t+1 = a + bt + cCi,t+1−k + εi,t+1 (for k = 1, 3, 6, 12, and 24) for
+       equities (top-left panel), fixed income (bottom-left panel), commodities (top-right panel), and currencies
+       (bottom-right panel). We use the Carry1-12 to forecast future returns. The dashed lines indicate the
+       95%-confidence interval, where the standard errors are clustered by time period. The sample period is
+       February 1988 - February 2011 for equities, October 1991 - February 2011 for fixed income, January 1980
+       - February 2011 for commodities, and October 1983 - February 2011 for currencies.
+
+
+
+
+                                                           61
+                             Cumulative Return Global Carry1-12 Strategy
+          1
+
+        0.8
+
+        0.6
+
+        0.4
+
+        0.2
+
+
+         1992     1994     1996      1998         2000   2002       2004        2006   2008   2010
+
+
+                      Cumulative Return Global Carry1-12 Strategy, Detrended
+
+                      Recession Asia and Continental Europe               Technology Crash
+        0.2
+       0.15
+                                   Asian Crisis
+        0.1
+       0.05
+          0
+     -0.05
+                                                              Great Recession
+      -0.1
+
+         1992     1994     1996      1998         2000   2002       2004        2006   2008   2010
+
+
+
+
+Figure 5: Returns on the Global Carry1-12 Factor and Global Recessions. The figure shows the
+cumulative return on the global carry1-12 factor in the top panel. We construct the global carry factor
+by weighing the carry strategy of each asset classes by the inverse of the standard deviation of returns,
+and scaling the weights so that they sum to one. The bottom panel displays the de-trended cumulative
+return alongside the global recession dummy. We construct the global recession dummy by weighting
+regional recession dummies by GDP. We de-trend the cumulative return series using a linear time trend.
+We indicate the major recessions. The sample period is November 1991 to February 2011.
+
+
+
+
+                                                         62
+ 0.2
+                Recession Asia and Continental Europe
+                                                                    Technology Crash
+                                     Asian Crisis
+ 0.1
+
+
+   0
+
+
+-0.1
+
+                                                                          Great Recession
+-0.2
+          Maximum drawdown GCF
+          Global recession indicator
+-0.3
+   1992     1994       1996       1998       2000            2002     2004       2006       2008   2010
+
+
+Figure 6: Draw-down Dynamics of the Global Carry1-12 Factor. The figure shows the
+maximumPt draw-down dynamics P    of the global carry1-12 strategy. We define the draw down as:
+                                    u
+Dt ≡     s=1 rs − maxu∈{1,...,t}    s=1 rs , where rs denotes the return on the global carry1-12 strategy.
+We construct the global carry factor by weighing the carry strategy of each asset classes by the inverse of
+the standard deviation of returns, and scaling the weights so that they sum to one. The sample period
+is November 1991 to February 2011.
+
+
+
+
+                                                        63
+                         Equities                                              Fixed income
+    0                                                        0
+
+                                                         -0.02
+-0.05
+                                                         -0.04
+ -0.1
+                                                         -0.06
+        EQ Drawdowns    GCF Drawdowns
+-0.15                                                    -0.08
+           1995        2000      2005      2010                    1995        2000          2005     2010
+
+                       Currencies                                              Commodities
+    0                                                        0
+
+                                                         -0.02
+-0.05
+                                                         -0.04
+
+                                                         -0.06
+ -0.1
+                                                         -0.08
+           1995        2000         2005   2010                    1995        2000          2005     2010
+
+
+
+Figure 7: Draw-down Dynamics Per Asset Class.                        The figure shows the maximum
+draw-down
+       Pt   dynamics    of   the  global
+                                  Pu      carry1-12    strategy.     We   define the draw down as:
+Dt ≡     s=1 rs − maxu∈{1,...,t}    s=1 rs , where rs denotes the return on the global carry1-12 strategy.
+We construct the global carry factor by weighing the carry strategy of each asset classes by the inverse of
+the standard deviation of returns, and scaling the weights so that they sum to one. The sample period
+is November 1991 to February 2011.
+
+
+
+
+                                                    64
+ 0.08
+                                                                                             DP
+                                                                                             CC
+                                                                                             C1-12
+ 0.06
+
+
+ 0.04
+
+
+ 0.02
+
+
+    0
+
+
+-0.02
+          1950          1960           1970            1980        1990          2000           2010
+
+
+
+
+    4
+                                                                     DP (standardized)
+    2                                                                CC (standardized)
+    0
+
+   -2
+
+   -4
+          1950          1960           1970            1980        1990          2000           2010
+
+    4
+                                                                     DP (standardized)
+    2                                                                C1-12 (standardized)
+
+    0
+
+   -2
+          1950          1960           1970            1980        1990          2000           2010
+
+
+  Figure 8: Time-Series of the Equity Carry. The figure shows the time series of the equity carry for
+  the US from January 1945 until December 2011.
+
+
+
+
+                                                  65
+

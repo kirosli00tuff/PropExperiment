@@ -1,0 +1,719 @@
+TWS API v9.72+: Basic Contracts
+|
+|
+C#
+Java
+VB
+C++
+Python
+|
+| Contact us
+|
+This documentation is now deprecated. Please
+switch to the IBKR Campus for up-to-date information regarding IBKR's API
+solutions.
+Basic Contracts
+FX Pairs
+Contract contract = new Contract();
+contract.Symbol = "EUR" ;
+contract.SecType = "CASH" ;
+contract.Currency = "GBP" ;
+contract.Exchange = "IDEALPRO" ;
+Contract contract = new Contract();
+contract.symbol( "EUR" );
+contract.secType( "CASH" );
+contract.currency( "GBP" );
+contract.exchange( "IDEALPRO" );
+Dim contract As Contract = New Contract
+contract.Symbol = "EUR"
+contract.SecType = "CASH"
+contract.Currency = "GBP"
+contract.Exchange = "IDEALPRO"
+Contract contract;
+contract.symbol = "EUR" ;
+contract.secType = "CASH" ;
+contract.currency = "GBP" ;
+contract.exchange = "IDEALPRO" ;
+1 contract = Contract()
+2 contract.symbol = "EUR"
+3 contract.secType = "CASH"
+4 contract.currency = "GBP"
+5 contract.exchange = "IDEALPRO"
+Cryptocurrency
+Contract contract = new Contract();
+contract.Symbol = "ETH" ;
+contract.SecType = "CRYPTO" ;
+contract.Exchange = "PAXOS" ;
+contract.Currency = "USD" ;
+Contract contract = new Contract();
+contract.symbol( "ETH" );
+contract.secType( "CRYPTO" );
+contract.exchange( "PAXOS" );
+contract.currency( "USD" );
+Dim contract As Contract = New Contract()
+contract.Symbol = "ETH"
+contract.SecType = "CRYPTO"
+contract.Exchange = "PAXOS"
+contract.Currency = "USD"
+Contract contract;
+contract.symbol = "BTC" ;
+contract.secType = "CRYPTO" ;
+contract.exchange = "PAXOS" ;
+contract.currency = "USD" ;
+1 contract = Contract()
+2 contract.symbol = "ETH"
+3 contract.secType = "CRYPTO"
+4 contract.currency = "USD"
+5 contract.exchange = "PAXOS"
+Stocks
+Contract contract = new Contract();
+contract.Symbol = "SPY" ;
+contract.SecType = "STK" ;
+contract.Currency = "USD" ;
+contract.Exchange = "ARCA" ;
+Contract contract = new Contract();
+contract.symbol( "SPY" );
+contract.secType( "STK" );
+contract.currency( "USD" );
+contract.exchange( "ARCA" );
+Dim contract As Contract = New Contract
+contract.Symbol = "SPY"
+contract.SecType = "STK"
+contract.Currency = "USD"
+contract.Exchange = "ARCA"
+Contract contract;
+contract.symbol = "SPY" ;
+contract.secType = "STK" ;
+contract.currency = "USD" ;
+contract.exchange = "ARCA" ;
+1 contract = Contract()
+2 contract.symbol = "SPY"
+3 contract.secType = "STK"
+4 contract.currency = "USD"
+5 contract.exchange = "ARCA"
+For certain smart-routed stock contracts that have the same symbol , currency and exchange , you would also need to specify the primary exchange attribute to uniquely define the contract. This should be defined as the native exchange of a contract, and is good practice to include for all stocks:
+Contract contract = new Contract();
+contract.Symbol = "SPY" ;
+contract.SecType = "STK" ;
+contract.Currency = "USD" ;
+contract.Exchange = "SMART" ;
+contract.PrimaryExch = "ARCA" ;
+Contract contract = new Contract();
+contract.symbol( "SPY" );
+contract.secType( "STK" );
+contract.currency( "USD" );
+contract.exchange( "SMART" );
+contract.primaryExch( "ARCA" );
+Dim Contract As Contract = New Contract
+Contract.Symbol = "SPY"
+Contract.secType = "STK"
+Contract.currency = "USD"
+Contract.exchange = "SMART"
+Contract.PrimaryExch = "ARCA"
+Contract contract;
+contract.symbol = "SPY" ;
+contract.secType = "STK" ;
+contract.currency = "USD" ;
+contract.exchange = "SMART" ;
+contract.primaryExchange = "ARCA" ;
+1 contract = Contract()
+2 contract.symbol = "SPY"
+3 contract.secType = "STK"
+4 contract.currency = "USD"
+5 contract.exchange = "SMART"
+6 contract.primaryExchange = "ARCA"
+For the purpose of requesting market data, the routing exchange and primary exchange can be specified in a single 'exchange' field if they are separated by a valid component exchange separator, for instance exchange = "SMART:ARCA". The default separators available are colon ":" and slash "/". Other component exchange separators can be defined using the field defined in TWS Global Configuration under API -> Settings. The component exchange separator syntax in TWS versions prior to 971 can only be used to request market data and not to place orders.
+Contracts specified by FIGI
+Contracts could also be defined by FIGI. In the example below, FIGI code specifies AAPL STK contract.
+Contract contract = new Contract();
+contract.SecIdType = "FIGI" ;
+contract.SecId = "BBG000B9XRY4" ;
+contract.Exchange = "SMART" ;
+Contract contract = new Contract();
+contract.secIdType( "FIGI" );
+contract.secId( "BBG000B9XRY4" );
+contract.exchange( "SMART" );
+Dim contract As Contract = New Contract
+contract.secIdType = "FIGI"
+contract.secId = "BBG000B9XRY4"
+contract.Exchange = "SMART"
+Contract contract;
+contract.secIdType = "FIGI" ;
+contract.secId = "BBG000B9XRY4" ;
+contract.exchange = "SMART" ;
+1 contract = Contract()
+2 contract.secIdType = "FIGI"
+3 contract.secId = "BBG000B9XRY4"
+4 contract.exchange = "SMART"
+Stock Contract with IPO price
+An example Stock contract with IPO price.
+Contract contract = new Contract();
+contract.Symbol = "EMCGU" ;
+contract.SecType = "STK" ;
+contract.Exchange = "SMART" ;
+contract.Currency = "USD" ;
+Contract contract = new Contract();
+contract.symbol( "EMCGU" );
+contract.secType( "STK" );
+contract.currency( "USD" );
+contract.exchange( "SMART" );
+Dim contract As Contract = New Contract
+contract.Symbol = "EMCGU"
+contract.SecType = "STK"
+contract.Currency = "USD"
+contract.Exchange = "SMART"
+Contract contract;
+contract.symbol = "EMCGU" ;
+contract.secType = "STK" ;
+contract.exchange = "SMART" ;
+contract.currency = "USD" ;
+1 contract = Contract()
+2 contract.symbol = "EMCGU"
+3 contract.secType = "STK"
+4 contract.currency = "USD"
+5 contract.exchange = "SMART"
+Indexes
+ISINs for indices which are available in IB's database are available in the API as of TWS 965+.
+Contract contract = new Contract();
+contract.Symbol = "DAX" ;
+contract.SecType = "IND" ;
+contract.Currency = "EUR" ;
+contract.Exchange = "EUREX" ;
+Contract contract = new Contract();
+contract.symbol( "DAX" );
+contract.secType( "IND" );
+contract.currency( "EUR" );
+contract.exchange( "EUREX" );
+Dim contract As Contract = New Contract
+contract.Symbol = "DAX"
+contract.SecType = "IND"
+contract.Currency = "EUR"
+contract.Exchange = "EUREX"
+Contract contract;
+contract.symbol = "DAX" ;
+contract.secType = "IND" ;
+contract.currency = "EUR" ;
+contract.exchange = "EUREX" ;
+1 contract = Contract()
+2 contract.symbol = "DAX"
+3 contract.secType = "IND"
+4 contract.currency = "EUR"
+5 contract.exchange = "EUREX"
+CFDs
+Contract contract = new Contract();
+contract.Symbol = "IBDE30" ;
+contract.SecType = "CFD" ;
+contract.Currency = "EUR" ;
+contract.Exchange = "SMART" ;
+Contract contract = new Contract();
+contract.symbol( "IBDE30" );
+contract.secType( "CFD" );
+contract.currency( "EUR" );
+contract.exchange( "SMART" );
+Dim contract As Contract = New Contract
+contract.Symbol = "IBDE30"
+contract.SecType = "CFD"
+contract.Currency = "EUR"
+contract.Exchange = "SMART"
+Contract contract;
+contract.symbol = "IBDE30" ;
+contract.secType = "CFD" ;
+contract.currency = "EUR" ;
+contract.exchange = "SMART" ;
+1 contract = Contract()
+2 contract.symbol = "IBDE30"
+3 contract.secType = "CFD"
+4 contract.currency = "EUR"
+5 contract.exchange = "SMART"
+Futures
+A regular futures contract is commonly defined using an expiry and the symbol field defined as the symbol of the underlying. Historical data for futures is available up to 2 years after they expire by setting the includeExpired flag within the Contract class to True.
+Contract contract = new Contract();
+contract.Symbol = "GBL" ;
+contract.SecType = "FUT" ;
+contract.Exchange = "EUREX" ;
+contract.Currency = "EUR" ;
+contract.LastTradeDateOrContractMonth = "202303" ;
+Contract contract = new Contract();
+contract.symbol( "GBL" );
+contract.secType( "FUT" );
+contract.currency( "EUR" );
+contract.exchange( "EUREX" );
+contract.lastTradeDateOrContractMonth( "202303" );
+Dim contract As Contract = New Contract
+contract.Symbol = "GBL"
+contract.SecType = "FUT"
+contract.Exchange = "EUREX"
+contract.Currency = "EUR"
+contract.LastTradeDateOrContractMonth = "202303"
+Contract contract;
+contract.symbol = "GBL" ;
+contract.secType = "FUT" ;
+contract.exchange = "EUREX" ;
+contract.currency = "EUR" ;
+contract.lastTradeDateOrContractMonth = "202303" ;
+1 contract = Contract()
+2 contract.symbol = "GBL"
+3 contract.secType = "FUT"
+4 contract.exchange = "EUREX"
+5 contract.currency = "EUR"
+6 contract.lastTradeDateOrContractMonth = "202303"
+By contract the 'local symbol' field is IB's symbol for the future itself (the Symbol within the TWS' Contract Description dialog). Since a local symbol uniquely defines a future, an expiry is not necessary.
+Contract contract = new Contract();
+contract.SecType = "FUT" ;
+contract.Exchange = "EUREX" ;
+contract.Currency = "EUR" ;
+contract.LocalSymbol = "FGBL MAR 23" ;
+Contract contract = new Contract();
+contract.localSymbol( "FGBL MAR 23" );
+contract.secType( "FUT" );
+contract.currency( "EUR" );
+contract.exchange( "EUREX" );
+Dim contract As Contract = New Contract
+contract.SecType = "FUT"
+contract.Exchange = "EUREX"
+contract.Currency = "EUR"
+contract.LocalSymbol = "FGBL MAR 23"
+Contract contract;
+contract.secType = "FUT" ;
+contract.exchange = "EUREX" ;
+contract.currency = "EUR" ;
+contract.localSymbol = "FGBL MAR 23" ;
+1 contract = Contract()
+2 contract.secType = "FUT"
+3 contract.exchange = "EUREX"
+4 contract.currency = "EUR"
+5 contract.localSymbol = "FGBL MAR 23"
+Occasionally, you can expect to have more than a single future contract for the same underlying with the same expiry. To rule out the ambiguity, the contract's multiplier can be given as shown below:
+Contract contract = new Contract();
+contract.Symbol = "DAX" ;
+contract.SecType = "FUT" ;
+contract.Exchange = "EUREX" ;
+contract.Currency = "EUR" ;
+contract.LastTradeDateOrContractMonth = "202303" ;
+contract.Multiplier = "1" ;
+Contract contract = new Contract();
+contract.symbol( "DAX" );
+contract.secType( "FUT" );
+contract.currency( "EUR" );
+contract.exchange( "EUREX" );
+contract.lastTradeDateOrContractMonth( "202303" );
+contract.multiplier( "1" );
+Dim contract As Contract = New Contract()
+contract.Symbol = "DAX"
+contract.SecType = "FUT"
+contract.Exchange = "EUREX"
+contract.Currency = "EUR"
+contract.LastTradeDateOrContractMonth = "202303"
+contract.Multiplier = "1"
+Contract contract;
+contract.symbol = "DAX" ;
+contract.secType = "FUT" ;
+contract.exchange = "EUREX" ;
+contract.currency = "EUR" ;
+contract.lastTradeDateOrContractMonth = "202303" ;
+contract.multiplier = "1" ;
+1 contract = Contract()
+2 contract.symbol = "DAX"
+3 contract.secType = "FUT"
+4 contract.exchange = "EUREX"
+5 contract.currency = "EUR"
+6 contract.lastTradeDateOrContractMonth = "202303"
+7 contract.multiplier = "1"
+Continuous futures are available from the API with TWS v971 and higher. Continuous futures cannot be used with real time data or to place orders, but only for historical data.
+Contract contract = new Contract();
+contract.Symbol = "GBL" ;
+contract.SecType = "CONTFUT" ;
+contract.Exchange = "EUREX" ;
+Contract contract = new Contract();
+contract.symbol( "GBL" );
+contract.secType( "CONTFUT" );
+contract.exchange( "EUREX" );
+Dim contract As Contract = New Contract()
+contract.Symbol = "GBL"
+contract.SecType = "CONTFUT"
+contract.Exchange = "EUREX"
+Contract contract;
+contract.symbol = "GBL" ;
+contract.secType = "CONTFUT" ;
+contract.exchange = "EUREX" ;
+1 contract = Contract()
+2 contract.symbol = "GBL"
+3 contract.secType = "CONTFUT"
+4 contract.exchange = "EUREX"
+The security type "FUT+CONTFUT" can be used to request contract details about the futures and continuous futures on an underlying. This security type cannot be used with other functionality.
+Contract contract = new Contract();
+contract.Symbol = "GBL" ;
+contract.SecType = "FUT+CONTFUT" ;
+contract.Exchange = "EUREX" ;
+Contract contract = new Contract();
+contract.symbol( "GBL" );
+contract.secType( "FUT+CONTFUT" );
+contract.exchange( "EUREX" );
+Dim contract As Contract = New Contract()
+contract.Symbol = "GBL"
+contract.SecType = "FUT+CONTFUT"
+contract.Exchange = "EUREX"
+Contract contract;
+contract.symbol = "GBL" ;
+contract.secType = "FUT+CONTFUT" ;
+contract.exchange = "EUREX" ;
+1 contract = Contract()
+2 contract.symbol = "GBL"
+3 contract.secType = "FUT+CONTFUT"
+4 contract.exchange = "EUREX"
+Options
+Options, like futures, also require an expiration date plus a strike and a multiplier :
+Contract contract = new Contract();
+contract.Symbol = "GOOG" ;
+contract.SecType = "OPT" ;
+contract.Exchange = "BOX" ;
+contract.Currency = "USD" ;
+contract.LastTradeDateOrContractMonth = "20170120" ;
+contract.Strike = 615;
+contract.Right = "C" ;
+contract.Multiplier = "100" ;
+Contract contract = new Contract();
+contract.symbol( "GOOG" );
+contract.secType( "OPT" );
+contract.currency( "USD" );
+contract.exchange( "BOX" );
+contract.lastTradeDateOrContractMonth( "20170120" );
+contract.right( "C" );
+contract.strike(615);
+contract.multiplier( "100" );
+Dim contract As Contract = New Contract
+contract.Symbol = "GOOG"
+contract.SecType = "OPT"
+contract.Exchange = "BOX"
+contract.Currency = "USD"
+contract.LastTradeDateOrContractMonth = "20170120"
+contract.Strike = 615
+contract.Right = "C"
+contract.Multiplier = "100"
+Contract contract;
+contract.symbol = "GOOG" ;
+contract.secType = "OPT" ;
+contract.exchange = "BOX" ;
+contract.currency = "USD" ;
+contract.lastTradeDateOrContractMonth = "20170120" ;
+contract.strike = 615;
+contract.right = "C" ;
+contract.multiplier = "100" ;
+1 contract = Contract()
+2 contract.symbol = "GOOG"
+3 contract.secType = "OPT"
+4 contract.exchange = "BOX"
+5 contract.currency = "USD"
+6 contract.lastTradeDateOrContractMonth = "20190315"
+7 contract.strike = 1180
+8 contract.right = "C"
+9 contract.multiplier = "100"
+It is not unusual to find many option contracts with an almost identical description (i.e. underlying symbol, strike, last trading date, multiplier, etc.). Adding more details such as the trading class will help:
+Contract contract = new Contract();
+contract.Symbol = "SANT" ;
+contract.SecType = "OPT" ;
+contract.Exchange = "MEFFRV" ;
+contract.Currency = "EUR" ;
+contract.LastTradeDateOrContractMonth = "20190621" ;
+contract.Strike = 7.5;
+contract.Right = "C" ;
+contract.Multiplier = "100" ;
+contract.TradingClass = "SANEU" ;
+Contract contract = new Contract();
+contract.symbol( "SANT" );
+contract.secType( "OPT" );
+contract.currency( "EUR" );
+contract.exchange( "MEFFRV" );
+contract.lastTradeDateOrContractMonth( "20190621" );
+contract.right( "C" );
+contract.strike(7.5);
+contract.multiplier( "100" );
+contract.tradingClass( "SANEU" );
+Dim contract As Contract = New Contract
+contract.Symbol = "SANT"
+contract.SecType = "OPT"
+contract.Exchange = "MEFFRV"
+contract.Currency = "EUR"
+contract.LastTradeDateOrContractMonth = "20190621"
+contract.Strike = 7.5
+contract.Right = "C"
+contract.Multiplier = "100"
+contract.TradingClass = "SANEU"
+Contract contract;
+contract.symbol = "SANT" ;
+contract.secType = "OPT" ;
+contract.exchange = "MEFFRV" ;
+contract.currency = "EUR" ;
+contract.lastTradeDateOrContractMonth = "20190621" ;
+contract.strike = 7.5;
+contract.right = "C" ;
+contract.multiplier = "100" ;
+contract.tradingClass = "SANEU" ;
+1 contract = Contract()
+2 contract.symbol = "SANT"
+3 contract.secType = "OPT"
+4 contract.exchange = "MEFFRV"
+5 contract.currency = "EUR"
+6 contract.lastTradeDateOrContractMonth = "20190621"
+7 contract.strike = 7.5
+8 contract.right = "C"
+9 contract.multiplier = "100"
+10 contract.tradingClass = "SANEU"
+The OCC options symbol can be used to define an option contract in the API through the option's 'local symbol' field.
+Contract contract = new Contract();
+//Watch out for the spaces within the local symbol!
+contract.LocalSymbol = "P BMW 20221216 72 M" ;
+contract.SecType = "OPT" ;
+contract.Exchange = "EUREX" ;
+contract.Currency = "EUR" ;
+Contract contract = new Contract();
+//Watch out for the spaces within the local symbol!
+contract.localSymbol( "P BMW 20221216 72 M" );
+contract.secType( "OPT" );
+contract.exchange( "EUREX" );
+contract.currency( "EUR" );
+Dim contract As Contract = New Contract()
+'Watch out for the spaces within the local symbol!
+contract.LocalSymbol = "P BMW 20221216 72 M"
+contract.SecType = "OPT"
+contract.Exchange = "EUREX"
+contract.Currency = "EUR"
+Contract contract;
+//Watch out for the spaces within the local symbol!
+contract.localSymbol = "P BMW 20221216 72 M" ;
+contract.secType = "OPT" ;
+contract.exchange = "EUREX" ;
+contract.currency = "EUR" ;
+1 contract = Contract()
+2 #Watch out for the spaces within the local symbol!
+3 contract.localSymbol = "P BMW 20221216 72 M"
+4 contract.secType = "OPT"
+5 contract.exchange = "EUREX"
+6 contract.currency = "EUR"
+Futures Options
+Important: In TWS versions prior to 972 , if defining a futures option that has a price magnifier using the strike price, the strike will be the strike price displayed in TWS divided by the price magnifier. (e.g. displayed in dollars not cents for ZW)
+In TWS versions 972 and greater , the strike prices will be shown in TWS and the API the same way (without a price magnifier applied)
+For some futures options (e.g GE) it will be necessary to define a trading class, or use the local symbol, or conId.
+Contract contract = new Contract();
+contract.Symbol = "GBL" ;
+contract.SecType = "FOP" ;
+contract.Exchange = "EUREX" ;
+contract.Currency = "EUR" ;
+contract.LastTradeDateOrContractMonth = "20230224" ;
+contract.Strike = 138;
+contract.Right = "C" ;
+contract.Multiplier = "1000" ;
+Contract contract = new Contract();
+contract.symbol( "GBL" );
+contract.secType( "FOP" );
+contract.currency( "EUR" );
+contract.exchange( "EUREX" );
+contract.lastTradeDateOrContractMonth( "20230224" );
+contract.right( "C" );
+contract.strike(138);
+contract.multiplier( "1000" );
+Dim contract As Contract = New Contract
+contract.Symbol = "GBL"
+contract.SecType = "FOP"
+contract.Exchange = "EUREX"
+contract.Currency = "EUR"
+contract.LastTradeDateOrContractMonth = "20230224"
+contract.Strike = 138
+contract.Right = "C"
+contract.Multiplier = "1000"
+Contract contract;
+contract.symbol = "GBL" ;
+contract.secType = "FOP" ;
+contract.exchange = "EUREX" ;
+contract.currency = "EUR" ;
+contract.lastTradeDateOrContractMonth = "20230224" ;
+contract.strike = 138;
+contract.right = "C" ;
+contract.multiplier = "1000" ;
+1 contract = Contract()
+2 contract.symbol = "GBL"
+3 contract.secType = "FOP"
+4 contract.exchange = "EUREX"
+5 contract.currency = "EUR"
+6 contract.lastTradeDateOrContractMonth = "20230224"
+7 contract.strike = 138
+8 contract.right = "C"
+9 contract.multiplier = "1000"
+Bonds
+Bonds can be specified by defining the symbol as the CUSIP or ISIN.
+Contract contract = new Contract();
+// enter CUSIP as symbol
+contract.Symbol = "912828C57" ;
+contract.SecType = "BOND" ;
+contract.Exchange = "SMART" ;
+contract.Currency = "USD" ;
+Contract contract = new Contract();
+// enter CUSIP as symbol
+contract.symbol( "912828C57" );
+contract.secType( "BOND" );
+contract.exchange( "SMART" );
+contract.currency( "USD" );
+Dim Contract As Contract = New Contract
+' enter CUSIP as symbol
+contract.symbol= "912828C57"
+contract.secType = "BOND"
+contract.exchange = "SMART"
+contract.currency = "USD"
+Contract contract;
+// enter CUSIP as symbol
+contract.symbol= "912828C57" ;
+contract.secType = "BOND" ;
+contract.exchange = "SMART" ;
+contract.currency = "USD" ;
+1 contract = Contract()
+2 # enter CUSIP as symbol
+3 contract.symbol= "912828C57"
+4 contract.secType = "BOND"
+5 contract.exchange = "SMART"
+6 contract.currency = "USD"
+Bonds can also be defined with the conId and exchange as with any security type.
+Contract contract = new Contract();
+contract.ConId = 456467716;
+contract.Exchange = "SMART" ;
+Contract contract = new Contract();
+contract.conid(456467716);
+contract.exchange( "SMART" );
+Dim Contract As Contract = New Contract
+Contract.ConId = 456467716
+Contract.exchange = "SMART"
+Contract contract;
+contract.conId = 456467716;
+contract.exchange = "SMART" ;
+1 contract = Contract()
+2 contract.conId = 456467716
+3 contract.exchange = "SMART"
+Mutual Funds
+Order placement for Mutual Funds is currently supported from the API both in paper account and live account. Note: It is recommended to understand mutual fund orders on TWS UI before implementing via API due to restrictions enforced on trading mutual funds. For example to buy ARBIX one requires to use cash quantity i.e. cashQty while selling ARBIX can be implemented using total quantity i.e. totalQuantity.
+Contract contract = new Contract();
+contract.Symbol = "VINIX" ;
+contract.SecType = "FUND" ;
+contract.Exchange = "FUNDSERV" ;
+contract.Currency = "USD" ;
+Contract contract = new Contract();
+contract.symbol( "VINIX" );
+contract.secType( "FUND" );
+contract.exchange( "FUNDSERV" );
+contract.currency( "USD" );
+Dim Contract As Contract = New Contract
+Contract.symbol = "VINIX"
+Contract.secType = "FUND"
+Contract.exchange = "FUNDSERV"
+Contract.currency = "USD"
+Contract contract;
+contract.symbol = "VINIX" ;
+contract.secType = "FUND" ;
+contract.exchange = "FUNDSERV" ;
+contract.currency = "USD" ;
+1 contract = Contract()
+2 contract.symbol = "VINIX"
+3 contract.secType = "FUND"
+4 contract.exchange = "FUNDSERV"
+5 contract.currency = "USD"
+Commodities
+Contract contract = new Contract();
+contract.Symbol = "XAUUSD" ;
+contract.SecType = "CMDTY" ;
+contract.Exchange = "SMART" ;
+contract.Currency = "USD" ;
+Contract contract = new Contract();
+contract.symbol( "XAUUSD" );
+contract.secType( "CMDTY" );
+contract.exchange( "SMART" );
+contract.currency( "USD" );
+Dim Contract As Contract = New Contract
+Contract.symbol = "XAUUSD"
+Contract.secType = "CMDTY"
+Contract.exchange = "SMART"
+Contract.currency = "USD"
+Contract contract;
+contract.symbol = "XAUUSD" ;
+contract.secType = "CMDTY" ;
+contract.exchange = "SMART" ;
+contract.currency = "USD" ;
+1 contract = Contract()
+2 contract.symbol = "XAUUSD"
+3 contract.secType = "CMDTY"
+4 contract.exchange = "SMART"
+5 contract.currency = "USD"
+Standard Warrants
+Warrants, like options, require an expiration date , a right , a strike and a multiplier . For some warrants it will be necessary to define a localSymbol or conId to uniquely identify the contract.
+Contract contract = new Contract();
+contract.Symbol = "GOOG" ;
+contract.SecType = "WAR" ;
+contract.Exchange = "FWB" ;
+contract.Currency = "EUR" ;
+contract.LastTradeDateOrContractMonth = "20201117" ;
+contract.Strike = 1500.0;
+contract.Right = "C" ;
+contract.Multiplier = "0.01" ;
+Contract contract = new Contract();
+contract.symbol( "GOOG" );
+contract.secType( "WAR" );
+contract.currency( "EUR" );
+contract.exchange( "FWB" );
+contract.lastTradeDateOrContractMonth( "20201117" );
+contract.right( "C" );
+contract.strike(1500.0);
+contract.multiplier( "0.01" );
+Dim contract As Contract = New Contract
+contract.Symbol = "GOOG"
+contract.SecType = "WAR"
+contract.Exchange = "FWB"
+contract.Currency = "EUR"
+contract.LastTradeDateOrContractMonth = "20201117"
+contract.Strike = 1500.0
+contract.Right = "C"
+contract.Multiplier = "0.01"
+Contract contract;
+contract.symbol = "GOOG" ;
+contract.secType = "WAR" ;
+contract.exchange = "FWB" ;
+contract.currency = "EUR" ;
+contract.lastTradeDateOrContractMonth = "20201117" ;
+contract.strike = 1500.0;
+contract.right = "C" ;
+contract.multiplier = "0.01" ;
+1 contract = Contract()
+2 contract.symbol = "GOOG"
+3 contract.secType = "WAR"
+4 contract.exchange = "FWB"
+5 contract.currency = "EUR"
+6 contract.lastTradeDateOrContractMonth = "20201117"
+7 contract.strike = 1500.0
+8 contract.right = "C"
+9 contract.multiplier = "0.01"
+Dutch Warrants and Structured Products
+To unambiguously define a Dutch Warrant or Structured Product (IOPTs) the conId or localSymbol field must be used.
+It is important to note that if reqContractDetails is used with an incompletely-defined IOPT contract definition, that thousands of results can be returned and the API connection broken.
+IOPT contract definitions will often change and it will be necessary to restart TWS or IB Gateway to download the new contract definition.
+Contract contract = new Contract();
+contract.LocalSymbol = "B881G" ;
+contract.SecType = "IOPT" ;
+contract.Exchange = "SBF" ;
+contract.Currency = "EUR" ;
+Contract contract = new Contract();
+contract.localSymbol( "B881G" );
+contract.secType( "IOPT" );
+contract.exchange( "SBF" );
+contract.currency( "EUR" );
+Dim contract As Contract = New Contract()
+contract.LocalSymbol = "B881G"
+contract.SecType = "IOPT"
+contract.Exchange = "SBF"
+contract.Currency = "EUR"
+Contract contract;
+contract.localSymbol = "B881G" ;
+contract.secType = "IOPT" ;
+contract.exchange = "SBF" ;
+contract.currency = "EUR" ;
+1 contract = Contract()
+2 contract.localSymbol = "B881G"
+3 contract.secType = "IOPT"
+4 contract.exchange = "SBF"
+5 contract.currency = "EUR"
+This website uses cookies. By navigating through it you agree to the use of cookies. Copyright Interactive Brokers 2016

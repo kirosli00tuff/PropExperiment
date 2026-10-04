@@ -1,0 +1,208 @@
+
+I get occasional emails asking me to cover subjects in my blog (keep them coming! I will eventually get round to them). A pretty common one runs something like this:
+ "I understand that diversification over instruments is the best way to improve returns- you trade almost 40 futures markets, and the likes of AHL and Winton trade hundreds. But how can someone with a small account trade enough instruments?" 
+This post will try and answer that question. It will also illustrate the latest feature I've recently added to pysystemtrade - dealing with costs. There is some messy code here .
+ David Harding (co founder of AHL and Winton) doesn't have a problem with small account size... (afr.com) 
+The problem
+I cover this problem in much more detail in chapter 12 of my book . Briefly though suppose you have a system that trades one instrument, and which holds a few contracts at a time, depending on on the strength of your forecast. Say it has an average position of 4 contracts, and a maximum of 8.
+I've said repeatedly that diversification of your trading system across multiple instruments is the most powerful source of extra return. But if you have 10 instruments, rather than one, then clearly your positions will be about 10%* of the initial value: average 0.4, and maximum 0.8.
+ * actually it's going to be a little more than 10% due to the diversification multiplier, but I'll come back to that. 
+But you can't own less than one futures contract. So except with high forecasts we'll have no position on; and our position will be one contract at best.
+(I'll be talking about futures in this post, but the same problem exists elsewhere. if you spread bet, there is a minimum bet per point. With trades in shares having minimum fees it isn't economic to trade in amounts of less than £1,000 or so.)
+In fact I recommend that you are holding at least 4 contracts at the maximum forecast. This implies we could hold only two instruments in this particular portfolio. Two instruments is unlikely to be enough. So we are caught between the devil of fractional contracts and the deep blue sea of insufficient diversification.
+The devil of fractional contracts
+Let's dig into what happens when we have an instrument for 
+which we can only get at best a 1 lot position. The x axis here shows the 
+forecast. The red line shows that ideally we'd be able to trade 
+fractional positions such that we had an effective forecast equal to 
+what was desired (with the usual capping at absolute values of 20).
+However
+ we can't trade fractional lots. In this example we have no position at 
+all unless the forecast hits 15; then subsequently we get a position of one
+ contract. Since one contract is equivalent to a forecast of 15 our 
+ effective forecast will be zero, or 15.
+The precise forecast at which you'd move to having a position will depend on the instrument, and it's current volatility.
+This presents a few problems: 
+ The system is binary in nature
+ Behaviour will not be consistent across instruments or across time- it's arbitrary binary 
+ Average risk targeting will be incorrect
+Bad Binary 
+ Binary systems aren't very nice, plus they also tend to have higher costs.
+ you wouldn't adjust your position unless your forecast changes massively.
+ you wouldn't adjust your position unless volatility changes massively.
+ you won't adjust your position unless your account value falls massively
+ position adjustments will be sudden : higher costs
+Arbitrary binary
+The other problem is that not all instruments are the same. A 10% 
+allocation in your portfolio to Eurodollar futures might be enough to 
+get you an average position of a few contracts. But the same allocation 
+in DAX wouldn't get you a single measly contract.
+Things also change over time as volatility changes. The cutoff point at which your system puts on it's single position is arbitrary .
+The wrong trousers risk
+ "Oh heck Grommet, I knew I shouldn't have used a students-t distribution"  (ethosdisability.com) 
+There's
+ another more subtle problem. If we assume say a gaussian distribution 
+for the forecast with a standard deviation of 10, then the forecast 
+passed through the red line filter will have a standard deviation of 
+9.65 (it's not exactly 10 because of the capping). But the same through 
+the blue line will have a standard deviation of just 5.5. So on average 
+this particular instrument will have less risk than it should do.
+Possible solutions
+There are a number of different solutions to this problem. The first two are mentioned in my book. The third and fourth are novel.
+Live with it - 'arbitrary binary'
+The first solution is to just live with arbitrary binary, in exchange for a more diversified system. 
+Reduce diversification
+The second option is to live with the reduced diversification. Perhaps it's better to have one instrument on which you adjust the position properly, rather than a more diversified portfolio of five on which you're effectively running an arbitrary binary system....? 
+Explicit binary
+Perhaps explicit binary is better than arbitrary binary:
+We go long one 'unit' with positive forecast, and vice versa. The standard deviation of the blue line is 10 here by the way. The effective forecast might not be 10 in reality; for example for the earlier graph I showed it would be 15, and the standard deviation would also be 15, which is higher than we want.
+Thresholded system
+Let's have a think about forecasts again. We know that p&l is proportional (in risk adjusted space) to forecast strength. So throwing away small forecasts will probably do limited damage to our returns. We can set a threshold ; an absolute forecast levels below which we have no position.
+Above the threshold we start buying in, though at a faster rate so we end up with the maximum position of 20 when our desired forecast is also 20.
+Let's use a value of 10* for our threshold. We get something like this:
+ * Other values are possible - higher values will mean you have fewer positions, and lower values do not improve the maximum position so much .
+The standard deviation of the blue line is lower than we want, as we've removed a chunk of the forecast distribution (around two thirds, between the -1 and +1 standard deviation points of -10 to +10) . We've effectively got spare 'risk' to redistribute.This spare risk can be used to beef up the maximum forecast.  
+We end up with something like this:
+Here the standard deviation is the same for both red and blue lines. Comparing the red line to the blue line we've exchanged having no position for weak forecasts, for having a larger position when forecasts are strong. A larger position will allow us to have less of a binary problem.
+Using forecast thresholding then is a matter of feeding your raw combined forecast into the blue line function mapping.
+Of course the result of this in terms of positions will depend on the instrument. Consider for example the instrument in my earlier graph which had a single contract for every 15 units of forecast. The actual result of pushing this through the thresholding function will be as follows:
+We can now get 2 positions rather than one; and there will be some limited adjustment.
+Here's an instrument for which a forecast of 10 represents one contract:
+As you can see the nice thing about this method is that it can be used for instruments which would otherwise have only one to three lots at maximum forecast.
+However if you have an instrument with a 'natural' maximum position of 4 contracts (my recommended minimum) you shouldn't need to do this. This would be equivalent to an instrument for which with typical volatility a single contract was equivalent to 5 or fewer forecast units.
+Evaluation
+We need to measure the expected benefits of diversification, versus the costs of eithier (a) "living with" the problem of arbitrary binary, (b) using explicit binary or (c) thresholded systems. 
+Measuring diversification benefit
+In this section I'm going to answer the question - "How much benefit should I expect to gain from moving from x to x+1 instruments?". I'll be doing this for the 37 futures markets which I currently trade. The results should apply elsewhere; although bear in mind that correlations would be higher (and thus the benefit lower) if for example you were trading only UK equities.
+The base system I will be using is the same outlined in chapter 15 of my book; which has 3 variations of the EWMAC trend following rule, plus a carry rule.
+Market selection
+Selecting the order to include markets in a portfolio of a given size is a complex job which requires weighing up multiple selection criteria*, and a little bit more of an art than a science. 
+* I list 12 criteria in chapter six of my book. 
+To make things fair we're going to need to automate the market selection process, and narrow down the selection criteria to just two: asset class, and maximum position size. 
+The latter is the position we expect to have for the maximum forecast of 20 (see chapter 12); I'll measure this at the subsystem level for an arbitrary amount of capital. 
+For the first instrument we:
+ Within each asset class pick the instrument with the largest maximum position 
+ Amongst those top ranked instruments (one per asset class) pick the instrument with the largest maximum position
+For subsequent instruments: 
+ Out of asset classes for which we have a gap (fewer assets, and more of that asset class waiting to be picked):
+ Perform steps 2 and 3 above
+Doing this I end up selecting instruments in the following order:
+['KR3',  'V2X',  'EDOLLAR', 'MXP', 'CORN', 'EUROSTX', 'GAS_US', 'PLAT',
+ 'US2', 'LEANHOG', 'GBP', 'VIX', 'CAC', 'COPPER', 'CRUDE_W',
+ 'BOBL', 'WHEAT', 'JPY', 'NASDAQ', 'GOLD',
+ 'US5', 'SOYBEAN', 'AUD', 'SP500','PALLAD',
+ 'KR10', 'LIVECOW', 'NZD', 'KOSPI',
+ 'US10', 'SMI', 'EUR',
+ 'OAT', 'AEX',
+ 'BUND',
+ 'BTP',
+ 'US20']
+Notice that the number of instruments in each asset isn't constant. The first group closely resembles the set in chapter 15 of my book, although that group excludes Gas and Platinum, and has a US rather than a Korean bond future. 
+I then tested the following groups of instruments.
+ Sets of 1.... 8 instruments, i.e. going from one asset class to the full set
+ Sets of 15, 20, 25 instruments, i.e. with 2, 3, 4 assets in each asset class (excluding STIR and energies for which we only have 1 and 2 instruments anyway)
+ The full set of 37 instruments.
+Because I'm going to be running twelve sets of backtests, I'll be using shrinkage to determine the instrument weights, as this is faster than bootstrapping.
+Measuring the benefit
+It's going to be hard to demonstrate the benefits of diversification here because not all the markets have data going back in history. This plot, which I've shown before, shows the number of markets with data over time.
+This means that a simple test of looking at the improvement in sharpe ratio as we add instruments won't work that well.
+For example the first instrument we add is KR3. This has an amazing sharpe, but then it's only been traded for a couple of years. Adding the next instrument actually makes performance worse!
+There are some ways round this. For example the instrument diversification multiplier is a measure of how many undiversified bets there are in the portfolio. It's the inverse of how much risk should fall versus trading a portfolio of just one instrument.
+If we assume that expected returns are the same for all instrument subsystems, then an IDM of 2.0 should imply that over the long run we'd have a sharpe ratio of twice what we'd get with one instrument. 
+Because the number of instruments and calculated IDM vary over time, we can scatter plot not just twelve observations, but one for every year. So each year in each of the twelve backtests we measure the average number of instruments currently traded, and the current IDM.
+As you can see the IDM increases concavely, asymptoting at around 2.75. The first set of instruments (one per asset class) roughly doubles the IDM from 1.0 to 2.0. Adding another instrument from each asset class then increases it by 50% to around 2.5. The next 20 or so instruments have a marginal effect.
+However the IDM is an in sample measure of diversification. We could also look at the ratio of realised risk divided by the IDM. If the IDM is over estimating how much diversification is available, then the realised risk with the IDM backed out will be too high. For example suppose we have an IDM of 3.0, but there's only enough diversification to halve the risk. Then the realised risk will be 50% above target.
+ Note - realised risk will also be affected by changing forecasts, particularly for a smaller number of instruments. 
+So if we plot the risk target of 20% annualised, divided by the risk adjusted for IDM, it will give us the effective amount of diversification. Again we can do a scatter plot; each year is a point within one of the twelve backtests:
+The maximum diversification measured using effective risk comes in a little lower than with the IDM, at perhaps 2.5 (my preferred maximum for the IDM measure). Because of weak forecasts we can sometimes see this measure below 1.0. Again the first set of instruments from each asset pushes the diversification measure, and thus sharpe ratio, up by about 75%; with a diminishing improvement thereafter.
+This suggests that the "true" out of sample correlation of the first eight instruments is around 0.25.
+A rule of thumb
+The average Sharpe ratio of each individual instrument is around 0.42. This is pretty high given we only have two trading rules: Carry and three slow variations of EWMAC.
+However many instruments are only recent arrivers in the porfolio, during a period in which the system did very well indeed. This will be biasing results upwards. If we time weight the returns to correct for this then the average is a more reasonable 0.35.
+With that in mind, and keeping the pictures above in mind, I'm going to use these as rules of thumb for diversification within my chapter 15 futures portfolio:
+ One instrument: SR 0.35
+ Two instruments: SR 0.45
+ Three: SR 0.50
+ Four: SR 0.54
+ Five: SR 0.57
+ Six: SR 0.58
+ Seven: SR 0.60
+ Eight instruments (one per asset class): SR 0.61
+ Fifteen instruments (two per asset class, except STIR): SR 0.65
+ All 37 instruments: SR 0.70
+Measuring the badness of position sizing
+To recap we've got the following options:
+ Arbitrary binary (live with it)
+ Explicit binary
+ Thresholding
+For each of these options I'm going to compare the p&l with and without rounded positions for some "small" capital (see below). I'll focus on net Sharpe, but I'll also look at costs - if net Sharpe doesn't change but costs are higher for a particular option then I'd be concerned.
+I'm not interested in the absolute sharpe, but the relative one. I'll compare the relative damage done by bad rounding to the relative benefit from diversification. 
+As well as sharpe ratio I will also look at realised risk over time as this will probably be more 'jagged' with rounding. I'll look at the maximum rolling risk over time for each option (using a 20 week moving average).
+The varying number of markets over time is problematic for any kind of backtest evaluation. There are a few solutions to this:
+ look at the whole account curve (which will be dominated by assets with more data). For this particular test this will make life difficult since different assets will be affected by sizing problems to different degrees.
+ take an average of the performance of each asset (eithier equally weighted, or weighted by instrument weights)
+ take an average, weighted by the amount of available data, of the performance of each asset. An easy way to do this is to 'stack up' the returns from each asset, and take a sharpe ratio from the entire set.
+Here's a quick summary of my findings:
+ If you have enough capital running the system "normally" is around 20% better than using a binary or a threshold system. This comes from much lower returns and slightly lower vol; peak risk also falls a little. Much of the lower return for threshold systems comes from higher cost.
+ If you only have enough capital for a single contract at maximum position then the sharpe ratios of arbitrary binary, explicit binary, and thresholding are fairly similar. The return for arbitrary binary will be higher, but with higher vol, higher costs, and higher peak volatility. Costs are a little lower for thresholding, and lower again for explicit binary.
+ There is around a 20% penalty to Sharpe if you can only hold one 
+contract; around 5% with a maximum position of two. This falls to zero 
+if you can hold 3 or 4 contracts. 
+  Correlations will be lower when using thresholding; so the IDM of the whole portfolio will be higher. This will compensate for the lower return and lower vol.
+ My conclusion is that if you can only hold one or two contracts then you should use a threshold filter for your forecasts. This will give you a Sharpe ratio penalty of around 20% if you can only hold one contract or 5% if you can only hold two. So an average SR of 0.36 will become 0.29 or 0.34.
+Putting it together
+The following graph summarises the results of diversification and small contract size.
+Y axis is sharpe ratio, x axis number of assets. The blue line show the results from earlier; the diversification benefits that accrue as you add instruments in the order I've suggested. These will only be applicable if your maximum position is three, four, or more contracts. If you can only hold two contracts you'll get the red line, with one contract you'll get the yellow line. 
+To use this graph let's say you had a choice between trading 8 assets with a maximum position of a single contract, or trading 2 assets with a maximum position of three or more contracts. You can see that the former has a SR of about 0.49 and the latter about 0.45. So in this case diversification wins over the problems of position rounding.
+Alternatively suppose you were considering going from 8 instruments, and being able to hold three or more contracts, up to the full portfolio of 37 futures but only holding a maximum of one contract. The Sharpe ratios are about 0.61 and 0.56 respectively. For this at least the diversification isn't worth it.
+As a general rule adding diversification wins for the first few assets, even if it means holding maximum positions of just one or two contracts. After that the costs of discrete positions bite into your returns. You need a lot more money to make it worth adding further instruments.
+Specific portfolios
+To make things concrete let's consider a few different account sizes:
+ $5,000; $10,000, $50K, $100K, $250K, $500K and a million dollars. In all cases we're using a percentage vol target of 20%, except for the very first portfolio. I also assume equal weights; for later portfolios where there is a preponderance of particular assets that might not be accurate.
+Note that in many cases we have different maximum positions for different instruments; hence a straightforward application of the previous graph isn't possible.
+Capital of $2,500: One instrument
+This is just enough to get to a single contract on eithier the KR3 or V2X futures. I'd suggest using thresholding on these first few portfolios.
+Because a single contract has a very low expected sharpe ratio the vol target of 20% is a little high given my usual insistence on using a half kelly figure. I'd run this mini portfolio at 15% annualised risk.
+Capital of $5,000: Two instruments 
+This is just enough to get to a single contract on both the KR3 and V2X futures, assuming a 50% weight to each and an IDM of 1.27*. This is superior to sticking to one instrument, and being able to get two contracts.
+ * all IDM's from table 18 of my book, assuming correlation of 0.25 
+Capital of $10,000: Three instruments 
+This is just 
+enough to get to a single contract on Eurodollar, and two on both the KR3 and V2X futures, 
+assuming a 33% weight to each and an IDM of 1.4. 
+Incidentally with $10K we could also hold just KR3 or just V2X and get four contracts. However we know that this is suboptimal.
+Capital of $20,000: Four instruments 
+This is just 
+enough to get to a single contract on Eurodollar and MXPUSD, and three on both the KR3 and V2X futures, 
+assuming a 25% weight to each and an IDM of 1.51. 
+Capital of $30,000: Five instruments 
+3 contracts a piece: KR3, V2X; Single contracts: Eurodollar, MXP, Corn
+Capital of $50,000: Six instruments 
+Five contracts a piece: KR3, V2X; Two contracts: Eurodollar, MXP; Single contracts: Corn, Eurostoxx
+At this stage you could stop using thresholding on the first two instruments, or for consistency keep it on all instruments.
+Capital of $80,000: Seven instruments 
+ KR3, V2X, Eurodollar, MXP, Corn, Eurostoxx, US Gas
+ Note: Contracts in italics do not require thresholding. 
+Capital of $100,000: Eight instruments 
+ KR3, V2X, Eurodollar, MXP, Corn, Eurostoxx, US Gas, Platinum
+ Note: Contracts in italics do not require thresholding. 
+Capital of $300,000: Fifteen instruments 
+ KR3, V2X, Eurodollar , MXP, Corn, Eurostoxx, US Gas, Platinum,
+ US2 , Leanhog, GBP, VIX, CAC, Copper, Crude
+ Note: Contracts in italics do not require thresholding. 
+Capital of $800,000: 37 instruments 
+ KR3, V2X, Eurodollar , MXP, Corn , Eurostoxx, US Gas, Platinum,
+ US2 , Leanhog, GBP, VIX, CAC, Copper, Crude
+ Bobl , Wheat, JPY, Nasdaq, Gold,
+ US5 , Soybean, AUD, SP500, Pallad,
+KR10, Livecow, NZD, Kospi,
+US10, SMI, EUR, OAT, AEX,
+Bund, BTP, US20
+ Note: Contracts in italics do not require thresholding. 
+Very rich people
+With a capital of $2.2 million you could hold 37 instruments with a maximum position of at least 2 contracts in each.
+With a capital of $3.25 million you could hold 37 instruments with a maximum position of at least 3 contracts in each. You shouldn't need to use thresholding at this stage for any instrument.
+With a capital of $4.25 million you could hold 37 instruments with a maximum position of at least 4 contracts in each.
+Beyond this you could think about adding further instruments. The largest CTA's, like my ex-fund AHL have 100+ instruments in their portfolio.
+Conclusion
+I've hopefully answered the question "what do I do with a small account". To summarise, you're probably better off using a binary or thresholded forecast filter with as wide a range of instruments as you can manage, at least until you have $100K or so. 

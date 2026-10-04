@@ -3449,3 +3449,83 @@ Delegation share: lead 148,107,878 (51.4%), workers 140,075,810 (48.6%); by tier
 reports/stage_e10_briefs/cost.py (raw output reports/stage_e12_briefs/cost_raw.txt); the /usage meter
 is not readable from the session.
 
+
+## 2026-10-03/04 — Stage E.13: what is left to search (research and scoping; no market data, no purchase)
+
+Prompt docs/prompts/STAGE_E.13.md. Lead Opus 5.5 xhigh, session dbc7460b. Return: reports/E.13_RETURN.md.
+The user paused the session twice (15:23-23:13 and 23:32-01:38 PDT).
+
+- Venues (reports/stage_e13_venues.md):
+  - Of 18 prop firms, only The Trading Pit Classic permits multi-day automation outright (flat by the Friday
+    close; possibly no longer sold).
+  - Phidias Premium is human-in-the-loop only; its clause is unchanged since 2026-09-28. Elite Trader Funding's
+    swing plans are unclear (written authorization).
+  - Topstep and the rest are flat every session.
+  - Personal account: IBKR Canada permits it (CIRO, API, USD 0 minimum).
+  - Support questions are drafted for the user, never sent (reports/stage_e13_phidias_question.md).
+- Trend and carry (reports/stage_e13_trend_carry.md):
+  - SG Trend 0.24 net since 2010; AQR TSMOM 0.31 gross since 2012; carry -0.19 since 2013.
+  - $40-$430 a month at $10K-$100K (mid case) with deep drawdowns.
+  - It fails swing-prop trailing drawdowns at minimum micro size.
+- Information sources (reports/stage_e13_info_sources.md): dealer gamma (Baltussen et al. 2021) and GFS revisions
+  for NG. Surprise sources need proprietary consensus history.
+- NG replication draft (reports/stage_e13_ng_replication_draft.md, rulings C1-C21): M1 frozen ridge; window
+  2010-06-07..2019-04-30; $57.31 quoted ($59.03 with margin), top-up about $41; odds 12% (7-35%).
+- Ranking (reports/stage_e13_ranking.md v3): C1 NG replication > C2 GEX momentum > C3 trend+carry personal > C4 GFS
+  > C5 swing prop. Pausing until the AiTrader readout is a reasonable alternative.
+  - Pre-registration drafts: reports/stage_e13_prereg_ngrepl.md and _gexmom.md.
+- Fable review (reports/stage_e13_review.md): BLOCK on R-01 (the top-two order used a tie the rule did not
+  contain). Ruled and fixed (reports/stage_e13_rulings.md): the rule applied literally, with C2's odds derived.
+  The follow-up check closed R-01; R-17 (disclosure) was applied.
+- Guardrails: holdout unlocks 0, REGISTRATION.md 0 bytes, ledger unchanged (no Databento call), harness v9
+  preflight OK at start and end. N stays 471.
+
+### Session cost
+
+#### Final ETA table (actuals; PDT; the initial estimate is in brackets)
+
+| # | Task or spawn | Owner | Model | Effort | Start | End | Time | Tokens | Status |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | Startup, start checks, briefs | lead | opus | xhigh | 14:24 | 14:34 | 0:10 [0:34] | (lead) | done |
+| 1a | Prop firms, part 1 | PropVenues1-OpusHigh | opus | high | 14:33 | 14:54 | 0:21 [0:55] | 21,691,418 | done |
+| 1b | Prop firms, part 2, Phidias question | PropVenues2-OpusHigh | opus | high | 14:33 | 14:52 | 0:19 [1:00] | 27,209,780 | done |
+| 2 | Trend and carry | TrendCarry-OpusHigh | opus | high | 14:33 | 15:07 | 0:33 [0:55] | 32,849,245 | done |
+| 4 | NG replication draft | ReplicationDesigner-OpusXHigh | opus | xhigh | 14:33 | 15:00 | 0:26 [1:05] | 32,351,615 | done |
+| 3 | Information sources | InfoSource-OpusHigh | opus | high | 14:52 | 15:20 | 0:28 [0:50] | 31,337,888 | done |
+| 1c | Personal-account brokers | BrokerVenues-OpusHigh | opus | high | 14:54 | 15:16 | 0:21 [0:40] | 33,241,282 | done |
+| L | Task 4 rulings, ETF question, venues merge (overlapping the workers) | lead | opus | xhigh | 14:53 | 15:17 | overlaps [0:20] | (lead) | done |
+| 5a | Ranking inputs | lead | opus | xhigh | 15:17 | 15:23 | 0:06 | (lead) | paused |
+| P1 | **Pause** (user: "Pause operations real quick") | | | | 15:23 | 23:13 | 7:50, excluded | | |
+| 5b | Ranking and two pre-registration drafts | lead | opus | xhigh | 23:13 | 23:21 | 0:08 [1:15 for 5a+5b] | (lead) | done |
+| 6 | Adversarial review | RankingReviewer-FableXHigh | fable | xhigh | 23:21 | 23:39 | 0:18 [0:30] | in 4,729,288 | BLOCK |
+| P2 | **Pause** (user: "actually, pause for a sec"; the review finished inside it) | | | | 23:32 | 01:38 | 2:06, excluded | | |
+| 6b | Rulings and fixes | lead | opus | xhigh | 01:38 | 01:44 | 0:06 [0:30] | (lead) | done |
+| 6c | Follow-up check (SendMessage to the same reviewer) | RankingReviewer-FableXHigh | fable | xhigh | 01:44 | 01:48 | 0:04 | in 4,729,288 | R-01 CLOSED |
+| 7 | R-17 fix, return, end checks, cost, progress, commit | lead | opus | xhigh | 01:48 | about 02:00 | 0:12 [0:35] | (lead) | done |
+| | **Stage total** | | | | 14:24 | about 02:00 | about 1:40 of work (0:59 + 0:19 + 0:22), plus 9:56 of pauses | 227,216,445 (to 01:49) | initial estimate 5:10 (end 19:35) |
+
+The workers ran 19-33 minutes against estimates of 40-65 minutes, all in parallel within the 4-worker cap, so the
+work took about a third of the estimate. There was no usage-limit wait. Both pauses were the user's.
+
+#### Tokens per model (this session's transcript and its 7 subagent transcripts, 14:24 PDT 2026-10-03 to 01:49 PDT 2026-10-04)
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-opus-5-5 | 2,218 | 860,712 | 218,688,957 | 2,935,270 | 222,487,157 |
+| claude-fable-5-1 | 612 | 102,188 | 3,989,221 | 637,267 | 4,729,288 |
+| all | 2,830 | 962,900 | 222,678,178 | 3,572,537 | 227,216,445 |
+
+Per spawn (agent file, model, effort, tokens):
+- BrokerVenues: worker-high, opus, high, 33,241,282
+- TrendCarry: worker-high, opus, high, 32,849,245
+- ReplicationDesigner: worker-xhigh, opus, xhigh, 32,351,615
+- InfoSource: worker-high, opus, high, 31,337,888
+- PropVenues2: worker-high, opus, high, 27,209,780
+- PropVenues1: worker-high, opus, high, 21,691,418
+- RankingReviewer (review plus follow-up): worker-xhigh, fable, xhigh, 4,729,288
+
+Delegation share: lead 43,805,929 (19.3%), workers 183,410,516 (80.7%). By tier: Opus 97.9% (lead 19.3%, Opus
+workers 78.6%), Fable 2.1%. Cache reads are 98.0% of all tokens. The resumed sessions wrote no usage of their own:
+it stayed in the first session's transcript (dbc7460b), as in E.5 and E.9. The closing steps after 01:49 (assembly
+and the commit) add a little to the lead and are not in these sums. Token counts, not plan-credit percentages: the
+/usage meter is not readable from the session.

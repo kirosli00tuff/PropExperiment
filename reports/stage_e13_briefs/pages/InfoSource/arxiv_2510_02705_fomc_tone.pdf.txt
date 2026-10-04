@@ -1,0 +1,632 @@
+Does FOMC Tone Really Matter? Statistical Evidence from
+Spectral Graph Network Analysis
+
+arXiv:2510.02705v1 [econ.GN] 3 Oct 2025
+
+Jaeho Choi
+
+Jaewon Kim
+
+Seyoung Chung
+Sogang University
+
+Abstract
+This study examines the relationship between Federal Open Market Committee
+(FOMC) announcements and financial market network structure through spectral graph
+theory. Using hypergraph networks constructed from S&P 100 stocks around FOMC
+announcement dates (2011-2024), we employ the Fiedler value—the second eigenvalue of the hypergraph Laplacian—to measure changes in market connectivity and systemic stability. Our event study methodology reveals that FOMC announcements significantly alter network structure across multiple time horizons. Analysis of policy tone,
+classified using natural language processing,
+reveals heterogeneous effects: hawkish announcements induce network fragmentation
+at short horizons (k = 6) followed by reconsolidation at medium horizons (k = 14),
+while neutral statements show limited immediate impact but exhibit delayed fragmentation. These findings suggest that monetary
+policy communication affects market architecture through a network structural transmission, with effects varying by announcement timing and policy stance.
+
+1
+
+INTRODUCTION
+
+Monetary policy communications reshape financial
+markets, yet how they affect market-wide structural
+cohesion remains underexplored in the literature. This
+study addresses this gap by measuring changes in
+network connectivity around FOMC announcements.
+While prior research has extensively documented the
+effects of central bank statements on individual asset
+prices, evidence on their influence over the structure
+of market relationships is limited.
+Our key contribution is introducing the Fiedler
+
+Chaeshick Chung
+
+Yoonsoo Lee
+
+value—the second smallest eigenvalue of the hypergraph Laplacian—as a statistical measure of market
+connectivity that captures system-wide stability. We
+construct sector-aware hypergraph networks from S&P
+100 stocks and employ an event study framework to
+measure the effects of FOMC announcements on network structure. Our analysis distinguishes between
+the immediate impact of information disclosure and
+the subsequent effects of policy tone. By measuring
+connectivity changes before and after policy announcements, we quantify how monetary policy reshapes market structure beyond traditional price effects.
+Methodologically, we combine three innovations novel
+in computational finance. First, dual-threshold network construction differentiates within-sector from
+cross-sector correlations, reflecting heterogeneous relationship formation. Second, hypergraph representation via clique detection captures higher-order interactions among asset groups beyond pairwise connections.
+Third, residualizing returns on market factors isolates
+firm-specific co-movements from systematic effects.
+We classify FOMC statements as hawkish, dovish, or
+neutral using natural language processing, enabling
+analysis of heterogeneous policy impacts. Our framework captures both the immediate market response to
+FOMC announcements and the delayed adjustments
+that materialize as markets gradually process and reassess the information content.
+Our analysis highlights a two-stage transmission mechanism. First, the mere act of public disclosure at
+FOMC dates triggers an immediate re-wiring of market connectivity (the announcement effect). Second,
+as market participants process the substantive content
+and follow-on communications, heterogeneous tone effects (hawkish, dovish, neutral) emerge with delays
+across horizon k. This design allows us to separate
+timing (announcement versus delayed interpretation)
+from content (policy stance), providing a networkstructural perspective on monetary policy communication that complements traditional asset-return evidence.
+
+Does FOMC Tone Really Matter? Statistical Evidence from Spectral Graph Network Analysis
+
+2
+
+RELATED WORK
+
+2.1
+
+FOMC Announcements and Market
+Response
+
+The literature on FOMC announcement effects is
+extensive, with seminal contributions from (Rosa,
+2013) demonstrating significant increases in asset price
+volatility following policy communications. Recent
+work by (Cieslak et al., 2019) shows that FOMC statements affect not only interest-sensitive assets but also
+equity markets through expectation channels.
+However, these studies predominantly focus on individual asset returns or volatility measures rather than
+systemic network effects. The communication aspect
+of monetary policy has gained prominence, especially
+since Bernanke’s tenure emphasized forward guidance
+as a policy tool. Studies by (Lucca and Moench,
+2015) and (Cieslak et al., 2019) document the ”preFOMC announcement drift” phenomenon, suggesting
+that markets often anticipate policy decisions before
+the official release. Beyond immediate price drifts, researchers have begun examining the content of FOMC
+communications. For example, (Hansen and McMahon, 2016) use computational linguistics to quantify
+the information in FOMC statements and find that
+the language and tone of announcements can have distinct market impacts beyond the rate decision.
+This aligns with a broader literature recognizing that
+central bank communication can strongly affect financial markets. Yet, what remains underexplored is how
+such communication influences the structure of market
+relationships. Our research extends this literature by
+examining whether anticipation effects and communication tone are reflected in network structural changes
+around FOMC events.
+2.2
+
+Financial Networks and Systemic Risk
+
+The application of network theory to finance has grown
+substantially since the 2008 financial crisis. (Acemoglu
+et al., 2016) demonstrate how network structure affects systemic risk transmission, showing that the architecture of interconnections can either buffer shocks
+or amplify contagion. (Billio et al., 2012) find that
+financial institutions have become highly interrelated
+over time, likely increasing the level of systemic risk
+in the finance and insurance sectors. This underscores
+that interconnectedness is a double-edged sword: while
+it may improve risk-sharing under normal conditions,
+it can facilitate rapid transmission of distress during
+crises. Recent work by (Diebold and Yılmaz, 2014) develops connectedness measures based on variance decompositions, providing a quantitative framework for
+understanding spillover effects among financial firms.
+
+These studies establish that network topology and connectivity are critical for assessing systemic stability.
+Within this realm, the use of spectral graph theory in finance is emerging. (Sandoval, 2012) apply correlation-based networks to stock market data,
+showing that network metrics can offer insights during crisis periods (e.g., identifying market clusters and
+leadership structure). More recently, (Uddin et al.,
+2021) constructs a network factor using signed graph
+Laplacians for asset pricing applications, highlighting
+that network characteristics can carry price-relevant
+information. Our research builds on this foundation
+by focusing specifically on the Fiedler value as a measure of network connectivity and stability. The Fiedler
+value (second smallest Laplacian eigenvalue) serves as
+an index of how tightly the market is connected: a
+larger Fiedler value implies a more cohesive network,
+whereas a smaller value suggests the network is closer
+to being disconnected. By examining changes in this
+measure, we gauge how FOMC announcements shift
+the cohesion of the financial system.
+
+3
+
+DATA
+
+3.1
+
+FOMC Announcement Data
+
+Our analysis covers FOMC announcements from 2011
+through 2024 (72 scheduled meetings plus emergency announcements). We record each statement of
+FOMC. FOMC statement tone is classified as hawkish/dovish/neutral using the gpt-4o-mini model.
+We define policy tones as follows: Hawkish statements
+signal tighter monetary policy or upward bias in future interest rates, emphasizing inflation concerns or
+economic strength. Dovish statements indicate accommodative policy or downward rate bias, stressing employment concerns or economic risks. Neutral statements present balanced risk assessments without clear
+directional bias.
+Our dataset comprises 72 FOMC meetings, with 29
+classified as hawkish (40.3%), 25 as dovish (34.7%),
+and 18 as neutral (25.0%). Examples: December 2015
+(rate liftoff) is hawkish, March 2020 (150 bps emergency cut) is dovish, and rate holds with balanced risk
+language are neutral. This tone classification is used
+in heterogeneity analysis.
+3.2
+
+Stock Market Data
+
+The analysis uses S&P 100 daily closing prices from
+2000 to 2025 (100 large-cap stocks). To remove
+market-wide effects, each stock’s returns are regressed
+on SPY and QQQ, and residuals are used for subsequent analysis.
+
+Jaeho Choi, Jaewon Kim, Seyoung Chung, Chaeshick Chung, Yoonsoo Lee
+
+Network construction incorporates Global Industry
+Classification Sector(GICS) information through a
+dual-threshold scheme: intra-sector connections require a lower correlation threshold, while inter-sector
+connections require a higher threshold. This captures
+both within-industry cohesion and cross-industry linkages.
+Event dates are drawn from scheduled FOMC meetings between 2011 and 2024, serving as reference points
+for constructing symmetric pre- and post-event windows in the event study analysis.
+
+3.3
+
+Control Variables
+
+To isolate the effect of FOMC announcements on network connectivity, we include several financial market
+controls in all baseline regressions.
+3.3.1
+
+Market Volatility
+
+We control for the level and daily change of the CBOE
+Volatility Index (VIX), which capture the prevailing
+uncertainty in equity markets as well as any contemporaneous shocks to volatility on the announcement
+day.
+3.3.2
+
+Market Return
+
+We include the daily return of the S&P 500 index.
+Large aggregate price movements may influence crossstock correlations through common shocks, independent of monetary policy announcements.
+3.3.3
+
+Interest Rates
+
+Both the 2-year and 10-year U.S. Treasury yields are
+added as controls. These yields serve as benchmarks
+for short- and long-term interest rate expectations,
+providing a proxy for broader macro-financial conditions that could affect equity market connectivity.
+3.3.4
+
+Exchange Rate
+
+We also control for the U.S. Dollar Trade-Weighted
+Index (TWI), as exchange rate fluctuations can reflect
+shifts in global risk sentiment and capital flows that
+may influence stock market comovements.
+By including these controls, we isolate the Fed announcement effect from confounders. Results will be
+reported both with and without the full control set to
+demonstrate robustness.
+
+4
+
+METHODOLOGY
+
+4.1
+
+Network Construction
+
+We construct stock market networks by employing a
+symmetric k-window algorithm. The sample consists
+of daily prices of S&P 100 constituents, and every trading day is treated as a reference point. For each reference day t, the pre-event and post-event windows are
+defined as follows:
+
+Pre-window = [t − k, t − 1]
+
+(1)
+
+Post-window = [t + 1, t + k]
+
+(2)
+
+where k ranges from 5 to 20 trading days, allowing
+the analysis to capture both short- and medium-term
+dynamics. All windows are automatically filtered to
+ensure a minimum number of valid observations, and
+missing values or extreme returns (e.g., above ±50%)
+are either removed or winsorized to avoid distortions.
+Daily stock returns are computed as following equation:
+Pt − Pt−1
+(3)
+rt =
+Pt−1
+To control for market-wide effects, each stock’s returns
+are regressed on SPY and QQQ ETF returns, and the
+residuals are used for the subsequent correlation analysis (Wu and Hao, 2015). Pearson correlation matrices
+are then computed from these residual returns, ensuring that the resulting networks capture firm-specific
+co-movements rather than aggregate market dynamics.
+In constructing the networks, sector classification information is incorporated. Each stock is mapped
+to its respective GICS sector, and different correlation thresholds are applied: a lower threshold is used
+for intra-sector connections, while a higher threshold is imposed on inter-sector connections. This
+dual-threshold design allows the networks to reflect
+both industry-level cohesion and cross-industry interactions.
+The correlation matrices are subsequently transformed
+into adjacency matrices A by thresholding. Hyperedges are generated by applying a maximum clique
+detection algorithm. Hyperedge sizes are restricted to
+between 3 and 12 nodes, with at most 400 cliques retained per window. A computational time limit of
+0.75 seconds per window is imposed to ensure efficiency, and a fallback mode retains only 3-cliques in
+the event of excessive density. These restrictions are
+introduced to prevent overly dense hypergraphs that
+reduce economic interpretability and to ensure computational tractability across all event windows.
+
+Does FOMC Tone Really Matter? Statistical Evidence from Spectral Graph Network Analysis
+
+Finally, for each window, the networks are evaluated
+using the Fiedler value (λ2 ) and the corresponding
+Fiedler vector, which capture network connectivity
+and latent partition structures. For the hypergraphs,
+the Zhou Laplacian is additionally employed to compute λ2 , providing a measure of collective connectivity.
+4.2
+
+Hypergraph Connectivity and Eigenvalue
+Analysis
+
+We evaluate network connectivity primarily on hypergraphs. Let H denote the vertex–edge incidence matrix, Dv the diagonal matrix of vertex degrees, and De
+the diagonal matrix of hyperedge cardinalities. Following (Zhou et al., 2006), the normalized hypergraph
+Laplacian is
+LH = I − Dv−1/2 H De−1 H ⊤ Dv−1/2 .
+For an undirected hypergraph, LH is symmetric and
+H
+positive semi-definite with eigenvalues 0 = λH
+1 ≤ λ2 ≤
+H
+H
+· · · ≤ λn . The second-smallest eigenvalue, λ2 , is
+our primary measure of algebraic connectivity: larger
+values indicate stronger group-level cohesion, whereas
+smaller values indicate fragmentation.
+Hyperedges are constructed from residual correlation networks (stock returns residualized on SPY and
+QQQ) using a sector-aware thresholding rule (lower
+threshold within sector, higher across sectors), after which maximal cliques (size 3–12) are extracted.
+This design captures higher-order co-movements beyond pairwise links. The associated second eigenvector (the “hypergraph Fiedler vector”) provides a datadriven bipartition that we examine around FOMC announcements to assess sectoral alignments.
+4.3
+
+Event Study Framework
+
+To demonstrate the effect of FOMC event on network
+connectivity, we defined ∆F iedler as follows :
+∆F iedlert = F iedlert,post − F iedlert,pre , ∀t ∈ T
+,where T is a set of time index in our dataset. Thus, we
+can measure the change of network connectivity each
+date. Moreover, we defined F OM Ct dummy variable
+as follows:
+
+1 if t ∈ E
+F OM Ct =
+0 Otherwise
+Here, E denotes the set of all dates which FOMC event
+held. Xt is a vector of control variables at time t ∈ T .
+
+A critical methodological challenge in this specification
+is the potential for effect contamination, as FOMC
+meetings occasionally occur in close temporal proximity. The post-event window of one announcement
+could overlap with the pre-event window of a subsequent announcement. This overlap would create a
+methodological contagion, where the lingering effect
+of the first event contaminates the baseline measurement for the second, thereby biasing the estimation of
+its unique impact.
+To ensure the analytical integrity and robustness of
+our estimates, we implement a strict exclusion criterion. Any observation period where the full event window ([t − k, t + k]) of one FOMC meeting overlaps with
+that of another is explicitly removed from our regression sample. This procedure ensures that each event’s
+estimated impact is isolated and independent of confounding effects from adjacent policy announcements.
+Within this robust framework, the coefficient of interest, βF , quantifies the average marginal effect of an
+FOMC announcement on the change in network connectivity. It represents the estimated shift in ∆Fiedler
+on announcement days relative to non-announcement
+days, after controlling for prevailing market conditions.
+4.4
+
+Heterogeneous Treatment Effects
+
+The baseline model in the previous section estimates
+the average effect of an FOMC announcement. However, the theoretical background suggests that the
+market’s reaction may vary significantly depending on
+the policy tone conveyed. To investigate these heterogeneous effects, we disaggregate the F OM Ct dummy
+into three distinct categories based on our NLP classification: Hawkish, Dovish, and Neutral.
+We define three mutually exclusive dummy variables.
+Let EH , ED , EN be the sets of dates for Hawkish,
+Dovish, and Neutral FOMC announcements, respectively, such that E = EH ∪ ED ∪ EN and EH ∩ ED ∩ EN =
+∅. The dummy variables are then defined as follows:
+• Hawkisht = 1 if t ∈ EH , and 0 otherwise.
+• Dovisht = 1
+
+if t ∈ ED , and 0 otherwise.
+
+• N eutralt = 1 if t ∈ EN , and 0 otherwise.
+By substituting these variables into our baseline
+model, we can estimate the distinct impact of each
+policy tone. The model is specified as:
+
+Our baseline regression model is specified as follows:
+∆F iedlert = β0 + βH · Hawkisht + βD · Dovisht
+∆F iedlert = β0 + βF F OM Ct + γ ′ Xt + εt
+
++ βN · N eutralt + γ ′ Xt + εt
+
+Jaeho Choi, Jaewon Kim, Seyoung Chung, Chaeshick Chung, Yoonsoo Lee
+
+In this specification, the coefficients βH , βD , and βN
+capture the additional change in network connectivity
+for each respective tone, compared to the baseline of
+a non-FOMC day (β0 ).
+
+5
+
+RESULTS
+
+5.1
+
+Baseline Effect
+
+FOMC announcements have a significant average effect on the Fiedler value of stock market networks. In
+other words, β in our baseline model will be non-zero,
+indicating that the act of the Fed making an announcement (regardless of content) tends to move the network
+connectivity away from its pre-event baseline.
+
+ments are associated with statistically detectable shifts
+in network connectivity. Importantly, the magnitude
+and significance of these coefficients are robust to alternative specifications without the full set of controls,
+suggesting that the findings are not sensitive to control
+selection.
+Table 1: Baseline FOMC Effects on Network Connectivity
+Variable
+FOMC
+
+k=7
+k=8
+k=9
+k=14
+−0.392∗∗ −0.359∗∗ −0.306∗∗
+0.053
+(0.015)
+(0.061)
+(0.089)
+(0.753)
+F-statistic
+2.647
+1.284
+1.322
+0.316
+P-value
+0.015
+0.261
+0.244
+0.929
+R2
+0.006
+0.004
+0.003
+0.001
+Adj. R2
+0.004
+0.001
+0.001
+−0.002
+AIC
+9,647
+7,043
+7,707
+4,663
+BIC
+9,688
+7,083
+7,748
+4,702
+Observations
+2,666
+2,128
+2,399
+1,984
+Notes: ∗∗∗ p<0.01, ∗∗ p<0.05, ∗ p<0.1. Dependent variable:
+∆Fiedler value. Controls include VIX, S&P 500 return,
+2Y/10Y Treasury yields, and Dollar TWI. Results are robust to alternative specifications without these controls,
+yielding qualitatively similar coefficients.
+
+5.2
+
+Heterogenous Effect
+
+The impact on network connectivity varies with contextual factors: policy stance, communication form,
+and economic conditions.
+Figure 1: Estimated FOMC announcement effects
+across different event windows. Black squares indicate statistical significance at the 5% level
+We test whether the act of communicating policy—irrespective of content—systematically shifts
+market connectivity. we find that βF ̸= 0 for a nontrivial subset of event windows. Significance clusters
+appear at at a mid horizon (k = 7–9 days). Coefficients also exhibit a sign reversal over k: negative
+at very short horizons, turning positive at intermediate horizons. This dynamic adjustment indicates that
+FOMC announcements are associated with evolving,
+rather than instantaneous, shifts in network connectivity.(See Figure 1)
+Model fit is modest but consistent with event-study
+expectations: out-of-sample variance explained ranges
+from 0.1% to 0.6% across window sizes (see Figure 3).
+These results reject the null of no announcement effect
+and establish that FOMC communications, as such, induce statistically detectable re-wiring of equity market
+networks.
+These baseline results indicate that FOMC announce-
+
+Figure 2: Estimated heterogeneous tone effects across
+different event windows. Black squares indicate statistical significance at the 5% level
+The results reveal a systematic heterogeneity across
+tone categories(See Figure 2):
+• Hawkish: Negative coefficients at short horizons
+(k = 6) indicate fragmentation of the network
+
+Does FOMC Tone Really Matter? Statistical Evidence from Spectral Graph Network Analysis
+
+(lower ∆λ2 ), consistent with heterogeneous sectoral reactions to tightening. However, k = 14, it
+strengthens the connection of the network.
+• Dovish: Dovish tone effects are not statistically
+significant for all time window k.
+• Neutral: Immediate effects are muted, but significant negative coefficients emerge at mid horizons (k = 14–15), consistent with delayed fragmentation. A plausible interpretation is that initially “balanced” language is subsequently re-read
+as absence of guidance, amplifying uncertainty
+and belief dispersion. While we treat this interpretation as hypothesis rather than identification,
+the mid-horizon association is robust across specifications.
+
+Table 2: Heterogeneous Effects of FOMC Tone on Network Connectivity
+Variable
+Hawkish
+
+k=7
+k=8
+k=9
+k=14
+−0.772∗∗∗
+−0.443
+−0.283
+0.366∗∗
+(0.000)
+(0.056)
+(0.183)
+(0.012)
+Dovish
+−0.107
+−0.218
+−0.428∗
+0.038
+(0.643)
+(0.326)
+(0.051)
+(0.847)
+Neutral
+−0.159
+−0.498∗
+−0.180
+−0.432∗∗
+(0.505)
+(0.029)
+(0.420)
+(0.028)
+F-statistic
+2.392
+1.029
+1.047
+1.684
+P-value
+0.014
+0.411
+0.398
+0.098
+R2
+0.007
+0.004
+0.003
+0.007
+Adj. R2
+0.004
+0.000
+0.000
+0.003
+Observations
+2,666
+2,128
+2,399
+1,984
+Notes: ∗∗∗ p<0.01, ∗∗ p<0.05, ∗ p<0.1. Dependent variable:
+∆Fiedler value. Controls include VIX, S&P 500 return,
+2Y/10Y Treasury yields, and Dollar TWI. Results are robust to alternative specifications without these controls,
+yielding qualitatively similar coefficients.
+
+are critical determinants of this structural impact. Using spectral analysis on sector-aware hypergraphs of
+S&P 100 constituents, we provide evidence consistent
+with a network-based channel of monetary policy communication.
+
+Figure 3: R2 score with time window k.
+Across windows, tone-decomposed specification outperforms the baseline model in terms of R2 and frequency of significant coefficients (see Figure 3), demonstrating that tone and context materially enhance explanatory power beyond the mere occurrence of announcements.
+The heterogeneous tone effects remain qualitatively
+similar when controls are dropped one by one or
+jointly, indicating that the documented differences
+across hawkish, dovish, and neutral communications
+are robust to control choice.
+
+6
+
+CONCLUSION
+
+This paper provides evidence that the transmission of
+monetary policy extends beyond its well-documented
+effects on asset prices to systematically reconfigure the
+structure of financial market networks. The substantive content—or tone—of the announcement and the
+temporal horizon over which its effects are measured
+
+Our central findings reveal a dynamic and heterogeneous adjustment process. FOMC announcements induce structural shifts in market connectivity that vary
+by policy tone and time horizon. Hawkish announcements induce short-run fragmentation (λ2 decreases),
+suggesting divergent sectoral responses to anticipated
+policy tightening. Dovish communications show positive effects on market cohesion (λ2 increases), though
+these effects are more modest and less consistent across
+horizons than hawkish fragmentation. Neutral statements exhibit a delayed effect, leading to significant
+network fragmentation at medium horizons. This underscores a crucial insight: analyzing effects across
+multiple time windows reveals heterogeneity that a
+single-window approach would miss.
+These results carry three broader implications for
+economic analysis. First, provide evidence for a
+network-based mechanism for the transmission of monetary policy, where central bank communication alters the covariance structure and potential for contagion within the financial system. Second, the findings offer a quantitative framework for assessing systemic connectivity shifts. The changes in algebraic
+connectivity we document provide measures of network structural adjustments in response to policy signals. Third, our methodology can be adapted to analyze the structural impact of information shocks in
+other high-dimensional economic systems where agent
+inter-dependencies are paramount.
+
+Jaeho Choi, Jaewon Kim, Seyoung Chung, Chaeshick Chung, Yoonsoo Lee
+
+Future research could extend this framework to other
+major central banks, alternative asset classes, and
+higher-frequency intraday data to further map the intricate relationship between public information and
+the evolving topology of financial markets. Ultimately,
+our findings argue for a re-conceptualization of policy
+influence: central bank communications do not merely
+inform market participants; they reshape the structure
+of their inter-relationships.
+
+References
+Acemoglu, D., Akcigit, U., and Kerr, W. (2016). Networks and the macroeconomy: An empirical exploration. Nber macroeconomics annual, 30(1):273–
+335.
+Billio, M., Getmansky, M., Lo, A. W., and Pelizzon, L.
+(2012). Econometric measures of connectedness and
+systemic risk in the finance and insurance sectors.
+Journal of financial economics, 104(3):535–559.
+Cieslak, A. and Schrimpf, A. (2019). Non-monetary
+news in central bank communication. Journal of
+International Economics, 118:293–315.
+Cieslak, A., Morse, A., and Vissing-Jorgensen, A.
+(2019). Stock returns over the fomc cycle. The Journal of Finance, 74(5):2201–2248.
+Diebold, F. X. and Yılmaz, K. (2014). On the network
+topology of variance decompositions: Measuring the
+connectedness of financial firms. Journal of econometrics, 182(1):119–134.
+El Ghoul, S., Guedhami, O., Mansi, S. A., and Sy,
+O. (2022). Event studies in international finance
+research. Journal of International Business Studies,
+54(2):344.
+Hansen, S. and McMahon, M. (2016). Shocking language: Understanding the macroeconomic effects of
+central bank communication. Journal of International Economics, 99:S114–S133.
+Lucca, D. O. and Moench, E. (2015). The prefomc announcement drift. The Journal of finance,
+70(1):329–371.
+MacKinlay, A. C. (1997). Event studies in economics and finance. Journal of economic literature,
+35(1):13–39.
+Rosa, C. (2013). The financial market effect of fomc
+minutes. Economic Policy Review, 19(2).
+Sandoval, P. L. (2012). Cambios en los referentes para
+la construcción de proyectos de vida juvenil. Revista
+Tendencias & Retos, 17(1):93–103.
+Uddin, A., Tao, X., and Yu, D. (2021). Attention
+based dynamic graph learning framework for asset
+pricing. In Proceedings of the 30th ACM International Conference on Information & Knowledge
+Management, pages 1844–1853.
+Wu, Q. and Hao, J.-K. (2015). A review on algorithms
+for maximum clique problems. European Journal of
+Operational Research, 242(3):693–709.
+Zhou, D., Huang, J., and Schölkopf, B. (2006). Learning with hypergraphs: Clustering, classification, and
+embedding. Advances in neural information processing systems, 19.
+
+

@@ -86,6 +86,10 @@ Stage E.12 (harness v8; V19, V23 items 4 and 19):
   reports/stage_e12_quotes.json. E.2b's reports/stage_e2b_step2_quotes.json and .md are refused as
   targets, so they are never overwritten. The quote summary also reports both accounts' positions
   (spent, cap, headroom) from each account's gate.
+
+Stage E.14 (harness v10): ``--plan es2011|ext2010`` hands the whole run to data.pull_hist (its own
+plans, gates, session ids, manifests under reports/hist/ and checks), after refusing every step 2
+option; without --plan nothing here changes.
 """
 
 from __future__ import annotations
@@ -267,6 +271,8 @@ STEP2_NOTE = "Stage E step 2 purchase"
 ACCOUNT_2_CREDIT_USD = 125.00  # U5: acct-2's credit when it was opened (docs/STAGE_E_DESIGN.md D13)
 RC_REFUSED = 2
 RC_STOPPED = 1
+# Stage E.14 (harness v10): --plan hands the run to data.pull_hist (its HIST_PLAN_NAMES).
+HIST_PLANS = ("es2011", "ext2010")
 
 
 # --------------------------------------------------------------- errors ----
@@ -1010,6 +1016,8 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--quotes-out", help="quotes JSON (.json; the .md is written beside it); "
                                              "default reports/stage_e12_quotes.json")
     parser.add_argument("--harness-sha256", help="the frozen harness manifest's sha256 (--buy)")
+    parser.add_argument("--plan", choices=HIST_PLANS,
+                        help="Stage E.14 hist plan (es2011 or ext2010): handed to data.pull_hist")
     return parser
 
 
@@ -1115,6 +1123,9 @@ def main(argv: list[str] | None = None, *,
     """The CLI. ``gate_factory`` and ``key_loader`` are called with ``account=`` (--account, or
     ACTIVE_ACCOUNT for --quote-only); the other keywords are for tests."""
     args = _parser().parse_args(argv)
+    if args.plan is not None:  # Stage E.14 (harness v10): the hist plans live in data.pull_hist
+        return _hist_main(args, sys.argv[1:] if argv is None else argv, key_loader=key_loader,
+                          client_factory=client_factory, log=log)
     if args.status:
         print(json.dumps(status(), indent=1))
         return 0
@@ -1170,6 +1181,24 @@ def main(argv: list[str] | None = None, *,
         return RC_STOPPED
     log(f"buy finished: {len(done)} chunks · harness {harness} · {banner(gate)}")
     return 0
+
+
+def _hist_main(args: argparse.Namespace, argv: list[str], *, key_loader: Callable[..., str],
+               client_factory: Callable[[str], Any], log: Callable[[str], None]) -> int:
+    """--plan: refuse every step 2 option, then run data.pull_hist's CLI on the same arguments
+    (its own gates, ledger session, manifests and checks; nothing of step 2 is used)."""
+    step2_only = [name for name, on in (
+        ("--status", args.status), ("--set", args.set is not None), ("--ml-route", args.ml_route),
+        ("--cluster", args.cluster is not None), ("--roots", args.roots is not None),
+        ("--training-window", args.training_window), ("--holdout2-only", args.holdout2_only),
+        ("--extension-2010", args.extension_2010)) if on]
+    if step2_only:
+        print(f"REFUSED before any vendor call: --plan {args.plan} takes none of "
+              f"{', '.join(step2_only)}", file=sys.stderr)
+        return RC_REFUSED
+    from data import pull_hist  # lazy: data.pull_hist imports this module's quote paths
+
+    return pull_hist.main(argv, key_loader=key_loader, client_factory=client_factory, log=log)
 
 
 def render_quotes_markdown(payload: dict[str, Any]) -> str:

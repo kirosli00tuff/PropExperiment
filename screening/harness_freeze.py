@@ -34,7 +34,8 @@ HARNESS_DIRS = ("rules", "sim", "screening", "funnel", "data", "ml_route", "comp
 # Data, never code: purchased files, sealed stores, built bars and the release sourcers' fetch
 # scripts are git-ignored and hashed by their own records (E.2a's tables, the holdout manifests,
 # each run's input hashes, the release source files); neither listed nor scanned.
-DATA_SUBDIRS = ("data/processed", "data/processed_step2", "data/vendor", "data/sealed")
+DATA_SUBDIRS = ("data/processed", "data/processed_step2", "data/vendor", "data/sealed",
+                "data/processed_hist")  # harness v10 (Stage E.14): the hist bar stores
 # Cluster member code (review F-1): only the frozen, empty package init and per-cluster packages
 # k1..k8 (hashed by each cluster's own freeze, screening/stage_e_freeze.py) may hold *.py here.
 MEMBERS_DIR = "strategy/members"
@@ -235,6 +236,9 @@ ENTRY_MODULES = (
     "screening.stage_e_stats", "ml_route.train", "ml_route.test", "ml_route.probes",
     "compute.remote", "compute.agent", "data.pull_step2", "data.step2_store", "data.holdout",
     "data.trade_date_guard", "data.stage_e_bars", "strategy.research._d1f_statistics",
+    # harness v10 (Stage E.14): the hist plans, calendars, stores, test C2 and the trial registry
+    "data.pull_hist", "data.hist_calendar", "data.hist_store", "data.hist_bars",
+    "screening.stage_e14_c2", "screening.trial_registry",
 )
 EARLIER_MANIFESTS = ("reports/stage_e1_freeze.json", "reports/stage_e2a_ml_freeze.json")
 # Read-only inputs the harness reads at run time. Append-only logs and files later sessions
@@ -255,13 +259,18 @@ FROZEN_INPUTS = (
     "reports/stage_e2b_release_names.json", "reports/stage_e2b_ml_probes.json",
     "reports/stage_e2b_v10_amendment.md", "pyproject.toml", "uv.lock", MEMBERS_INIT,
     "reports/stage_e12_closure_rulings.json",  # harness v9: data.step2_store's closure ruling
+    # harness v10 (Stage E.14): the six 2010-2019 group calendars data.hist_calendar reads
+    # (schema e14_hist_calendar/1). Listed here so a rebuild refuses while any is missing.
+    "data/calendars/hist2010/equity.json", "data/calendars/hist2010/rates.json",
+    "data/calendars/hist2010/fx.json", "data/calendars/hist2010/energy.json",
+    "data/calendars/hist2010/metals.json", "data/calendars/hist2010/grains.json",
 )
 FROZEN_INPUT_DIRS = ("reports/stage_e2a_funnel",)
 # M7.8: "every M7 test" is hashed with the pipeline; the other Stage E tests travel with it.
 TEST_PATTERNS = ("test_stage_e_*.py", "test_ml_route_*.py", "test_compute_*.py", "test_e2b_*.py",
                  "test_cross_platform_static.py", "test_build_release_calendar.py",
                  "test_leakage_canaries.py", "test_harness_freeze.py", "_stage_e_*.py",
-                 "_compute_fixtures.py")
+                 "_compute_fixtures.py", "test_e14_*.py", "_e14_*.py")  # e14: harness v10
 
 
 def harness_dir_files(root: Path) -> list[str]:

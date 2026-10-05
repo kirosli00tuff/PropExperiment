@@ -1,8 +1,8 @@
 {
  "stage": "E.2b",
  "what": "Stage E harness freeze: every file Stage E's sessions run or read as frozen input",
- "created_pdt": "2026-10-03T12:00:03-07:00",
- "head_at_creation": "deccd17b0d073a8d90b2b72291612d13acefce6f",
+ "created_pdt": "2026-10-05T03:27:25-07:00",
+ "head_at_creation": "77be2a901193a6e9ec72ddfae9684e29ae3bb9b8",
  "harness_dirs": [
   "rules",
   "sim",
@@ -28,7 +28,13 @@
   "data.holdout",
   "data.trade_date_guard",
   "data.stage_e_bars",
-  "strategy.research._d1f_statistics"
+  "strategy.research._d1f_statistics",
+  "data.pull_hist",
+  "data.hist_calendar",
+  "data.hist_store",
+  "data.hist_bars",
+  "screening.stage_e14_c2",
+  "screening.trial_registry"
  ],
  "categories": {
   "compute/__init__.py": "harness_code",
@@ -57,14 +63,24 @@
   "data/calendars/equity.py": "harness_code",
   "data/calendars/fx.py": "harness_code",
   "data/calendars/grains.py": "harness_code",
+  "data/calendars/hist2010/energy.json": "harness_code",
+  "data/calendars/hist2010/equity.json": "harness_code",
+  "data/calendars/hist2010/fx.json": "harness_code",
+  "data/calendars/hist2010/grains.json": "harness_code",
+  "data/calendars/hist2010/metals.json": "harness_code",
+  "data/calendars/hist2010/rates.json": "harness_code",
   "data/calendars/livestock.py": "harness_code",
   "data/calendars/metals.py": "harness_code",
   "data/calendars/rates.py": "harness_code",
   "data/cme_calendar.py": "harness_code",
   "data/config.py": "harness_code",
   "data/group_session.py": "harness_code",
+  "data/hist_bars.py": "harness_code",
+  "data/hist_calendar.py": "harness_code",
+  "data/hist_store.py": "harness_code",
   "data/holdout.py": "harness_code",
   "data/intervals.py": "harness_code",
+  "data/pull_hist.py": "harness_code",
   "data/pull_mes.py": "harness_code",
   "data/pull_step2.py": "harness_code",
   "data/pull_step2_report.py": "harness_code",
@@ -975,6 +991,7 @@
   "screening/drift.py": "harness_code",
   "screening/harness_freeze.py": "harness_code",
   "screening/runner.py": "harness_code",
+  "screening/stage_e14_c2.py": "harness_code",
   "screening/stage_e_align.py": "harness_code",
   "screening/stage_e_engine.py": "harness_code",
   "screening/stage_e_freeze.py": "harness_code",
@@ -989,6 +1006,7 @@
   "screening/stage_e_stats_start.py": "harness_code",
   "screening/stage_e_stats_units.py": "harness_code",
   "screening/stage_e_verdict.py": "harness_code",
+  "screening/trial_registry.py": "harness_code",
   "screening/trips.py": "harness_code",
   "screening/vehicles.py": "harness_code",
   "screening/vehicles_choice.py": "harness_code",
@@ -1025,6 +1043,7 @@
   "strategy/stage_e/_template.py": "harness_code",
   "strategy/stage_e/interface.py": "harness_code",
   "tests/_compute_fixtures.py": "stage_e_test",
+  "tests/_e14_fixtures.py": "stage_e_test",
   "tests/_stage_e_canary_kit.py": "stage_e_test",
   "tests/_stage_e_launch.py": "stage_e_test",
   "tests/_stage_e_synthetic.py": "stage_e_test",
@@ -1033,6 +1052,12 @@
   "tests/test_compute_remote_e2e.py": "stage_e_test",
   "tests/test_compute_units.py": "stage_e_test",
   "tests/test_cross_platform_static.py": "stage_e_test",
+  "tests/test_e14_c2.py": "stage_e_test",
+  "tests/test_e14_config_v10.py": "stage_e_test",
+  "tests/test_e14_hist_calendar.py": "stage_e_test",
+  "tests/test_e14_hist_store.py": "stage_e_test",
+  "tests/test_e14_pull_hist.py": "stage_e_test",
+  "tests/test_e14_trial_registry.py": "stage_e_test",
   "tests/test_e2b_pull_step2.py": "stage_e_test",
   "tests/test_e2b_pull_step2_e12.py": "stage_e_test",
   "tests/test_e2b_step2_store.py": "stage_e_test",
@@ -1179,6 +1204,30 @@
    "sha256": "a685731be437412fa8dcb9120f0f37392112d6b4d41a781db393351a38f7806f",
    "bytes": 173517
   },
+  "data/calendars/hist2010/energy.json": {
+   "sha256": "c7a58e904571028f412dfe7f1039aa3c6cc89da8117e112e99a39d6d0bdeee6c",
+   "bytes": 217593
+  },
+  "data/calendars/hist2010/equity.json": {
+   "sha256": "b12aee433635bc8334adb15d8f06c21255b0cb24889ea123a4d4375fb22657be",
+   "bytes": 160135
+  },
+  "data/calendars/hist2010/fx.json": {
+   "sha256": "463c256b38a530fb1b150b542db21449d704d5b4cfa5308bd018d2e0e05b0591",
+   "bytes": 149245
+  },
+  "data/calendars/hist2010/grains.json": {
+   "sha256": "1197496f224636e7330f6da0b50ae45063ffb085fc780e95b54bc078955a7a61",
+   "bytes": 159783
+  },
+  "data/calendars/hist2010/metals.json": {
+   "sha256": "7eb64ead635aafb932422f5f31d2ff483ed22247ae0eaacccc71f798386991e9",
+   "bytes": 217992
+  },
+  "data/calendars/hist2010/rates.json": {
+   "sha256": "099ac84eb88c4e2bef67814e668d04fc4e88ad2ef1b3ea52114c53abd25382a4",
+   "bytes": 154992
+  },
   "data/calendars/livestock.py": {
    "sha256": "57727e68c448153ed018d0c0d0f03107db56d93e26da190e6d356f34e743c501",
    "bytes": 148666
@@ -1196,12 +1245,24 @@
    "bytes": 52510
   },
   "data/config.py": {
-   "sha256": "a21e647e6aac77b614b075798b05410f0d73f6537f547c9291386e1a0ceee22a",
-   "bytes": 11777
+   "sha256": "d4589d311bcfcc925c0b646fb12fe450b6b5c83eadf3b1db73da2fa7fb8eaf3a",
+   "bytes": 14132
   },
   "data/group_session.py": {
    "sha256": "2ed48dda5833eab49196684231da5d7829d1810014c9d28d63351c5fce47308b",
    "bytes": 29616
+  },
+  "data/hist_bars.py": {
+   "sha256": "e572c98e93a4142902858153bfa342a1d39e7585f5a723b538c8858015e70ca9",
+   "bytes": 6103
+  },
+  "data/hist_calendar.py": {
+   "sha256": "bee290693e79f01912d6137a189abda649c3dabd5e16ffd38329820ebd13ada6",
+   "bytes": 23863
+  },
+  "data/hist_store.py": {
+   "sha256": "908093ed5b4c867858fe590ad3b9daa7bc305dd8cfb0ab4b70ab95b1bb3e9cac",
+   "bytes": 29658
   },
   "data/holdout.py": {
    "sha256": "a8df5d63d78604853781de5fcce94acd077b06f76b3f83e48767a6c4e98cc129",
@@ -1211,13 +1272,17 @@
    "sha256": "c7b22bfcbef68ea63d189115c32509331c610ff323d82180e6a0165620f47bf0",
    "bytes": 1139
   },
+  "data/pull_hist.py": {
+   "sha256": "ee5436a913918d45a801b88560fb5124594b951c23122c69275f2a0b266b947f",
+   "bytes": 36713
+  },
   "data/pull_mes.py": {
    "sha256": "31948223ce39e30c002b8a325fec428b27a5f7ed70aeaffc90474f9a55b1e617",
    "bytes": 17550
   },
   "data/pull_step2.py": {
-   "sha256": "64b2ab87850efde49472eb1bce971c8b2b056142f27f8bd37e00d93230d60ea5",
-   "bytes": 65352
+   "sha256": "6a57461b03cebe9e7eb38388f3f5b9ee8d802790836a8d91649b82582abe28d6",
+   "bytes": 67249
   },
   "data/pull_step2_report.py": {
    "sha256": "637df89bfb3bf8243272862771f3048e2c9884a412d6691e37e3292073d98c59",
@@ -4844,12 +4909,16 @@
    "bytes": 15758
   },
   "screening/harness_freeze.py": {
-   "sha256": "9cb2779aec2b6177ae4bf6a7b5bfbd8c090018021e95df353d0cd0612e6136f1",
-   "bytes": 20655
+   "sha256": "6facd6ef34a94b766c0238e192053ed9da9d1263bff3896a52f78b8327fbf41e",
+   "bytes": 21453
   },
   "screening/runner.py": {
    "sha256": "da1612ef6b6056db1a72bd22a6292fbec18426804cae418a898797db08a1eee9",
    "bytes": 20893
+  },
+  "screening/stage_e14_c2.py": {
+   "sha256": "9e018374f89f12a849c5cc099722cbbdd3d0786eaea1ae04f949244cb3f5628e",
+   "bytes": 27472
   },
   "screening/stage_e_align.py": {
    "sha256": "d72b5b25d23b50ec216f51a6755a8a1599b52779e6184eb2daa4191097c5c387",
@@ -4906,6 +4975,10 @@
   "screening/stage_e_verdict.py": {
    "sha256": "5de1414b77e7703f2fe511bf3a4ddb58d1fdb67d3a3c68bf450fe62eaedb2c68",
    "bytes": 36244
+  },
+  "screening/trial_registry.py": {
+   "sha256": "1661f90732300d724dfcab0fd5a22c39ed941805ccf139a6ef731998085e045b",
+   "bytes": 13654
   },
   "screening/trips.py": {
    "sha256": "157062100644ea8526dab16c179e8e5ef9ba27347f33d72516167986f06b40ec",
@@ -5051,6 +5124,10 @@
    "sha256": "e52fd5f8ef04976baf6e7dcfda3c583c66afc422fb3607b3c2297f45de06aaca",
    "bytes": 11282
   },
+  "tests/_e14_fixtures.py": {
+   "sha256": "f62474f39cad71ef922439d7544ed02f92e581d5891a1147380059baf2071cee",
+   "bytes": 9985
+  },
   "tests/_stage_e_canary_kit.py": {
    "sha256": "842c606caae68eb9aaae9828a0c364355aab0198af599d4071f380a5b1aafcd2",
    "bytes": 37199
@@ -5082,6 +5159,30 @@
   "tests/test_cross_platform_static.py": {
    "sha256": "128cef9196e1899b34ba0bd662aaf300381e19d58d649f04a58b3628cebc6b0d",
    "bytes": 20418
+  },
+  "tests/test_e14_c2.py": {
+   "sha256": "aa1d1fcbfff2e952aa9406da69e6bd928e66494f277fe65a5d67c61215487d3c",
+   "bytes": 24500
+  },
+  "tests/test_e14_config_v10.py": {
+   "sha256": "49644e15a12533e8e51ccebce96e86fdfd843bec02461f859dfaa5c06c5a4035",
+   "bytes": 3392
+  },
+  "tests/test_e14_hist_calendar.py": {
+   "sha256": "430a03652ffd483c687004cd6197bcb0344518284b3061485c14cbe0b21aff2a",
+   "bytes": 13268
+  },
+  "tests/test_e14_hist_store.py": {
+   "sha256": "1263e5e422de38ae8647de455eae6881f484d4f684a3ee95ca85d2c61f1230c6",
+   "bytes": 16422
+  },
+  "tests/test_e14_pull_hist.py": {
+   "sha256": "0c83f6fbf9c779a099ffd644d81359d08ceaad6362cfbd5fb4095b70dbf27ff8",
+   "bytes": 22270
+  },
+  "tests/test_e14_trial_registry.py": {
+   "sha256": "79bce9366072c0a208c89bbfb74d2877cdc76baaaea9ec696a947d1eb64293a8",
+   "bytes": 8069
   },
   "tests/test_e2b_pull_step2.py": {
    "sha256": "272465f9480ce1f6d526905eccf4cfa7f4f23503cf100136d95e20a0fb3933bd",
@@ -5247,7 +5348,7 @@
  "notes": [
   "The manifest cannot hold its own sha256: every Stage E entry point takes it on its command line (--harness-sha256) and preflight() refuses unless it matches.",
   "The two earlier manifests' audit files are hashed at their current committed bytes (Parts appended after those freezes included); their freeze-commit blobs are checked by the start and end checks, not here.",
-  "Not frozen, by design: append-only logs and files later sessions write (docs/HOLDOUT_UNLOCK_LOG.md, docs/ACCESS.md, ledger/, per-product holdout-2 manifests, reports/stage_e_start_rule_*.json, quote reports), and data files under data/processed, data/processed_step2, data/vendor, data/sealed.",
+  "Not frozen, by design: append-only logs and files later sessions write (docs/HOLDOUT_UNLOCK_LOG.md, docs/ACCESS.md, ledger/, per-product holdout-2 manifests, reports/stage_e_start_rule_*.json, quote reports), and data files under data/processed, data/processed_step2, data/vendor, data/sealed, data/processed_hist.",
   "A spend-policy change in data/config.py (a purchase session's session id and caps) changes a frozen file: that session writes a new manifest whose only difference is data/config.py's entry, shows the diff, and passes the new sha256 on its commands."
  ]
 }

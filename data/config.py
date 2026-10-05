@@ -163,6 +163,37 @@ STEP2_PURCHASE_SESSION_ID = STAGE_E12_SESSION_ID
 STEP2_SESSION_CAP_USD = E12_SESSION_CAP_USD
 STEP2_REQUEST_CAP_USD = E12_REQUEST_CAP_USD
 
+# Stage E.14 spend policy (stage prompt docs/prompts/STAGE_E.14.md, V25, V26, 2026-10-05; harness
+# v10). Read by data.pull_hist only: the step 2 active policy above stays on the E.12 block, and
+# ACCOUNT_2_CAP_USD stays 249.67 (V26: the acct-2 top-up did not go through).
+# Test C2 buys ES.v.0 2011-05..2019-04 (data.pull_hist plan "es2011") on acct-2 only. The E.14 lead
+# sets E14_SESSION_CAP_USD from the fresh `--quote-only --plan es2011` total x 1.03, in whole
+# cents, never above acct-2's headroom ($18.070270, E.12_RETURN.md:572; the E.14 prompt's
+# Guardrails: "never above acct-2's remaining headroom ($18.07)"), before the v10 manifest. 0.00
+# means the gate refuses every billable request and `--buy --plan es2011` refuses to start.
+STAGE_E14_SESSION_ID = "stage-E.14-2026-10-05"
+# Stays 0.00 (E.14 lead, 01:34 PDT 2026-10-05): the fresh --quote-only --plan es2011 run (01:29-01:32
+# PDT, 96 of 96 chunks, 0 failed; reports/stage_e14_quotes_es2011.json) quoted $10.109048 (x 1.03 =
+# $10.412319, which would fit acct-2's $18.070270), but test C2 stopped before its freeze and
+# registration on its power rule (prereg C2 section 7: 135 eligible GEX < 0 dates, under 200;
+# reports/stage_e14_gex.md). No ES is bought in E.14; a later harness sets this cap only if the user
+# runs C2 under a new decision.
+E14_SESSION_CAP_USD = 0.00
+E14_REQUEST_CAP_USD = 3.00  # D13's per-request cap (docs/STAGE_E_DESIGN.md D13), as E.5 and E.12
+# Test C1 (plan "ext2010": NG, NQ, ZN, 6E, GC, ZC, 2010-06-06..2019-05-01) is quoted only in E.14;
+# its $0.00 quote lines go under STAGE_E14_SESSION_ID. Its buy runs under its own session id, so
+# C2's ES spend never counts against C1's session cap, and is refused while this cap is 0.00
+# (V26: C1 stops frozen, awaiting funds). A later harness may raise only this cap and
+# ACCOUNT_2_CAP_USD (C1's freeze says so).
+STAGE_E14_EXT2010_SESSION_ID = "stage-E.14-ext2010"
+E14_EXT2010_SESSION_CAP_USD = 0.00
+# The only account an E.14 plan buys on: acct-1's $1.609980 of headroom fits no root
+# (E.12_RETURN.md:572; reports/stage_e13_ng_replication_draft.md section 8).
+E14_BUY_ACCOUNT = ACCOUNT_2_ID
+# The hist bar stores (data.hist_store, plans es2011 and ext2010): their own base, separate from
+# the research and step 2 stores (the V10 separate data roots). Git-ignored.
+HIST_ROOT = DATA_ROOT / "processed_hist"
+
 # One Databento key per account (Stage E.11, V19): .env holds DATABENTO_API_KEY1 and
 # DATABENTO_API_KEY2 only. require_databento_key reads the variable of the account it is asked
 # for (ACTIVE_ACCOUNT by default). The old single DATABENTO_API_KEY is not read, not even as a

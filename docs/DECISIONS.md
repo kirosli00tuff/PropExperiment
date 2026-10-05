@@ -465,3 +465,23 @@
   quoted cost; (d) a ranking of these against each other, with
   pre-registration drafts for the top one or two. Re-running Gate 0,
   relaxing its bar, or re-mining the 2019-2024 stores is ruled out.
+- 2026-10-04 (user, planning chat): V25. After E.13. The user runs C1
+  (the backward NG replication) and C2 (dealer-gamma-conditioned S&P
+  late-session momentum) together in one overnight stage, E.14, per the
+  drafts reports/stage_e13_prereg_ngrepl.md and
+  reports/stage_e13_prereg_gexmom.md. Decisions: (1) V24's question for
+  C1 is answered yes: reloading E.12's persisted out-of-fold predictions
+  to reproduce q, and one full-panel fit of the frozen ridge M1 on the
+  E.12 training panel, are allowed; neither reruns Gate 0 or tests
+  anything on 2019-2024. (2) The S&P exposure is reopened for C2's one
+  registered test only: ES 2011-05..2019-04 bars are read, MES is the
+  vehicle, and MES's sealed holdouts stay sealed. SqueezeMetrics' free
+  GEX CSV is accepted, subject to its terms check; C2 stops if the terms
+  forbid this use. (3) Funding: the user tops up acct-2 by $60, so
+  ACCOUNT_2_CAP_USD rises from $249.67 to $309.67 in E.14's harness v10,
+  and pre-approves spending up to $75.00 in total in E.14, after a fresh
+  quote logged in that session, with no further approval. (4) The
+  calendar probe (one year of the energy calendar and the NGS table at
+  evidence grade) runs first inside E.14 and can drop C1 by its stated
+  rule. N goes 471 -> 473 (C1) -> 475 (C2) at registration, whatever the
+  outcomes. A pass in either is evidence, not a deployment verdict.

@@ -1,4 +1,9 @@
-STAGE E.14 "TWO REGISTERED TESTS IN ONE NIGHT: THE BACKWARD NG REPLICATION (C1) AND GAMMA-CONDITIONED S&P LATE-SESSION MOMENTUM (C2): PROBE, FREEZE, BUY, EVALUATE ONCE EACH"
+STAGE E.14 "C1 AND C2 TOGETHER: PROBE, CALENDARS AND FREEZES FOR BOTH; C2 BOUGHT AND EVALUATED ONCE WITH THE FUNDS ON HAND; C1 FROZEN AND READY, AWAITING FUNDS"
+
+Revision 2026-10-05 (before launch, V26): the acct-2 top-up did not go
+through. No cap raise, spend limited to acct-2's current headroom
+($18.07), C2's ES only. C1 is built, frozen and taken through its q
+reproduction, then stops before registration and purchase.
 
 BEGIN PROMPT - SUMMARY OF PROMPT
 
@@ -6,16 +11,18 @@ Summary: Stage E.13 ranked what is left to search and drafted two
 pre-registrations: C1, a backward replication of E.12's NG near-miss on
 2010-2019 NG data never read, and C2, dealer-gamma-conditioned
 late-session momentum in S&P futures over 2011-2019 (Baltussen et al.,
-JFE 2021). The user chose to run both in one overnight stage (V25), allowed
-C1's two computations on the 2019-2024 panel, reopened the S&P exposure
-for C2's one test, topped up acct-2 by $60 and pre-approved spending up to
-$75 after a logged fresh quote. This session runs the calendar probe,
-builds the calendars, freezes both pre-registrations with harness v10,
-fetches and checks the GEX file, reproduces C1's threshold, registers
-both tests, buys the data, and evaluates each test exactly once. Each
+JFE 2021). The user chose to run both together (V25), allowed C1's two
+computations on the 2019-2024 panel, and reopened the S&P exposure for
+C2's one test. The acct-2 top-up failed (V26), so this session works with
+the funds on hand: it runs the calendar probe, builds the calendars,
+freezes both pre-registrations with harness v10, fetches and checks the
+GEX file, reproduces C1's threshold and fits M1, then registers C2 only,
+buys C2's ES data within acct-2's $18.07 of headroom, and evaluates C2
+exactly once. C1 ends frozen and ready, with its registration, purchase
+and evaluation left to a later session once funds are in place. Each
 test has its own stop rules, and a stop in one never blocks the other.
 
-Decisions in force: docs/DECISIONS.md V18, V23, V24, V25. The drafts
+Decisions in force: docs/DECISIONS.md V18, V23, V24, V25, V26. The drafts
 reports/stage_e13_prereg_ngrepl.md (C1) and
 reports/stage_e13_prereg_gexmom.md (C2) rule, with C1's technical annex
 reports/stage_e13_ng_replication_draft.md and its rulings C1-C21, and
@@ -37,9 +44,9 @@ Usage: follows CLAUDE.md's context-hygiene rules. The user runs this
 unattended overnight. The auto-retry launcher resumes it with "read the
 STATE file first", so reports/stage_e14_STATE.md names, after every
 task, the task finished, the files and hashes in force, C1's and C2's
-status (running, stopped with reason, or done), the ledger total per
-account and the next task. Compute: the ThinkPad under the overnight
-profile. Expect 6 to 9 hours.
+status (running, stopped with reason, frozen awaiting funds, or done),
+the ledger total per account and the next task. Compute: the ThinkPad
+under the overnight profile. Expect 5 to 8 hours.
 
 Do not stop to ask. Do not use AskUserQuestion: the user is asleep.
 Decide, log the choice under Open choices in the return document, and
@@ -57,17 +64,19 @@ This stage does:
 - the calendars both tests need, from official pages, no prices (Task 2)
 - the GEX file: terms, fetch, timing rule, the GEX < 0 count (Task 3)
 - harness v10 and the freezes of both pre-registrations (Task 4)
-- C1's M1 fit and the q reproduction (Task 5)
-- registration of both tests, then the quote and the purchase (Task 6)
-- the store builds and one evaluation per test (Task 7)
-- Fable verification of both verdicts (Task 8)
+- C1's M1 fit and the q reproduction, then C1 stops, frozen (Task 5)
+- registration of C2, then the quote and C2's purchase (Task 6)
+- C2's store build and its one evaluation (Task 7)
+- Fable verification of C2's verdict and of C1's q reproduction (Task 8)
+- a free quote for C1's set, so the user knows the top-up (Task 6)
 
 This stage does NOT:
 - read, summarize or plot any test-window byte (NG and its five legs
   2010-06..2019-04, ES 2011-05..2019-04, GEX values) before that test's
   freeze and registration, except the counts the drafts allow
-- spend above $75.00 in total, or above acct-2's cap of $309.67, or buy
-  anything the two drafts do not list
+- spend above acct-2's current headroom ($18.07 under the unchanged
+  cap of $249.67), buy anything but C2's ES, or raise any cap
+- register, buy or evaluate C1 (it stops frozen after Task 5)
 - touch MES's sealed holdouts, holdout-1, holdout-2 or the research
   window
 - rerun Gate 0, refit anything on 2019-2024 beyond C1's single M1 fit,
@@ -110,21 +119,20 @@ GUARDRAILS
   7fd757f6d7c3990c2d20756c501f68b0541aa89851dcca9236badabd4f4a9bd9` (v9)
   until Task 4 commits v10, then the v10 sha256. Fresh
   PYTHONPYCACHEPREFIX outside the repository.
-- Spend (V25). Pre-approved, no further approval needed, if every
+- Spend (V26). Pre-approved, no further approval needed, if every
   condition holds:
   - only through the frozen purchase path and its gate, after a fresh
     quote-only run in this session, ledgered at $0.00;
-  - only the items the drafts list: ES 2011-05..2019-04 (C2); NG, NQ, ZN,
-    6E, GC and ZC 2010-06..2019-04, including the June-2010 chunks (C1);
-  - acct-2 only (acct-1's $1.61 fits no root), under
-    ACCOUNT_2_CAP_USD = 309.67, and the session cap = the fresh quote of
-    the items still live plus 3%, never above $75.00;
-  - C2's ES is bought first (it is small), then C1's set.
-  A fresh quote whose live items exceed $75.00 drops C1's purchase (C2
-  goes on) and is reported with the figures. Databento refusing a
-  purchase for insufficient balance stops further buys, and the return
-  states the top-up needed. A billed amount above its quote by more than
-  3% stops further buys.
+  - only C2's ES 2011-05..2019-04;
+  - acct-2 only (acct-1's $1.61 fits no root), under the unchanged
+    ACCOUNT_2_CAP_USD = 249.67, and the session cap = the fresh ES quote
+    plus 3%, never above acct-2's remaining headroom ($18.07).
+  A fresh ES quote whose 3% margin exceeds the headroom stops C2 before
+  its registration, and the return states the shortfall. Databento
+  refusing a purchase for insufficient balance stops the buy and is
+  reported. A billed amount above its quote by more than 3% is a stop.
+- C1's set (NG, NQ, ZN, 6E, GC, ZC 2010-06..2019-04, with the June-2010
+  chunks) is quoted only, ledgered at $0.00, never bought here.
 - Order of events per test, enforced in git and the ledger: probe and
   calendars, then freeze commit, then registration (N written), then
   purchase, then evaluation. The return shows the timestamps.
@@ -212,8 +220,9 @@ TASK 4: HARNESS V10 AND THE FREEZES (LEAD, WITH FABLE BEFORE THE COMMIT)
 ============================================================
 
 - Harness v10 (V10Coder-OpusXHigh, worker-xhigh on opus, in a worktree;
-  the lead commits): ACCOUNT_2_CAP_USD = 309.67 (V25), the E.14 session
-  caps, an "ext2010" store type and buy plan for C1's six roots
+  the lead commits): ACCOUNT_2_CAP_USD unchanged at 249.67 (V26; the
+  raise waits for the user's top-up and a later harness), the E.14
+  session caps for C2's ES only, an "ext2010" store type and buy plan for C1's six roots
   (2010-06..2019-04, with the June-2010 partial chunks and the fixed
   start 2010-06-07, ruling C5) and an ES store for 2011-05..2019-04,
   both refusing any chunk outside their windows, with tests. Diff against
@@ -229,7 +238,10 @@ TASK 4: HARNESS V10 AND THE FREEZES (LEAD, WITH FABLE BEFORE THE COMMIT)
   the order of events enforceable, the windows disjoint from everything
   the program has read.
 - Commits, in order: "harness v10, E.14 caps and stores", then "E.14
-  freezes, C1 and C2". A test dropped earlier is not frozen.
+  freezes, C1 and C2". A test dropped earlier is not frozen. C1's freeze
+  records that its registration (N 473 -> 475), purchase and evaluation
+  happen in a later session, under this freeze, with v10 or a later
+  harness that changes only the acct-2 cap and session caps.
 
 ============================================================
 TASK 5: C1'S M1 FIT AND THE q REPRODUCTION (LEAD)
@@ -242,36 +254,35 @@ TASK 5: C1'S M1 FIT AND THE q REPRODUCTION (LEAD)
   panel with the frozen code, constants byte-identical. Write M1's
   coefficient hash and both q values to STATE before any 2010-2019 byte
   is bought.
-- Output: reports/stage_e14_c1_model.md.
+- Then C1 stops with status FROZEN, AWAITING FUNDS. It is not
+  registered, so N does not change for it tonight.
+- Output: reports/stage_e14_c1_model.md, including exactly what the later
+  session must do (register, quote fresh, buy, build, evaluate once) and
+  the hashes it must verify first (the freeze, M1, q, the E.12 state copy).
 
 ============================================================
 TASK 6: REGISTRATION, QUOTE AND PURCHASE (LEAD)
 ============================================================
 
-- Register the live tests in the append-only ledger before any purchase:
-  C1's T1 and T2 (N 471 -> 473), then C2's T1 and T2 (-> 475). If C1 was
-  dropped, C2 takes 471 -> 473.
-- Fresh quote-only run for the live items, ledgered at $0.00. Then buy
-  per the spend guardrail: ES first, then C1's six roots.
-- Output: reports/stage_e14_purchase.md: quotes, caps, ledger lines,
-  billed against quoted per chunk, the balance left, the holdout status
-  after the purchase.
+- Fresh quote-only runs, ledgered at $0.00: C2's ES, and C1's full set
+  (for the user's top-up figure).
+- If the ES quote fits the spend guardrail: register C2's T1 and T2 in
+  the append-only ledger (N 471 -> 473), then buy ES.
+- Output: reports/stage_e14_purchase.md: both quotes, the caps, ledger
+  lines, billed against quoted per chunk, the balance left, the top-up C1
+  needs (its quote plus 3% minus the headroom left after C2), and the
+  holdout status after the purchase.
 
 ============================================================
 TASK 7: STORES AND THE EVALUATIONS (LEAD RUNS THE FROZEN CODE)
 ============================================================
 
 - Store builds print counts only.
-- C1: compute the replication features on NG rows, the applicable-row
-  counts per feature without values (ruling C10: any feature live in
-  E.12 with 0 applicable rows stops C1 and closes this attempt), then
-  the evaluation once behind a run-once marker. Verdict per draft
-  section 5, then the descriptive outputs (section 6, ruling C15).
+- C1 is not evaluated in this stage.
 - C2: build the eligible-date table, then run T1 and T2 once behind a
   run-once marker. Verdict per draft section 5, including the T1 versus
   T2 comparison.
-- Output: reports/stage_e14_c1_result.md and reports/stage_e14_c2_result.md
-  with their JSON, each with the verdict (PASS, FAIL, or STOPPED with
+- Output: reports/stage_e14_c2_result.md with its JSON: the verdict (PASS, FAIL, or STOPPED with
   the rule that fired), every statistic, and its hashes.
 
 ============================================================
@@ -279,10 +290,11 @@ TASK 8: VERIFICATION (FABLE)
 ============================================================
 
 - VerdictVerifier-FableXHigh (worker-xhigh on fable): recomputes both
-  verdicts independently from the stores and the frozen rules, without
-  reading the lead's statistics first: C1's q reproduction, the trade
-  count, mean gross, c, t and p per test; C2's eligible-date count, T1
-  and T2's trades, mean g, t and p, and the T1 versus T2 comparison. It
+  C2's verdict independently from the store and the frozen rules,
+  without reading the lead's statistics first: the eligible-date count,
+  T1 and T2's trades, mean g, t and p, and the T1 versus T2 comparison.
+  It also re-runs C1's q reproduction and M1 coefficient hash from the
+  frozen state. It
   also checks the order of events in git and the ledger.
 - Output: reports/stage_e14_review.md (both Fable passes, graded
   BLOCKING, SHOULD FIX or NOTE) and reports/stage_e14_rulings.md. A
@@ -294,7 +306,7 @@ TASK 8: VERIFICATION (FABLE)
 TASK 9: RETURN AND COMMIT (LEAD)
 ============================================================
 
-- One final commit "Stage E.14 C1 and C2 evaluations" holding the
+- One final commit "Stage E.14 C1 frozen, C2 evaluated" holding the
   reports, results, ledger registrations, the STATE file and the
   briefs. Bars and raw data stay in the frozen stores. No push.
 
@@ -312,8 +324,8 @@ DELEGATION PLAN
 | 4 Freeze review | FreezeReviewer-FableXHigh | fable | xhigh | after 2, 3, v10 | independent check before commit |
 | 4 Freezes, commits | lead | opus | xhigh | after review | reserved to the lead |
 | 5 M1, q | lead | opus | xhigh | after 4 | reserved to the lead |
-| 6 Registration, buy | lead | opus | xhigh | after 5 | spend, reserved to the lead |
-| 7 Evaluations | lead | opus | xhigh | after 6 | verdicts, reserved to the lead |
+| 6 Quotes, C2 registration, buy | lead | opus | xhigh | after 5 | spend, reserved to the lead |
+| 7 C2 evaluation | lead | opus | xhigh | after 6 | verdict, reserved to the lead |
 | 8 Verify | VerdictVerifier-FableXHigh | fable | xhigh | after 7 | verdict numbers recomputed |
 | 9 Return, commit | lead | opus | xhigh | last | reserved to the lead |
 
@@ -344,7 +356,8 @@ WHAT NOT TO DO
 ============================================================
 
 - No test-window byte read before that test's freeze and registration.
-- No spend above $75.00, no item outside the drafts, no acct-1 purchase.
+- No spend beyond C2's ES within $18.07, no cap raise, no acct-1
+  purchase, no C1 registration, purchase or evaluation.
 - No second evaluation, and no rule changed after a freeze.
 - No Gate 0 rerun, no 2019-2024 test, no MES holdout opened.
 - No AskUserQuestion. No key printed. No push. No write to REGISTRATION.md.
@@ -355,20 +368,22 @@ DELIVERABLE: ONE RETURN DOCUMENT
 
 Write reports/E.14_RETURN.md. Fixed sections, in order:
 
-1. Verdict summary, at most 300 words: C1's and C2's verdicts (PASS,
-   FAIL or STOPPED with the rule) and their decisive numbers, what was
-   bought and its cost, the funds left, the v10 and freeze hashes, the
-   new N, and what each outcome means per the drafts' section 8.
+1. Verdict summary, at most 300 words: C2's verdict (PASS, FAIL or
+   STOPPED with the rule) and its decisive numbers; C1's status (FROZEN,
+   AWAITING FUNDS, or dropped with the rule) and its q reproduction;
+   what was bought and its cost, the funds left, the top-up C1 needs, the
+   v10 and freeze hashes, the new N, and what C2's outcome means per its
+   draft's section 8.
 2. Guardrail evidence: the start, post-purchase and end checks verbatim,
    and the order of events with timestamps per test.
 3. Results per task: the probe, the calendars, the GEX file and count,
-   v10, the freezes, M1 and q, the purchase, both evaluations.
+   v10, the freezes, M1 and q, the quotes and purchase, C2's evaluation.
 4. Delegation record: one row per spawn.
 5. Verification: each Fable finding, the ruling and the fix.
 6. Open choices: every decision the lead made on its own, with the reason.
-7. Decisions for the user, each with a recommendation: on a pass, the
-   next pre-registered step the draft names; on fails, what is closed,
-   and whether anything is left before the AiTrader readout.
+7. Decisions for the user, each with a recommendation: C2's next step
+   per its outcome; C1's top-up and the session that completes it; and
+   whether anything else is left before the AiTrader readout.
 8. Session cost: the final ETA table and the per-model token table, per
    CLAUDE.md. Never estimated.
 

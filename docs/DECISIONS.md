@@ -485,3 +485,13 @@
   evidence grade) runs first inside E.14 and can drop C1 by its stated
   rule. N goes 471 -> 473 (C1) -> 475 (C2) at registration, whatever the
   outcomes. A pass in either is evidence, not a deployment verdict.
+- 2026-10-05 (user, planning chat): V26. Amends V25 before E.14
+  launched. The acct-2 top-up did not go through. ACCOUNT_2_CAP_USD
+  stays $249.67; the raise to $309.67 waits for a successful top-up and
+  a later harness change. E.14 works with the funds on hand: both
+  pre-registrations are built and frozen; C1 goes through its q
+  reproduction and M1 fit and then stops, frozen and unregistered,
+  awaiting funds; C2 is registered (N 471 -> 473), its ES 2011-05..2019-04
+  bought within acct-2's $18.07 of headroom (pre-approved after a fresh
+  logged quote, with the 3% margin), and evaluated once. C1's set is
+  quoted only. V25's $75 approval lapses with the top-up.

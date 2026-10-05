@@ -135,6 +135,12 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     sources (dealer gamma, GFS revisions), a backward NG replication draft ($59 of data, 12% odds); ranking C1 NG
     replication > C2 GEX late-session momentum > C3 trend+carry personal; two pre-registration drafts, nothing
     frozen; Fable review BLOCK then R-01 closed; N stays 471.
+  - Stage E.14 — C1 and C2 together, with the funds on hand (V25, V26). Run 2026-10-05 (see
+    reports/E.14_RETURN.md): C2 (GEX-conditioned S&P late-session momentum) stopped at its power rule before its
+    freeze (135 eligible GEX < 0 dates, under 200; Fable-verified); C1 (backward NG replication) frozen
+    (1680982), its q reproduced exactly and M1 fitted, awaiting a $41.41 acct-2 top-up for its $57.74 of data;
+    calendars 2010-2019 built from CME, EIA and Fed pages with 0 unsourced dates; harness v10 (dc93e9b);
+    nothing bought, nothing registered; N stays 471.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

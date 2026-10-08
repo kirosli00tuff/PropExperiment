@@ -506,3 +506,20 @@
   x 1.03 on acct-2, never above $60.00, after a logged quote, with no
   further approval. C1 is registered (N 471 -> 473) before the purchase
   and evaluated once.
+- 2026-10-07 (user, planning chat): V28. After the user's research run on
+  how quant firms build systems and which base strategies survive. No
+  deep network, reinforcement learning or other ML layer goes onto a rule
+  set that has not passed a pre-registered test: ML combines and filters
+  real signals, it does not find them, and Gate 0 already found no gross
+  edge for ridge and LightGBM on the 64-feature library. ML re-enters
+  only as a pre-registered meta-labeling layer (a small classifier
+  deciding whether and how large to take a passing base rule's trades),
+  after that rule passes and after a holdout-2 registered read. Stage
+  E.16 pre-registers five forced-flow base rules from the report (H1
+  settlement-window intraday momentum pooled; H2 the month-end NQ versus
+  ZN rebalancing pair; H3 the Treasury auction cycle; H4 the next-day
+  reversal of the settlement-window move; H5 their equal-risk
+  combination), every parameter fixed, on data already owned, with no
+  purchase, holdout-2 sealed, N rising by 5, and Holm at 0.05 across the
+  five. H2 and H3 hold overnight, so their venue is a personal account
+  (IBKR), not Topstep.

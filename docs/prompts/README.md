@@ -33,6 +33,7 @@ From 2026-09-23 on, each new prompt is committed here before it is sent.
 | E.12 | STAGE_E.12.md | Opus 5.5, xhigh (Fable xhigh freeze review and Gate 0 verification) | 2026-10-03 | ML route v2 freeze with V23 applied, harness v8 (acct-2 cap, key strip, training-window purchase), phase-1 purchase within the funds on hand, c/sigma filter, Gate 0 run once, free quotes for later phases; then stop |
 | E.13 | STAGE_E.13.md | Opus 5.5, xhigh (Fable xhigh adversarial review) | 2026-10-03 | Research and scoping after the Gate 0 fail: multi-day venues (prop firms, a personal micro account), trend and carry evidence and sizing, new information sources, a backward NG replication draft, a ranked plan with pre-registration drafts; no data read, no purchase |
 | E.14 | STAGE_E.14.md | Opus 5.5, xhigh (Fable xhigh freeze review and verdict verification) | 2026-10-05 | C1 and C2 together with the funds on hand (V26): calendar probe, calendars, GEX file, harness v10 (cap unchanged), both freezes; C1 through q reproduction then frozen awaiting funds; C2 registered (N to 473), ES bought within $18.07, evaluated once |
+| E.15 | STAGE_E.15.md | Opus 5.5, xhigh (Fable xhigh verdict verification) | 2026-10-07 | C1 completion per its E.14 freeze: verify inputs, harness v11 (acct-2 cap 291.08), fresh quote, register (N to 473), buy up to $60, build, evaluate once |
 
 Model names are as written in each prompt at the time. The routing rules
 that apply today are in CLAUDE.md.

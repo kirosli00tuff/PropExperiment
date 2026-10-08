@@ -495,3 +495,14 @@
   bought within acct-2's $18.07 of headroom (pre-approved after a fresh
   logged quote, with the 3% margin), and evaluated once. C1's set is
   quoted only. V25's $75 approval lapses with the top-up.
+- 2026-10-07 (user, planning chat): V27. After E.14. C2 stopped at its
+  power rule (135 eligible negative-GEX dates against the floor of 200)
+  before its freeze; nothing was read or bought for it, N is unchanged,
+  and it stays stopped with no rerun planned. C1 is frozen and ready
+  (freeze afc5c10f..., commit 1680982). The user has topped up acct-2 to
+  fund C1. Stage E.15 completes C1 per its freeze: harness v11 raises
+  ACCOUNT_2_CAP_USD from $249.67 to $291.08 (the minimum E.14's quote
+  needs), and the user pre-approves spending the fresh ext2010 quote
+  x 1.03 on acct-2, never above $60.00, after a logged quote, with no
+  further approval. C1 is registered (N 471 -> 473) before the purchase
+  and evaluated once.

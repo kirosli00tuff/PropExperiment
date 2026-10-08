@@ -141,6 +141,10 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     (1680982), its q reproduced exactly and M1 fitted, awaiting a $41.41 acct-2 top-up for its $57.74 of data;
     calendars 2010-2019 built from CME, EIA and Fed pages with 0 unsourced dates; harness v10 (dc93e9b);
     nothing bought, nothing registered; N stays 471.
+  - Stage E.15 — complete C1 under its freeze (V27). Run 2026-10-07 (see reports/E.15_RETURN.md): the freeze
+    verified intact (43 inputs, E.12 state, model, q); the fresh quote failed, Databento having locked acct-2
+    (403 auth_account_locked on all 642 calls, $0.00); C1 stopped before registration; no v11, nothing bought,
+    nothing registered; N stays 471; the user clears the lock, then E.15 re-runs.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

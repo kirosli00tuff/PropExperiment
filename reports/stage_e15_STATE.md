@@ -20,6 +20,7 @@ written, forbids any second evaluation.
 - Holdouts: all_ok, unlocks_logged 0 (22:00, 22:30).
 - Ledger after the failed quote run (22:30): 28,398 lines, sha256 ef429036642b25c8fd0d4b8adb33967f1ef43b1a3f9532f46e447845698fdea7; totals unchanged.
 - STOP (22:29): Databento acct-2 locked (403 auth_account_locked); C1 not registered, nothing bought.
+- STOP again (22:55, attempt 2): 636 x 403 auth_account_locked + 6 x ConnectionError; ledger 29,040 lines, sha256 a9ad6ab5...; totals unchanged.
 
 ## Steps
 
@@ -34,4 +35,8 @@ written, forbids any second evaluation.
 | 6 Evaluate once | NOT RUN (stop) | | | | no marker, no result |
 | 7 Fable verify | NOT RUN (no verdict to verify) | | | | |
 | 8 Return, commit (attempt 1) | done | 22:29 | 22:50 | reports/E.15_RETURN.md, progress.md, docs/STAGES.md, end_checks_attempt1.txt, pytest_end.out (6740 passed, 22:31:10-22:48:16) | commit "Stage E.15 stopped before registration: Databento acct-2 locked" |
-| ATTEMPT 2 | next | | | | 22:45 user (relayed by the planning chat): the acct-2 lock is cleared; resume from Step 3 in this session: re-run Step 1, fresh quote under v10 with the lead-side guard (reports/stage_e15_briefs/fresh_quote_guard.py: the total summed from the run's own new ledger lines, never the tool JSON, never --retry-failed), then Steps 2, 4-8; an auth or lock error again stops before registration |
+| ATTEMPT 2 (user, relayed 22:45: lock cleared) | started | 22:49 | | | resume from Step 3 in this session; guard reports/stage_e15_briefs/fresh_quote_guard.py |
+| A2 Step 1 re-verify | done, ALL_OK | 22:49 | 22:49 | verify_freeze.json (attempt 2, sha256 7c222259...); attempt 1's copy verify_freeze_attempt1.json | 43/43 inputs; freeze unchanged; E.12 state 51 files; model, payloads, q; v10 preflight |
+| A2 Step 3 fresh quote (v10) | STOPPED: no fresh quote (acct-2 still locked) | 22:49:43 | 22:54:27 | quote_ext2010_attempt2.log; guard fresh_quote_guard_attempt2.json (ok false); tool files quotes_ext2010_attempt2_ALL_FAILED_not_fresh.json/.md | ledger 28,398 -> 29,040 (sha256 a9ad6ab5...): 636 x 403 auth_account_locked, 6 x ConnectionError (hist.databento.com max retries), all $0.00, 05:49:47-05:54:27 UTC; the tool again logged '642 failed' and reported E.14's $57.742330. .env modified 22:44:38 PDT (the user's update; DATABENTO_API_KEY2 set; no Databento variable in the shell environment, so the file was read). Per the user's instruction (an auth or lock error again): stop before registration. Push sent 22:55 |
+| A2 Steps 2, 4-7 | NOT RUN (stop) | | | | no v11, N 471, nothing bought, no evaluation, no Fable |
+| A2 Step 8 return, commit | done | 22:55 | (commit time in git) | reports/E.15_RETURN.md (both attempts), progress.md, docs/STAGES.md, pytest_end.out (6740 passed, 22:55:39-23:11:34), end_checks.txt, cost_raw.txt | final commit "Stage E.15 stopped again before registration: acct-2 still locked"; no worker or background shell left running |

@@ -146,6 +146,11 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     having locked acct-2 (403 auth_account_locked on 642, then 636 of 642 calls after the user's key update,
     $0.00); C1 stopped before registration both times; no v11, nothing bought, nothing registered; N stays 471;
     a lead-side quote guard added; the user gets Databento to unlock the account, then E.15 re-runs.
+  - Stage E.16 Part A — base-rule batch H1-H5 built and frozen with no Databento (V28, V29). Run 2026-10-08/09
+    (see reports/E.16_RETURN.md): five forced-flow tests (settlement-window momentum, month-end NQ/ZN pair,
+    Treasury auction cycle, next-day reversal, their combination) frozen on 2010-07..2024-02 windows (freeze
+    8f388c8, manifest 5274aa97...); nothing read, bought or registered; N stays 471. Stage E.17 completes C1, then
+    buys the 21 remaining extension roots under harness v12, registers E16-H1..H5 and runs each once.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

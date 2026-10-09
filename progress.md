@@ -3658,3 +3658,74 @@ checks and the commit) are not in the table.
 
 Split: attempt 1 to 05:50Z 19,122,120 (the figure in commit 878c9c7); attempt 2 and the close, 7,232,129.
 Delegation share: lead 100%, workers 0%. By model: claude-opus-5-5 100%.
+
+## 2026-10-08/09 — Stage E.16 Part A: base-rule batch H1-H5 frozen (no Databento, no bar read, nothing registered)
+
+Prompt docs/prompts/STAGE_E.16.md (V29). Lead Opus 5.5 xhigh, session 4a9d3866. Return: reports/E.16_RETURN.md.
+
+- **Freeze:** commit 8f388c8 "E.16 base-rule freeze", manifest reports/stage_e16_freeze.json (sha256 5274aa97...,
+  97 files). It holds the pre-registrations reports/stage_e16_prereg_common.md and _H1.._H5.md, base_rules/ with 75
+  synthetic tests, the settlement table, the livestock and EC-AUC 2010-2019 calendars, the windows, the power
+  table, the overlap audit, the rulings and Fable's review. Review: APPROVE WITH FIXES (1 BLOCKING, 8 SHOULD FIX, all
+  fixed or ruled), then APPROVE on recheck.
+- **User rulings of 2026-10-09:**
+  - U1: E.17 runs C1 under a caps-only harness first, then a harness adding plan "ext2010h".
+  - U2: windows start at the first priced month after the last unpriced gap (24 products 2010-07, TN 2016-01,
+    RTY 2017-06, HE 2017-07).
+  - U3a: base cost is D8 with no extra tick; D8 plus one tick per side is the stress case.
+  - U3b: H2's year stability counts years with at least 6 units.
+- **Findings:**
+  - Equity settled at 15:15 CT until 2020-10-23.
+  - Grains settled at 14:00 from 2012-06-25 to 2013-04-07.
+  - LE's 2010-2014 settlement minute is weak, so LE is excluded from H1 and H4 there.
+  - 95 Treasury auctions were announced after t-3 and are excluded from H3 (review F-04).
+- **Power, P(pass all bars) at Holm 0.01, low / high prior, full window:** H1 0.11/0.71, H2 0.11/0.53, H3
+  0.09/0.50, H4 0.06/0.43, H5 0.70/1.00. H2 cannot pass on the fallback window.
+- **E.17:** the 21 extension roots are 1,993 chunks, $158.58 at E.12's quote x 1.03. With C1, acct-2 needs about
+  $218.06. Order and commands: reports/stage_e16_handoff.md.
+- **Guardrails:** N stays 471. Holdouts all_ok with 0 unlocks. REGISTRATION.md 0 bytes. Ledger unchanged (29,040
+  lines). Spend $0.00. Start suite 6740 passed.
+- **Paused** at the usage limit 02:10-11:58 after the freeze commit; Task 6 finished on resume.
+
+### Session cost
+
+Wall clock 23:05 (2026-10-08) to 12:15 (2026-10-09) PDT. Work time 2:57: 23:05-02:10 less the user pause
+(23:45-00:10), plus Task 6 (11:58-12:15). The usage-limit wait (02:10-11:58, 9:48) is shown separately and not counted.
+
+### Final ETA table (actuals; PDT; the initial estimate in brackets)
+
+| # | Task / spawn | Owner | Model | Effort | Start | End | Time [estimate] | Tokens | Status and deviations |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | Startup: checks, start suite, spec, STATE, briefs | lead | opus | xhigh | 23:05 | 00:16 | 0:46 work [done by 00:25] | lead | done; suite 6740 passed |
+| - | Pause: the user interrupted after the lead's three points; rulings U1-U3b | user | | | 23:45 | 00:10 | 0:25 (not work) | | pause |
+| 1 | Settlement minutes | SettlementSource-OpusHigh | opus | high | 00:16 | 00:39 | 0:23 [1:30] | 23,306,834 | done; lead grades R-S1..R-S6 |
+| 2 | Overlap audit | OverlapAudit-OpusHigh | opus | high | 00:17 | 00:28 | 0:11 [0:50] | 13,664,694 | done; keep all five |
+| 3b | Livestock and EC-AUC calendars (+ F-04 follow-up 01:49-01:52) | CalendarBuilder-OpusHigh | opus | high | 00:16 | 01:07 | 0:54 [1:30] | 68,346,290 | done; both 2% checks pass |
+| 3 | base_rules build, tests, probe, power (+ R-B 01:15-01:24, review fixes 01:49-02:04) | BaseRulesCoder-OpusXHigh | opus | xhigh | 00:16 | 02:04 | 1:21 [2:45] | 163,022,024 | done; merged twice |
+| 3' | Rulings, merges, prereg, manifest (parallel with workers) | lead | opus | xhigh | 00:28 | 01:26 | in lead [0:50] | lead | done |
+| 4r | Freeze review (+ recheck 02:05-02:09) | FreezeReviewer-FableXHigh | fable | xhigh | 01:26 | 01:46 | 0:24 [0:40] | 8,043,509 | APPROVE WITH FIXES, then APPROVE |
+| 4 | Review rulings, fixes, manifest, commit 8f388c8 | lead | opus | xhigh | 01:46 | 02:09 | 0:23 [0:30] | lead | done |
+| 5 | E.17 hand-off (drafted 00:18-00:20) | lead | opus | xhigh | 00:18 | 02:10 | in lead [0:25] | lead | done |
+| - | Pause: usage limit | | | | 02:10 | 11:58 | 9:48 (not work) | | pause |
+| 6 | End checks, end suite (0:16), return, progress, STAGES, commit | lead | opus | xhigh | 11:58 | 12:15 | 0:17 [0:50] | lead | done; suite 6815 passed |
+| Total | Stage E.16 Part A | lead + 5 spawns | | | 23:05 | 12:15 | 2:57 work (23:05-02:10 less 0:25, plus 11:58-12:15) [estimate ~5:35] | 338,794,287 | no rerun; two pauses excluded |
+
+### Tokens per model (this session's transcript and its 5 subagent transcripts, 2026-10-09 06:00Z to 19:16Z)
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 806 | 107,883 | 7,049,488 | 885,332 | 8,043,509 |
+| claude-opus-5-5 | 1,912 | 1,117,668 | 325,639,490 | 3,991,708 | 330,750,778 |
+| all | 2,718 | 1,225,551 | 332,688,978 | 4,877,040 | 338,794,287 |
+
+Per spawn (agent file, model, effort, tokens):
+- SettlementSource-OpusHigh: worker-high, opus, high, 23,306,834
+- OverlapAudit-OpusHigh: worker-high, opus, high, 13,664,694
+- CalendarBuilder-OpusHigh: worker-high, opus, high, 68,346,290
+- BaseRulesCoder-OpusXHigh: worker-xhigh, opus, xhigh, 163,022,024
+- FreezeReviewer-FableXHigh: worker-xhigh, fable, xhigh, 8,043,509
+
+Delegation share: lead 62,410,936 (18.4%), workers 276,383,351 (81.6%). By tier: Opus 97.6%, Fable
+2.4%. Cache reads dominate. Token counts are from the transcripts (reports/stage_e10_briefs/cost.py; raw output
+reports/stage_e16_briefs/cost_raw.txt); the lead's last few steps after 19:16Z (the final commit and the worktree
+removal) are not in them. These are token counts, not plan-credit percentages.

@@ -1,4 +1,10 @@
-STAGE E.16 "BASE-RULE BATCH: FIVE PRE-REGISTERED FORCED-FLOW TESTS ON DATA ALREADY OWNED (SETTLEMENT-WINDOW MOMENTUM, MONTH-END REBALANCING PAIR, TREASURY AUCTION CYCLE, NEXT-DAY REVERSAL, AND THEIR COMBINATION)"
+STAGE E.16 "BASE-RULE BATCH, PART A: BUILD AND FREEZE FIVE FORCED-FLOW TESTS ON A 2010-2024 WINDOW (SETTLEMENT-WINDOW MOMENTUM, MONTH-END REBALANCING PAIR, TREASURY AUCTION CYCLE, NEXT-DAY REVERSAL, AND THEIR COMBINATION); NO DATABENTO, NO DATA READ, NO REGISTRATION"
+
+Revision 2026-10-08 (before launch, V29): Databento is unavailable (acct-2
+locked). This session does everything that needs no Databento: sources,
+overlap audit, simulator and runners, calendars, the freeze with a
+2010-2024 window and its power. Registration, the purchase and the five
+runs move to the next stage (E.17), together with C1.
 
 BEGIN PROMPT - SUMMARY OF PROMPT
 
@@ -11,29 +17,33 @@ reinforcement learning on top of anything yet: ML enters only as a
 pre-registered meta-labeling layer on a base rule that has already
 passed. This session pre-registers the five base rules with every
 parameter fixed, audits their overlap with Stage E's catalogs, builds a
-small multi-day simulator, freezes everything with Fable's review, then
-runs each test exactly once on data the program already owns. Nothing is
-bought. Holdout-2 stays sealed for the final confirmation of anything
-that passes.
+small multi-day simulator, and freezes everything with Fable's review,
+on a 2010-2024 window that gives each test real power. It reads no bar
+of any market data, calls no Databento endpoint, registers nothing and
+runs no test: Databento's acct-2 is locked (V29), and the 2010-2019
+history for most products is not yet bought. Stage E.17 will finish C1,
+buy the 2010 extension, register the five tests and run each once under
+this freeze. Holdout-2 stays sealed for the final confirmation of
+anything that passes.
 
-Decisions in force: docs/DECISIONS.md V18, V22, V24 to V28.
+Decisions in force: docs/DECISIONS.md V18, V22, V24 to V29.
 
 Lead: Opus 5.5, effort xhigh. Ultracode: off.
 
-Why this lead and effort: five registered evaluations in one unattended
-night, with new simulator code. The silent failures to guard against: a
-parameter fixed after data, a settlement time guessed, a multi-day P&L
-that is more generous than the frozen engine's fills and costs, a test
-window that leaks into holdout-2, and a wrong verdict number. Freezes and
-verdicts stay with the lead. Fable reviews the freeze before the commit
-and recomputes every verdict independently.
+Why this lead and effort: five pre-registrations and new simulator code
+in one unattended night. The silent failures to guard against: a
+parameter left free, a settlement time guessed, a multi-day P&L more
+generous than the frozen engine's fills and costs, a window or splice
+rule that leaks into holdout-2 or cannot be decided before data, and any
+market-data byte read. The freeze stays with the lead. Fable reviews it
+before the commit.
 
 Usage: follows CLAUDE.md's context-hygiene rules. The user runs this
 unattended overnight. The auto-retry launcher resumes it with "read the
 STATE file first", so reports/stage_e16_STATE.md names, after every
 task, the task finished, the files and hashes in force, each test's
 status and the next task. Compute: the ThinkPad under the overnight
-profile. Expect 6 to 9 hours.
+profile. Expect 4 to 6 hours.
 
 Do not stop to ask, and do not use AskUserQuestion. Decide, log the
 choice under Open choices in the return document, and continue. The only
@@ -64,7 +74,11 @@ Common definitions:
 - Exclusions per product: roll-blackout dates, CME early-close and halt
   dates, and dates where a required bar is missing, all from the frozen
   calendars. Each exclusion is counted.
-- Universe: the 27 owned price paths of E.12 (MBT excluded: too short).
+- Universe: the 27 price paths of E.12 (MBT excluded: too short). Each
+  product's window starts at the later of 2010-06-07 and its first
+  priced month in E.12's 2010-extension quote record
+  (reports/stage_e12_quotes_ext2010.json; RTY and TN, for example, start
+  years later), plus its warm-up.
 
 H1, settlement-window intraday momentum, pooled. For each product p and
 eligible date d: signal = sign of (price at S_p - 30 min on d minus the
@@ -109,14 +123,16 @@ deviation, computed strictly before the date. Test statistic: the daily
 combined net P&L.
 
 Windows (fixed):
-- Primary test window: trade dates 2019-05-06..2024-02-29, from the E.12
-  phase-1 stores, for every test.
-- H2 only: if, at this session's start, C1's run-once marker
-  reports/stage_e14_c1_RUN_ONCE.json exists and the ext2010 stores for
-  NQ and ZN exist and verify, H2's window is 2010-06-07..2024-02-29
-  (2010-2019 from the ext2010 stores, then the E.12 stores; the splice
-  rule written in the freeze). Otherwise H2 uses the primary window. This
-  is decided by the files' existence before any bar is read, and recorded.
+- Test window for every test: trade dates 2010-06-07..2024-02-29 (per
+  product from its start above), from the ext2010 stores for
+  2010-06..2019-04 (to be bought in E.17) and the E.12 phase-1 stores
+  from 2019-05. The freeze writes the splice rule (the store boundary,
+  roll handling across it, and that no date is double-counted).
+- Fallback, fixed now: if E.17 cannot buy the extension for a product,
+  that product's window is 2019-05-06..2024-02-29, recorded per product
+  at E.17's registration, before any test bar is read. A test whose
+  products all fall back runs on the short window with its lower power
+  stated.
 - Never read: holdout-2 (2024-03..2025-03), MES's sealed stores, anything
   from 2026-06-21. The research window 2025-04..2026-06 is NOT part of any
   test (Stage E's screens used it); after all verdicts are written, the
@@ -136,29 +152,38 @@ each, as is the 1.5 x slippage case. A pass is evidence, not a deployment
 verdict: the next step for a pass is a holdout-2 registered read and,
 only then, a meta-labeling design (V28).
 
-Trial count: N rises by 5 at registration, whatever the outcomes (from
-473 if C1 was registered in E.15, else from 471).
+Trial count: N rises by 5 at E.17's registration, whatever the outcomes.
+This stage registers nothing.
 
 Priors (from the research report, decayed): net Sharpe H1 0.3-0.8, H2
 0.4-0.9, H3 0.3-0.7, H4 0.2-0.6, H5 0.8-1.5. The freeze states each
-test's power at those values with its window length. Most are
-underpowered on 4.8 years; the return says so plainly.
+test's power at those values, for the full 2010-2024 window and for the
+short fallback window.
 
 ============================================================
 SCOPE
 ============================================================
 
 This stage does:
-- source the settlement minutes (Task 1)
+- source the settlement minutes for 2010-2024 (Task 1)
 - audit overlap with every Stage D and E catalog member (Task 2)
-- build and test the multi-day simulator and the five test runners
+- build and test the multi-day simulator and the five test runners, on
+  synthetic data only, with a runtime probe at full 2010-2024 scale
   (Task 3)
+- the calendars the window needs that do not yet exist: the livestock
+  group calendar 2010-2019 and the EC-AUC Treasury auction calendar
+  2010-2019 from FiscalData, both in the frozen formats (Task 3b)
 - freeze the five pre-registrations with Fable's review (Task 4)
-- register the five tests and run each once (Task 5)
-- have Fable recompute every verdict (Task 6)
+- write the E.17 hand-off: the exact purchase list (the 21 extension
+  roots not in C1's set, from E.12's quote record), the order of events,
+  and the guard against the quote tool's stale-ledger fallback that E.15
+  found (Task 5)
 
 This stage does NOT:
-- buy anything or call Databento (no quote is needed)
+- call Databento for anything, buy anything, or read any bar of any
+  market data, including the owned stores (the runners touch synthetic
+  data only)
+- register any test or run any test
 - read holdout-2, MES's sealed stores, or any bar from 2026-06-21
 - tune, add or drop any parameter after the freeze, or run any test twice
 - fit any ML model, deep network or RL policy (V28)
@@ -190,16 +215,16 @@ CONTEXT TO READ FIRST
 GUARDRAILS
 ============================================================
 
-- Harness: use the sha256 of the harness manifest in force at HEAD (v11
-  if E.15 committed it, else v10
-  fde3a49c8e15f08b36108e9a32d062f08f342fe2414607d33a7b8981ef00e34b),
-  verified at start. New code lives in a new package base_rules/ outside
+- Harness: v10
+  fde3a49c8e15f08b36108e9a32d062f08f342fe2414607d33a7b8981ef00e34b,
+  verified at start. No harness file changes in this stage (C1's freeze
+  allows only a cap change in the next harness). New code lives in a new package base_rules/ outside
   the harness directories, frozen by this stage's own manifest. Fresh
   PYTHONPYCACHEPREFIX outside the repository.
-- No test-window bar is read before the freeze commit and the
-  registration. The overlap audit and the settlement sourcing read no
-  bars.
-- Web access (Task 1 only): read a site's terms before any automated
+- No market-data bar is read at all in this stage. Store metadata
+  (file names, sizes, manifests, quote records) may be read.
+- Web access (Tasks 1 and 3b only; FiscalData is a public API whose
+  terms allow access): read a site's terms before any automated
   fetch. CME's own site forbids automated access (E.12): do not fetch it
   or archived copies of it. Use other sources that allow access
   (published papers, exchange rulebook excerpts quoted by permitted
@@ -222,16 +247,14 @@ TASKS
 ============================================================
 
 TASK 0: STARTUP (lead). Start checks; the STATE file; the ETA table. HEAD
-is the commit holding this prompt or a descendant. If an E.15 session is
-still running on this machine, wait for its final commit before starting
-(check the git log and the E.15 STATE file every 10 minutes, up to 3
-hours; then start anyway and record it). Decide H2's window by the rule
-above and record it.
+is the commit holding this prompt or a descendant with a clean tree
+(apart from the expected DO_NOT_COMMIT page folders and
+.claude/worktrees/).
 
 TASK 1: SETTLEMENT MINUTES (SettlementSource-OpusHigh, worker-high on
 opus). For each of the 27 products, the daily settlement minute in CT for
-2019-2024, any change in that period with its date, a grade and a cited
-source. Output reports/stage_e16_settlement.md and .json.
+2010-2024, every change in that period with its date, a grade and a
+cited source. Output reports/stage_e16_settlement.md and .json.
 
 TASK 2: OVERLAP AUDIT (OverlapAudit-OpusHigh, worker-high on opus; the
 lead rules). Compare each of H1 to H5 against every Stage D and E member:
@@ -241,6 +264,14 @@ intraday auction and month-end slices) and how H1 to H5 differ. Rule: a
 hypothesis identical to a tested member (same signal, window and
 products) is dropped before registration; a related one is kept and the
 relation is written into its freeze. Output reports/stage_e16_overlap.md.
+
+TASK 3B: CALENDARS (CalendarBuilder-OpusHigh, worker-high on opus). The
+livestock group calendar 2010-06..2019-05 (holidays, early closes,
+halts) in E.14's calendar format and grading, and the EC-AUC auction
+calendar 2010-2019 from FiscalData with E.0's announcement rule, both
+with their 2% unsourced-date checks. E.14's six group calendars
+(energy, equity, rates, FX, metals, grains) for 2010-2019 are reused as
+frozen. Output the calendar files and reports/stage_e16_calendars.md.
 
 TASK 3: BUILD (BaseRulesCoder-OpusXHigh, worker-xhigh on opus, in a
 worktree; the lead merges). base_rules/: the multi-day position
@@ -252,39 +283,38 @@ test, and tests: a hand-computed multi-day trade to the cent, a
 single-day trade that matches the frozen engine fill for fill, causality
 tests for every signal and for the risk scaling, a planted-edge synthetic
 test each runner must detect, and a pure-noise test each must reject.
-Synthetic data only until the freeze.
+The store loader for the 2010-2024 splice is built and tested on
+synthetic stores of the same layout as the ext2010 and E.12 stores.
+Synthetic data only. A runtime probe at the full 2010-2024 scale (27
+products, about 3,500 dates) reports wall time and peak memory.
 
 TASK 4: FREEZE (lead, with FreezeReviewer-FableXHigh, worker-xhigh on
 fable, before the commit). reports/stage_e16_prereg_H1.md to _H5.md, the
 text above with Task 1's settlement table, Task 2's relations, each
 test's power, and nothing loosened. A manifest
 reports/stage_e16_freeze.json hashing the prereg files, base_rules/, its
-tests and every input table. The reviewer checks: no free parameter, no
+tests and every input table, including the splice rule, the fallback
+rule and the power table. The reviewer checks: no free parameter, no
 look-ahead, the simulator no more generous than the engine, the windows
-clear of holdout-2, the pass bars as stated. One commit "E.16 base-rule
-freeze".
-
-TASK 5: REGISTER AND RUN (lead). Register the five tests (or fewer, if
-Task 2 dropped any) in the trial registry before any test-window bar is
-read; record N. Run each test once behind its marker. Write
-reports/stage_e16_results.md and .json: per test the unit count, net mean,
-t, one-sided p, the Holm decision, year stability, DSR at N, gross mean
-and cost, the 1.5 x slippage case, and the verdict (PASS, FAIL or
-STOPPED with the rule). Then, marked descriptive, the research-window
-figures from the same frozen code.
-
-TASK 6: VERIFY (VerdictVerifier-FableXHigh, worker-xhigh on fable).
-Recompute every verdict number independently from the stores and the
-frozen rules, without reading the lead's statistics first, and check the
-order of events in git and the registry. Findings graded BLOCKING, SHOULD
+clear of holdout-2, the splice and fallback rules decidable before any
+bar is read, the pass bars as stated. Findings graded BLOCKING, SHOULD
 FIX or NOTE in reports/stage_e16_review.md; the lead's rulings in
-reports/stage_e16_rulings.md. A BLOCKING finding on a verdict is resolved
-by finding the code error, never by a second run; if unresolved, that
-verdict is reported as unverified.
+reports/stage_e16_rulings.md; every BLOCKING and SHOULD FIX fixed before
+the commit. One commit "E.16 base-rule freeze".
 
-TASK 7: RETURN AND COMMIT (lead). One final commit "Stage E.16 base-rule
-batch" holding the reports, results, registry lines, the STATE file and
-the briefs. No push.
+TASK 5: E.17 HAND-OFF (lead). reports/stage_e16_handoff.md: the exact
+order E.17 must follow (verify both freezes, C1's then this one; the
+fresh quote with the lead-side guard that sums the fresh total from the
+run's own new ledger lines and never trusts the tool's JSON or uses
+--retry-failed; the cap change as the only harness diff; C1's
+registration and purchase; this batch's registration; the purchase of
+the remaining extension roots; the store builds; C1's evaluation; the
+five runs; Fable's recomputation), the purchase list with E.12's quoted
+cost per root, the funds each step needs, and the commands.
+
+TASK 6: RETURN AND COMMIT (lead). One final commit "Stage E.16 Part A:
+base-rule batch frozen" holding the reports, the calendars, base_rules/,
+its tests, the STATE file and the briefs. No push.
 
 ============================================================
 DELEGATION PLAN
@@ -296,14 +326,14 @@ DELEGATION PLAN
 | 1 Settlement minutes | SettlementSource-OpusHigh | opus | high | parallel | sourced facts with terms checks |
 | 2 Overlap audit | OverlapAudit-OpusHigh | opus | high | parallel | catalog reading, lead rules |
 | 3 Build | BaseRulesCoder-OpusXHigh | opus | xhigh | parallel | simulator must match the engine |
-| 4 Freeze review | FreezeReviewer-FableXHigh | fable | xhigh | after 1 to 3 | independent check before commit |
+| 3b Calendars | CalendarBuilder-OpusHigh | opus | high | parallel | sourced dates, rule-exact |
+| 4 Freeze review | FreezeReviewer-FableXHigh | fable | xhigh | after 1 to 3b | independent check before commit |
 | 4 Freeze, commit | lead | opus | xhigh | after review | reserved to the lead |
-| 5 Register, run | lead | opus | xhigh | after 4 | verdicts reserved to the lead |
-| 6 Verify | VerdictVerifier-FableXHigh | fable | xhigh | after 5 | verdict numbers recomputed |
-| 7 Return, commit | lead | opus | xhigh | last | reserved to the lead |
+| 5 Hand-off | lead | opus | xhigh | after 4 | reserved to the lead |
+| 6 Return, commit | lead | opus | xhigh | last | reserved to the lead |
 
-Usage pools: weekly usage reset on 2026-10-07; Fable runs only the two
-checks at xhigh. Web work stays on Opus high. No Sonnet or Haiku worker
+Usage pools: weekly usage reset on 2026-10-07; Fable runs only the
+freeze review at xhigh. Web work stays on Opus high. No Sonnet or Haiku worker
 draws a conclusion.
 
 At most 4 workers at once. Workers write files and return paths.
@@ -331,15 +361,15 @@ DELIVERABLE: ONE RETURN DOCUMENT
 
 Write reports/E.16_RETURN.md. Fixed sections, in order:
 
-1. Verdict summary, at most 300 words: each test's verdict and decisive
-   numbers, the power each had, the new N, and what a pass or fail
-   means for the program (a pass goes to a holdout-2 registered read;
-   meta-labeling only after that, V28).
-2. Guardrail evidence: the start and end checks verbatim, and the order
-   of events with timestamps.
+1. Verdict summary, at most 300 words: what was frozen (or dropped by the
+   overlap audit), each test's power on the full and fallback windows,
+   the freeze hash, the E.17 purchase list and its cost, and what E.17
+   must do.
+2. Guardrail evidence: the start and end checks verbatim, and a
+   statement that no bar was read and no vendor was called.
 3. Results per task: the settlement table, the overlap rulings, the
-   build and its tests, the freeze, the results table, the descriptive
-   research-window figures.
+   calendars, the build and its tests, the runtime probe, the freeze,
+   the hand-off.
 4. Delegation record: one row per spawn.
 5. Verification: each Fable finding, the ruling and the fix.
 6. Open choices: every decision the lead made on its own, with the reason.

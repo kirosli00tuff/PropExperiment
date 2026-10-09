@@ -523,3 +523,19 @@
   purchase, holdout-2 sealed, N rising by 5, and Holm at 0.05 across the
   five. H2 and H3 hold overnight, so their venue is a personal account
   (IBKR), not Topstep.
+- 2026-10-08 (user, planning chat): V29. After E.15 stopped twice on
+  Databento's acct-2 lock ("locked for security reasons"; the user
+  suspects an incident on Databento's side). C1 stays frozen and
+  unregistered; N stays 471. The quote tool reported E.14's old quote as
+  complete when every call failed (a stale-ledger fallback); until a
+  harness change fixes it, every quote is checked by summing the run's
+  own new ledger lines. The user runs what needs no Databento: Stage
+  E.16 becomes Part A, which sources settlement minutes, audits overlap,
+  builds the multi-day simulator and runners on synthetic data, builds
+  the missing 2010-2019 calendars (livestock, EC-AUC), and freezes H1 to
+  H5 on a 2010-06-07..2024-02-29 window (with a per-product fallback to
+  2019-05-06 if a product's extension cannot be bought), reading no bar,
+  calling no vendor, registering nothing. Stage E.17, once Databento
+  works and funds are in place, completes C1, buys the remaining 21
+  extension roots (about $160 per E.12's quote), registers H1 to H5
+  (N +5), and runs each once.

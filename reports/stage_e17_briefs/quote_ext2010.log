@@ -1,0 +1,15 @@
+$ date; wc -l ledger; UTC start
+Fri Oct  9 18:54:50 PDT 2026
+29040
+2026-10-10T01:54:50+00:00
+$ PYTHONPYCACHEPREFIX=<fresh> uv run python -m screening.harness_freeze verify --expected fde3a49c...
+preflight OK: fde3a49c8e15f08b36108e9a32d062f08f342fe2414607d33a7b8981ef00e34b
+$ nice -n 10 uv run python -m data.pull_step2 --quote-only --plan ext2010 --account acct-2 --quotes-out reports/stage_e17_briefs/quotes_ext2010.json
+Fri Oct  9 18:54:57 PDT 2026
+[2026-10-09 18:54:59 PDT] stage-E.14-2026-10-05: account acct-2 (cap $249.67, spent $231.599730) · session cap $0.00 (spent $0.000000) · request cap $3.00
+[2026-10-09 18:54:59 PDT] plan ext2010 (test C1): 642 chunks over 6 root(s) NG, NQ, ZN, 6E, GC, ZC, 2010-06-06..2019-05-01 (end exclusive, 00:00 UTC)
+[2026-10-09 19:06:57 PDT] ext2010: quoted 642 of 642 chunks; 0 failed
+[2026-10-09 19:06:57 PDT] ext2010: TOTAL QUOTED $57.742330 (x 1.03 = $59.474600); 0 chunk quote(s) failed; wrote quotes_ext2010.json
+rc=0
+Fri Oct  9 19:06:57 PDT 2026
+29682

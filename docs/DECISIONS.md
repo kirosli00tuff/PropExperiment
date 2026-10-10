@@ -575,3 +575,16 @@
   vehicle, and is dropped if the expected gross does not clear the
   cost by its pass multiple. After C1b, the program waits for the
   AiTrader readout.
+- 2026-10-10 (user, planning chat): V32. After E.18. C1b failed (NG h60
+  t_B -0.83, hF -0.41; Fable verified); the NG near-miss is closed; N is
+  480. The user cannot fund a personal IBKR account yet and plans to
+  build that capital from Topstep XFA payouts. Before any Combine is
+  bought, Stage E.19 models the Combine-to-XFA funnel's cash value to
+  the user from Topstep's current, sourced rules and fees: expected net
+  cash, its distribution and the chance of losing all fees, at zero edge
+  and at small edges, with fat-tailed daily returns from the owned
+  2019-2024 training stores (return magnitudes only, demeaned) and D8
+  costs, for 50K, 100K and 150K, both payout paths and a grid of sizing.
+  No purchase, no edge test, N unchanged, and every modelled practice
+  checked against Topstep's terms. The program otherwise waits for the
+  AiTrader readout.

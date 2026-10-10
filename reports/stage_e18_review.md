@@ -241,3 +241,126 @@ freeze by one phrase; it stops nothing.
 
 Not done: nothing the brief asked for was left undone. No listing page was fetched for the long-established
 contracts (allowed, not needed). The dry check on the real reference (Step 3) is outside this review.
+
+## C1b verdict verification (VerdictVerifier-FableXHigh)
+
+Worker: worker-xhigh, model fable (Fable 5.1). Brief: reports/stage_e18_briefs/brief_verdict_verify.md. Started
+12:19:13 PDT, ended Sat Oct 10 12:29:08 PM PDT 2026 (times from `date`), 2026-10-10. Scripts and outputs: reports/stage_e18_verify/
+(recompute.py -> recompute.json + recompute.log, written 12:23:48 BEFORE the result, marker or log were opened;
+compare.py -> compare.json, 12:24:45; inputs_check.py -> inputs_check.json, 12:26:25). The rebuild ran at nice 10
+with a scratchpad PYTHONPYCACHEPREFIX; MemAvailable 10,503 MB at start; world -> panel 26 s (12:23:22-12:23:48).
+Nothing in c1_replication.c1b, evaluate.run/evaluate or q_m1 was called; no price, bar row or feature value printed.
+
+**Verdict: VERIFIED WITH NOTES.** C1b's registered verdict FAIL stands: every number in
+reports/stage_e18_c1b_result.json equals my independent recomputation (66 compared items, 0 unequal at 1e-9,
+counts exact), the order of events is as section 9 orders it, the evaluation ran once, and every input hash is the
+freeze manifest's. No BLOCKING and no SHOULD FIX finding; two NOTEs.
+
+### Check 1: recompute (own code on the frozen building blocks)
+
+Rebuilt the world and panel with load_calendars, c12_exclusions, hist_tables, build_world (data.hist_bars.load_hist_leg
+on the six pinned stores; every expected_sha256 verified by the loader and again by sha256 in inputs_check) and
+replication_panel; panel 5,137 rows, all NG, feature_cols equal the model's 150 (C11). Then with my own code:
+r_hat from my own unpack of the M1 payloads (int64 count, float64 coefficients, intercept; evaluate.py:386-408 and
+models.py:107-113, 141-155 read for the layout), cross-checked against ml_route_v2.models.predict (max abs diff 0.0
+on both horizons; a second summation order differs by 5.6e-17 / 3.3e-16 and selects the identical trade set; 0 rows
+within 1e-9 of q; 0 zero predictions; 0 non-NG ok rows).
+
+Statistic convention, read in ml_route_v2/gate0.py: `_b_test` (345-361) reports `mean` as the TRADE-LEVEL mean of
+g_ticks and `cost_ticks` as the trade-level mean cost; t comes from `date_t` (114-122) on `_per_date_means` (148-154,
+the equal-weight mean of g per unique trade date): t_B = mean(per-date) / (sd(per-date, ddof=1) / sqrt(n_dates)),
+sample sd (ddof=1); p from `p_value` (125-133): scipy student_t.sf(t, n_dates - 1), one-sided. evaluate.py:410-412
+(`passes`) and 415-425 (`stat_block`) apply criterion 1 to `test.mean`, the trade-level mean. My numbers reproduce
+t_B and p to 1e-9 with that convention, so it is the one the run used.
+
+| test | h | ok rows | trades | dates | mean g (trade-level) | mean of per-date means | sd per-date (ddof 1) | c | 1.5 c bar | t_B | p one-sided | criteria (mean>=bar, p<=0.025, n>=30) | decision |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| C1b-T1 | h60 | 5,120 | 814 | 557 | 0.5847665847665838 | -0.9135248354278859 | 25.949792662213326 | 1.708030028896704 | 2.562045043345056 | -0.8308336238532805 | 0.7967878731876523 | False, False, True | FAIL |
+| C1b-T2 | hF | 4,538 | 627 | 386 | -0.11323763955342993 | -1.10449050086356 | 52.94976129090921 | 1.766110195114868 | 2.6491652926723024 | -0.4098185674408931 | 0.6589165121653967 | False, False, True | FAIL |
+
+Verdict FAIL (PASS iff T1 or T2 passes; passing tests: none). trades_sha256 (evaluate.py:464-475 encoding, rows in
+panel order per test: [tid, date, decision_ts_ns, side, repr(g), repr(cost)]) =
+ebc010f2ca917470f8230f4dcc43d6a40d24bb6bf9c615c47aa21bf5c73a1e2a over 1,441 rows.
+
+Extra item (brief, trade-level mean versus mean of per-date means): computed both. Criterion 1 fails under either
+reading on both tests (T1: 0.585 and -0.914 against the bar 2.562; T2: -0.113 and -1.104 against 2.649), p fails
+on both (t_B < 0), so the verdict does NOT depend on which mean criterion 1 reads. See NOTE 1.
+
+C10 (own counts over NG ok rows, app_<signal> > 0): h60 5,120 ok rows, hF 4,538; 64 signals. Exempt pair now:
+g17_mbt 0 / 0 (E.12 reference 87 / 84), g17_cl 0 / 0 (reference 0 / 0). Of the 30 signals live in E.12 per
+horizon, the 29 non-exempt ones all apply on at least one row (minimum 347 rows at h60, 307 at hF). Amended check
+(c1b.py:49-56 exempt list, 64-70 the rule on the reference less the exempt signals): nothing dead, no stop. C1's
+unamended rule (evaluate.py:376-383) would again have stopped on g17_mbt (h60), g17_mbt (hF), as E.17's closed
+attempt did (reports/stage_e14_c1_result.json: STOPPED, that reason).
+
+Descriptive (own code): C14 (commission 0.422 ticks from vehicle_facts("NG"), 1.5 x the slippage part,
+COST_SENSITIVITY_SLIPPAGE_MULTIPLE 1.5): T1 mean cost 2.3510450433450565, bar 3.5265675650175847, met False; T2
+2.4381652926723025, bar 3.657247939008454, met False. C15: share of ok rows at or above q 0.158984375 (814/5,120)
+and 0.13816659321286912 (627/4,538); long/short T1 121/693 (mean g 0.4297520661156784 / 0.6118326118326148), T2
+117/510 (-4.435897435897456 / 0.8784313725490234); trades per year T1 2010:1, 2011:101, 2012:99, 2013:94, 2014:85,
+2015:90, 2016:98, 2017:96, 2018:127, 2019:23; T2 2010:1, 2011:69, 2012:76, 2013:72, 2014:76, 2015:62, 2016:52,
+2017:73, 2018:116, 2019:30; first trade date 2010-12-23 on both, last 2019-04-26 (T1) and 2019-04-18 (T2).
+C12 record: 2,296 candidate dates, 1 excluded (release_unsourced), share 0.0436%, no stop. Clock (marker): 2,295
+dates, 2,220 with rows, 6,660 decision rows.
+
+### Check 2: compare with reports/stage_e18_c1b_result.json
+
+compare.json: 66 items, 0 unequal. Equal to 1e-9 (counts, strings and booleans exactly): verdict FAIL and
+passing_tests []; per test horizon, n_trades, n_dates, n_rows, mean_gross_ticks, cost_ticks, bar_ticks, t_B,
+p_one_sided, the three criteria and the decision; every C14 and C15 field including trades_per_year;
+trades_sha256; guards.C10 (both horizons, all 64 signals and ng_ok_rows) and guards.C11; world.roots (six leg
+records: bars, trade dates, splice and blackout counts, store sha256s), calendar_dates, excluded_dates;
+panel_counts (every key); inputs.c12. The log (reports/stage_e18_briefs/c1b_evaluate.log lines 6-11) prints the same
+numbers and the result sha256 0b82091933a2b2b40e6cf52461437f7b8e4a6872f4444b8067fae993aebd6466.
+
+### Check 3: order of events (timestamps from `date`, file mtimes, git, the registry and the log)
+
+| step | evidence | time (PDT) |
+|---|---|---|
+| Diff review | reports/stage_e18_review.md lines 5-6 ("Started 11:58 ... written 12:14") | 11:58-12:14 |
+| Rulings applied to the freeze text | reports/stage_e18_prereg_C1b.md mtime | 12:14:38 |
+| Dry check | reports/stage_e18_dry_check.json started_local / finished_local; ok true | 12:16:02-12:16:05 |
+| Freeze manifest written | reports/stage_e18_freeze.json mtime; sha256 5ed208a2... | 12:17:07 |
+| Freeze commit | git b714751 "C1b freeze" (37 files; prereg, c1b.py and manifest at that commit hash 35b936fb..., 4f8ce49b..., 5ed208a2..., the same bytes as on disk now; `git diff b714751 --` on every frozen path is empty) | 12:17:35 |
+| Registration | ledger/trial_registrations.jsonl line 4: r003-C1b, test C1b, ids [C1b-T1, C1b-T2], N 478 -> 480, time_local 2026-10-10T12:17:48-07:00, freeze_sha256 35b936fb... (equals the frozen file's and the manifest's), harness ece91ae8... (v12); exactly one C1b entry; c1b_register.log rc=0 | 12:17:48 |
+| Evaluation launched | c1b_evaluate.log line 1; line 2 the command (c1_replication.c1b, --freeze-sha256 35b936fb..., --model-sha256 c6075306..., --out reports/stage_e18_c1b_result.json) | 12:18:03 |
+| Marker | reports/stage_e18_c1b_RUN_ONCE.json started_local 12:18:05 (mtime 12:18:05.6); log line 3 "C1 marker written" precedes line 4, the first bar-derived output (C10 h60 counts) | 12:18:05 |
+| Result | reports/stage_e18_c1b_result.json finished_local 12:18:38 (mtime 12:18:38.1); log lines 12-14: wall 34.68 s, peak 2,047,420 KB, rc=0 | 12:18:38 |
+
+Ran once: one marker and one result under reports/ (a repo-wide find for *c1b* outside the stage's briefs finds
+only c1_replication/c1b.py, tests/test_c1b.py, the two files above and an unrelated E.10 research file
+oa_c1b.json). marker.inputs == result.inputs and both carry the c1b record (ids, the two-signal exempt list, the C1
+closed-attempt citation) so the rule in force was on disk before any bar (c1b.py:73-82, evaluate.py:545-552).
+
+### Check 4: inputs
+
+inputs_check.json: 105 items, 1 unequal (NOTE 2). Equal: every file in the manifest's `files` (13) and `c1_inputs`
+(35) rehashes now to the manifest's sha256; the 8 external items (two M1 payloads, six ext2010 stores) rehash to
+the manifest's; all 9 pins; the result's freeze, harness (v12 ece91ae8...), model (c6075306...), M1 payload sha256s
+(h60 9c2d9986..., hF 153c2bdc...), q_repr (0.033735277284776724, 0.0831931045522869), the six store sha256s, the
+store-hashes and calendar-hashes files, the six hist calendars, the release file, the energy full sessions, the
+Gate 0 list, the v2 freeze, code_sha256 (the 10 c1_replication/*.py including c1b.py 4f8ce49b..., names and values),
+the registry entry, the c1b record and the window; marker.inputs equal to result.inputs. Spend ledger
+ledger/databento_spend.jsonl: 36,402 lines, sha256 034a454b49f2d9c93f3ff8872a5fb322cd351de57a7d73842d08f5d07d94c700,
+mtime 2026-10-10 01:26:22, identical to the brief's start values: no purchase, no Databento call.
+
+### Findings
+
+- NOTE 1 (statistic wording versus code; verdict-neutral here). reports/stage_e18_prereg_C1b.md:109-113 describes
+  the statistic as "per-date mean of the gross P&L in vehicle ticks" and criterion 1 as "mean gross g >= 1.5 x
+  c(NG,h)"; the frozen code reads criterion 1 on the trade-level mean (ml_route_v2/gate0.py:357 `mean=float(g.mean())`;
+  c1_replication/evaluate.py:410-412, 420-421 compare `test.mean`), while t_B and p use the per-date means
+  (gate0.py:351-353). On this data the two means differ, for T1 even in sign (+0.585 trade-level, -0.914 per-date;
+  814 trades on 557 dates), and both fail the bar, so the verdict is the same under either reading. The lead may
+  want the next freeze's section 5 to name the mean criterion 1 reads.
+- NOTE 2 (C1 freeze-inputs, one known supersession). reports/stage_e14_c1_freeze_inputs.json lists 43 files; 42
+  rehash as recorded. The one that does not is reports/stage_e2b_harness_freeze.json (role "harness", recorded
+  fde3a49c..., harness v10 of 2026-10-05, commit dc93e9b), now ece91ae8... (v12, commit d30f50c 2026-10-10
+  00:29:51, after v11 a21d82d 2026-10-09). C1b's freeze pins v12 (reports/stage_e18_freeze.json pins.harness_v12;
+  reports/stage_e18_prereg_C1b.md:10, 241, 281 declare it), and the registry, the command line and the result all
+  carry ece91ae8..., so the run used the declared harness. Every other C1 freeze input, including the model, q,
+  the E.12 state manifest, calendars, releases, code and tests, is unchanged.
+
+Not done: the test suite was not rerun (not in the brief; the diff review ran it 12:03-12:04); the harness v12
+preflight and E.12's reference counts were not re-derived (E.17's verifier covered the latter); the stores were
+read only through the frozen loader with counts printed.

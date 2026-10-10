@@ -156,6 +156,10 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     by design in 2010-2019; a freeze contradiction; Fable-verified; not rerun); harness v11 and v12; 11 of the 21
     extension roots bought ($64.04; 10 on the fallback window); E16-H1..H5 registered and run once: all five
     FAIL (Holm rejects none, DSR about 0; Fable-verified); N 471 -> 478; no holdout-2 read, no meta-labeling.
+  - Stage E.18 — C1b: C1 re-registered with guard C10's one fix (V31: g17_mbt and g17_cl exempt) and evaluated
+    once on the stores bought in E.17, no purchase. Run 2026-10-10 (see reports/E.18_RETURN.md): Fable approved
+    the diff, the dry check passed, freeze b714751; FAIL (T1 NG h60 mean 0.585 ticks vs bar 2.562, t_B -0.83;
+    T2 NG hF -0.113 vs 2.649, t_B -0.41; Fable-verified); the NG near-miss is closed; N 478 -> 480.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

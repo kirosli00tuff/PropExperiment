@@ -66,3 +66,15 @@ as you computed them, each finding), and anything you could not finish.
 - You may read the 2010-2019 ext2010 stores through the frozen loaders to recompute; print counts and statistics,
   never prices or bar rows.
 - No holdout, live/, ops/, TopstepX, Databento or network access. No git commit. Do not spawn other agents.
+
+## Facts at hand-off (lead, from `date`, file mtimes and the registry; no statistic given here)
+
+- DiffReviewer-FableXHigh review 11:58-12:14 (reports/stage_e18_review.md first section); rulings R-1..R-5 applied
+  12:14-12:15. Dry check 12:16:02-12:16:05. Freeze manifest written 12:17:07 (sha256
+  5ed208a21c2556e84830aca6fb7b2dba08a3012713f62de6e7bd1c57fb702d03). Commit b714751 "C1b freeze" 12:17:35.
+- Registration r003-C1b 12:17:48 (log reports/stage_e18_briefs/c1b_register.log). Evaluation launched 12:18:03
+  (detached, nice 10); the log reports/stage_e18_briefs/c1b_evaluate.log ends with rc and the time.
+- Extra item for check 1: gate0._b_test reports `mean` as the mean over trades and t_B / p over per-date means; the
+  freeze's section 5 describes the statistic as a per-date mean and criterion 1 as "mean gross g >= 1.5 x c". Compute
+  both the trade-level mean and the mean of the per-date means for each test, and say whether the verdict depends on
+  which one criterion 1 reads.

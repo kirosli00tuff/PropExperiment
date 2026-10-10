@@ -20,3 +20,14 @@ All times PDT, from `date`. Findings are in reports/stage_e18_review.md.
   and useful); C1's log and schema strings stay (changing them would touch C1's code); the test misses do not weaken
   clause 2's coverage; the text change went through the generator and the diff was regenerated (N-8); the
   long-established contracts' launch dates stay [unverified] (no doubt; the two dates that matter are verified).
+
+## Step 6: VerdictVerifier-FableXHigh (VERIFIED WITH NOTES; 0 BLOCKING, 0 SHOULD FIX, 2 NOTE; 12:19:13-12:29:08)
+
+- V-1 (NOTE 1) recorded, no action: criterion 1 in the frozen code (gate0._b_test's `mean`) reads the trade-level
+  mean, while the freeze's section 5 describes a per-date mean. For T1 they differ in sign (trade-level +0.585 ticks,
+  per-date -0.914 ticks); both are below the 1.5c bar of 2.562, and p 0.797 > 0.025, so the verdict is FAIL under
+  either reading (T2: both negative). The run applied the frozen code as C1 and E.12 did. Carried to the return's
+  decisions as a freeze-writing lesson (define the mean explicitly).
+- V-2 (NOTE 2) no action: the harness manifest in C1's freeze-inputs list is now v12, as C1b's section 11 declares
+  and the run used.
+- The verdict FAIL stands; N = 480. No second evaluation.

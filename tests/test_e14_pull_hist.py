@@ -193,7 +193,7 @@ def test_the_buy_gates_use_each_plans_session_and_caps() -> None:
     es = ph.buy_gate(ph.PLAN_ES2011)
     ext = ph.buy_gate(ph.PLAN_EXT2010)
     assert (es.session_id, es.session_cap_usd, es.request_cap_usd) == (E14, 0.0, 3.0)
-    assert (ext.session_id, ext.session_cap_usd) == ("stage-E.14-ext2010", 0.0)
+    assert (ext.session_id, ext.session_cap_usd) == ("stage-E.14-ext2010", 59.47)
     assert es.account_id == ext.account_id == config.ACCOUNT_2_ID
     assert ph.quote_gate().session_id == E14
 
@@ -297,7 +297,7 @@ def test_the_es2011_buy_refuses_to_start_while_the_e14_cap_is_zero(
 def test_the_ext2010_buy_stays_refused_at_a_zero_cap_and_without_c1s_registration(
         tmp_path: Path, preflight_ok: list[str]) -> None:
     argv = ["--buy", "--plan", "ext2010", "--account", "acct-2", "--harness-sha256", HARNESS]
-    assert config.E14_EXT2010_SESSION_CAP_USD == 0.0
+    assert config.E14_EXT2010_SESSION_CAP_USD == 59.47
     assert _main_buy(tmp_path, argv) == ph.RC_REFUSED
     assert _main_buy(tmp_path, argv, cap=70.0, registry=registry_with(tmp_path / "a", "C2")) \
         == ph.RC_REFUSED

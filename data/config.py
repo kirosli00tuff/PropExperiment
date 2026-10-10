@@ -82,7 +82,11 @@ LEGACY_ACCOUNT_ID = ACCOUNT_1_ID  # ledger lines with no "account" field
 # 0b5466c4366ca9eaba7e10525545631c83e97c1184a7e745d5ed8ad47a9fe957; recomputed by the v8
 # worker from the same file: 124.673761487003) + the user's $125.00 top-up of 2026-10-02 (V19)
 # = 249.673761, rounded DOWN to the cent so the cap never exceeds the funds: 249.67.
-ACCOUNT_2_CAP_USD = 249.67
+# Harness v11 (Stage E.17, 2026-10-09; V27, V30 as amended; C1's freeze section 11): acct-2's ledger
+# spend 231.599730 (ledger/databento_spend.jsonl, 29,040 lines before E.17's quote) + C1's fresh
+# ext2010 quote $57.742330 x 1.03 = $59.474600 (the sum of the quote run's own 642 ledger lines,
+# 18:54-19:07 PDT; reports/stage_e17_briefs/fresh_quote_c1.json) = 291.074330, rounded UP to the cent.
+ACCOUNT_2_CAP_USD = 291.08
 
 ACCOUNTS: MappingProxyType[str, DatabentoAccount] = MappingProxyType({
     ACCOUNT_1_ID: DatabentoAccount(
@@ -186,7 +190,9 @@ E14_REQUEST_CAP_USD = 3.00  # D13's per-request cap (docs/STAGE_E_DESIGN.md D13)
 # (V26: C1 stops frozen, awaiting funds). A later harness may raise only this cap and
 # ACCOUNT_2_CAP_USD (C1's freeze says so).
 STAGE_E14_EXT2010_SESSION_ID = "stage-E.14-ext2010"
-E14_EXT2010_SESSION_CAP_USD = 0.00
+# Harness v11 (Stage E.17): C1's fresh ext2010 quote $57.742330 x 1.03 = $59.474600, rounded DOWN to
+# the cent; never above $60.00 (V27) nor E.17's $124.00 budget (V30 as amended).
+E14_EXT2010_SESSION_CAP_USD = 59.47
 # The only account an E.14 plan buys on: acct-1's $1.609980 of headroom fits no root
 # (E.12_RETURN.md:572; reports/stage_e13_ng_replication_draft.md section 8).
 E14_BUY_ACCOUNT = ACCOUNT_2_ID

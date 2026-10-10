@@ -17,7 +17,7 @@ def test_the_e14_block_holds_the_placeholders_and_d13s_request_cap() -> None:
     assert config.E14_SESSION_CAP_USD == 0.00  # the lead sets it from the fresh quote x 1.03
     assert config.E14_REQUEST_CAP_USD == 3.00 == config.E12_REQUEST_CAP_USD
     assert config.STAGE_E14_EXT2010_SESSION_ID == "stage-E.14-ext2010"
-    assert config.E14_EXT2010_SESSION_CAP_USD == 0.00  # C1's buy stays refused (V26)
+    assert config.E14_EXT2010_SESSION_CAP_USD == 59.47  # v11 (E.17): C1's fresh quote x 1.03, down
     assert config.E14_BUY_ACCOUNT == config.ACCOUNT_2_ID
     assert config.HIST_ROOT == config.DATA_ROOT / "processed_hist"
 
@@ -29,8 +29,8 @@ def test_the_e14_session_cap_never_exceeds_acct2s_headroom_when_set() -> None:
 
 
 def test_acct2s_cap_and_the_step2_active_policy_are_unchanged() -> None:
-    assert config.ACCOUNT_2_CAP_USD == 249.67
-    assert config.ACCOUNTS[config.ACCOUNT_2_ID].cap_usd == 249.67
+    assert config.ACCOUNT_2_CAP_USD == 291.08
+    assert config.ACCOUNTS[config.ACCOUNT_2_ID].cap_usd == 291.08
     assert config.STEP2_PURCHASE_SESSION_ID == config.STAGE_E12_SESSION_ID
     assert config.STEP2_SESSION_CAP_USD == config.E12_SESSION_CAP_USD == 137.73
     assert config.STEP2_REQUEST_CAP_USD == config.E12_REQUEST_CAP_USD

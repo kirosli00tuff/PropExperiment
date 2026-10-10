@@ -36,6 +36,7 @@ From 2026-09-23 on, each new prompt is committed here before it is sent.
 | E.15 | STAGE_E.15.md | Opus 5.5, xhigh (Fable xhigh verdict verification) | 2026-10-07 | C1 completion per its E.14 freeze: verify inputs, harness v11 (acct-2 cap 291.08), fresh quote, register (N to 473), buy up to $60, build, evaluate once |
 | E.16 | STAGE_E.16.md | Opus 5.5, xhigh (Fable xhigh freeze review) | 2026-10-08 | Part A of the base-rule batch (V29, no Databento): settlement sourcing, overlap audit, multi-day simulator and runners on synthetic data, 2010-2019 livestock and auction calendars, H1-H5 frozen on a 2010-2024 window, E.17 hand-off; no data read, nothing registered |
 | E.17 | STAGE_E.17.md | Opus 5.5, xhigh (Fable xhigh harness reviews and verdict verification) | 2026-10-09 | C1 completed (v11, register, buy, evaluate), then the base-rule batch H1-H5 (v12, priority-ordered purchase within a $97 total budget, fallback list, register, run once each, Fable recomputation) |
+| E.18 | STAGE_E.18.md | Opus 5.5, xhigh (Fable xhigh diff review and verdict verification) | 2026-10-10 | C1b: C1 re-registered with the C10 listing-date exemption (MBT, CL), Fable diff review, dry check, freeze, register (N to 480), evaluate once on owned data; no purchase |
 
 Model names are as written in each prompt at the time. The routing rules
 that apply today are in CLAUDE.md.

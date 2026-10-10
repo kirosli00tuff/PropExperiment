@@ -559,3 +559,19 @@
   A1 changes from $97.00 to $124.00 in total billed spend, with A3's
   greedy selection using each root's fresh quote x 1.03 against $124.00
   minus Part 1's billed amount. Nothing else changes.
+- 2026-10-10 (user, planning chat): V31. After E.17. C1 stopped at its
+  guard C10 (g17_mbt, a bitcoin leg that did not trade in 2010-2019,
+  applied on 0 NG rows); no statistic exists; the attempt is closed.
+  The user chooses a re-registration, C1b, identical to C1 except that
+  C10 exempts legs with no listed contract in the test window (MBT; CL),
+  which section 2 already treats as not applicable; N 478 -> 480; no
+  purchase (the data was bought in E.17). The base-rule batch H1 to H5
+  is closed: all five failed (H1's gross is about a quarter of its D8
+  cost; H2 positive at p 0.068, not a pass); no rerun or variant on these
+  windows, no purchase of the 10 fallback roots, no holdout-2 read. New
+  program rule (cost-feasibility gate): every future hypothesis states,
+  before any data purchase or pre-registration, its expected gross per
+  trade from published evidence against the D8 round-trip cost of its
+  vehicle, and is dropped if the expected gross does not clear the
+  cost by its pass multiple. After C1b, the program waits for the
+  AiTrader readout.

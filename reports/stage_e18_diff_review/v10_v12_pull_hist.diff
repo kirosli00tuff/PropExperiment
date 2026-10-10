@@ -1,0 +1,327 @@
+diff --git a/data/pull_hist.py b/data/pull_hist.py
+index c358c0e..4ae1018 100644
+--- a/data/pull_hist.py
++++ b/data/pull_hist.py
+@@ -43,6 +43,26 @@ stops before the next chunk; at most 3% it is settled pro rata, recorded and the
+ the free metadata the store needs, each written once and never overwritten: symbology.resolve of
+ <ROOT>.v.0 over the plan's data window (VENDOR_ROOT/rolls/<ROOT>_v_0_<start>_<end>_symbology.json)
+ and the dataset condition list (VENDOR_ROOT/condition/GLBX.MDP3_<start>_<end>.json).
++
++Harness v12 (Stage E.17, reports/stage_e16_handoff.md step 8, E.17 amendment A4) adds plan
++"ext2010h" (the base-rule batch, test label E16, ids E16-H1..E16-H5); es2011 and ext2010 are
++unchanged. Run it with ``python -m data.pull_hist`` (data.pull_step2's --plan choices stay the
++v10 two):
++    uv run python -m data.pull_hist --quote-only --plan ext2010h --quotes-out <json>
++    uv run python -m data.pull_hist --buy --plan ext2010h --account acct-2 --harness-sha256 <sha>
++        [--roots ROOT [ROOT ...]]
++- Its 21 roots, in reports/stage_e16_windows.json's purchase_21_roots order, each with its OWN
++  chunk list (``HistPlan.root_chunks``): the monthly chunks of <ROOT>.v.0 from its U2 start month
++  through 2019-04 (end exclusive 2019-05-01): 18 roots from 2010-07 (106 each), TN from 2016-01
++  (40), RTY from 2017-06 (23), HE from 2017-07 (22); 1,993 in all. ``check_hist_chunk`` refuses
++  any chunk outside its own root's list. Store trade dates 2010-07-01..2019-04-30 (2010-07-01 is
++  the first trade date on or after the U2 default start; base_rules.hist_plan.check_name accepts
++  it for every root), data window [2010-07-01, 2019-05-01) UTC.
++- Quote AND buy run under STAGE_E17_EXT2010H_SESSION_ID (its quote lines are separable from
++  E.14's), the buy with E17_EXT2010H_SESSION_CAP_USD (0.00 refuses it) and E14_REQUEST_CAP_USD.
++- --roots (A4) restricts the quote or the buy of ext2010h to the named roots (each a plan root,
++  distinct, at least one; chunks in the order given); refused for es2011 and ext2010 before any
++  vendor call. Every other step of the buy is the one above.
+ """
+ 
+ from __future__ import annotations
+@@ -69,9 +89,11 @@ from data.config import (
+     E14_EXT2010_SESSION_CAP_USD,
+     E14_REQUEST_CAP_USD,
+     E14_SESSION_CAP_USD,
++    E17_EXT2010H_SESSION_CAP_USD,
+     REPO_ROOT,
+     STAGE_E14_EXT2010_SESSION_ID,
+     STAGE_E14_SESSION_ID,
++    STAGE_E17_EXT2010H_SESSION_ID,
+     VENDOR_ROOT,
+     MissingSecretError,
+     require_databento_key,
+@@ -134,6 +156,19 @@ class HistPlan:
+     last_trade_date: date
+     data_start: date  # the chunks' UTC span [data_start, data_end)
+     data_end: date
++    # Harness v12: per-root chunk lists, (root, its chunks oldest first) in root order; ``chunks``
++    # is then their union. Empty (es2011, ext2010): every root holds ``chunks``.
++    root_chunks: tuple[tuple[str, tuple[tuple[str, str], ...]], ...] = ()
++
++    def chunks_of(self, root: str) -> tuple[tuple[str, str], ...]:
++        """``root``'s chunks: its own list in a per-root plan, else ``chunks``."""
++        if not self.root_chunks:
++            return self.chunks
++        for name, chunks in self.root_chunks:
++            if name == root:
++                return chunks
++        raise HistPlanError(f"{root!r} is not a root of plan {self.name} "
++                            f"({', '.join(self.roots)})")
+ 
+ 
+ ES2011 = HistPlan(
+@@ -153,6 +188,49 @@ if len(ES2011.chunks) != 96 or len(EXT2010.chunks) != 107 or any(
+     raise RuntimeError("hist plans: es2011 is the 96 chunks 2011-05..2019-04, ext2010 the 107 "
+                        "chunks 2010-06-06..2019-05-01, contiguous, ending where step 2 starts")
+ 
++# Harness v12 (Stage E.17): plan "ext2010h", the base-rule batch's 21 roots (module docstring).
++# Each root's U2 start month (reports/stage_e16_windows.json products.<ROOT>.start_month), in the
++# windows file's purchase_21_roots order; its chunks run monthly from there to 2019-05-01.
++PLAN_EXT2010H = "ext2010h"
++EXT2010H_START_MONTHS = (
++    ("6A", "2010-07"), ("6B", "2010-07"), ("6C", "2010-07"), ("6J", "2010-07"),
++    ("6N", "2010-07"), ("6S", "2010-07"), ("CL", "2010-07"), ("HE", "2017-07"),
++    ("HG", "2010-07"), ("LE", "2010-07"), ("RTY", "2017-06"), ("TN", "2016-01"),
++    ("UB", "2010-07"), ("YM", "2010-07"), ("ZB", "2010-07"), ("ZF", "2010-07"),
++    ("ZL", "2010-07"), ("ZM", "2010-07"), ("ZS", "2010-07"), ("ZT", "2010-07"),
++    ("ZW", "2010-07"))
++
++
++def _monthly_to_step2(month: str) -> tuple[tuple[str, str], ...]:
++    return tuple(monthly_chunks(date.fromisoformat(f"{month}-01"),
++                                date.fromisoformat(STEP2_DATA_START)))
++
++
++EXT2010H = HistPlan(
++    PLAN_EXT2010H, "E16", ("E16-H1", "E16-H2", "E16-H3", "E16-H4", "E16-H5"),
++    tuple(root for root, _ in EXT2010H_START_MONTHS),
++    tuple(monthly_chunks(date(2010, 7, 1), date(2019, 5, 1))),
++    date(2010, 7, 1), date(2019, 4, 30), date(2010, 7, 1), date(2019, 5, 1),
++    root_chunks=tuple((root, _monthly_to_step2(month)) for root, month in EXT2010H_START_MONTHS))
++_EXT2010H_COUNTS = {root: len(chunks) for root, chunks in EXT2010H.root_chunks}
++if (len(EXT2010H.roots) != 21 or sum(_EXT2010H_COUNTS.values()) != 1993
++        or len(EXT2010H.chunks) != 106
++        or {r: n for r, n in _EXT2010H_COUNTS.items() if n != 106} != {"HE": 22, "RTY": 23,
++                                                                       "TN": 40}
++        or EXT2010H.chunks[0][0] != str(EXT2010H.data_start)
++        or str(EXT2010H.data_end) != STEP2_DATA_START
++        or any(a[1] != b[0] for a, b in zip(EXT2010H.chunks, EXT2010H.chunks[1:], strict=False))
++        or any(c[-1][1] != STEP2_DATA_START or not set(c) <= set(EXT2010H.chunks)
++               or any(a[1] != b[0] for a, b in zip(c, c[1:], strict=False))
++               for _, c in EXT2010H.root_chunks)):
++    raise RuntimeError("hist plan ext2010h: 21 roots, 1,993 chunks (18 x 106 from 2010-07, TN 40, "
++                       "RTY 23, HE 22), each root's list contiguous and ending where step 2 "
++                       "starts")
++PLANS = {**PLANS, PLAN_EXT2010H: EXT2010H}
++HIST_PLAN_NAMES = (*HIST_PLAN_NAMES, PLAN_EXT2010H)
++# A4 (E.17): the plans whose quote or buy --roots may restrict to some of their roots.
++ROOTS_OPTION_PLANS = (PLAN_EXT2010H,)
++
+ 
+ # ------------------------------------------------------------------ plan ----
+ @dataclass(frozen=True, slots=True)
+@@ -190,24 +268,50 @@ def check_hist_chunk(item: Any, plan: HistPlan) -> None:
+     if p.symbols != (f"{item.root}.v.0",) or (p.dataset, p.schema, p.stype_in) != (
+             DATASET, OHLCV_1M, STYPE_CONTINUOUS):
+         raise HistPlanError(f"not a {plan.name} request for {item.root}: {p.as_kwargs()}")
+-    if (p.start, p.end) not in plan.chunks:
++    own = plan.chunks_of(item.root)  # v12: the root's own list in a per-root plan
++    if (p.start, p.end) not in own:
++        what = f"{item.root} chunks" if plan.root_chunks else "chunks"
+         raise HistPlanError(f"{item.root} {p.start}..{p.end} is not one of plan {plan.name}'s "
+-                            f"{len(plan.chunks)} chunks {plan.chunks[0][0]}..{plan.chunks[-1][1]}")
++                            f"{len(own)} {what} {own[0][0]}..{own[-1][1]}")
+     if p.end > STEP2_DATA_START:
+         raise HistPlanError(f"{item.root} {p.start}..{p.end} reaches past {STEP2_DATA_START}")
+ 
+ 
+ def plan_chunks(plan: HistPlan, roots: Sequence[str] | None = None) -> list[HistChunk]:
+-    """The plan's chunks, roots in plan order (or ``roots``, each a plan root), oldest first."""
++    """The plan's chunks, roots in plan order (or ``roots``, each a plan root), oldest first
++    (per root: the root's own chunk list, ``HistPlan.chunks_of``)."""
+     chosen = plan.roots if roots is None else tuple(roots)
+     if not chosen or len(set(chosen)) != len(chosen):
+         raise HistPlanError(f"roots must be distinct and non-empty: {list(chosen)}")
+-    items = [HistChunk(plan.name, r, _params(r, s, e)) for r in chosen for s, e in plan.chunks]
++    items = [HistChunk(plan.name, r, _params(r, s, e)) for r in chosen
++             for s, e in plan.chunks_of(r)]
+     for item in items:
+         check_hist_chunk(item, plan)
+     return items
+ 
+ 
++def select_roots(plan: HistPlan, roots: Sequence[str] | None) -> tuple[str, ...] | None:
++    """A4 (E.17): --roots restricts a quote or buy of a ROOTS_OPTION_PLANS plan to some of its
++    roots, each a plan root, distinct, at least one. None means the whole plan. Refused for every
++    other plan (es2011 and ext2010 are quoted and bought whole, as in v10)."""
++    if roots is None:
++        return None
++    if plan.name not in ROOTS_OPTION_PLANS:
++        raise HistPlanError(f"--roots is for plan {', '.join(ROOTS_OPTION_PLANS)} only; plan "
++                            f"{plan.name} is quoted and bought whole")
++    chosen = tuple(roots)
++    if not chosen:
++        raise HistPlanError("--roots needs at least one root")
++    repeated = sorted({r for r in chosen if chosen.count(r) > 1})
++    if repeated:
++        raise HistPlanError(f"--roots names {repeated} more than once")
++    unknown = [r for r in chosen if r not in plan.roots]
++    if unknown:
++        raise HistPlanError(f"--roots {unknown}: not root(s) of plan {plan.name} "
++                            f"({', '.join(plan.roots)})")
++    return chosen
++
++
+ # ------------------------------------------------------------------ paths ----
+ def purchase_manifest_path(root: str, plan: str, base: Path = HIST_REPORTS) -> Path:
+     return Path(base) / f"purchase_{root}_{plan}.json"
+@@ -232,18 +336,40 @@ def condition_path(plan: HistPlan, condition_dir: Path = CONDITION_DIR) -> Path:
+ # ------------------------------------------------------------------ gates ----
+ def quote_gate(account: str = E14_BUY_ACCOUNT, **overrides: Any) -> LockedQuoteGate:
+     """Quotes of either plan: STAGE_E14_SESSION_ID on ``account`` (the caps do not matter for a
+-    quote). ``overrides`` are for tests (tmp ledgers)."""
++    quote). ``overrides`` are for tests (tmp ledgers). (v12: ext2010h quotes through
++    ``plan_quote_gate``.)"""
+     kwargs = {"session_cap_usd": E14_SESSION_CAP_USD, "request_cap_usd": E14_REQUEST_CAP_USD,
+               "account": account, **overrides}
+     return LockedQuoteGate(STAGE_E14_SESSION_ID, **kwargs)
+ 
+ 
++def quote_session_id(plan: str) -> str:
++    """The session a plan's $0.00 quote lines go under: E.14's for es2011 and ext2010 (v10),
++    STAGE_E17_EXT2010H_SESSION_ID for ext2010h (v12)."""
++    if plan in (PLAN_ES2011, PLAN_EXT2010):
++        return STAGE_E14_SESSION_ID
++    if plan == PLAN_EXT2010H:
++        return STAGE_E17_EXT2010H_SESSION_ID
++    raise HistPlanError(f"unknown hist plan {plan!r}")
++
++
++def plan_quote_gate(plan: str, account: str = E14_BUY_ACCOUNT, **overrides: Any
++                    ) -> LockedQuoteGate:
++    """Quotes of ``plan`` under its quote session (``quote_session_id``); ``quote_gate`` is the
++    v10 gate of es2011 and ext2010. ``overrides`` are for tests (tmp ledgers)."""
++    kwargs = {"session_cap_usd": E14_SESSION_CAP_USD, "request_cap_usd": E14_REQUEST_CAP_USD,
++              "account": account, **overrides}
++    return LockedQuoteGate(quote_session_id(plan), **kwargs)
++
++
+ def buy_policy(plan: str) -> tuple[str, float, float]:
+     """(session id, session cap, request cap) of a plan's buy, read at call time."""
+     if plan == PLAN_ES2011:
+         return STAGE_E14_SESSION_ID, E14_SESSION_CAP_USD, E14_REQUEST_CAP_USD
+     if plan == PLAN_EXT2010:
+         return STAGE_E14_EXT2010_SESSION_ID, E14_EXT2010_SESSION_CAP_USD, E14_REQUEST_CAP_USD
++    if plan == PLAN_EXT2010H:  # v12: its own session for the quote and the buy
++        return STAGE_E17_EXT2010H_SESSION_ID, E17_EXT2010H_SESSION_CAP_USD, E14_REQUEST_CAP_USD
+     raise HistPlanError(f"unknown hist plan {plan!r}")
+ 
+ 
+@@ -338,9 +464,10 @@ def quotes_from_ledger(items: list[HistChunk], entries: list[dict[str, Any]],
+                       int(latest[c.key]["billable_bytes"])) for c in items]
+ 
+ 
+-def summarize_quotes(plan: HistPlan, quotes: list[HistQuote], position: dict[str, Any]
+-                     ) -> dict[str, Any]:
+-    """Per root and plan totals (costs, bytes, counts; no price data), with the 3% margin."""
++def summarize_quotes(plan: HistPlan, quotes: list[HistQuote], position: dict[str, Any],
++                     roots: Sequence[str] | None = None) -> dict[str, Any]:
++    """Per root and plan totals (costs, bytes, counts; no price data), with the 3% margin.
++    ``roots``: the --roots selection (v12, ext2010h), recorded as the section's roots."""
+     per_root: dict[str, dict[str, Any]] = {}
+     for q in quotes:
+         row = per_root.setdefault(q.chunk.root, {"usd": 0.0, "billable_bytes": 0, "chunks": 0,
+@@ -358,7 +485,8 @@ def summarize_quotes(plan: HistPlan, quotes: list[HistQuote], position: dict[str
+     failed = sum(len(r["failed"]) for r in per_root.values())
+     margin = total * (1.0 + BILLED_OVER_QUOTE_STOP)
+     return {"set": f"plan:{plan.name}", "plan": plan.name, "test": plan.test,
+-            "roots": list(plan.roots), "chunks": len(quotes), "chunks_failed": failed,
++            "roots": list(plan.roots if roots is None else roots), "chunks": len(quotes),
++            "chunks_failed": failed,
+             "complete": failed == 0, "chunk_range": [plan.chunks[0][0], plan.chunks[-1][1]],
+             "store_trade_dates": [str(plan.first_trade_date), str(plan.last_trade_date)],
+             "total_usd": total, "total_usd_x_1_03": margin, "account": position,
+@@ -617,6 +745,9 @@ def _parser() -> argparse.ArgumentParser:
+     parser.add_argument("--quotes-out", help="quotes JSON (--quote-only; the .md goes beside it)")
+     parser.add_argument("--retry-failed", action="store_true")
+     parser.add_argument("--harness-sha256", help="the frozen harness manifest's sha256 (--buy)")
++    parser.add_argument("--roots", nargs="+", metavar="ROOT",
++                        help=f"restrict the quote or buy to these roots (plan "
++                             f"{', '.join(ROOTS_OPTION_PLANS)} only; E.17 amendment A4)")
+     return parser
+ 
+ 
+@@ -644,6 +775,22 @@ def _check_args(args: argparse.Namespace) -> None:
+             raise HistPlanError(f"--buy requires --account ({E14_BUY_ACCOUNT})")
+         if args.quotes_out is not None or args.retry_failed:
+             raise HistPlanError("--quotes-out and --retry-failed are for --quote-only")
++        if args.plan in ROOTS_OPTION_PLANS and not args.roots:
++            raise HistPlanError(f"--buy --plan {args.plan} requires --roots (A4: a buy of this plan "
++                                "is restricted to the lead's selection; review F-1)")
++
++
++def _plan_quote_gate(plan: HistPlan, account: str, quote_gate_factory: Callable[..., Any],
++                     plan_quote_gate_factory: Callable[..., Any]) -> LockedQuoteGate:
++    """es2011 and ext2010: the v10 quote gate, as in v10. ext2010h (v12): its own quote
++    session, checked."""
++    if plan.name in (PLAN_ES2011, PLAN_EXT2010):
++        return quote_gate_factory(account=account)
++    gate = plan_quote_gate_factory(plan=plan.name, account=account)
++    if gate.session_id != quote_session_id(plan.name):
++        raise HistPlanError(f"plan {plan.name} quotes under {quote_session_id(plan.name)}, not "
++                            f"{gate.session_id}")
++    return gate
+ 
+ 
+ def main(argv: list[str] | None = None, *,
+@@ -653,23 +800,30 @@ def main(argv: list[str] | None = None, *,
+          client_factory: Callable[[str], Any] = build_client,
+          vendor_root: Path = VENDOR_ROOT, reports_base: Path = HIST_REPORTS,
+          registry_path: Path = trial_registry.REGISTRY_PATH, rolls_dir: Path = ROLLS_DIR,
+-         condition_dir: Path = CONDITION_DIR, log: Callable[[str], None] = log_line) -> int:
+-    """The CLI. The keyword arguments are for tests (fake clients, tmp ledgers and paths)."""
++         condition_dir: Path = CONDITION_DIR, log: Callable[[str], None] = log_line,
++         plan_quote_gate_factory: Callable[..., LockedQuoteGate] = plan_quote_gate) -> int:
++    """The CLI. The keyword arguments are for tests (fake clients, tmp ledgers and paths).
++    ``quote_gate_factory`` serves es2011 and ext2010, ``plan_quote_gate_factory`` ext2010h."""
+     args = _parser().parse_args(argv)
+     account = E14_BUY_ACCOUNT if args.account is None else args.account
+     try:
+         _check_args(args)
+         plan = get_plan(args.plan)
+-        items = plan_chunks(plan)
++        roots = select_roots(plan, args.roots)  # A4: None unless --roots (ext2010h only)
++        items = plan_chunks(plan, roots)
+         if args.quote_only:
+             out = _quotes_path(args.quotes_out)
+-            gate = quote_gate_factory(account=account)
++            gate = _plan_quote_gate(plan, account, quote_gate_factory, plan_quote_gate_factory)
+         else:
+             gate = buy_gate_factory(plan=plan.name, account=account)
+         log(banner(gate))
++        chosen = plan.roots if roots is None else roots
+         log(f"plan {plan.name} (test {plan.test}): {len(items)} chunks over "
+-            f"{len(plan.roots)} root(s) {', '.join(plan.roots)}, {plan.chunks[0][0]}.."
++            f"{len(chosen)} root(s) {', '.join(chosen)}, {plan.chunks[0][0]}.."
+             f"{plan.chunks[-1][1]} (end exclusive, 00:00 UTC)")
++        if roots is not None:
++            log(f"--roots: {len(roots)} of plan {plan.name}'s {len(plan.roots)} roots; no other "
++                "root is quoted or bought")
+         if args.buy:
+             log(f"harness preflight passed: {harness_freeze.preflight(args.harness_sha256)}")
+             require_buy_ready(gate, plan, account, registry_path=registry_path)
+@@ -682,7 +836,8 @@ def main(argv: list[str] | None = None, *,
+     client = client_factory(key)
+     try:
+         if args.quote_only:
+-            return _quote_main(client, gate, plan, items, out, args.retry_failed, log)
++            return _quote_main(client, gate, plan, items, out, args.retry_failed, log,
++                               roots=roots)
+         harness, done = run_hist_buy(
+             client, gate, plan, items, expected_harness_sha256=args.harness_sha256,
+             account=account, registry_path=registry_path, vendor_root=vendor_root,
+@@ -698,10 +853,11 @@ def main(argv: list[str] | None = None, *,
+ 
+ 
+ def _quote_main(client: Any, gate: LockedQuoteGate, plan: HistPlan, items: list[HistChunk],
+-                out: Path, retry_failed: bool, log: Callable[[str], None]) -> int:
++                out: Path, retry_failed: bool, log: Callable[[str], None], *,
++                roots: Sequence[str] | None = None) -> int:
+     run_hist_quotes(client, gate, plan, items, log=log, retry_failed=retry_failed)
+     quotes = quotes_from_ledger(items, read_entries(gate.ledger_path), gate.session_id)
+-    section = summarize_quotes(plan, quotes, account_position(gate))
++    section = summarize_quotes(plan, quotes, account_position(gate), roots)
+     extra = {"session_id": gate.session_id, "dataset": DATASET, "schema": OHLCV_1M}
+     write_quotes(section, extra, out)
+     log(f"{plan.name}: TOTAL QUOTED ${section['total_usd']:.6f} (x 1.03 = "

@@ -539,3 +539,17 @@
   works and funds are in place, completes C1, buys the remaining 21
   extension roots (about $160 per E.12's quote), registers H1 to H5
   (N +5), and runs each once.
+- 2026-10-09 (user, planning chat): V30. After E.16 Part A. The user has
+  about $100 in Databento acct-2 (funded with help from friends) and
+  chooses to buy what that covers, then proceed. Stage E.17 follows the
+  E.16 hand-off with amendments: total spend at most $97.00; C1 first;
+  then the other 21 extension roots in a priority order fixed before any
+  quote (ZT, ZF, ZB to complete H3, then E.12's frozen phase-1 ranking,
+  greedy within the budget left); roots not funded run on the fallback
+  window 2019-05-06..2024-02-29, listed at registration before any
+  purchase; H2 is dropped (N + 4) if C1's NQ and ZN purchase does not
+  complete. The E.16 lead's recommendations are accepted: H2's NQ entry
+  at the 15:30 reopen before 2020-10, HE from 2017-07, LE 2010-2014 out
+  of H1 and H4, equity H1 trades past 15:08 kept for 2010-2020 with a
+  descriptive table without them. If acct-2 is still locked at the fresh
+  quote, E.17 stops before any registration.

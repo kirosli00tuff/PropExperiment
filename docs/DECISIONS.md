@@ -554,8 +554,8 @@
   descriptive table without them. If acct-2 is still locked at the fresh
   quote, E.17 stops before any registration.
 - 2026-10-09 (user, planning chat): V30 amended before any quote. The
-  user confirmed acct-2's Databento balance at exactly $126.25. E.17's
-  amendment A1 changes from $97.00 to $122.50 in total billed spend
-  (about 3% under the balance), with A3's greedy selection using each
-  root's fresh quote x 1.03 against $122.50 minus Part 1's billed
-  amount. Nothing else changes.
+  user confirmed acct-2's Databento balance at exactly $130.23 (a first
+  figure of $126.25 was a typo). E.17's amendment A1 changes from $97.00
+  to $126.30 in total billed spend (about 3% under the balance), with
+  A3's greedy selection using each root's fresh quote x 1.03 against
+  $126.30 minus Part 1's billed amount. Nothing else changes.

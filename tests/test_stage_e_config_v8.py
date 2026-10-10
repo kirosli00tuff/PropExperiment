@@ -62,7 +62,7 @@ def test_the_acct2_cap_is_the_ledger_spend_plus_the_topup_rounded_down_to_the_ce
     # Assert: 124.673761 + 125.00 = 249.673761 -> 249.67, never above the funds
     assert funds == pytest.approx(249.673761, abs=1e-9)
     assert floored == 249.67  # v8's cap; harness v11 (Stage E.17) raised it for C1
-    assert config.ACCOUNT_2_CAP_USD == 291.08  # v11: spend 231.599730 + C1's quote x 1.03, up
+    assert config.ACCOUNT_2_CAP_USD == 355.38  # v12: spend after C1 + A3 selection x 1.03, up
     assert config.ACCOUNTS[ACCOUNT_2_ID].cap_usd == config.ACCOUNT_2_CAP_USD
     assert config.ACCOUNTS[ACCOUNT_1_ID].cap_usd == config.SHARED_ACCOUNT_CAP_USD == 120.00
 

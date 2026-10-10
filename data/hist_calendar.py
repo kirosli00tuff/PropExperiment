@@ -34,6 +34,9 @@ overlap, leave a gap or do not cover the coverage), any entry, unsourced date or
 the coverage, and an unknown grade. ``assert_coverage`` refuses any date outside
 2010-06-01..2019-05-31. Existing (2019-05 on) callers never use this module: it is read only by
 data.hist_store, data.hist_bars and screening.stage_e14_c2.
+
+Harness v12 (Stage E.17): a seventh group, "livestock" (HE, LE; plan ext2010h's stores), whose
+file is a byte copy of reports/stage_e16_calendars/hist2010_livestock.json.
 """
 
 from __future__ import annotations
@@ -54,7 +57,9 @@ from data.group_session import CalendarNotReady, GroupCalendar
 
 HIST_CALENDAR_SCHEMA = "e14_hist_calendar/1"
 HIST_CALENDAR_DIR = REPO_ROOT / "data" / "calendars" / "hist2010"
-HIST_GROUPS = ("equity", "rates", "fx", "energy", "metals", "grains")
+# Harness v12 (Stage E.17): "livestock" added (module docstring); its file's sha256 is the one
+# reports/stage_e16_freeze.json records, and this loader parses it unchanged.
+HIST_GROUPS = ("equity", "rates", "fx", "energy", "metals", "grains", "livestock")
 HIST_COVERAGE = (date(2010, 6, 1), date(2019, 5, 31))
 STATUS_GRADES = ("cme", "secondary", "unverified")
 TIME_GRADES = ("cme", "secondary", "inferred", "unverified", "n/a")

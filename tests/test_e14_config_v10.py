@@ -29,8 +29,10 @@ def test_the_e14_session_cap_never_exceeds_acct2s_headroom_when_set() -> None:
 
 
 def test_acct2s_cap_and_the_step2_active_policy_are_unchanged() -> None:
-    assert config.ACCOUNT_2_CAP_USD == 291.08
-    assert config.ACCOUNTS[config.ACCOUNT_2_ID].cap_usd == 291.08
+    assert config.ACCOUNT_2_CAP_USD == 355.38  # v12 (E.17): spend after C1 + A3 selection x 1.03, up
+    assert config.ACCOUNTS[config.ACCOUNT_2_ID].cap_usd == 355.38
+    assert config.STAGE_E17_EXT2010H_SESSION_ID == "stage-E.17-ext2010h"  # v12 review F-2
+    assert config.E17_EXT2010H_SESSION_CAP_USD == 65.82  # v12 review F-2; rulings V12-R3
     assert config.STEP2_PURCHASE_SESSION_ID == config.STAGE_E12_SESSION_ID
     assert config.STEP2_SESSION_CAP_USD == config.E12_SESSION_CAP_USD == 137.73
     assert config.STEP2_REQUEST_CAP_USD == config.E12_REQUEST_CAP_USD

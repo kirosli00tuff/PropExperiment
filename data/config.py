@@ -86,7 +86,11 @@ LEGACY_ACCOUNT_ID = ACCOUNT_1_ID  # ledger lines with no "account" field
 # spend 231.599730 (ledger/databento_spend.jsonl, 29,040 lines before E.17's quote) + C1's fresh
 # ext2010 quote $57.742330 x 1.03 = $59.474600 (the sum of the quote run's own 642 ledger lines,
 # 18:54-19:07 PDT; reports/stage_e17_briefs/fresh_quote_c1.json) = 291.074330, rounded UP to the cent.
-ACCOUNT_2_CAP_USD = 291.08
+# Harness v12 (Stage E.17, 2026-10-10; hand-off step 8, amendments A1 and A3): acct-2's ledger spend
+# after C1 289.417062 + the A3 selection's fresh ext2010h quote $64.038166 x 1.03 = $65.959311 (11 roots;
+# the sums of the quote run's own ledger lines, 23:36-00:02 PDT; reports/stage_e17_a3_selection.json)
+# = 355.376373, rounded UP to the cent; under A1's bound 231.599730 + 124.00 = 355.599730.
+ACCOUNT_2_CAP_USD = 355.38
 
 ACCOUNTS: MappingProxyType[str, DatabentoAccount] = MappingProxyType({
     ACCOUNT_1_ID: DatabentoAccount(
@@ -199,6 +203,20 @@ E14_BUY_ACCOUNT = ACCOUNT_2_ID
 # The hist bar stores (data.hist_store, plans es2011 and ext2010): their own base, separate from
 # the research and step 2 stores (the V10 separate data roots). Git-ignored.
 HIST_ROOT = DATA_ROOT / "processed_hist"
+
+# Stage E.17 spend policy for the base-rule batch (harness v12; reports/stage_e16_handoff.md step 8,
+# docs/prompts/STAGE_E.17.md amendment A4). Read by data.pull_hist only. Plan "ext2010h" (the 21
+# roots of reports/stage_e16_windows.json, tests E16-H1..E16-H5) is quoted AND bought under its own
+# session id, so its $0.00 quote lines are separable from E.14's (STAGE_E14_SESSION_ID) and its
+# spend from C1's (STAGE_E14_EXT2010_SESSION_ID). Its request cap is E14_REQUEST_CAP_USD (D13), on
+# E14_BUY_ACCOUNT (acct-2) only.
+STAGE_E17_EXT2010H_SESSION_ID = "stage-E.17-ext2010h"
+# Set by the E.17 lead from the fresh `--quote-only --plan ext2010h` quote (hand-off step 8, A1, A3;
+# rulings V12-R3): the A3 selection's quote x 1.03 = $65.959311 rounded down is $65.95, tightened to
+# $65.82 so that up to 4 concurrent buy processes over disjoint --roots (each able to overshoot the
+# cap by one in-flight chunk, the largest $0.115211 x 1.03) keep the stage within A1's $124.00:
+# floor(66.182668 budget left - 3 x 0.118667) = 65.82.
+E17_EXT2010H_SESSION_CAP_USD = 65.82
 
 # One Databento key per account (Stage E.11, V19): .env holds DATABENTO_API_KEY1 and
 # DATABENTO_API_KEY2 only. require_databento_key reads the variable of the account it is asked

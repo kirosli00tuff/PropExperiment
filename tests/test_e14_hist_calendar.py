@@ -161,7 +161,7 @@ def test_a_missing_file_an_unknown_group_and_a_wrong_expected_sha_are_refused(
     with pytest.raises(HistCalendarError, match="does not exist"):
         load_hist_group_calendar("rates", base=tmp_path)
     with pytest.raises(HistCalendarError, match="unknown hist calendar group"):
-        load_hist_group_calendar("livestock", base=FIXTURE_DIR)
+        load_hist_group_calendar("crypto", base=FIXTURE_DIR)  # v12: livestock is a hist group
     with pytest.raises(HistCalendarError, match="expected"):
         load_hist_group_calendar("equity", base=FIXTURE_DIR, expected_sha256="0" * 64)
 

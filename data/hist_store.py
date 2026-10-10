@@ -30,6 +30,16 @@ rule L-3, flag_frame's columns and the read-only parquet writer. What differs, i
    counted in the summary, never held. Close-minute bars follow L-3 as before.
 5. The written frame is checked again: every trade date inside the plan's window, none unsourced.
 The build prints counts only (rows, trade dates, excluded dates by reason, rolls), never a price.
+
+Harness v12 (Stage E.17): plan "ext2010h" (data.pull_hist), the base-rule batch's 21 roots, with
+the same per-root logic:
+    uv run python -m data.hist_store --plan ext2010h --products 6A TN --harness-sha256 <sha256>
+Each root's inputs are exactly its OWN chunk list (from its U2 start month; TN, RTY and HE start
+later) as its purchase manifest lists them; the store is
+HIST_ROOT/ext2010h/<ROOT>/ohlcv-1m_<ROOT>_v_0_2010-07-01_2019-04-30_ext2010h.parquet with
+"plan": "ext2010h" in its metadata, on the root's hist group calendar (livestock included). The
+first trade date 2010-07-01 is partial: its Globex session opens 2010-06-30 (CT), before the
+first bought chunk; nothing earlier is read.
 """
 
 from __future__ import annotations
@@ -496,7 +506,7 @@ def cli(argv: Sequence[str] | None = None, *,
     from screening import harness_freeze
 
     parser = argparse.ArgumentParser(prog="python -m data.hist_store")
-    parser.add_argument("--plan", required=True, choices=("es2011", "ext2010"))
+    parser.add_argument("--plan", required=True, choices=("es2011", "ext2010", "ext2010h"))
     parser.add_argument("--products", nargs="+")
     parser.add_argument("--harness-sha256", required=True)
     args = parser.parse_args(argv)

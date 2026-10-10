@@ -151,6 +151,11 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     Treasury auction cycle, next-day reversal, their combination) frozen on 2010-07..2024-02 windows (freeze
     8f388c8, manifest 5274aa97...); nothing read, bought or registered; N stays 471. Stage E.17 completes C1, then
     buys the 21 remaining extension roots under harness v12, registers E16-H1..H5 and runs each once.
+  - Stage E.17 — C1 completed and the base-rule batch run once, within $124.00 (V30 amended). Run 2026-10-09/10
+    (see reports/E.17_RETURN.md): C1 registered, bought ($57.82) and evaluated, STOPPED at guard C10 (g17_mbt n/a
+    by design in 2010-2019; a freeze contradiction; Fable-verified; not rerun); harness v11 and v12; 11 of the 21
+    extension roots bought ($64.04; 10 on the fallback window); E16-H1..H5 registered and run once: all five
+    FAIL (Holm rejects none, DSR about 0; Fable-verified); N 471 -> 478; no holdout-2 read, no meta-labeling.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

@@ -1,0 +1,182 @@
+{
+ "schema": "stage_e17_c1_verify/verdict/1",
+ "worker": "VerdictVerifier-FableXHigh (worker-xhigh, fable)",
+ "brief": "reports/stage_e17_briefs/brief_c1_verify.md",
+ "verdict": "VERIFIED WITH NOTES",
+ "meaning": "The STOPPED verdict is the freeze's C10 rule (section 3) applied as written by the frozen code on counts reproduced exactly from the frozen inputs; no code or input error. Notes: the freeze's sections 2 and 3 are inconsistent for g17_mbt, and the stop was decidable from frozen artefacts on 2026-10-05 before registration and purchase.",
+ "check1_reference": {
+  "g17_mbt": {
+   "h60": 87,
+   "hF": 84
+  },
+  "mine_equals_model_json": true,
+  "frozen_function_equals_model_json": true,
+  "ng_ok_rows": {
+   "h60": 2590,
+   "hF": 2473
+  },
+  "live_by_count": {
+   "h60": 30,
+   "hF": 30
+  },
+  "zero_count_signals": {
+   "h60": 34,
+   "hF": 34
+  },
+  "mbt_span": {
+   "ng_rows_total": 2594,
+   "ng_rows_app_g17_mbt": 87,
+   "non_ng_rows_app_g17_mbt": 2190,
+   "ng_ok_h60_rows_app_g17_mbt": 87,
+   "ng_ok_hF_rows_app_g17_mbt": 84,
+   "date_column": "trade_date",
+   "first_date": "2024-01-04",
+   "last_date": "2024-02-29",
+   "distinct_dates": 29,
+   "ng_panel_first_date": "2019-11-19",
+   "ng_panel_last_date": "2024-02-29"
+  },
+  "state_files_verified": 51
+ },
+ "check2_run": {
+  "c7_frames": {
+   "CL": {
+    "root": "CL",
+    "bars": 1,
+    "trade_dates": [
+     "2019-05-31"
+    ],
+    "bars_with_trade_date_in_window": 0,
+    "bars_with_trade_date_after_window": 1,
+    "timestamp_column": "ts_event",
+    "bars_at_or_before_last_ng_decision_time": 0,
+    "min_bar_ts_utc": "2019-05-31T14:00:00+00:00"
+   },
+   "MBT": {
+    "root": "MBT",
+    "bars": 1,
+    "trade_dates": [
+     "2019-05-31"
+    ],
+    "bars_with_trade_date_in_window": 0,
+    "bars_with_trade_date_after_window": 1,
+    "timestamp_column": "ts_event",
+    "bars_at_or_before_last_ng_decision_time": 0,
+    "min_bar_ts_utc": "2019-05-31T14:00:00+00:00"
+   }
+  },
+  "ng_ok_rows": {
+   "h60": 5120,
+   "hF": 4538
+  },
+  "g17_counts": {
+   "h60": {
+    "g17_nq": 4836,
+    "g17_zn": 4858,
+    "g17_6e": 4836,
+    "g17_cl": 0,
+    "g17_gc": 4778,
+    "g17_zc": 4806,
+    "g17_mbt": 0
+   },
+   "hF": {
+    "g17_nq": 4297,
+    "g17_zn": 4307,
+    "g17_6e": 4288,
+    "g17_cl": 0,
+    "g17_gc": 4231,
+    "g17_zc": 4270,
+    "g17_mbt": 0
+   }
+  },
+  "mine_equals_result_guards_C10": true,
+  "panel_counts_equal_result": true,
+  "world_roots_equal_result": true,
+  "feature_cols_equal_model": true,
+  "app_g17_mbt_on_all_ng_rows": {
+   "g17_mbt": 0,
+   "g17_cl": 0
+  },
+  "zero_now_but_live_in_reference": {
+   "h60": [
+    "g17_mbt"
+   ],
+   "hF": [
+    "g17_mbt"
+   ]
+  },
+  "zero_in_reference_but_live_now": {
+   "h60": [],
+   "hF": []
+  },
+  "dead_by_my_rule": [
+   "g17_mbt (h60)",
+   "g17_mbt (hF)"
+  ],
+  "result_stop_reason": "C10: features live in E.12 apply on no NG row: ['g17_mbt (h60)', 'g17_mbt (hF)'] (2)",
+  "wall_seconds": 27.92,
+  "peak_rss_kb": 2020912
+ },
+ "check3_code_vs_freeze": {
+  "code_implements_rule_as_written": true,
+  "freeze_exempts_na_by_design": false,
+  "freeze_lines_live": [
+   28,
+   29,
+   64,
+   65
+  ],
+  "freeze_lines_exempt": [],
+  "c10_check": "c1_replication/evaluate.py:376-384",
+  "stop": "c1_replication/evaluate.py:520-523",
+  "order_in_evaluate": [
+   "build_world",
+   "replication_panel",
+   "C11",
+   "c10_counts",
+   "c10_check",
+   "trades"
+  ]
+ },
+ "check4_order_leakage": {
+  "marker_precedes_c10_and_verdict_in_log": true,
+  "no_numbers_before_marker_except_date_and_command": true,
+  "log_c10_values_all_integer_counts": true,
+  "marker_mtime_before_result_mtime": true,
+  "marker_holds_no_bar_derived_block": true,
+  "marker_inputs_equal_result_inputs": true,
+  "result_numeric_outside_inputs_all_integer": true,
+  "no_stat_keys_in_result": true,
+  "no_stat_words_in_result_text": true,
+  "no_stat_words_in_log": true,
+  "guards_only_c10": true
+ },
+ "check5_hashes": {
+  "freeze": true,
+  "registry": true,
+  "harness": true,
+  "model": true,
+  "store_hashes_file": true,
+  "stores": true,
+  "calendar_hashes_file": true,
+  "calendars": true,
+  "code": true,
+  "marker": true,
+  "v2_freeze": true,
+  "gate0_list": true
+ },
+ "frozen_tests_run": {
+  "tests": [
+   "test_c1_world.py::test_a_frame_with_no_row_breaks_the_frozen_g17_code",
+   "test_c1_world.py::test_c7_ng_rows_equal_those_with_synthetic_cl_bars",
+   "test_c1_evaluate.py::test_c10_stop_closes_the_attempt"
+  ],
+  "passed": 3,
+  "failed": 0
+ },
+ "findings": {
+  "BLOCKING": 0,
+  "SHOULD_FIX": 1,
+  "NOTE": 4
+ }
+}

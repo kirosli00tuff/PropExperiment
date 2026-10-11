@@ -588,3 +588,39 @@
   No purchase, no edge test, N unchanged, and every modelled practice
   checked against Topstep's terms. The program otherwise waits for the
   AiTrader readout.
+- 2026-10-10 (user, planning chat): V33. After E.19 (commit 647af55).
+  E.19's verdict is accepted: at zero edge the Topstep funnel loses money
+  for the user at every size, path and sizing within the terms (best case
+  50K, -$250 per cycle); break-even net Sharpe about 0 at 50K, 0.34 to
+  0.52 at 100K, 0.54 to 0.86 at 150K. Fable reproduced the headline.
+  1. No Combine is bought until a strategy passes a registered test and
+     its follow-up reads with a net Sharpe of about 0.5 or more. Then:
+     50K, Consistency path, DLL at purchase, Back2Funded, keep-D payouts,
+     and a hard fee budget of $1,000 fixed before the first purchase and
+     never raised after losses (E.19 return, section 7).
+  2. Hyperliquid: the user reports BC residents are not restricted. It is
+     parked for a later personal-capital phase. Its base taker round trip
+     (0.090% of notional) costs more per notional than CME index futures
+     (D8: MNQ about 0.4 bp, NQ about 0.3 bp), so it is not a cost fix.
+  3. AiTrader is an options strategy (user). It cannot trade at Topstep
+     and stays a separate track; a positive readout and replay test would
+     point to a small defined-risk options account, not to an XFA.
+  4. H2 (month-end NQ/ZN, multi-day, t 1.52, n 56) is noted as a
+     personal-account candidate only; it is not pursued now.
+  5. Stage E.20: an ML pattern search. It runs the ML route's frozen net
+     pipeline (STAGE_E_ML_V2_DESIGN V2.3 to V2.9: ridge and shallow
+     LightGBM, cost gate, 50K sizing, nested CPCV), which never ran
+     because Gate 0 stopped v2, on the E.12 training stores
+     (2019-05-06..2024-02-29) of the 17 roots with owned 2010-2019
+     history. Its 45 configurations are registered before any fit, as
+     V2.9's trial count requires (N 480 -> 525). If the nested
+     out-of-sample record clears E.20's screen, the one final model is
+     frozen, as C1's M1 was (V2.10 (a)), registered as one test (N 526)
+     and evaluated once, backward, on the owned 2010-2019 stores: nine
+     years of data no part of the search reads, in place of the 1.2-year
+     research window as the first confirmation. The user chooses this
+     search; it narrows V28, which barred ML layered on the unpassed base
+     rules. Shallow models only: no DNN or RL. The research window and
+     holdout-2 stay unread; a pass leads to a forward research-window
+     read and then holdout-2, each in its own stage. No purchase, no
+     Databento call.

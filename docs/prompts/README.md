@@ -38,6 +38,7 @@ From 2026-09-23 on, each new prompt is committed here before it is sent.
 | E.17 | STAGE_E.17.md | Opus 5.5, xhigh (Fable xhigh harness reviews and verdict verification) | 2026-10-09 | C1 completed (v11, register, buy, evaluate), then the base-rule batch H1-H5 (v12, priority-ordered purchase within a $97 total budget, fallback list, register, run once each, Fable recomputation) |
 | E.18 | STAGE_E.18.md | Opus 5.5, xhigh (Fable xhigh diff review and verdict verification) | 2026-10-10 | C1b: C1 re-registered with the C10 listing-date exemption (MBT, CL), Fable diff review, dry check, freeze, register (N to 480), evaluate once on owned data; no purchase |
 | E.19 | STAGE_E.19.md | Opus 5.5, xhigh (Fable xhigh review and recomputation) | 2026-10-10 | Prop economics: sourced Topstep rules and terms, a Combine-to-XFA funnel simulator, zero-edge and small-edge return models with fat tails and D8 costs, expected cash and attempts to $5K and $10K; no purchase, N unchanged |
+| E.20 | STAGE_E.20.md | Opus 5.5, xhigh (Fable xhigh plan review, freeze review and verdict verification) | 2026-10-10 | Pattern search: the ML route's frozen net pipeline on the 17 roots with owned 2010-2019 history, 45 configurations registered and screened by nested CPCV on 2019-05..2024-02; on a pass, one frozen model registered and evaluated once backward on 2010-2019; no purchase |
 
 Model names are as written in each prompt at the time. The routing rules
 that apply today are in CLAUDE.md.

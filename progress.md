@@ -3872,3 +3872,85 @@ Per spawn: DiffReviewer-FableXHigh (worker-xhigh, fable, xhigh) 2,484,866; Verdi
 fable, xhigh) 2,897,434. Raw lines: reports/stage_e18_briefs/cost_raw.txt.
 
 These are token counts from the transcripts, not plan-credit percentages; the session cannot read the /usage meter.
+
+
+## 2026-10-10 — Stage E.19: prop economics; the Topstep funnel is negative at zero edge; break-even net Sharpe about 0 (50K) to 0.9 (150K)
+
+Prompt docs/prompts/STAGE_E.19.md (V22, V31, V32). Lead Opus 5.5 xhigh, session 087ee4a8. Return: reports/E.19_RETURN.md.
+
+- **Verdict: no, at zero edge.** Inside the policy band (daily risk <= 0.25 of the drawdown distance) all 1,500 zero-edge
+  configurations lose money: best 50K Standard -$250 per cycle (-$31 per Combine purchase; -$94 without the $14.50
+  API fee), 100K -$1,063, 150K -$2,696. It depends on costs (at a net Sharpe of exactly 0, 50K is about break-even)
+  and on sizing beyond the terms (f 0.50 with the DLL reaches about break-even; sign not established).
+- **Break-even net Sharpe** (best band f): 50K 0.02 Standard / < 0 Consistency; 100K 0.52 / 0.34; 150K 0.86 / 0.54;
+  zero gross edge is about -0.5 net (D8 costs at one round trip a day). Best: 50K, Consistency, DLL, Standard
+  pricing, Back2Funded: +$906 per cycle at a net Sharpe of 0.5. $5,000 withdrawn (five 50K accounts): 112 / 164
+  purchases and $7.9K / $11.5K of fees at zero edge (50% / 80%), 51 / 76 and $4.1K / $5.9K at 0.5. Cycles with no
+  payout at all: 48-74% at zero edge.
+- **Rules:** 214 rules (198 SOURCED, 7 UNSOURCED, 3 CONFLICT) and 42 practices from 41 Topstep help-centre and terms
+  pages (curl, one page at a time; ToU section 28 crawl ban read as not covering named fetches, upheld by Fable).
+  New since E.12: Combine consistency 55% of total profit; call-up discretionary; API $14.50/month; no VPS.
+- **Model:** prop_econ/ (rules, scalar reference, vectorized simulator, fees and campaigns, returns, grid,
+  aggregator), 148 tests; 780 jobs, 4,464 records (82.7 min on 4 workers). Returns: owned E.12 training stores, NQ,
+  CL, GC, ZN, 6E day sessions, demeaned, random direction, 5-day block bootstrap; normal comparison.
+- **Review:** RulesReviewer-FableXHigh 1 BLOCKING (RR-1 account stacking: churn metrics and label L-19 added), 4
+  SHOULD FIX, 14 NOTE; EconReviewer-FableXHigh 0 BLOCKING, 3 SHOULD FIX (text fixes), 11 NOTE; the headline
+  reproduces independently (blind recomputation, Phase C verdict cells). Rulings reports/stage_e19_rulings.md.
+- **Guardrails:** holdouts all_ok, 0 unlocks, start and end; REGISTRATION.md 0 bytes; N 480 unchanged; spend ledger
+  unchanged (no purchase, no Databento call); harness v12 unchanged; no TopstepX call; no push.
+- **For the user:** do not buy a Combine until a registered test shows a net Sharpe of about 0.5 or more; then 50K,
+  Consistency path, DLL, Standard pricing, Back2Funded, a fixed fee budget (about $1,000) and a bot that obeys the
+  terms list in the return's section 7.
+
+### Session cost
+
+Wall clock 16:54 to the final commit (see the ETA table's last rows), 2026-10-10, one session: no pause, no usage-limit
+wait, no outage. Tokens are summed from this session's transcript and its six subagent transcripts up to
+2026-10-11T03:15:07Z (reports/stage_e10_briefs/cost.py; raw output reports/stage_e19_briefs/cost_raw.txt); the lead's
+last steps after that (the final assembly and the commit) are not in the count. Never estimated.
+
+### Final ETA table (actuals; PDT; the initial estimate in brackets)
+
+| # | Task or spawn | Owner | Model | Effort | Parallel / serial | Start | End | Time | Status, deviations [initial estimate] |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | Read prompt and context | lead | opus | xhigh | first | 16:54 | 17:02 | 8 min | done |
+| 0 | Start checks | lead | opus | xhigh | serial | 17:03:05 | 17:03:13 | 8 s | all pass |
+| 0 | Spec, schema, interface, briefs | lead | opus | xhigh | serial | 17:04 | 17:09 | 5 min | done [task 0 total 16 min; actual 15] |
+| 1 | TopstepRules-OpusHigh | worker-high | opus | high | parallel with 2, 3a | 17:09 | 17:24 | 15 min | done [60 min, guess] |
+| 2 | FunnelCoder-OpusXHigh | worker-xhigh | opus | xhigh | parallel with 1, 3a | 17:09 | 17:41 | 32 min | done [90 min, guess] |
+| 3a | ReturnsCoder-OpusHigh | worker-high | opus | high | parallel with 1, 2 | 17:09 | 17:15 | 6 min | done [45 min, guess] |
+| 3b | Lead checks and rulings L-10..L-17, ruff fix | lead | opus | xhigh | serial, between returns | 17:15 | 17:43 | interleaved | done [15 min] |
+| 3c | GridCoder-OpusHigh (runner, aggregator, full grid) | worker-high | opus | high | parallel with 5a, 5b-A | 17:43 | 19:26 | 103 min | done; first run stopped 18:01 and restarted 18:02 to add the churn metrics (RR-1); grid 82.7 min on 4 workers [80 min: 40 code + 40 run] |
+| 5a | RulesReviewer-FableXHigh | worker-xhigh | fable | xhigh | parallel with 3c | 17:43 | 18:00 | 17 min | done; started before the results (rules final) [75 min with 5b, after task 4] |
+| 5b-A | EconReviewer-FableXHigh, Phase A (blind) | worker-xhigh | fable | xhigh | parallel with 3c | 17:43 | 17:59 | 16 min | done [in the 75 min above] |
+| 5c | Rulings RR-1..RR-19, RR-4 fix | lead | opus | xhigh | serial | 18:00 | 18:02 | 2 min | done |
+| 4 | Results md (narrative, key numbers, assembler) | lead | opus | xhigh | parallel with 5b-B | 19:26 | 19:31 | 5 min draft | done; final after the review fixes (19:56) [45 min] |
+| 5b-B | EconReviewer, Phase B (compare, code review) | worker-xhigh | fable | xhigh | parallel with 4 | 19:27 | 19:46 | 19 min | done; 0 BLOCKING |
+| 5b-C | EconReviewer, Phase C (verdict cells) | worker-xhigh | fable | xhigh | serial | 19:46 | 19:56 | 10 min | done; ER-14 |
+| 5d | Rulings ER-1..ER-14, text fixes | lead | opus | xhigh | parallel with 5b-C | 19:46 | 19:56 | 10 min | done [30 min] |
+| 6 | End suite (detached) | lead | - | - | parallel with 6 | 19:57:06 | 20:14:17 | 17 min 11 s | 7,138 passed, 3 skipped, 3 xfailed, rc 0 |
+| 6 | Return, progress, STAGES, end checks, commit | lead | opus | xhigh | serial | 19:57 | 20:15 (commit within minutes) | 18 min | [40 min] |
+| | **Total** | | | | | 16:54 | 20:15 (commit within minutes) | 3 h 21 min | no pause, no outage; initial estimate ended 23:25 (6 h 31 min); revised at 17:43 to 20:20 and at 18:36 to 21:30 |
+
+### Tokens per model
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 3,084 | 243,150 | 20,626,103 | 834,977 | 21,707,314 |
+| claude-opus-5-5 | 742 | 652,168 | 74,197,620 | 3,301,322 | 78,151,852 |
+| all | 3,826 | 895,318 | 94,823,723 | 4,136,299 | 99,859,166 |
+
+Delegation share: lead 42,098,026 (42.2%), workers 57,761,140 (57.8%). Per worker: section 4.
+
+### Worker spawns (agent file, model, effort, tokens)
+
+One row per spawn (six spawns; at most three ran at once). Tokens: input + output + cache read + cache creation from each transcript (reports/stage_e10_briefs/cost.py, per-field final usage per message).
+
+| Agent (description) | Agent file | Model | Effort | Start | End | Tokens (transcript) | Status, deviations |
+|---|---|---|---|---|---|---|---|
+| TopstepRules-OpusHigh | worker-high | opus (claude-opus-5-5) | high | 17:09 | 17:24 | 10,488,168 | done; 214 rules, 42 practices; terms reading L-11 |
+| FunnelCoder-OpusXHigh | worker-xhigh | opus (claude-opus-5-5) | xhigh | 17:09 | 17:41 | 11,526,887 | done; 117 tests; one lead message 17:24 (final-rules facts) |
+| ReturnsCoder-OpusHigh | worker-high | opus (claude-opus-5-5) | high | 17:09 | 17:15 | 2,653,369 | done; 15 tests; 4 spec questions (L-10) |
+| GridCoder-OpusHigh | worker-high | opus (claude-opus-5-5) | high | 17:43 | 19:26 | 11,385,402 | done; run restarted 18:02 to add churn metrics (RR-1); 780 jobs, 0 failures |
+| RulesReviewer-FableXHigh | worker-xhigh | fable (claude-fable-5-1) | xhigh | 17:43 | 18:00 | 3,657,605 | done; 1 BLOCKING (RR-1), 4 SHOULD FIX, 14 NOTE; started early (rules final) |
+| EconReviewer-FableXHigh | worker-xhigh | fable (claude-fable-5-1) | xhigh | 17:43 | 19:56 | 18,049,709 | done; Phase A 17:43-17:59 blind, B 19:27-19:46, C 19:46-19:56 (two resumes by message); 0 / 3 / 11 |

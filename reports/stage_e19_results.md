@@ -1,0 +1,1280 @@
+# Stage E.19 results: what the Topstep Combine-to-XFA funnel is worth to the user, in cash
+
+Lead synthesis (Opus 5.5 xhigh), 2026-10-10, written against docs/prompts/STAGE_E.19.md. Numbers come from
+reports/stage_e19_results.json (prop_econ/report.py: 780 grid jobs, 4,464 records, settings fingerprint
+d4644acce4988b94; 20,000 attempts, 20,000 XFAs, 20,000 cycles and 20,000 campaign replications per configuration).
+The model is reports/stage_e19_briefs/sim_spec.md with the lead decisions L-1..L-20 (reports/stage_e19_STATE.md); the
+rules are reports/stage_e19_rules.json (Topstep help centre and terms, fetched 2026-10-10). Fable review:
+reports/stage_e19_review_rules.md (rules, terms) and reports/stage_e19_review.md (model, recomputation); rulings in
+reports/stage_e19_rulings.md. This is an economics model, not an edge test: N stays 480.
+
+## 1. The answer
+
+**At zero edge the funnel is negative expected value for the user, at every account size, payout path, pricing path,
+DLL choice and sizing, under every sensitivity run.** The best zero-edge case is 50K, Standard payout path, Standard
+pricing, DLL off, f = 0.25: **-$250 per cycle (SE $7 given the simulated pools, about $9 with the pools' own
+sampling error, ER-1)**, i.e. -$31 per Combine purchase; 100K -$1,063, 150K -$2,696.
+Without the $14.50/month API fee the 50K figure is -$94. Thin (normal) tails flatter it to -$179; a long-only bot
+makes it worse (-$294). Inside the policy band (f <= 0.25) all 1,500 zero-edge records are negative (EconReviewer, ER-4). Outside it, the
+only zero-edge cells that come out positive are at f = 0.50 with the DLL (+$27 per cycle at 50K Standard, +$34 with
+Back2Funded), and the reviewer's independent shocks give +$2.5 (SE 10) and -$16 (SE 15) there, so their sign is not
+established (ER-14): at best, sizing that breaches fast (the account-stacking pattern Topstep prohibits) lifts the
+zero-edge funnel to about break-even. Without the API fee one product-specific
+case is also slightly positive (integer MNQ contracts on 50K Consistency, +$21 to +$67). What the sign depends on:
+at a net Sharpe of exactly 0 (a gross edge that just covers trading costs) 50K is about break-even at f = 0.25 (-$8
+Standard, +$3 Consistency), so at 50K the loss comes from trading costs and the API fee; at 100K (-$559 / -$509) and
+150K (-$1,672 / -$1,500) the funnel loses even then.
+
+A "cycle" is one Combine subscription from purchase, through every reset until a pass (cap 60 attempts), to the end of
+the funded XFA it produces; cash out = Combine purchases (monthly price, rebills, paid resets), the activation fee and
+the API subscription; cash in = 90% of the XFA payouts.
+
+Why zero edge loses: (1) zero gross edge is a negative net edge: the D8 round trip costs a net Sharpe of about -0.5 at
+one round trip a day and -1.5 at three (T3's effective-Sharpe table); (2) the Combine pass probability is low (0.175
+at 50K, 0.13 at 100K and 150K, at f = 0.25) and every month in the Combine is billed; (3) the XFA's value is capped
+by the loss Topstep absorbs: a zero-edge funded 50K XFA pays the user $447 on average (Standard path) and a 150K one
+$926, less the $149 activation fee, while getting one costs 8 (50K) to 16 (150K) Combine purchases.
+
+**Break-even edge** (net annual Sharpe after costs at which the cycle mean crosses zero, best band f, DLL off,
+Standard pricing): 50K Standard path 0.02, Consistency path below 0 (+$3 at a net Sharpe of exactly 0); 100K 0.52 /
+0.34; 150K 0.86 / 0.54. In gross terms add the cost drag: about +0.5 at one round trip a day. A bot therefore needs a
+real gross edge of roughly a Sharpe of 0.5 (50K) to 1.0-1.4 (150K) just to break even on the funnel.
+
+**Best size and path:** 50K. At a net Sharpe of 0.5: Consistency path +$391 (f 0.20; DLL off), +$477 with the DLL
+(f 0.25), and +$692 / +$906 with Back2Funded reactivations on; Standard path +$278. 100K at 0.5 is positive on the
+Consistency path (+$263) and on the Standard path only with Back2Funded (+$117); 150K is negative on the Standard path
+even at a net Sharpe of 0.5 (-$697; -$461 with Back2Funded). The No Activation
+Fee pricing path is worse everywhere except a few DLL-on 150K cells.
+
+**Cash targets** (five accounts at most, five independent slots, best band f, DLL off, Back2Funded off, API fee in):
+to withdraw $5,000 at zero edge (50K Standard) takes 112 Combine purchases and $7,918 of fees with 50% probability
+(164 and $11,499 with 80%), about 570 trading days; $10,000 takes 202 / 276 purchases and $14,366 / $19,390. At a
+net Sharpe of 0.5 (50K Standard): $5,000 in 51 / 76 purchases, $4,052 / $5,934 of fees, 255 / 383 trading days;
+$10,000 in 86 / 121 purchases, $6,900 / $9,530. At 1.0: $5,000 in 36 / 53 purchases, $3,036 / $4,409. So even with a
+good edge, roughly 60-80 cents of fees go out for every dollar withdrawn on the way to the first $5,000.
+
+**Risk of losing every fee paid** (a cycle with no payout at all): 0.48 (50K Standard) to 0.74 (Consistency) at zero
+edge; 0.36 / 0.54 at a net Sharpe of 0.5. The Consistency path pays more on average but more cycles pay nothing.
+
+**Terms:** Topstep allows bots on the Combine and XFA through the TopstepX / ProjectX API (not on a Live Funded
+Account), forbids a VPS (the bot must run on the user's own machine), forbids cross-account hedging and trading the
+full position size into scheduled news, and names "account stacking" and "excessive purchases of Trading Combines or
+Resets" as prohibited; it publishes no threshold. Expected cash rises with aggressive sizing (the band optimum is f 0.25 in
+176 of 192 cases, and 0.35 / 0.50 beat 0.25 at zero edge): the structure rewards exactly what the terms forbid.
+
+## 2. Model in brief (Tasks 2 and 3)
+
+- Rules: 214 sourced rules for 50K / 100K / 150K (reports/stage_e19_rules.md), 7 UNSOURCED and 3 CONFLICT, each run at
+  every reading that can be simulated. Combine: monthly price $49 / $99 / $199 (Standard pricing; $95 / $149 / $229
+  No Activation Fee), resets at the same price, rebill every 30 days with a reset credit, profit target $3,000 /
+  $6,000 / $9,000, end-of-day trailing MLL $2,000 / $3,000 / $4,500 locking at the start balance, best day < 55% of
+  total profit, at least 2 days. XFA: $149 activation (Standard pricing), trailing MLL locking at $0 and set to $0 after
+  the first payout, scaling plan by balance, Standard path (5 winning days of $150+) or Consistency path (3 days,
+  best day <= 40%), payouts up to 50% of the balance capped at $2,000 / $3,000 / $5,000 (Standard) and $3,000 / $4,000
+  / $6,000 (Consistency), doubled with the DLL, 90/10 split, $125 minimum, Back2Funded $599 / $699 / $829 before the
+  first payout, at most 5 XFAs, discretionary Live Funded call-up (no API on a Live account).
+- Returns (reports/stage_e19_returns_summary.md): day-session holds of NQ, CL, GC, ZN, 6E from the owned E.12 training
+  stores (2019-05-06..2024-02-29; 1,203 to 1,222 dates each), demeaned per path, a random direction each day, 5-day
+  block bootstrap pooled over the five paths (fat tails: excess kurtosis 1.9 to 5.6, 0.08% to 0.66% of days beyond 4
+  sigma; worst intraday excursion from the 1-minute bars), against a normal model with a Brownian-bridge intraday
+  minimum. Vehicles: the micro when the day's risk is below one full contract's sigma (MNQ, MCL, MGC, M6E; ZN has no
+  micro). Costs: the D8 day-session round trip, at 1 or 3 round trips a day; D8 cost per unit of daily sigma 0.005
+  (NQ) to 0.051 (M6E), so zero gross edge is a net Sharpe of about -0.5 (1 round trip) or -1.5 (3).
+- Sizing: daily risk f x D (D = distance to the trailing MLL) in fractional contracts, at least one contract, cut to
+  the lot limit or scaling tier; f in 0.05..0.25 (policy band) plus 0.35 and 0.50 as diagnostics. Edges: zero gross
+  drift, or a constant drift giving a net Sharpe of 0, 0.15, 0.3, 0.5, 0.75 or 1.0 after costs.
+- Wallet: payouts are requested at the first eligible morning, at the largest amount the policy allows (keep-D 0.5 as
+  a sensitivity); the API subscription ($14.50 per 21 trading days) is a cash-out; transfer fees $0 (Wise).
+
+## 3. Sizing: every grid point and the in-simulation optimum
+
+The table below and T2 (appendix) give the cycle mean net at every f and edge; T6 gives the in-simulation optimum f
+per rule set and edge, with its SE and the paired SE of its gap to the runner-up. All SEs in this report condition on the simulated 20,000-path pools; the
+pools' own sampling error multiplies them by about 1.3 (50K) to 2.5 (150K) at zero edge (ER-1), which changes no sign,
+ranking or break-even. The optimum sits at the top of the policy band (f 0.25) in 176 of 192 rule-set-edge cases; the 16 exceptions are all on the Consistency path at a net Sharpe of
+0.5 to 1.0 (best f 0.15 or 0.20). On the Standard path the mean keeps rising past the band (f 0.50 beats 0.25 in every Standard-path cell): fees are
+priced by time and the downside is capped, so faster resolution pays. On the Consistency path the optimum is interior
+once the edge is positive (f 0.15 to 0.35; ER-5). It is an in-simulation optimum: the gaps to f 0.20 are many SEs wide at zero edge
+($166 to $2,066), but at a net Sharpe of 0.5 on 50K Consistency the best two f differ by $7 (SE 10), within noise.
+Small f is ruinous on the larger accounts because a slow Combine is billed every month for years (150K at f 0.05:
+-$52,841 per cycle: 248 purchases over a mean cycle of 5,464 trading days, a cycle no one would run to the end): the subscription price, not the trading, dominates.
+
+## 4. Sensitivities (T5, appendix)
+
+- Tail model: normal tails make zero edge less negative by $34 to $230 per cycle (50K -179 vs -250); at a net
+  Sharpe of 0.5 or 1.0 the difference is mixed and mostly within 2 SEs. Fat tails do not flip any sign.
+- Direction long only (index skew kept): $31 to $325 worse at zero edge.
+- Cost wall (E.10's worst-bucket round trip): $36 to $975 worse at zero edge (largest at 150K, 3 round trips).
+- Integer contracts on a single product: much worse for 6E, CL and GC (the micros cost 0.023 to 0.051 per unit of
+  sigma per round trip, and rounding down cuts the risk below f x D, slowing the Combine); NQ (MNQ) is close to the
+  pooled headline; ZN mixed. On 50K, NQ and ZN trade one contract at every band f (ER-12), so their results do not
+  depend on f. Product and vehicle choice matter as much as sizing.
+- Payout policy keep-D 0.5 (leave at least half the MLL in the account after a payout): better whenever there is an
+  edge (50K Standard, net Sharpe 0.5: +$487 vs +$278; 150K Standard at 1.0: +$1,690 vs +$303); neutral at zero edge.
+- Live Funded call-up right after the 1st payout: -$132 to -$1,048 per cycle; after the 3rd: -$12 to -$281.
+- UNSOURCED scaling-plan boundary and the CONFLICT Combine-consistency boundary: no effect (0 in every cell).
+- Post hoc: ACH or wire at $30 per payout costs $10 to $42 per cycle; the voluntary-close payout at the horizon adds
+  at most $16 (few XFAs live that long); the API fee is $109 to $311 per cycle (at its $29 list price, double that);
+  five copy-traded accounts multiply both the gains and the losses by about five (50K, net Sharpe 0.5: +$1,826;
+  zero edge: -$628), but copied accounts breach together, which Topstep lists as a Responsible Trading Program
+  trigger, so that figure is not repeatable.
+
+## 5. Churn and the terms (reviewer finding RR-1, rule L-19)
+
+Every configuration's Combine purchase rate is 0.79 to 1.90 per 21 Combine-phase trading days per account, so all
+are "low" under L-19 (<= 2.0); a five-slot campaign buys 2.86 to 8.73 Combines per 21 trading days in its first year.
+The label is partly definitional (ER-2): every 21-day rebill is a purchase and reset credits pay most resets, so the
+rate has a floor near 0.8 to 1.0. Counting credit-paid resets too, the per-account rate stays at or below 2.0 inside
+the band, and a five-account campaign makes about 4 to 5 purchases or resets per 21 trading days.
+Topstep publishes no "excessive" threshold, so L-19 is the lead's reading, not Topstep's. The binding terms are
+qualitative: sizing that repeatedly hits the MLL and moves on to the next account (account stacking), many Combines
+or Resets in a short time, losing many XFAs quickly (the Slowdown path), several accounts hitting the MLL on one day
+(the Responsible Trading Program), opposite positions across accounts, full position size into scheduled releases,
+and a VPS. The cash rewards point toward f above the band; the terms point the other way.
+
+## 6. Limitations
+
+- One sizing fraction serves both phases; a faster Combine (larger f in the Combine than in the XFA) was not
+  modelled and might cut the subscription drag; it is also the direction the account-stacking clause polices.
+- Daily P&L is one day-session hold per day; real strategies trade fewer days and hold for less time, which raises
+  the cost per unit of risk (the zero-edge cost drag here is a lower bound).
+- Slots are independent; copy-trading or correlated products widen the distribution and trip the RTP rule.
+- Discretionary rules (call-up, churn thresholds, payout reviews) are not modelled as random events; payouts are
+  never denied in the headline (the forfeiture column in T8 shows the loss if they were).
+- Prices exclude sales tax; the API is billed by a third party; a CAD bank adds Wise's conversion fee.
+- Each cycle ends when its XFA ends; an XFA alive after 756 trading days is valued at 0 (a few at most).
+
+## 7. Key numbers (generated from the results JSON)
+
+Headline configuration (bootstrap tails, random direction, D8 costs, continuous contracts, payout policy max,
+Standard pricing, API fee included), at each rule set's best band f; 'B2F on' = Back2Funded reactivations used.
+
+| size | path | DLL | edge | best band f | cycle net (SE) | net ex API | P(no payout) | P(pass) | net per purchase | per funded XFA | purchases | cycle days | days to 1st payout | B2F on: net | break-even S (best f) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 50K | standard | off | zero_k1 | 0.25 | -250 (7) | -94 | 0.482 | 0.175 | -31 | 298 | 8.1 | 216 | 204 | -373 (9) | 0.02 |
+| 50K | standard | off | S0.5 | 0.25 | 278 (13) | 387 | 0.360 | 0.307 | 52 | 637 | 5.3 | 148 | 131 | 358 (15) | 0.02 |
+| 50K | standard | on | zero_k1 | 0.25 | -273 (8) | -108 | 0.474 | 0.175 | -32 | 305 | 8.5 | 230 | 217 | -358 (10) | 0.04 |
+| 50K | standard | on | S0.5 | 0.25 | 249 (12) | 363 | 0.345 | 0.312 | 45 | 632 | 5.5 | 155 | 138 | 344 (14) | 0.04 |
+| 50K | consistency | off | zero_k1 | 0.25 | -283 (8) | -120 | 0.741 | 0.175 | -35 | 267 | 8.1 | 226 | 209 | -554 (12) | < 0 |
+| 50K | consistency | off | S0.5 | 0.20 | 391 (15) | 538 | 0.537 | 0.325 | 61 | 863 | 6.4 | 204 | 170 | 692 (19) | < 0 |
+| 50K | consistency | on | zero_k1 | 0.25 | -307 (9) | -133 | 0.745 | 0.175 | -36 | 279 | 8.5 | 242 | 224 | -494 (13) | < 0 |
+| 50K | consistency | on | S0.5 | 0.25 | 477 (17) | 608 | 0.594 | 0.312 | 86 | 875 | 5.5 | 181 | 150 | 906 (23) | < 0 |
+| 100K | standard | off | zero_k1 | 0.25 | -1,063 (13) | -811 | 0.434 | 0.130 | -81 | 486 | 13.2 | 356 | 340 | -1,111 (15) | 0.52 |
+| 100K | standard | off | S0.5 | 0.25 | -25 (17) | 134 | 0.310 | 0.254 | -3 | 923 | 8.1 | 221 | 199 | 117 (18) | 0.52 |
+| 100K | standard | on | zero_k1 | 0.25 | -1,128 (14) | -864 | 0.432 | 0.128 | -82 | 489 | 13.8 | 372 | 356 | -1,143 (15) | 0.57 |
+| 100K | standard | on | S0.5 | 0.25 | -83 (15) | 84 | 0.307 | 0.254 | -10 | 911 | 8.5 | 231 | 209 | 78 (17) | 0.57 |
+| 100K | consistency | off | zero_k1 | 0.25 | -1,098 (14) | -836 | 0.734 | 0.130 | -83 | 455 | 13.2 | 370 | 349 | -1,263 (18) | 0.34 |
+| 100K | consistency | off | S0.5 | 0.25 | 263 (21) | 440 | 0.584 | 0.254 | 32 | 1,208 | 8.1 | 247 | 213 | 825 (26) | 0.34 |
+| 100K | consistency | on | zero_k1 | 0.25 | -1,142 (15) | -868 | 0.737 | 0.128 | -83 | 488 | 13.8 | 387 | 365 | -1,201 (20) | 0.31 |
+| 100K | consistency | on | S0.5 | 0.25 | 344 (24) | 532 | 0.587 | 0.254 | 40 | 1,355 | 8.5 | 262 | 224 | 1,096 (31) | 0.31 |
+| 150K | standard | off | zero_k1 | 0.25 | -2,696 (26) | -2,397 | 0.412 | 0.128 | -169 | 777 | 15.9 | 423 | 403 | -2,664 (27) | 0.86 |
+| 150K | standard | off | S0.5 | 0.25 | -697 (26) | -513 | 0.286 | 0.257 | -73 | 1,386 | 9.5 | 257 | 231 | -461 (27) | 0.86 |
+| 150K | standard | on | zero_k1 | 0.25 | -2,878 (27) | -2,563 | 0.410 | 0.126 | -171 | 779 | 16.8 | 446 | 425 | -2,814 (29) | 0.90 |
+| 150K | standard | on | S0.5 | 0.25 | -795 (23) | -604 | 0.282 | 0.260 | -80 | 1,371 | 9.9 | 267 | 240 | -548 (25) | 0.90 |
+| 150K | consistency | off | zero_k1 | 0.25 | -2,701 (28) | -2,390 | 0.736 | 0.128 | -170 | 778 | 15.9 | 441 | 407 | -2,659 (33) | 0.54 |
+| 150K | consistency | off | S0.5 | 0.25 | -131 (33) | 75 | 0.577 | 0.257 | -14 | 1,967 | 9.5 | 289 | 244 | 939 (41) | 0.54 |
+| 150K | consistency | on | zero_k1 | 0.25 | -2,840 (30) | -2,512 | 0.738 | 0.126 | -169 | 833 | 16.8 | 465 | 430 | -2,666 (36) | 0.49 |
+| 150K | consistency | on | S0.5 | 0.25 | 18 (39) | 235 | 0.578 | 0.260 | 2 | 2,213 | 9.9 | 305 | 255 | 1,390 (49) | 0.49 |
+
+Zero edge, every band f (DLL off, standard pricing, Back2Funded off): cycle mean net
+
+| size | path | f 0.05 | f 0.10 | f 0.15 | f 0.20 | f 0.25 | f 0.35 (diag) | f 0.50 (diag) | best band f gap to runner-up (paired SE) |
+|---|---|---|---|---|---|---|---|---|---|
+| 50K | standard | -1,089 | -953 | -710 | -452 | -250 | -72 | -30 | 0.25 vs 0.20: 202 (4) |
+| 50K | consistency | -1,092 | -941 | -702 | -449 | -283 | -172 | -161 | 0.25 vs 0.20: 166 (5) |
+| 100K | standard | -9,998 | -6,492 | -3,575 | -1,900 | -1,063 | -420 | -260 | 0.25 vs 0.20: 837 (12) |
+| 100K | consistency | -9,934 | -6,399 | -3,497 | -1,869 | -1,098 | -578 | -496 | 0.25 vs 0.20: 771 (13) |
+| 150K | standard | -52,841 | -20,238 | -8,989 | -4,762 | -2,696 | -1,050 | -718 | 0.25 vs 0.20: 2,066 (27) |
+| 150K | consistency | -52,686 | -20,048 | -8,825 | -4,664 | -2,701 | -1,262 | -1,067 | 0.25 vs 0.20: 1,962 (28) |
+
+## Appendix: machine tables T1-T8 (verbatim from reports/stage_e19_briefs/results_tables.md)
+
+Generated 2026-10-10 19:25:30 PDT; jobs found 780 of 780; missing 0. Dollars rounded to whole dollars, probabilities to 3 decimals. Per configuration: 20,000 attempts, 20,000 XFAs, 20,000 cycles, 20,000 campaign replications; horizon 756 trading days; attempt cap 60 per cycle; base seed 20261019.
+
+## T1 Headline at zero_k1 and S 0.5, best band f per row
+
+Configuration: bootstrap tail, random direction, d8 costs, continuous contracts, payout policy max, call-up none (discretionary), every rule at readings[0], Back2Funded off (last column on), API fee included (ex-API column excludes it). Best f = band f with the highest cycle mean net, with its churn label (L-19: Combine purchases per 21 Combine-phase days, low <= 2.0, medium <= 4.0, else high); 'low-churn best f' = the best band f among 'low' rule sets and its cycle mean net. Dollars per cycle (SE in brackets).
+
+| edge | size | path | DLL | pricing | best f | churn (purch/21 Combine d) | low-churn best f: net | P(pass) | XFA P(any payout) | net mean (SE) | net ex API | net P5 / P50 / P95 | P(no payout) | purchases | net/purchase | per funded XFA | cycle days | days to 1st payout | net B2F on |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| zero_k1 | 50K | standard | off | standard | 0.25 | low (0.90) | 0.25: -250 | 0.175 | 0.515 | -250 (7) | -94 | -1,399 / -368 / 1,392 | 0.482 | 8.1 | -31 | 298 | 216 | 204 | -373 |
+| zero_k1 | 50K | standard | off | no_activation_fee | 0.25 | low (0.90) | 0.25: -472 | 0.175 | 0.515 | -472 (8) | -316 | -2,168 / -452 / 1,289 | 0.482 | 8.1 | -59 | 447 | 216 | 204 | -595 |
+| zero_k1 | 50K | standard | on | standard | 0.25 | low (0.89) | 0.25: -273 | 0.175 | 0.523 | -273 (8) | -108 | -1,486 / -389 / 1,364 | 0.474 | 8.5 | -32 | 305 | 230 | 217 | -358 |
+| zero_k1 | 50K | standard | on | no_activation_fee | 0.25 | low (0.89) | 0.25: -437 | 0.175 | 0.523 | -437 (9) | -271 | -2,121 / -427 / 1,319 | 0.474 | 8.5 | -52 | 454 | 230 | 217 | -521 |
+| zero_k1 | 50K | consistency | off | standard | 0.25 | low (0.90) | 0.25: -283 | 0.175 | 0.258 | -283 (8) | -120 | -1,477 / -446 / 1,595 | 0.741 | 8.1 | -35 | 267 | 226 | 209 | -554 |
+| zero_k1 | 50K | consistency | off | no_activation_fee | 0.25 | low (0.90) | 0.25: -504 | 0.175 | 0.258 | -504 (9) | -342 | -2,262 / -548 / 1,474 | 0.741 | 8.1 | -63 | 416 | 226 | 209 | -776 |
+| zero_k1 | 50K | consistency | on | standard | 0.25 | low (0.89) | 0.25: -307 | 0.175 | 0.255 | -307 (9) | -133 | -1,570 / -476 / 1,483 | 0.745 | 8.5 | -36 | 279 | 242 | 224 | -494 |
+| zero_k1 | 50K | consistency | on | no_activation_fee | 0.25 | low (0.89) | 0.25: -471 | 0.175 | 0.255 | -471 (10) | -297 | -2,201 / -526 / 1,422 | 0.745 | 8.5 | -56 | 428 | 242 | 224 | -657 |
+| zero_k1 | 100K | standard | off | standard | 0.25 | low (0.86) | 0.25: -1,063 | 0.130 | 0.562 | -1,063 (13) | -811 | -4,127 / -884 / 1,550 | 0.434 | 13.2 | -81 | 486 | 356 | 340 | -1,111 |
+| zero_k1 | 100K | standard | off | no_activation_fee | 0.25 | low (0.86) | 0.25: -1,574 | 0.130 | 0.562 | -1,574 (17) | -1,321 | -5,817 / -1,174 / 1,363 | 0.434 | 13.2 | -119 | 635 | 356 | 340 | -1,622 |
+| zero_k1 | 100K | standard | on | standard | 0.25 | low (0.86) | 0.25: -1,128 | 0.128 | 0.565 | -1,128 (14) | -864 | -4,296 / -947 / 1,500 | 0.432 | 13.8 | -82 | 489 | 372 | 356 | -1,143 |
+| zero_k1 | 100K | standard | on | no_activation_fee | 0.25 | low (0.86) | 0.25: -1,401 | 0.128 | 0.565 | -1,401 (16) | -1,138 | -5,311 / -1,054 / 1,453 | 0.432 | 13.8 | -102 | 638 | 372 | 356 | -1,417 |
+| zero_k1 | 100K | consistency | off | standard | 0.25 | low (0.86) | 0.25: -1,098 | 0.130 | 0.265 | -1,098 (14) | -836 | -4,223 / -987 / 1,884 | 0.734 | 13.2 | -83 | 455 | 370 | 349 | -1,263 |
+| zero_k1 | 100K | consistency | off | no_activation_fee | 0.25 | low (0.86) | 0.25: -1,609 | 0.130 | 0.265 | -1,609 (17) | -1,347 | -5,868 / -1,316 / 1,690 | 0.734 | 13.2 | -122 | 604 | 370 | 349 | -1,774 |
+| zero_k1 | 100K | consistency | on | standard | 0.25 | low (0.86) | 0.25: -1,142 | 0.128 | 0.262 | -1,142 (15) | -868 | -4,409 / -1,057 / 1,844 | 0.737 | 13.8 | -83 | 488 | 387 | 365 | -1,201 |
+| zero_k1 | 100K | consistency | on | no_activation_fee | 0.25 | low (0.86) | 0.25: -1,415 | 0.128 | 0.262 | -1,415 (17) | -1,141 | -5,396 / -1,192 / 1,759 | 0.737 | 13.8 | -103 | 637 | 387 | 365 | -1,474 |
+| zero_k1 | 150K | standard | off | standard | 0.25 | low (0.87) | 0.25: -2,696 | 0.128 | 0.591 | -2,696 (26) | -2,397 | -9,474 / -1,948 / 1,821 | 0.412 | 15.9 | -169 | 777 | 423 | 403 | -2,664 |
+| zero_k1 | 150K | standard | off | no_activation_fee | 0.25 | low (0.87) | 0.25: -3,025 | 0.128 | 0.591 | -3,025 (29) | -2,726 | -10,649 / -2,180 / 1,813 | 0.412 | 15.9 | -190 | 926 | 423 | 403 | -2,992 |
+| zero_k1 | 150K | standard | on | standard | 0.25 | low (0.87) | 0.25: -2,878 | 0.126 | 0.594 | -2,878 (27) | -2,563 | -9,922 / -2,104 / 1,741 | 0.410 | 16.8 | -171 | 779 | 446 | 425 | -2,814 |
+| zero_k1 | 150K | standard | on | no_activation_fee | 0.25 | low (0.87) | 0.25: -2,737 | 0.126 | 0.594 | -2,737 (27) | -2,422 | -9,782 / -1,965 / 1,886 | 0.410 | 16.8 | -163 | 928 | 446 | 425 | -2,672 |
+| zero_k1 | 150K | consistency | off | standard | 0.25 | low (0.87) | 0.25: -2,701 | 0.128 | 0.264 | -2,701 (28) | -2,390 | -9,577 / -2,114 / 2,507 | 0.736 | 15.9 | -170 | 778 | 441 | 407 | -2,659 |
+| zero_k1 | 150K | consistency | off | no_activation_fee | 0.25 | low (0.87) | 0.25: -3,030 | 0.128 | 0.264 | -3,030 (30) | -2,719 | -10,801 / -2,250 / 2,448 | 0.736 | 15.9 | -190 | 927 | 441 | 407 | -2,988 |
+| zero_k1 | 150K | consistency | on | standard | 0.25 | low (0.87) | 0.25: -2,840 | 0.126 | 0.263 | -2,840 (30) | -2,512 | -10,004 / -2,258 / 2,521 | 0.738 | 16.8 | -169 | 833 | 465 | 430 | -2,666 |
+| zero_k1 | 150K | consistency | on | no_activation_fee | 0.25 | low (0.87) | 0.25: -2,699 | 0.126 | 0.263 | -2,699 (30) | -2,371 | -9,891 / -2,127 / 2,670 | 0.738 | 16.8 | -161 | 982 | 465 | 430 | -2,524 |
+| S0.5 | 50K | standard | off | standard | 0.25 | low (0.98) | 0.25: 278 | 0.307 | 0.639 | 278 (13) | 387 | -862 / -216 / 2,924 | 0.360 | 5.3 | 52 | 637 | 148 | 131 | 358 |
+| S0.5 | 50K | standard | off | no_activation_fee | 0.25 | low (0.98) | 0.25: 182 | 0.307 | 0.639 | 182 (13) | 291 | -1,262 / -215 / 2,816 | 0.360 | 5.3 | 34 | 786 | 148 | 131 | 262 |
+| S0.5 | 50K | standard | on | standard | 0.25 | low (0.97) | 0.25: 249 | 0.312 | 0.653 | 249 (12) | 363 | -891 / -220 / 2,897 | 0.345 | 5.5 | 45 | 632 | 155 | 138 | 344 |
+| S0.5 | 50K | standard | on | no_activation_fee | 0.25 | low (0.97) | 0.25: 194 | 0.312 | 0.653 | 194 (12) | 308 | -1,208 / -186 / 2,851 | 0.345 | 5.5 | 35 | 781 | 155 | 138 | 289 |
+| S0.5 | 50K | consistency | off | standard | 0.20 | low (0.96) | 0.20: 391 | 0.325 | 0.462 | 391 (15) | 538 | -1,052 / -290 / 3,947 | 0.537 | 6.4 | 61 | 863 | 204 | 170 | 692 |
+| S0.5 | 50K | consistency | off | no_activation_fee | 0.25 | low (0.98) | 0.25: 287 | 0.307 | 0.402 | 287 (14) | 409 | -1,343 / -248 / 3,723 | 0.597 | 5.3 | 54 | 923 | 167 | 140 | 562 |
+| S0.5 | 50K | consistency | on | standard | 0.25 | low (0.97) | 0.25: 477 | 0.312 | 0.405 | 477 (17) | 608 | -965 / -290 / 4,253 | 0.594 | 5.5 | 86 | 875 | 181 | 150 | 906 |
+| S0.5 | 50K | consistency | on | no_activation_fee | 0.25 | low (0.97) | 0.25: 422 | 0.312 | 0.405 | 422 (17) | 553 | -1,262 / -228 / 4,211 | 0.594 | 5.5 | 76 | 1,024 | 181 | 150 | 851 |
+| S0.5 | 100K | standard | off | standard | 0.25 | low (0.93) | 0.25: -25 | 0.254 | 0.691 | -25 (17) | 134 | -2,270 / -405 / 3,521 | 0.310 | 8.1 | -3 | 923 | 221 | 199 | 117 |
+| S0.5 | 100K | standard | off | no_activation_fee | 0.25 | low (0.93) | 0.25: -282 | 0.254 | 0.691 | -282 (18) | -123 | -3,164 / -505 / 3,403 | 0.310 | 8.1 | -35 | 1,072 | 221 | 199 | -140 |
+| S0.5 | 100K | standard | on | standard | 0.25 | low (0.93) | 0.25: -83 | 0.254 | 0.695 | -83 (15) | 84 | -2,407 / -444 / 3,491 | 0.307 | 8.5 | -10 | 911 | 231 | 209 | 78 |
+| S0.5 | 100K | standard | on | no_activation_fee | 0.25 | low (0.93) | 0.25: -195 | 0.254 | 0.695 | -195 (16) | -28 | -2,927 / -445 / 3,452 | 0.307 | 8.5 | -23 | 1,060 | 231 | 209 | -34 |
+| S0.5 | 100K | consistency | off | standard | 0.25 | low (0.93) | 0.25: 263 | 0.254 | 0.413 | 263 (21) | 440 | -2,378 / -504 / 5,187 | 0.584 | 8.1 | 32 | 1,208 | 247 | 213 | 825 |
+| S0.5 | 100K | consistency | off | no_activation_fee | 0.25 | low (0.93) | 0.25: 6 | 0.254 | 0.413 | 6 (22) | 183 | -3,194 / -534 / 5,021 | 0.584 | 8.1 | 1 | 1,357 | 247 | 213 | 568 |
+| S0.5 | 100K | consistency | on | standard | 0.25 | low (0.93) | 0.25: 344 | 0.254 | 0.411 | 344 (24) | 532 | -2,492 / -518 / 5,903 | 0.587 | 8.5 | 40 | 1,355 | 262 | 224 | 1,096 |
+| S0.5 | 100K | consistency | on | no_activation_fee | 0.25 | low (0.93) | 0.25: 232 | 0.254 | 0.411 | 232 (25) | 420 | -2,963 / -488 / 5,890 | 0.587 | 8.5 | 27 | 1,504 | 262 | 224 | 984 |
+| S0.5 | 150K | standard | off | standard | 0.25 | low (0.93) | 0.25: -697 | 0.257 | 0.715 | -697 (26) | -513 | -5,132 / -848 / 4,528 | 0.286 | 9.5 | -73 | 1,386 | 257 | 231 | -461 |
+| S0.5 | 150K | standard | off | no_activation_fee | 0.25 | low (0.93) | 0.25: -833 | 0.257 | 0.715 | -833 (27) | -649 | -5,754 / -888 / 4,539 | 0.286 | 9.5 | -88 | 1,535 | 257 | 231 | -597 |
+| S0.5 | 150K | standard | on | standard | 0.25 | low (0.93) | 0.25: -795 | 0.260 | 0.721 | -795 (23) | -604 | -5,360 / -909 / 4,461 | 0.282 | 9.9 | -80 | 1,371 | 267 | 240 | -548 |
+| S0.5 | 150K | standard | on | no_activation_fee | 0.25 | low (0.93) | 0.25: -650 | 0.260 | 0.721 | -650 (23) | -460 | -5,211 / -767 / 4,610 | 0.282 | 9.9 | -66 | 1,520 | 267 | 240 | -403 |
+| S0.5 | 150K | consistency | off | standard | 0.25 | low (0.93) | 0.25: -131 | 0.257 | 0.421 | -131 (33) | 75 | -5,176 / -876 / 7,734 | 0.577 | 9.5 | -14 | 1,967 | 289 | 244 | 939 |
+| S0.5 | 150K | consistency | off | no_activation_fee | 0.25 | low (0.93) | 0.25: -267 | 0.257 | 0.421 | -267 (34) | -61 | -5,764 / -974 / 7,726 | 0.577 | 9.5 | -28 | 2,116 | 289 | 244 | 803 |
+| S0.5 | 150K | consistency | on | standard | 0.25 | low (0.93) | 0.25: 18 | 0.260 | 0.420 | 18 (39) | 235 | -5,382 / -1,017 / 8,828 | 0.578 | 9.9 | 2 | 2,213 | 305 | 255 | 1,390 |
+| S0.5 | 150K | consistency | on | no_activation_fee | 0.25 | low (0.93) | 0.25: 162 | 0.260 | 0.420 | 162 (39) | 380 | -5,240 / -868 / 8,977 | 0.578 | 9.9 | 16 | 2,362 | 305 | 255 | 1,534 |
+
+## T2 Cycle mean net (SE) by f x edge, DLL off, cheaper pricing per cell
+
+Headline configuration as T1, DLL off, Back2Funded off, API fee included. Cheaper pricing = the pricing path with the lower mean total fees in that cell (suffix s = standard, n = no_activation_fee). f 0.35 and 0.50 are diagnostic, outside the policy band.
+
+### 50K, standard path
+
+| edge | f 0.05 | f 0.10 | f 0.15 | f 0.20 | f 0.25 | f 0.35* | f 0.50* |
+|---|---|---|---|---|---|---|---|
+| zero_k1 | -1,089 (9) s | -953 (9) s | -710 (8) s | -452 (7) s | -250 (7) s | -72 (9) s | -30 (10) s |
+| zero_k3 | -2,508 (16) s | -2,310 (15) s | -1,764 (12) s | -1,152 (8) s | -755 (7) s | -452 (6) s | -341 (7) s |
+| S0 | -588 (8) s | -490 (8) s | -331 (8) s | -168 (8) s | -8 (9) s | 142 (12) s | 148 (13) s |
+| S0.15 | -457 (9) s | -382 (8) s | -234 (8) s | -79 (9) s | 74 (10) s | 219 (14) s | 217 (15) s |
+| S0.3 | -343 (9) s | -269 (8) s | -130 (8) s | 25 (9) s | 159 (10) s | 302 (15) s | 309 (18) s |
+| S0.5 | -176 (9) s | -111 (9) s | 5 (9) s | 154 (10) s | 278 (13) s | 426 (18) s | 461 (24) s |
+| S0.75 | 23 (11) s | 81 (10) s | 188 (11) s | 328 (13) s | 463 (17) s | 609 (24) s | 641 (31) s |
+| S1 | 221 (12) s | 270 (11) s | 359 (12) s | 536 (18) s | 689 (23) s | 885 (33) s | 895 (39) s |
+
+### 50K, consistency path
+
+| edge | f 0.05 | f 0.10 | f 0.15 | f 0.20 | f 0.25 | f 0.35* | f 0.50* |
+|---|---|---|---|---|---|---|---|
+| zero_k1 | -1,092 (10) s | -941 (9) s | -702 (9) s | -449 (8) s | -283 (8) s | -172 (8) s | -161 (7) s |
+| zero_k3 | -2,563 (16) s | -2,360 (15) s | -1,813 (12) s | -1,210 (9) s | -823 (7) s | -537 (6) s | -440 (6) s |
+| S0 | -497 (10) s | -371 (10) s | -217 (10) s | -91 (10) s | 3 (10) s | 37 (9) s | -6 (9) s |
+| S0.15 | -306 (11) s | -210 (11) s | -74 (11) s | 38 (11) s | 109 (11) s | 112 (10) s | 56 (10) s |
+| S0.3 | -139 (12) s | -36 (12) s | 87 (13) s | 179 (13) s | 222 (12) s | 199 (11) s | 116 (11) s |
+| S0.5 | 93 (14) s | 227 (15) s | 318 (15) s | 391 (15) s | 384 (14) s | 335 (14) s | 216 (13) s |
+| S0.75 | 444 (17) s | 564 (18) s | 668 (19) s | 685 (19) s | 656 (18) s | 521 (17) s | 354 (16) s |
+| S1 | 798 (20) s | 991 (23) s | 1,135 (25) s | 1,114 (25) s | 1,002 (24) s | 767 (22) s | 550 (21) s |
+
+### 100K, standard path
+
+| edge | f 0.05 | f 0.10 | f 0.15 | f 0.20 | f 0.25 | f 0.35* | f 0.50* |
+|---|---|---|---|---|---|---|---|
+| zero_k1 | -9,998 (65) s | -6,492 (44) s | -3,575 (26) s | -1,900 (17) s | -1,063 (13) s | -420 (13) s | -260 (13) s |
+| zero_k3 | -24,067 (70) s | -15,684 (59) s | -8,002 (42) s | -3,866 (25) s | -2,167 (16) s | -1,116 (12) s | -813 (12) s |
+| S0 | -4,673 (31) s | -3,343 (24) s | -2,036 (18) s | -1,143 (14) s | -559 (14) s | -64 (15) s | 11 (18) s |
+| S0.15 | -3,868 (26) s | -2,766 (21) s | -1,676 (16) s | -926 (14) s | -397 (14) s | 53 (16) s | 117 (20) s |
+| S0.3 | -3,192 (22) s | -2,262 (18) s | -1,373 (15) s | -723 (14) s | -244 (15) s | 181 (18) s | 243 (24) s |
+| S0.5 | -2,445 (18) s | -1,727 (15) s | -1,026 (14) s | -449 (14) s | -25 (17) s | 368 (22) s | 429 (31) s |
+| S0.75 | -1,767 (16) s | -1,193 (14) s | -626 (14) s | -111 (15) s | 260 (21) s | 629 (29) s | 701 (41) s |
+| S1 | -1,217 (15) s | -746 (14) s | -256 (14) s | 197 (18) s | 558 (24) s | 909 (35) s | 1,003 (50) s |
+
+### 100K, consistency path
+
+| edge | f 0.05 | f 0.10 | f 0.15 | f 0.20 | f 0.25 | f 0.35* | f 0.50* |
+|---|---|---|---|---|---|---|---|
+| zero_k1 | -9,934 (66) s | -6,399 (44) s | -3,497 (27) s | -1,869 (18) s | -1,098 (14) s | -578 (11) s | -496 (11) s |
+| zero_k3 | -24,090 (70) s | -15,713 (59) s | -8,057 (42) s | -3,942 (25) s | -2,267 (16) s | -1,265 (11) s | -989 (10) s |
+| S0 | -4,403 (32) s | -3,046 (25) s | -1,760 (20) s | -951 (18) s | -509 (16) s | -225 (13) s | -249 (12) s |
+| S0.15 | -3,515 (27) s | -2,364 (23) s | -1,296 (20) s | -649 (18) s | -279 (17) s | -98 (14) s | -152 (13) s |
+| S0.3 | -2,745 (25) s | -1,756 (22) s | -866 (20) s | -353 (20) s | -63 (18) s | 42 (15) s | -48 (15) s |
+| S0.5 | -1,834 (23) s | -1,047 (22) s | -350 (23) s | 64 (22) s | 263 (21) s | 234 (17) s | 88 (17) s |
+| S0.75 | -961 (23) s | -243 (24) s | 418 (28) s | 696 (28) s | 696 (25) s | 512 (21) s | 284 (20) s |
+| S1 | -193 (25) s | 520 (28) s | 1,253 (35) s | 1,430 (35) s | 1,295 (33) s | 860 (27) s | 532 (25) s |
+
+### 150K, standard path
+
+| edge | f 0.05 | f 0.10 | f 0.15 | f 0.20 | f 0.25 | f 0.35* | f 0.50* |
+|---|---|---|---|---|---|---|---|
+| zero_k1 | -52,841 (309) s | -20,238 (135) s | -8,989 (65) s | -4,762 (38) s | -2,696 (26) s | -1,050 (20) s | -718 (23) s |
+| zero_k3 | -86,213 (125) s | -43,244 (152) s | -18,430 (100) s | -9,247 (59) s | -5,030 (36) s | -2,262 (21) s | -1,669 (20) s |
+| S0 | -19,666 (130) s | -10,042 (68) s | -5,384 (42) s | -2,994 (29) s | -1,672 (23) s | -455 (23) s | -267 (27) s |
+| S0.15 | -15,206 (98) s | -8,249 (57) s | -4,506 (36) s | -2,524 (26) s | -1,335 (23) s | -270 (24) s | -99 (28) s |
+| S0.3 | -11,940 (76) s | -6,739 (47) s | -3,775 (32) s | -2,091 (25) s | -1,053 (24) s | -44 (27) s | 99 (32) s |
+| S0.5 | -8,811 (55) s | -5,129 (37) s | -2,941 (27) s | -1,587 (24) s | -697 (26) s | 223 (29) s | 403 (42) s |
+| S0.75 | -6,398 (39) s | -3,689 (29) s | -2,111 (24) s | -999 (23) s | -224 (26) s | 597 (34) s | 828 (57) n |
+| S1 | -4,739 (30) s | -2,650 (24) s | -1,382 (22) s | -449 (24) s | 303 (32) s | 1,101 (53) n | 1,302 (72) n |
+
+### 150K, consistency path
+
+| edge | f 0.05 | f 0.10 | f 0.15 | f 0.20 | f 0.25 | f 0.35* | f 0.50* |
+|---|---|---|---|---|---|---|---|
+| zero_k1 | -52,686 (310) s | -20,048 (135) s | -8,825 (65) s | -4,664 (40) s | -2,701 (28) s | -1,262 (19) s | -1,067 (18) s |
+| zero_k3 | -86,218 (125) s | -43,275 (152) s | -18,498 (100) s | -9,347 (59) s | -5,169 (36) s | -2,476 (20) s | -1,944 (18) s |
+| S0 | -19,187 (130) s | -9,471 (69) s | -4,853 (45) s | -2,611 (33) s | -1,500 (27) s | -632 (22) s | -645 (19) s |
+| S0.15 | -14,606 (99) s | -7,528 (58) s | -3,798 (41) s | -2,014 (33) s | -1,082 (28) s | -417 (23) s | -479 (21) s |
+| S0.3 | -11,217 (77) s | -5,839 (49) s | -2,835 (39) s | -1,404 (33) s | -683 (30) s | -180 (25) s | -315 (22) s |
+| S0.5 | -7,904 (56) s | -3,936 (42) s | -1,631 (40) s | -606 (36) s | -131 (33) s | 148 (28) s | -97 (25) s |
+| S0.75 | -5,213 (43) s | -2,076 (38) s | -129 (45) s | 528 (44) s | 692 (40) s | 601 (33) s | 222 (30) n |
+| S1 | -3,287 (37) s | -485 (39) s | 1,474 (54) s | 1,904 (55) s | 1,705 (51) s | 1,146 (41) n | 631 (38) n |
+
+## T3 Break-even net Sharpe
+
+Headline configuration, Back2Funded off, API fee included. Linear interpolation of the cycle mean net over S in {0, 0.15, 0.3, 0.5, 0.75, 1.0}; '< 0' = positive already at S = 0, '> 1' = still negative at S = 1.0. 'best band f' uses at each S the band f with the highest mean net. f 0.35 / 0.50 diagnostic.
+
+| size | path | DLL | pricing | f 0.05 | f 0.10 | f 0.15 | f 0.20 | f 0.25 | f 0.35 | f 0.50 | best band f |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 50K | standard | off | standard | 0.72 | 0.64 | 0.49 | 0.26 | 0.02 | < 0 | < 0 | 0.02 |
+| 50K | standard | off | no_activation_fee | > 1 | 0.90 | 0.73 | 0.49 | 0.23 | < 0 | < 0 | 0.23 |
+| 50K | standard | on | standard | 0.75 | 0.67 | 0.52 | 0.31 | 0.04 | < 0 | < 0 | 0.04 |
+| 50K | standard | on | no_activation_fee | 0.95 | 0.85 | 0.68 | 0.45 | 0.19 | < 0 | < 0 | 0.19 |
+| 50K | consistency | off | standard | 0.42 | 0.33 | 0.22 | 0.11 | < 0 | < 0 | 0.02 | < 0 |
+| 50K | consistency | off | no_activation_fee | 0.65 | 0.53 | 0.42 | 0.29 | 0.18 | 0.09 | 0.18 | 0.18 |
+| 50K | consistency | on | standard | 0.45 | 0.33 | 0.23 | 0.09 | < 0 | < 0 | 0.04 | < 0 |
+| 50K | consistency | on | no_activation_fee | 0.61 | 0.49 | 0.36 | 0.22 | 0.10 | 0.00 | 0.15 | 0.10 |
+| 100K | standard | off | standard | > 1 | > 1 | > 1 | 0.84 | 0.52 | 0.08 | < 0 | 0.52 |
+| 100K | standard | off | no_activation_fee | > 1 | > 1 | > 1 | > 1 | 0.71 | 0.27 | 0.18 | 0.71 |
+| 100K | standard | on | standard | > 1 | > 1 | > 1 | 0.87 | 0.57 | 0.05 | < 0 | 0.57 |
+| 100K | standard | on | no_activation_fee | > 1 | > 1 | > 1 | 0.96 | 0.66 | 0.13 | < 0 | 0.66 |
+| 100K | consistency | off | standard | > 1 | 0.83 | 0.61 | 0.47 | 0.34 | 0.25 | 0.37 | 0.34 |
+| 100K | consistency | off | no_activation_fee | > 1 | > 1 | 0.76 | 0.62 | 0.50 | 0.40 | 0.52 | 0.50 |
+| 100K | consistency | on | standard | > 1 | 0.83 | 0.59 | 0.43 | 0.31 | 0.16 | 0.28 | 0.31 |
+| 100K | consistency | on | no_activation_fee | > 1 | 0.92 | 0.67 | 0.51 | 0.38 | 0.22 | 0.37 | 0.38 |
+| 150K | standard | off | standard | > 1 | > 1 | > 1 | > 1 | 0.86 | 0.33 | 0.22 | 0.86 |
+| 150K | standard | off | no_activation_fee | > 1 | > 1 | > 1 | > 1 | 0.90 | 0.36 | 0.25 | 0.90 |
+| 150K | standard | on | standard | > 1 | > 1 | > 1 | > 1 | 0.90 | 0.32 | 0.06 | 0.90 |
+| 150K | standard | on | no_activation_fee | > 1 | > 1 | > 1 | > 1 | 0.83 | 0.24 | 0.02 | 0.83 |
+| 150K | consistency | off | standard | > 1 | > 1 | 0.77 | 0.63 | 0.54 | 0.41 | 0.58 | 0.54 |
+| 150K | consistency | off | no_activation_fee | > 1 | > 1 | 0.81 | 0.68 | 0.58 | 0.43 | 0.58 | 0.58 |
+| 150K | consistency | on | standard | > 1 | > 1 | 0.76 | 0.60 | 0.49 | 0.36 | 0.47 | 0.49 |
+| 150K | consistency | on | no_activation_fee | > 1 | > 1 | 0.73 | 0.57 | 0.45 | 0.29 | 0.40 | 0.45 |
+
+### Effective net Sharpe of the zero edge (headline shocks, DLL off)
+
+Computed from the vehicle mix actually traded: the scalar reference replays the first 200 attempt rows and the first 200 XFA rows (standard path) of each job with a day log; risk-weighted S_eff = -sqrt(252) x sum(n x k x rt_u) / sum(n x sigma_u) over all traded days of both phases (expected cost per dollar of daily sd); day-weighted = -sqrt(252) x mean(k x rt_u / sigma_u). 'full share' = share of traded days on the full-size contract.
+
+| size | edge | f | S_eff risk-weighted | S_eff day-weighted | full share | days logged |
+|---|---|---|---|---|---|---|
+| 100K | zero_k1 | 0.05 | -0.51 | -0.52 | 0.195 | 44417 |
+| 100K | zero_k1 | 0.10 | -0.52 | -0.53 | 0.196 | 33761 |
+| 100K | zero_k1 | 0.15 | -0.52 | -0.53 | 0.200 | 25693 |
+| 100K | zero_k1 | 0.20 | -0.50 | -0.51 | 0.242 | 19956 |
+| 100K | zero_k1 | 0.25 | -0.45 | -0.50 | 0.273 | 15704 |
+| 100K | zero_k1 | 0.35 | -0.39 | -0.48 | 0.351 | 10354 |
+| 100K | zero_k1 | 0.50 | -0.37 | -0.46 | 0.517 | 6443 |
+| 100K | zero_k3 | 0.05 | -1.54 | -1.59 | 0.201 | 31560 |
+| 100K | zero_k3 | 0.10 | -1.57 | -1.58 | 0.193 | 26762 |
+| 100K | zero_k3 | 0.15 | -1.57 | -1.59 | 0.194 | 20778 |
+| 100K | zero_k3 | 0.20 | -1.48 | -1.53 | 0.229 | 16355 |
+| 100K | zero_k3 | 0.25 | -1.45 | -1.52 | 0.257 | 12925 |
+| 100K | zero_k3 | 0.35 | -1.35 | -1.45 | 0.282 | 8572 |
+| 100K | zero_k3 | 0.50 | -1.16 | -1.36 | 0.483 | 5524 |
+| 150K | zero_k1 | 0.05 | -0.51 | -0.52 | 0.196 | 65021 |
+| 150K | zero_k1 | 0.10 | -0.51 | -0.52 | 0.196 | 44409 |
+| 150K | zero_k1 | 0.15 | -0.48 | -0.50 | 0.240 | 32192 |
+| 150K | zero_k1 | 0.20 | -0.47 | -0.49 | 0.261 | 23483 |
+| 150K | zero_k1 | 0.25 | -0.46 | -0.48 | 0.275 | 18105 |
+| 150K | zero_k1 | 0.35 | -0.43 | -0.46 | 0.404 | 10391 |
+| 150K | zero_k1 | 0.50 | -0.41 | -0.45 | 0.520 | 6208 |
+| 150K | zero_k3 | 0.05 | -1.52 | -1.56 | 0.190 | 49043 |
+| 150K | zero_k3 | 0.10 | -1.53 | -1.55 | 0.190 | 34884 |
+| 150K | zero_k3 | 0.15 | -1.43 | -1.49 | 0.230 | 25937 |
+| 150K | zero_k3 | 0.20 | -1.39 | -1.47 | 0.250 | 19695 |
+| 150K | zero_k3 | 0.25 | -1.36 | -1.44 | 0.263 | 14866 |
+| 150K | zero_k3 | 0.35 | -1.30 | -1.40 | 0.383 | 9170 |
+| 150K | zero_k3 | 0.50 | -1.24 | -1.35 | 0.514 | 5605 |
+| 50K | zero_k1 | 0.05 | -0.49 | -0.52 | 0.194 | 24688 |
+| 50K | zero_k1 | 0.10 | -0.51 | -0.52 | 0.195 | 21234 |
+| 50K | zero_k1 | 0.15 | -0.52 | -0.52 | 0.198 | 18607 |
+| 50K | zero_k1 | 0.20 | -0.52 | -0.52 | 0.200 | 15556 |
+| 50K | zero_k1 | 0.25 | -0.50 | -0.51 | 0.229 | 12358 |
+| 50K | zero_k1 | 0.35 | -0.47 | -0.49 | 0.273 | 8021 |
+| 50K | zero_k1 | 0.50 | -0.45 | -0.47 | 0.333 | 5107 |
+| 50K | zero_k3 | 0.05 | -1.47 | -1.55 | 0.194 | 19482 |
+| 50K | zero_k3 | 0.10 | -1.52 | -1.56 | 0.194 | 17951 |
+| 50K | zero_k3 | 0.15 | -1.54 | -1.56 | 0.192 | 15154 |
+| 50K | zero_k3 | 0.20 | -1.53 | -1.56 | 0.188 | 12500 |
+| 50K | zero_k3 | 0.25 | -1.47 | -1.52 | 0.219 | 10315 |
+| 50K | zero_k3 | 0.35 | -1.41 | -1.46 | 0.265 | 6831 |
+| 50K | zero_k3 | 0.50 | -1.35 | -1.42 | 0.312 | 4663 |
+
+## T4 Campaigns at the best band f
+
+Headline configuration, DLL off, Back2Funded off, API fee included in fees (one per user, per started 21-trading-day period). Pricing = the path with the higher cycle mean net at its best band f. P50 / P80 = the K reached with 50% / 80% probability ('-' when the share reaching the target is below that); cap 400 purchases. Churn label of the best f as in T1; the last column gives the best band f among 'low' churn rule sets and its $5k purchases P50 / P80; purchases per 21 elapsed days = mean over the replications that reached $5k.
+
+| edge | size | path | pricing | best f | churn (purch/21 Combine d) | slots | $5k not reached | $5k purchases P50/P80 | $5k fees P50/P80 | $5k days P50/P80 | $10k not reached | $10k purchases P50/P80 | $10k fees P50/P80 | $10k days P50/P80 | $5k purchases per 21 elapsed d (reached) | low-churn best f: $5k purch P50/P80 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| zero_k1 | 50K | standard | standard | 0.25 | low (0.90) | 1 | 0.000 | 103 / 156 | 8,949 / 13,302 | 2,738 / 4,123 | 0.015 | 194 / 267 | 16,775 / 22,792 | 5,175 / 7,093 | 0.79 | 0.25: 103 / 156 |
+| zero_k1 | 50K | standard | standard | 0.25 | low (0.90) | 5 | 0.000 | 112 / 164 | 7,918 / 11,499 | 570 / 845 | 0.018 | 202 / 276 | 14,366 / 19,390 | 1,055 / 1,439 | 4.15 | 0.25: 112 / 164 |
+| zero_k1 | 50K | consistency | standard | 0.25 | low (0.90) | 1 | 0.004 | 113 / 182 | 9,909 / 15,639 | 3,148 / 4,990 | 0.056 | 210 / 304 | 18,308 / 26,191 | 5,858 / 8,385 | 0.75 | 0.25: 113 / 182 |
+| zero_k1 | 50K | consistency | standard | 0.25 | low (0.90) | 5 | 0.004 | 123 / 192 | 8,720 / 13,480 | 656 / 1,029 | 0.065 | 220 / 313 | 15,652 / 22,096 | 1,193 / 1,706 | 3.97 | 0.25: 123 / 192 |
+| zero_k1 | 100K | standard | standard | 0.25 | low (0.86) | 1 | 0.004 | 125 / 196 | 16,120 / 25,154 | 3,332 / 5,239 | 0.087 | 230 / 329 | 29,665 / 42,228 | 6,180 / 8,804 | 0.78 | 0.25: 125 / 196 |
+| zero_k1 | 100K | standard | standard | 0.25 | low (0.86) | 5 | 0.006 | 133 / 206 | 15,114 / 23,168 | 687 / 1,071 | 0.096 | 239 / 339 | 27,248 / 38,472 | 1,260 / 1,794 | 4.10 | 0.25: 133 / 206 |
+| zero_k1 | 100K | consistency | standard | 0.25 | low (0.86) | 1 | 0.023 | 132 / 226 | 17,182 / 29,176 | 3,673 / 6,235 | 0.153 | 244 / 370 | 31,658 / 47,618 | 6,788 / 10,199 | 0.75 | 0.25: 132 / 226 |
+| zero_k1 | 100K | consistency | standard | 0.25 | low (0.86) | 5 | 0.026 | 144 / 237 | 16,362 / 26,845 | 770 / 1,281 | 0.167 | 255 / 380 | 29,110 / 43,172 | 1,394 / 2,075 | 3.95 | 0.25: 144 / 237 |
+| zero_k1 | 150K | standard | standard | 0.25 | low (0.87) | 1 | 0.004 | 106 / 179 | 24,122 / 40,529 | 2,804 / 4,711 | 0.051 | 193 / 293 | 43,854 / 66,084 | 5,115 / 7,707 | 0.79 | 0.25: 106 / 179 |
+| zero_k1 | 150K | standard | standard | 0.25 | low (0.87) | 5 | 0.004 | 112 / 183 | 23,816 / 38,658 | 572 / 941 | 0.054 | 199 / 297 | 42,200 / 62,838 | 1,032 / 1,545 | 4.18 | 0.25: 112 / 183 |
+| zero_k1 | 150K | consistency | standard | 0.25 | low (0.87) | 1 | 0.020 | 113 / 208 | 25,752 / 46,971 | 3,103 / 5,642 | 0.105 | 201 / 328 | 45,714 / 74,508 | 5,533 / 8,971 | 0.76 | 0.25: 113 / 208 |
+| zero_k1 | 150K | consistency | standard | 0.25 | low (0.87) | 5 | 0.023 | 123 / 218 | 26,103 / 45,981 | 651 / 1,159 | 0.119 | 209 / 338 | 44,278 / 71,489 | 1,126 / 1,824 | 4.03 | 0.25: 123 / 218 |
+| S0.3 | 50K | standard | standard | 0.25 | low (0.97) | 1 | 0.000 | 51 / 80 | 4,799 / 7,385 | 1,357 / 2,114 | 0.000 | 93 / 133 | 8,752 / 12,298 | 2,507 / 3,540 | 0.77 | 0.25: 51 / 80 |
+| S0.3 | 50K | standard | standard | 0.25 | low (0.97) | 5 | 0.000 | 59 / 88 | 4,600 / 6,764 | 297 / 447 | 0.000 | 101 / 141 | 7,881 / 10,866 | 524 / 732 | 4.22 | 0.25: 59 / 88 |
+| S0.3 | 50K | consistency | standard | 0.25 | low (0.97) | 1 | 0.000 | 46 / 77 | 4,472 / 7,272 | 1,352 / 2,195 | 0.000 | 83 / 126 | 7,988 / 11,902 | 2,458 / 3,634 | 0.71 | 0.25: 46 / 77 |
+| S0.3 | 50K | consistency | standard | 0.25 | low (0.97) | 5 | 0.000 | 57 / 88 | 4,424 / 6,800 | 305 / 476 | 0.000 | 94 / 137 | 7,390 / 10,580 | 530 / 762 | 3.95 | 0.25: 57 / 88 |
+| S0.3 | 100K | standard | standard | 0.25 | low (0.92) | 1 | 0.000 | 60 / 97 | 8,065 / 12,921 | 1,581 / 2,557 | 0.000 | 107 / 160 | 14,460 / 21,247 | 2,859 / 4,229 | 0.78 | 0.25: 60 / 97 |
+| S0.3 | 100K | standard | standard | 0.25 | low (0.92) | 5 | 0.000 | 68 / 106 | 8,084 / 12,411 | 341 / 535 | 0.000 | 116 / 170 | 13,907 / 19,944 | 602 / 875 | 4.24 | 0.25: 68 / 106 |
+| S0.3 | 100K | consistency | standard | 0.25 | low (0.92) | 1 | 0.000 | 54 / 96 | 7,411 / 12,912 | 1,543 / 2,689 | 0.000 | 94 / 151 | 12,838 / 20,288 | 2,723 / 4,270 | 0.72 | 0.25: 54 / 96 |
+| S0.3 | 100K | consistency | standard | 0.25 | low (0.92) | 5 | 0.000 | 64 / 106 | 7,626 / 12,456 | 341 / 567 | 0.000 | 105 / 160 | 12,562 / 18,946 | 583 / 879 | 4.01 | 0.25: 64 / 106 |
+| S0.3 | 150K | standard | standard | 0.25 | low (0.92) | 1 | 0.000 | 51 / 89 | 11,886 / 20,527 | 1,340 / 2,328 | 0.000 | 90 / 141 | 20,954 / 32,524 | 2,394 / 3,705 | 0.79 | 0.25: 51 / 89 |
+| S0.3 | 150K | standard | standard | 0.25 | low (0.92) | 5 | 0.000 | 58 / 96 | 12,639 / 20,680 | 288 / 482 | 0.000 | 98 / 148 | 21,141 / 31,911 | 500 / 758 | 4.33 | 0.25: 58 / 96 |
+| S0.3 | 150K | consistency | standard | 0.25 | low (0.92) | 1 | 0.000 | 45 / 86 | 10,542 / 19,872 | 1,280 / 2,371 | 0.000 | 76 / 131 | 17,833 / 30,231 | 2,201 / 3,655 | 0.73 | 0.25: 45 / 86 |
+| S0.3 | 150K | consistency | standard | 0.25 | low (0.92) | 5 | 0.000 | 55 / 95 | 11,878 / 20,410 | 288 / 503 | 0.000 | 87 / 140 | 18,808 / 30,204 | 474 / 763 | 4.11 | 0.25: 55 / 95 |
+| S0.5 | 50K | standard | standard | 0.25 | low (0.98) | 1 | 0.000 | 43 / 69 | 4,222 / 6,512 | 1,174 / 1,833 | 0.000 | 78 / 114 | 7,538 / 10,768 | 2,128 / 3,047 | 0.76 | 0.25: 43 / 69 |
+| S0.5 | 50K | standard | standard | 0.25 | low (0.98) | 5 | 0.000 | 51 / 76 | 4,052 / 5,934 | 255 / 383 | 0.000 | 86 / 121 | 6,900 / 9,530 | 449 / 628 | 4.24 | 0.25: 51 / 76 |
+| S0.5 | 50K | consistency | standard | 0.20 | low (0.96) | 1 | 0.000 | 43 / 71 | 4,026 / 6,526 | 1,289 / 2,078 | 0.000 | 75 / 116 | 7,037 / 10,632 | 2,306 / 3,425 | 0.67 | 0.20: 43 / 71 |
+| S0.5 | 50K | consistency | standard | 0.20 | low (0.96) | 5 | 0.000 | 55 / 83 | 4,119 / 6,162 | 304 / 460 | 0.000 | 87 / 127 | 6,646 / 9,494 | 508 / 727 | 3.81 | 0.20: 55 / 83 |
+| S0.5 | 100K | standard | standard | 0.25 | low (0.93) | 1 | 0.000 | 50 / 83 | 6,836 / 11,183 | 1,332 / 2,192 | 0.000 | 90 / 136 | 12,230 / 18,240 | 2,403 / 3,586 | 0.78 | 0.25: 50 / 83 |
+| S0.5 | 100K | standard | standard | 0.25 | low (0.93) | 5 | 0.000 | 58 / 90 | 6,987 / 10,720 | 289 / 455 | 0.000 | 97 / 142 | 11,774 / 16,964 | 502 / 734 | 4.28 | 0.25: 58 / 90 |
+| S0.5 | 100K | consistency | standard | 0.25 | low (0.93) | 1 | 0.000 | 42 / 77 | 5,872 / 10,444 | 1,222 / 2,158 | 0.000 | 73 / 120 | 10,154 / 16,354 | 2,160 / 3,429 | 0.71 | 0.25: 42 / 77 |
+| S0.5 | 100K | consistency | standard | 0.25 | low (0.93) | 5 | 0.000 | 53 / 87 | 6,395 / 10,288 | 283 / 462 | 0.000 | 85 / 131 | 10,268 / 15,668 | 474 / 723 | 4.03 | 0.25: 53 / 87 |
+| S0.5 | 150K | standard | standard | 0.25 | low (0.93) | 1 | 0.000 | 43 / 75 | 10,027 / 17,446 | 1,125 / 1,962 | 0.000 | 76 / 119 | 17,658 / 27,460 | 2,015 / 3,112 | 0.79 | 0.25: 43 / 75 |
+| S0.5 | 150K | standard | standard | 0.25 | low (0.93) | 5 | 0.000 | 50 / 83 | 10,982 / 17,934 | 247 / 412 | 0.000 | 83 / 127 | 18,077 / 27,610 | 423 / 651 | 4.37 | 0.25: 50 / 83 |
+| S0.5 | 150K | consistency | standard | 0.25 | low (0.93) | 1 | 0.000 | 36 / 70 | 8,562 / 16,252 | 1,045 / 1,951 | 0.000 | 61 / 104 | 14,280 / 24,283 | 1,764 / 2,960 | 0.72 | 0.25: 36 / 70 |
+| S0.5 | 150K | consistency | standard | 0.25 | low (0.93) | 5 | 0.000 | 46 / 79 | 10,108 / 17,153 | 242 / 420 | 0.000 | 71 / 115 | 15,548 / 24,937 | 392 / 629 | 4.13 | 0.25: 46 / 79 |
+| S1 | 50K | standard | standard | 0.25 | low (1.03) | 1 | 0.000 | 28 / 46 | 2,895 / 4,592 | 769 / 1,227 | 0.000 | 49 / 74 | 5,110 / 7,478 | 1,384 / 2,022 | 0.74 | 0.25: 28 / 46 |
+| S1 | 50K | standard | standard | 0.25 | low (1.03) | 5 | 0.000 | 36 / 53 | 3,036 / 4,409 | 179 / 266 | 0.000 | 58 / 82 | 4,920 / 6,894 | 303 / 427 | 4.27 | 0.25: 36 / 53 |
+| S1 | 50K | consistency | standard | 0.15 | low (1.00) | 1 | 0.000 | 28 / 49 | 2,739 / 4,543 | 911 / 1,468 | 0.000 | 46 / 75 | 4,523 / 7,036 | 1,557 / 2,331 | 0.62 | 0.15: 28 / 49 |
+| S1 | 50K | consistency | standard | 0.15 | low (1.00) | 5 | 0.000 | 43 / 63 | 3,268 / 4,674 | 243 / 348 | 0.000 | 63 / 90 | 4,850 / 6,797 | 382 / 528 | 3.75 | 0.15: 43 / 63 |
+| S1 | 100K | standard | standard | 0.25 | low (0.97) | 1 | 0.000 | 31 / 54 | 4,464 / 7,410 | 842 / 1,406 | 0.000 | 55 / 85 | 7,774 / 11,854 | 1,501 / 2,276 | 0.76 | 0.25: 31 / 54 |
+| S1 | 100K | standard | standard | 0.25 | low (0.97) | 5 | 0.000 | 40 / 62 | 4,972 / 7,548 | 196 / 306 | 0.000 | 64 / 94 | 8,008 / 11,539 | 329 / 480 | 4.35 | 0.25: 40 / 62 |
+| S1 | 100K | consistency | standard | 0.20 | low (0.98) | 1 | 0.000 | 27 / 50 | 3,829 / 6,859 | 838 / 1,453 | 0.000 | 44 / 75 | 6,206 / 10,271 | 1,406 / 2,240 | 0.67 | 0.20: 27 / 50 |
+| S1 | 100K | consistency | standard | 0.20 | low (0.98) | 5 | 0.000 | 41 / 64 | 4,950 / 7,512 | 221 / 340 | 0.000 | 59 / 89 | 7,195 / 10,634 | 342 / 501 | 3.97 | 0.20: 41 / 64 |
+| S1 | 150K | standard | standard | 0.25 | low (0.97) | 1 | 0.000 | 27 / 48 | 6,363 / 11,280 | 710 / 1,247 | 0.000 | 45 / 74 | 10,766 / 17,382 | 1,225 / 1,954 | 0.77 | 0.25: 27 / 48 |
+| S1 | 150K | standard | standard | 0.25 | low (0.97) | 5 | 0.000 | 34 / 56 | 7,628 / 12,226 | 165 / 272 | 0.000 | 53 / 82 | 11,878 / 17,999 | 272 / 416 | 4.47 | 0.25: 34 / 56 |
+| S1 | 150K | consistency | standard | 0.20 | low (0.98) | 1 | 0.000 | 23 / 46 | 5,530 / 10,692 | 712 / 1,315 | 0.000 | 36 / 66 | 8,516 / 15,316 | 1,140 / 1,936 | 0.68 | 0.20: 23 / 46 |
+| S1 | 150K | consistency | standard | 0.20 | low (0.98) | 5 | 0.000 | 37 / 59 | 8,118 / 12,768 | 196 / 312 | 0.000 | 52 / 80 | 11,246 / 17,296 | 290 / 442 | 4.11 | 0.20: 37 / 59 |
+
+## T5 Sensitivities against the headline twin
+
+DLL off, Back2Funded off, API fee included. Twin = the headline record with the same size, path, pricing, edge (and f where shown). Pricing = the twin's better pricing (higher mean net at its best band f). 'best' columns: each side at its own best band f; 'at twin f': the sensitivity at the twin's best band f, minus the twin; SE of differences unpaired (sqrt(se1^2 + se2^2), conservative where the seeds are shared).
+
+| family | size | path | pricing | edge | twin best f | twin mean (SE) | sens best f | sens mean (SE) | at f | sens at f (SE) | sens - twin (SE) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| callup1 | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | -424 (9) | 0.25 | -424 (9) | -687 (23) |
+| callup1 | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,277 (11) | 0.25 | -1,277 (11) | -178 (18) |
+| callup1 | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -629 (7) | 0.25 | -629 (7) | -604 (18) |
+| callup1 | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -1,326 (11) | 0.25 | -1,326 (11) | -263 (17) |
+| callup1 | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -1,179 (17) | 0.25 | -1,179 (17) | -1,048 (37) |
+| callup1 | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -2,986 (25) | 0.25 | -2,986 (25) | -284 (37) |
+| callup1 | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -1,545 (14) | 0.25 | -1,545 (14) | -848 (29) |
+| callup1 | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -3,074 (24) | 0.25 | -3,074 (24) | -378 (35) |
+| callup1 | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.25 | -67 (5) | 0.20 | -148 (5) | -539 (16) |
+| callup1 | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -415 (5) | 0.25 | -415 (5) | -132 (9) |
+| callup1 | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.25 | -174 (3) | 0.25 | -174 (3) | -452 (13) |
+| callup1 | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -435 (4) | 0.25 | -435 (4) | -184 (8) |
+| callup3 | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | 94 (16) | 0.25 | 94 (16) | -169 (26) |
+| callup3 | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,115 (14) | 0.25 | -1,115 (14) | -17 (20) |
+| callup3 | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -222 (11) | 0.25 | -222 (11) | -196 (20) |
+| callup3 | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -1,110 (12) | 0.25 | -1,110 (12) | -48 (18) |
+| callup3 | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -373 (26) | 0.25 | -373 (26) | -241 (42) |
+| callup3 | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -2,725 (27) | 0.25 | -2,725 (27) | -24 (39) |
+| callup3 | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -978 (18) | 0.25 | -978 (18) | -281 (31) |
+| callup3 | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -2,766 (25) | 0.25 | -2,766 (25) | -70 (36) |
+| callup3 | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.25 | 277 (10) | 0.20 | 236 (10) | -155 (18) |
+| callup3 | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -294 (7) | 0.25 | -294 (7) | -12 (11) |
+| callup3 | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.25 | 117 (7) | 0.25 | 117 (7) | -161 (14) |
+| callup3 | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -287 (6) | 0.25 | -287 (6) | -37 (9) |
+| ccons_inclusive | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | 263 (21) | 0.10 | -1,047 (22) | 0 (30) |
+| ccons_inclusive | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | 263 (21) | 0.25 | 263 (21) | 0 (30) |
+| ccons_inclusive | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,098 (14) | 0.10 | -6,399 (44) | 0 (62) |
+| ccons_inclusive | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,098 (14) | 0.25 | -1,098 (14) | 0 (20) |
+| ccons_inclusive | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -25 (17) | 0.10 | -1,727 (15) | 0 (22) |
+| ccons_inclusive | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -25 (17) | 0.25 | -25 (17) | 0 (23) |
+| ccons_inclusive | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -1,063 (13) | 0.10 | -6,492 (44) | 0 (62) |
+| ccons_inclusive | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -1,063 (13) | 0.25 | -1,063 (13) | 0 (19) |
+| ccons_inclusive | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -131 (33) | 0.10 | -3,936 (42) | 0 (59) |
+| ccons_inclusive | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -131 (33) | 0.25 | -131 (33) | 0 (47) |
+| ccons_inclusive | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -2,701 (28) | 0.10 | -20,048 (135) | 0 (191) |
+| ccons_inclusive | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -2,701 (28) | 0.25 | -2,701 (28) | 0 (39) |
+| ccons_inclusive | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -697 (26) | 0.10 | -5,129 (37) | 0 (52) |
+| ccons_inclusive | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -697 (26) | 0.25 | -697 (26) | 0 (36) |
+| ccons_inclusive | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -2,696 (26) | 0.10 | -20,238 (135) | 0 (191) |
+| ccons_inclusive | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -2,696 (26) | 0.25 | -2,696 (26) | 0 (37) |
+| ccons_inclusive | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.25 | 384 (14) | 0.10 | 227 (15) | 0 (21) |
+| ccons_inclusive | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.25 | 384 (14) | 0.25 | 384 (14) | 0 (20) |
+| ccons_inclusive | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -283 (8) | 0.10 | -941 (9) | 0 (13) |
+| ccons_inclusive | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -283 (8) | 0.25 | -283 (8) | 0 (11) |
+| ccons_inclusive | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.25 | 278 (13) | 0.10 | -111 (9) | 0 (13) |
+| ccons_inclusive | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.25 | 278 (13) | 0.25 | 278 (13) | 0 (18) |
+| ccons_inclusive | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -250 (7) | 0.10 | -953 (9) | 0 (12) |
+| ccons_inclusive | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -250 (7) | 0.25 | -250 (7) | 0 (10) |
+| cost_wall | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,226 (14) | 0.25 | -1,226 (14) | -128 (20) |
+| cost_wall | 100K | consistency | standard | zero_k3 | 0.25 | -2,267 (16) | 0.25 | -2,666 (17) | 0.25 | -2,666 (17) | -399 (24) |
+| cost_wall | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -1,183 (13) | 0.25 | -1,183 (13) | -120 (19) |
+| cost_wall | 100K | standard | standard | zero_k3 | 0.25 | -2,167 (16) | 0.25 | -2,567 (17) | 0.25 | -2,567 (17) | -400 (24) |
+| cost_wall | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -2,998 (29) | 0.25 | -2,998 (29) | -297 (40) |
+| cost_wall | 150K | consistency | standard | zero_k3 | 0.25 | -5,169 (36) | 0.25 | -6,144 (39) | 0.25 | -6,144 (39) | -975 (53) |
+| cost_wall | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -2,964 (28) | 0.25 | -2,964 (28) | -268 (38) |
+| cost_wall | 150K | standard | standard | zero_k3 | 0.25 | -5,030 (36) | 0.25 | -5,994 (39) | 0.25 | -5,994 (39) | -964 (53) |
+| cost_wall | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -326 (7) | 0.25 | -326 (7) | -44 (11) |
+| cost_wall | 50K | consistency | standard | zero_k3 | 0.25 | -823 (7) | 0.25 | -911 (7) | 0.25 | -911 (7) | -88 (10) |
+| cost_wall | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -287 (7) | 0.25 | -287 (7) | -36 (10) |
+| cost_wall | 50K | standard | standard | zero_k3 | 0.25 | -755 (7) | 0.25 | -845 (7) | 0.25 | -845 (7) | -91 (10) |
+| direction_long | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,253 (15) | 0.25 | -1,253 (15) | -155 (21) |
+| direction_long | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -1,261 (14) | 0.25 | -1,261 (14) | -198 (19) |
+| direction_long | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -3,014 (29) | 0.25 | -3,014 (29) | -312 (40) |
+| direction_long | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -3,021 (27) | 0.25 | -3,021 (27) | -325 (38) |
+| direction_long | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -314 (8) | 0.25 | -314 (8) | -31 (11) |
+| direction_long | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -294 (7) | 0.25 | -294 (7) | -43 (10) |
+| integer_6E | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | -762 (29) | 0.25 | -762 (29) | -1,025 (36) |
+| integer_6E | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -4,219 (33) | 0.25 | -4,219 (33) | -3,121 (36) |
+| integer_6E | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -1,386 (19) | 0.25 | -1,386 (19) | -1,360 (25) |
+| integer_6E | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -4,272 (32) | 0.25 | -4,272 (32) | -3,209 (35) |
+| integer_6E | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -2,031 (50) | 0.25 | -2,031 (50) | -1,899 (60) |
+| integer_6E | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -7,731 (61) | 0.25 | -7,731 (61) | -5,029 (67) |
+| integer_6E | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -3,171 (36) | 0.25 | -3,171 (36) | -2,474 (44) |
+| integer_6E | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -7,877 (60) | 0.25 | -7,877 (60) | -5,181 (66) |
+| integer_6E | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.25 | 220 (19) | 0.20 | -86 (19) | -476 (24) |
+| integer_6E | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -1,203 (12) | 0.25 | -1,203 (12) | -920 (14) |
+| integer_6E | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.25 | -78 (14) | 0.25 | -78 (14) | -356 (19) |
+| integer_6E | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -1,188 (11) | 0.25 | -1,188 (11) | -938 (13) |
+| integer_CL | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | -221 (25) | 0.25 | -221 (25) | -484 (32) |
+| integer_CL | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -2,407 (22) | 0.25 | -2,407 (22) | -1,308 (26) |
+| integer_CL | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -665 (18) | 0.25 | -665 (18) | -640 (25) |
+| integer_CL | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -2,408 (22) | 0.25 | -2,408 (22) | -1,345 (25) |
+| integer_CL | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -997 (39) | 0.25 | -997 (39) | -866 (52) |
+| integer_CL | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -5,025 (44) | 0.25 | -5,025 (44) | -2,323 (52) |
+| integer_CL | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -1,790 (28) | 0.25 | -1,790 (28) | -1,093 (38) |
+| integer_CL | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -5,046 (42) | 0.25 | -5,046 (42) | -2,350 (50) |
+| integer_CL | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.25 | 214 (15) | 0.20 | -36 (14) | -427 (20) |
+| integer_CL | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -813 (10) | 0.25 | -813 (10) | -531 (13) |
+| integer_CL | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.25 | -15 (12) | 0.25 | -15 (12) | -292 (17) |
+| integer_CL | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -813 (9) | 0.25 | -813 (9) | -562 (12) |
+| integer_GC | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | -272 (26) | 0.25 | -272 (26) | -535 (33) |
+| integer_GC | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -2,899 (25) | 0.25 | -2,899 (25) | -1,801 (29) |
+| integer_GC | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -717 (18) | 0.25 | -717 (18) | -692 (25) |
+| integer_GC | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -2,869 (24) | 0.25 | -2,869 (24) | -1,807 (28) |
+| integer_GC | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -916 (43) | 0.25 | -916 (43) | -785 (55) |
+| integer_GC | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -5,613 (47) | 0.25 | -5,613 (47) | -2,911 (55) |
+| integer_GC | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -1,783 (29) | 0.25 | -1,783 (29) | -1,086 (39) |
+| integer_GC | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -5,603 (46) | 0.25 | -5,603 (46) | -2,907 (53) |
+| integer_GC | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.25 | 289 (17) | 0.20 | 127 (16) | -264 (22) |
+| integer_GC | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -868 (10) | 0.25 | -868 (10) | -585 (12) |
+| integer_GC | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.25 | 25 (14) | 0.25 | 25 (14) | -253 (19) |
+| integer_GC | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -830 (9) | 0.25 | -830 (9) | -580 (12) |
+| integer_NQ | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | 124 (21) | 0.25 | 124 (21) | -139 (30) |
+| integer_NQ | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,080 (17) | 0.25 | -1,080 (17) | 18 (22) |
+| integer_NQ | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -410 (15) | 0.25 | -410 (15) | -384 (22) |
+| integer_NQ | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -1,230 (15) | 0.25 | -1,230 (15) | -167 (20) |
+| integer_NQ | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -548 (37) | 0.25 | -548 (37) | -417 (50) |
+| integer_NQ | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -2,958 (33) | 0.25 | -2,958 (33) | -256 (43) |
+| integer_NQ | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -1,538 (24) | 0.25 | -1,538 (24) | -840 (35) |
+| integer_NQ | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -3,228 (30) | 0.25 | -3,228 (30) | -532 (39) |
+| integer_NQ | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.15 | 433 (15) | 0.20 | 408 (15) | 17 (21) |
+| integer_NQ | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.05 | -104 (10) | 0.25 | -153 (9) | 129 (12) |
+| integer_NQ | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.05 | 102 (9) | 0.25 | 87 (10) | -191 (16) |
+| integer_NQ | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.05 | -223 (7) | 0.25 | -244 (7) | 7 (10) |
+| integer_ZN | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | 355 (26) | 0.25 | 355 (26) | 92 (33) |
+| integer_ZN | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,986 (17) | 0.25 | -1,986 (17) | -888 (22) |
+| integer_ZN | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -236 (14) | 0.25 | -236 (14) | -210 (22) |
+| integer_ZN | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -1,946 (16) | 0.25 | -1,946 (16) | -884 (21) |
+| integer_ZN | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -132 (41) | 0.25 | -132 (41) | -1 (53) |
+| integer_ZN | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -4,940 (38) | 0.25 | -4,940 (38) | -2,238 (47) |
+| integer_ZN | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -1,139 (26) | 0.25 | -1,139 (26) | -442 (36) |
+| integer_ZN | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -4,873 (38) | 0.25 | -4,873 (38) | -2,177 (46) |
+| integer_ZN | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.05 | 630 (18) | 0.20 | 556 (17) | 165 (23) |
+| integer_ZN | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.05 | -383 (7) | 0.25 | -398 (7) | -115 (10) |
+| integer_ZN | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.20 | 236 (10) | 0.25 | 234 (11) | -44 (17) |
+| integer_ZN | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.05 | -338 (6) | 0.25 | -347 (6) | -97 (10) |
+| keep_d | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | 270 (21) | 0.25 | 270 (21) | 7 (30) |
+| keep_d | 100K | consistency | standard | S1 | 0.20 | 1,430 (35) | 0.15 | 1,732 (40) | 0.20 | 1,608 (37) | 178 (51) |
+| keep_d | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,115 (14) | 0.25 | -1,115 (14) | -17 (20) |
+| keep_d | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | 378 (21) | 0.25 | 378 (21) | 403 (27) |
+| keep_d | 100K | standard | standard | S1 | 0.25 | 558 (24) | 0.25 | 1,293 (33) | 0.25 | 1,293 (33) | 735 (41) |
+| keep_d | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -981 (15) | 0.25 | -981 (15) | 82 (20) |
+| keep_d | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -108 (35) | 0.25 | -108 (35) | 23 (48) |
+| keep_d | 150K | consistency | standard | S1 | 0.20 | 1,904 (55) | 0.15 | 2,439 (64) | 0.20 | 2,247 (60) | 343 (82) |
+| keep_d | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -2,732 (28) | 0.25 | -2,732 (28) | -30 (39) |
+| keep_d | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | 57 (36) | 0.25 | 57 (36) | 754 (44) |
+| keep_d | 150K | standard | standard | S1 | 0.25 | 303 (32) | 0.25 | 1,690 (53) | 0.25 | 1,690 (53) | 1,387 (61) |
+| keep_d | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -2,543 (28) | 0.25 | -2,543 (28) | 153 (38) |
+| keep_d | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.20 | 432 (16) | 0.20 | 432 (16) | 42 (22) |
+| keep_d | 50K | consistency | standard | S1 | 0.15 | 1,135 (25) | 0.15 | 1,366 (28) | 0.15 | 1,366 (28) | 231 (38) |
+| keep_d | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -290 (8) | 0.25 | -290 (8) | -8 (11) |
+| keep_d | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.25 | 487 (16) | 0.25 | 487 (16) | 209 (21) |
+| keep_d | 50K | standard | standard | S1 | 0.25 | 689 (23) | 0.25 | 1,068 (30) | 0.25 | 1,068 (30) | 379 (38) |
+| keep_d | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -213 (8) | 0.25 | -213 (8) | 37 (11) |
+| scaling_upper | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | 263 (21) | 0.10 | -1,047 (22) | 0 (30) |
+| scaling_upper | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | 263 (21) | 0.25 | 263 (21) | 0 (30) |
+| scaling_upper | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,098 (14) | 0.10 | -6,399 (44) | 0 (62) |
+| scaling_upper | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,098 (14) | 0.25 | -1,098 (14) | 0 (20) |
+| scaling_upper | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -25 (17) | 0.10 | -1,727 (15) | 0 (22) |
+| scaling_upper | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -25 (17) | 0.25 | -25 (17) | 0 (23) |
+| scaling_upper | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -1,063 (13) | 0.10 | -6,492 (44) | 0 (62) |
+| scaling_upper | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -1,063 (13) | 0.25 | -1,063 (13) | 0 (19) |
+| scaling_upper | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -131 (33) | 0.10 | -3,936 (42) | 0 (59) |
+| scaling_upper | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | -131 (33) | 0.25 | -131 (33) | 0 (47) |
+| scaling_upper | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -2,701 (28) | 0.10 | -20,048 (135) | 0 (191) |
+| scaling_upper | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -2,701 (28) | 0.25 | -2,701 (28) | 0 (39) |
+| scaling_upper | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -697 (26) | 0.10 | -5,129 (37) | 0 (52) |
+| scaling_upper | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -697 (26) | 0.25 | -697 (26) | 0 (36) |
+| scaling_upper | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -2,696 (26) | 0.10 | -20,238 (135) | 0 (191) |
+| scaling_upper | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -2,696 (26) | 0.25 | -2,696 (26) | 0 (37) |
+| scaling_upper | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.25 | 384 (14) | 0.10 | 227 (15) | 0 (21) |
+| scaling_upper | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.25 | 384 (14) | 0.25 | 384 (14) | 0 (20) |
+| scaling_upper | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -283 (8) | 0.10 | -941 (9) | 0 (13) |
+| scaling_upper | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -283 (8) | 0.25 | -283 (8) | 0 (11) |
+| scaling_upper | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.25 | 278 (13) | 0.10 | -111 (9) | 0 (13) |
+| scaling_upper | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.25 | 278 (13) | 0.25 | 278 (13) | 0 (18) |
+| scaling_upper | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -250 (7) | 0.10 | -953 (9) | 0 (12) |
+| scaling_upper | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -250 (7) | 0.25 | -250 (7) | 0 (10) |
+| tail_normal | 100K | consistency | standard | S0 | 0.25 | -509 (16) | 0.25 | -373 (16) | 0.25 | -373 (16) | 136 (23) |
+| tail_normal | 100K | consistency | standard | S0.15 | 0.25 | -279 (17) | 0.25 | -171 (18) | 0.25 | -171 (18) | 108 (24) |
+| tail_normal | 100K | consistency | standard | S0.3 | 0.25 | -63 (18) | 0.25 | 55 (19) | 0.25 | 55 (19) | 118 (26) |
+| tail_normal | 100K | consistency | standard | S0.5 | 0.25 | 263 (21) | 0.25 | 412 (23) | 0.25 | 412 (23) | 149 (31) |
+| tail_normal | 100K | consistency | standard | S0.75 | 0.20 | 696 (28) | 0.25 | 889 (28) | 0.20 | 838 (29) | 142 (40) |
+| tail_normal | 100K | consistency | standard | S1 | 0.20 | 1,430 (35) | 0.20 | 1,559 (37) | 0.20 | 1,559 (37) | 128 (51) |
+| tail_normal | 100K | consistency | standard | zero_k1 | 0.25 | -1,098 (14) | 0.25 | -1,007 (15) | 0.25 | -1,007 (15) | 92 (20) |
+| tail_normal | 100K | consistency | standard | zero_k3 | 0.25 | -2,267 (16) | 0.25 | -2,271 (17) | 0.25 | -2,271 (17) | -3 (23) |
+| tail_normal | 100K | standard | standard | S0 | 0.25 | -559 (14) | 0.25 | -527 (13) | 0.25 | -527 (13) | 33 (19) |
+| tail_normal | 100K | standard | standard | S0.15 | 0.25 | -397 (14) | 0.25 | -374 (14) | 0.25 | -374 (14) | 22 (20) |
+| tail_normal | 100K | standard | standard | S0.3 | 0.25 | -244 (15) | 0.25 | -227 (14) | 0.25 | -227 (14) | 17 (21) |
+| tail_normal | 100K | standard | standard | S0.5 | 0.25 | -25 (17) | 0.25 | -2 (16) | 0.25 | -2 (16) | 24 (23) |
+| tail_normal | 100K | standard | standard | S0.75 | 0.25 | 260 (21) | 0.25 | 246 (20) | 0.25 | 246 (20) | -13 (29) |
+| tail_normal | 100K | standard | standard | S1 | 0.25 | 558 (24) | 0.25 | 527 (25) | 0.25 | 527 (25) | -31 (34) |
+| tail_normal | 100K | standard | standard | zero_k1 | 0.25 | -1,063 (13) | 0.25 | -1,029 (13) | 0.25 | -1,029 (13) | 34 (19) |
+| tail_normal | 100K | standard | standard | zero_k3 | 0.25 | -2,167 (16) | 0.25 | -2,212 (17) | 0.25 | -2,212 (17) | -45 (23) |
+| tail_normal | 150K | consistency | standard | S0 | 0.25 | -1,500 (27) | 0.25 | -1,343 (28) | 0.25 | -1,343 (28) | 156 (39) |
+| tail_normal | 150K | consistency | standard | S0.15 | 0.25 | -1,082 (28) | 0.25 | -956 (29) | 0.25 | -956 (29) | 126 (41) |
+| tail_normal | 150K | consistency | standard | S0.3 | 0.25 | -683 (30) | 0.25 | -530 (31) | 0.25 | -530 (31) | 153 (43) |
+| tail_normal | 150K | consistency | standard | S0.5 | 0.25 | -131 (33) | 0.25 | 93 (36) | 0.25 | 93 (36) | 224 (49) |
+| tail_normal | 150K | consistency | standard | S0.75 | 0.25 | 692 (40) | 0.25 | 948 (46) | 0.25 | 948 (46) | 257 (61) |
+| tail_normal | 150K | consistency | standard | S1 | 0.20 | 1,904 (55) | 0.20 | 2,105 (59) | 0.20 | 2,105 (59) | 202 (81) |
+| tail_normal | 150K | consistency | standard | zero_k1 | 0.25 | -2,701 (28) | 0.25 | -2,471 (28) | 0.25 | -2,471 (28) | 230 (39) |
+| tail_normal | 150K | consistency | standard | zero_k3 | 0.25 | -5,169 (36) | 0.25 | -4,803 (34) | 0.25 | -4,803 (34) | 366 (50) |
+| tail_normal | 150K | standard | standard | S0 | 0.25 | -1,672 (23) | 0.25 | -1,658 (23) | 0.25 | -1,658 (23) | 14 (33) |
+| tail_normal | 150K | standard | standard | S0.15 | 0.25 | -1,335 (23) | 0.25 | -1,363 (23) | 0.25 | -1,363 (23) | -28 (32) |
+| tail_normal | 150K | standard | standard | S0.3 | 0.25 | -1,053 (24) | 0.25 | -1,079 (24) | 0.25 | -1,079 (24) | -26 (34) |
+| tail_normal | 150K | standard | standard | S0.5 | 0.25 | -697 (26) | 0.25 | -712 (25) | 0.25 | -712 (25) | -15 (36) |
+| tail_normal | 150K | standard | standard | S0.75 | 0.25 | -224 (26) | 0.25 | -277 (27) | 0.25 | -277 (27) | -53 (38) |
+| tail_normal | 150K | standard | standard | S1 | 0.25 | 303 (32) | 0.25 | 198 (30) | 0.25 | 198 (30) | -105 (44) |
+| tail_normal | 150K | standard | standard | zero_k1 | 0.25 | -2,696 (26) | 0.25 | -2,581 (26) | 0.25 | -2,581 (26) | 115 (37) |
+| tail_normal | 150K | standard | standard | zero_k3 | 0.25 | -5,030 (36) | 0.25 | -4,734 (34) | 0.25 | -4,734 (34) | 296 (50) |
+| tail_normal | 50K | consistency | standard | S0 | 0.25 | 3 (10) | 0.25 | 110 (10) | 0.25 | 110 (10) | 107 (14) |
+| tail_normal | 50K | consistency | standard | S0.15 | 0.25 | 109 (11) | 0.25 | 209 (11) | 0.25 | 209 (11) | 100 (16) |
+| tail_normal | 50K | consistency | standard | S0.3 | 0.25 | 222 (12) | 0.25 | 318 (13) | 0.25 | 318 (13) | 96 (18) |
+| tail_normal | 50K | consistency | standard | S0.5 | 0.20 | 391 (15) | 0.25 | 489 (15) | 0.20 | 447 (14) | 56 (21) |
+| tail_normal | 50K | consistency | standard | S0.75 | 0.20 | 685 (19) | 0.25 | 753 (19) | 0.20 | 745 (18) | 61 (26) |
+| tail_normal | 50K | consistency | standard | S1 | 0.15 | 1,135 (25) | 0.20 | 1,116 (24) | 0.15 | 1,014 (22) | -121 (34) |
+| tail_normal | 50K | consistency | standard | zero_k1 | 0.25 | -283 (8) | 0.25 | -171 (8) | 0.25 | -171 (8) | 112 (11) |
+| tail_normal | 50K | consistency | standard | zero_k3 | 0.25 | -823 (7) | 0.25 | -667 (6) | 0.25 | -667 (6) | 156 (10) |
+| tail_normal | 50K | standard | standard | S0 | 0.25 | -8 (9) | 0.25 | 36 (8) | 0.25 | 36 (8) | 44 (12) |
+| tail_normal | 50K | standard | standard | S0.15 | 0.25 | 74 (10) | 0.25 | 102 (9) | 0.25 | 102 (9) | 28 (13) |
+| tail_normal | 50K | standard | standard | S0.3 | 0.25 | 159 (10) | 0.25 | 187 (11) | 0.25 | 187 (11) | 28 (15) |
+| tail_normal | 50K | standard | standard | S0.5 | 0.25 | 278 (13) | 0.25 | 287 (13) | 0.25 | 287 (13) | 10 (18) |
+| tail_normal | 50K | standard | standard | S0.75 | 0.25 | 463 (17) | 0.25 | 426 (15) | 0.25 | 426 (15) | -37 (23) |
+| tail_normal | 50K | standard | standard | S1 | 0.25 | 689 (23) | 0.25 | 598 (18) | 0.25 | 598 (18) | -90 (30) |
+| tail_normal | 50K | standard | standard | zero_k1 | 0.25 | -250 (7) | 0.25 | -179 (7) | 0.25 | -179 (7) | 71 (10) |
+| tail_normal | 50K | standard | standard | zero_k3 | 0.25 | -755 (7) | 0.25 | -630 (6) | 0.25 | -630 (6) | 125 (9) |
+
+### Post hoc wallet sensitivities on the headline (no new simulation)
+
+DLL off, Back2Funded off, best band f, better pricing. ACH: $30 per payout (global.payout_fee_usd.ach). Close: XFAs alive at the horizon closed for split x min(0.5 x end balance, $5,000) (rules file values). Copy x5: five accounts trading the same fills = 5 x (cash - Combine/activation fees) - one API fee.
+
+| edge | size | path | pricing | f | headline | API excluded | ACH $30/payout | voluntary close | copy x5 |
+|---|---|---|---|---|---|---|---|---|---|
+| zero_k1 | 50K | standard | standard | 0.25 | -250 (7) | -94 (7) | -272 (7) | -250 (7) | -628 (35) |
+| zero_k1 | 50K | consistency | standard | 0.25 | -283 (8) | -120 (8) | -293 (8) | -282 (8) | -762 (39) |
+| zero_k1 | 100K | standard | standard | 0.25 | -1,063 (13) | -811 (12) | -1,088 (13) | -1,063 (13) | -4,305 (62) |
+| zero_k1 | 100K | consistency | standard | 0.25 | -1,098 (14) | -836 (13) | -1,109 (14) | -1,098 (14) | -4,442 (67) |
+| zero_k1 | 150K | standard | standard | 0.25 | -2,696 (26) | -2,397 (24) | -2,724 (26) | -2,696 (26) | -12,283 (124) |
+| zero_k1 | 150K | consistency | standard | 0.25 | -2,701 (28) | -2,390 (26) | -2,712 (28) | -2,700 (28) | -12,262 (133) |
+| S0.5 | 50K | standard | standard | 0.25 | 278 (13) | 387 (13) | 245 (12) | 279 (13) | 1,826 (64) |
+| S0.5 | 50K | consistency | standard | 0.20 | 391 (15) | 538 (15) | 367 (15) | 406 (16) | 2,544 (77) |
+| S0.5 | 100K | standard | standard | 0.25 | -25 (17) | 134 (16) | -63 (16) | -25 (17) | 511 (82) |
+| S0.5 | 100K | consistency | standard | 0.25 | 263 (21) | 440 (21) | 242 (21) | 279 (22) | 2,024 (105) |
+| S0.5 | 150K | standard | standard | 0.25 | -697 (26) | -513 (25) | -739 (25) | -696 (26) | -2,747 (126) |
+| S0.5 | 150K | consistency | standard | 0.25 | -131 (33) | 75 (33) | -153 (33) | -121 (34) | 169 (166) |
+
+## T6 In-simulation optimum f in the policy band
+
+Headline configuration, Back2Funded off, API fee included. Best f = highest cycle mean net among f 0.05..0.25 (ties: smaller f); gap = best minus runner-up, paired SE over the shared cycle draws.
+
+| size | path | DLL | pricing | edge | best f | mean net (SE) | runner-up f | gap (paired SE) |
+|---|---|---|---|---|---|---|---|---|
+| 50K | standard | off | standard | zero_k1 | 0.25 | -250 (7) | 0.20 | 202 (4) |
+| 50K | standard | off | no_activation_fee | zero_k1 | 0.25 | -472 (8) | 0.20 | 311 (6) |
+| 50K | consistency | off | standard | zero_k1 | 0.25 | -283 (8) | 0.20 | 166 (5) |
+| 50K | consistency | off | no_activation_fee | zero_k1 | 0.25 | -504 (9) | 0.20 | 276 (6) |
+| 50K | standard | off | standard | zero_k3 | 0.25 | -755 (7) | 0.20 | 397 (6) |
+| 50K | standard | off | no_activation_fee | zero_k3 | 0.25 | -1,201 (10) | 0.20 | 637 (10) |
+| 50K | consistency | off | standard | zero_k3 | 0.25 | -823 (7) | 0.20 | 388 (6) |
+| 50K | consistency | off | no_activation_fee | zero_k3 | 0.25 | -1,269 (10) | 0.20 | 627 (10) |
+| 50K | standard | off | standard | S0 | 0.25 | -8 (9) | 0.20 | 159 (4) |
+| 50K | standard | off | no_activation_fee | S0 | 0.25 | -159 (10) | 0.20 | 235 (5) |
+| 50K | consistency | off | standard | S0 | 0.25 | 3 (10) | 0.20 | 94 (6) |
+| 50K | consistency | off | no_activation_fee | S0 | 0.25 | -148 (10) | 0.20 | 169 (7) |
+| 50K | standard | off | standard | S0.15 | 0.25 | 74 (10) | 0.20 | 153 (5) |
+| 50K | standard | off | no_activation_fee | S0.15 | 0.25 | -58 (10) | 0.20 | 222 (6) |
+| 50K | consistency | off | standard | S0.15 | 0.25 | 109 (11) | 0.20 | 71 (7) |
+| 50K | consistency | off | no_activation_fee | S0.15 | 0.25 | -23 (11) | 0.20 | 140 (8) |
+| 50K | standard | off | standard | S0.3 | 0.25 | 159 (10) | 0.20 | 134 (5) |
+| 50K | standard | off | no_activation_fee | S0.3 | 0.25 | 45 (11) | 0.20 | 194 (6) |
+| 50K | consistency | off | standard | S0.3 | 0.25 | 222 (12) | 0.20 | 43 (8) |
+| 50K | consistency | off | no_activation_fee | S0.3 | 0.25 | 108 (12) | 0.20 | 103 (8) |
+| 50K | standard | off | standard | S0.5 | 0.25 | 278 (13) | 0.20 | 123 (7) |
+| 50K | standard | off | no_activation_fee | S0.5 | 0.25 | 182 (13) | 0.20 | 172 (7) |
+| 50K | consistency | off | standard | S0.5 | 0.20 | 391 (15) | 0.25 | 7 (10) |
+| 50K | consistency | off | no_activation_fee | S0.5 | 0.25 | 287 (14) | 0.20 | 41 (10) |
+| 50K | standard | off | standard | S0.75 | 0.25 | 463 (17) | 0.20 | 135 (10) |
+| 50K | standard | off | no_activation_fee | S0.75 | 0.25 | 389 (17) | 0.20 | 176 (10) |
+| 50K | consistency | off | standard | S0.75 | 0.20 | 685 (19) | 0.15 | 16 (13) |
+| 50K | consistency | off | no_activation_fee | S0.75 | 0.25 | 582 (19) | 0.20 | 12 (13) |
+| 50K | standard | off | standard | S1 | 0.25 | 689 (23) | 0.20 | 153 (15) |
+| 50K | standard | off | no_activation_fee | S1 | 0.25 | 635 (23) | 0.20 | 188 (15) |
+| 50K | consistency | off | standard | S1 | 0.15 | 1,135 (25) | 0.20 | 21 (19) |
+| 50K | consistency | off | no_activation_fee | S1 | 0.20 | 1,025 (25) | 0.15 | 21 (19) |
+| 50K | standard | on | standard | zero_k1 | 0.25 | -273 (8) | 0.20 | 220 (5) |
+| 50K | standard | on | no_activation_fee | zero_k1 | 0.25 | -437 (9) | 0.20 | 307 (6) |
+| 50K | consistency | on | standard | zero_k1 | 0.25 | -307 (9) | 0.20 | 176 (6) |
+| 50K | consistency | on | no_activation_fee | zero_k1 | 0.25 | -471 (10) | 0.20 | 264 (7) |
+| 50K | standard | on | standard | zero_k3 | 0.25 | -817 (7) | 0.20 | 408 (7) |
+| 50K | standard | on | no_activation_fee | zero_k3 | 0.25 | -1,186 (10) | 0.20 | 591 (10) |
+| 50K | consistency | on | standard | zero_k3 | 0.25 | -904 (7) | 0.20 | 384 (7) |
+| 50K | consistency | on | no_activation_fee | zero_k3 | 0.25 | -1,273 (10) | 0.20 | 567 (10) |
+| 50K | standard | on | standard | S0 | 0.25 | -25 (10) | 0.20 | 164 (5) |
+| 50K | standard | on | no_activation_fee | S0 | 0.25 | -126 (10) | 0.20 | 218 (6) |
+| 50K | consistency | on | standard | S0 | 0.25 | 15 (11) | 0.20 | 90 (8) |
+| 50K | consistency | on | no_activation_fee | S0 | 0.25 | -87 (12) | 0.20 | 145 (8) |
+| 50K | standard | on | standard | S0.15 | 0.25 | 60 (10) | 0.20 | 158 (6) |
+| 50K | standard | on | no_activation_fee | S0.15 | 0.25 | -25 (11) | 0.20 | 209 (7) |
+| 50K | consistency | on | standard | S0.15 | 0.25 | 133 (13) | 0.20 | 83 (9) |
+| 50K | consistency | on | no_activation_fee | S0.15 | 0.25 | 49 (13) | 0.20 | 134 (9) |
+| 50K | standard | on | standard | S0.3 | 0.25 | 139 (10) | 0.20 | 144 (6) |
+| 50K | standard | on | no_activation_fee | S0.3 | 0.25 | 68 (11) | 0.20 | 188 (6) |
+| 50K | consistency | on | standard | S0.3 | 0.25 | 273 (14) | 0.20 | 56 (10) |
+| 50K | consistency | on | no_activation_fee | S0.3 | 0.25 | 202 (15) | 0.20 | 101 (11) |
+| 50K | standard | on | standard | S0.5 | 0.25 | 249 (12) | 0.20 | 117 (7) |
+| 50K | standard | on | no_activation_fee | S0.5 | 0.25 | 194 (12) | 0.20 | 152 (7) |
+| 50K | consistency | on | standard | S0.5 | 0.25 | 477 (17) | 0.20 | 28 (12) |
+| 50K | consistency | on | no_activation_fee | S0.5 | 0.25 | 422 (17) | 0.20 | 63 (13) |
+| 50K | standard | on | standard | S0.75 | 0.25 | 417 (13) | 0.20 | 125 (8) |
+| 50K | standard | on | no_activation_fee | S0.75 | 0.25 | 383 (14) | 0.20 | 156 (8) |
+| 50K | consistency | on | standard | S0.75 | 0.20 | 771 (21) | 0.25 | 12 (15) |
+| 50K | consistency | on | no_activation_fee | S0.75 | 0.25 | 724 (20) | 0.20 | 19 (16) |
+| 50K | standard | on | standard | S1 | 0.25 | 587 (15) | 0.20 | 115 (9) |
+| 50K | standard | on | no_activation_fee | S1 | 0.25 | 569 (15) | 0.20 | 141 (9) |
+| 50K | consistency | on | standard | S1 | 0.15 | 1,214 (28) | 0.20 | 8 (22) |
+| 50K | consistency | on | no_activation_fee | S1 | 0.20 | 1,161 (27) | 0.15 | 25 (22) |
+| 100K | standard | off | standard | zero_k1 | 0.25 | -1,063 (13) | 0.20 | 837 (12) |
+| 100K | standard | off | no_activation_fee | zero_k1 | 0.25 | -1,574 (17) | 0.20 | 1,172 (17) |
+| 100K | consistency | off | standard | zero_k1 | 0.25 | -1,098 (14) | 0.20 | 771 (13) |
+| 100K | consistency | off | no_activation_fee | zero_k1 | 0.25 | -1,609 (17) | 0.20 | 1,106 (17) |
+| 100K | standard | off | standard | zero_k3 | 0.25 | -2,167 (16) | 0.20 | 1,699 (19) |
+| 100K | standard | off | no_activation_fee | zero_k3 | 0.25 | -3,044 (22) | 0.20 | 2,409 (27) |
+| 100K | consistency | off | standard | zero_k3 | 0.25 | -2,267 (16) | 0.20 | 1,675 (19) |
+| 100K | consistency | off | no_activation_fee | zero_k3 | 0.25 | -3,144 (22) | 0.20 | 2,385 (27) |
+| 100K | standard | off | standard | S0 | 0.25 | -559 (14) | 0.20 | 584 (10) |
+| 100K | standard | off | no_activation_fee | S0 | 0.25 | -934 (16) | 0.20 | 801 (13) |
+| 100K | consistency | off | standard | S0 | 0.25 | -509 (16) | 0.20 | 442 (11) |
+| 100K | consistency | off | no_activation_fee | S0 | 0.25 | -884 (17) | 0.20 | 659 (14) |
+| 100K | standard | off | standard | S0.15 | 0.25 | -397 (14) | 0.20 | 529 (10) |
+| 100K | standard | off | no_activation_fee | S0.15 | 0.25 | -730 (16) | 0.20 | 719 (12) |
+| 100K | consistency | off | standard | S0.15 | 0.25 | -279 (17) | 0.20 | 370 (11) |
+| 100K | consistency | off | no_activation_fee | S0.15 | 0.25 | -612 (18) | 0.20 | 560 (14) |
+| 100K | standard | off | standard | S0.3 | 0.25 | -244 (15) | 0.20 | 479 (9) |
+| 100K | standard | off | no_activation_fee | S0.3 | 0.25 | -543 (16) | 0.20 | 645 (12) |
+| 100K | consistency | off | standard | S0.3 | 0.25 | -63 (18) | 0.20 | 290 (12) |
+| 100K | consistency | off | no_activation_fee | S0.3 | 0.25 | -362 (19) | 0.20 | 456 (14) |
+| 100K | standard | off | standard | S0.5 | 0.25 | -25 (17) | 0.20 | 424 (10) |
+| 100K | standard | off | no_activation_fee | S0.5 | 0.25 | -282 (18) | 0.20 | 560 (12) |
+| 100K | consistency | off | standard | S0.5 | 0.25 | 263 (21) | 0.20 | 199 (13) |
+| 100K | consistency | off | no_activation_fee | S0.5 | 0.25 | 6 (22) | 0.20 | 335 (14) |
+| 100K | standard | off | standard | S0.75 | 0.25 | 260 (21) | 0.20 | 371 (14) |
+| 100K | standard | off | no_activation_fee | S0.75 | 0.25 | 46 (22) | 0.20 | 474 (15) |
+| 100K | consistency | off | standard | S0.75 | 0.20 | 696 (28) | 0.25 | 0 (18) |
+| 100K | consistency | off | no_activation_fee | S0.75 | 0.25 | 482 (26) | 0.20 | 103 (18) |
+| 100K | standard | off | standard | S1 | 0.25 | 558 (24) | 0.20 | 361 (14) |
+| 100K | standard | off | no_activation_fee | S1 | 0.25 | 387 (24) | 0.20 | 446 (14) |
+| 100K | consistency | off | standard | S1 | 0.20 | 1,430 (35) | 0.25 | 135 (22) |
+| 100K | consistency | off | no_activation_fee | S1 | 0.20 | 1,173 (36) | 0.25 | 50 (23) |
+| 100K | standard | on | standard | zero_k1 | 0.25 | -1,128 (14) | 0.20 | 842 (13) |
+| 100K | standard | on | no_activation_fee | zero_k1 | 0.25 | -1,401 (16) | 0.20 | 1,038 (16) |
+| 100K | consistency | on | standard | zero_k1 | 0.25 | -1,142 (15) | 0.20 | 780 (14) |
+| 100K | consistency | on | no_activation_fee | zero_k1 | 0.25 | -1,415 (17) | 0.20 | 976 (17) |
+| 100K | standard | on | standard | zero_k3 | 0.25 | -2,312 (17) | 0.20 | 1,664 (20) |
+| 100K | standard | on | no_activation_fee | zero_k3 | 0.25 | -2,837 (21) | 0.20 | 2,071 (25) |
+| 100K | consistency | on | standard | zero_k3 | 0.25 | -2,418 (17) | 0.20 | 1,631 (20) |
+| 100K | consistency | on | no_activation_fee | zero_k3 | 0.25 | -2,943 (21) | 0.20 | 2,038 (25) |
+| 100K | standard | on | standard | S0 | 0.25 | -616 (14) | 0.20 | 583 (10) |
+| 100K | standard | on | no_activation_fee | S0 | 0.25 | -802 (15) | 0.20 | 709 (12) |
+| 100K | consistency | on | standard | S0 | 0.25 | -498 (18) | 0.20 | 454 (14) |
+| 100K | consistency | on | no_activation_fee | S0 | 0.25 | -685 (19) | 0.20 | 580 (15) |
+| 100K | standard | on | standard | S0.15 | 0.25 | -461 (14) | 0.20 | 506 (10) |
+| 100K | standard | on | no_activation_fee | S0.15 | 0.25 | -624 (15) | 0.20 | 610 (11) |
+| 100K | consistency | on | standard | S0.15 | 0.25 | -264 (19) | 0.20 | 343 (15) |
+| 100K | consistency | on | no_activation_fee | S0.15 | 0.25 | -428 (20) | 0.20 | 447 (16) |
+| 100K | standard | on | standard | S0.3 | 0.25 | -298 (14) | 0.20 | 452 (9) |
+| 100K | standard | on | no_activation_fee | S0.3 | 0.25 | -439 (15) | 0.20 | 540 (11) |
+| 100K | consistency | on | standard | S0.3 | 0.25 | -26 (21) | 0.20 | 270 (15) |
+| 100K | consistency | on | no_activation_fee | S0.3 | 0.25 | -166 (21) | 0.20 | 358 (16) |
+| 100K | standard | on | standard | S0.5 | 0.25 | -83 (15) | 0.20 | 402 (9) |
+| 100K | standard | on | no_activation_fee | S0.5 | 0.25 | -195 (16) | 0.20 | 476 (10) |
+| 100K | consistency | on | standard | S0.5 | 0.25 | 344 (24) | 0.20 | 198 (17) |
+| 100K | consistency | on | no_activation_fee | S0.5 | 0.25 | 232 (25) | 0.20 | 272 (18) |
+| 100K | standard | on | standard | S0.75 | 0.25 | 200 (18) | 0.20 | 343 (11) |
+| 100K | standard | on | no_activation_fee | S0.75 | 0.25 | 118 (19) | 0.20 | 401 (12) |
+| 100K | consistency | on | standard | S0.75 | 0.25 | 854 (29) | 0.20 | 14 (21) |
+| 100K | consistency | on | no_activation_fee | S0.75 | 0.25 | 772 (30) | 0.20 | 72 (22) |
+| 100K | standard | on | standard | S1 | 0.25 | 509 (21) | 0.20 | 349 (12) |
+| 100K | standard | on | no_activation_fee | S1 | 0.25 | 454 (21) | 0.20 | 395 (13) |
+| 100K | consistency | on | standard | S1 | 0.20 | 1,658 (40) | 0.25 | 163 (28) |
+| 100K | consistency | on | no_activation_fee | S1 | 0.20 | 1,557 (41) | 0.25 | 116 (28) |
+| 150K | standard | off | standard | zero_k1 | 0.25 | -2,696 (26) | 0.20 | 2,066 (27) |
+| 150K | standard | off | no_activation_fee | zero_k1 | 0.25 | -3,025 (29) | 0.20 | 2,340 (31) |
+| 150K | consistency | off | standard | zero_k1 | 0.25 | -2,701 (28) | 0.20 | 1,962 (28) |
+| 150K | consistency | off | no_activation_fee | zero_k1 | 0.25 | -3,030 (30) | 0.20 | 2,237 (31) |
+| 150K | standard | off | standard | zero_k3 | 0.25 | -5,030 (36) | 0.20 | 4,217 (44) |
+| 150K | standard | off | no_activation_fee | zero_k3 | 0.25 | -5,637 (41) | 0.20 | 4,797 (50) |
+| 150K | consistency | off | standard | zero_k3 | 0.25 | -5,169 (36) | 0.20 | 4,177 (44) |
+| 150K | consistency | off | no_activation_fee | zero_k3 | 0.25 | -5,776 (41) | 0.20 | 4,757 (50) |
+| 150K | standard | off | standard | S0 | 0.25 | -1,672 (23) | 0.20 | 1,322 (20) |
+| 150K | standard | off | no_activation_fee | S0 | 0.25 | -1,892 (25) | 0.20 | 1,490 (22) |
+| 150K | consistency | off | standard | S0 | 0.25 | -1,500 (27) | 0.20 | 1,111 (22) |
+| 150K | consistency | off | no_activation_fee | S0 | 0.25 | -1,720 (28) | 0.20 | 1,279 (24) |
+| 150K | standard | off | standard | S0.15 | 0.25 | -1,335 (23) | 0.20 | 1,189 (18) |
+| 150K | standard | off | no_activation_fee | S0.15 | 0.25 | -1,524 (24) | 0.20 | 1,336 (21) |
+| 150K | consistency | off | standard | S0.15 | 0.25 | -1,082 (28) | 0.20 | 932 (21) |
+| 150K | consistency | off | no_activation_fee | S0.15 | 0.25 | -1,271 (29) | 0.20 | 1,079 (23) |
+| 150K | standard | off | standard | S0.3 | 0.25 | -1,053 (24) | 0.20 | 1,038 (18) |
+| 150K | standard | off | no_activation_fee | S0.3 | 0.25 | -1,219 (25) | 0.20 | 1,161 (20) |
+| 150K | consistency | off | standard | S0.3 | 0.25 | -683 (30) | 0.20 | 721 (22) |
+| 150K | consistency | off | no_activation_fee | S0.3 | 0.25 | -848 (31) | 0.20 | 844 (23) |
+| 150K | standard | off | standard | S0.5 | 0.25 | -697 (26) | 0.20 | 890 (18) |
+| 150K | standard | off | no_activation_fee | S0.5 | 0.25 | -833 (27) | 0.20 | 991 (19) |
+| 150K | consistency | off | standard | S0.5 | 0.25 | -131 (33) | 0.20 | 475 (24) |
+| 150K | consistency | off | no_activation_fee | S0.5 | 0.25 | -267 (34) | 0.20 | 575 (25) |
+| 150K | standard | off | standard | S0.75 | 0.25 | -224 (26) | 0.20 | 775 (17) |
+| 150K | standard | off | no_activation_fee | S0.75 | 0.25 | -324 (27) | 0.20 | 857 (18) |
+| 150K | consistency | off | standard | S0.75 | 0.25 | 692 (40) | 0.20 | 163 (29) |
+| 150K | consistency | off | no_activation_fee | S0.75 | 0.25 | 592 (41) | 0.20 | 246 (29) |
+| 150K | standard | off | standard | S1 | 0.25 | 303 (32) | 0.20 | 752 (20) |
+| 150K | standard | off | no_activation_fee | S1 | 0.25 | 234 (32) | 0.20 | 820 (20) |
+| 150K | consistency | off | standard | S1 | 0.20 | 1,904 (55) | 0.25 | 199 (37) |
+| 150K | consistency | off | no_activation_fee | S1 | 0.20 | 1,767 (56) | 0.25 | 132 (37) |
+| 150K | standard | on | standard | zero_k1 | 0.25 | -2,878 (27) | 0.20 | 2,046 (29) |
+| 150K | standard | on | no_activation_fee | zero_k1 | 0.25 | -2,737 (27) | 0.20 | 2,041 (29) |
+| 150K | consistency | on | standard | zero_k1 | 0.25 | -2,840 (30) | 0.20 | 1,966 (30) |
+| 150K | consistency | on | no_activation_fee | zero_k1 | 0.25 | -2,699 (30) | 0.20 | 1,962 (30) |
+| 150K | standard | on | standard | zero_k3 | 0.25 | -5,349 (38) | 0.20 | 4,167 (47) |
+| 150K | standard | on | no_activation_fee | zero_k3 | 0.25 | -5,217 (38) | 0.20 | 4,162 (47) |
+| 150K | consistency | on | standard | zero_k3 | 0.25 | -5,481 (38) | 0.20 | 4,132 (47) |
+| 150K | consistency | on | no_activation_fee | zero_k3 | 0.25 | -5,350 (38) | 0.20 | 4,127 (47) |
+| 150K | standard | on | standard | S0 | 0.25 | -1,803 (24) | 0.20 | 1,327 (21) |
+| 150K | standard | on | no_activation_fee | S0 | 0.25 | -1,660 (24) | 0.20 | 1,324 (21) |
+| 150K | consistency | on | standard | S0 | 0.25 | -1,517 (31) | 0.20 | 1,181 (25) |
+| 150K | consistency | on | no_activation_fee | S0 | 0.25 | -1,374 (31) | 0.20 | 1,177 (25) |
+| 150K | standard | on | standard | S0.15 | 0.25 | -1,459 (23) | 0.20 | 1,178 (19) |
+| 150K | standard | on | no_activation_fee | S0.15 | 0.25 | -1,315 (23) | 0.20 | 1,174 (19) |
+| 150K | consistency | on | standard | S0.15 | 0.25 | -1,068 (32) | 0.20 | 966 (26) |
+| 150K | consistency | on | no_activation_fee | S0.15 | 0.25 | -925 (32) | 0.20 | 962 (26) |
+| 150K | standard | on | standard | S0.3 | 0.25 | -1,176 (23) | 0.20 | 1,016 (18) |
+| 150K | standard | on | no_activation_fee | S0.3 | 0.25 | -1,032 (23) | 0.20 | 1,013 (18) |
+| 150K | consistency | on | standard | S0.3 | 0.25 | -623 (35) | 0.20 | 768 (25) |
+| 150K | consistency | on | no_activation_fee | S0.3 | 0.25 | -480 (35) | 0.20 | 765 (25) |
+| 150K | standard | on | standard | S0.5 | 0.25 | -795 (23) | 0.20 | 871 (17) |
+| 150K | standard | on | no_activation_fee | S0.5 | 0.25 | -650 (23) | 0.20 | 868 (17) |
+| 150K | consistency | on | standard | S0.5 | 0.25 | 18 (39) | 0.20 | 513 (28) |
+| 150K | consistency | on | no_activation_fee | S0.5 | 0.25 | 162 (39) | 0.20 | 511 (28) |
+| 150K | standard | on | standard | S0.75 | 0.25 | -307 (24) | 0.20 | 761 (16) |
+| 150K | standard | on | no_activation_fee | S0.75 | 0.25 | -162 (24) | 0.20 | 758 (16) |
+| 150K | consistency | on | standard | S0.75 | 0.25 | 959 (47) | 0.20 | 158 (36) |
+| 150K | consistency | on | no_activation_fee | S0.75 | 0.25 | 1,104 (47) | 0.20 | 155 (36) |
+| 150K | standard | on | standard | S1 | 0.25 | 195 (27) | 0.20 | 703 (16) |
+| 150K | standard | on | no_activation_fee | S1 | 0.25 | 340 (27) | 0.20 | 701 (16) |
+| 150K | consistency | on | standard | S1 | 0.20 | 2,322 (64) | 0.25 | 235 (44) |
+| 150K | consistency | on | no_activation_fee | S1 | 0.20 | 2,469 (64) | 0.25 | 238 (44) |
+
+## T7 Diagnostic f (0.35, 0.50; outside the policy band)
+
+Headline configuration, Back2Funded off, API fee included. Does the cycle mean net keep rising above f 0.25? Differences paired over the shared cycle draws; 'best of all 7' over f 0.05..0.50.
+
+| size | path | DLL | pricing | edge | f 0.25 | f 0.35 | f 0.50 | 0.35 - 0.25 (SE) | 0.50 - 0.25 (SE) | best of all 7 | gap to runner-up (SE) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 50K | standard | off | standard | zero_k1 | -250 | -72 | -30 | 178 (5) | 221 (8) | 0.50 | 42 (7) |
+| 50K | standard | off | no_activation_fee | zero_k1 | -472 | -209 | -151 | 263 (7) | 321 (9) | 0.50 | 58 (8) |
+| 50K | consistency | off | standard | zero_k1 | -283 | -172 | -161 | 111 (6) | 122 (8) | 0.50 | 11 (6) |
+| 50K | consistency | off | no_activation_fee | zero_k1 | -504 | -308 | -282 | 196 (7) | 222 (9) | 0.50 | 26 (6) |
+| 50K | standard | off | standard | zero_k3 | -755 | -452 | -341 | 303 (5) | 414 (7) | 0.50 | 111 (5) |
+| 50K | standard | off | no_activation_fee | zero_k3 | -1,201 | -739 | -582 | 462 (8) | 619 (10) | 0.50 | 157 (7) |
+| 50K | consistency | off | standard | zero_k3 | -823 | -537 | -440 | 286 (5) | 382 (7) | 0.50 | 97 (5) |
+| 50K | consistency | off | no_activation_fee | zero_k3 | -1,269 | -824 | -682 | 445 (8) | 587 (10) | 0.50 | 142 (7) |
+| 50K | standard | off | standard | S0 | -8 | 142 | 148 | 151 (8) | 156 (11) | 0.50 | 6 (8) |
+| 50K | standard | off | no_activation_fee | S0 | -159 | 52 | 68 | 211 (8) | 228 (12) | 0.50 | 16 (9) |
+| 50K | consistency | off | standard | S0 | 3 | 37 | -6 | 34 (7) | -9 (9) | 0.35 | 34 (7) |
+| 50K | consistency | off | no_activation_fee | S0 | -148 | -53 | -86 | 95 (8) | 62 (10) | 0.35 | 33 (7) |
+| 50K | standard | off | standard | S0.15 | 74 | 219 | 217 | 145 (8) | 143 (12) | 0.35 | 2 (9) |
+| 50K | standard | off | no_activation_fee | S0.15 | -58 | 142 | 149 | 200 (9) | 207 (12) | 0.50 | 7 (10) |
+| 50K | consistency | off | standard | S0.15 | 109 | 112 | 56 | 3 (8) | -54 (11) | 0.35 | 3 (8) |
+| 50K | consistency | off | no_activation_fee | S0.15 | -23 | 35 | -13 | 58 (9) | 10 (11) | 0.35 | 47 (8) |
+| 50K | standard | off | standard | S0.3 | 159 | 302 | 309 | 143 (10) | 150 (15) | 0.50 | 7 (12) |
+| 50K | standard | off | no_activation_fee | S0.3 | 45 | 238 | 252 | 194 (10) | 208 (15) | 0.50 | 14 (13) |
+| 50K | consistency | off | standard | S0.3 | 222 | 199 | 116 | -24 (9) | -107 (12) | 0.25 | 24 (9) |
+| 50K | consistency | off | no_activation_fee | S0.3 | 108 | 136 | 59 | 27 (9) | -50 (12) | 0.35 | 27 (9) |
+| 50K | standard | off | standard | S0.5 | 278 | 426 | 461 | 148 (11) | 184 (21) | 0.50 | 35 (18) |
+| 50K | standard | off | no_activation_fee | S0.5 | 182 | 378 | 418 | 196 (12) | 237 (21) | 0.50 | 40 (19) |
+| 50K | consistency | off | standard | S0.5 | 384 | 335 | 216 | -48 (11) | -168 (14) | 0.20 | 7 (10) |
+| 50K | consistency | off | no_activation_fee | S0.5 | 287 | 287 | 172 | -1 (11) | -115 (14) | 0.25 | 1 (11) |
+| 50K | standard | off | standard | S0.75 | 463 | 609 | 641 | 145 (17) | 178 (26) | 0.50 | 32 (24) |
+| 50K | standard | off | no_activation_fee | S0.75 | 389 | 577 | 612 | 187 (17) | 223 (26) | 0.50 | 36 (24) |
+| 50K | consistency | off | standard | S0.75 | 656 | 521 | 354 | -135 (14) | -302 (19) | 0.20 | 16 (13) |
+| 50K | consistency | off | no_activation_fee | S0.75 | 582 | 488 | 325 | -93 (15) | -257 (19) | 0.25 | 12 (13) |
+| 50K | standard | off | standard | S1 | 689 | 885 | 895 | 196 (23) | 206 (34) | 0.50 | 10 (30) |
+| 50K | standard | off | no_activation_fee | S1 | 635 | 867 | 879 | 233 (23) | 244 (34) | 0.50 | 11 (30) |
+| 50K | consistency | off | standard | S1 | 1,002 | 767 | 550 | -234 (20) | -452 (24) | 0.15 | 21 (19) |
+| 50K | consistency | off | no_activation_fee | S1 | 948 | 750 | 534 | -198 (20) | -414 (24) | 0.20 | 21 (19) |
+| 50K | standard | on | standard | zero_k1 | -273 | -77 | 27 | 197 (6) | 301 (9) | 0.50 | 104 (8) |
+| 50K | standard | on | no_activation_fee | zero_k1 | -437 | -178 | -73 | 259 (7) | 363 (10) | 0.50 | 104 (8) |
+| 50K | consistency | on | standard | zero_k1 | -307 | -176 | -184 | 131 (7) | 123 (9) | 0.35 | 8 (8) |
+| 50K | consistency | on | no_activation_fee | zero_k1 | -471 | -277 | -285 | 194 (8) | 186 (10) | 0.35 | 8 (9) |
+| 50K | standard | on | standard | zero_k3 | -817 | -519 | -406 | 298 (6) | 411 (7) | 0.50 | 113 (6) |
+| 50K | standard | on | no_activation_fee | zero_k3 | -1,186 | -784 | -668 | 402 (8) | 518 (10) | 0.50 | 116 (8) |
+| 50K | consistency | on | standard | zero_k3 | -904 | -632 | -574 | 272 (6) | 330 (7) | 0.50 | 58 (6) |
+| 50K | consistency | on | no_activation_fee | zero_k3 | -1,273 | -897 | -836 | 376 (9) | 437 (10) | 0.50 | 61 (8) |
+| 50K | standard | on | standard | S0 | -25 | 124 | 235 | 149 (7) | 259 (12) | 0.50 | 110 (11) |
+| 50K | standard | on | no_activation_fee | S0 | -126 | 66 | 174 | 193 (7) | 300 (12) | 0.50 | 108 (11) |
+| 50K | consistency | on | standard | S0 | 15 | 56 | -20 | 41 (9) | -35 (11) | 0.35 | 41 (9) |
+| 50K | consistency | on | no_activation_fee | S0 | -87 | -2 | -81 | 85 (9) | 6 (12) | 0.35 | 79 (10) |
+| 50K | standard | on | standard | S0.15 | 60 | 203 | 309 | 143 (7) | 249 (14) | 0.50 | 106 (12) |
+| 50K | standard | on | no_activation_fee | S0.15 | -25 | 157 | 260 | 181 (7) | 285 (14) | 0.50 | 104 (13) |
+| 50K | consistency | on | standard | S0.15 | 133 | 146 | 48 | 12 (10) | -85 (12) | 0.35 | 12 (10) |
+| 50K | consistency | on | no_activation_fee | S0.15 | 49 | 99 | -1 | 50 (11) | -50 (12) | 0.35 | 50 (11) |
+| 50K | standard | on | standard | S0.3 | 139 | 276 | 365 | 138 (7) | 227 (14) | 0.50 | 89 (13) |
+| 50K | standard | on | no_activation_fee | S0.3 | 68 | 240 | 327 | 172 (8) | 258 (14) | 0.50 | 86 (13) |
+| 50K | consistency | on | standard | S0.3 | 273 | 240 | 123 | -32 (11) | -150 (13) | 0.25 | 32 (11) |
+| 50K | consistency | on | no_activation_fee | S0.3 | 202 | 204 | 84 | 2 (12) | -118 (14) | 0.35 | 2 (12) |
+| 50K | standard | on | standard | S0.5 | 249 | 395 | 489 | 146 (8) | 240 (16) | 0.50 | 94 (15) |
+| 50K | standard | on | no_activation_fee | S0.5 | 194 | 371 | 462 | 177 (8) | 267 (16) | 0.50 | 91 (15) |
+| 50K | consistency | on | standard | S0.5 | 477 | 387 | 205 | -89 (13) | -272 (16) | 0.25 | 28 (12) |
+| 50K | consistency | on | no_activation_fee | S0.5 | 422 | 364 | 177 | -58 (13) | -245 (16) | 0.25 | 58 (13) |
+| 50K | standard | on | standard | S0.75 | 417 | 563 | 628 | 146 (10) | 210 (18) | 0.50 | 64 (17) |
+| 50K | standard | on | no_activation_fee | S0.75 | 383 | 556 | 615 | 174 (10) | 232 (18) | 0.50 | 58 (17) |
+| 50K | consistency | on | standard | S0.75 | 759 | 591 | 352 | -167 (16) | -406 (19) | 0.20 | 12 (15) |
+| 50K | consistency | on | no_activation_fee | S0.75 | 724 | 584 | 340 | -140 (16) | -384 (19) | 0.25 | 19 (16) |
+| 50K | standard | on | standard | S1 | 587 | 745 | 815 | 157 (14) | 227 (20) | 0.50 | 70 (20) |
+| 50K | standard | on | no_activation_fee | S1 | 569 | 751 | 814 | 182 (14) | 245 (21) | 0.50 | 63 (20) |
+| 50K | consistency | on | standard | S1 | 1,122 | 832 | 516 | -289 (20) | -606 (23) | 0.15 | 8 (22) |
+| 50K | consistency | on | no_activation_fee | S1 | 1,103 | 838 | 515 | -265 (20) | -588 (23) | 0.20 | 25 (22) |
+| 100K | standard | off | standard | zero_k1 | -1,063 | -420 | -260 | 643 (10) | 803 (13) | 0.50 | 160 (9) |
+| 100K | standard | off | no_activation_fee | zero_k1 | -1,574 | -690 | -474 | 884 (13) | 1,100 (16) | 0.50 | 217 (11) |
+| 100K | consistency | off | standard | zero_k1 | -1,098 | -578 | -496 | 521 (11) | 602 (13) | 0.50 | 81 (9) |
+| 100K | consistency | off | no_activation_fee | zero_k1 | -1,609 | -847 | -710 | 762 (14) | 899 (17) | 0.50 | 138 (10) |
+| 100K | standard | off | standard | zero_k3 | -2,167 | -1,116 | -813 | 1,050 (13) | 1,354 (16) | 0.50 | 304 (9) |
+| 100K | standard | off | no_activation_fee | zero_k3 | -3,044 | -1,590 | -1,183 | 1,454 (18) | 1,861 (22) | 0.50 | 407 (13) |
+| 100K | consistency | off | standard | zero_k3 | -2,267 | -1,265 | -989 | 1,003 (13) | 1,279 (16) | 0.50 | 276 (9) |
+| 100K | consistency | off | no_activation_fee | zero_k3 | -3,144 | -1,738 | -1,359 | 1,406 (18) | 1,785 (21) | 0.50 | 379 (13) |
+| 100K | standard | off | standard | S0 | -559 | -64 | 11 | 496 (10) | 571 (16) | 0.50 | 75 (14) |
+| 100K | standard | off | no_activation_fee | S0 | -934 | -256 | -147 | 677 (12) | 787 (17) | 0.50 | 110 (14) |
+| 100K | consistency | off | standard | S0 | -509 | -225 | -249 | 284 (12) | 260 (15) | 0.35 | 24 (10) |
+| 100K | consistency | off | no_activation_fee | S0 | -884 | -418 | -407 | 466 (13) | 477 (17) | 0.50 | 11 (11) |
+| 100K | standard | off | standard | S0.15 | -397 | 53 | 117 | 450 (10) | 513 (17) | 0.50 | 63 (15) |
+| 100K | standard | off | no_activation_fee | S0.15 | -730 | -119 | -24 | 611 (12) | 705 (18) | 0.50 | 94 (15) |
+| 100K | consistency | off | standard | S0.15 | -279 | -98 | -152 | 181 (13) | 127 (16) | 0.35 | 53 (11) |
+| 100K | consistency | off | no_activation_fee | S0.15 | -612 | -271 | -293 | 341 (14) | 319 (18) | 0.35 | 22 (12) |
+| 100K | standard | off | standard | S0.3 | -244 | 181 | 243 | 425 (11) | 487 (20) | 0.50 | 62 (19) |
+| 100K | standard | off | no_activation_fee | S0.3 | -543 | 29 | 117 | 572 (12) | 660 (21) | 0.50 | 88 (19) |
+| 100K | consistency | off | standard | S0.3 | -63 | 42 | -48 | 105 (14) | 15 (18) | 0.35 | 90 (13) |
+| 100K | consistency | off | no_activation_fee | S0.3 | -362 | -110 | -174 | 252 (15) | 188 (19) | 0.35 | 64 (13) |
+| 100K | standard | off | standard | S0.5 | -25 | 368 | 429 | 394 (14) | 455 (26) | 0.50 | 61 (24) |
+| 100K | standard | off | no_activation_fee | S0.5 | -282 | 238 | 322 | 521 (14) | 604 (27) | 0.50 | 84 (24) |
+| 100K | consistency | off | standard | S0.5 | 263 | 234 | 88 | -29 (16) | -175 (21) | 0.25 | 29 (16) |
+| 100K | consistency | off | no_activation_fee | S0.5 | 6 | 104 | -20 | 98 (17) | -26 (22) | 0.35 | 98 (17) |
+| 100K | standard | off | standard | S0.75 | 260 | 629 | 701 | 369 (21) | 442 (34) | 0.50 | 72 (30) |
+| 100K | standard | off | no_activation_fee | S0.75 | 46 | 523 | 615 | 476 (21) | 569 (34) | 0.50 | 93 (30) |
+| 100K | consistency | off | standard | S0.75 | 696 | 512 | 284 | -184 (21) | -412 (25) | 0.20 | 0 (18) |
+| 100K | consistency | off | no_activation_fee | S0.75 | 482 | 406 | 198 | -77 (21) | -284 (26) | 0.25 | 77 (21) |
+| 100K | standard | off | standard | S1 | 558 | 909 | 1,003 | 351 (27) | 445 (44) | 0.50 | 94 (38) |
+| 100K | standard | off | no_activation_fee | S1 | 387 | 826 | 935 | 440 (27) | 548 (44) | 0.50 | 109 (38) |
+| 100K | consistency | off | standard | S1 | 1,295 | 860 | 532 | -435 (26) | -763 (32) | 0.20 | 135 (22) |
+| 100K | consistency | off | no_activation_fee | S1 | 1,123 | 777 | 464 | -346 (27) | -659 (33) | 0.20 | 50 (23) |
+| 100K | standard | on | standard | zero_k1 | -1,128 | -420 | -170 | 707 (11) | 958 (15) | 0.50 | 250 (12) |
+| 100K | standard | on | no_activation_fee | zero_k1 | -1,401 | -566 | -328 | 835 (13) | 1,073 (17) | 0.50 | 238 (13) |
+| 100K | consistency | on | standard | zero_k1 | -1,142 | -565 | -473 | 577 (13) | 669 (16) | 0.50 | 92 (12) |
+| 100K | consistency | on | no_activation_fee | zero_k1 | -1,415 | -711 | -631 | 704 (14) | 784 (17) | 0.50 | 80 (13) |
+| 100K | standard | on | standard | zero_k3 | -2,312 | -1,177 | -895 | 1,136 (14) | 1,417 (17) | 0.50 | 282 (11) |
+| 100K | standard | on | no_activation_fee | zero_k3 | -2,837 | -1,502 | -1,242 | 1,336 (18) | 1,596 (21) | 0.50 | 260 (14) |
+| 100K | consistency | on | standard | zero_k3 | -2,418 | -1,349 | -1,137 | 1,069 (15) | 1,281 (17) | 0.50 | 212 (12) |
+| 100K | consistency | on | no_activation_fee | zero_k3 | -2,943 | -1,674 | -1,483 | 1,269 (18) | 1,460 (21) | 0.50 | 190 (14) |
+| 100K | standard | on | standard | S0 | -616 | -43 | 159 | 573 (12) | 774 (19) | 0.50 | 202 (17) |
+| 100K | standard | on | no_activation_fee | S0 | -802 | -134 | 54 | 668 (13) | 857 (20) | 0.50 | 188 (17) |
+| 100K | consistency | on | standard | S0 | -498 | -162 | -198 | 337 (14) | 300 (18) | 0.35 | 36 (14) |
+| 100K | consistency | on | no_activation_fee | S0 | -685 | -253 | -302 | 432 (15) | 383 (19) | 0.35 | 50 (14) |
+| 100K | standard | on | standard | S0.15 | -461 | 91 | 293 | 552 (13) | 754 (20) | 0.50 | 201 (19) |
+| 100K | standard | on | no_activation_fee | S0.15 | -624 | 16 | 206 | 641 (14) | 831 (21) | 0.50 | 190 (19) |
+| 100K | consistency | on | standard | S0.15 | -264 | -17 | -95 | 247 (16) | 169 (19) | 0.35 | 78 (15) |
+| 100K | consistency | on | no_activation_fee | S0.15 | -428 | -92 | -181 | 336 (16) | 246 (20) | 0.35 | 90 (15) |
+| 100K | standard | on | standard | S0.3 | -298 | 235 | 415 | 533 (13) | 713 (20) | 0.50 | 180 (19) |
+| 100K | standard | on | no_activation_fee | S0.3 | -439 | 176 | 343 | 615 (14) | 781 (21) | 0.50 | 167 (19) |
+| 100K | consistency | on | standard | S0.3 | -26 | 162 | 15 | 188 (17) | 41 (21) | 0.35 | 147 (16) |
+| 100K | consistency | on | no_activation_fee | S0.3 | -166 | 103 | -57 | 269 (17) | 109 (21) | 0.35 | 161 (17) |
+| 100K | standard | on | standard | S0.5 | -83 | 397 | 563 | 480 (14) | 645 (20) | 0.50 | 165 (20) |
+| 100K | standard | on | no_activation_fee | S0.5 | -195 | 355 | 508 | 549 (15) | 703 (20) | 0.50 | 154 (20) |
+| 100K | consistency | on | standard | S0.5 | 344 | 360 | 172 | 16 (19) | -172 (23) | 0.35 | 16 (19) |
+| 100K | consistency | on | no_activation_fee | S0.5 | 232 | 317 | 118 | 85 (19) | -114 (24) | 0.35 | 85 (19) |
+| 100K | standard | on | standard | S0.75 | 200 | 640 | 807 | 440 (18) | 607 (27) | 0.50 | 168 (25) |
+| 100K | standard | on | no_activation_fee | S0.75 | 118 | 614 | 772 | 496 (18) | 654 (27) | 0.50 | 158 (25) |
+| 100K | consistency | on | standard | S0.75 | 854 | 710 | 388 | -143 (23) | -466 (28) | 0.25 | 14 (21) |
+| 100K | consistency | on | no_activation_fee | S0.75 | 772 | 685 | 352 | -87 (24) | -419 (29) | 0.25 | 72 (22) |
+| 100K | standard | on | standard | S1 | 509 | 918 | 1,085 | 409 (21) | 576 (31) | 0.50 | 167 (29) |
+| 100K | standard | on | no_activation_fee | S1 | 454 | 908 | 1,066 | 454 (21) | 612 (31) | 0.50 | 158 (29) |
+| 100K | consistency | on | standard | S1 | 1,496 | 1,103 | 622 | -393 (29) | -874 (34) | 0.20 | 163 (28) |
+| 100K | consistency | on | no_activation_fee | S1 | 1,441 | 1,093 | 603 | -348 (29) | -838 (34) | 0.20 | 116 (28) |
+| 150K | standard | off | standard | zero_k1 | -2,696 | -1,050 | -718 | 1,646 (21) | 1,978 (27) | 0.50 | 332 (17) |
+| 150K | standard | off | no_activation_fee | zero_k1 | -3,025 | -1,169 | -798 | 1,856 (23) | 2,227 (29) | 0.50 | 371 (18) |
+| 150K | consistency | off | standard | zero_k1 | -2,701 | -1,262 | -1,067 | 1,440 (22) | 1,635 (27) | 0.50 | 195 (15) |
+| 150K | consistency | off | no_activation_fee | zero_k1 | -3,030 | -1,380 | -1,147 | 1,650 (24) | 1,884 (29) | 0.50 | 234 (17) |
+| 150K | standard | off | standard | zero_k3 | -5,030 | -2,262 | -1,669 | 2,768 (30) | 3,360 (35) | 0.50 | 593 (18) |
+| 150K | standard | off | no_activation_fee | zero_k3 | -5,637 | -2,503 | -1,842 | 3,134 (34) | 3,795 (40) | 0.50 | 661 (20) |
+| 150K | consistency | off | standard | zero_k3 | -5,169 | -2,476 | -1,944 | 2,693 (30) | 3,226 (35) | 0.50 | 533 (18) |
+| 150K | consistency | off | no_activation_fee | zero_k3 | -5,776 | -2,717 | -2,116 | 3,059 (34) | 3,660 (39) | 0.50 | 601 (20) |
+| 150K | standard | off | standard | S0 | -1,672 | -455 | -267 | 1,217 (18) | 1,405 (25) | 0.50 | 188 (18) |
+| 150K | standard | off | no_activation_fee | S0 | -1,892 | -526 | -312 | 1,366 (20) | 1,580 (27) | 0.50 | 214 (18) |
+| 150K | consistency | off | standard | S0 | -1,500 | -632 | -645 | 867 (20) | 855 (25) | 0.35 | 12 (17) |
+| 150K | consistency | off | no_activation_fee | S0 | -1,720 | -704 | -690 | 1,017 (22) | 1,031 (27) | 0.50 | 14 (17) |
+| 150K | standard | off | standard | S0.15 | -1,335 | -270 | -99 | 1,065 (18) | 1,236 (25) | 0.50 | 172 (18) |
+| 150K | standard | off | no_activation_fee | S0.15 | -1,524 | -329 | -133 | 1,195 (19) | 1,390 (27) | 0.50 | 196 (19) |
+| 150K | consistency | off | standard | S0.15 | -1,082 | -417 | -479 | 665 (21) | 604 (26) | 0.35 | 61 (17) |
+| 150K | consistency | off | no_activation_fee | S0.15 | -1,271 | -476 | -513 | 795 (22) | 758 (28) | 0.35 | 37 (18) |
+| 150K | standard | off | standard | S0.3 | -1,053 | -44 | 99 | 1,009 (20) | 1,152 (28) | 0.50 | 143 (24) |
+| 150K | standard | off | no_activation_fee | S0.3 | -1,219 | -89 | 76 | 1,129 (21) | 1,294 (29) | 0.50 | 165 (24) |
+| 150K | consistency | off | standard | S0.3 | -683 | -180 | -315 | 503 (22) | 368 (28) | 0.35 | 135 (19) |
+| 150K | consistency | off | no_activation_fee | S0.3 | -848 | -225 | -338 | 623 (23) | 510 (29) | 0.35 | 113 (19) |
+| 150K | standard | off | standard | S0.5 | -697 | 223 | 403 | 920 (18) | 1,100 (36) | 0.50 | 180 (32) |
+| 150K | standard | off | no_activation_fee | S0.5 | -833 | 193 | 391 | 1,026 (19) | 1,224 (37) | 0.50 | 198 (32) |
+| 150K | consistency | off | standard | S0.5 | -131 | 148 | -97 | 280 (25) | 34 (31) | 0.35 | 245 (21) |
+| 150K | consistency | off | no_activation_fee | S0.5 | -267 | 118 | -109 | 385 (26) | 159 (32) | 0.35 | 227 (21) |
+| 150K | standard | off | standard | S0.75 | -224 | 597 | 827 | 821 (22) | 1,051 (51) | 0.50 | 230 (45) |
+| 150K | standard | off | no_activation_fee | S0.75 | -324 | 584 | 828 | 908 (23) | 1,152 (51) | 0.50 | 244 (45) |
+| 150K | consistency | off | standard | S0.75 | 692 | 601 | 220 | -91 (31) | -471 (38) | 0.25 | 91 (31) |
+| 150K | consistency | off | no_activation_fee | S0.75 | 592 | 588 | 222 | -3 (31) | -370 (38) | 0.25 | 3 (31) |
+| 150K | standard | off | standard | S1 | 303 | 1,099 | 1,289 | 795 (40) | 985 (65) | 0.50 | 190 (62) |
+| 150K | standard | off | no_activation_fee | S1 | 234 | 1,101 | 1,302 | 867 (40) | 1,068 (65) | 0.50 | 202 (62) |
+| 150K | consistency | off | standard | S1 | 1,705 | 1,144 | 617 | -560 (40) | -1,087 (50) | 0.20 | 199 (37) |
+| 150K | consistency | off | no_activation_fee | S1 | 1,635 | 1,146 | 631 | -489 (40) | -1,004 (50) | 0.20 | 132 (37) |
+| 150K | standard | on | standard | zero_k1 | -2,878 | -1,106 | -594 | 1,772 (23) | 2,284 (32) | 0.50 | 512 (22) |
+| 150K | standard | on | no_activation_fee | zero_k1 | -2,737 | -992 | -559 | 1,744 (23) | 2,177 (33) | 0.50 | 433 (22) |
+| 150K | consistency | on | standard | zero_k1 | -2,840 | -1,287 | -1,047 | 1,553 (25) | 1,793 (29) | 0.50 | 240 (20) |
+| 150K | consistency | on | no_activation_fee | zero_k1 | -2,699 | -1,174 | -1,012 | 1,525 (25) | 1,686 (29) | 0.50 | 162 (20) |
+| 150K | standard | on | standard | zero_k3 | -5,349 | -2,421 | -1,851 | 2,928 (33) | 3,497 (37) | 0.50 | 569 (20) |
+| 150K | standard | on | no_activation_fee | zero_k3 | -5,217 | -2,357 | -1,913 | 2,861 (33) | 3,304 (37) | 0.50 | 443 (21) |
+| 150K | consistency | on | standard | zero_k3 | -5,481 | -2,666 | -2,227 | 2,815 (33) | 3,254 (37) | 0.50 | 439 (20) |
+| 150K | consistency | on | no_activation_fee | zero_k3 | -5,350 | -2,602 | -2,289 | 2,748 (33) | 3,061 (37) | 0.50 | 313 (21) |
+| 150K | standard | on | standard | S0 | -1,803 | -496 | -84 | 1,307 (24) | 1,719 (30) | 0.50 | 413 (21) |
+| 150K | standard | on | no_activation_fee | S0 | -1,660 | -373 | -22 | 1,287 (24) | 1,638 (31) | 0.50 | 351 (21) |
+| 150K | consistency | on | standard | S0 | -1,517 | -607 | -556 | 910 (25) | 961 (30) | 0.50 | 51 (22) |
+| 150K | consistency | on | no_activation_fee | S0 | -1,374 | -484 | -494 | 890 (25) | 880 (30) | 0.35 | 10 (22) |
+| 150K | standard | on | standard | S0.15 | -1,459 | -256 | 115 | 1,203 (26) | 1,574 (32) | 0.50 | 371 (22) |
+| 150K | standard | on | no_activation_fee | S0.15 | -1,315 | -131 | 183 | 1,184 (26) | 1,498 (32) | 0.50 | 314 (22) |
+| 150K | consistency | on | standard | S0.15 | -1,068 | -361 | -413 | 707 (25) | 655 (30) | 0.35 | 52 (23) |
+| 150K | consistency | on | no_activation_fee | S0.15 | -925 | -236 | -345 | 689 (25) | 580 (30) | 0.35 | 109 (23) |
+| 150K | standard | on | standard | S0.3 | -1,176 | -37 | 306 | 1,139 (26) | 1,482 (33) | 0.50 | 344 (26) |
+| 150K | standard | on | no_activation_fee | S0.3 | -1,032 | 89 | 381 | 1,122 (26) | 1,414 (33) | 0.50 | 292 (26) |
+| 150K | consistency | on | standard | S0.3 | -623 | -108 | -200 | 515 (27) | 423 (33) | 0.35 | 92 (24) |
+| 150K | consistency | on | no_activation_fee | S0.3 | -480 | 19 | -125 | 498 (27) | 355 (33) | 0.35 | 144 (24) |
+| 150K | standard | on | standard | S0.5 | -795 | 293 | 558 | 1,088 (33) | 1,353 (35) | 0.50 | 265 (34) |
+| 150K | standard | on | no_activation_fee | S0.5 | -650 | 423 | 641 | 1,073 (33) | 1,292 (35) | 0.50 | 219 (34) |
+| 150K | consistency | on | standard | S0.5 | 18 | 270 | 32 | 252 (30) | 14 (37) | 0.35 | 239 (26) |
+| 150K | consistency | on | no_activation_fee | S0.5 | 162 | 400 | 115 | 238 (30) | -48 (37) | 0.35 | 238 (30) |
+| 150K | standard | on | standard | S0.75 | -307 | 671 | 965 | 977 (32) | 1,272 (40) | 0.50 | 295 (37) |
+| 150K | standard | on | no_activation_fee | S0.75 | -162 | 802 | 1,057 | 965 (32) | 1,219 (40) | 0.50 | 255 (37) |
+| 150K | consistency | on | standard | S0.75 | 959 | 835 | 386 | -124 (38) | -574 (44) | 0.25 | 124 (38) |
+| 150K | consistency | on | no_activation_fee | S0.75 | 1,104 | 967 | 477 | -137 (38) | -627 (44) | 0.25 | 137 (38) |
+| 150K | standard | on | standard | S1 | 195 | 1,110 | 1,412 | 915 (38) | 1,217 (46) | 0.50 | 302 (45) |
+| 150K | standard | on | no_activation_fee | S1 | 340 | 1,243 | 1,510 | 903 (38) | 1,170 (46) | 0.50 | 267 (45) |
+| 150K | consistency | on | standard | S1 | 2,087 | 1,407 | 756 | -679 (44) | -1,330 (53) | 0.20 | 235 (44) |
+| 150K | consistency | on | no_activation_fee | S1 | 2,232 | 1,541 | 855 | -691 (44) | -1,377 (53) | 0.20 | 238 (44) |
+
+## T8 Churn (reviewer finding RR-1, lead rule L-19)
+
+Headline configuration, DLL off, Back2Funded off, cheaper pricing per cell (lower mean total fees; s / n). Churn = Combine purchases (start + rebills + paid resets) per 21 Combine-phase trading days, the ratio of the cycle means (Combine-phase days = the cycle's exact attempt days; a reset starts the next attempt the next trading day, so there are no gap days); label low <= 2.0, medium <= 4.0, else high. Breaches: Combine MLL breaches per 21 Combine-phase days, XFA MLL breaches per 21 XFA days. 5-slot first year: 5 x the purchases of one slot (consecutive cycles back to back) in its first 252 trading days, per 21 days. Forfeiture = cycle mean net if every payout were denied (= minus mean total fees incl. API), shown for medium and high churn. f 0.35 / 0.50 diagnostic.
+
+| size | path | edge | f | pricing | net mean (SE) | churn (purch/21 Combine d) | Combine breaches/21 d | XFA breaches/21 d | 5-slot purch/21 d, first 252 d | forfeiture net |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 50K | standard | zero_k1 | 0.05 | s | -1,089 (9) | low (0.91) | 0.24 | 0.45 | 4.50 |  |
+| 50K | standard | zero_k1 | 0.10 | s | -953 (9) | low (0.90) | 0.28 | 0.50 | 4.45 |  |
+| 50K | standard | zero_k1 | 0.15 | s | -710 (8) | low (0.89) | 0.34 | 0.56 | 4.36 |  |
+| 50K | standard | zero_k1 | 0.20 | s | -452 (7) | low (0.88) | 0.42 | 0.64 | 4.29 |  |
+| 50K | standard | zero_k1 | 0.25 | s | -250 (7) | low (0.90) | 0.53 | 0.73 | 4.37 |  |
+| 50K | standard | zero_k1 | 0.35 | s | -72 (9) | low (1.14) | 0.84 | 0.96 | 5.21 |  |
+| 50K | standard | zero_k1 | 0.50 | s | -30 (10) | low (1.79) | 1.44 | 1.36 | 7.73 |  |
+| 50K | standard | S0.3 | 0.05 | s | -343 (9) | low (0.96) | 0.18 | 0.40 | 4.40 |  |
+| 50K | standard | S0.3 | 0.10 | s | -269 (8) | low (0.96) | 0.21 | 0.46 | 4.37 |  |
+| 50K | standard | S0.3 | 0.15 | s | -130 (8) | low (0.95) | 0.26 | 0.51 | 4.29 |  |
+| 50K | standard | S0.3 | 0.20 | s | 25 (9) | low (0.95) | 0.34 | 0.57 | 4.21 |  |
+| 50K | standard | S0.3 | 0.25 | s | 159 (10) | low (0.97) | 0.44 | 0.64 | 4.23 |  |
+| 50K | standard | S0.3 | 0.35 | s | 302 (15) | low (1.17) | 0.74 | 0.83 | 4.92 |  |
+| 50K | standard | S0.3 | 0.50 | s | 309 (18) | low (1.79) | 1.32 | 1.19 | 7.22 |  |
+| 50K | standard | S0.5 | 0.05 | s | -176 (9) | low (0.97) | 0.17 | 0.39 | 4.35 |  |
+| 50K | standard | S0.5 | 0.10 | s | -111 (9) | low (0.97) | 0.20 | 0.44 | 4.32 |  |
+| 50K | standard | S0.5 | 0.15 | s | 5 (9) | low (0.97) | 0.24 | 0.50 | 4.25 |  |
+| 50K | standard | S0.5 | 0.20 | s | 154 (10) | low (0.96) | 0.32 | 0.55 | 4.16 |  |
+| 50K | standard | S0.5 | 0.25 | s | 278 (13) | low (0.98) | 0.42 | 0.62 | 4.18 |  |
+| 50K | standard | S0.5 | 0.35 | s | 426 (18) | low (1.18) | 0.72 | 0.80 | 4.83 |  |
+| 50K | standard | S0.5 | 0.50 | s | 461 (24) | low (1.81) | 1.29 | 1.10 | 7.09 |  |
+| 50K | standard | S1 | 0.05 | s | 221 (12) | low (1.00) | 0.14 | 0.36 | 4.22 |  |
+| 50K | standard | S1 | 0.10 | s | 270 (11) | low (1.01) | 0.16 | 0.41 | 4.17 |  |
+| 50K | standard | S1 | 0.15 | s | 359 (12) | low (1.00) | 0.20 | 0.46 | 4.10 |  |
+| 50K | standard | S1 | 0.20 | s | 536 (18) | low (1.01) | 0.27 | 0.50 | 4.03 |  |
+| 50K | standard | S1 | 0.25 | s | 689 (23) | low (1.03) | 0.37 | 0.55 | 4.04 |  |
+| 50K | standard | S1 | 0.35 | s | 885 (33) | low (1.22) | 0.66 | 0.69 | 4.64 |  |
+| 50K | standard | S1 | 0.50 | s | 895 (39) | low (1.84) | 1.24 | 0.93 | 6.78 |  |
+| 50K | consistency | zero_k1 | 0.05 | s | -1,092 (10) | low (0.91) | 0.24 | 0.30 | 4.42 |  |
+| 50K | consistency | zero_k1 | 0.10 | s | -941 (9) | low (0.90) | 0.28 | 0.33 | 4.36 |  |
+| 50K | consistency | zero_k1 | 0.15 | s | -702 (9) | low (0.89) | 0.34 | 0.38 | 4.24 |  |
+| 50K | consistency | zero_k1 | 0.20 | s | -449 (8) | low (0.88) | 0.42 | 0.45 | 4.15 |  |
+| 50K | consistency | zero_k1 | 0.25 | s | -283 (8) | low (0.90) | 0.53 | 0.54 | 4.23 |  |
+| 50K | consistency | zero_k1 | 0.35 | s | -172 (8) | low (1.14) | 0.84 | 0.79 | 5.08 |  |
+| 50K | consistency | zero_k1 | 0.50 | s | -161 (7) | low (1.79) | 1.44 | 1.20 | 7.62 |  |
+| 50K | consistency | S0.3 | 0.05 | s | -139 (12) | low (0.96) | 0.18 | 0.24 | 4.24 |  |
+| 50K | consistency | S0.3 | 0.10 | s | -36 (12) | low (0.96) | 0.21 | 0.27 | 4.15 |  |
+| 50K | consistency | S0.3 | 0.15 | s | 87 (13) | low (0.95) | 0.26 | 0.30 | 4.04 |  |
+| 50K | consistency | S0.3 | 0.20 | s | 179 (13) | low (0.95) | 0.34 | 0.35 | 3.94 |  |
+| 50K | consistency | S0.3 | 0.25 | s | 222 (12) | low (0.97) | 0.44 | 0.43 | 3.97 |  |
+| 50K | consistency | S0.3 | 0.35 | s | 199 (11) | low (1.17) | 0.74 | 0.65 | 4.72 |  |
+| 50K | consistency | S0.3 | 0.50 | s | 116 (11) | low (1.79) | 1.32 | 1.02 | 7.07 |  |
+| 50K | consistency | S0.5 | 0.05 | s | 93 (14) | low (0.97) | 0.17 | 0.23 | 4.16 |  |
+| 50K | consistency | S0.5 | 0.10 | s | 227 (15) | low (0.97) | 0.20 | 0.25 | 4.07 |  |
+| 50K | consistency | S0.5 | 0.15 | s | 318 (15) | low (0.97) | 0.24 | 0.28 | 3.96 |  |
+| 50K | consistency | S0.5 | 0.20 | s | 391 (15) | low (0.96) | 0.32 | 0.32 | 3.85 |  |
+| 50K | consistency | S0.5 | 0.25 | s | 384 (14) | low (0.98) | 0.42 | 0.40 | 3.90 |  |
+| 50K | consistency | S0.5 | 0.35 | s | 335 (14) | low (1.18) | 0.72 | 0.60 | 4.61 |  |
+| 50K | consistency | S0.5 | 0.50 | s | 216 (13) | low (1.81) | 1.29 | 0.91 | 6.92 |  |
+| 50K | consistency | S1 | 0.05 | s | 798 (20) | low (1.00) | 0.14 | 0.20 | 3.98 |  |
+| 50K | consistency | S1 | 0.10 | s | 991 (23) | low (1.01) | 0.16 | 0.21 | 3.84 |  |
+| 50K | consistency | S1 | 0.15 | s | 1,135 (25) | low (1.00) | 0.20 | 0.22 | 3.69 |  |
+| 50K | consistency | S1 | 0.20 | s | 1,114 (25) | low (1.01) | 0.27 | 0.26 | 3.60 |  |
+| 50K | consistency | S1 | 0.25 | s | 1,002 (24) | low (1.03) | 0.37 | 0.31 | 3.65 |  |
+| 50K | consistency | S1 | 0.35 | s | 767 (22) | low (1.22) | 0.66 | 0.48 | 4.34 |  |
+| 50K | consistency | S1 | 0.50 | s | 550 (21) | low (1.84) | 1.24 | 0.70 | 6.56 |  |
+| 100K | standard | zero_k1 | 0.05 | s | -9,998 (65) | low (0.94) | 0.13 | 0.34 | 4.86 |  |
+| 100K | standard | zero_k1 | 0.10 | s | -6,492 (44) | low (0.93) | 0.17 | 0.41 | 4.76 |  |
+| 100K | standard | zero_k1 | 0.15 | s | -3,575 (26) | low (0.90) | 0.24 | 0.47 | 4.59 |  |
+| 100K | standard | zero_k1 | 0.20 | s | -1,900 (17) | low (0.88) | 0.32 | 0.55 | 4.41 |  |
+| 100K | standard | zero_k1 | 0.25 | s | -1,063 (13) | low (0.86) | 0.44 | 0.64 | 4.32 |  |
+| 100K | standard | zero_k1 | 0.35 | s | -420 (13) | low (0.98) | 0.73 | 0.89 | 4.84 |  |
+| 100K | standard | zero_k1 | 0.50 | s | -260 (13) | low (1.62) | 1.35 | 1.38 | 7.35 |  |
+| 100K | standard | S0.3 | 0.05 | s | -3,192 (22) | low (0.98) | 0.08 | 0.34 | 4.83 |  |
+| 100K | standard | S0.3 | 0.10 | s | -2,262 (18) | low (0.97) | 0.11 | 0.40 | 4.73 |  |
+| 100K | standard | S0.3 | 0.15 | s | -1,373 (15) | low (0.95) | 0.17 | 0.44 | 4.54 |  |
+| 100K | standard | S0.3 | 0.20 | s | -723 (14) | low (0.93) | 0.25 | 0.50 | 4.37 |  |
+| 100K | standard | S0.3 | 0.25 | s | -244 (15) | low (0.92) | 0.35 | 0.57 | 4.28 |  |
+| 100K | standard | S0.3 | 0.35 | s | 181 (18) | low (1.02) | 0.64 | 0.79 | 4.67 |  |
+| 100K | standard | S0.3 | 0.50 | s | 243 (24) | low (1.62) | 1.25 | 1.23 | 6.97 |  |
+| 100K | standard | S0.5 | 0.05 | s | -2,445 (18) | low (0.98) | 0.07 | 0.33 | 4.81 |  |
+| 100K | standard | S0.5 | 0.10 | s | -1,727 (15) | low (0.98) | 0.10 | 0.39 | 4.70 |  |
+| 100K | standard | S0.5 | 0.15 | s | -1,026 (14) | low (0.96) | 0.16 | 0.43 | 4.52 |  |
+| 100K | standard | S0.5 | 0.20 | s | -449 (14) | low (0.94) | 0.23 | 0.48 | 4.34 |  |
+| 100K | standard | S0.5 | 0.25 | s | -25 (17) | low (0.93) | 0.33 | 0.55 | 4.24 |  |
+| 100K | standard | S0.5 | 0.35 | s | 368 (22) | low (1.03) | 0.62 | 0.76 | 4.63 |  |
+| 100K | standard | S0.5 | 0.50 | s | 429 (31) | low (1.62) | 1.23 | 1.17 | 6.89 |  |
+| 100K | standard | S1 | 0.05 | s | -1,217 (15) | low (1.00) | 0.05 | 0.32 | 4.73 |  |
+| 100K | standard | S1 | 0.10 | s | -746 (14) | low (1.00) | 0.08 | 0.37 | 4.60 |  |
+| 100K | standard | S1 | 0.15 | s | -256 (14) | low (0.99) | 0.12 | 0.41 | 4.41 |  |
+| 100K | standard | S1 | 0.20 | s | 197 (18) | low (0.98) | 0.20 | 0.45 | 4.23 |  |
+| 100K | standard | S1 | 0.25 | s | 558 (24) | low (0.97) | 0.29 | 0.50 | 4.13 |  |
+| 100K | standard | S1 | 0.35 | s | 909 (35) | low (1.07) | 0.57 | 0.69 | 4.49 |  |
+| 100K | standard | S1 | 0.50 | s | 1,003 (50) | low (1.65) | 1.18 | 1.00 | 6.65 |  |
+| 100K | consistency | zero_k1 | 0.05 | s | -9,934 (66) | low (0.94) | 0.13 | 0.19 | 4.84 |  |
+| 100K | consistency | zero_k1 | 0.10 | s | -6,399 (44) | low (0.93) | 0.17 | 0.23 | 4.71 |  |
+| 100K | consistency | zero_k1 | 0.15 | s | -3,497 (27) | low (0.90) | 0.24 | 0.28 | 4.49 |  |
+| 100K | consistency | zero_k1 | 0.20 | s | -1,869 (18) | low (0.88) | 0.32 | 0.35 | 4.29 |  |
+| 100K | consistency | zero_k1 | 0.25 | s | -1,098 (14) | low (0.86) | 0.44 | 0.45 | 4.20 |  |
+| 100K | consistency | zero_k1 | 0.35 | s | -578 (11) | low (0.98) | 0.73 | 0.73 | 4.74 |  |
+| 100K | consistency | zero_k1 | 0.50 | s | -496 (11) | low (1.62) | 1.35 | 1.25 | 7.28 |  |
+| 100K | consistency | S0.3 | 0.05 | s | -2,745 (25) | low (0.98) | 0.08 | 0.16 | 4.78 |  |
+| 100K | consistency | S0.3 | 0.10 | s | -1,756 (22) | low (0.97) | 0.11 | 0.19 | 4.58 |  |
+| 100K | consistency | S0.3 | 0.15 | s | -866 (20) | low (0.95) | 0.17 | 0.22 | 4.32 |  |
+| 100K | consistency | S0.3 | 0.20 | s | -353 (20) | low (0.93) | 0.25 | 0.27 | 4.13 |  |
+| 100K | consistency | S0.3 | 0.25 | s | -63 (18) | low (0.92) | 0.35 | 0.35 | 4.04 |  |
+| 100K | consistency | S0.3 | 0.35 | s | 42 (15) | low (1.02) | 0.64 | 0.60 | 4.50 |  |
+| 100K | consistency | S0.3 | 0.50 | s | -48 (15) | low (1.62) | 1.25 | 1.03 | 6.84 |  |
+| 100K | consistency | S0.5 | 0.05 | s | -1,834 (23) | low (0.98) | 0.07 | 0.15 | 4.74 |  |
+| 100K | consistency | S0.5 | 0.10 | s | -1,047 (22) | low (0.98) | 0.10 | 0.18 | 4.52 |  |
+| 100K | consistency | S0.5 | 0.15 | s | -350 (23) | low (0.96) | 0.16 | 0.20 | 4.25 |  |
+| 100K | consistency | S0.5 | 0.20 | s | 64 (22) | low (0.94) | 0.23 | 0.25 | 4.05 |  |
+| 100K | consistency | S0.5 | 0.25 | s | 263 (21) | low (0.93) | 0.33 | 0.33 | 3.97 |  |
+| 100K | consistency | S0.5 | 0.35 | s | 234 (17) | low (1.03) | 0.62 | 0.57 | 4.43 |  |
+| 100K | consistency | S0.5 | 0.50 | s | 88 (17) | low (1.62) | 1.23 | 0.97 | 6.74 |  |
+| 100K | consistency | S1 | 0.05 | s | -193 (25) | low (1.00) | 0.05 | 0.14 | 4.61 |  |
+| 100K | consistency | S1 | 0.10 | s | 520 (28) | low (1.00) | 0.08 | 0.16 | 4.32 |  |
+| 100K | consistency | S1 | 0.15 | s | 1,253 (35) | low (0.99) | 0.12 | 0.16 | 4.01 |  |
+| 100K | consistency | S1 | 0.20 | s | 1,430 (35) | low (0.98) | 0.20 | 0.20 | 3.79 |  |
+| 100K | consistency | S1 | 0.25 | s | 1,295 (33) | low (0.97) | 0.29 | 0.26 | 3.74 |  |
+| 100K | consistency | S1 | 0.35 | s | 860 (27) | low (1.07) | 0.57 | 0.47 | 4.24 |  |
+| 100K | consistency | S1 | 0.50 | s | 532 (25) | low (1.65) | 1.18 | 0.78 | 6.44 |  |
+| 150K | standard | zero_k1 | 0.05 | s | -52,841 (309) | low (0.97) | 0.08 | 0.27 | 4.96 |  |
+| 150K | standard | zero_k1 | 0.10 | s | -20,238 (135) | low (0.95) | 0.12 | 0.33 | 4.86 |  |
+| 150K | standard | zero_k1 | 0.15 | s | -8,989 (65) | low (0.92) | 0.18 | 0.39 | 4.67 |  |
+| 150K | standard | zero_k1 | 0.20 | s | -4,762 (38) | low (0.89) | 0.27 | 0.47 | 4.47 |  |
+| 150K | standard | zero_k1 | 0.25 | s | -2,696 (26) | low (0.87) | 0.37 | 0.56 | 4.32 |  |
+| 150K | standard | zero_k1 | 0.35 | s | -1,050 (20) | low (0.92) | 0.66 | 0.80 | 4.61 |  |
+| 150K | standard | zero_k1 | 0.50 | s | -718 (23) | low (1.51) | 1.27 | 1.25 | 6.94 |  |
+| 150K | standard | S0.3 | 0.05 | s | -11,940 (76) | low (0.99) | 0.04 | 0.29 | 4.95 |  |
+| 150K | standard | S0.3 | 0.10 | s | -6,739 (47) | low (0.98) | 0.07 | 0.33 | 4.82 |  |
+| 150K | standard | S0.3 | 0.15 | s | -3,775 (32) | low (0.96) | 0.13 | 0.37 | 4.61 |  |
+| 150K | standard | S0.3 | 0.20 | s | -2,091 (25) | low (0.94) | 0.20 | 0.42 | 4.41 |  |
+| 150K | standard | S0.3 | 0.25 | s | -1,053 (24) | low (0.92) | 0.30 | 0.50 | 4.25 |  |
+| 150K | standard | S0.3 | 0.35 | s | -44 (27) | low (0.97) | 0.58 | 0.72 | 4.49 |  |
+| 150K | standard | S0.3 | 0.50 | s | 99 (32) | low (1.52) | 1.18 | 1.14 | 6.61 |  |
+| 150K | standard | S0.5 | 0.05 | s | -8,811 (55) | low (1.00) | 0.03 | 0.29 | 4.94 |  |
+| 150K | standard | S0.5 | 0.10 | s | -5,129 (37) | low (0.99) | 0.06 | 0.33 | 4.79 |  |
+| 150K | standard | S0.5 | 0.15 | s | -2,941 (27) | low (0.97) | 0.12 | 0.36 | 4.57 |  |
+| 150K | standard | S0.5 | 0.20 | s | -1,587 (24) | low (0.95) | 0.19 | 0.41 | 4.37 |  |
+| 150K | standard | S0.5 | 0.25 | s | -697 (26) | low (0.93) | 0.28 | 0.48 | 4.23 |  |
+| 150K | standard | S0.5 | 0.35 | s | 223 (29) | low (0.99) | 0.56 | 0.70 | 4.46 |  |
+| 150K | standard | S0.5 | 0.50 | s | 403 (42) | low (1.52) | 1.16 | 1.08 | 6.52 |  |
+| 150K | standard | S1 | 0.05 | s | -4,739 (30) | low (1.01) | 0.02 | 0.30 | 4.89 |  |
+| 150K | standard | S1 | 0.10 | s | -2,650 (24) | low (1.01) | 0.04 | 0.33 | 4.68 |  |
+| 150K | standard | S1 | 0.15 | s | -1,382 (22) | low (1.00) | 0.09 | 0.35 | 4.46 |  |
+| 150K | standard | S1 | 0.20 | s | -449 (24) | low (0.98) | 0.15 | 0.39 | 4.25 |  |
+| 150K | standard | S1 | 0.25 | s | 303 (32) | low (0.97) | 0.24 | 0.44 | 4.10 |  |
+| 150K | standard | S1 | 0.35 | n | 1,101 (53) | low (1.03) | 0.52 | 0.64 | 4.34 |  |
+| 150K | standard | S1 | 0.50 | n | 1,302 (72) | low (1.57) | 1.12 | 0.96 | 6.35 |  |
+| 150K | consistency | zero_k1 | 0.05 | s | -52,686 (310) | low (0.97) | 0.08 | 0.13 | 4.96 |  |
+| 150K | consistency | zero_k1 | 0.10 | s | -20,048 (135) | low (0.95) | 0.12 | 0.16 | 4.82 |  |
+| 150K | consistency | zero_k1 | 0.15 | s | -8,825 (65) | low (0.92) | 0.18 | 0.21 | 4.57 |  |
+| 150K | consistency | zero_k1 | 0.20 | s | -4,664 (40) | low (0.89) | 0.27 | 0.29 | 4.34 |  |
+| 150K | consistency | zero_k1 | 0.25 | s | -2,701 (28) | low (0.87) | 0.37 | 0.38 | 4.20 |  |
+| 150K | consistency | zero_k1 | 0.35 | s | -1,262 (19) | low (0.92) | 0.66 | 0.64 | 4.52 |  |
+| 150K | consistency | zero_k1 | 0.50 | s | -1,067 (18) | low (1.51) | 1.27 | 1.10 | 6.85 |  |
+| 150K | consistency | S0.3 | 0.05 | s | -11,217 (77) | low (0.99) | 0.04 | 0.11 | 4.93 |  |
+| 150K | consistency | S0.3 | 0.10 | s | -5,839 (49) | low (0.98) | 0.07 | 0.13 | 4.69 |  |
+| 150K | consistency | S0.3 | 0.15 | s | -2,835 (39) | low (0.96) | 0.13 | 0.16 | 4.36 |  |
+| 150K | consistency | S0.3 | 0.20 | s | -1,404 (33) | low (0.94) | 0.20 | 0.22 | 4.13 |  |
+| 150K | consistency | S0.3 | 0.25 | s | -683 (30) | low (0.92) | 0.30 | 0.30 | 4.01 |  |
+| 150K | consistency | S0.3 | 0.35 | s | -180 (25) | low (0.97) | 0.58 | 0.54 | 4.32 |  |
+| 150K | consistency | S0.3 | 0.50 | s | -315 (22) | low (1.52) | 1.18 | 0.95 | 6.49 |  |
+| 150K | consistency | S0.5 | 0.05 | s | -7,904 (56) | low (1.00) | 0.03 | 0.11 | 4.91 |  |
+| 150K | consistency | S0.5 | 0.10 | s | -3,936 (42) | low (0.99) | 0.06 | 0.13 | 4.61 |  |
+| 150K | consistency | S0.5 | 0.15 | s | -1,631 (40) | low (0.97) | 0.12 | 0.15 | 4.27 |  |
+| 150K | consistency | S0.5 | 0.20 | s | -606 (36) | low (0.95) | 0.19 | 0.20 | 4.04 |  |
+| 150K | consistency | S0.5 | 0.25 | s | -131 (33) | low (0.93) | 0.28 | 0.28 | 3.94 |  |
+| 150K | consistency | S0.5 | 0.35 | s | 148 (28) | low (0.99) | 0.56 | 0.51 | 4.26 |  |
+| 150K | consistency | S0.5 | 0.50 | s | -97 (25) | low (1.52) | 1.16 | 0.90 | 6.38 |  |
+| 150K | consistency | S1 | 0.05 | s | -3,287 (37) | low (1.01) | 0.02 | 0.11 | 4.83 |  |
+| 150K | consistency | S1 | 0.10 | s | -485 (39) | low (1.01) | 0.04 | 0.11 | 4.38 |  |
+| 150K | consistency | S1 | 0.15 | s | 1,474 (54) | low (1.00) | 0.09 | 0.12 | 4.00 |  |
+| 150K | consistency | S1 | 0.20 | s | 1,904 (55) | low (0.98) | 0.15 | 0.16 | 3.78 |  |
+| 150K | consistency | S1 | 0.25 | s | 1,705 (51) | low (0.97) | 0.24 | 0.22 | 3.69 |  |
+| 150K | consistency | S1 | 0.35 | n | 1,146 (41) | low (1.03) | 0.52 | 0.42 | 4.07 |  |
+| 150K | consistency | S1 | 0.50 | n | 631 (38) | low (1.57) | 1.12 | 0.73 | 6.16 |  |
+

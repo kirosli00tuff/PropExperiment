@@ -1,0 +1,3428 @@
+{
+ "generated_date_cmd": "Sat Oct 10 07:34:51 PM PDT 2026 seed offset 100",
+ "n_paths": 20000,
+ "n_cycles": 20000,
+ "n_days": 756,
+ "seeds": {
+  "shocks_attempt": 7190101,
+  "shocks_xfa": 7190102,
+  "cycles": 7190103
+ },
+ "code": [
+  "reports/stage_e19_verify/er_returns.py",
+  "reports/stage_e19_verify/er_sim.py"
+ ],
+ "conventions": [
+  "Conventions the spec leaves open (my readings; Phase B compares them with the code's):",
+  "C1 a reset happens the trading day after a fail and the new attempt trades on that day;",
+  "C2 a rebill falling on the pass day is paid (the subscription is alive at the start of that day);",
+  "C3 a rebill due on a reset day is paid first and its credit pays the reset (L-17);",
+  "C4 no reset is charged after the 60th failed attempt (the cycle ends with no XFA);",
+  "C5 the API fee counts started 21-day periods of the cycle length (first day to the XFA's end day);",
+  "C6 the Combine consistency is strict (best < 0.55 x B, rules combine_consistency_inclusive false);",
+  "C7 the XFA consistency is inclusive (best <= 0.4 x window net, rules xfa_consistency_inclusive true);",
+  "C8 a payout request needs amount >= 125; otherwise the window keeps accumulating."
+ ],
+ "products": {
+  "NQ": {
+   "sigma_full": 2999.103982553904,
+   "rt_full": 15.552175306459402,
+   "sigma_micro": 299.9103982553904,
+   "rt_micro": 2.0594370644314144
+  },
+  "CL": {
+   "sigma_full": 1395.8035012972455,
+   "rt_full": 17.280558919479088,
+   "sigma_micro": 139.58035012972454,
+   "rt_micro": 3.1669504903972525
+  },
+  "GC": {
+   "sigma_full": 1224.6009818245702,
+   "rt_full": 43.514336363874946,
+   "sigma_micro": 122.46009818245702,
+   "rt_micro": 4.086340091694883
+  },
+  "ZN": {
+   "sigma_full": 368.0573994562542,
+   "rt_full": 18.247022322491446,
+   "sigma_micro": null,
+   "rt_micro": null
+  },
+  "6E": {
+   "sigma_full": 470.1878461624894,
+   "rt_full": 12.091472265614087,
+   "sigma_micro": 47.01878461624894,
+   "rt_micro": 2.402458464893215
+  }
+ },
+ "shock_check": {
+  "attempt_z_mean": 3.297430589042964e-07,
+  "attempt_z_sd": 1.0006771488049282,
+  "xfa_z_mean": 0.0001738207331536024,
+  "xfa_z_sd": 1.000113246384282,
+  "w_le_min0z": true
+ },
+ "configs": [
+  {
+   "size": "50K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.16685,
+    "p_pass_se": 0.0026363903115813486,
+    "mean_length": 72.18875,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 380.98760175,
+     "se": 5.131277466859503
+    },
+    "p_any_payout": 0.58875,
+    "p_any_payout_se": 0.003479392457743162,
+    "mean_n_payouts": 0.7858,
+    "mean_first_payout_day_given": 34.39473460721868,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 47.61415
+   },
+   "cycle": {
+    "net": {
+     "mean": -1036.82162535,
+     "se": 9.008944403781358
+    },
+    "net_noapi": {
+     "mean": -697.38605035,
+     "se": 7.577761864901708
+    },
+    "p_no_payout": 0.41185,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 18.89285,
+    "mean_purchases_se": 0.11380162997261603,
+    "p_no_payout_se": 0.0034801550073236677,
+    "mean_fees": 1414.185225,
+    "mean_fee_sub": 925.74965,
+    "mean_fee_act": 149.0,
+    "mean_api": 339.435575,
+    "mean_cash": 377.36359965,
+    "mean_attempts": 6.03045,
+    "mean_length": 481.56095,
+    "net_per_purchase": -54.879048176955834,
+    "p5": -3292.89455,
+    "p50": -847.3969999999999,
+    "p95": 582.5605999999998
+   },
+   "funded_xfa_net_of_activation": 231.98760175
+  },
+  {
+   "size": "50K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.16685,
+    "p_pass_se": 0.0026363903115813486,
+    "mean_length": 72.18875,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 417.51206955,
+     "se": 6.678259095282948
+    },
+    "p_any_payout": 0.3647,
+    "p_any_payout_se": 0.003403629753660054,
+    "mean_n_payouts": 0.5044,
+    "mean_first_payout_day_given": 44.1139292569235,
+    "breach_share": 0.99945,
+    "alive_at_horizon": 0.00055,
+    "mean_life": 71.5272
+   },
+   "cycle": {
+    "net": {
+     "mean": -1019.3509443,
+     "se": 9.857165560852543
+    },
+    "net_noapi": {
+     "mean": -663.4767193,
+     "se": 8.662081311416186
+    },
+    "p_no_payout": 0.63685,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 18.89285,
+    "mean_purchases_se": 0.11380162997261603,
+    "p_no_payout_se": 0.0034005299403181265,
+    "mean_fees": 1430.623875,
+    "mean_fee_sub": 925.74965,
+    "mean_fee_act": 149.0,
+    "mean_api": 355.874225,
+    "mean_cash": 411.2729307000001,
+    "mean_attempts": 6.03045,
+    "mean_length": 505.42415,
+    "net_per_purchase": -53.95432368859119,
+    "p5": -3323.9386,
+    "p50": -890.4165,
+    "p95": 834.96395
+   },
+   "funded_xfa_net_of_activation": 268.51206955000004
+  },
+  {
+   "size": "50K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.1649,
+    "p_pass_se": 0.0026240044778925204,
+    "mean_length": 63.6227,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 377.7306921,
+     "se": 5.041432280465675
+    },
+    "p_any_payout": 0.59765,
+    "p_any_payout_se": 0.0034674520724878085,
+    "mean_n_payouts": 0.7972,
+    "mean_first_payout_day_given": 28.19919685434619,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 42.06715
+   },
+   "cycle": {
+    "net": {
+     "mean": -892.6816233000001,
+     "se": 8.29398046531904
+    },
+    "net_noapi": {
+     "mean": -590.4936483,
+     "se": 7.036278208427992
+    },
+    "p_no_payout": 0.39985,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 16.59265,
+    "mean_purchases_se": 0.10117950713216671,
+    "p_no_payout_se": 0.0034638849396306454,
+    "mean_fees": 1264.227825,
+    "mean_fee_sub": 813.03985,
+    "mean_fee_act": 149.0,
+    "mean_api": 302.187975,
+    "mean_cash": 371.54620170000004,
+    "mean_attempts": 6.08095,
+    "mean_length": 427.63805,
+    "net_per_purchase": -53.799822409319795,
+    "p5": -2901.76405,
+    "p50": -745.7845,
+    "p95": 656.04215
+   },
+   "funded_xfa_net_of_activation": 228.73069209999994
+  },
+  {
+   "size": "50K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.1649,
+    "p_pass_se": 0.0026240044778925204,
+    "mean_length": 63.6227,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 427.62027825000007,
+     "se": 6.75368572149515
+    },
+    "p_any_payout": 0.35505,
+    "p_any_payout_se": 0.003383707267923749,
+    "mean_n_payouts": 0.50065,
+    "mean_first_payout_day_given": 38.30291508238276,
+    "breach_share": 0.99995,
+    "alive_at_horizon": 5e-05,
+    "mean_life": 64.38325
+   },
+   "cycle": {
+    "net": {
+     "mean": -856.12672465,
+     "se": 9.418215985852253
+    },
+    "net_noapi": {
+     "mean": -538.52089965,
+     "se": 8.427940192887256
+    },
+    "p_no_payout": 0.6464,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 16.59265,
+    "mean_purchases_se": 0.10117950713216671,
+    "p_no_payout_se": 0.0033805845648349044,
+    "mean_fees": 1279.645675,
+    "mean_fee_sub": 813.03985,
+    "mean_fee_act": 149.0,
+    "mean_api": 317.605825,
+    "mean_cash": 423.51895034999995,
+    "mean_attempts": 6.08095,
+    "mean_length": 450.03985,
+    "net_per_purchase": -51.59674462186571,
+    "p5": -2932.0,
+    "p50": -767.5,
+    "p95": 1003.7672999999999
+   },
+   "funded_xfa_net_of_activation": 278.62027825
+  },
+  {
+   "size": "50K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.16535,
+    "p_pass_se": 0.0026268743546275677,
+    "mean_length": 52.8509,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 397.33314210000003,
+     "se": 5.342295939686853
+    },
+    "p_any_payout": 0.58855,
+    "p_any_payout_se": 0.0034796472342753368,
+    "mean_n_payouts": 0.8004,
+    "mean_first_payout_day_given": 23.461812930082406,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 37.4025
+   },
+   "cycle": {
+    "net": {
+     "mean": -676.5419937,
+     "se": 7.543782219353112
+    },
+    "net_noapi": {
+     "mean": -423.4843687,
+     "se": 6.617298326774944
+    },
+    "p_no_payout": 0.4104,
+    "p_reach_xfa": 0.99995,
+    "mean_purchases": 13.52985,
+    "mean_purchases_se": 0.0830889320993288,
+    "p_no_payout_se": 0.0034783030345270378,
+    "mean_fees": 1065.012825,
+    "mean_fee_sub": 662.96265,
+    "mean_fee_act": 148.99255,
+    "mean_api": 253.057625,
+    "mean_cash": 388.4708313,
+    "mean_attempts": 6.05595,
+    "mean_length": 356.498,
+    "net_per_purchase": -50.003658111509,
+    "p5": -2380.5187,
+    "p50": -593.5,
+    "p95": 847.6190999999989
+   },
+   "funded_xfa_net_of_activation": 248.33314209999998
+  },
+  {
+   "size": "50K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.16535,
+    "p_pass_se": 0.0026268743546275677,
+    "mean_length": 52.8509,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 438.4919727,
+     "se": 6.904895125614664
+    },
+    "p_any_payout": 0.3355,
+    "p_any_payout_se": 0.003338710454651616,
+    "mean_n_payouts": 0.4703,
+    "mean_first_payout_day_given": 32.85365126676602,
+    "breach_share": 0.99995,
+    "alive_at_horizon": 5e-05,
+    "mean_life": 55.68865
+   },
+   "cycle": {
+    "net": {
+     "mean": -639.89629535,
+     "se": 8.800368431227861
+    },
+    "net_noapi": {
+     "mean": -374.12289535,
+     "se": 8.10205329958931
+    },
+    "p_no_payout": 0.66665,
+    "p_reach_xfa": 0.99995,
+    "mean_purchases": 13.52985,
+    "mean_purchases_se": 0.0830889320993288,
+    "p_no_payout_se": 0.0033333749976562793,
+    "mean_fees": 1077.7286,
+    "mean_fee_sub": 662.96265,
+    "mean_fee_act": 148.99255,
+    "mean_api": 265.7734,
+    "mean_cash": 437.83230465,
+    "mean_attempts": 6.05595,
+    "mean_length": 374.9571,
+    "net_per_purchase": -47.295150748160545,
+    "p5": -2429.6749999999997,
+    "p50": -637.0,
+    "p95": 1264.03935
+   },
+   "funded_xfa_net_of_activation": 289.49197269999996
+  },
+  {
+   "size": "50K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.17305,
+    "p_pass_se": 0.00267491773237982,
+    "mean_length": 42.15765,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 428.5259590500001,
+     "se": 6.039486594004385
+    },
+    "p_any_payout": 0.561,
+    "p_any_payout_se": 0.0035091238222667493,
+    "mean_n_payouts": 0.77995,
+    "mean_first_payout_day_given": 20.08288770053476,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 33.0347
+   },
+   "cycle": {
+    "net": {
+     "mean": -431.46747170000003,
+     "se": 7.181799874948096
+    },
+    "net_noapi": {
+     "mean": -233.81434670000002,
+     "se": 6.649695732802657
+    },
+    "p_no_payout": 0.4406,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 10.2591,
+    "mean_purchases_se": 0.06222681872270522,
+    "p_no_payout_se": 0.0035104959763543383,
+    "mean_fees": 849.349025,
+    "mean_fee_sub": 502.6959,
+    "mean_fee_act": 149.0,
+    "mean_api": 197.653125,
+    "mean_cash": 417.8815533,
+    "mean_attempts": 5.7897,
+    "mean_length": 276.3538,
+    "net_per_purchase": -42.05704902964198,
+    "p5": -1809.0,
+    "p50": -462.14799999999997,
+    "p95": 1135.73415
+   },
+   "funded_xfa_net_of_activation": 279.52595905
+  },
+  {
+   "size": "50K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.17305,
+    "p_pass_se": 0.00267491773237982,
+    "mean_length": 42.15765,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 445.56552990000006,
+     "se": 7.279328601672564
+    },
+    "p_any_payout": 0.30045,
+    "p_any_payout_se": 0.0032417572202433666,
+    "mean_n_payouts": 0.41405,
+    "mean_first_payout_day_given": 28.238142785821267,
+    "breach_share": 0.99995,
+    "alive_at_horizon": 5e-05,
+    "mean_life": 47.55695
+   },
+   "cycle": {
+    "net": {
+     "mean": -410.71171305,
+     "se": 8.411048758336506
+    },
+    "net_noapi": {
+     "mean": -203.00428804999999,
+     "se": 8.03131452724484
+    },
+    "p_no_payout": 0.69735,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 10.2591,
+    "mean_purchases_se": 0.06222681872270522,
+    "p_no_payout_se": 0.003248484088771253,
+    "mean_fees": 859.403325,
+    "mean_fee_sub": 502.6959,
+    "mean_fee_act": 149.0,
+    "mean_api": 207.707425,
+    "mean_cash": 448.69161195,
+    "mean_attempts": 5.7897,
+    "mean_length": 290.86455,
+    "net_per_purchase": -40.033893133900634,
+    "p5": -1867.0,
+    "p50": -510.0,
+    "p95": 1515.0358499999988
+   },
+   "funded_xfa_net_of_activation": 296.56552990000006
+  },
+  {
+   "size": "50K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.1785,
+    "p_pass_se": 0.002707745833714826,
+    "mean_length": 32.8202,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 467.60645250000005,
+     "se": 7.021810758791431
+    },
+    "p_any_payout": 0.5228,
+    "p_any_payout_se": 0.003531856169211878,
+    "mean_n_payouts": 0.74305,
+    "mean_first_payout_day_given": 17.572876817138486,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 29.19155
+   },
+   "cycle": {
+    "net": {
+     "mean": -236.12692855000003,
+     "se": 7.613479881359501
+    },
+    "net_noapi": {
+     "mean": -81.74397855,
+     "se": 7.350407381700569
+    },
+    "p_no_payout": 0.47755,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 7.9663,
+    "mean_purchases_se": 0.04721683690151585,
+    "p_no_payout_se": 0.0035319682720828627,
+    "mean_fees": 693.73165,
+    "mean_fee_sub": 390.3487,
+    "mean_fee_act": 149.0,
+    "mean_api": 154.38295,
+    "mean_cash": 457.60472145,
+    "mean_attempts": 5.6342,
+    "mean_length": 213.5721,
+    "net_per_purchase": -29.64072763390784,
+    "p5": -1413.5,
+    "p50": -362.0039999999999,
+    "p95": 1452.6958499999992
+   },
+   "funded_xfa_net_of_activation": 318.6064525
+  },
+  {
+   "size": "50K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.1785,
+    "p_pass_se": 0.002707745833714826,
+    "mean_length": 32.8202,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 441.27895545000007,
+     "se": 7.47035029221521
+    },
+    "p_any_payout": 0.2657,
+    "p_any_payout_se": 0.0031233276325099164,
+    "mean_n_payouts": 0.3537,
+    "mean_first_payout_day_given": 24.04083552879187,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 39.32995
+   },
+   "cycle": {
+    "net": {
+     "mean": -263.53638574999997,
+     "se": 8.007233051698305
+    },
+    "net_noapi": {
+     "mean": -102.13326074999998,
+     "se": 7.799544238683046
+    },
+    "p_no_payout": 0.73285,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 7.9663,
+    "mean_purchases_se": 0.04721683690151585,
+    "p_no_payout_se": 0.003128744776264117,
+    "mean_fees": 700.751825,
+    "mean_fee_sub": 390.3487,
+    "mean_fee_act": 149.0,
+    "mean_api": 161.403125,
+    "mean_cash": 437.21543925000003,
+    "mean_attempts": 5.6342,
+    "mean_length": 223.77125,
+    "net_per_purchase": -33.08140363154789,
+    "p5": -1491.5,
+    "p50": -432.0,
+    "p95": 1665.435649999999
+   },
+   "funded_xfa_net_of_activation": 292.27895545000007
+  },
+  {
+   "size": "50K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.36085,
+    "p_pass_se": 0.003395859813802684,
+    "mean_length": 79.4926,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 707.63847435,
+     "se": 8.987242352719194
+    },
+    "p_any_payout": 0.72935,
+    "p_any_payout_se": 0.0031416442947921393,
+    "mean_n_payouts": 1.20245,
+    "mean_first_payout_day_given": 33.05614588332077,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 54.74485
+   },
+   "cycle": {
+    "net": {
+     "mean": -164.8409945,
+     "se": 9.36687833304287
+    },
+    "net_noapi": {
+     "mean": 33.36458050000002,
+     "se": 9.224038796789168
+    },
+    "p_no_payout": 0.27565,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 10.34085,
+    "mean_purchases_se": 0.054062969804758276,
+    "p_no_payout_se": 0.0031596445804868627,
+    "mean_fees": 853.907225,
+    "mean_fee_sub": 506.70165,
+    "mean_fee_act": 149.0,
+    "mean_api": 198.205575,
+    "mean_cash": 689.0662305,
+    "mean_attempts": 2.79305,
+    "mean_length": 276.9791,
+    "net_per_purchase": -15.940758690049657,
+    "p5": -1540.5,
+    "p50": -417.5,
+    "p95": 2235.0857999999926
+   },
+   "funded_xfa_net_of_activation": 558.63847435
+  },
+  {
+   "size": "50K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.36085,
+    "p_pass_se": 0.003395859813802684,
+    "mean_length": 79.4926,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1040.12345295,
+     "se": 14.580774600681561
+    },
+    "p_any_payout": 0.56765,
+    "p_any_payout_se": 0.003503023533320894,
+    "mean_n_payouts": 1.0562,
+    "mean_first_payout_day_given": 47.22654804897384,
+    "breach_share": 0.9943,
+    "alive_at_horizon": 0.0057,
+    "mean_life": 94.0956
+   },
+   "cycle": {
+    "net": {
+     "mean": 134.69724630000002,
+     "se": 14.311915566770484
+    },
+    "net_noapi": {
+     "mean": 359.96779630000003,
+     "se": 14.539539324467173
+    },
+    "p_no_payout": 0.4366,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 10.34085,
+    "mean_purchases_se": 0.054062969804758276,
+    "p_no_payout_se": 0.0035069961505539184,
+    "mean_fees": 880.9722,
+    "mean_fee_sub": 506.70165,
+    "mean_fee_act": 149.0,
+    "mean_api": 225.27055,
+    "mean_cash": 1015.6694463,
+    "mean_attempts": 2.79305,
+    "mean_length": 316.23055,
+    "net_per_purchase": 13.025742206878547,
+    "p5": -1540.5,
+    "p50": -417.5,
+    "p95": 4014.9915999999957
+   },
+   "funded_xfa_net_of_activation": 891.1234529499998
+  },
+  {
+   "size": "50K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3566,
+    "p_pass_se": 0.0033870078240240305,
+    "mean_length": 69.8026,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 686.43931815,
+     "se": 8.653969400944563
+    },
+    "p_any_payout": 0.7395,
+    "p_any_payout_se": 0.003103544344777435,
+    "mean_n_payouts": 1.2092,
+    "mean_first_payout_day_given": 27.030290736984448,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 48.0157
+   },
+   "cycle": {
+    "net": {
+     "mean": -102.35006179999999,
+     "se": 9.032405242667403
+    },
+    "net_noapi": {
+     "mean": 73.96051320000002,
+     "se": 8.91802522507594
+    },
+    "p_no_payout": 0.26455,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 9.13465,
+    "mean_purchases_se": 0.048664354304192636,
+    "p_no_payout_se": 0.003119000621192628,
+    "mean_fees": 772.908425,
+    "mean_fee_sub": 447.59785,
+    "mean_fee_act": 149.0,
+    "mean_api": 176.310575,
+    "mean_cash": 670.5583632,
+    "mean_attempts": 2.82485,
+    "mean_length": 245.3032,
+    "net_per_purchase": -11.204595884899803,
+    "p5": -1384.5,
+    "p50": -354.0,
+    "p95": 2219.862499999999
+   },
+   "funded_xfa_net_of_activation": 537.43931815
+  },
+  {
+   "size": "50K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3566,
+    "p_pass_se": 0.0033870078240240305,
+    "mean_length": 69.8026,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1075.82772555,
+     "se": 15.240834421784733
+    },
+    "p_any_payout": 0.5573,
+    "p_any_payout_se": 0.0035122408089423482,
+    "mean_n_payouts": 1.05625,
+    "mean_first_payout_day_given": 41.543423649739815,
+    "breach_share": 0.99645,
+    "alive_at_horizon": 0.00355,
+    "mean_life": 85.45745
+   },
+   "cycle": {
+    "net": {
+     "mean": 247.8455365,
+     "se": 14.93410251448869
+    },
+    "net_noapi": {
+     "mean": 449.29911150000004,
+     "se": 15.13974358345327
+    },
+    "p_no_payout": 0.44815,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 9.13465,
+    "mean_purchases_se": 0.048664354304192636,
+    "p_no_payout_se": 0.0035164725045135786,
+    "mean_fees": 798.051425,
+    "mean_fee_sub": 447.59785,
+    "mean_fee_act": 149.0,
+    "mean_api": 201.453575,
+    "mean_cash": 1045.8969614999999,
+    "mean_attempts": 2.82485,
+    "mean_length": 281.70345,
+    "net_per_purchase": 27.13246117804185,
+    "p5": -1393.5,
+    "p50": -354.0,
+    "p95": 4020.701399999999
+   },
+   "funded_xfa_net_of_activation": 926.82772555
+  },
+  {
+   "size": "50K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.34645,
+    "p_pass_se": 0.0033646871882836303,
+    "mean_length": 57.1359,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 719.9199945,
+     "se": 9.342273774695526
+    },
+    "p_any_payout": 0.728,
+    "p_any_payout_se": 0.003146553670287542,
+    "mean_n_payouts": 1.225,
+    "mean_first_payout_day_given": 22.58901098901099,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 43.09525
+   },
+   "cycle": {
+    "net": {
+     "mean": 32.11882855000002,
+     "se": 9.4649399991019
+    },
+    "net_noapi": {
+     "mean": 182.78687855,
+     "se": 9.421377865682134
+    },
+    "p_no_payout": 0.27665,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 7.6172,
+    "mean_purchases_se": 0.041034100427204366,
+    "p_no_payout_se": 0.0031631849258302934,
+    "mean_fees": 672.91085,
+    "mean_fee_sub": 373.2428,
+    "mean_fee_act": 149.0,
+    "mean_api": 150.66805,
+    "mean_cash": 705.02967855,
+    "mean_attempts": 2.88865,
+    "mean_length": 208.20675,
+    "net_per_purchase": 4.216618777240983,
+    "p5": -1161.3735,
+    "p50": -290.5,
+    "p95": 2492.395249999999
+   },
+   "funded_xfa_net_of_activation": 570.9199945
+  },
+  {
+   "size": "50K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.34645,
+    "p_pass_se": 0.0033646871882836303,
+    "mean_length": 57.1359,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1107.7374032999999,
+     "se": 16.469162956149933
+    },
+    "p_any_payout": 0.5237,
+    "p_any_payout_se": 0.003531559924452649,
+    "mean_n_payouts": 0.9784,
+    "mean_first_payout_day_given": 35.849150276876074,
+    "breach_share": 0.99625,
+    "alive_at_horizon": 0.00375,
+    "mean_life": 76.6294
+   },
+   "cycle": {
+    "net": {
+     "mean": 380.46900475,
+     "se": 15.909060519561436
+    },
+    "net_noapi": {
+     "mean": 553.4351547499999,
+     "se": 16.14188845429435
+    },
+    "p_no_payout": 0.4789,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 7.6172,
+    "mean_purchases_se": 0.041034100427204366,
+    "p_no_payout_se": 0.0035323843930127425,
+    "mean_fees": 695.20895,
+    "mean_fee_sub": 373.2428,
+    "mean_fee_act": 149.0,
+    "mean_api": 172.96615,
+    "mean_cash": 1075.67795475,
+    "mean_attempts": 2.88865,
+    "mean_length": 240.5482,
+    "net_per_purchase": 49.94866942577325,
+    "p5": -1194.0,
+    "p50": -305.0,
+    "p95": 4204.3673499999995
+   },
+   "funded_xfa_net_of_activation": 958.7374033000001
+  },
+  {
+   "size": "50K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3331,
+    "p_pass_se": 0.003332749540544564,
+    "mean_length": 45.1406,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 765.9807502499999,
+     "se": 10.28473419783874
+    },
+    "p_any_payout": 0.6963,
+    "p_any_payout_se": 0.003251663497350241,
+    "mean_n_payouts": 1.1958,
+    "mean_first_payout_day_given": 19.44384604337211,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 38.53405
+   },
+   "cycle": {
+    "net": {
+     "mean": 166.5676262,
+     "se": 10.318875916166366
+    },
+    "net_noapi": {
+     "mean": 293.8167262,
+     "se": 10.318588984097055
+    },
+    "p_no_payout": 0.3061,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 6.26655,
+    "mean_purchases_se": 0.0342738791182803,
+    "p_no_payout_se": 0.0032588555506496445,
+    "mean_fees": 583.31005,
+    "mean_fee_sub": 307.06095,
+    "mean_fee_act": 149.0,
+    "mean_api": 127.2491,
+    "mean_cash": 749.8776762,
+    "mean_attempts": 3.00605,
+    "mean_length": 174.30885,
+    "net_per_purchase": 26.580435199591484,
+    "p5": -989.0,
+    "p50": -227.0,
+    "p95": 2780.7256999999972
+   },
+   "funded_xfa_net_of_activation": 616.9807502500001
+  },
+  {
+   "size": "50K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3331,
+    "p_pass_se": 0.003332749540544564,
+    "mean_length": 45.1406,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1072.87297875,
+     "se": 16.183022195354837
+    },
+    "p_any_payout": 0.46785,
+    "p_any_payout_se": 0.0035282175209303637,
+    "mean_n_payouts": 0.83575,
+    "mean_first_payout_day_given": 30.873249973282036,
+    "breach_share": 0.9961,
+    "alive_at_horizon": 0.0039,
+    "mean_life": 66.58835
+   },
+   "cycle": {
+    "net": {
+     "mean": 450.93972080000003,
+     "se": 15.985141241072572
+    },
+    "net_noapi": {
+     "mean": 597.1308958,
+     "se": 16.223145048061287
+    },
+    "p_no_payout": 0.53475,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 6.26655,
+    "mean_purchases_se": 0.0342738791182803,
+    "p_no_payout_se": 0.003526984813548252,
+    "mean_fees": 602.252125,
+    "mean_fee_sub": 307.06095,
+    "mean_fee_act": 149.0,
+    "mean_api": 146.191175,
+    "mean_cash": 1053.1918458,
+    "mean_attempts": 3.00605,
+    "mean_length": 201.73285,
+    "net_per_purchase": 71.95980576234133,
+    "p5": -1047.0,
+    "p50": -290.5,
+    "p95": 4131.588399999999
+   },
+   "funded_xfa_net_of_activation": 923.8729787499999
+  },
+  {
+   "size": "50K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3156,
+    "p_pass_se": 0.0032863097845455772,
+    "mean_length": 34.9868,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 832.8970476000001,
+     "se": 13.954409564951517
+    },
+    "p_any_payout": 0.64975,
+    "p_any_payout_se": 0.003373239818779566,
+    "mean_n_payouts": 1.1411,
+    "mean_first_payout_day_given": 17.16013851481339,
+    "breach_share": 0.99965,
+    "alive_at_horizon": 0.00035,
+    "mean_life": 34.3484
+   },
+   "cycle": {
+    "net": {
+     "mean": 297.7710743,
+     "se": 13.262747839060845
+    },
+    "net_noapi": {
+     "mean": 405.0355493,
+     "se": 13.321054783176573
+    },
+    "p_no_payout": 0.3561,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 5.2367,
+    "mean_purchases_se": 0.02865780380604817,
+    "p_no_payout_se": 0.0033859473563539054,
+    "mean_fees": 512.862775,
+    "mean_fee_sub": 256.5983,
+    "mean_fee_act": 149.0,
+    "mean_api": 107.264475,
+    "mean_cash": 810.6338493000001,
+    "mean_attempts": 3.17675,
+    "mean_length": 145.38035,
+    "net_per_purchase": 56.862351156262534,
+    "p5": -842.7757999999999,
+    "p50": -212.5,
+    "p95": 2999.3299499999957
+   },
+   "funded_xfa_net_of_activation": 683.8970476000001
+  },
+  {
+   "size": "50K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3156,
+    "p_pass_se": 0.0032863097845455772,
+    "mean_length": 34.9868,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 980.7648507000001,
+     "se": 15.529652618766999
+    },
+    "p_any_payout": 0.40765,
+    "p_any_payout_se": 0.003474704861567382,
+    "mean_n_payouts": 0.68255,
+    "mean_first_payout_day_given": 26.315344045136758,
+    "breach_share": 0.9962,
+    "alive_at_horizon": 0.0038,
+    "mean_life": 54.0049
+   },
+   "cycle": {
+    "net": {
+     "mean": 451.33334145,
+     "se": 15.424581727810224
+    },
+    "net_noapi": {
+     "mean": 572.14009145,
+     "se": 15.64122270029901
+    },
+    "p_no_payout": 0.59355,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 5.2367,
+    "mean_purchases_se": 0.02865780380604817,
+    "p_no_payout_se": 0.00347309946229589,
+    "mean_fees": 526.40505,
+    "mean_fee_sub": 256.5983,
+    "mean_fee_act": 149.0,
+    "mean_api": 120.80675,
+    "mean_cash": 977.73839145,
+    "mean_attempts": 3.17675,
+    "mean_length": 164.96165,
+    "net_per_purchase": 86.18659488800198,
+    "p5": -914.7749999999997,
+    "p50": -290.5,
+    "p95": 3933.4551999999994
+   },
+   "funded_xfa_net_of_activation": 831.7648507
+  },
+  {
+   "size": "100K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.0804,
+    "p_pass_se": 0.001922704345446798,
+    "mean_length": 153.2095,
+    "timeout_share": 0.00255
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 411.82803225,
+     "se": 5.1553354943698
+    },
+    "p_any_payout": 0.6909,
+    "p_any_payout_se": 0.0032676994200813514,
+    "mean_n_payouts": 0.90735,
+    "mean_first_payout_day_given": 39.50723693732812,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 61.6104
+   },
+   "cycle": {
+    "net": {
+     "mean": -9620.1040913,
+     "se": 62.16356494364247
+    },
+    "net_noapi": {
+     "mean": -8253.851016300001,
+     "se": 53.82202547398805
+    },
+    "p_no_payout": 0.31945,
+    "p_reach_xfa": 0.9939,
+    "mean_purchases": 85.90885,
+    "mean_purchases_se": 0.5409215995804935,
+    "p_no_payout_se": 0.0032969811760154167,
+    "mean_fees": 10019.320325,
+    "mean_fee_sub": 8504.97615,
+    "mean_fee_act": 148.0911,
+    "mean_api": 1366.253075,
+    "mean_cash": 399.21623370000003,
+    "mean_attempts": 12.472,
+    "mean_length": 1968.77915,
+    "net_per_purchase": -111.98036164260142,
+    "p5": -27669.1151,
+    "p50": -6976.0,
+    "p95": -963.8558500000013
+   },
+   "funded_xfa_net_of_activation": 262.82803225000004
+  },
+  {
+   "size": "100K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.0804,
+    "p_pass_se": 0.001922704345446798,
+    "mean_length": 153.2095,
+    "timeout_share": 0.00255
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 542.1221865,
+     "se": 7.594449871151379
+    },
+    "p_any_payout": 0.4249,
+    "p_any_payout_se": 0.0034954255105780754,
+    "mean_n_payouts": 0.60505,
+    "mean_first_payout_day_given": 61.19663450223582,
+    "breach_share": 0.99885,
+    "alive_at_horizon": 0.00115,
+    "mean_life": 109.9829
+   },
+   "cycle": {
+    "net": {
+     "mean": -9524.28784505,
+     "se": 62.4126216687753
+    },
+    "net_noapi": {
+     "mean": -8125.0421950499995,
+     "se": 54.136702824696066
+    },
+    "p_no_payout": 0.582,
+    "p_reach_xfa": 0.9939,
+    "mean_purchases": 85.90885,
+    "mean_purchases_se": 0.5409215995804935,
+    "p_no_payout_se": 0.003487663974639759,
+    "mean_fees": 10052.3129,
+    "mean_fee_sub": 8504.97615,
+    "mean_fee_act": 148.0911,
+    "mean_api": 1399.24565,
+    "mean_cash": 528.02505495,
+    "mean_attempts": 12.472,
+    "mean_length": 2016.4893,
+    "net_per_purchase": -110.8650371300512,
+    "p5": -27603.99635,
+    "p50": -6910.496499999999,
+    "p95": -814.1509000000004
+   },
+   "funded_xfa_net_of_activation": 393.1221865
+  },
+  {
+   "size": "100K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.0896,
+    "p_pass_se": 0.0020195524256626765,
+    "mean_length": 114.7031,
+    "timeout_share": 0.00015
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 435.20099444999994,
+     "se": 5.340862556585382
+    },
+    "p_any_payout": 0.6851,
+    "p_any_payout_se": 0.0032843415626271273,
+    "mean_n_payouts": 0.91595,
+    "mean_first_payout_day_given": 28.93468106845716,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 51.5629
+   },
+   "cycle": {
+    "net": {
+     "mean": -6184.5199127999995,
+     "se": 41.7628648435187
+    },
+    "net_noapi": {
+     "mean": -5267.7740878,
+     "se": 36.11748720595003
+    },
+    "p_no_payout": 0.31965,
+    "p_reach_xfa": 0.9968,
+    "mean_purchases": 56.0462,
+    "mean_purchases_se": 0.3602152148758453,
+    "p_no_payout_se": 0.0032975284494602924,
+    "mean_fees": 6613.842825,
+    "mean_fee_sub": 5548.5738,
+    "mean_fee_act": 148.5232,
+    "mean_api": 916.745825,
+    "mean_cash": 429.3229122,
+    "mean_attempts": 11.0582,
+    "mean_length": 1317.69365,
+    "net_per_purchase": -110.34681945966005,
+    "p5": -18111.164,
+    "p50": -4421.9125,
+    "p95": -429.20655000000005
+   },
+   "funded_xfa_net_of_activation": 286.20099445000005
+  },
+  {
+   "size": "100K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.0896,
+    "p_pass_se": 0.0020195524256626765,
+    "mean_length": 114.7031,
+    "timeout_share": 0.00015
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 573.6717729000001,
+     "se": 8.015443086212821
+    },
+    "p_any_payout": 0.4006,
+    "p_any_payout_se": 0.003464964934887509,
+    "mean_n_payouts": 0.5823,
+    "mean_first_payout_day_given": 48.36832251622566,
+    "breach_share": 0.9998,
+    "alive_at_horizon": 0.0002,
+    "mean_life": 92.31515
+   },
+   "cycle": {
+    "net": {
+     "mean": -6080.49575865,
+     "se": 42.170402034108314
+    },
+    "net_noapi": {
+     "mean": -5136.09045865,
+     "se": 36.621558435218944
+    },
+    "p_no_payout": 0.60455,
+    "p_reach_xfa": 0.9968,
+    "mean_purchases": 56.0462,
+    "mean_purchases_se": 0.3602152148758453,
+    "p_no_payout_se": 0.0034573783239616692,
+    "mean_fees": 6641.5023,
+    "mean_fee_sub": 5548.5738,
+    "mean_fee_act": 148.5232,
+    "mean_api": 944.4053,
+    "mean_cash": 561.00654135,
+    "mean_attempts": 11.0582,
+    "mean_length": 1357.72675,
+    "net_per_purchase": -108.49077651384037,
+    "p5": -18011.83905,
+    "p50": -4379.3544999999995,
+    "p95": -103.52460000000232
+   },
+   "funded_xfa_net_of_activation": 424.67177290000006
+  },
+  {
+   "size": "100K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.10395,
+    "p_pass_se": 0.002158059284403466,
+    "mean_length": 81.2764,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 507.76097355,
+     "se": 6.298044153871212
+    },
+    "p_any_payout": 0.652,
+    "p_any_payout_se": 0.0033682042693399697,
+    "mean_n_payouts": 0.9181,
+    "mean_first_payout_day_given": 23.2409509202454,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 44.8321
+   },
+   "cycle": {
+    "net": {
+     "mean": -3593.1035238,
+     "se": 26.558080718681516
+    },
+    "net_noapi": {
+     "mean": -3011.6955737999997,
+     "se": 23.021855183675974
+    },
+    "p_no_payout": 0.352,
+    "p_reach_xfa": 0.9987,
+    "mean_purchases": 33.9094,
+    "mean_purchases_se": 0.2233929269291893,
+    "p_no_payout_se": 0.0033770993470728693,
+    "mean_fees": 4087.24485,
+    "mean_fee_sub": 3357.0306,
+    "mean_fee_act": 148.8063,
+    "mean_api": 581.40795,
+    "mean_cash": 494.14132620000004,
+    "mean_attempts": 9.69715,
+    "mean_length": 831.96215,
+    "net_per_purchase": -105.96187263118782,
+    "p5": -10975.9216,
+    "p50": -2542.338,
+    "p95": 216.35029999999884
+   },
+   "funded_xfa_net_of_activation": 358.7609735500001
+  },
+  {
+   "size": "100K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.10395,
+    "p_pass_se": 0.002158059284403466,
+    "mean_length": 81.2764,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 627.5512593000001,
+     "se": 9.384479477382078
+    },
+    "p_any_payout": 0.34935,
+    "p_any_payout_se": 0.003371235511648511,
+    "mean_n_payouts": 0.51135,
+    "mean_first_payout_day_given": 39.52869614999285,
+    "breach_share": 0.99985,
+    "alive_at_horizon": 0.00015,
+    "mean_life": 76.70105
+   },
+   "cycle": {
+    "net": {
+     "mean": -3485.36878125,
+     "se": 27.501067090285563
+    },
+    "net_noapi": {
+     "mean": -2882.35003125,
+     "se": 24.150300358049602
+    },
+    "p_no_payout": 0.652,
+    "p_reach_xfa": 0.9987,
+    "mean_purchases": 33.9094,
+    "mean_purchases_se": 0.2233929269291893,
+    "p_no_payout_se": 0.0033682042693399697,
+    "mean_fees": 4108.85565,
+    "mean_fee_sub": 3357.0306,
+    "mean_fee_act": 148.8063,
+    "mean_api": 603.01875,
+    "mean_cash": 623.48686875,
+    "mean_attempts": 9.69715,
+    "mean_length": 863.3246,
+    "net_per_purchase": -102.78473760225779,
+    "p5": -10936.5,
+    "p50": -2506.0,
+    "p95": 765.4405
+   },
+   "funded_xfa_net_of_activation": 478.55125929999997
+  },
+  {
+   "size": "100K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.11975,
+    "p_pass_se": 0.002295756275173826,
+    "mean_length": 58.2714,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 602.73331695,
+     "se": 7.777872182467224
+    },
+    "p_any_payout": 0.61415,
+    "p_any_payout_se": 0.003442163400392259,
+    "mean_n_payouts": 0.90375,
+    "mean_first_payout_day_given": 19.455996092159896,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 39.0336
+   },
+   "cycle": {
+    "net": {
+     "mean": -1961.5994181499998,
+     "se": 17.257199966138604
+    },
+    "net_noapi": {
+     "mean": -1589.9934181499998,
+     "se": 15.229004484877143
+    },
+    "p_no_payout": 0.38985,
+    "p_reach_xfa": 0.99945,
+    "mean_purchases": 20.4648,
+    "mean_purchases_se": 0.1343546262928088,
+    "p_no_payout_se": 0.003448673494983252,
+    "mean_fees": 2546.53925,
+    "mean_fee_sub": 2026.0152,
+    "mean_fee_act": 148.91805,
+    "mean_api": 371.606,
+    "mean_cash": 584.93983185,
+    "mean_attempts": 8.4085,
+    "mean_length": 528.16535,
+    "net_per_purchase": -95.85236201428793,
+    "p5": -6550.15735,
+    "p50": -1433.115,
+    "p95": 974.3194999999998
+   },
+   "funded_xfa_net_of_activation": 453.73331695
+  },
+  {
+   "size": "100K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.11975,
+    "p_pass_se": 0.002295756275173826,
+    "mean_length": 58.2714,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 660.22701075,
+     "se": 10.509964103616518
+    },
+    "p_any_payout": 0.30545,
+    "p_any_payout_se": 0.003256918002498681,
+    "mean_n_payouts": 0.43355,
+    "mean_first_payout_day_given": 30.867899819937797,
+    "breach_share": 0.99985,
+    "alive_at_horizon": 0.00015,
+    "mean_life": 61.04655
+   },
+   "cycle": {
+    "net": {
+     "mean": -1904.37509115,
+     "se": 18.78057918399471
+    },
+    "net_noapi": {
+     "mean": -1517.52089115,
+     "se": 17.002680567813854
+    },
+    "p_no_payout": 0.694,
+    "p_reach_xfa": 0.99945,
+    "mean_purchases": 20.4648,
+    "mean_purchases_se": 0.1343546262928088,
+    "p_no_payout_se": 0.003258557963271484,
+    "mean_fees": 2561.78745,
+    "mean_fee_sub": 2026.0152,
+    "mean_fee_act": 148.91805,
+    "mean_api": 386.8542,
+    "mean_cash": 657.4123588499999,
+    "mean_attempts": 8.4085,
+    "mean_length": 550.1963,
+    "net_per_purchase": -93.05613009411282,
+    "p5": -6592.0,
+    "p50": -1494.022,
+    "p95": 1552.0327499999992
+   },
+   "funded_xfa_net_of_activation": 511.2270107500001
+  },
+  {
+   "size": "100K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.131,
+    "p_pass_se": 0.0023857807946246865,
+    "mean_length": 42.93295,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 672.25690755,
+     "se": 9.255272600840419
+    },
+    "p_any_payout": 0.5702,
+    "p_any_payout_se": 0.003500513962263256,
+    "mean_n_payouts": 0.8555,
+    "mean_first_payout_day_given": 16.823833742546476,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 33.5925
+   },
+   "cycle": {
+    "net": {
+     "mean": -1086.7346009,
+     "se": 13.458302675115286
+    },
+    "net_noapi": {
+     "mean": -829.8685509,
+     "se": 12.3563922302286
+    },
+    "p_no_payout": 0.43285,
+    "p_reach_xfa": 0.99975,
+    "mean_purchases": 13.4779,
+    "mean_purchases_se": 0.08666219531205528,
+    "p_no_payout_se": 0.003503504513340892,
+    "mean_fees": 1740.1409,
+    "mean_fee_sub": 1334.3121,
+    "mean_fee_act": 148.96275,
+    "mean_api": 256.86605,
+    "mean_cash": 653.4062991000001,
+    "mean_attempts": 7.6668,
+    "mean_length": 362.0177,
+    "net_per_purchase": -80.63085502192479,
+    "p5": -4252.0,
+    "p50": -914.9275,
+    "p95": 1655.551299999999
+   },
+   "funded_xfa_net_of_activation": 523.25690755
+  },
+  {
+   "size": "100K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.131,
+    "p_pass_se": 0.0023857807946246865,
+    "mean_length": 42.93295,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 646.6090518,
+     "se": 10.687930565244075
+    },
+    "p_any_payout": 0.267,
+    "p_any_payout_se": 0.0031281863755217654,
+    "mean_n_payouts": 0.3608,
+    "mean_first_payout_day_given": 25.38558052434457,
+    "breach_share": 0.99995,
+    "alive_at_horizon": 5e-05,
+    "mean_life": 47.8099
+   },
+   "cycle": {
+    "net": {
+     "mean": -1114.3437386,
+     "se": 14.678817921416039
+    },
+    "net_noapi": {
+     "mean": -847.5640386,
+     "se": 13.723031614598144
+    },
+    "p_no_payout": 0.7341,
+    "p_reach_xfa": 0.99975,
+    "mean_purchases": 13.4779,
+    "mean_purchases_se": 0.08666219531205528,
+    "p_no_payout_se": 0.003124077383804697,
+    "mean_fees": 1750.05455,
+    "mean_fee_sub": 1334.3121,
+    "mean_fee_act": 148.96275,
+    "mean_api": 266.7797,
+    "mean_cash": 635.7108114,
+    "mean_attempts": 7.6668,
+    "mean_length": 376.33715,
+    "net_per_purchase": -82.67932976205492,
+    "p5": -4336.5,
+    "p50": -1001.5,
+    "p95": 2000.2297500000002
+   },
+   "funded_xfa_net_of_activation": 497.6090518
+  },
+  {
+   "size": "100K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.35515,
+    "p_pass_se": 0.003383921375416397,
+    "mean_length": 196.4179,
+    "timeout_share": 0.00575
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 747.88171335,
+     "se": 9.011330689234198
+    },
+    "p_any_payout": 0.84485,
+    "p_any_payout_se": 0.002560063256054428,
+    "mean_n_payouts": 1.3487,
+    "mean_first_payout_day_given": 37.52050659880452,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 64.17525
+   },
+   "cycle": {
+    "net": {
+     "mean": -2434.96857865,
+     "se": 17.999370253951998
+    },
+    "net_noapi": {
+     "mean": -2001.14887865,
+     "se": 16.276119789435228
+    },
+    "p_no_payout": 0.1598,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 26.04935,
+    "mean_purchases_se": 0.1381686297876181,
+    "p_no_payout_se": 0.002590983982968633,
+    "mean_fees": 3161.70535,
+    "mean_fee_sub": 2578.88565,
+    "mean_fee_act": 149.0,
+    "mean_api": 433.8197,
+    "mean_cash": 726.73677135,
+    "mean_attempts": 2.82275,
+    "mean_length": 618.35815,
+    "net_per_purchase": -93.47521449287602,
+    "p5": -6988.0232,
+    "p50": -2008.5,
+    "p95": 745.5936499999988
+   },
+   "funded_xfa_net_of_activation": 598.88171335
+  },
+  {
+   "size": "100K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.35515,
+    "p_pass_se": 0.003383921375416397,
+    "mean_length": 196.4179,
+    "timeout_share": 0.00575
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1383.7100908500001,
+     "se": 16.251777849821988
+    },
+    "p_any_payout": 0.6848,
+    "p_any_payout_se": 0.003285186143888958,
+    "mean_n_payouts": 1.3177,
+    "mean_first_payout_day_given": 67.26270443925233,
+    "breach_share": 0.9904,
+    "alive_at_horizon": 0.0096,
+    "mean_life": 136.0072
+   },
+   "cycle": {
+    "net": {
+     "mean": -1853.4781747500003,
+     "se": 22.241921708234866
+    },
+    "net_noapi": {
+     "mean": -1370.60714975,
+     "se": 21.167003497963954
+    },
+    "p_no_payout": 0.3188,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 26.04935,
+    "mean_purchases_se": 0.1381686297876181,
+    "p_no_payout_se": 0.003295197717891902,
+    "mean_fees": 3210.756675,
+    "mean_fee_sub": 2578.88565,
+    "mean_fee_act": 149.0,
+    "mean_api": 482.871025,
+    "mean_cash": 1357.27850025,
+    "mean_attempts": 2.82275,
+    "mean_length": 689.28525,
+    "net_per_purchase": -71.1525690564256,
+    "p5": -6768.20005,
+    "p50": -1766.008,
+    "p95": 3220.516899999997
+   },
+   "funded_xfa_net_of_activation": 1234.7100908500001
+  },
+  {
+   "size": "100K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3345,
+    "p_pass_se": 0.003336238525645311,
+    "mean_length": 141.07025,
+    "timeout_share": 0.00035
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 782.4040335,
+     "se": 9.234641918903087
+    },
+    "p_any_payout": 0.83415,
+    "p_any_payout_se": 0.0026300549186281264,
+    "mean_n_payouts": 1.37905,
+    "mean_first_payout_day_given": 27.974105376730805,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 54.9358
+   },
+   "cycle": {
+    "net": {
+     "mean": -1672.30316885,
+     "se": 15.468622664975316
+    },
+    "net_noapi": {
+     "mean": -1335.19556885,
+     "se": 14.199290245036103
+    },
+    "p_no_payout": 0.1689,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 19.71765,
+    "mean_purchases_se": 0.11100293917955653,
+    "p_no_payout_se": 0.002649271503640199,
+    "mean_fees": 2438.15495,
+    "mean_fee_sub": 1952.04735,
+    "mean_fee_act": 149.0,
+    "mean_api": 337.1076,
+    "mean_cash": 765.85178115,
+    "mean_attempts": 3.0037,
+    "mean_length": 478.26085,
+    "net_per_purchase": -84.81249889565947,
+    "p5": -5472.990449999999,
+    "p50": -1402.1934999999999,
+    "p95": 1379.5477499999977
+   },
+   "funded_xfa_net_of_activation": 633.4040335000001
+  },
+  {
+   "size": "100K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3345,
+    "p_pass_se": 0.003336238525645311,
+    "mean_length": 141.07025,
+    "timeout_share": 0.00035
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1512.4413901500002,
+     "se": 18.110302892584823
+    },
+    "p_any_payout": 0.65095,
+    "p_any_payout_se": 0.003370564474238699,
+    "mean_n_payouts": 1.30945,
+    "mean_first_payout_day_given": 55.123204547200245,
+    "breach_share": 0.99535,
+    "alive_at_horizon": 0.00465,
+    "mean_life": 118.98175
+   },
+   "cycle": {
+    "net": {
+     "mean": -1000.69525,
+     "se": 21.69634161875487
+    },
+    "net_noapi": {
+     "mean": -619.9934,
+     "se": 21.0894613522902
+    },
+    "p_no_payout": 0.35185,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 19.71765,
+    "mean_purchases_se": 0.11100293917955653,
+    "p_no_payout_se": 0.0033767704800593125,
+    "mean_fees": 2481.7492,
+    "mean_fee_sub": 1952.04735,
+    "mean_fee_act": 149.0,
+    "mean_api": 380.70185,
+    "mean_cash": 1481.05395,
+    "mean_attempts": 3.0037,
+    "mean_length": 541.3634,
+    "net_per_purchase": -50.751243175530554,
+    "p5": -5242.5962,
+    "p50": -1144.0,
+    "p95": 4164.497099999995
+   },
+   "funded_xfa_net_of_activation": 1363.4413901500002
+  },
+  {
+   "size": "100K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.30525,
+    "p_pass_se": 0.0032563202967460067,
+    "mean_length": 95.7182,
+    "timeout_share": 5e-05
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 895.75328385,
+     "se": 10.467346509770115
+    },
+    "p_any_payout": 0.7967,
+    "p_any_payout_se": 0.0028457785402240987,
+    "mean_n_payouts": 1.39525,
+    "mean_first_payout_day_given": 22.909752730011295,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 49.66475
+   },
+   "cycle": {
+    "net": {
+     "mean": -955.4588121500001,
+     "se": 14.271936818426378
+    },
+    "net_noapi": {
+     "mean": -696.7708371499999,
+     "se": 13.460071069481417
+    },
+    "p_no_payout": 0.2074,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 14.44075,
+    "mean_purchases_se": 0.08621792823092203,
+    "p_no_payout_se": 0.002866925530947743,
+    "mean_fees": 1837.322225,
+    "mean_fee_sub": 1429.63425,
+    "mean_fee_act": 149.0,
+    "mean_api": 258.687975,
+    "mean_cash": 881.8634128499999,
+    "mean_attempts": 3.28425,
+    "mean_length": 364.66105,
+    "net_per_purchase": -66.16407126707409,
+    "p5": -4069.8108499999994,
+    "p50": -890.3009999999999,
+    "p95": 2280.6070999999993
+   },
+   "funded_xfa_net_of_activation": 746.7532838500001
+  },
+  {
+   "size": "100K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.30525,
+    "p_pass_se": 0.0032563202967460067,
+    "mean_length": 95.7182,
+    "timeout_share": 5e-05
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1691.3265061500001,
+     "se": 22.306750653071322
+    },
+    "p_any_payout": 0.57175,
+    "p_any_payout_se": 0.003498942250880972,
+    "mean_n_payouts": 1.16115,
+    "mean_first_payout_day_given": 45.68762571053782,
+    "breach_share": 0.9957,
+    "alive_at_horizon": 0.0043,
+    "mean_life": 106.19515
+   },
+   "cycle": {
+    "net": {
+     "mean": -223.51681569999997,
+     "se": 23.632342375020723
+    },
+    "net_noapi": {
+     "mean": 73.52583430000006,
+     "se": 23.44845530123748
+    },
+    "p_no_payout": 0.43345,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 14.44075,
+    "mean_purchases_se": 0.08621792823092203,
+    "p_no_payout_se": 0.003504076893420006,
+    "mean_fees": 1875.6769,
+    "mean_fee_sub": 1429.63425,
+    "mean_fee_act": 149.0,
+    "mean_api": 297.04265,
+    "mean_cash": 1652.1600843,
+    "mean_attempts": 3.28425,
+    "mean_length": 420.0855,
+    "net_per_purchase": -15.478199934213942,
+    "p5": -3897.22865,
+    "p50": -745.5,
+    "p95": 5284.276949999996
+   },
+   "funded_xfa_net_of_activation": 1542.32650615
+  },
+  {
+   "size": "100K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.27905,
+    "p_pass_se": 0.0031716013108522957,
+    "mean_length": 66.26675,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1019.5404138,
+     "se": 12.299679993820106
+    },
+    "p_any_payout": 0.7493,
+    "p_any_payout_se": 0.0030647145870374296,
+    "mean_n_payouts": 1.36675,
+    "mean_first_payout_day_given": 19.506606165754704,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 44.2914
+   },
+   "cycle": {
+    "net": {
+     "mean": -421.77560094999995,
+     "se": 13.709095919363595
+    },
+    "net_noapi": {
+     "mean": -220.81140094999998,
+     "se": 13.26581951819096
+    },
+    "p_no_payout": 0.2551,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 10.6808,
+    "mean_purchases_se": 0.06454129567139434,
+    "p_no_payout_se": 0.003082401579937306,
+    "mean_fees": 1407.3634,
+    "mean_fee_sub": 1057.3992,
+    "mean_fee_act": 149.0,
+    "mean_api": 200.9642,
+    "mean_cash": 985.58779905,
+    "mean_attempts": 3.57035,
+    "mean_length": 280.99935,
+    "net_per_purchase": -39.489139479252486,
+    "p5": -2959.8404,
+    "p50": -603.0,
+    "p95": 2982.189299999998
+   },
+   "funded_xfa_net_of_activation": 870.5404138
+  },
+  {
+   "size": "100K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.27905,
+    "p_pass_se": 0.0031716013108522957,
+    "mean_length": 66.26675,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1618.33887585,
+     "se": 22.746488179293117
+    },
+    "p_any_payout": 0.48695,
+    "p_any_payout_se": 0.00353432948025506,
+    "mean_n_payouts": 0.9093,
+    "mean_first_payout_day_given": 36.47972071054523,
+    "breach_share": 0.99575,
+    "alive_at_horizon": 0.00425,
+    "mean_life": 85.50125
+   },
+   "cycle": {
+    "net": {
+     "mean": 158.92447830000003,
+     "se": 23.578033569809214
+    },
+    "net_noapi": {
+     "mean": 388.45150330000007,
+     "se": 23.599924825525562
+    },
+    "p_no_payout": 0.51815,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 10.6808,
+    "mean_purchases_se": 0.06454129567139434,
+    "p_no_payout_se": 0.0035332037692439987,
+    "mean_fees": 1435.926225,
+    "mean_fee_sub": 1057.3992,
+    "mean_fee_act": 149.0,
+    "mean_api": 229.527025,
+    "mean_cash": 1594.8507033,
+    "mean_attempts": 3.57035,
+    "mean_length": 322.30205,
+    "net_per_purchase": 14.879454563328594,
+    "p5": -2989.0,
+    "p50": -591.0,
+    "p95": 5651.577749999999
+   },
+   "funded_xfa_net_of_activation": 1469.3388758499998
+  },
+  {
+   "size": "100K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.25745,
+    "p_pass_se": 0.003091678326572802,
+    "mean_length": 47.56945,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1154.5685262,
+     "se": 17.66210327199771
+    },
+    "p_any_payout": 0.69845,
+    "p_any_payout_se": 0.003245131719206479,
+    "mean_n_payouts": 1.3057,
+    "mean_first_payout_day_given": 17.016035507194502,
+    "breach_share": 0.9998,
+    "alive_at_horizon": 0.0002,
+    "mean_life": 39.0889
+   },
+   "cycle": {
+    "net": {
+     "mean": 7.97497865000004,
+     "se": 18.070827340668387
+    },
+    "net_noapi": {
+     "mean": 168.34062865000004,
+     "se": 17.93483679193155
+    },
+    "p_no_payout": 0.3059,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 8.1738,
+    "mean_purchases_se": 0.048681497228501715,
+    "p_no_payout_se": 0.0032582601952575855,
+    "mean_fees": 1118.57185,
+    "mean_fee_sub": 809.2062,
+    "mean_fee_act": 149.0,
+    "mean_api": 160.36565,
+    "mean_cash": 1126.54682865,
+    "mean_attempts": 3.8548,
+    "mean_length": 222.24945,
+    "net_per_purchase": 0.9756757750373192,
+    "p5": -2268.65565,
+    "p50": -405.3565,
+    "p95": 3805.64065
+   },
+   "funded_xfa_net_of_activation": 1005.5685262
+  },
+  {
+   "size": "100K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.25745,
+    "p_pass_se": 0.003091678326572802,
+    "mean_length": 47.56945,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1458.95131395,
+     "se": 21.814198478438747
+    },
+    "p_any_payout": 0.41625,
+    "p_any_payout_se": 0.0034855841511861395,
+    "mean_n_payouts": 0.7143,
+    "mean_first_payout_day_given": 29.277237237237237,
+    "breach_share": 0.99615,
+    "alive_at_horizon": 0.00385,
+    "mean_life": 65.4762
+   },
+   "cycle": {
+    "net": {
+     "mean": 308.41973580000007,
+     "se": 22.266244484380614
+    },
+    "net_noapi": {
+     "mean": 486.9712858,
+     "se": 22.34645656272881
+    },
+    "p_no_payout": 0.5872,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 8.1738,
+    "mean_purchases_se": 0.048681497228501715,
+    "p_no_payout_se": 0.0034813514617171304,
+    "mean_fees": 1136.75775,
+    "mean_fee_sub": 809.2062,
+    "mean_fee_act": 149.0,
+    "mean_api": 178.55155,
+    "mean_cash": 1445.1774858,
+    "mean_attempts": 3.8548,
+    "mean_length": 248.61655,
+    "net_per_purchase": 37.73272355575131,
+    "p5": -2349.0,
+    "p50": -504.0,
+    "p95": 5495.812249999999
+   },
+   "funded_xfa_net_of_activation": 1309.95131395
+  },
+  {
+   "size": "150K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.04645,
+    "p_pass_se": 0.0014881598956429378,
+    "mean_length": 257.10795,
+    "timeout_share": 0.03205
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 441.51240690000003,
+     "se": 5.267758856971471
+    },
+    "p_any_payout": 0.7583,
+    "p_any_payout_se": 0.0030272191034016686,
+    "mean_n_payouts": 0.99145,
+    "mean_first_payout_day_given": 43.59053145193195,
+    "breach_share": 0.99995,
+    "alive_at_horizon": 5e-05,
+    "mean_life": 78.65815
+   },
+   "cycle": {
+    "net": {
+     "mean": -51618.364328100004,
+     "se": 304.75421272238106
+    },
+    "net_noapi": {
+     "mean": -47925.5007031,
+     "se": 283.38578554107033
+    },
+    "p_no_payout": 0.2894,
+    "p_reach_xfa": 0.94125,
+    "mean_purchases": 242.1883,
+    "mean_purchases_se": 1.4225763207381583,
+    "p_no_payout_se": 0.0032066153495547292,
+    "mean_fees": 52028.581575,
+    "mean_fee_sub": 48195.4717,
+    "mean_fee_act": 140.24625,
+    "mean_api": 3692.863625,
+    "mean_cash": 410.2172469,
+    "mean_attempts": 20.5083,
+    "mean_length": 5338.32785,
+    "net_per_purchase": -213.13318739220682,
+    "p5": -142840.1,
+    "p50": -38862.4945,
+    "p95": -4660.344300000003
+   },
+   "funded_xfa_net_of_activation": 292.51240690000003
+  },
+  {
+   "size": "150K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.04645,
+    "p_pass_se": 0.0014881598956429378,
+    "mean_length": 257.10795,
+    "timeout_share": 0.03205
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 672.06942945,
+     "se": 8.329838497914832
+    },
+    "p_any_payout": 0.47345,
+    "p_any_payout_se": 0.003530545974066901,
+    "mean_n_payouts": 0.6877,
+    "mean_first_payout_day_given": 79.48104340479459,
+    "breach_share": 0.9944,
+    "alive_at_horizon": 0.0056,
+    "mean_life": 165.69495
+   },
+   "cycle": {
+    "net": {
+     "mean": -51461.531715850004,
+     "se": 305.00999136804614
+    },
+    "net_noapi": {
+     "mean": -47712.36459085,
+     "se": 283.7065885648096
+    },
+    "p_no_payout": 0.56075,
+    "p_reach_xfa": 0.94125,
+    "mean_purchases": 242.1883,
+    "mean_purchases_se": 1.4225763207381583,
+    "p_no_payout_se": 0.003509340661007421,
+    "mean_fees": 52084.885075,
+    "mean_fee_sub": 48195.4717,
+    "mean_fee_act": 140.24625,
+    "mean_api": 3749.167125,
+    "mean_cash": 623.35335915,
+    "mean_attempts": 20.5083,
+    "mean_length": 5419.8495,
+    "net_per_purchase": -212.48562261616274,
+    "p5": -142782.225,
+    "p50": -38643.893500000006,
+    "p95": -4452.984600000004
+   },
+   "funded_xfa_net_of_activation": 523.06942945
+  },
+  {
+   "size": "150K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.07755,
+    "p_pass_se": 0.0018912429444680023,
+    "mean_length": 163.9201,
+    "timeout_share": 0.00145
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 550.1991591,
+     "se": 6.323515728272789
+    },
+    "p_any_payout": 0.72825,
+    "p_any_payout_se": 0.0031456472903044932,
+    "mean_n_payouts": 1.0164,
+    "mean_first_payout_day_given": 30.22176450394782,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 63.65035
+   },
+   "cycle": {
+    "net": {
+     "mean": -19920.58249015,
+     "se": 133.42397384345523
+    },
+    "net_noapi": {
+     "mean": -18425.11194015,
+     "se": 123.87018989397711
+    },
+    "p_no_payout": 0.2798,
+    "p_reach_xfa": 0.99205,
+    "mean_purchases": 94.53355,
+    "mean_purchases_se": 0.621463868287493,
+    "p_no_payout_se": 0.0031742082477367486,
+    "mean_fees": 20455.46245,
+    "mean_fee_sub": 18812.17645,
+    "mean_fee_act": 147.81545,
+    "mean_api": 1495.47055,
+    "mean_cash": 534.87995985,
+    "mean_attempts": 12.79755,
+    "mean_length": 2155.87025,
+    "net_per_purchase": -210.7250017602216,
+    "p5": -58996.5307,
+    "p50": -14008.169,
+    "p95": -1480.1713000000004
+   },
+   "funded_xfa_net_of_activation": 401.1991591
+  },
+  {
+   "size": "150K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.07755,
+    "p_pass_se": 0.0018912429444680023,
+    "mean_length": 163.9201,
+    "timeout_share": 0.00145
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 792.9085671,
+     "se": 10.167583419483886
+    },
+    "p_any_payout": 0.41075,
+    "p_any_payout_se": 0.003478752919510094,
+    "mean_n_payouts": 0.62875,
+    "mean_first_payout_day_given": 58.53986609860012,
+    "breach_share": 0.9992,
+    "alive_at_horizon": 0.0008,
+    "mean_life": 129.59305
+   },
+   "cycle": {
+    "net": {
+     "mean": -19720.183373750002,
+     "se": 133.78454281843446
+    },
+    "net_noapi": {
+     "mean": -18179.87809875,
+     "se": 124.27471744213781
+    },
+    "p_no_payout": 0.59595,
+    "p_reach_xfa": 0.99205,
+    "mean_purchases": 94.53355,
+    "mean_purchases_se": 0.621463868287493,
+    "p_no_payout_se": 0.0034698241850272473,
+    "mean_fees": 20500.297175,
+    "mean_fee_sub": 18812.17645,
+    "mean_fee_act": 147.81545,
+    "mean_api": 1540.305275,
+    "mean_cash": 780.1138012500002,
+    "mean_attempts": 12.79755,
+    "mean_length": 2220.8039,
+    "net_per_purchase": -208.60512880083314,
+    "p5": -58960.9143,
+    "p50": -13827.479500000001,
+    "p95": -1259.8498000000022
+   },
+   "funded_xfa_net_of_activation": 643.9085671000001
+  },
+  {
+   "size": "150K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.1053,
+    "p_pass_se": 0.0021703906330428173,
+    "mean_length": 103.74585,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 717.33607425,
+     "se": 8.218848136420855
+    },
+    "p_any_payout": 0.68625,
+    "p_any_payout_se": 0.0032810892817782327,
+    "mean_n_payouts": 1.0372,
+    "mean_first_payout_day_given": 22.777559198542804,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 53.30095
+   },
+   "cycle": {
+    "net": {
+     "mean": -8833.8518649,
+     "se": 63.62071007180393
+    },
+    "net_noapi": {
+     "mean": -8107.787564899999,
+     "se": 58.9966388672085
+    },
+    "p_no_payout": 0.31885,
+    "p_reach_xfa": 0.99905,
+    "mean_purchases": 43.5052,
+    "mean_purchases_se": 0.29311205942773677,
+    "p_no_payout_se": 0.003295335168840948,
+    "mean_fees": 9532.45755,
+    "mean_fee_sub": 8657.5348,
+    "mean_fee_act": 148.85845,
+    "mean_api": 726.0643,
+    "mean_cash": 698.6056851000001,
+    "mean_attempts": 9.54695,
+    "mean_length": 1041.47755,
+    "net_per_purchase": -203.05278138935114,
+    "p5": -26890.9052,
+    "p50": -6150.2235,
+    "p95": -182.13165000000106
+   },
+   "funded_xfa_net_of_activation": 568.33607425
+  },
+  {
+   "size": "150K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.1053,
+    "p_pass_se": 0.0021703906330428173,
+    "mean_length": 103.74585,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 934.63588125,
+     "se": 13.467774374742907
+    },
+    "p_any_payout": 0.35535,
+    "p_any_payout_se": 0.0033843491065491454,
+    "mean_n_payouts": 0.5391,
+    "mean_first_payout_day_given": 42.92626987477135,
+    "breach_share": 0.9999,
+    "alive_at_horizon": 0.0001,
+    "mean_life": 98.76535
+   },
+   "cycle": {
+    "net": {
+     "mean": -8637.7453771,
+     "se": 64.52423596187867
+    },
+    "net_noapi": {
+     "mean": -7880.7663520999995,
+     "se": 60.00345985966275
+    },
+    "p_no_payout": 0.64685,
+    "p_reach_xfa": 0.99905,
+    "mean_purchases": 43.5052,
+    "mean_purchases_se": 0.29311205942773677,
+    "p_no_payout_se": 0.0033796085387216073,
+    "mean_fees": 9563.372275,
+    "mean_fee_sub": 8657.5348,
+    "mean_fee_act": 148.85845,
+    "mean_api": 756.979025,
+    "mean_cash": 925.6268979,
+    "mean_attempts": 9.54695,
+    "mean_length": 1086.2774,
+    "net_per_purchase": -198.5451251137795,
+    "p5": -26583.9621,
+    "p50": -6000.5,
+    "p95": 536.735799999997
+   },
+   "funded_xfa_net_of_activation": 785.63588125
+  },
+  {
+   "size": "150K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.119,
+    "p_pass_se": 0.0022895305195607244,
+    "mean_length": 70.5429,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 855.01260945,
+     "se": 10.449203290474236
+    },
+    "p_any_payout": 0.6402,
+    "p_any_payout_se": 0.003393699751009214,
+    "mean_n_payouts": 1.0093,
+    "mean_first_payout_day_given": 18.752733520774758,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 45.28975
+   },
+   "cycle": {
+    "net": {
+     "mean": -4825.40404745,
+     "se": 38.43983277649101
+    },
+    "net_noapi": {
+     "mean": -4375.67132245,
+     "se": 35.69905353973828
+    },
+    "p_no_payout": 0.3627,
+    "p_reach_xfa": 0.99965,
+    "mean_purchases": 25.41945,
+    "mean_purchases_se": 0.17187458400969707,
+    "p_no_payout_se": 0.0033996228467287368,
+    "mean_fees": 5657.151125,
+    "mean_fee_sub": 5058.47055,
+    "mean_fee_act": 148.94785,
+    "mean_api": 449.732725,
+    "mean_cash": 831.74707755,
+    "mean_attempts": 8.4574,
+    "mean_length": 641.3808,
+    "net_per_purchase": -189.8311744530271,
+    "p5": -15417.160699999999,
+    "p50": -3378.4075000000003,
+    "p95": 845.480349999998
+   },
+   "funded_xfa_net_of_activation": 706.01260945
+  },
+  {
+   "size": "150K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.119,
+    "p_pass_se": 0.0022895305195607244,
+    "mean_length": 70.5429,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 988.3195780499999,
+     "se": 15.692738550312974
+    },
+    "p_any_payout": 0.3051,
+    "p_any_payout_se": 0.0032558715423062993,
+    "mean_n_payouts": 0.44075,
+    "mean_first_payout_day_given": 32.37921992789249,
+    "breach_share": 0.9998,
+    "alive_at_horizon": 0.0002,
+    "mean_life": 74.24335
+   },
+   "cycle": {
+    "net": {
+     "mean": -4696.4652077,
+     "se": 40.15815285518157
+    },
+    "net_noapi": {
+     "mean": -4226.8377577,
+     "se": 37.596319547532126
+    },
+    "p_no_payout": 0.69455,
+    "p_reach_xfa": 0.99965,
+    "mean_purchases": 25.41945,
+    "mean_purchases_se": 0.17187458400969707,
+    "p_no_payout_se": 0.003256918002498681,
+    "mean_fees": 5677.04585,
+    "mean_fee_sub": 5058.47055,
+    "mean_fee_act": 148.94785,
+    "mean_api": 469.62745,
+    "mean_cash": 980.5806423,
+    "mean_attempts": 8.4574,
+    "mean_length": 670.1544,
+    "net_per_purchase": -184.7587263965192,
+    "p5": -15311.5,
+    "p50": -3409.5,
+    "p95": 1746.8667499999992
+   },
+   "funded_xfa_net_of_activation": 839.3195780499999
+  },
+  {
+   "size": "150K",
+   "path": "standard",
+   "edge": "zero_k1",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.13,
+    "p_pass_se": 0.002378024390118823,
+    "mean_length": 50.1719,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 974.0145199500002,
+     "se": 13.048286879059313
+    },
+    "p_any_payout": 0.5946,
+    "p_any_payout_se": 0.0034716771163228874,
+    "mean_n_payouts": 0.9499,
+    "mean_first_payout_day_given": 16.235620585267405,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 38.3683
+   },
+   "cycle": {
+    "net": {
+     "mean": -2700.6606413,
+     "se": 26.265639793241775
+    },
+    "net_noapi": {
+     "mean": -2399.5318913,
+     "se": 24.649459662986544
+    },
+    "p_no_payout": 0.41025,
+    "p_reach_xfa": 0.9997,
+    "mean_purchases": 16.0569,
+    "mean_purchases_se": 0.10706178697748109,
+    "p_no_payout_se": 0.003478109669777536,
+    "mean_fees": 3645.40715,
+    "mean_fee_sub": 3195.3231,
+    "mean_fee_act": 148.9553,
+    "mean_api": 301.12875,
+    "mean_cash": 944.7465086999999,
+    "mean_attempts": 7.7548,
+    "mean_length": 426.11075,
+    "net_per_purchase": -168.19315318025272,
+    "p5": -9503.5,
+    "p50": -1955.4724999999999,
+    "p95": 1943.1207999999995
+   },
+   "funded_xfa_net_of_activation": 825.0145199499999
+  },
+  {
+   "size": "150K",
+   "path": "consistency",
+   "edge": "zero_k1",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.13,
+    "p_pass_se": 0.002378024390118823,
+    "mean_length": 50.1719,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 976.8821548500001,
+     "se": 16.37778851995726
+    },
+    "p_any_payout": 0.26605,
+    "p_any_payout_se": 0.003124639159167023,
+    "mean_n_payouts": 0.3641,
+    "mean_first_payout_day_given": 26.125352377372675,
+    "breach_share": 0.9998,
+    "alive_at_horizon": 0.0002,
+    "mean_life": 56.10135
+   },
+   "cycle": {
+    "net": {
+     "mean": -2694.95783415,
+     "se": 28.44316415349064
+    },
+    "net_noapi": {
+     "mean": -2381.39098415,
+     "se": 27.005866789681644
+    },
+    "p_no_payout": 0.73575,
+    "p_reach_xfa": 0.9997,
+    "mean_purchases": 16.0569,
+    "mean_purchases_se": 0.10706178697748109,
+    "p_no_payout_se": 0.0031178673600716243,
+    "mean_fees": 3657.84525,
+    "mean_fee_sub": 3195.3231,
+    "mean_fee_act": 148.9553,
+    "mean_api": 313.56685,
+    "mean_cash": 962.8874158500001,
+    "mean_attempts": 7.7548,
+    "mean_length": 444.10785,
+    "net_per_purchase": -167.83799077966484,
+    "p5": -9673.5,
+    "p50": -2114.0,
+    "p95": 2591.1329999999994
+   },
+   "funded_xfa_net_of_activation": 827.88215485
+  },
+  {
+   "size": "150K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.378,
+    "p_pass_se": 0.0034286732127748773,
+    "mean_length": 350.91355,
+    "timeout_share": 0.08095
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 783.31185045,
+     "se": 9.140502261609315
+    },
+    "p_any_payout": 0.91345,
+    "p_any_payout_se": 0.0019882039319446083,
+    "mean_n_payouts": 1.4461,
+    "mean_first_payout_day_given": 40.9527067710329,
+    "breach_share": 0.99995,
+    "alive_at_horizon": 5e-05,
+    "mean_life": 72.25165
+   },
+   "cycle": {
+    "net": {
+     "mean": -8875.41812395,
+     "se": 54.97919649703919
+    },
+    "net_noapi": {
+     "mean": -8175.0072239500005,
+     "se": 51.30731537766873
+    },
+    "p_no_payout": 0.09015,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 44.19125,
+    "mean_purchases_se": 0.2535589345271409,
+    "p_no_payout_se": 0.002025129347720782,
+    "mean_fees": 9643.46965,
+    "mean_fee_sub": 8794.05875,
+    "mean_fee_act": 149.0,
+    "mean_api": 700.4109,
+    "mean_cash": 768.0515260500001,
+    "mean_attempts": 2.65665,
+    "mean_length": 1004.39785,
+    "net_per_purchase": -200.8410742839363,
+    "p5": -24299.7285,
+    "p50": -6502.148499999999,
+    "p95": -1265.2753999999998
+   },
+   "funded_xfa_net_of_activation": 634.31185045
+  },
+  {
+   "size": "150K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.05,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.378,
+    "p_pass_se": 0.0034286732127748773,
+    "mean_length": 350.91355,
+    "timeout_share": 0.08095
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1809.8445645,
+     "se": 17.85002750525082
+    },
+    "p_any_payout": 0.7891,
+    "p_any_payout_se": 0.0028846246722927403,
+    "mean_n_payouts": 1.59215,
+    "mean_first_payout_day_given": 92.17177797490812,
+    "breach_share": 0.9784,
+    "alive_at_horizon": 0.0216,
+    "mean_life": 185.73975
+   },
+   "cycle": {
+    "net": {
+     "mean": -7950.674878350002,
+     "se": 56.79896070455175
+    },
+    "net_noapi": {
+     "mean": -7173.257378350002,
+     "se": 53.397708822266665
+    },
+    "p_no_payout": 0.21485,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 44.19125,
+    "mean_purchases_se": 0.2535589345271409,
+    "p_no_payout_se": 0.0029042165681987288,
+    "mean_fees": 9720.47625,
+    "mean_fee_sub": 8794.05875,
+    "mean_fee_act": 149.0,
+    "mean_api": 777.4175,
+    "mean_cash": 1769.80137165,
+    "mean_attempts": 2.65665,
+    "mean_length": 1115.95205,
+    "net_per_purchase": -179.91513881933645,
+    "p5": -23617.050049999998,
+    "p50": -5860.620499999999,
+    "p95": 894.6047499999983
+   },
+   "funded_xfa_net_of_activation": 1660.8445644999997
+  },
+  {
+   "size": "150K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3625,
+    "p_pass_se": 0.003399218660221787,
+    "mean_length": 209.6096,
+    "timeout_share": 0.00755
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 959.2723322999999,
+     "se": 10.389635624572804
+    },
+    "p_any_payout": 0.8786,
+    "p_any_payout_se": 0.002309350991079528,
+    "mean_n_payouts": 1.52465,
+    "mean_first_payout_day_given": 30.31402230821762,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 63.92605
+   },
+   "cycle": {
+    "net": {
+     "mean": -5062.4263774,
+     "se": 36.15249832507012
+    },
+    "net_noapi": {
+     "mean": -4612.3333274,
+     "se": 33.862670659183365
+    },
+    "p_no_payout": 0.12325,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 27.18825,
+    "mean_purchases_se": 0.1618290147914657,
+    "p_no_payout_se": 0.0023244293654572515,
+    "mean_fees": 6009.5548,
+    "mean_fee_sub": 5410.46175,
+    "mean_fee_act": 149.0,
+    "mean_api": 450.09305,
+    "mean_cash": 947.1284226,
+    "mean_attempts": 2.76975,
+    "mean_length": 641.89395,
+    "net_per_purchase": -186.19905206844868,
+    "p5": -14995.54965,
+    "p50": -3793.498,
+    "p95": 521.0085999999972
+   },
+   "funded_xfa_net_of_activation": 810.2723323000001
+  },
+  {
+   "size": "150K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.1,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3625,
+    "p_pass_se": 0.003399218660221787,
+    "mean_length": 209.6096,
+    "timeout_share": 0.00755
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 2231.9960328,
+     "se": 22.738038970392996
+    },
+    "p_any_payout": 0.6999,
+    "p_any_payout_se": 0.0032406788640653673,
+    "mean_n_payouts": 1.56925,
+    "mean_first_payout_day_given": 71.58258322617517,
+    "breach_share": 0.9901,
+    "alive_at_horizon": 0.0099,
+    "mean_life": 165.84935
+   },
+   "cycle": {
+    "net": {
+     "mean": -3895.3731332499997,
+     "se": 41.227330810857865
+    },
+    "net_noapi": {
+     "mean": -3375.8584332499995,
+     "se": 39.45370488043984
+    },
+    "p_no_payout": 0.3054,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 27.18825,
+    "mean_purchases_se": 0.1618290147914657,
+    "p_no_payout_se": 0.0032567686439168506,
+    "mean_fees": 6078.97645,
+    "mean_fee_sub": 5410.46175,
+    "mean_fee_act": 149.0,
+    "mean_api": 519.5147,
+    "mean_cash": 2183.60331675,
+    "mean_attempts": 2.76975,
+    "mean_length": 742.37285,
+    "net_per_purchase": -143.27413986740595,
+    "p5": -14320.29685,
+    "p50": -3066.1225,
+    "p95": 4246.1645999999955
+   },
+   "funded_xfa_net_of_activation": 2082.9960327999997
+  },
+  {
+   "size": "150K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3202,
+    "p_pass_se": 0.003299029857397474,
+    "mean_length": 125.0783,
+    "timeout_share": 0.0001
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1205.44295265,
+     "se": 12.84653238312595
+    },
+    "p_any_payout": 0.83055,
+    "p_any_payout_se": 0.0026527033145453713,
+    "mean_n_payouts": 1.5834,
+    "mean_first_payout_day_given": 24.17048943471194,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 58.31255
+   },
+   "cycle": {
+    "net": {
+     "mean": -2882.8321516,
+     "se": 27.1974915328936
+    },
+    "net_noapi": {
+     "mean": -2565.3996016,
+     "se": 25.720947712526822
+    },
+    "p_no_payout": 0.1722,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 18.10595,
+    "mean_purchases_se": 0.11294440690812267,
+    "p_no_payout_se": 0.0026697112203382597,
+    "mean_fees": 4069.5166,
+    "mean_fee_sub": 3603.08405,
+    "mean_fee_act": 149.0,
+    "mean_api": 317.43255,
+    "mean_cash": 1186.6844484,
+    "mean_attempts": 3.12655,
+    "mean_length": 449.7577,
+    "net_per_purchase": -159.22015423659073,
+    "p5": -9871.7179,
+    "p50": -2153.3405000000002,
+    "p95": 2108.6822500000003
+   },
+   "funded_xfa_net_of_activation": 1056.44295265
+  },
+  {
+   "size": "150K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.15,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.3202,
+    "p_pass_se": 0.003299029857397474,
+    "mean_length": 125.0783,
+    "timeout_share": 0.0001
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 2602.3898583,
+     "se": 32.23387059733406
+    },
+    "p_any_payout": 0.5899,
+    "p_any_payout_se": 0.0034779159708078055,
+    "mean_n_payouts": 1.2874,
+    "mean_first_payout_day_given": 54.58611629089676,
+    "breach_share": 0.99215,
+    "alive_at_horizon": 0.00785,
+    "mean_life": 140.37515
+   },
+   "cycle": {
+    "net": {
+     "mean": -1550.6405648999998,
+     "se": 40.051664538761734
+    },
+    "net_noapi": {
+     "mean": -1176.7094898999999,
+     "se": 39.37697494548434
+    },
+    "p_no_payout": 0.41525,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 18.10595,
+    "mean_purchases_se": 0.11294440690812267,
+    "p_no_payout_se": 0.0034843753923766594,
+    "mean_fees": 4126.015125,
+    "mean_fee_sub": 3603.08405,
+    "mean_fee_act": 149.0,
+    "mean_api": 373.931075,
+    "mean_cash": 2575.3745601000005,
+    "mean_attempts": 3.12655,
+    "mean_length": 531.5211,
+    "net_per_purchase": -85.64259621284715,
+    "p5": -9578.8077,
+    "p50": -1713.5444999999995,
+    "p95": 7309.0341499999995
+   },
+   "funded_xfa_net_of_activation": 2453.3898583
+  },
+  {
+   "size": "150K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.28495,
+    "p_pass_se": 0.003191813728117604,
+    "mean_length": 80.8493,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1412.1467028,
+     "se": 15.69559256175172
+    },
+    "p_any_payout": 0.77435,
+    "p_any_payout_se": 0.0029557746658025203,
+    "mean_n_payouts": 1.54615,
+    "mean_first_payout_day_given": 19.636275585975334,
+    "breach_share": 1.0,
+    "alive_at_horizon": 0.0,
+    "mean_life": 51.37705
+   },
+   "cycle": {
+    "net": {
+     "mean": -1553.2540953,
+     "se": 22.920981499111086
+    },
+    "net_noapi": {
+     "mean": -1316.3248203,
+     "se": 22.021062301015057
+    },
+    "p_no_payout": 0.2302,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 12.79135,
+    "mean_purchases_se": 0.08136274794838658,
+    "p_no_payout_se": 0.002976642067834156,
+    "mean_fees": 2931.407925,
+    "mean_fee_sub": 2545.47865,
+    "mean_fee_act": 149.0,
+    "mean_api": 236.929275,
+    "mean_cash": 1378.1538297,
+    "mean_attempts": 3.48975,
+    "mean_length": 333.18465,
+    "net_per_purchase": -121.43003633705591,
+    "p5": -6930.205999999999,
+    "p50": -1292.6169999999997,
+    "p95": 3412.5891499999984
+   },
+   "funded_xfa_net_of_activation": 1263.1467028000002
+  },
+  {
+   "size": "150K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.2,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.28495,
+    "p_pass_se": 0.003191813728117604,
+    "mean_length": 80.8493,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 2527.41273795,
+     "se": 34.424966387471045
+    },
+    "p_any_payout": 0.4959,
+    "p_any_payout_se": 0.003535415039284638,
+    "mean_n_payouts": 0.9662,
+    "mean_first_payout_day_given": 40.931437789876995,
+    "breach_share": 0.99545,
+    "alive_at_horizon": 0.00455,
+    "mean_life": 106.06895
+   },
+   "cycle": {
+    "net": {
+     "mean": -472.67581595,
+     "se": 38.37637305509223
+    },
+    "net_noapi": {
+     "mean": -198.27491594999995,
+     "se": 38.13017207556894
+    },
+    "p_no_payout": 0.50945,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 12.79135,
+    "mean_purchases_se": 0.08136274794838658,
+    "p_no_payout_se": 0.003534902385498078,
+    "mean_fees": 2968.87955,
+    "mean_fee_sub": 2545.47865,
+    "mean_fee_act": 149.0,
+    "mean_api": 274.4009,
+    "mean_cash": 2496.2037340499996,
+    "mean_attempts": 3.48975,
+    "mean_length": 387.42735,
+    "net_per_purchase": -36.95277011026983,
+    "p5": -6825.5,
+    "p50": -1177.7269999999999,
+    "p95": 8338.163349999997
+   },
+   "funded_xfa_net_of_activation": 2378.41273795
+  },
+  {
+   "size": "150K",
+   "path": "standard",
+   "edge": "sharpe_0.5",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.2596,
+    "p_pass_se": 0.0031000632251617062,
+    "mean_length": 55.80235,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 1616.3669506500003,
+     "se": 21.810453820708965
+    },
+    "p_any_payout": 0.72215,
+    "p_any_payout_se": 0.0031674072796216155,
+    "mean_n_payouts": 1.4546,
+    "mean_first_payout_day_given": 17.001800180018,
+    "breach_share": 0.99995,
+    "alive_at_horizon": 5e-05,
+    "mean_life": 44.2852
+   },
+   "cycle": {
+    "net": {
+     "mean": -659.1030905499999,
+     "se": 25.519610966668488
+    },
+    "net_noapi": {
+     "mean": -473.7387155499998,
+     "se": 25.109014947275224
+    },
+    "p_no_payout": 0.2835,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 9.54815,
+    "mean_purchases_se": 0.06056614146327623,
+    "p_no_payout_se": 0.0031869087686973406,
+    "mean_fees": 2234.446225,
+    "mean_fee_sub": 1900.08185,
+    "mean_fee_act": 149.0,
+    "mean_api": 185.364375,
+    "mean_cash": 1575.3431344500002,
+    "mean_attempts": 3.8341,
+    "mean_length": 258.53265,
+    "net_per_purchase": -69.02940261202431,
+    "p5": -5085.00875,
+    "p50": -833.0,
+    "p95": 4662.02225
+   },
+   "funded_xfa_net_of_activation": 1467.36695065
+  },
+  {
+   "size": "150K",
+   "path": "consistency",
+   "edge": "sharpe_0.5",
+   "f": 0.25,
+   "dll": false,
+   "pricing": "standard",
+   "api_fee": "included",
+   "policy": "max",
+   "attempt": {
+    "p_pass": 0.2596,
+    "p_pass_se": 0.0031000632251617062,
+    "mean_length": 55.80235,
+    "timeout_share": 0.0
+   },
+   "xfa": {
+    "mean_user_cash": {
+     "mean": 2216.4751206,
+     "se": 32.35753320452194
+    },
+    "p_any_payout": 0.42165,
+    "p_any_payout_se": 0.0034918567947440225,
+    "mean_n_payouts": 0.7311,
+    "mean_first_payout_day_given": 31.857939048974266,
+    "breach_share": 0.9962,
+    "alive_at_horizon": 0.0038,
+    "mean_life": 76.52675
+   },
+   "cycle": {
+    "net": {
+     "mean": -59.727968599999954,
+     "se": 34.69051989424089
+    },
+    "net_noapi": {
+     "mean": 147.90333140000007,
+     "se": 34.601267456627184
+    },
+    "p_no_payout": 0.58275,
+    "p_reach_xfa": 1.0,
+    "mean_purchases": 9.54815,
+    "mean_purchases_se": 0.06056614146327623,
+    "p_no_payout_se": 0.003486778151101673,
+    "mean_fees": 2256.71315,
+    "mean_fee_sub": 1900.08185,
+    "mean_fee_act": 149.0,
+    "mean_api": 207.6313,
+    "mean_cash": 2196.9851814,
+    "mean_attempts": 3.8341,
+    "mean_length": 290.73635,
+    "net_per_purchase": -6.255449338353499,
+    "p5": -5132.429999999999,
+    "p50": -911.5305,
+    "p95": 8020.091649999999
+   },
+   "funded_xfa_net_of_activation": 2067.4751206
+  }
+ ],
+ "elapsed_s": 92.8
+}

@@ -160,6 +160,12 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     once on the stores bought in E.17, no purchase. Run 2026-10-10 (see reports/E.18_RETURN.md): Fable approved
     the diff, the dry check passed, freeze b714751; FAIL (T1 NG h60 mean 0.585 ticks vs bar 2.562, t_B -0.83;
     T2 NG hF -0.113 vs 2.649, t_B -0.41; Fable-verified); the NG near-miss is closed; N 478 -> 480.
+  - Stage E.19 — Prop economics: the Topstep Combine-to-XFA funnel's cash value to the user, from sourced rules
+    (214, help centre and terms), owned 2019-2024 return magnitudes (demeaned, fat-tailed) and D8 costs; no
+    purchase, no edge test, N unchanged at 480. Run 2026-10-10 (see reports/E.19_RETURN.md): negative at zero edge
+    for every size, path and sizing in the policy band (best 50K -$250 per cycle); break-even net Sharpe about 0
+    (50K), 0.34-0.52 (100K), 0.54-0.86 (150K); Fable reproduced the headline; account stacking and excessive
+    purchases are the binding terms.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

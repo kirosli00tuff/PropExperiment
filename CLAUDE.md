@@ -152,7 +152,14 @@ is used only when Scrapling fails.
   budgets such as web searches split across the workers). Light workers
   (readers, reviewers, audits) run all at once up to the cap of 20 in
   .claude/settings.json; the cap is not enforced under ultracode, so the
-  prompt's number governs. Workflow `agent()` calls follow the same rule. Compute-heavy workers (model
+  prompt's number governs. Workflow `agent()` calls follow the same rule.
+  Two refinements for parallel readers: (a) they start from one shared
+  brief, and the lead assigns a paper or source that serves several
+  workers to one of them, whose notes the others cite, so the same pages
+  are not read many times; (b) fetches to any one site are spaced (no more
+  than about 2 workers on the same domain at once, a pause between
+  requests); a worker that is throttled or blocked says so in its log and
+  never presents the gap as a finding. Dependent steps stay serial. Compute-heavy workers (model
   fits, store builds) stay at most 2 at once, after a free-memory check.
 - Workers do not spawn further workers unless the stage prompt says so.
 - Scale to the task: a lookup needs 1 agent, a comparison 2 to 4, a parallel

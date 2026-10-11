@@ -669,3 +669,8 @@
   usage allows. Settings cap raised to 20. Stage prompts state the
   parallel count per step. Supersedes the default working limit of 8 in
   V35 and V36.
+- 2026-10-10 (user, planning chat): V37 refined. Parallel readers start
+  from one shared brief, a source serving several workers is read once by
+  an assigned worker and cited by the rest, and fetches to one site are
+  spaced (about 2 workers per domain at once); a throttled or blocked
+  fetch is logged, never reported as missing evidence. E.20 updated.

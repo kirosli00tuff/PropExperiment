@@ -108,6 +108,12 @@ reports/stage_e20_briefs/product_<ROOT>.md and .json with:
    GEX CSV may be fetched and used under its terms (read the terms first;
    CLAUDE.md's page-fetch order). Its answer decides T3 before any NQ bar
    is read.
+Shared sources: the planning brief is every reader's starting point. A
+source that covers several roots (for example Baltussen et al., which
+spans every asset class) is read once by the reader the lead assigns in
+its spawn brief, and the others cite that reader's notes. No more than
+about 2 readers fetch from the same domain at once; a throttled or
+blocked fetch is logged as such, never reported as missing evidence.
 Web rules: CLAUDE.md's research rules; pages saved to disk before use;
 never fetch CME's site or any archived copy of it by automation; read a
 site's terms before any automated fetch. Readers do not open any data

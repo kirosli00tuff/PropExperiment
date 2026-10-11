@@ -624,3 +624,28 @@
      holdout-2 stay unread; a pass leads to a forward research-window
      read and then holdout-2, each in its own stage. No purchase, no
      Databento call.
+- 2026-10-10 (user, planning chat): V34. Amends V33 item 5 before E.20
+  runs, after the planning chat's literature run
+  (reports/stage_e20_briefs/literature_planning_2026-10-10.md). E.20 is
+  not run tonight. It runs with Ultracode on, launched interactively.
+  1. Part A: one research agent per root (17, opus high, 4 at a time)
+     checks that root's published intraday evidence since 2015, audits
+     its feature availability over 2010-2019 and 2019-2024, and proposes
+     at most two literature-sourced features.
+  2. Part B: H6, rest-of-day to last-half-hour momentum (Baltussen, Da,
+     Lammers and Martens, JFE 2021), the only published effect whose
+     numbers clear the cost gate (about 2.7 bp gross per trade on the
+     equity portfolio against MNQ's 0.4 bp), tested directly on NQ at MNQ
+     cost on 2020-06..2024-02, after the paper's sample: T1 always, T2
+     above the trailing 60-date median of |r_ROD| (Rosa 2022), and T3 on
+     negative prior-day GEX only if its source is cleared under its terms.
+     Registered and evaluated once before the search reads data. The
+     program's CP1 port tested the overnight-plus-first-half-hour form;
+     the rest-of-day form was never screened (E.13 section 2.7).
+  3. Part C: the V33 search, with a decision time t4 = F_X - 60 min, the
+     r_ROD features, and Part A's accepted features. Market orders only:
+     the literature finds passive fills mostly adverse.
+  4. Dropped from the shortlist: the overnight drift (decayed since 2021,
+     overnight hold), closing-auction distortions (overnight), and
+     pre-announcement drift and noise-area momentum (unsized; the latter
+     close to the failed opening-range family).

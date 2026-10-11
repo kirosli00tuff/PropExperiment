@@ -20,8 +20,8 @@ would change the setup.
   The Agent tool takes a per-call `model` but no per-call `effort`, which is
   why effort lives in the files. Dynamic workflows take both per agent:
   `agent(prompt, { model, effort })`.
-- .claude/settings.json caps concurrency at 8 subagents (4 before
-  2026-10-10) and spawn depth at 2; web searches at 1,500 a session.
+- .claude/settings.json caps concurrency at 17 subagents (4 before
+  2026-10-10; the default working limit is 8, CLAUDE.md) and spawn depth at 2; web searches at 1,500 a session.
 
 ## Why
 

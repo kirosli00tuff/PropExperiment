@@ -655,3 +655,9 @@
   workers (model fits, store builds) stay at most 2 at once, after a
   free-memory check (the ThinkPad has 14 GB). E.20's Part A readers run 8
   at a time; V34 item 1's "4 at a time" is superseded.
+- 2026-10-10 (user, planning chat): V36. E.20's 17 Part A readers run all
+  at once, each with unchanged instructions and effort. The settings cap
+  is raised to 17 (the cap is not enforced under ultracode, so the
+  prompt's number governs); the default working limit stays 8, and
+  compute-heavy workers stay at most 2. Supersedes V35's "8 at a time"
+  for Part A.

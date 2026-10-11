@@ -649,3 +649,9 @@
      overnight hold), closing-auction distortions (overnight), and
      pre-announcement drift and noise-area momentum (unsized; the latter
      close to the failed opening-range family).
+- 2026-10-10 (user, planning chat): V35. The subagent concurrency cap is
+  raised from 4 to 8 (.claude/settings.json, CLAUDE.md, ORCHESTRATION.md),
+  and the web-search budget from 1,000 to 1,500 a session. Compute-heavy
+  workers (model fits, store builds) stay at most 2 at once, after a
+  free-memory check (the ThinkPad has 14 GB). E.20's Part A readers run 8
+  at a time; V34 item 1's "4 at a time" is superseded.

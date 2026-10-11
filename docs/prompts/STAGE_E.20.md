@@ -48,8 +48,9 @@ source; and a wrong verdict number.
 Usage: follows CLAUDE.md's context-hygiene rules. The user runs this
 unattended. reports/stage_e20_STATE.md names, after every step, the step
 finished, the hashes in force, N, each guard's state and the next step;
-the session resumes from it after a usage pause. Expect 12 to 16 hours.
-Part A's 17 readers run at most 4 at a time (.claude/settings.json).
+the session resumes from it after a usage pause. Expect 10 to 14 hours.
+Part A's 17 readers run at most 8 at a time (.claude/settings.json);
+compute-heavy steps run at most 2 workers at once.
 
 Do not stop to ask, and do not use AskUserQuestion. Decide, log the
 choice under Open choices in the return document, and continue. The only
@@ -291,7 +292,7 @@ STEPS
 
 STEP 0: STARTUP (lead). Start checks; STATE; ETA table.
 
-STEP 1: PART A (17 ProductReader-<ROOT>-OpusHigh, at most 4 at a time;
+STEP 1: PART A (17 ProductReader-<ROOT>-OpusHigh, at most 8 at a time;
 NQ first). Then the lead consolidates reports/stage_e20_product_summary.md:
 per root, the evidence table, the feature availability, the proposed
 features, and the NQ reader's GEX ruling.
@@ -359,7 +360,7 @@ DELEGATION PLAN
 | Step | Owner | Model | Effort | Parallel or serial | Why this tier |
 |---|---|---|---|---|---|
 | 0 Startup | lead | opus | xhigh | first | gates the session |
-| 1 Part A | 17 x ProductReader-<ROOT>-OpusHigh | opus | high | 4 at a time | literature reading and availability audit per root (CLAUDE.md routing) |
+| 1 Part A | 17 x ProductReader-<ROOT>-OpusHigh | opus | high | 8 at a time | literature reading and availability audit per root (CLAUDE.md routing) |
 | 1 Consolidation | lead | opus | xhigh | after the readers | feature acceptance reserved to the lead |
 | 2 H6 review | H6Reviewer-FableXHigh | fable | xhigh | after the H6 text and code | independent check before a registration |
 | 3 H6 evaluate | lead | opus | xhigh | after 2 | registration and verdict reserved to the lead |
@@ -380,7 +381,7 @@ recomputations and move the plan and freeze reviews to opus xhigh
        path and format, allowed tools, and boundaries.
     2. Route per CLAUDE.md. State model and effort for each subtask before
        spawning.
-    3. At most 4 concurrent. Small tasks needing no isolation go inline.
+    3. At most 8 concurrent. Small tasks needing no isolation go inline.
     4. Collect results as files plus short summaries.
     5. Verify every number entering a verdict with an independent fable
        xhigh worker.

@@ -661,3 +661,11 @@
   prompt's number governs); the default working limit stays 8, and
   compute-heavy workers stay at most 2. Supersedes V35's "8 at a time"
   for Part A.
+- 2026-10-10 (user, planning chat): V37. Standing rule: run as many
+  workers in parallel as possible whenever it costs nothing in per-worker
+  depth (same instructions, model and effort as alone), the items are
+  independent, memory is safe (compute-heavy workers bounded by RAM, at
+  most 2 at once on the ThinkPad unless a measured peak allows more), and
+  usage allows. Settings cap raised to 20. Stage prompts state the
+  parallel count per step. Supersedes the default working limit of 8 in
+  V35 and V36.

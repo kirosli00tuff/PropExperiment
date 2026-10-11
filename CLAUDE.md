@@ -142,11 +142,17 @@ is used only when Scrapling fails.
 
 ## Delegation budget
 
-- At most 8 subagents at once by default; a stage prompt may run up to 17
-  light research readers at once (.claude/settings.json caps at 17; raised
-  from 4 by the user, 2026-10-10; not enforced under ultracode, so the
-  prompt's number governs). Inside a workflow, run parallel `agent()`
-  calls in batches of at most 8 unless the prompt says otherwise. Compute-heavy workers (model
+- Run as many workers in parallel as possible (user standing rule,
+  2026-10-10, V37), on four conditions: each worker keeps the same
+  instructions, model and effort it would have alone; the work items are
+  independent; memory stays safe (check `free -m` first; compute-heavy
+  workers such as model fits and store builds are bounded by RAM, at most
+  2 at once on the 14 GB ThinkPad unless a measured peak allows more); and
+  usage allows (the Fable 40% rule in docs/ORCHESTRATION.md; shared
+  budgets such as web searches split across the workers). Light workers
+  (readers, reviewers, audits) run all at once up to the cap of 20 in
+  .claude/settings.json; the cap is not enforced under ultracode, so the
+  prompt's number governs. Workflow `agent()` calls follow the same rule. Compute-heavy workers (model
   fits, store builds) stay at most 2 at once, after a free-memory check.
 - Workers do not spawn further workers unless the stage prompt says so.
 - Scale to the task: a lookup needs 1 agent, a comparison 2 to 4, a parallel

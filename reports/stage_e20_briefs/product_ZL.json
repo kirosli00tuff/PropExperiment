@@ -1,0 +1,757 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "ZL",
+ "reader": "ProductReader-ZL-OpusHigh",
+ "finished_utc": "2026-10-11T17:46:12Z",
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "Market intraday momentum (r_ROD -> r_LH), soybean oil's own row",
+   "rule": "r_LH = a + b*r_ROD; r_ROD = return from prior close to 30 min before close, r_LH = last half-hour return (BO session 08:30-13:20 CT)",
+   "hold": "last 30 min of the day session",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "BO slope 0.03 (x100) with t 0.08: no effect to size. 1 ZL tick = 0.01 c/lb = $6. bp per tick = 100/P (P in c/lb). Public level used: IMF global soybean-oil price via FRED PSOILUSDM, mean 39.52 c/lb over 2010-07..2019-04 (2.53 bp/tick) and 50.75 c/lb over 2019-05..2024-02 (1.97 bp/tick); a proxy, not the CBOT ZL price. D8 RT wall 2.675 ticks ($16.05) = 6.8 bp at 39.5 c/lb, 5.3 bp at 50.75 c/lb; 1.5x = 4.01 ticks ($24.08).",
+   "gross_or_net": "gross",
+   "sample": "BO (CBOT soybean oil, Tickdata), 1982-07-06..2020-05-01, 9458 obs, 1-min bars",
+   "decay_evidence": "none needed: in-sample null; R2 -0.01%, R2_OOS -0.06%. Pooled 'Softs' group (12 ags incl. BO) b_ROD 0.65 (t 2.16), R2_OOS -0.01%.",
+   "source": "Baltussen, Da, Lammers, Martens (2021), JFE 142, 377-403, Table B3 Panel B (on-disk publisher copy; NQ reader owns the full read)",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0304405X21001598",
+   "quote": "| BO | -0.80(-1.40) | 0.02 | -0.06 | -0.86(-1.48) | 1.02(1.20) | 2.80(1.22) | 0.06 | -0.36 | 0.03(0.08) | -0.01 | -0.06 |",
+   "quote_location": "Table B3 Panel B, row BO (columns: bONFH, R2, R2OOS, bTONFH, bM, bSLH, R2, R2OOS, bROD, R2, R2OOS; slopes and R2 x100); caption: 'Panel B: Newey and West (1986) robust t-statistics'; Softs row in Panel A: '| Softs | 0.25 (0.70) | ... | 0.65** (2.16) | 0.04 | -0.01 |'; sample row: '| Soybean oil futures | BO | 1982-07-06 | 2020-05-01 | 9458 | 08:30-13:20 | Softs |'",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E2",
+   "effect": "Intraday cointegration of the soybean crush (ZS, ZL, ZM) in the day session; stronger on USDA days",
+   "rule": "none (econometric; no trading rule). Cointegration of 1-min ZS/ZL/ZM prices, 08:30-13:20 CT session vs 19:00-07:45 session",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "no per-trade figure published",
+   "gross_or_net": "unknown",
+   "sample": "ZS, ZL, ZM CME market-by-order data, all of 2015 (243 trading days), 1-min snapshots",
+   "decay_evidence": "one year only; no out-of-sample or post-publication test",
+   "source": "Zhou, Bagnarosa, Gohin, Pennings, Debie (2023), 'Microstructure and high frequency price discovery in the soybean complex', J. Commodity Markets 30, 100314 (CC BY)",
+   "url": "https://edepot.wur.nl/629433",
+   "quote": "A high level of cointegration is indeed observed during session 2 trading hours, which fades away during session 1. Another interesting result is the stronger intraday cointegration observed on average on USDA announcement days, although the number of observations available is limited.",
+   "quote_location": "Section 5.1, PDF p. 10; sample: 'The high-frequency data used in this study covers the total trading activity of 2015, amounting to 243 trading days.' (Section 4, PDF p. 8)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZL/zhou_etal_2023_jcm.pdf",
+   "sha256": "908bb3f449d993435184af2cd3ef65992b95dc93155d846169f8e0e80b9fcf1a"
+  },
+  {
+   "id": "E3",
+   "effect": "Biofuel-policy events (EPA RVO announcements, CARB quarterly reports, Reuters 'sources' leaks) raise soybean oil ABSOLUTE daily returns on the event day and the day after",
+   "rule": "none tradable: unsigned (absolute) close-to-close returns; EPA events and leaks are unscheduled (no calendar known in advance); CARB reports fall on the last day of each quarter",
+   "hold": "1 day (close to close)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "0.59% and 0.62% are increases in |return|, not signed returns; no direction, so no per-trade gross. 1 ZL tick = 0.01 c/lb = $6. bp per tick = 100/P (P in c/lb). Public level used: IMF global soybean-oil price via FRED PSOILUSDM, mean 39.52 c/lb over 2010-07..2019-04 (2.53 bp/tick) and 50.75 c/lb over 2019-05..2024-02 (1.97 bp/tick); a proxy, not the CBOT ZL price. D8 RT wall 2.675 ticks ($16.05) = 6.8 bp at 39.5 c/lb, 5.3 bp at 50.75 c/lb; 1.5x = 4.01 ticks ($24.08).",
+   "gross_or_net": "gross",
+   "sample": "Daily nearby/first-deferred futures from Bloomberg, 2019..2025-02 (1,034 trading days); 36 events 2021-2025",
+   "decay_evidence": "none; sample is 2021-2025 only (no backward-window evidence; RD/biofuel demand regime)",
+   "source": "Avileis and Swanson (2025), 'Drivers of Commodity Volatility in the Biofuel Era', NCCC-134 proceedings",
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2025/pdf/Aveleis_Swanson_NCCC134_2025.pdf",
+   "quote": "We calculate absolute returns for all commodities and the crush as the difference between market open (i.e., market close of the previous trading day) and market close for a single day.",
+   "quote_location": "Section 3 Data, p. 10-11 (the PDF's ligature for 'difference' is garbled in pdftotext as 'di!erence'); abstract: 'soybean oil futures returns increase significantly on announcement days (0.59%) and continue rising the following day (0.62%)'; Section 5.1 p. 18: 'absolute returns cumulative increase by 1.21% on a two-day window'",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZL/aveleis_swanson_nccc134_2025.pdf",
+   "sha256": "a44fbcffe8bc6cb33e95b1b87fc12e496524a51baf10fb7b752568f55dad20f3"
+  },
+  {
+   "id": "E4",
+   "effect": "Crush-spread mean reversion driven by intraday deviations from the USDA-implied processing relationship; strategies profitable after costs",
+   "rule": "not available (abstract only); legs ZS, ZM, ZL",
+   "hold": "unknown",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "not sized in the abstract",
+   "gross_or_net": "net",
+   "sample": "8650 trading days, 1990-09..2021-05 (bar size unknown)",
+   "decay_evidence": "unknown",
+   "source": "Abdoh and Chitavi (2025), 'Mean reversion of the soybean crush spread: A new model and trading strategies', Int. Review of Economics & Finance 101 (paywalled; no preprint found)",
+   "url": "https://ideas.repec.org/a/eee/reveco/v101y2025ics1059056025003491.html",
+   "quote": "Our simulations demonstrate that trading strategies based on these findings would have been profitable, even after accounting for transaction costs. This analysis is based on 8650 trading days from September 1990 to May 2021.",
+   "quote_location": "abstract (RePEc/IDEAS record)",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/ZL/ideas_abdoh_chitavi_2025.html",
+   "sha256": "9204c6f2e28a411927d63e79dc92f65960cc08ad776fc0777f5d99e956292aac"
+  },
+  {
+   "id": "E5",
+   "effect": "USDA reports and Dalian (DCE) soybean oil futures: minute volatility and volume react at the DCE open, price reactions fade within minutes; reduced impact on DCE soybean oil in the trade-war period",
+   "rule": "none (volatility/volume event study; DCE, not CBOT ZL)",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "no signed return effect",
+   "gross_or_net": "unknown",
+   "sample": "DCE soybean no.1, no.2, soybean oil, soybean meal, 2011-01..2021-04, minute data",
+   "decay_evidence": "trade-war period: reduced impact on DCE soybean oil",
+   "source": "Hu and Mallory (2022 NCCC-134; published J. Futures Markets 45(11), 2025)",
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2022/pdf/Hu_Mallory_NCCC-134_2022.pdf",
+   "quote": "On average, price reactions dissipate within a few minutes, while increased trading volume can last up to an hour. ... During the trade war period, USDA reports had reduced impact on soybean no. 1 and soybean oil futures but remained influential on soybean no. 2 and soybean meal futures.",
+   "quote_location": "JFM 2025 abstract (IDEAS record, saved ideas_hu_mallory_jfm2025.html); NCCC full text saved and read for scope only (p. 2-3: 'impacts and becomes fully incorporated into soybean no.1, soybean no. 2, soybean oil, and soybean meal futures contracts on the DCE')",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/ZL/hu_mallory_nccc134_2022.pdf",
+   "sha256": "00743c4e96c507ca7b9b2d2a75641b6701da2a1495a82f8940c8ac5b0a384ef9"
+  },
+  {
+   "id": "E6",
+   "effect": "Intraday momentum/reversal on 31 Chinese commodity futures (minute data, includes the DCE soybean-oil contract per 'complete' dataset): intraday strategies do not cover costs",
+   "rule": "various momentum/reversal rules (abstract only)",
+   "hold": "intraday",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "not sized",
+   "gross_or_net": "net",
+   "sample": "31 Chinese commodities, minute bars (years not in abstract)",
+   "decay_evidence": "after-cost failure of intraday variants",
+   "source": "Yang, Goncu, Pantelous (2018), Int. Review of Financial Analysis 60, 177-196",
+   "url": "https://ideas.repec.org/a/eee/finana/v60y2018icp177-196.html",
+   "quote": "the intra-day strategies used cannot generate sufficiently enough high excess returns to cover the excessive costs due to the higher frequency of trading.",
+   "quote_location": "abstract (IDEAS record)",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/ZL/ideas_finana_2018_yang_goncu_pantelous.html",
+   "sha256": "f256bb288396f4314147e0ad82c04128ce7debf9daa6557c3a88ed99e0bbabe0"
+  }
+ ],
+ "availability": [
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2012-05-18: no 08:59 (O+29) bar under O=08:30 (Globex break 07:15-09:30); computable 2012-05-21 on; session-consistent (day open 08:30) from 2013-04-08",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20. First bar rule (first bar >= 19:00 CT d-1) is met in every era. Basis: data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, 2,269 trade dates, 0 unsourced, CME evidence; sha256 1197496f...) and data/calendars/grains.py (2019-05-01..2026-06-19; sha256 a685731b...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "as cp1_ret: no bars in [08:30,08:45) before 2012-05-21",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20.",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "as cp2_range (needs the range)",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20.",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "needs the O bar (08:30) of d and a complete [O,C) day: before 2012-05-21 no 08:30 bar under O=08:30; yes with an era O of 09:30",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20.",
+   "shared_ref": null
+  },
+  {
+   "feature": "g01_ret30",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar (trade dates)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "bars at t exist for t2 10:00, t3 11:00, t4 12:18 in every era; t1 09:00 has no bar 2010-07-01..2012-05-18 (row missing for data reasons); g02/g03 at t2 need bars back to 09:00/08:00: absent in that era; normal 20-date warm-up at 2010-07",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20. Own-bar features; the calendar exists both windows: data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, 2,269 trade dates, 0 unsourced, CME evidence; sha256 1197496f...) and data/calendars/grains.py (2019-05-01..2026-06-19; sha256 a685731b...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g02_ret60",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar (trade dates)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "bars at t exist for t2 10:00, t3 11:00, t4 12:18 in every era; t1 09:00 has no bar 2010-07-01..2012-05-18 (row missing for data reasons); g02/g03 at t2 need bars back to 09:00/08:00: absent in that era; normal 20-date warm-up at 2010-07",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20. Own-bar features; the calendar exists both windows: data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, 2,269 trade dates, 0 unsourced, CME evidence; sha256 1197496f...) and data/calendars/grains.py (2019-05-01..2026-06-19; sha256 a685731b...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g03_ret120",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar (trade dates)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "bars at t exist for t2 10:00, t3 11:00, t4 12:18 in every era; t1 09:00 has no bar 2010-07-01..2012-05-18 (row missing for data reasons); g02/g03 at t2 need bars back to 09:00/08:00: absent in that era; normal 20-date warm-up at 2010-07",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20. Own-bar features; the calendar exists both windows: data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, 2,269 trade dates, 0 unsourced, CME evidence; sha256 1197496f...) and data/calendars/grains.py (2019-05-01..2026-06-19; sha256 a685731b...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g04_ret_day",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar (trade dates)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "bars at t exist for t2 10:00, t3 11:00, t4 12:18 in every era; t1 09:00 has no bar 2010-07-01..2012-05-18 (row missing for data reasons); g02/g03 at t2 need bars back to 09:00/08:00: absent in that era; normal 20-date warm-up at 2010-07",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20. Own-bar features; the calendar exists both windows: data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, 2,269 trade dates, 0 unsourced, CME evidence; sha256 1197496f...) and data/calendars/grains.py (2019-05-01..2026-06-19; sha256 a685731b...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06_rv60",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar (trade dates)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "bars at t exist for t2 10:00, t3 11:00, t4 12:18 in every era; t1 09:00 has no bar 2010-07-01..2012-05-18 (row missing for data reasons); g02/g03 at t2 need bars back to 09:00/08:00: absent in that era; normal 20-date warm-up at 2010-07",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20. Own-bar features; the calendar exists both windows: data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, 2,269 trade dates, 0 unsourced, CME evidence; sha256 1197496f...) and data/calendars/grains.py (2019-05-01..2026-06-19; sha256 a685731b...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g07_range",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar (trade dates)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "bars at t exist for t2 10:00, t3 11:00, t4 12:18 in every era; t1 09:00 has no bar 2010-07-01..2012-05-18 (row missing for data reasons); g02/g03 at t2 need bars back to 09:00/08:00: absent in that era; normal 20-date warm-up at 2010-07",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20. Own-bar features; the calendar exists both windows: data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, 2,269 trade dates, 0 unsourced, CME evidence; sha256 1197496f...) and data/calendars/grains.py (2019-05-01..2026-06-19; sha256 a685731b...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g10_logvol30",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar (trade dates)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "bars at t exist for t2 10:00, t3 11:00, t4 12:18 in every era; t1 09:00 has no bar 2010-07-01..2012-05-18 (row missing for data reasons); g02/g03 at t2 need bars back to 09:00/08:00: absent in that era; normal 20-date warm-up at 2010-07",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20. Own-bar features; the calendar exists both windows: data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, 2,269 trade dates, 0 unsourced, CME evidence; sha256 1197496f...) and data/calendars/grains.py (2019-05-01..2026-06-19; sha256 a685731b...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "needs the O_X (08:30) bar of d: absent 2010-07-01..2012-05-18; C_X-1 (13:14) bar of the previous date exists in every era",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20.",
+   "shared_ref": null
+  },
+  {
+   "feature": "g08_prev_ret",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "close(C-1)-open(O) of the last complete date: no 08:30 open before 2012-05-21 under O=08:30",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20.",
+   "shared_ref": null
+  },
+  {
+   "feature": "g09_vol_state",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "sigma_X,d from daily [O,C) bars; same O caveat; 120-date median warm-up",
+   "basis": "Grain session eras in hist2010/grains.json: 2010-06-01..2012-05-18 Globex 18:00(d-1)-07:15 and 09:30-13:15 (no bars 07:15-09:30); 2012-05-21..2013-04-05 Globex 17:00(d-1)-14:00; 2013-04-08..2015-07-03 19:00-07:45 and 08:30-13:15; 2015-07-06.. 08:30-13:20.",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11_t_index",
+   "legs": [],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "no data dependence",
+   "basis": "flag",
+   "shared_ref": null
+  },
+  {
+   "feature": "g12_dow",
+   "legs": [],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "no data dependence",
+   "basis": "flag",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel",
+   "legs": [],
+   "calendars": [
+    "release calendar, ZL list: FOMC, WASDE, CROP (Crop Production), CROP_ANNUAL"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2019-2024: frozen calendar reports/stage_e2b_release_calendar.json (sha256 839f2437...) 2019-05-01..2026-06-21, ZL rows: CROP 85, WASDE 85, FOMC 57, CROP_ANNUAL 7 (2019-05..2026-06). 2010-2019: reports/stage_e14_cal_releases.json (sha256 9a051211...) holds NGS, WPSR, FOMC only (FOMC 72 rows 2010-06-23..2019-05-01): no WASDE, Crop Production or Crop Production Annual rows",
+   "basis": "Only the FOMC part of ZL's D8 list exists in 2010-2019; the grain report part does not exist on disk. E.16 review F-11 confirms 'CROP, WASDE, CROP_PROGRESS' have no 2010-2019 rows. Release-time regime if built: USDA 2012-09-19 notice, 08:30 a.m. ET until 2013-01-01, noon ET from January 2013 (07:30 CT inside the 2010-2012 Globex break; 11:00 CT after).",
+   "shared_ref": "FOMC part: shared/macro_calendars.md (RTY reader)"
+  },
+  {
+   "feature": "g14_min_since_rel",
+   "legs": [],
+   "calendars": [
+    "as g13"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "as g13",
+   "basis": "as g13",
+   "shared_ref": "shared/macro_calendars.md (RTY reader)"
+  },
+  {
+   "feature": "g15_rel_day",
+   "legs": [],
+   "calendars": [
+    "as g13"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "as g13",
+   "basis": "as g13",
+   "shared_ref": "shared/macro_calendars.md (RTY reader)"
+  },
+  {
+   "feature": "g16_month_end",
+   "legs": [],
+   "calendars": [
+    "grain group calendar"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "last two trade dates per month: hist2010/grains.json 2010-06..2019-05 (0 unsourced), grains.py 2019-05..2026-06",
+   "basis": "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, 2,269 trade dates, 0 unsourced, CME evidence; sha256 1197496f...) and data/calendars/grains.py (2019-05-01..2026-06-19; sha256 a685731b...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_nq",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "leg's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "lead NQ",
+   "basis": "Applies on ZL rows (other clusters' leads); audited by the lead root's reader",
+   "shared_ref": "product_NQ.json"
+  },
+  {
+   "feature": "g17_zn",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "leg's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "lead ZN",
+   "basis": "Applies on ZL rows (other clusters' leads); audited by the lead root's reader",
+   "shared_ref": "product_ZN.json"
+  },
+  {
+   "feature": "g17_6e",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "leg's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "lead 6E",
+   "basis": "Applies on ZL rows (other clusters' leads); audited by the lead root's reader",
+   "shared_ref": "product_6E.json"
+  },
+  {
+   "feature": "g17_cl",
+   "legs": [
+    "CL"
+   ],
+   "calendars": [
+    "leg's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "lead CL",
+   "basis": "Applies on ZL rows (other clusters' leads); audited by the lead root's reader",
+   "shared_ref": "product_CL.json"
+  },
+  {
+   "feature": "g17_gc",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "leg's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "lead GC",
+   "basis": "Applies on ZL rows (other clusters' leads); audited by the lead root's reader",
+   "shared_ref": "product_GC.json"
+  },
+  {
+   "feature": "g17_zc",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "leg's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "ZL's own cluster (K6) lead: not applicable on ZL rows by construction (generic.py _lead: own_cluster excluded)",
+   "basis": "Applies on ZL rows (other clusters' leads); audited by the lead root's reader",
+   "shared_ref": "product_ZC.json"
+  },
+  {
+   "feature": "g17_mbt",
+   "legs": [
+    "MBT"
+   ],
+   "calendars": [
+    "leg's group calendar"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "MBT not one of the 17 roots; listed 2021 (brief section 7)",
+   "basis": "Applies on ZL rows (other clusters' leads); audited by the lead root's reader",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mes",
+   "legs": [
+    "MES"
+   ],
+   "calendars": [
+    "leg's group calendar"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "MES not one of the 17 roots; listed 2019 (brief section 7)",
+   "basis": "Applies on ZL rows (other clusters' leads); audited by the lead root's reader",
+   "shared_ref": null
+  },
+  {
+   "feature": "k6_crushgap_gap (ZL as leg)",
+   "legs": [
+    "ZS",
+    "ZM",
+    "ZL"
+   ],
+   "calendars": [
+    "GRAIN_FULL_SESSIONS, GRAIN_TRADE_DATES (strategy/members/k6/_calendar.py, 2019-05-01..2026-06-18); 2010-2019 equivalent only via hist2010/grains.json"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "Applies on ZS rows, not ZL rows. Reads the 08:30 opens of d and 13:14 closes of d-1: no 08:30 bar 2010-07-01..2012-05-18; ZM and ZL listed throughout (E.16 windows: both start 2010-07, 106 chunks 2010..2019-04, bought in E.17)",
+   "basis": "Leg ZM is not one of the 17 roots (fails the F6 leg rule whatever the calendars say). The member's own calendar tables start 2019-05-01; a 2010-2019 version would have to be derived from hist2010/grains.json.",
+   "shared_ref": null
+  },
+  {
+   "feature": "r_ROD / |r_ROD| ratio (prompt additions, for reference)",
+   "legs": [
+    "ZL"
+   ],
+   "calendars": [
+    "grain group calendar, C=13:15"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "prior close at C exists in every era (13:15, 14:00 or 13:20 closes); not proposed here",
+   "basis": "prompt F6 item 2",
+   "shared_ref": null
+  }
+ ],
+ "proposed_features": [],
+ "shared_notes_written": [],
+ "fetch_log": [
+  {
+   "url": "https://farmdoc.illinois.edu/robots.txt",
+   "utc": "2026-10-11T17:37:05Z",
+   "sha256": "8219ec175e69f4216c1c6462f625ab06abd02b04e2a26272d45c96d4be2f31c1",
+   "path": "reports/stage_e20_briefs/pages/ZL/farmdoc.illinois.edu_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://ageconsearch.umn.edu/robots.txt",
+   "utc": "2026-10-11T17:37:05Z",
+   "sha256": "76ce0beb53cc0c83ac20f38864831433c85371c17bdd582c822505c465cd369a",
+   "path": "reports/stage_e20_briefs/pages/ZL/ageconsearch.umn.edu_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2025/pdf/Aveleis_Swanson_NCCC134_2025.pdf",
+   "utc": "2026-10-11T17:37:13Z",
+   "sha256": "a44fbcffe8bc6cb33e95b1b87fc12e496524a51baf10fb7b752568f55dad20f3",
+   "path": "reports/stage_e20_briefs/pages/ZL/aveleis_swanson_nccc134_2025.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://ageconsearch.umn.edu/record/329790/files/Hu_Mallory_NCCC-134_2022.pdf",
+   "utc": "2026-10-11T17:37:19Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked"
+  },
+  {
+   "url": "https://ageconsearch.umn.edu/record/235772/files/AAEA2016_USDA%20Report%20Effects.pdf",
+   "utc": "2026-10-11T17:37:26Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked"
+  },
+  {
+   "url": "https://ageconsearch.umn.edu/record/329790 (scrapling get, then fetch)",
+   "utc": "2026-10-11T17:37:59Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2022/pdf/Hu_Mallory_NCCC-134_2022.pdf",
+   "utc": "2026-10-11T17:38:12Z",
+   "sha256": "00743c4e96c507ca7b9b2d2a75641b6701da2a1495a82f8940c8ac5b0a384ef9",
+   "path": "reports/stage_e20_briefs/pages/ZL/hu_mallory_nccc134_2022.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:38:54Z",
+   "sha256": "4620fbdb346382486937732e10fb82fe1cab79fa1d839d85de8a4798c1702d46",
+   "path": "reports/stage_e20_briefs/pages/ZL/ideas_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/reveco/v101y2025ics1059056025003491.html",
+   "utc": "2026-10-11T17:38:54Z",
+   "sha256": "9204c6f2e28a411927d63e79dc92f65960cc08ad776fc0777f5d99e956292aac",
+   "path": "reports/stage_e20_briefs/pages/ZL/ideas_abdoh_chitavi_2025.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://doaj.org/robots.txt",
+   "utc": "2026-10-11T17:40:32Z",
+   "sha256": "122d50f643c623e8413e9fdfebf63ab5066d890591483395afa6c7a71369d05c",
+   "path": "reports/stage_e20_briefs/pages/ZL/doaj_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://doaj.org/article/a85ee176db244e39a80ca730eef50493",
+   "utc": "2026-10-11T17:40:32Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked"
+  },
+  {
+   "url": "https://edepot.wur.nl/robots.txt",
+   "utc": "2026-10-11T17:40:47Z",
+   "sha256": "4ac27bf2028144278be359b3ed815ad5ff1ee24510c7f8af9b25cce75ee06f11",
+   "path": "reports/stage_e20_briefs/pages/ZL/edepot_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://edepot.wur.nl/629433",
+   "utc": "2026-10-11T17:40:47Z",
+   "sha256": "908bb3f449d993435184af2cd3ef65992b95dc93155d846169f8e0e80b9fcf1a",
+   "path": "reports/stage_e20_briefs/pages/ZL/zhou_etal_2023_jcm.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/riibaf/v54y2020ics0275531919311328.html",
+   "utc": "2026-10-11T17:41:21Z",
+   "sha256": "de36791499bb6c6b5917a7d49c57fc4fb01239cf70a166496b969fe8d91b6c31",
+   "path": "reports/stage_e20_briefs/pages/ZL/ideas_riibaf_2020_intraday_mom_china.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/finana/v60y2018icp177-196.html",
+   "utc": "2026-10-11T17:41:25Z",
+   "sha256": "f256bb288396f4314147e0ad82c04128ce7debf9daa6557c3a88ed99e0bbabe0",
+   "path": "reports/stage_e20_briefs/pages/ZL/ideas_finana_2018_yang_goncu_pantelous.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/wly/jfutmk/v45y2025i11p2109-2127.html",
+   "utc": "2026-10-11T17:41:30Z",
+   "sha256": "f3ebb55fd919682b3493c94b586699bb2c6b647a4d59da0fde4e76fffb209991",
+   "path": "reports/stage_e20_briefs/pages/ZL/ideas_hu_mallory_jfm2025.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.usda.gov/sites/default/files/documents/USDA_Release_time_change_9_19_12.pdf (and robots.txt)",
+   "utc": "2026-10-11T17:41:53Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked"
+  },
+  {
+   "url": "https://archive.org/wayback/available?url=... (availability API)",
+   "utc": "not stamped; between 2026-10-11T17:41:53Z and 17:42:27Z",
+   "sha256": "",
+   "path": "",
+   "status": "throttled"
+  },
+  {
+   "url": "https://web.archive.org/web/20201018081741id_/https://www.usda.gov/sites/default/files/documents/USDA_Release_time_change_9_19_12.pdf",
+   "utc": "2026-10-11T17:42:27Z",
+   "sha256": "f1b8003f7f835314bd0e26a52972aa6527c32720e1cfe31f6a5fc0532dc57bce",
+   "path": "reports/stage_e20_briefs/pages/ZL/usda_release_time_change_2012-09-19.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://fred.stlouisfed.org/robots.txt",
+   "utc": "not stamped; between 2026-10-11T17:42:51Z and 17:43:11Z",
+   "sha256": "95860629969d02d112c0cdd09a102f0956f62686a62577ad2f733320587e20ce",
+   "path": "reports/stage_e20_briefs/pages/ZL/fred_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=PSOILUSDM",
+   "utc": "2026-10-11T17:43:11Z",
+   "sha256": "d05d867833cbb4ca13fa7d3b6cfd0fbbc1423df1aa942866b308edf61e965431",
+   "path": "reports/stage_e20_briefs/pages/ZL/fred_PSOILUSDM.csv",
+   "status": "ok"
+  },
+  {
+   "url": "https://fred.stlouisfed.org/legal/",
+   "utc": "2026-10-11T17:44:30Z",
+   "sha256": "11ceec99e4183e81aa96a6008d17c078fba8b660484a31d59c182c63c58f7522",
+   "path": "reports/stage_e20_briefs/pages/ZL/fred_legal.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/ (home, for terms links)",
+   "utc": "not stamped; after 2026-10-11T17:44:30Z (3 s sleep after the FRED legal fetch)",
+   "sha256": "77bd748cebbddbe67166621b3aecd74512463eebe0fae253216805d28addeb3a",
+   "path": "reports/stage_e20_briefs/pages/ZL/farmdoc_home.html",
+   "status": "ok"
+  },
+  {
+   "url": "file: reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md (on-disk copy, grep only)",
+   "utc": "read 2026-10-11 about 17:36Z (local file)",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465",
+   "path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "status": "ok"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "farmdoc.illinois.edu",
+   "url": "https://farmdoc.illinois.edu/robots.txt",
+   "utc": "2026-10-11T17:37:05Z",
+   "ruling": "robots: User-agent * Crawl-delay 10, Disallow /lucee only; site links the University of Illinois copyright page (illinois.edu/resources/website/copyright.html, not fetched). Two PDF fetches spaced >10 s: allowed. Hu & Mallory PDF carries 'Readers may make verbatim copies of this document for non-commercial purposes'."
+  },
+  {
+   "site": "ageconsearch.umn.edu",
+   "url": "https://ageconsearch.umn.edu/robots.txt",
+   "utc": "2026-10-11T17:37:05Z",
+   "ruling": "robots allows /record/ (Crawl-Delay 5); the site serves an AWS WAF challenge (HTTP 202) to curl and Scrapling get/fetch: blocked. stealthy-fetch not used. Same papers taken from farmdoc's NCCC-134 archive."
+  },
+  {
+   "site": "ideas.repec.org",
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:38:54Z",
+   "ruling": "robots disallows /cgi-bin/ only; abstract pages allowed."
+  },
+  {
+   "site": "doaj.org",
+   "url": "https://doaj.org/robots.txt",
+   "utc": "2026-10-11T17:40:32Z",
+   "ruling": "robots allows /article/ (content-signal ai-input=yes); Cloudflare challenge 403: blocked, not retried."
+  },
+  {
+   "site": "edepot.wur.nl",
+   "url": "https://edepot.wur.nl/robots.txt",
+   "utc": "2026-10-11T17:40:47Z",
+   "ruling": "User-agent * Disallow /WebQuery, Crawl-delay 600: one PDF request only. Article is CC BY (PDF p. 1: 'open access article under the CC BY license')."
+  },
+  {
+   "site": "usda.gov",
+   "url": "https://www.usda.gov/robots.txt",
+   "utc": "2026-10-11T17:41:53Z",
+   "ruling": "Akamai 'Access Denied' even for robots.txt: blocked; the notice was read from a Wayback copy (web.archive.org, permitted: not cmegroup.com)."
+  },
+  {
+   "site": "fred.stlouisfed.org",
+   "url": "https://fred.stlouisfed.org/legal/",
+   "utc": "2026-10-11T17:44:30Z",
+   "ruling": "robots: Crawl-delay 1, fredgraph.csv not disallowed; legal page: series 'may be used without permission, provided you do not engage in any prohibited use' with citation. Used only as a public price level for the bp conversion."
+  }
+ ],
+ "budget_notices": [
+  "No WebSearch over-budget notice; 22 WebSearch calls used of about 50. No Firecrawl call made."
+ ],
+ "unfinished": [
+  "Abdoh and Chitavi (2025) full text not read (Elsevier paywall, no preprint found): rule, bar size and per-trade size unknown [secondary-only].",
+  "Energy Reports (2022) palm oil / soybean oil / crude oil information-flow paper: DOAJ blocked by Cloudflare; frequency unknown [unverified], not pursued further.",
+  "No soybean-oil-specific (CBOT ZL) signed intraday return study since 2015 was found in 22 searches; crude-oil-to-soybean-oil lead-lag evidence found only at multi-year/daily horizons in CME commentary (cmegroup.com, not fetched) [unverified].",
+  "Grains-class evidence (WASDE windows, Adjemian-Irwin, Anderson-McKenzie-Noyes 2024, Joseph-Garcia) left to the ZC reader (shared/grains_class_notes.md not yet on disk at writing); Aalto thesis per-class notes left to ZN (shared/aalto_thesis_notes.md not yet on disk); macro calendars to RTY (shared/macro_calendars.md not yet on disk).",
+  "G17 rows: availability left undetermined here by design (lead-root readers decide)."
+ ],
+ "nq_only": null
+}

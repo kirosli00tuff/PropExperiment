@@ -1,0 +1,708 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "TN",
+ "reader": "ProductReader-TN-OpusHigh",
+ "finished_utc": "2026-10-11T17:44:39Z",
+ "listing": {
+  "first_trade_date": "2016-01-11",
+  "source": "CBOT Submission 15-572, cftc.gov ptc122315cbotdcm001.pdf",
+  "quote": "effective on Sunday, January 10, 2016 for trade date Monday, January 11, 2016 for trading on the CME Globex Electronic Trading Platform",
+  "quote_location": "txt lines 68-70",
+  "sha256": "85201ffd2b3c828f62f9d11175acc2ee96d2fc74ed773a0260d782dc6460bde6",
+  "corroboration": "FirstRate Data TN page: 'Continuous data is from 10-Jan-2016' (secondary)"
+ },
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "(absence) TN not in the Baltussen et al. ROD->LH sample",
+   "rule": "n/a for TN; class rule is H6's (ROD -> last half hour)",
+   "hold": "last 30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "n/a",
+   "gross_or_net": "gross",
+   "sample": "16 developed bond futures; US contracts TU, FV, TY, US, UB; 1974-2020",
+   "decay_evidence": "class decay: [shared, see shared/baltussen_notes.md, shared/aalto_thesis_notes.md]",
+   "source": "Baltussen, Da, Lammers, Martens, J. Financial Economics 142 (2021) 377-403",
+   "url": "https://repub.eur.nl/pub/131621 (on-disk copy)",
+   "quote": "| US 10-year T-note futures | TY | 8:20 - 15:00 | ... | Ultra T-bond futures | UB | 8:20 - 15:00 |",
+   "quote_location": "Table 1, on-disk copy lines 913-917; grep 'Ultra' finds only the UB row",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": ""
+  },
+  {
+   "id": "E2",
+   "effect": "(context, no return effect) TN is one of six CBOT futures buckets in a DV01-volume liquidity study by trading hours",
+   "rule": "none (no return test)",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "n/a",
+   "gross_or_net": "unknown",
+   "sample": "CBOT futures and TRACE, 2017-07-10..2018-06-01 (229 days)",
+   "decay_evidence": "n/a",
+   "source": "Baker, McPhail, Tuckman, CFTC staff note, 2018-12-03",
+   "url": "https://cftc.gov/sites/default/files/2018-11/Liquidity%20Hierarchy%20in%20Tsy%20Mkt%20v4_ada.pdf",
+   "quote": "The 6 buckets correspond to the following contracts, which are all listed on the CBOT (Chicago Board of Trade): 2-year T-Note; 5-year T-Note; 10-Year T-Note; Ultra 10-Year T-Note; T-Bond or 30-Year T-Bond; and Ultra T-Bond or Ultra 30-Year T-Bond.",
+   "quote_location": "p.2, txt lines 113-115",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/TN/cftc_liquidity_hierarchy_2018.pdf",
+   "sha256": "1c36ae6de56d2662ed796739a36c1c15806fdc54af1dec47a0b6dc8b6d8483b6"
+  },
+  {
+   "id": "E3",
+   "effect": "(class pointer, not TN) minute-scale reversion and hours-scale weak trending, pooled over 16 futures incl. US 10-year",
+   "rule": "trend strength over 2^k minutes vs next-minute return",
+   "hold": "1 minute",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "not reported per trade",
+   "gross_or_net": "gross",
+   "sample": "TickData end-of-minute 2010-2023; rates: US, CA, DE, UK 10-year",
+   "decay_evidence": "none per market",
+   "source": "Safari, Schmidhuber, arXiv 2501.16772v2 (2025)",
+   "url": "https://arxiv.org/pdf/2501.16772",
+   "quote": "Across asset classes, we find that markets are in a trending regime on time scales that range from a few hours to a few years, while they are in a reversion regime on shorter and longer time scales.",
+   "quote_location": "abstract, txt lines 27-29; minute reversion lines 480-481; sample lines 415-420",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/TN/arxiv_2501.16772.pdf",
+   "sha256": "9b40ea4bd1605b484d1265e07e3bf03438910be7595444179369903790ba3a2e"
+  },
+  {
+   "id": "E4",
+   "effect": "(class pointer) rates-class ROD->LH and other Treasury-futures intraday effects",
+   "rule": "see ZN reader",
+   "hold": "",
+   "gross_per_trade_bp": 0.9,
+   "gross_per_trade_ticks": null,
+   "conversion": "planning-brief derivation 0.9 bp = 0.58..0.86 TN ticks at P 100..150 (1 tick = 156.25/P bp)",
+   "gross_or_net": "gross",
+   "sample": "",
+   "decay_evidence": "",
+   "source": "[shared, see shared/rates_class_notes.md]; planning brief line 27-29",
+   "url": "",
+   "quote": "",
+   "quote_location": "",
+   "grade": "unverified",
+   "saved_path": "",
+   "sha256": ""
+  },
+  {
+   "id": "E5",
+   "effect": "(class pointer) 10-year auction-day intraday price pressure",
+   "rule": "prices fall into the auction and recover after (K2-aucpre/aucpost already encode the event)",
+   "hold": "hours",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "snippet '6 basis points', unit unverified",
+   "gross_or_net": "gross",
+   "sample": "10Y T-note futures 1983-2024 (Robeco); 33 years intraday (SR1188)",
+   "decay_evidence": "SR1188 snippet: pressure has not risen in recent years",
+   "source": "Robeco quant chart 2025-03; Fleming, Liu, Nguyen, NY Fed Staff Report 1188 (2026)",
+   "url": "https://www.robeco.com/en-uk/insights/2025/03/quant-chart-us-treasuries-up-for-auction ; https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "quote": "",
+   "quote_location": "search snippets only; not fetched (rates class is the ZN reader's)",
+   "grade": "secondary-only",
+   "saved_path": "",
+   "sha256": ""
+  },
+  {
+   "id": "E6",
+   "effect": "(class pointer) post-FOMC drift in long-term US bond futures (multi-day, out of scope)",
+   "rule": "",
+   "hold": "~15 days",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "",
+   "decay_evidence": "",
+   "source": "Indriawan, Jiao, Tse, J. Banking and Finance (2021)",
+   "url": "https://works.bepress.com/yiuman-tse/141",
+   "quote": "",
+   "quote_location": "search snippet only",
+   "grade": "secondary-only",
+   "saved_path": "",
+   "sha256": ""
+  }
+ ],
+ "availability": [
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "from 2016-01-11",
+   "basis": "listing CBOT 15-572 (first trade date 2016-01-11, Globex open Sunday 2016-01-10 17:00 CT); rates calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "from 2016-01-11",
+   "basis": "same",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "from 2016-01-11",
+   "basis": "same",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "from 2016-01-12",
+   "basis": "first prior complete day",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_auction_mto",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "reports/stage_e16_calendars/ec_auc_2010_2019.json (2010-01-01..2019-06-30, FiscalData; 40 10Y rows in window, 13:00 ET)",
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2016-01-11..2019-05-05: 40 10Y auctions, T_a 12:00 CT (t1, t2 'to' rows)",
+   "basis": "AUCTION_TENOR TN=10Y; inputs exist; 2010-2019 literal table not generated",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_auction_msince",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "reports/stage_e16_calendars/ec_auc_2010_2019.json (2010-01-01..2019-06-30, FiscalData; 40 10Y rows in window, 13:00 ET)",
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "t3 12:50 (and E.20 t4 14:08)",
+   "basis": "same",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_fomc_mto",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "reports/stage_e14_cal_releases.json FOMC (2010-06-23..2019-05-01; 27 rows in window, 14:00 ET, official)",
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "27 statements in window, all 13:00 CT",
+   "basis": "inputs exist; 2010-2019 FOMC_STATEMENT_DATES table not generated",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_monthend_msince",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "months 2016-01..2019-04",
+   "basis": "N-1, N derivable from hist2010 rates trade dates; table not generated",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_predrift_move",
+   "legs": [
+    "ZN",
+    "ZB"
+   ],
+   "calendars": [
+    "ISM services"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "no",
+   "dates": "not applicable on TN rows",
+   "basis": "own_path_only ZN, ZB; listed for completeness (no 2010-2019 ISM-services calendar on disk)",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_fomc_msince (excluded at V2.2 clock)",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "reports/stage_e14_cal_releases.json FOMC (2010-06-23..2019-05-01; 27 rows in window, 14:00 ET, official)",
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "reachable only at E.20 t4 14:08",
+   "basis": "excluded since 13:00 CT > 12:50; fact for the lead",
+   "shared_ref": null
+  },
+  {
+   "feature": "g01_ret30",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "from 2016-01-11",
+   "basis": "session intervals SG-3",
+   "shared_ref": null
+  },
+  {
+   "feature": "g02_ret60",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "from 2016-01-11",
+   "basis": "same",
+   "shared_ref": null
+  },
+  {
+   "feature": "g03_ret120",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "from 2016-01-11",
+   "basis": "same",
+   "shared_ref": null
+  },
+  {
+   "feature": "g04_ret_day",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "from 2016-01-11; scaled by sigma_X,d (~2016-02-08)",
+   "basis": "rates calendars",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "from 2016-01-12; n/a after early halts",
+   "basis": "prior C_X close; early halts listed in hist2010 rates",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06_rv60",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "first possible row ~2016-02-08 (20 previous dates)",
+   "basis": "warm-up only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g07_range",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "~2016-02-08 (sigma_X,d)",
+   "basis": "warm-up only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g08_prev_ret",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "from 2016-01-12; sigma ~2016-02-08",
+   "basis": "warm-up only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g09_vol_state",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "first possible row ~2016-07-26 (sigma 20 + 120-date median)",
+   "basis": "warm-up only; trade-date index from hist2010 rates",
+   "shared_ref": null
+  },
+  {
+   "feature": "g10_logvol30",
+   "legs": [
+    "TN"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "~2016-02-08 (20 previous dates)",
+   "basis": "warm-up only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11_t_index",
+   "legs": [],
+   "calendars": [
+    "V2.2 clock"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "no leg",
+   "shared_ref": null
+  },
+  {
+   "feature": "g12_dow",
+   "legs": [],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "no leg",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel",
+   "legs": [],
+   "calendars": [
+    "TN D8 list: TREASURY_AUCTION (all coupon tenors) reports/stage_e16_calendars/ec_auc_2010_2019.json (2010-01-01..2019-06-30, FiscalData; 40 10Y rows in window, 13:00 ET)",
+    "FOMC reports/stage_e14_cal_releases.json FOMC (2010-06-23..2019-05-01; 27 rows in window, 14:00 ET, official)",
+    "NFP 2010-2019: RTY reader",
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21)"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "yes",
+   "dates": "auctions yes, FOMC yes, NFP pending shared/macro_calendars.md",
+   "basis": "no single 2010-2019 release file for TN; code's _covered reads one coverage range; 20Y auctions only from 2020",
+   "shared_ref": "shared/macro_calendars.md"
+  },
+  {
+   "feature": "g14_min_since_rel",
+   "legs": [],
+   "calendars": [
+    "same as g13"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "yes",
+   "dates": "same",
+   "basis": "same",
+   "shared_ref": "shared/macro_calendars.md"
+  },
+  {
+   "feature": "g15_rel_day",
+   "legs": [],
+   "calendars": [
+    "same as g13"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "yes",
+   "dates": "same",
+   "basis": "same",
+   "shared_ref": "shared/macro_calendars.md"
+  },
+  {
+   "feature": "g16_month_end",
+   "legs": [],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "months 2016-01..2019-04",
+   "basis": "group calendar trade dates",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_nq",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "lead leg; audited by NQ reader",
+   "shared_ref": "product_NQ.md"
+  },
+  {
+   "feature": "g17_6e",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "audited by 6E reader",
+   "shared_ref": "product_6E.md"
+  },
+  {
+   "feature": "g17_cl",
+   "legs": [
+    "CL"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "audited by CL reader",
+   "shared_ref": "product_CL.md"
+  },
+  {
+   "feature": "g17_gc",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "audited by GC reader",
+   "shared_ref": "product_GC.md"
+  },
+  {
+   "feature": "g17_zc",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "audited by ZC reader",
+   "shared_ref": "product_ZC.md"
+  },
+  {
+   "feature": "g17_zn",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "no",
+   "dates": "not applicable on TN rows",
+   "basis": "TN is cluster K2 whose lead is ZN (SG-2)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mbt",
+   "legs": [
+    "MBT"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MBT listed 2021 (brief section 7)",
+   "basis": "leg outside the 17 roots",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mes",
+   "legs": [
+    "MES"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MES listed 2019 (brief section 7)",
+   "basis": "leg outside the 17 roots; uncovered in stage_e12_gate0_list.json",
+   "shared_ref": null
+  },
+  {
+   "feature": "k9_anncday",
+   "legs": [
+    "MNQ",
+    "M2K",
+    "MYM"
+   ],
+   "calendars": [
+    "EC-K9"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "no",
+   "dates": "not applicable on TN rows",
+   "basis": "equity vehicles only",
+   "shared_ref": null
+  }
+ ],
+ "proposed_features": [],
+ "proposed_features_note": "none: no TN-specific published intraday rule found; class effects are rates-wide (ZN reader); bond ROD->LH ~0.9 bp [unverified] = 0.58..0.86 TN ticks at P 100..150, ratio 0.47..0.70 to D8 RT 1.235 ticks, below 1.5x",
+ "shared_notes_written": [],
+ "fetch_log": [
+  {
+   "url": "https://www.cftc.gov/robots.txt",
+   "utc": "2026-10-11T17:37:01Z",
+   "sha256": "1d500ec03ef610b457287a8e55e6ad2f83a7bb888a630325c23573dccdcd81bb",
+   "path": "reports/stage_e20_briefs/pages/TN/cftc_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.cftc.gov/filings/ptc/ptc122315cbotdcm001.pdf",
+   "utc": "2026-10-11T17:37:09Z",
+   "sha256": "85201ffd2b3c828f62f9d11175acc2ee96d2fc74ed773a0260d782dc6460bde6",
+   "path": "reports/stage_e20_briefs/pages/TN/cftc_cbot15-572_tn_listing.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://cftc.gov/sites/default/files/2018-11/Liquidity%20Hierarchy%20in%20Tsy%20Mkt%20v4_ada.pdf",
+   "utc": "2026-10-11T17:37:13Z",
+   "sha256": "1c36ae6de56d2662ed796739a36c1c15806fdc54af1dec47a0b6dc8b6d8483b6",
+   "path": "reports/stage_e20_briefs/pages/TN/cftc_liquidity_hierarchy_2018.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://firstratedata.com/robots.txt",
+   "utc": "2026-10-11T17:38:42Z",
+   "sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f",
+   "path": "reports/stage_e20_briefs/pages/TN/firstratedata_robots.txt",
+   "status": "blocked"
+  },
+  {
+   "url": "https://firstratedata.com/i/futures/TN",
+   "utc": "2026-10-11T17:38:55Z",
+   "sha256": "6e2b3c479e54eea98aa99bf9a19b960659cd6567aef0fc91ccc10a8758fd7b75",
+   "path": "reports/stage_e20_briefs/pages/TN/firstratedata_TN.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://arxiv.org/robots.txt",
+   "utc": "2026-10-11T17:39:20Z",
+   "sha256": "eda2bc852443f3f29d31eb04d37b26476654dc33b29256fb882819da23d189a5",
+   "path": "reports/stage_e20_briefs/pages/TN/arxiv_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2501.16772",
+   "utc": "2026-10-11T17:39:24Z",
+   "sha256": "9b40ea4bd1605b484d1265e07e3bf03438910be7595444179369903790ba3a2e",
+   "path": "reports/stage_e20_briefs/pages/TN/arxiv_2501.16772.pdf",
+   "status": "ok"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "cftc.gov",
+   "url": "https://www.cftc.gov/robots.txt",
+   "utc": "2026-10-11T17:37:01Z",
+   "ruling": "Content-Signal search=yes, ai-train=no, use=reference; AI training crawlers disallowed; public-domain web policy (E.13 copy). Single reference fetches allowed; no crawling."
+  },
+  {
+   "site": "firstratedata.com",
+   "url": "https://firstratedata.com/robots.txt",
+   "utc": "2026-10-11T17:38:42Z",
+   "ruling": "robots.txt 404 (status 'blocked' in fetch_log means not found, not a block). One public product page fetched as secondary listing corroboration; no data downloaded."
+  },
+  {
+   "site": "arxiv.org",
+   "url": "https://arxiv.org/robots.txt",
+   "utc": "2026-10-11T17:39:20Z",
+   "ruling": "User-agent * Crawl-delay 15; one PDF fetch; allowed."
+  }
+ ],
+ "budget_notices": [],
+ "search_count": {
+  "websearch": 18,
+  "websearch_extended": 1,
+  "firecrawl_research_search": 1,
+  "log": "reports/stage_e20_briefs/pages/TN/search_log.md"
+ },
+ "unfinished": [
+  "No TN-specific intraday study found; SSRN/Wiley/ScienceDirect full texts not queried directly (gap, not absence).",
+  "Public TN price level not retrieved; bp conversions over P 100..150 [unverified band].",
+  "Class pointers left to ZN reader: NY Fed SR1188 and Robeco 2025 auction pressure ('6 basis points' snippet, unit unverified); Indriawan-Jiao-Tse 2021 (multi-day).",
+  "Cited shared notes not yet on disk at writing: shared/baltussen_notes.md, rates_class_notes.md, aalto_thesis_notes.md, macro_calendars.md.",
+  "g13-g15 backward availability undetermined pending NFP 2010-2019 coverage (shared/macro_calendars.md).",
+  "2010-2019 literal tables for k2_auction_*, k2_fomc_mto, k2_monthend_msince not generated (inputs exist)."
+ ],
+ "nq_only": null
+}

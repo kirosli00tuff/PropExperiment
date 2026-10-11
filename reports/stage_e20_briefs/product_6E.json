@@ -1,0 +1,869 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "6E",
+ "reader": "ProductReader-6E-OpusHigh",
+ "finished_utc": "2026-10-11T17:50:26Z",
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "Market intraday momentum ROD->LH, currency futures (Baltussen et al.)",
+   "rule": "At 13:30 CT (30 min before 14:00 CT, the paper's FX close; Euro FX hours 07:20-14:00), long if r_ROD = P(13:30)/P(prior 14:00 close) - 1 > 0, short if < 0; exit 14:00 CT",
+   "hold": "30 min (last half hour)",
+   "gross_per_trade_bp": 0.337,
+   "gross_per_trade_ticks": 0.75,
+   "conversion": "0.85%/yr (1/N portfolio of 8 currency futures, Table 6 Panel D) / 252 trading days = 0.337 bp per day; bp->ticks at EUR/USD 1.11 (2019-2024 mean of ECB annual reference-rate averages, pages/6E/ecb_exr_usd_eur_annual_2010_2024.csv): 1 tick (0.00005) = 0.4505 bp",
+   "gross_or_net": "gross",
+   "sample": "8 US-listed currency futures, 1974-12..2020-05 (Euro FX EC 1999-01-06..2020-05-01, 5284 obs), 1-min data",
+   "decay_evidence": "Subsample Table 5 Panel B 2000-2020: currency beta_ROD 0.33 (t 1.45), insignificant (1974-1999: 1.31, t 6.48). Euro FX alone (Table B4 Panel B): beta_ROD -0.04 (t -0.17), R2 -0.02%, R2_OOS -0.07%: a null for 6E. No post-2020 FX evidence found; Aalto thesis (2008-2024) says 'may not be feasible after transactions costs, especially in bond and currency futures' (abstract only, shared/aalto_thesis_notes.md).",
+   "source": "Baltussen, Da, Lammers, Martens (2021), Hedging demand and market intraday momentum, JFE 142, 377-403",
+   "url": "EUR repository copy on disk (E.13 I-37b)",
+   "quote": "Table 6 Panel D: '| η(rROD) | ... | 0.85 | 0.98 | 0.87 | 0.53 |'; Table B4 Panel B: '| EC | 0.04 (0.12) | -0.02 | -0.08 | 0.01 (0.04) | -0.47 (-1.25) | 4.07 (1.44) | 0.22 | -0.30 | -0.04 (-0.17) | -0.02 | -0.07 |'; Table 5 Panel B: '| Currency | 0.38 (1.29) | 0.03 | 0.37 (1.27) | -0.04 (-0.12) | 3.44 (1.41) | 0.17 | 0.33 (1.45) | 0.04 |'",
+   "quote_location": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md lines 1742 (Table 6), 3920 (Table B4), 1669 (Table 5); hours Table 1 line 920; EC sample line 3322",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "(E.13 copy; provenance in reports/stage_e13_info_sources.md section 4, I-37b)"
+  },
+  {
+   "id": "E2",
+   "effect": "Post-London-fix U.S. dollar depreciation (EUR appreciates after the 16:00 London fix)",
+   "rule": "Long EUR/USD from the London fix (11:00 ET = 10:00 CT) to 17:00 ET (16:00 CT), every day",
+   "hold": "6 h (10:00-16:00 CT); inside the 6E day session up to F 15:08 CT",
+   "gross_per_trade_bp": 2.73,
+   "gross_per_trade_ticks": 6.06,
+   "conversion": "Table I EUR post-L 2.73 bp per day; bp->ticks at EUR/USD 1.11 (2019-2024 mean of ECB annual reference-rate averages, pages/6E/ecb_exr_usd_eur_annual_2010_2024.csv): 1 tick (0.00005) = 0.4505 bp",
+   "gross_or_net": "gross",
+   "sample": "EUR/USD spot (Refinitiv Tick History), 1999-01..2019-12, intraday",
+   "decay_evidence": "Dollar portfolio post-L by subsample (Table II): 2.80 (99-03), 2.29 (04-09), 1.43 (10-13, t 1.80), 0.86 (14-19, t 1.62). CME futures dollar portfolio 2006-2019 (Table III): 0.64 bp (t 2.20). Liquidity-demander returns after costs negative (Table X, AUD and GBP, post-L -2.83 and -0.44 bp). No post-2019 or post-publication evidence found.",
+   "source": "Krohn, Mueller, Whelan (2024), Foreign Exchange Fixings and Returns Around the Clock, Journal of Finance 79(1) 541-578 (author accepted manuscript, Jan 2023)",
+   "url": "https://wrap.warwick.ac.uk/177333/1/WRAP-foreign-exchange-fixings-returns-around-clock-Mueller-2023.pdf",
+   "quote": "'After the London fix, the pattern is again quite striking: with the exception of the yen, all currencies appreciate strongly (i.e., between 1.5 bps for the Canadian dollar and 2.7 bps for the euro) during the period between the London fix and the close of markets in the U.S.' Table I: 'EUR -1.80 2.34 -3.53 0.63 2.73 0.36 / (-8.84) (9.29) (-7.25) (1.36) (6.78) (0.43)'. Table II: '14-19 -0.63 0.82 -1.25 -0.60 0.86 -0.80'. Table III: 'CME Futures -1.46 1.80 -1.64 0.11 0.64 -0.56 / (-8.94) (9.37) (-4.76) (0.30) (2.20) (-0.90)'. 'for the trader (or liquidity demander), reversal returns turn negative once transaction costs are taken into account.'",
+   "quote_location": "text p.10; Table I p.31; Table II p.32; Table III p.33; Table X discussion p.27, Table X p.40; window definitions ('post-L,' 11:00 to 17:00 ET) p.8",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/6E/krohn_mueller_whelan_2024_jf_wrap.pdf",
+   "sha256": "a7975f26f9b42b837a0b2a6c1474a63e448fff5a0fa7957bc2233b1c0302e6a3"
+  },
+  {
+   "id": "E3",
+   "effect": "Pre-ECB-fix U.S. dollar appreciation (EUR depreciates 02:00-08:15 ET)",
+   "rule": "Short EUR/USD from 02:00 ET (01:00 CT) to the ECB fix 08:15 ET (07:15 CT)",
+   "hold": "6.25 h, entirely before t1 (07:50 CT); reachable only by a pre-session entry such as K3-ecbfix leg 1 (00:59 CT)",
+   "gross_per_trade_bp": 3.53,
+   "gross_per_trade_ticks": 7.84,
+   "conversion": "Table I EUR pre-E -3.53 bp per day (short earns +3.53 gross); bp->ticks at EUR/USD 1.11 (2019-2024 mean of ECB annual reference-rate averages, pages/6E/ecb_exr_usd_eur_annual_2010_2024.csv): 1 tick (0.00005) = 0.4505 bp",
+   "gross_or_net": "gross",
+   "sample": "EUR/USD spot, 1999-2019",
+   "decay_evidence": "Dollar portfolio pre-E by subsample (Table II): -3.43, -1.50, -0.35 (t -0.40), -1.25 (t -2.28). Not reachable at t1-t4.",
+   "source": "Krohn, Mueller, Whelan (2024), JF",
+   "url": "https://wrap.warwick.ac.uk/177333/1/WRAP-foreign-exchange-fixings-returns-around-clock-Mueller-2023.pdf",
+   "quote": "'The highest drops are observed for the euro and the Swedish krona with -3.5 and -3.1 basis points per day, respectively.' Table II '10-13 -3.49 2.31 -0.35 0.11 1.43 0.01'.",
+   "quote_location": "text p.10; Table I p.31; Table II p.32",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/6E/krohn_mueller_whelan_2024_jf_wrap.pdf",
+   "sha256": "a7975f26f9b42b837a0b2a6c1474a63e448fff5a0fa7957bc2233b1c0302e6a3"
+  },
+  {
+   "id": "E4",
+   "effect": "ECB-fix 15-minute reversal and its move after July 2016",
+   "rule": "EUR/USD falls in the 15 min before the reference-rate concertation and rises in the 15 min after; before 2016-07 turning point 08:15 ET (14:15 CET), from 2016-07 at 08:00 ET (14:00 CET, the WM/Reuters 14:00 CET benchmark), after the ECB moved publication to 16:00 CET",
+   "hold": "15 min (below the v2 60-min minimum)",
+   "gross_per_trade_bp": 0.96,
+   "gross_per_trade_ticks": 2.13,
+   "conversion": "Table VI Panel B EUR 08:15-08:30 ET +0.96 bp (2000-01..2016-06); Panel C 08:00-08:15 ET +1.04 bp (2016-07..2019-12); bp->ticks at EUR/USD 1.11 (2019-2024 mean of ECB annual reference-rate averages, pages/6E/ecb_exr_usd_eur_annual_2010_2024.csv): 1 tick (0.00005) = 0.4505 bp",
+   "gross_or_net": "gross",
+   "sample": "EUR/USD (Olsen, RTH), 1986-2019 in three panels",
+   "decay_evidence": "Turning point moved by 15 min in July 2016 (Panel C: 08:15-08:30 ET -0.07, t -0.44). K3-ecbfix's T_E = 14:15 Berlin is the pre-2016 turning point.",
+   "source": "Krohn, Mueller, Whelan (2024), JF",
+   "url": "https://wrap.warwick.ac.uk/177333/1/WRAP-foreign-exchange-fixings-returns-around-clock-Mueller-2023.pdf",
+   "quote": "Panel B: 'EUR -0.61 -0.89 0.96 / (-4.76) (-7.31) (7.53)'; Panel C: 'EUR -1.33 1.04 -0.07 / (-6.08) (5.93) (-0.44)'. 'the ECB has moved the publication of the reference rates to 16:00 CET in July 2016 while keeping the methodology unchanged (ECB, 2019). In direct response, Thomson Reuters launched the WM/Reuters 14:00 CET benchmark'.",
+   "quote_location": "Table VI p.36; text p.6 (publication change) and p.18 (Panel C reading)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/6E/krohn_mueller_whelan_2024_jf_wrap.pdf",
+   "sha256": "a7975f26f9b42b837a0b2a6c1474a63e448fff5a0fa7957bc2233b1c0302e6a3"
+  },
+  {
+   "id": "E5",
+   "effect": "End-of-month WMR fix reversal (contrarian after the 4 pm fix)",
+   "rule": "On the last trading day of the month, at 16:00 London take a long (short) position if the fix is below (above) the price h minutes earlier; hold h = 1, 5, 15 min",
+   "hold": "1-15 min (below the v2 60-min minimum)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "EUR/USD h=15: 3.965 (annual percent), Sharpe 1.881, net of one half the average EBS spread at exit. The annualization convention for a once-a-month trade is not stated, so a per-trade bp figure is not derivable without an assumption (x252 gives 1.57 bp, x12 gives 33 bp).",
+   "gross_or_net": "net",
+   "sample": "21 currency pairs, 2004-2013, Gain Capital 1-s data and EBS; fix window 1 min (pre-2015 methodology)",
+   "decay_evidence": "Author reports pre-2010 estimates similar and post-2010 out-of-sample average 3.25% across the best pre-2010 pairs. Sample ends before the 2015-02-15 widening of the fix window to 5 min. Basis of K3-ldnrev (on 6E).",
+   "source": "Evans (2018), Forex trading and the WMR Fix, J. Banking & Finance 87, 233-247 (MPRA 81583, Sept 2017 forthcoming version)",
+   "url": "https://mpra.ub.uni-muenchen.de/81583/1/MPRA_paper_81583.pdf",
+   "quote": "'A: EUR/USD 3.965 0.486 0.068 1.881 0.222 0.042 1.791 1.780 1.732'; notes: 'Columns (i) - (iii) report the average return (in annual percent) from a trading strategy of holding a long (short) position for horizon h = {1, 5, 15} minutes following the end-of-month Fix if the Fix is below (above) the price level h minutes earlier.' 'Returns are inclusive of trading costs, computed to be zero at the Fix and one half the average bid-ask spread when the position is closed.' 'I also calculated the post-2010 returns on the strategy for each currency pair that had the highest Sharpe Ratio in the pre-2010 data. This produced an average return across the currencies of 3.25 percent.'",
+   "quote_location": "Table 6 p.34; text p.34-35",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/6E/evans_2018_jbf_wmrfix_mpra81583.pdf",
+   "sha256": "f34bf1d22e364cf47be579197f395039ffd1f90e577ce2833bb510c69a77898b"
+  },
+  {
+   "id": "E6",
+   "effect": "Month-end equity-hedge rebalancing before the 4 pm fix (Melvin and Prins)",
+   "rule": "Last day of month: currency return 15:00-16:00 London regressed on the country's month-to-date equity return (first to second-last day of month, close to close), both cross-sectionally demeaned over 10 currencies (USD included): coefficient -0.0142",
+   "hold": "60 min (15:00-16:00 London = 09:00-10:00 CT standard weeks)",
+   "gross_per_trade_bp": 1.42,
+   "gross_per_trade_ticks": 3.15,
+   "conversion": "per 1% of relative month-to-date equity return: 0.0142 x 100 bp = 1.42 bp ('10% equity appreciation leads to 14 basis points'); bp->ticks at EUR/USD 1.11 (2019-2024 mean of ECB annual reference-rate averages, pages/6E/ecb_exr_usd_eur_annual_2010_2024.csv): 1 tick (0.00005) = 0.4505 bp",
+   "gross_or_net": "gross",
+   "sample": "10 currencies, 5-min TWAPs from EBS/Reuters, 2004-04-28..2012-12-31; Datastream total-market equity indices",
+   "decay_evidence": "None found after 2012. The fix window widened from 1 to 5 min on 2015-02-15 (BIS, Debelle 2015). Published JFM 22 (2015) 50-72 version not retrieved (paywalled); figures here are from the 2013 ECB-workshop draft.",
+   "source": "Melvin, Prins (2015), Equity hedging and exchange rates at the London 4 p.m. fix, J. Financial Markets 22, 50-72 (Nov 2013 working-paper draft hosted by the ECB)",
+   "url": "https://www.ecb.europa.eu/events/pdf/conferences/131216/Third_FX_Workshop_MELVIN_PRINS_Equity%20hedging%20and%20exchange%20rates%20Nov%202013.pdf",
+   "quote": "'The results show that an equity market appreciation over the month predicts a statistically significant depreciation in the currency in the hour leading up to the end of month fix. The implied magnitude is that a 10% equity appreciation leads to 14 basis points of currency depreciation.' 'where r_i,T^FX is the currency return from 15:00 to 16:00 London time on the last day of the month (a positive return reflects strengthening of the currency), and r_i,T-1^EQ is the equity return from the first to the second last day of the month (market close to market close).' 'At each period, we subtract the cross-section mean return of currencies against the USD.'",
+   "quote_location": "WP pp.13-14 (eq. 3, eq. 4 and footnote 3)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/6E/melvin_prins_2013_ecb_wp.pdf",
+   "sha256": "606a6c402741982f4f81423f6df3ca055348156fe728d54976807579168d587c"
+  },
+  {
+   "id": "E7",
+   "effect": "FOMC-day currency drift and reversal (foreign currencies appreciate before and at the announcement, reverse 12-24 h later)",
+   "rule": "Long foreign currency vs USD in the 12-hour window before a scheduled FOMC statement (02:15-14:15 EST), reverse after +12 h",
+   "hold": "12-hour half-day windows (overlaps the 6E day session only partly)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "Dollar factor -12:0hr 23.407 (% per annum), 0:12hr 13.751, 12:24hr -47.521; the annualization of a 12-hour window return is not stated (x504 half-days gives 4.6 bp per pre-FOMC window, x252 gives 9.3 bp). EUR-specific numbers are in figures only.",
+   "gross_or_net": "gross",
+   "sample": "17 currencies, 136 scheduled FOMC meetings, 1999-01..2015-12, 15-min data",
+   "decay_evidence": "Published version (Lee and Wang, RAPS 15(3-4) 2025, 247-287) not retrieved; abstract per search engine reports the reversal cancels about 65% of the pre-announcement drift [secondary-only]. Borisenko and Pozdeev find the related Karnaukh dollar pre-FOMC drift averages to zero across specifications [secondary-only, not fetched]. 6E's D8 list already includes FOMC (g13-g15).",
+   "source": "Wang (2018), Essays on currency markets, PhD dissertation, Georgia Institute of Technology, ch.1 (published as Lee and Wang 2025, Review of Asset Pricing Studies)",
+   "url": "https://repository.gatech.edu/server/api/core/bitstreams/2b078c65-57a2-4cc0-b1dc-39b25e9fabcb/content",
+   "quote": "'Dollar factor 0.085 23.115 23.407 13.751 -47.521' (Panel A, Excess return (% per annum), columns Overall, -24:-12hr, -12:0hr, 0:12hr, 12:24hr). 'because scheduled FOMC announcements occur at 14:15 EST, non-overlapping half-day windows are partitioned at 02:15 and 14:15 EST.'",
+   "quote_location": "Table 1.1 Panel A p.38; text p.10",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/6E/wang_2018_gatech_dissertation.pdf",
+   "sha256": "39662026c101d39062d804ec3f7219f4904ddb94c44404ab7f367fccd401ea06"
+  },
+  {
+   "id": "E8",
+   "effect": "ECB communication outside meeting days: no EUR/USD drift (null)",
+   "rule": "Event study of 1,868 coded ECB statements; cumulative abnormal returns over 20 minutes",
+   "hold": "up to 20 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "null: CARs within about +-2 bp by t = +20 min; no rule",
+   "gross_or_net": "gross",
+   "sample": "EUR/USD 1-min, 2008-2016",
+   "decay_evidence": "null result",
+   "source": "Fanta (2025), ECB monetary policy communication: an event study on intraday returns and volatility in the EUR/USD FX market, IES Working Paper 23/2025 (Czech J. Economics and Finance 76(2), 2026)",
+   "url": "https://ies.fsv.cuni.cz/sites/default/files/uploads/files/wp_2025_23_fanta.pdf",
+   "quote": "'Across the full sample and every split, price responses are small and short-lived. Cumulative abnormal returns remain within a few basis points by t=+20, and scattered significant minutes are not sequential.' 'We find no reliably detectable intraday drift under conservative'",
+   "quote_location": "abstract; introduction p.3 (line 134 of the text extraction)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/6E/fanta_2025_ies_wp23.pdf",
+   "sha256": "0b046c6af16cd48b091394ebe8891a40914bd0560917cf4429aca664fc663aea"
+  },
+  {
+   "id": "E9",
+   "effect": "Intraday momentum and reversal in currency futures 2008-2024: not feasible after costs (shared Aalto thesis)",
+   "rule": "not stated (abstract only)",
+   "hold": "last half hour",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "no figures",
+   "gross_or_net": "net",
+   "sample": "20 equity, bond and currency futures, 2008-01..2024-10",
+   "decay_evidence": "'most intraday momentum and reversal trading strategies may not be feasible after transactions costs, especially in bond and currency futures' [shared, see reports/stage_e20_briefs/shared/aalto_thesis_notes.md]",
+   "source": "Aalto University master's thesis (2025), read by ProductReader-ZN",
+   "url": "https://aaltodoc.aalto.fi/items/1011f043-edd1-4cb2-9694-b1216d77561f",
+   "quote": "'Additionally, we find that most intraday momentum and reversal trading strategies may not be feasible after transactions costs, especially in bond and currency futures.'",
+   "quote_location": "abstract (dc.description.abstract), via shared/aalto_thesis_notes.md",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/shared/aalto_thesis_item_api.json",
+   "sha256": "see product_ZN.json"
+  }
+ ],
+ "availability": [
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "6E (on 6E rows; pooled port over all vehicles)"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)",
+    "D6 FX session O 07:20 / C 14:00 CT"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05 and 2019-05-06..2024-02-29",
+   "basis": "6E bars plus the FX group calendar (open, prior close); both calendar files cover their windows. 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "6E (on 6E rows; pooled port over all vehicles)"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)",
+    "D6 FX session O 07:20 / C 14:00 CT"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05 and 2019-05-06..2024-02-29",
+   "basis": "6E bars plus the FX group calendar (open, prior close); both calendar files cover their windows. 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "6E (on 6E rows; pooled port over all vehicles)"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)",
+    "D6 FX session O 07:20 / C 14:00 CT"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05 and 2019-05-06..2024-02-29",
+   "basis": "6E bars plus the FX group calendar (open, prior close); both calendar files cover their windows. 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "6E (on 6E rows; pooled port over all vehicles)"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)",
+    "D6 FX session O 07:20 / C 14:00 CT"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05 and 2019-05-06..2024-02-29",
+   "basis": "6E bars plus the FX group calendar (open, prior close); both calendar files cover their windows. 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "k3_ecbfix_mto",
+   "legs": [],
+   "calendars": [
+    "T_E (k3/_clocks.py)",
+    "FX_FULL_SESSIONS",
+    "TGT_CLOSING_DAYS"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "2019-05-06..2024-02-29 only",
+   "basis": "Fixed-clock flag on 6E rows; reads no bars. K3 literal tables (strategy/members/k3/_clocks.py CLOCK_RANGE 2019-04-01..2026-06-19; _calendar.py FX_FULL_SESSIONS 2019-05-01..2026-06-19, EW_BANK_HOLIDAYS 2019-04..2026-06, TGT_CLOSING_DAYS 2019-2026, MONTH_ENDS 2019-05-31..2026-05-29) do not cover 2010-2019. T_L/T_E are derivable by C9's zoneinfo rule and FX full sessions from hist2010/fx.json, but no 2010-2019 table exists on disk; E&W bank holidays and TARGET closing days 2010-2019 found nowhere on disk outside data/vendor (not opened, boundary). Applies at t1 only in C9 mismatch weeks (T_E 08:15 > 07:50; coverage .002/0/0). Krohn et al. Table VI: the EUR turning point moved from 14:15 to 14:00 CET in July 2016 (E4).",
+   "shared_ref": null
+  },
+  {
+   "feature": "k3_ecbfix_msince",
+   "legs": [],
+   "calendars": [
+    "T_E (k3/_clocks.py)",
+    "FX_FULL_SESSIONS",
+    "TGT_CLOSING_DAYS"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "2019-05-06..2024-02-29 only",
+   "basis": "As k3_ecbfix_mto. K3 literal tables (strategy/members/k3/_clocks.py CLOCK_RANGE 2019-04-01..2026-06-19; _calendar.py FX_FULL_SESSIONS 2019-05-01..2026-06-19, EW_BANK_HOLIDAYS 2019-04..2026-06, TGT_CLOSING_DAYS 2019-2026, MONTH_ENDS 2019-05-31..2026-05-29) do not cover 2010-2019. T_L/T_E are derivable by C9's zoneinfo rule and FX full sessions from hist2010/fx.json, but no 2010-2019 table exists on disk; E&W bank holidays and TARGET closing days 2010-2019 found nowhere on disk outside data/vendor (not opened, boundary).",
+   "shared_ref": null
+  },
+  {
+   "feature": "k3_ldnmom_trend",
+   "legs": [
+    "6E (6J on 6J rows)"
+   ],
+   "calendars": [
+    "T_L (k3/_clocks.py)",
+    "FX_FULL_SESSIONS",
+    "EW_BANK_HOLIDAYS"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "2019-05-06..2024-02-29 only",
+   "basis": "S = close(T_L-13) - open(T_L-15) in vehicle ticks, known T_L-12 (09:48 CT). K3 literal tables (strategy/members/k3/_clocks.py CLOCK_RANGE 2019-04-01..2026-06-19; _calendar.py FX_FULL_SESSIONS 2019-05-01..2026-06-19, EW_BANK_HOLIDAYS 2019-04..2026-06, TGT_CLOSING_DAYS 2019-2026, MONTH_ENDS 2019-05-31..2026-05-29) do not cover 2010-2019. T_L/T_E are derivable by C9's zoneinfo rule and FX full sessions from hist2010/fx.json, but no 2010-2019 table exists on disk; E&W bank holidays and TARGET closing days 2010-2019 found nowhere on disk outside data/vendor (not opened, boundary). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "k3_ldnrev_move",
+   "legs": [
+    "6E (6J, 6S on their rows)"
+   ],
+   "calendars": [
+    "MONTH_ENDS",
+    "T_L",
+    "FX_FULL_SESSIONS",
+    "EW_BANK_HOLIDAYS"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "2019-05-06..2024-02-29 only (month ends 2019-05-31..)",
+   "basis": "M = close(T_L-1) - close(T_L-11), month ends only. MONTH_ENDS is derivable from hist2010/fx.json trade dates, but the other K3 tables are absent for 2010-2019. K3 literal tables (strategy/members/k3/_clocks.py CLOCK_RANGE 2019-04-01..2026-06-19; _calendar.py FX_FULL_SESSIONS 2019-05-01..2026-06-19, EW_BANK_HOLIDAYS 2019-04..2026-06, TGT_CLOSING_DAYS 2019-2026, MONTH_ENDS 2019-05-31..2026-05-29) do not cover 2010-2019. T_L/T_E are derivable by C9's zoneinfo rule and FX full sessions from hist2010/fx.json, but no 2010-2019 table exists on disk; E&W bank holidays and TARGET closing days 2010-2019 found nowhere on disk outside data/vendor (not opened, boundary). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g01_ret30",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "6E bars and FX group calendar trade dates only (lookbacks of up to 120 trade dates need warm-up from 2010-07; rows without a full lookback are excluded by V2.3). 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g02_ret60",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "6E bars and FX group calendar trade dates only (lookbacks of up to 120 trade dates need warm-up from 2010-07; rows without a full lookback are excluded by V2.3). 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g03_ret120",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "6E bars and FX group calendar trade dates only (lookbacks of up to 120 trade dates need warm-up from 2010-07; rows without a full lookback are excluded by V2.3). 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g04_ret_day",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "6E bars and FX group calendar trade dates only (lookbacks of up to 120 trade dates need warm-up from 2010-07; rows without a full lookback are excluded by V2.3). 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06_rv60",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "6E bars and FX group calendar trade dates only (lookbacks of up to 120 trade dates need warm-up from 2010-07; rows without a full lookback are excluded by V2.3). 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g07_range",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "6E bars and FX group calendar trade dates only (lookbacks of up to 120 trade dates need warm-up from 2010-07; rows without a full lookback are excluded by V2.3). 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g08_prev_ret",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "6E bars and FX group calendar trade dates only (lookbacks of up to 120 trade dates need warm-up from 2010-07; rows without a full lookback are excluded by V2.3). 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json). 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g09_vol_state",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "6E bars and FX group calendar trade dates only (lookbacks of up to 120 trade dates need warm-up from 2010-07; rows without a full lookback are excluded by V2.3). 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g10_logvol30",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "6E bars and FX group calendar trade dates only (lookbacks of up to 120 trade dates need warm-up from 2010-07; rows without a full lookback are excluded by V2.3). 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)",
+    "D6 FX C 14:00 CT"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "Open of O_X bar minus close of the C_X-1 bar of the previous FX trade date; FX calendar files cover both windows. 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11_t_index",
+   "legs": [],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "Decision-time index; no bars or calendars beyond the clock.",
+   "shared_ref": null
+  },
+  {
+   "feature": "g12_dow",
+   "legs": [],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "Day of week.",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel",
+   "legs": [],
+   "calendars": [
+    "6E's D8 release list = NFP + FOMC (reports/stage_e2b_release_calendar.json, 2019-05-01..2026-06-21: NFP 85, FOMC 57 rows)",
+    "2010-2019: reports/stage_e14_cal_releases.json (FOMC 72 rows 2010-06-23..2019-05-01, official; no NFP)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019: FOMC only on disk; NFP 2010-2019 absent from E.14/E.16 calendars",
+   "basis": "Shared macro calendar audit belongs to the RTY reader.",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md (RTY reader; not yet on disk at 2026-10-11T17:50Z)"
+  },
+  {
+   "feature": "g14_min_since_rel",
+   "legs": [],
+   "calendars": [
+    "as g13"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "as g13",
+   "basis": "as g13",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md"
+  },
+  {
+   "feature": "g15_rel_day",
+   "legs": [],
+   "calendars": [
+    "as g13"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "as g13",
+   "basis": "as g13",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md"
+  },
+  {
+   "feature": "g16_month_end",
+   "legs": [],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "Last two FX trade dates of each month from the group calendar; both files cover their windows.",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_6e",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/fx.json (E.14, 2010-06-01..2019-05-31, 0 unsourced, CME grade)",
+    "data/calendars/fx.py (E.2a, 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows (6E is the K3 lead; not applicable on 6E's own rows, SG-2)",
+   "basis": "G17 lead-root audit (this reader's assignment): 6E listed on CME Globex before both windows: Baltussen et al. Table A1 'Euro FX futures | EC | 1999-01-06 | 2020-05-01' (Tick Data sample) and the CME 6E contract-specifications page captured 2010-01-08 ('CME Globex Electronic Markets: 6E', E.14 save reports/stage_e14_briefs/pages/cal_equity/wb20100108085247_6e_specs.html, sha256 261aaa4f...); E.16 window 6E 2010-07-01..2024-02-29 (reports/stage_e16_windows.json). Quarterly roll blackouts make the lead 'not applicable' (V2.2), not missing. 6E outright tick was $.0001 ($12.50) until trade date 2016-01-10 and $.00005 ($6.25) from trade date 2016-01-11 (CFTC-hosted CME filing, pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf): any feature in 'vehicle ticks' on the 0.00005 grid moves in 2-tick steps before 2016-01-11 (2010-07..2016-01 of the backward window).",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_nq / g17_zn / g17_cl / g17_gc / g17_zc (on 6E rows)",
+   "legs": [
+    "NQ",
+    "ZN",
+    "CL",
+    "GC",
+    "ZC"
+   ],
+   "calendars": [
+    "each lead's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "Read on 6E rows but audited by each lead's reader (product_NQ, _ZN, _CL, _GC, _ZC).",
+   "shared_ref": "reports/stage_e20_briefs/product_<lead>.md"
+  },
+  {
+   "feature": "g17_mbt / g17_mes (on 6E rows)",
+   "legs": [
+    "MBT",
+    "MES"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MBT listed 2021, MES 2019 (brief section 7)",
+   "basis": "Legs outside the 17 roots; listed after the backward window (brief section 7).",
+   "shared_ref": null
+  },
+  {
+   "feature": "k3_mehedge_req",
+   "legs": [
+    "6J (Nikkei literal table)"
+   ],
+   "calendars": [
+    "MONTH_ENDS",
+    "T_L",
+    "MEHEDGE_R_EQ_6J"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "Not on 6E rows: K3-mehedge on 6E was not declared (no free EURO STOXX 50 history, reports/stage_e4c_member_specs.md line 56). Listed for completeness only.",
+   "shared_ref": null
+  },
+  {
+   "feature": "k8_oilcad_ret / k8_oilcad_z",
+   "legs": [
+    "MCL (signal), 6C (traded)"
+   ],
+   "calendars": [
+    "OILCAD_DATES (k8/_calendar.py 2019-05-01..2026-06-18)"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "Applies on 6C rows only; 6C is not one of the 17 E.20 roots, so it never applies on 6E rows. Its signal leg MCL is not one of the 17 roots either (CL is). Listed as the brief asks.",
+   "shared_ref": null
+  },
+  {
+   "feature": "k9_anncday",
+   "legs": [],
+   "calendars": [
+    "EC-K9"
+   ],
+   "exists_2010_2019": "n/a",
+   "exists_2019_2024": "n/a",
+   "dates": "",
+   "basis": "Applies on MNQ, M2K, MYM rows only; not on 6E rows.",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md"
+  }
+ ],
+ "proposed_features": [
+  {
+   "name": "p6e_mehedge_nq",
+   "source": "Melvin and Prins (2015, JFM 22:50-72), 2013 ECB-workshop draft, pp.13-14 (E6)",
+   "quote": "'an equity market appreciation over the month predicts a statistically significant depreciation in the currency in the hour leading up to the end of month fix. The implied magnitude is that a 10% equity appreciation leads to 14 basis points of currency depreciation.' / 'At each period, we subtract the cross-section mean return of currencies against the USD.'",
+   "formula": "On trade date d = ME(m), the last FX trade date of calendar month m (FX group calendar; hist2010/fx.json before 2019-05, data/calendars/fx.py after), at t1 = 07:50 CT: value = ln( C_NQ(e_prev) / C_NQ(e_base) ), where C_NQ(x) is the close of NQ's last 1-min bar ending at or before 15:00 CT (equity group C) on equity trade date x, e_prev = the last equity trade date strictly before d's calendar date, e_base = the last equity trade date of month m-1. On every other date or decision time: 0 and flag 0. Sign: positive value predicts 6E up (USD depreciation) in the 09:00-10:00 CT pre-fix hour, because in the paper's demeaned panel EUR/USD's predicted return is +0.0142 x (r_US_eq - r_EU_eq) and only the US leg is among the 17 roots. Differences from the paper: NQ stands in for the US total-market index; the euro-area equity leg is missing (no free EURO STOXX 50 history, and it is not one of the 17 roots); the base is the previous month's last close, as in K3-mehedge, while the paper says 'from the first to the second last day of the month'.",
+   "decision_times": [
+    "t1"
+   ],
+   "horizons": [
+    "h120"
+   ],
+   "legs": [
+    "NQ",
+    "6E (traded)"
+   ],
+   "calendars": [
+    "FX group calendar (month ends): hist2010/fx.json 2010-06-01..2019-05-31, data/calendars/fx.py 2019-05-01..2026-06-19",
+    "equity group calendar for NQ closes: hist2010/equity.json 2010-06-01..2019-05-31, data/calendars/equity.py"
+   ],
+   "available_both_windows": true,
+   "expected_gross_per_trade_ticks": 2.63,
+   "derivation": "Expected figure and ratio are per 1% of relative month-to-date equity return (conditional slope, not an unconditional mean). 1.42 bp per 1% of relative (US minus euro-area) month-to-date equity return over the full 60-min pre-fix hour; the t1/h120 hold (07:50-09:50 CT) overlaps 50 of those 60 min in standard weeks (pro rata 1.18 bp) and none of them in C9 mismatch weeks (T_L 11:00 CT). 1.18 bp / 0.4505 bp per tick = 2.63 ticks per 1% of relative return. 1.5 x D8 = 3.458 ticks (1.56 bp) needs a relative return of at least 1.32%. NQ alone measures the relative return only partly (the euro-area leg is missing), so the realized slope on the NQ-only value is smaller than 0.0142 by an unknown factor. The unconditional mean per trade is not derivable from the paper. About 12 events a year (about 106 in the backward window, 58 in the search window).",
+   "d8_rt_ticks": 2.305,
+   "ratio_to_d8": 1.14,
+   "clears_1p5x": false
+  },
+  {
+   "name": "p6e_post_ldnfix",
+   "source": "Krohn, Mueller and Whelan (2024, JF 79(1) 541-578), Table I and p.10 (E2)",
+   "quote": "'After the London fix, the pattern is again quite striking: with the exception of the yen, all currencies appreciate strongly (i.e., between 1.5 bps for the Canadian dollar and 2.7 bps for the euro) during the period between the London fix and the close of markets in the U.S.'",
+   "formula": "On every 6E row: T_L(d) = 16:00 Europe/London on calendar date d converted to CT with zoneinfo (10:00 CT, 11:00 CT in C9 mismatch weeks; same rule as k3/_clocks.py, extended to 2010-2019). Value at decision time t = minutes elapsed since T_L(d) if t >= T_L(d), applicability flag 1; else 0 and flag 0. Sign: positive applicability predicts 6E up to F (USD depreciates from the London fix to 17:00 ET).",
+   "decision_times": [
+    "t2",
+    "t3",
+    "t4"
+   ],
+   "horizons": [
+    "F",
+    "h60",
+    "h120"
+   ],
+   "legs": [
+    "6E (traded); no bars read"
+   ],
+   "calendars": [
+    "T_L by rule (zoneinfo Europe/London and America/Chicago); FX group calendar both windows"
+   ],
+   "available_both_windows": true,
+   "expected_gross_per_trade_ticks": 1.53,
+   "derivation": "Expected figure uses the latest published subsample (dollar portfolio 2014-2019, the closest to the search window). Full sample 1999-2019: EUR post-L 2.73 bp over 10:00-16:00 CT; t2 to F (10:20-15:08 CT, 4.8 of 6 h, pro rata) 2.18 bp = 4.85 ticks, ratio 2.10 to D8. Latest published subsample (dollar portfolio 2014-2019) 0.86 bp, pro rata 0.69 bp = 1.53 ticks, ratio 0.66. CME futures dollar portfolio 2006-2019 0.64 bp, pro rata 0.51 bp = 1.14 ticks, ratio 0.49. Fails 1.5x on the recent and on the futures-based evidence; the authors report liquidity-demander returns negative after costs. Overlap: away from mismatch weeks the value is a function of the decision time, which G11 together with the product identifier already carries.",
+   "d8_rt_ticks": 2.305,
+   "ratio_to_d8": 0.66,
+   "clears_1p5x": false
+  }
+ ],
+ "shared_notes_written": [],
+ "fetch_log": [
+  {
+   "url": "https://wrap.warwick.ac.uk/robots.txt",
+   "utc": "2026-10-11T17:37:02Z",
+   "sha256": "ec3eb748ada4bf8ad66bd16b93e8e8235311350d7202ee101ed8f1ebe4940792",
+   "path": "reports/stage_e20_briefs/pages/6E/wrap_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.bankofcanada.ca/robots.txt",
+   "utc": "2026-10-11T17:37:15Z",
+   "sha256": "32a514576e8373e3dd00b11c702a81218cf227326f4ad2e67b96997b46292320",
+   "path": "reports/stage_e20_briefs/pages/6E/boc_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://mpra.ub.uni-muenchen.de/robots.txt",
+   "utc": "2026-10-11T17:37:15Z",
+   "sha256": "5ef5e0cbc88a0789a7cf2f03f6e62c84ebbdaa7b8f797f946a0d358bb0d612d0",
+   "path": "reports/stage_e20_briefs/pages/6E/mpra_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://wrap.warwick.ac.uk/id/eprint/177333",
+   "utc": "2026-10-11T17:37:21Z",
+   "sha256": "a7e8a6d4e094fb8a2fb91002aaccb00af90129af1432e8326d589ae3d89e3e53",
+   "path": "reports/stage_e20_briefs/pages/6E/wrap_177333.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://wrap.warwick.ac.uk/177333/1/WRAP-foreign-exchange-fixings-returns-around-clock-Mueller-2023.pdf",
+   "utc": "2026-10-11T17:37:53Z",
+   "sha256": "a7975f26f9b42b837a0b2a6c1474a63e448fff5a0fa7957bc2233b1c0302e6a3",
+   "path": "reports/stage_e20_briefs/pages/6E/krohn_mueller_whelan_2024_jf_wrap.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://mpra.ub.uni-muenchen.de/81583/1/MPRA_paper_81583.pdf",
+   "utc": "2026-10-11T17:39:09Z",
+   "sha256": "f34bf1d22e364cf47be579197f395039ffd1f90e577ce2833bb510c69a77898b",
+   "path": "reports/stage_e20_briefs/pages/6E/evans_2018_jbf_wmrfix_mpra81583.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://hull-repository.worktribe.com/OutputFile/3303156",
+   "utc": "2026-10-11T17:40:13Z",
+   "sha256": "e20c2abad77a3eb253b4307d101464c5eb53a22a5550313185791fae50091ee2",
+   "path": "reports/stage_e20_briefs/pages/6E/hull_3303156_cloudflare_challenge.html",
+   "status": "blocked"
+  },
+  {
+   "url": "https://reading-9.eprints-hosting.org/95566/1/Accepted-Version.pdf",
+   "utc": "2026-10-11T17:40:13Z",
+   "sha256": "",
+   "path": "reports/stage_e20_briefs/pages/6E/reading_95566.pdf",
+   "status": "blocked"
+  },
+  {
+   "url": "https://centaur.reading.ac.uk/95566/1/Accepted-Version.pdf",
+   "utc": "2026-10-11T17:40:39Z",
+   "sha256": "39add97e355b49c01ac9d5f0ba76a584fb593e8ec293545127e5c60ca2830bee",
+   "path": "reports/stage_e20_briefs/pages/6E/li_sakkas_urquhart_reading95566.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://repository.gatech.edu/server/api/core/bitstreams/2b078c65-57a2-4cc0-b1dc-39b25e9fabcb/content",
+   "utc": "2026-10-11T17:41:23Z",
+   "sha256": "39662026c101d39062d804ec3f7219f4904ddb94c44404ab7f367fccd401ea06",
+   "path": "reports/stage_e20_briefs/pages/6E/wang_2018_gatech_dissertation.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.cftc.gov/filings/orgrules/rule122315cmedcm001.pdf",
+   "utc": "2026-10-11T17:41:58Z",
+   "sha256": "c322a64df1ec3123c596de8b8e9a21d8bbaee1dc6a9e593f95b549e089834e6c",
+   "path": "reports/stage_e20_briefs/pages/6E/cftc_rule122315cmedcm001_6e_tick.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.bis.org/review/r150213c.pdf",
+   "utc": "2026-10-11T17:42:26Z",
+   "sha256": "624f9a4c4edb935571b015b78594d35c91111951f8f37cd648e05144c6790f45",
+   "path": "reports/stage_e20_briefs/pages/6E/bis_debelle_2015_fx_benchmarks.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.ecb.europa.eu/events/pdf/conferences/131216/Third_FX_Workshop_MELVIN_PRINS_Equity%20hedging%20and%20exchange%20rates%20Nov%202013.pdf",
+   "utc": "2026-10-11T17:43:06Z",
+   "sha256": "606a6c402741982f4f81423f6df3ca055348156fe728d54976807579168d587c",
+   "path": "reports/stage_e20_briefs/pages/6E/melvin_prins_2013_ecb_wp.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://ies.fsv.cuni.cz/cb-monetary-policy-communication-event-study-intraday-returns-and-volatility-eur/usd-fx-market",
+   "utc": "2026-10-11T17:45:36Z",
+   "sha256": "dbe16d4c44a9b48bb98ca62b63661a67589a0ae5af56f065bdce6adea5b5319d",
+   "path": "reports/stage_e20_briefs/pages/6E/ies_fanta_page.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://ies.fsv.cuni.cz/sites/default/files/uploads/files/wp_2025_23_fanta.pdf",
+   "utc": "2026-10-11T17:45:45Z",
+   "sha256": "0b046c6af16cd48b091394ebe8891a40914bd0560917cf4429aca664fc663aea",
+   "path": "reports/stage_e20_briefs/pages/6E/fanta_2025_ies_wp23.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://data-api.ecb.europa.eu/service/data/EXR/A.USD.EUR.SP00.A?format=csvdata&startPeriod=2010&endPeriod=2024",
+   "utc": "2026-10-11T17:46:23Z",
+   "sha256": "374f065905878a2c79b169942205e76e40cd1c58f2436d21505081eff8f8bf71",
+   "path": "reports/stage_e20_briefs/pages/6E/ecb_exr_usd_eur_annual_2010_2024.csv",
+   "status": "ok"
+  },
+  {
+   "url": "https://hull-repository.worktribe.com/OutputFile/3303156 (scrapling extract get; Cloudflare challenge; not retried with stealthy-fetch)",
+   "utc": "2026-10-11T17:40:18Z",
+   "sha256": "-",
+   "path": "(not saved; scratch only)",
+   "status": "blocked"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "wrap.warwick.ac.uk",
+   "url": "https://wrap.warwick.ac.uk/robots.txt",
+   "utc": "2026-10-11T17:37:02Z",
+   "ruling": "robots allows /id/eprint and item files for *; PDF cover sheet: copies 'can be used for personal research or study, educational, or not-for-profit purposes without prior permission'. Fetched."
+  },
+  {
+   "site": "mpra.ub.uni-muenchen.de",
+   "url": "https://mpra.ub.uni-muenchen.de/robots.txt",
+   "utc": "2026-10-11T17:37:15Z",
+   "ruling": "Disallow only /cgi/ for *. Fetched paper PDF."
+  },
+  {
+   "site": "www.bankofcanada.ca",
+   "url": "https://www.bankofcanada.ca/robots.txt",
+   "utc": "2026-10-11T17:37:15Z",
+   "ruling": "Allowed (wp-admin only); not used (WRAP copy taken instead)."
+  },
+  {
+   "site": "hull-repository.worktribe.com",
+   "url": "https://hull-repository.worktribe.com/robots.txt",
+   "utc": "2026-10-11T17:40Z",
+   "ruling": "robots.txt itself behind a Cloudflare challenge; file blocked (403) by curl and by scrapling get; not retried with stealthy-fetch (terms unread). The item turned out (by search title) to be 'Intraday Time-series Momentum: Evidence from China' (not FX). Gap logged."
+  },
+  {
+   "site": "centaur.reading.ac.uk",
+   "url": "https://centaur.reading.ac.uk/robots.txt",
+   "utc": "2026-10-11T17:40Z",
+   "ruling": "Disallow /cgi/ only for *; accepted version CC BY-NC-ND 4.0. Fetched; equity-only, screened out."
+  },
+  {
+   "site": "repository.gatech.edu",
+   "url": "https://repository.gatech.edu/robots.txt",
+   "utc": "2026-10-11T17:41Z",
+   "ruling": "Disallows search, filters and admin paths for *; item bitstream via the DSpace REST API is not disallowed. Fetched dissertation PDF."
+  },
+  {
+   "site": "www.cftc.gov",
+   "url": "reports/stage_e13_briefs/pages/InfoSource/cftc_robots.txt (E.13 reading)",
+   "utc": "2026-10-11T17:41Z (re-read on disk)",
+   "ruling": "'User-agent: * ... Allow: /', 'Content-Signal: search=yes,ai-train=no,use=reference'. Reference use; fetched one filing."
+  },
+  {
+   "site": "www.bis.org",
+   "url": "https://www.bis.org/robots.txt",
+   "utc": "2026-10-11T17:42Z",
+   "ruling": "Allows content for *; fetched one speech (URL .pdf served HTML)."
+  },
+  {
+   "site": "www.ecb.europa.eu / data-api.ecb.europa.eu",
+   "url": "https://www.ecb.europa.eu/robots.txt",
+   "utc": "2026-10-11T17:43Z",
+   "ruling": "Disallows only *_content.<lang>.html patterns; data-api robots.txt returned 301. Fetched one workshop PDF and one annual reference-rate CSV."
+  },
+  {
+   "site": "ies.fsv.cuni.cz",
+   "url": "https://ies.fsv.cuni.cz/robots.txt",
+   "utc": "2026-10-11T17:46Z",
+   "ruling": "'Disallow: /' applies to SeekportBot only; for * only core/admin paths. Fetched WP PDF (saved robots as pages/6E/ies_robots.txt)."
+  }
+ ],
+ "budget_notices": [
+  "No WebSearch over-budget notice. About 17 WebSearch calls used of about 90. WebFetch not used (pages saved by curl, then grepped). Firecrawl not used. Cost notices from a hook ('COST CRITICAL ... Informational only') seen and treated as informational."
+ ],
+ "unfinished": [
+  "Melvin and Prins (2015) published JFM version not retrieved (paywalled); figures from the 2013 ECB-hosted draft.",
+  "Lee and Wang (2025, RAPS) published version not retrieved; 65% reversal figure is from a search-engine abstract [secondary-only]. Dissertation's % p.a. annualization for 12-hour windows not stated.",
+  "Evans (2018) Table 6 annualization for a monthly trade not stated: per-trade bp not derived.",
+  "Evans, O'Neill, Rime, Saakvitne ('Fixing the Fix?', post-2015 WMR window study) not found; Marsh-Panagiotou-Payne (Norges Bank-hosted draft) and Benenchia-Galati-Lepone (PBFJ 2025) not fetched. No sized post-2015 study of the London-fix reversal on EUR/USD beyond Krohn et al.'s 2014-2019 subsample was found.",
+  "No post-2015 peer-reviewed sized evidence found for EUR/USD NFP or ECB press-conference drift at holds of 60 min or more (search results: a 2021 master's thesis, trade press, a 2026 null on inter-meeting communication).",
+  "Hull repository item blocked by Cloudflare (logged; title per search: China equity, not FX).",
+  "NFP 2010-2019 calendar coverage for g13-g15: depends on the RTY reader's shared/macro_calendars.md, not on disk when this file was written.",
+  "FX_FULL_SESSIONS for 2010-2019 also needs the engine flatten rule's early-F dates (rules/sessions.py) for 2010-2019: not checked (undetermined component of the K3 rows)."
+ ],
+ "nq_only": null
+}

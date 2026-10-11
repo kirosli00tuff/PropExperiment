@@ -1,0 +1,705 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "HE",
+ "reader": "ProductReader-HE-OpusHigh",
+ "finished_utc": "2026-10-11T17:49:07Z",
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "Market intraday momentum ROD -> LH (rest-of-day return predicts last half hour), lean hogs alone",
+   "rule": "r_LH on r_ROD, r_ROD = P(C-30)/P(prior close)-1, C = 13:05 CT (paper's LH hours 08:30-13:05); long if r_ROD>0, short if <0, exit at C",
+   "hold": "30 min (last half hour, 12:35-13:05 CT)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "slope 0.03 (x100) = 0.0003: a 1% r_ROD predicts 0.0003% = 0.03 bp = 0.01 tick; HE tick 0.025 c/lb x 40,000 lb = $10; at the 80 c/lb price level the source itself uses (He 2022, p.16: 'a lean hog contract with a unit price of 80 cents/pound'), 1 tick = 0.025/80 = 3.125 bp",
+   "gross_or_net": "gross",
+   "sample": "CME lean hogs (LH), 1981-04-03..2020-05-01, 9,499 days, 1-minute bars",
+   "decay_evidence": "Null in full sample: t 0.06, adjusted R2 -0.01%, R2_OOS -0.06% (no in-sample or OOS predictability)",
+   "source": "Baltussen, Da, Lammers, Martens (2021), Hedging demand and market intraday momentum, JFE 142, Table B3 Panel B",
+   "url": "https://doi.org/10.1016/j.jfineco.2021.04.029",
+   "quote": "| LH | 0.56(0.87) | 0.00 | -0.04 | 0.58(0.89) | -0.98(-1.18) | 3.30*(1.76) | 0.08 | -0.06 | 0.03(0.06) | -0.01 | -0.06 |  [columns: | | βONFH | R2(%) | R2OOS(%) | βTONFH | βM | βSLH | R2(%) | R2OOS(%) | βROD | R2(%) | R2OOS(%) |; caption: 'Panel B: Newey and West (1986) robust t-statistics in parentheses. Samples range from April 1981 to May 2020. ... Adjusted R2, R2OOS, and slope coefficients are multiplied by 100.'; Table A1: '| Lean hogs futures | LH | 1981-04-03 | 2020-05-01 | 9499 | 08:30-13:05 | Softs |']",
+   "quote_location": "on-disk copy lines 3673-3684 (caption), 3759-3784 (Table B3 cont., LH row), 3309 (sample row)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E2",
+   "effect": "Second-to-last half hour -> last half hour (SLH -> LH), lean hogs alone",
+   "rule": "r_LH on r_SLH (12:05-12:35 CT return), joint regression with r_ONFH and r_M",
+   "hold": "30 min (12:35-13:05 CT)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "slope 3.30 (x100) = 0.033: a 1% r_SLH predicts 3.3 bp = 1.06 ticks; typical half-hour moves are far below 1%. HE tick 0.025 c/lb x 40,000 lb = $10; at the 80 c/lb price level the source itself uses (He 2022, p.16: 'a lean hog contract with a unit price of 80 cents/pound'), 1 tick = 0.025/80 = 3.125 bp",
+   "gross_or_net": "gross",
+   "sample": "as E1",
+   "decay_evidence": "In-sample t 1.76 (10% level only); the joint model's R2_OOS is -0.06% (no OOS value)",
+   "source": "Baltussen et al. (2021), Table B3 Panel B, LH row",
+   "url": "https://doi.org/10.1016/j.jfineco.2021.04.029",
+   "quote": "| LH | 0.56(0.87) | 0.00 | -0.04 | 0.58(0.89) | -0.98(-1.18) | 3.30*(1.76) | 0.08 | -0.06 | 0.03(0.06) | -0.01 | -0.06 |",
+   "quote_location": "on-disk copy line 3784",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E3",
+   "effect": "Next-day direction after a locked-limit day (limit-induced under-reaction), lean hogs",
+   "rule": "logit of 1[settle(d) > settle(d-1)] on SignedLimit(d-1) (+1 locked limit-up, -1 locked limit-down, 0 else) with controls",
+   "hold": "settlement to settlement (includes the overnight gap)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "direction only; no return size reported. exp(1.006) = 2.73 odds ratio",
+   "gross_or_net": "unknown",
+   "sample": "CME lean hogs, first five nearby contracts, 2014-2019, daily (7,264 obs.); 172 locked-limit events (39 in the first nearby)",
+   "decay_evidence": "none (single 2014-2019 sample; limit days cluster in 2014)",
+   "source": "He, X. (2022), Essays on extreme events in agricultural futures markets, PhD dissertation, University of Illinois, Appendix B.4, Table B.5 (working version of He and Serra, AJAE 104(5) 2022, 1724-1746)",
+   "url": "https://www.ideals.illinois.edu/items/125160/bitstreams/411014/data.pdf",
+   "quote": "SignedLimit d−1,c 1.006*** 0.181 [Lean Hog estimate, std. error]; Obs 7,264 ... 'The exponential of the coefficient β1 is around 2.7, suggesting that on average the price is 1.7 times more likely to move in the same direction following a locked-limit day than following a non-limit day.'",
+   "quote_location": "dissertation printed pp.179-180 (text lines 7665-7727) and p.200 Table B.5 (lines 8326-8346)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/HE/he_2022_dissertation_ideals.pdf",
+   "sha256": "e0624529946c8ccf071e80bb45aea516ff35c4a39d3fdd473d136a5f6c633c4b"
+  },
+  {
+   "id": "E4",
+   "effect": "Price path after limit moves: locked-limit days gap beyond the limit next day and stay; temporary-limit days reverse",
+   "rule": "median distance to the limit in 5-minute bins, pre- and post-limit windows; post-limit window for locked days starts at the next day's open",
+   "hold": "next-day open to +1 hour (locked); same-day after the touch (temporary)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "locked: next-day level 0.3-0.4 c/lb beyond the old limit = 12-16 ticks = $120-160, reached at the OPEN (overnight gap, not capturable by an entry at t1 = 09:00); post-open drift not sized (figure only: 'remains persistently far'). temporary: about 0.5 c/lb (20 ticks) inside the range, but the class 'temporary' is defined by the close (hindsight), so no causal rule. Pooled lean hog and live cattle in the text. HE tick 0.025 c/lb x 40,000 lb = $10; at the 80 c/lb price level the source itself uses (He 2022, p.16: 'a lean hog contract with a unit price of 80 cents/pound'), 1 tick = 0.025/80 = 3.125 bp",
+   "gross_or_net": "gross",
+   "sample": "CME lean hogs and live cattle, first five nearby, 2014-2019, intraday",
+   "decay_evidence": "none",
+   "source": "He (2022) dissertation, ch.3 section on Figure 3.1",
+   "url": "https://www.ideals.illinois.edu/items/125160/bitstreams/411014/data.pdf",
+   "quote": "On the next trading day following a locked-limit day, the price jumps to a new level that is 0.3 to 0.4 cents/lb. outside the previous day's limit. The price level remains persistently far from the previous limit after one hour of trading, suggesting that price limits impede price discovery and induce market under-reaction on locked-limit days. ... In contrast, temporary-limit moves are followed by a price reversal resulting in a post-limit price level around 0.5 cents/lb. inside the trading range",
+   "quote_location": "printed p.69 (text lines 3209-3230); Figure 3.1 note p.84",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/HE/he_2022_dissertation_ideals.pdf",
+   "sha256": "e0624529946c8ccf071e80bb45aea516ff35c4a39d3fdd473d136a5f6c633c4b"
+  },
+  {
+   "id": "E5",
+   "effect": "Flash events (large intraday moves) in lean hogs: no reversal documented; moves read as fundamental",
+   "rule": "events: price change of at least 2.4 c/lb within an hour (at 80 c/lb), USDA-report days excluded",
+   "hold": "n/a (liquidity study)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "no return pattern sized",
+   "gross_or_net": "unknown",
+   "sample": "CME lean hogs and corn, 2014-2019, limit order book, 1,253 non-announcement days",
+   "decay_evidence": "n/a",
+   "source": "He (2022) dissertation ch.2 (= He, Serra, Garcia, AJAE 103(2) 2021, 743-764, 'Resilience in Flash Events in the Corn and Lean Hog Futures Markets')",
+   "url": "https://www.ideals.illinois.edu/items/125160/bitstreams/411014/data.pdf",
+   "quote": "the revised threshold requires the price to change by at least 2.4 cents/pound ($960 per contract) within an hour. ... The temporal duration of the events (around 50 minutes in both markets) corresponds closely to the recent findings which show that it takes about an hour for low latency agricultural markets to absorb fully fundamental information from USDA releases",
+   "quote_location": "printed pp.15-16 (lines 903-906), p.36-37 (lines 1897-1908)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/HE/he_2022_dissertation_ideals.pdf",
+   "sha256": "e0624529946c8ccf071e80bb45aea516ff35c4a39d3fdd473d136a5f6c633c4b"
+  },
+  {
+   "id": "E6",
+   "effect": "Hog report window: NASS Quarterly Hogs and Pigs release time (after HE's 13:05 CT close, except noon-ET releases)",
+   "rule": "release normally 15:00 ET (14:00 CT, after the close; reaction is overnight, out of scope); a Friday noon-ET release (11:00 CT) falls inside the session",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "no intraday study found",
+   "gross_or_net": "unknown",
+   "sample": "n/a",
+   "decay_evidence": "n/a",
+   "source": "USDA NASS notice, Dec. 10, 2018 (ESMIS)",
+   "url": "https://esmis.nal.usda.gov/sites/default/release-files/rj430453j/5q47rs43b/c534ft03m/USDA_NASS_issues_new_release_date_for_December_Cattle_on_Feed_and_Hogs_and_Pigs_reports.txt",
+   "quote": "has rescheduled release of the December Cattle on Feed and Hogs and Pigs reports to Thursday, Dec. 20 at 3:00 pm ET. They were previously scheduled for release on Friday, Dec. 21 at Noon ET.",
+   "quote_location": "notice body",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/HE/nass_dec2018_hogs_reschedule.txt",
+   "sha256": "ddb80a1fdd6ff7d14c88539d184e163638c09025dfb149fc907883958f8d2193"
+  },
+  {
+   "id": "E7",
+   "effect": "Hog report window: USDA LMR swine report statutory deadlines inside the HE session",
+   "rule": "prior-day purchased report by 08:00 CT; prior-day slaughtered by 10:00 CT; morning report by 11:00 CT; afternoon report by 15:00 CT (after close). Deadlines, not fixed instants",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "no published intraday futures response found (searched); unknown, not rejected",
+   "gross_or_net": "unknown",
+   "sample": "n/a",
+   "decay_evidence": "n/a",
+   "source": "7 U.S.C. 1635j (US Code 2024 edition, govinfo)",
+   "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title7/html/USCODE-2024-title7-chap38-subchapII-partC-sec1635j.htm",
+   "quote": "The Secretary shall publish the information obtained under this paragraph in the morning report as soon as practicable, but not later than 11:00 a.m. Central Time, on each reporting day. ... (I) in the case of information regarding barrows and gilts purchased or priced, not later than 8:00 a.m. Central Time, and (II) in the case of information regarding barrows and gilts slaughtered, not later than 10:00 a.m. Central Time ... in the afternoon report as soon as practicable, but not later than 3:00 p.m. Central Time",
+   "quote_location": "section 1635j(c)(1)(D), (c)(2)(B), (c)(3)(B)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/HE/usc_7_1635j.htm",
+   "sha256": "9208a0fb4e9081d650473ee3e4d07b8b3a6a5e273cea966463db7968d348b7c7"
+  },
+  {
+   "id": "E8",
+   "effect": "Limit events lead to persistent price changes (commodity futures, multi-market)",
+   "rule": "not read",
+   "hold": "",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "not read",
+   "decay_evidence": "not read",
+   "source": "Janardanan, Qiao, Rouwenhorst (2019), On commodity price limits, J. Futures Markets 39 (class-level; LE reader's)",
+   "url": "https://doi.org/10.1002/fut.21999",
+   "quote": "We find little evidence that limits events are the result of speculative activity, but instead associated with shocks to fundamentals that lead to persistent price changes. [abstract via OpenAlex metadata only]",
+   "quote_location": "abstract (OpenAlex record)",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/HE/openalex/doi_10_1002_fut_21999.json",
+   "sha256": "87fecda5a09b0e1ca95a67af8dce706d5a116c868943e8c68db2c9be53b28da8"
+  }
+ ],
+ "availability": [
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock group calendar (sessions O 08:30, C 13:00; trade dates)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2017-07-03..2019-05-03 (cp3 from the 2nd trade date) and 2019-05-06..2024-02-29",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12); era 3 session 08:30-13:05 valid from 2016-02-29 (CME 16-064, 'cme'); data/calendars/livestock.py (2019-05-01..2026-06-19; 'cme' except 2023-01-16; sha256 57727e68...); livestock first bar = 08:30 bar of d (ports.py)",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock group calendar (sessions O 08:30, C 13:00; trade dates)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2017-07-03..2019-05-03 (cp3 from the 2nd trade date) and 2019-05-06..2024-02-29",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12); era 3 session 08:30-13:05 valid from 2016-02-29 (CME 16-064, 'cme'); data/calendars/livestock.py (2019-05-01..2026-06-19; 'cme' except 2023-01-16; sha256 57727e68...); livestock first bar = 08:30 bar of d (ports.py)",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock group calendar (sessions O 08:30, C 13:00; trade dates)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2017-07-03..2019-05-03 (cp3 from the 2nd trade date) and 2019-05-06..2024-02-29",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12); era 3 session 08:30-13:05 valid from 2016-02-29 (CME 16-064, 'cme'); data/calendars/livestock.py (2019-05-01..2026-06-19; 'cme' except 2023-01-16; sha256 57727e68...); livestock first bar = 08:30 bar of d (ports.py)",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock group calendar (sessions O 08:30, C 13:00; trade dates)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2017-07-03..2019-05-03 (cp3 from the 2nd trade date) and 2019-05-06..2024-02-29",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12); era 3 session 08:30-13:05 valid from 2016-02-29 (CME 16-064, 'cme'); data/calendars/livestock.py (2019-05-01..2026-06-19; 'cme' except 2023-01-16; sha256 57727e68...); livestock first bar = 08:30 bar of d (ports.py)",
+   "shared_ref": null
+  },
+  {
+   "feature": "k6_limitcont_dir",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock calendar",
+    "settlement window 12:59:30-13:00:00 CT (rules/price_limits.py SETTLEMENT_WINDOW_CT)",
+    "LIMIT_PERIODS (strategy/members/k6/_limits.py)"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019: none on disk (LIMIT_PERIODS and rules/price_limits.py HE periods start 2019-05-01); 2019-05-01..2024-02-29 covered",
+   "basis": "Settlement window: reports/stage_e16_settlement.md LE/HE 2014-12-15..2024-02-29 12:59:30-13:00:00, primary direct to 2018-10, inferred after. Limit table: none for 2017-07..2019-04 (reports/stage_e16_review.md F-07: 'for 2010-2019, where no limit table exists'). Public fact (not on disk as a table): CME Submissions 15-306 (eff. 2015-08-31) and 20-112 (rule text 'up to and including April 10, 2020') both state 'no trading at a price more than $.030 per pound above or below the previous day's settlement price', expanded $0.045 after a first-three-months limit settle; one search found no 2016-2019 amendment. Flag: 20-112 asks for $3.75/cwt from trade date 2020-04-13, while the frozen table encodes $0.03 for 2020-04-02..04-21 (bracketed); CFTC approval date not verified.",
+   "shared_ref": null
+  },
+  {
+   "feature": "g01_ret30",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock session calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "backward: from about the 21st trade date (2017-08-01) once sigma_X,d's 20-date lookback is full; search window: all",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12); G1-G5, G7, G8 are divided by sigma_X,d (20 dates). G1-G3 at t1 are not applicable for livestock by design (SG-3)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g02_ret60",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock session calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "backward: from about the 21st trade date (2017-08-01) once sigma_X,d's 20-date lookback is full; search window: all",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12); G1-G5, G7, G8 are divided by sigma_X,d (20 dates). G1-G3 at t1 are not applicable for livestock by design (SG-3)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g03_ret120",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock session calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "backward: from about the 21st trade date (2017-08-01) once sigma_X,d's 20-date lookback is full; search window: all",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12); G1-G5, G7, G8 are divided by sigma_X,d (20 dates). G1-G3 at t1 are not applicable for livestock by design (SG-3)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g04_ret_day",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock session calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "backward: from about the 21st trade date (2017-08-01) once sigma_X,d's 20-date lookback is full; search window: all",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12); G1-G5, G7, G8 are divided by sigma_X,d (20 dates). G1-G3 at t1 are not applicable for livestock by design (SG-3)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g07_range",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock session calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "backward: from about the 21st trade date (2017-08-01) once sigma_X,d's 20-date lookback is full; search window: all",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12); G1-G5, G7, G8 are divided by sigma_X,d (20 dates). G1-G3 at t1 are not applicable for livestock by design (SG-3)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g08_prev_ret",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock session calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "backward: from about the 21st trade date (2017-08-01) once sigma_X,d's 20-date lookback is full; search window: all",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12); G1-G5, G7, G8 are divided by sigma_X,d (20 dates). G1-G3 at t1 are not applicable for livestock by design (SG-3)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock calendar (previous trade date, C_X 13:00, early halts)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "backward: from about 2017-08-01 (sigma warm-up); not applicable after each early-halt date (6 in 2017-07..2019-04: 2017-07-03, 2017-11-24, 2017-12-22, 2018-07-03, 2018-11-23, 2018-12-24)",
+   "basis": "data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12) early_halt entries (secondary); data/calendars/livestock.py (2019-05-01..2026-06-19; 'cme' except 2023-01-16; sha256 57727e68...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06_rv60",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock session calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "backward: from the 21st row date (about 2017-08-01)",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); 20 previous row dates at the same clock",
+   "shared_ref": null
+  },
+  {
+   "feature": "g09_vol_state",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock trade dates"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "backward: from about the 141st trade date (2018-01-23): sigma 20 dates + 120-date median",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); trade-date count from data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g10_logvol30",
+   "legs": [
+    "HE"
+   ],
+   "calendars": [
+    "livestock session calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "backward: from the 21st row date (about 2017-08-01)",
+   "basis": "HE bars priced from 2017-07 (reports/stage_e16_windows.json HE start_month 2017-07; last unpriced month 2017-06; E.16 U2); median over 20 previous row dates",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11_t_index",
+   "legs": [],
+   "calendars": [
+    "V2.2 clock (O_X, F_X) only"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "no calendar beyond the session table (livestock O 08:30, F 13:03 in both windows: era 3 from 2016-02-29)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g12_dow",
+   "legs": [],
+   "calendars": [
+    "V2.2 clock (O_X, F_X) only"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "no calendar beyond the session table (livestock O 08:30, F 13:03 in both windows: era 3 from 2016-02-29)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel",
+   "legs": [],
+   "calendars": [
+    "release calendar, HE's D8 list: FOMC, WASDE, CROP (Crop Production), CROP_ANNUAL"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "search window: frozen calendar 2019-05-01..2026-06-21 (95 HE instants in 2019-05-06..2024-02-29, E.11); backward: FOMC only",
+   "basis": "reports/stage_e2b_release_calendar.json release_products (sha256 839f2437...): HE in FOMC (all products) and WASDE/CROP/CROP_ANNUAL (member-named). 2010-2019: reports/stage_e14_cal_releases.json covers FOMC, NGS, WPSR only (2010-06-01..2019-05-31); no WASDE, Crop Production or Crop Production Annual calendar for 2010-2019 found on disk (grep of reports/stage_e14*, stage_e16*). USDA Hogs and Pigs, Cold Storage and LMR reports are not in HE's D8 list.",
+   "shared_ref": "shared/macro_calendars.md (RTY reader: FOMC); shared/grains_class_notes.md (ZC reader: WASDE, Crop Production)"
+  },
+  {
+   "feature": "g14_min_since_rel",
+   "legs": [],
+   "calendars": [
+    "release calendar, HE's D8 list: FOMC, WASDE, CROP (Crop Production), CROP_ANNUAL"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "search window: frozen calendar 2019-05-01..2026-06-21 (95 HE instants in 2019-05-06..2024-02-29, E.11); backward: FOMC only",
+   "basis": "reports/stage_e2b_release_calendar.json release_products (sha256 839f2437...): HE in FOMC (all products) and WASDE/CROP/CROP_ANNUAL (member-named). 2010-2019: reports/stage_e14_cal_releases.json covers FOMC, NGS, WPSR only (2010-06-01..2019-05-31); no WASDE, Crop Production or Crop Production Annual calendar for 2010-2019 found on disk (grep of reports/stage_e14*, stage_e16*). USDA Hogs and Pigs, Cold Storage and LMR reports are not in HE's D8 list.",
+   "shared_ref": "shared/macro_calendars.md (RTY reader: FOMC); shared/grains_class_notes.md (ZC reader: WASDE, Crop Production)"
+  },
+  {
+   "feature": "g15_rel_day",
+   "legs": [],
+   "calendars": [
+    "release calendar, HE's D8 list: FOMC, WASDE, CROP (Crop Production), CROP_ANNUAL"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "search window: frozen calendar 2019-05-01..2026-06-21 (95 HE instants in 2019-05-06..2024-02-29, E.11); backward: FOMC only",
+   "basis": "reports/stage_e2b_release_calendar.json release_products (sha256 839f2437...): HE in FOMC (all products) and WASDE/CROP/CROP_ANNUAL (member-named). 2010-2019: reports/stage_e14_cal_releases.json covers FOMC, NGS, WPSR only (2010-06-01..2019-05-31); no WASDE, Crop Production or Crop Production Annual calendar for 2010-2019 found on disk (grep of reports/stage_e14*, stage_e16*). USDA Hogs and Pigs, Cold Storage and LMR reports are not in HE's D8 list.",
+   "shared_ref": "shared/macro_calendars.md (RTY reader: FOMC); shared/grains_class_notes.md (ZC reader: WASDE, Crop Production)"
+  },
+  {
+   "feature": "g16_month_end",
+   "legs": [],
+   "calendars": [
+    "livestock trade dates"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows (4 unsourced backward dates excluded as action dates)",
+   "basis": "data/calendars/hist2010/livestock.json (2010-06-01..2019-05-31; E.16 'secondary'; sha256 802a4dd9...; HE window 2017-07-03..2019-04-30: 460 trade dates, 4 unsourced: 2017-10-09, 2017-11-10, 2018-10-08, 2018-11-12); data/calendars/livestock.py (2019-05-01..2026-06-19; 'cme' except 2023-01-16; sha256 57727e68...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_* on HE rows (g17_nq, g17_zn, g17_6e, g17_cl, g17_gc, g17_mbt, g17_mes; g17_zc is HE's own cluster lead: not applicable on HE rows)",
+   "legs": [
+    "NQ",
+    "ZN",
+    "6E",
+    "CL",
+    "GC",
+    "MBT",
+    "MES"
+   ],
+   "calendars": [
+    "each lead's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "not audited here",
+   "basis": "audited by the G17 lead-root readers (NQ, ZN, 6E, CL, GC, ZC); g17_mbt (MBT) and g17_mes (MES) read legs outside the 17 roots (brief section 7)",
+   "shared_ref": "product_NQ/ZN/6E/CL/GC/ZC.md"
+  },
+  {
+   "feature": "id_root_HE, id_cluster_K6 (G18/G19)",
+   "legs": [],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "constants only",
+   "shared_ref": null
+  },
+  {
+   "feature": "k9_anncday",
+   "legs": [],
+   "calendars": [
+    "EC-K9"
+   ],
+   "exists_2010_2019": "n/a",
+   "exists_2019_2024": "n/a",
+   "dates": "",
+   "basis": "applies on MNQ, M2K, MYM rows only (V2.3), not on HE rows",
+   "shared_ref": "shared/macro_calendars.md"
+  }
+ ],
+ "proposed_features": [],
+ "proposed_features_note": "none: no published lean-hog intraday rule since 2015 has a sized gross per trade from an entry at t1-t4 (E1 null, E2 OOS-negative, E3 unsized and settle-to-settle, E4 at the next open or hindsight-defined, E5-E7 unsized). D8 round trip 1.965 ticks ($19.65); the 1.5x hurdle is 2.95 ticks ($29.48), about 9.2 bp at 80 c/lb. k6_limitcont_dir already carries the limit-continuation idea.",
+ "shared_notes_written": [],
+ "fetch_log": [
+  {
+   "url": "https://www.cftc.gov/robots.txt",
+   "utc": "2026-10-11T17:38:35Z",
+   "sha256": "1d500ec03ef610b457287a8e55e6ad2f83a7bb888a630325c23573dccdcd81bb",
+   "path": "reports/stage_e20_briefs/pages/HE/cftc_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.cftc.gov/filings/ptc/ptc030220cmedcm002.pdf",
+   "utc": "2026-10-11T17:38:54Z",
+   "sha256": "eaf189618e812f23013e147dcf5257ea2d1ffda9ed3d1e32eae0f7519b816150",
+   "path": "reports/stage_e20_briefs/pages/HE/ptc030220cmedcm002.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.cftc.gov/filings/ptc/ptc071715cmedcm001.pdf",
+   "utc": "2026-10-11T17:38:58Z",
+   "sha256": "41aed8706c2e5788772939c80bb1b7c8b28b5c9cda9e2acf2bff58acb2476206",
+   "path": "reports/stage_e20_briefs/pages/HE/ptc071715cmedcm001.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://api.openalex.org/works?search=... (5 queries, from 2015)",
+   "utc": "2026-10-11T17:39:53Z",
+   "sha256": "see files",
+   "path": "reports/stage_e20_briefs/pages/HE/openalex/*.json (5 search files)",
+   "status": "ok"
+  },
+  {
+   "url": "https://api.openalex.org/works/https://doi.org/... (5 DOIs)",
+   "utc": "2026-10-11T17:40:16Z",
+   "sha256": "see files",
+   "path": "reports/stage_e20_briefs/pages/HE/openalex/doi_*.json",
+   "status": "ok"
+  },
+  {
+   "url": "https://onlinelibrary.wiley.com/robots.txt",
+   "utc": "2026-10-11T17:41:06Z",
+   "sha256": "9bb321ba7d7be3a765d173af6bee54b35c8ea4fe3910d3b0c83fb520191a6d53",
+   "path": "reports/stage_e20_briefs/pages/HE/wiley_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://onlinelibrary.wiley.com/terms-and-conditions (curl)",
+   "utc": "2026-10-11T17:41:12Z",
+   "sha256": "d68a8f90f572178d669826febf610248d8d6cfefce3a9f0a7eaa56d698caa68c",
+   "path": "reports/stage_e20_briefs/pages/HE/wiley_terms.html",
+   "status": "blocked"
+  },
+  {
+   "url": "https://onlinelibrary.wiley.com/terms-and-conditions (scrapling get: challenge page; scrapling fetch: ok)",
+   "utc": "2026-10-11T17:41:28Z",
+   "sha256": "bb8c8f71120faa275d12cc521c448c531f2ba29a596d7ef4b10802403bd60fbb",
+   "path": "reports/stage_e20_briefs/pages/HE/wiley_terms.md",
+   "status": "ok"
+  },
+  {
+   "url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1111/ajae.12146 and 10.1002/fut.21999 (not fetched)",
+   "utc": "",
+   "sha256": "",
+   "path": "",
+   "status": "terms-forbid"
+  },
+  {
+   "url": "https://www.ideals.illinois.edu/robots.txt",
+   "utc": "2026-10-11T17:41:52Z",
+   "sha256": "2ac02f038caa0320c19646a32dabdea7b14b9ab8683655be7cb26a8548465091",
+   "path": "reports/stage_e20_briefs/pages/HE/ideals_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.ideals.illinois.edu/items/125160",
+   "utc": "2026-10-11T17:41:56Z",
+   "sha256": "6fdcd1d22892a51ae77051c854245b7e17ef6321be1f85fc1b185eb77e47920a",
+   "path": "reports/stage_e20_briefs/pages/HE/ideals_item_125160.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.ideals.illinois.edu/about",
+   "utc": "2026-10-11T17:42:12Z",
+   "sha256": "f52f4a80132bebbbb8f21f409e8a2d4870c213def0401229edf6795092c15a2d",
+   "path": "reports/stage_e20_briefs/pages/HE/ideals_about.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://guides.library.illinois.edu/ideals",
+   "utc": "2026-10-11T17:42:28Z",
+   "sha256": "197b62c23b92f376c55c8c056ea8ca290db56064ad6562803860aa21a6e2b3d8",
+   "path": "reports/stage_e20_briefs/pages/HE/ideals_guide.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://guides.library.illinois.edu/ideals/access_and_use_policy",
+   "utc": "2026-10-11T17:42:36Z",
+   "sha256": "3035c521f08f732c0295c35af55181ee637e261acabfe8065d277053b237e3ba",
+   "path": "reports/stage_e20_briefs/pages/HE/ideals_access_use_policy.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.ideals.illinois.edu/items/125160/bitstreams/411014/data.pdf",
+   "utc": "2026-10-11T17:42:46Z",
+   "sha256": "e0624529946c8ccf071e80bb45aea516ff35c4a39d3fdd473d136a5f6c633c4b",
+   "path": "reports/stage_e20_briefs/pages/HE/he_2022_dissertation_ideals.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://esmis.nal.usda.gov/robots.txt",
+   "utc": "2026-10-11T17:44:04Z",
+   "sha256": "87fa5e648c4b2b40838ea9b32081e70d63f9e37e61f330605f7d88e750c916bb",
+   "path": "reports/stage_e20_briefs/pages/HE/esmis_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://esmis.nal.usda.gov/sites/default/release-files/rj430453j/5q47rs43b/c534ft03m/USDA_NASS_issues_new_release_date_for_December_Cattle_on_Feed_and_Hogs_and_Pigs_reports.txt",
+   "utc": "2026-10-11T17:44:07Z",
+   "sha256": "ddb80a1fdd6ff7d14c88539d184e163638c09025dfb149fc907883958f8d2193",
+   "path": "reports/stage_e20_briefs/pages/HE/nass_dec2018_hogs_reschedule.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://uscode.house.gov/robots.txt",
+   "utc": "2026-10-11T17:44:20Z",
+   "sha256": "0b9f42d75d476d82d4f6dee98423dd0d030fe380669ee52c6129b0365077b2dd",
+   "path": "reports/stage_e20_briefs/pages/HE/uscode_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title7-section1635j (server error page, deleted)",
+   "utc": "2026-10-11T17:44:23Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked"
+  },
+  {
+   "url": "https://www.law.cornell.edu/robots.txt (not used further)",
+   "utc": "2026-10-11T17:44:30Z",
+   "sha256": "730a298f7b888e2a3a1e32dc4fe2270a108bf346873295acc17f3c90685911cf",
+   "path": "reports/stage_e20_briefs/pages/HE/law_cornell_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.govinfo.gov/robots.txt",
+   "utc": "2026-10-11T17:44:40Z",
+   "sha256": "44c5698f1245cef059b8722b6108a87a128c61dbf4c25fbe11402952b805309c",
+   "path": "reports/stage_e20_briefs/pages/HE/govinfo_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title7/html/USCODE-2024-title7-chap38-subchapII-partC-sec1635j.htm",
+   "utc": "2026-10-11T17:45:06Z",
+   "sha256": "9208a0fb4e9081d650473ee3e4d07b8b3a6a5e273cea966463db7968d348b7c7",
+   "path": "reports/stage_e20_briefs/pages/HE/usc_7_1635j.htm",
+   "status": "ok"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "cftc.gov",
+   "url": "https://www.cftc.gov/robots.txt; reports/stage_e13_briefs/pages/InfoSource/cftc_webpolicy.html (E.13 copy, sha256 99bd19f1...)",
+   "utc": "2026-10-11T17:38:35Z",
+   "ruling": "allowed: robots 'User-agent: * ... Allow: /', 'Content-Signal: search=yes,ai-train=no,use=reference' (no ai-input signal); web policy: 'Government information at the CFTC website is in the public domain.' CME filings hosted there are the E.14/E.16 'cme'-grade precedent"
+  },
+  {
+   "site": "onlinelibrary.wiley.com",
+   "url": "https://onlinelibrary.wiley.com/terms-and-conditions",
+   "utc": "2026-10-11T17:41:28Z",
+   "ruling": "terms-forbid: 'Users shall not: * Use any scraper, crawler, spider, robot or other automated means of any kind to access or copy this site, Wiley Online Library ... * Use or enable artificial intelligence technologies and tools to ingest, ...'. No article fetched from Wiley"
+  },
+  {
+   "site": "ideals.illinois.edu",
+   "url": "https://www.ideals.illinois.edu/robots.txt; https://guides.library.illinois.edu/ideals/access_and_use_policy",
+   "utc": "2026-10-11T17:42:36Z",
+   "ruling": "allowed: robots disallows only /admin, /auth, /handle, /login, /oai-pmh etc. (not /items); policy: 'A primary mission of IDEALS is to provide access ... In order to meet this mission, IDEALS disseminates its contents through as many means possible including: Facilitating the indexing of both metadata and items by search engines'. Item 'Copyright 2022 Xinyue He'; used for quotation only"
+  },
+  {
+   "site": "esmis.nal.usda.gov",
+   "url": "https://esmis.nal.usda.gov/robots.txt",
+   "utc": "2026-10-11T17:44:04Z",
+   "ruling": "allowed: release-files path not disallowed; USDA federal publication"
+  },
+  {
+   "site": "govinfo.gov",
+   "url": "https://www.govinfo.gov/robots.txt",
+   "utc": "2026-10-11T17:44:40Z",
+   "ruling": "allowed: /content not disallowed; US Code is a federal government work"
+  },
+  {
+   "site": "uscode.house.gov",
+   "url": "https://uscode.house.gov/robots.txt",
+   "utc": "2026-10-11T17:44:20Z",
+   "ruling": "allowed (robots disallows only /500 for Slurp); page returned a server error"
+  },
+  {
+   "site": "api.openalex.org",
+   "url": "https://api.openalex.org (metadata API)",
+   "utc": "2026-10-11T17:39:53Z",
+   "ruling": "used for discovery and metadata only (OpenAlex data is CC0); no full text from it"
+  }
+ ],
+ "budget_notices": [
+  "WebSearch calls used: 17 of about 50; no over-budget notice. A PostToolUse hook printed 'COST CRITICAL: session total ~$129.01 (over $50). Informational only' at about 2026-10-11T17:45Z; treated as informational (brief section 8)."
+ ],
+ "unfinished": [
+  "Janardanan, Qiao, Rouwenhorst (JFM 2019) and the published He and Serra (AJAE 2022) and He, Serra, Garcia (AJAE 2021) not fetched: Wiley terms forbid automated access; E3-E5 come from the IDEALS dissertation (working versions; published numbers may differ). Class-level papers belong to the LE reader.",
+  "Aalto thesis lean-hog rows: not read here; see shared/aalto_thesis_notes.md (ZN reader), not on disk at writing time.",
+  "Livestock-class evidence: see shared/livestock_class_notes.md (LE reader), not on disk at writing time.",
+  "WASDE / Crop Production calendars for 2017-07..2019-04: none found on disk; see shared/grains_class_notes.md and shared/macro_calendars.md.",
+  "HE limit history 2015-2020: only one search for a 2016-2019 amendment; CFTC approval and effective date of CME 20-112 not verified (frozen-table flag for 2020-04-13..04-21).",
+  "Whether any Quarterly Hogs and Pigs report was released at noon ET (inside the session) in either window: undetermined (NASS calendars not read).",
+  "No post-2015 study of intraday lean-hog response to LMR or Hogs and Pigs reports was found (6 searches + OpenAlex); unknown, not rejected.",
+  "Deviation: one grep -l over data/ for 'wasde' printed four script file names under data/vendor/release_pages/commodity_scripts/ (names only, no contents shown)."
+ ],
+ "nq_only": null
+}

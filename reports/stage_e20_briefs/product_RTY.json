@@ -1,0 +1,1091 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "RTY",
+ "reader": "ProductReader-RTY-OpusHigh",
+ "finished_utc": "2026-10-11T17:53:43Z",
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "Rest-of-day to last half-hour momentum (ROD -> LH), Russell 2000 futures",
+   "rule": "r_ROD = P(LH start = 15:30 ET)/P(prior close 16:00 ET) - 1; regress r_LH on r_ROD (trade: sign of r_ROD, hold 15:30-16:00 ET)",
+   "hold": "30 min (14:30-15:00 CT)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "beta 6.00 (x100): about 6.0 bp of LH return per 1% of r_ROD = 12 M2K ticks per 1% at L=2,000. Per-trade mean needs mean |r_ROD| for ER, not reported; not derived. M2K: $5 x index, tick 0.10 pt = $0.50 (CME filing ptc041519cmedcm003 lines 125, 161). 1 bp of notional = L x 1e-4 pt = L/1000 ticks; at L = 2,000 (Russell 2000 first above 2,000 on 2020-12-23, Wikipedia) 1 bp = 2 ticks = $1; range over the search window about 1,500-2,400 gives 1.5-2.4 ticks per bp.",
+   "gross_or_net": "gross",
+   "sample": "ER (Russell 2000 ICE/CME, regular before mini), 1993-02-08..2020-05-01, 6,746 obs, 1-min bars, 09:30-16:00 ET",
+   "decay_evidence": "Paper's own R2_OOS 3.15%; post-2020 for ER: none found. Equity post-2020: Adams et al. (E8), SPX retest (E9) point to weakening. Full portfolio and decay figures: NQ reader shared/baltussen_notes.md",
+   "source": "Baltussen, Da, Lammers, Martens, J. Financial Economics 142 (2021) 377-403, Table B1 Panel B",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0304405X21001598 (copy: E.13 on-disk version of record)",
+   "quote": "| ER | 8.17*** (4.62) | 2.38 | 2.21*** | 7.79*** (4.54) | 3.61*** (3.15) | 12.27** (2.17) | 3.91 | 3.33*** | 6.00*** (5.86) | 3.35 | 3.15*** |",
+   "quote_location": "Table B1 Panel B (individual equity index futures), copy line 3431; caption: 'Adjusted R2, R2_OOS, and slope coefficients are multiplied by 100'",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E2",
+   "effect": "Overnight-plus-first-half-hour to last half-hour (ONFH -> LH), Russell 2000 futures",
+   "rule": "r_ONFH = P(10:00 ET)/P(prior close) - 1 predicts r_LH",
+   "hold": "30 min (14:30-15:00 CT)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "beta 8.17 (x100): about 8.2 bp per 1% of r_ONFH. M2K: $5 x index, tick 0.10 pt = $0.50 (CME filing ptc041519cmedcm003 lines 125, 161). 1 bp of notional = L x 1e-4 pt = L/1000 ticks; at L = 2,000 (Russell 2000 first above 2,000 on 2020-12-23, Wikipedia) 1 bp = 2 ticks = $1; range over the search window about 1,500-2,400 gives 1.5-2.4 ticks per bp.",
+   "gross_or_net": "gross",
+   "sample": "ER 1993-02-08..2020-05-01",
+   "decay_evidence": "R2_OOS 2.21% for ER, but ES ONFH R2_OOS -1.68% in the same table; the program's CP1 port (this ONFH form) already failed (V34 item 2)",
+   "source": "Baltussen et al. (2021) Table B1 Panel B",
+   "url": "(as E1)",
+   "quote": "(same ER row as E1: 'ER | 8.17*** (4.62) | 2.38 | 2.21***')",
+   "quote_location": "Table B1 Panel B, line 3431",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E3",
+   "effect": "First half-hour (ONFH) sign -> last half-hour, SPY",
+   "rule": "Long at 15:30 ET if r1 > 0, short if r1 <= 0, r1 = P(10:00 ET)/P(previous close) - 1; close at 16:00 ET",
+   "hold": "30 min",
+   "gross_per_trade_bp": 2.65,
+   "gross_per_trade_ticks": 5.3,
+   "conversion": "Derived: 6.67%/yr / 252 = 2.65 bp per trade (paper annualizes the daily trade like a daily return). M2K: $5 x index, tick 0.10 pt = $0.50 (CME filing ptc041519cmedcm003 lines 125, 161). 1 bp of notional = L x 1e-4 pt = L/1000 ticks; at L = 2,000 (Russell 2000 first above 2,000 on 2020-12-23, Wikipedia) 1 bp = 2 ticks = $1; range over the search window about 1,500-2,400 gives 1.5-2.4 ticks per bp.",
+   "gross_or_net": "gross",
+   "sample": "SPY, 1993-02-01..2013-12-31, half-hour TAQ returns",
+   "decay_evidence": "None post-2013 in the paper. Later: ONFH form weak OOS (Baltussen ES R2_OOS -1.68%); Rosa 2022 OOS failure (NQ reader); Liu-Tse 2017 [unverified]",
+   "source": "Gao, Han, Li, Zhou, J. Financial Economics 129 (2018) 394-414; read as working paper Dec 2015",
+   "url": "https://c.mql5.com/forextsd/forum/173/intraday_momentum_-_the_first_half-hour_return_predicts_the_last_half-hour_return.pdf",
+   "quote": "the average return of the timing strategy using the sign of the first half-hour return is 6.67% per annum with a standard deviation of 6.19%. The Sharpe ratio is thus 1.08",
+   "quote_location": "Introduction p. 1; rule Sec. 3.1 eq. (4)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/shared/gao_han_li_zhou_wp2015_mql5.pdf",
+   "sha256": "050d5680d1424a5f53aeb175de283bc796b130be3874abf319aa1980941cc374"
+  },
+  {
+   "id": "E4",
+   "effect": "E3 after bid-ask spread costs",
+   "rule": "As E3, long at the ask, short at the bid at 15:30 ET; closing price at 16:00",
+   "hold": "30 min",
+   "gross_per_trade_bp": 3.16,
+   "gross_per_trade_ticks": 6.32,
+   "conversion": "Derived 2005-2013: gross 7.96/252 = 3.16 bp, net of spread 6.52/252 = 2.59 bp (5.17 ticks at L=2,000); commissions ignored by the paper. M2K: $5 x index, tick 0.10 pt = $0.50 (CME filing ptc041519cmedcm003 lines 125, 161). 1 bp of notional = L x 1e-4 pt = L/1000 ticks; at L = 2,000 (Russell 2000 first above 2,000 on 2020-12-23, Wikipedia) 1 bp = 2 ticks = $1; range over the search window about 1,500-2,400 gives 1.5-2.4 ticks per bp.",
+   "gross_or_net": "net",
+   "sample": "SPY, 2005-01-01..2013-12-31 (Panel B); 2001-07-01.. (Panel A: 4.46%/yr net)",
+   "decay_evidence": "Spread stabilized near 1.2 bp after 2005 (Sec. 5.2)",
+   "source": "Gao et al. (2015 WP) Table 10",
+   "url": "(as E3)",
+   "quote": "The average return of market timing using the first half-hour return is 6.52% after transaction costs compared with 7.96% before transaction costs.",
+   "quote_location": "Sec. 5.2, Table 10 Panel B",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/shared/gao_han_li_zhou_wp2015_mql5.pdf",
+   "sha256": "050d5680d1424a5f53aeb175de283bc796b130be3874abf319aa1980941cc374"
+  },
+  {
+   "id": "E5",
+   "effect": "First half-hour -> last half-hour, IWM (Russell 2000 ETF), mean-variance form",
+   "rule": "Recursive forecast of r13 from r1; constrained mean-variance weights in [-0.5, 1.5], risk aversion 5",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "Not convertible (variable weights). Same-method SPY figure: 6.85%/yr (Table 6), so IWM's 11.72%/yr is larger on the same method, different sample",
+   "gross_or_net": "gross",
+   "sample": "IWM 2000-05-26..2013-12-31",
+   "decay_evidence": "None post-2013",
+   "source": "Gao et al. (2015 WP) Table 12 Panel A",
+   "url": "(as E3)",
+   "quote": "IWM       11.72***        7.70         2.51          2.43       11.72",
+   "quote_location": "Table 12 Panel A (Avg Ret, Std Dev, INS R2, OOS R2, CER, all %); t = 5.18",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/shared/gao_han_li_zhou_wp2015_mql5.pdf",
+   "sha256": "050d5680d1424a5f53aeb175de283bc796b130be3874abf319aa1980941cc374"
+  },
+  {
+   "id": "E6",
+   "effect": "First half-hour sign -> last half-hour on FOMC statement days, SPY",
+   "rule": "E3's rule applied only on FOMC release days",
+   "hold": "30 min",
+   "gross_per_trade_bp": 7.95,
+   "gross_per_trade_ticks": 15.9,
+   "conversion": "Derived: 20.04%/yr / 252 = 7.95 bp per FOMC-day trade (non-release days 6.24/252 = 2.48 bp). M2K: $5 x index, tick 0.10 pt = $0.50 (CME filing ptc041519cmedcm003 lines 125, 161). 1 bp of notional = L x 1e-4 pt = L/1000 ticks; at L = 2,000 (Russell 2000 first above 2,000 on 2020-12-23, Wikipedia) 1 bp = 2 ticks = $1; range over the search window about 1,500-2,400 gives 1.5-2.4 ticks per bp.",
+   "gross_or_net": "gross",
+   "sample": "SPY 1993-02-01..2013-12-31, about 8 FOMC days a year (about 165 trades)",
+   "decay_evidence": "None post-2013. Related pre-FOMC drift disappeared after 2015 (E11, abstract only)",
+   "source": "Gao et al. (2015 WP) Table 8 Panel B",
+   "url": "(as E3)",
+   "quote": "Release            FOMC           20.04**               5.84             3.43",
+   "quote_location": "Table 8 Panel B (Avg Ret %/yr, Std Dev, Sharpe; t 2.46). Text Sec. 4.2: 'The annualized average return reaches a high level of 20.04%.' Paper says 'FOMC minutes ... 2:15pm about every six weeks' (statement timing; ambiguity noted)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/shared/gao_han_li_zhou_wp2015_mql5.pdf",
+   "sha256": "050d5680d1424a5f53aeb175de283bc796b130be3874abf319aa1980941cc374"
+  },
+  {
+   "id": "E7",
+   "effect": "Intraday time-series momentum, US (S&P 500 cash index)",
+   "rule": "Long (short) at the start of the last half hour if the first half-hour return is positive (negative); close at the market close",
+   "hold": "30 min",
+   "gross_per_trade_bp": 2.61,
+   "gross_per_trade_ticks": 5.22,
+   "conversion": "Derived: 6.567%/yr / 252 = 2.61 bp; cash index, not tradable directly. M2K: $5 x index, tick 0.10 pt = $0.50 (CME filing ptc041519cmedcm003 lines 125, 161). 1 bp of notional = L x 1e-4 pt = L/1000 ticks; at L = 2,000 (Russell 2000 first above 2,000 on 2020-12-23, Wikipedia) 1 bp = 2 ticks = $1; range over the search window about 1,500-2,400 gives 1.5-2.4 ticks per bp.",
+   "gross_or_net": "gross",
+   "sample": "S&P 500 index (.SPX 09:30-16:00), 2005-10-04..2017-12-29, 1-min data",
+   "decay_evidence": "Paper reports OOS significance in most countries; no post-2017 data",
+   "source": "Li, Sakkas, Urquhart, J. Financial Markets 57 (2022) 100619 (accepted manuscript)",
+   "url": "https://centaur.reading.ac.uk/95566/1/Accepted-Version.pdf",
+   "quote": "US         ITSM     6.567    5.892     0.086     3.099     1.115",
+   "quote_location": "Strategy performance table (Mean, SD, Skewness, Kurtosis, Sharpe; annualized), txt line 1994",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/shared/li_sakkas_urquhart_2022_accepted.pdf",
+   "sha256": "39add97e355b49c01ac9d5f0ba76a584fb593e8ec293545127e5c60ca2830bee"
+  },
+  {
+   "id": "E8",
+   "effect": "Hourly momentum vs market-maker net gamma, E-mini S&P",
+   "rule": "Momentum return R(t,t+n) - R(t-n-1,t-1) by quartile of SPX market makers' net gamma (180-day backward quartiles), 10-min marks",
+   "hold": "10-120 min",
+   "gross_per_trade_bp": -1.144,
+   "gross_per_trade_ticks": null,
+   "conversion": "Q4 (high gamma) at 60 min: -1.144 bp; Q1: +0.633 bp; Q4-Q1: -1.777 bp. ES-based; needs SPX option-position data (not a bar of the 17 roots)",
+   "gross_or_net": "gross",
+   "sample": "ES, 01/2018..12/2024, 09:30-16:00 ET",
+   "decay_evidence": "This is itself post-2018 evidence: momentum turns to reversal when hedging needs are high",
+   "source": "Adams, Dim, Eraker, Fontaine, Ornthanalai, Vilkov, 'Do S&P 500 Options Increase Market Volatility? Evidence from 0DTEs', draft July 15, 2026",
+   "url": "https://www.jean-sebastienfontaine.com/papers/0dte-options-volatility.pdf",
+   "quote": "60 0.633* 0.087 -0.271 -1.144** -1.777***",
+   "quote_location": "Table 7 (rows by horizon in minutes; Q1, Q2, Q3, Q4, Q4-Q1); text Sec. 4.4: 'negative momentum returns (or positive reversal returns) of around 1-2 bps'",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/shared/adams_etal_0dte_fontaine.pdf",
+   "sha256": "6b256ade06bd64282dd8cfd4855521dfb1b0f404b687c0191c0edd61d73791ea"
+  },
+  {
+   "id": "E9",
+   "effect": "ROD -> LH retest on SPX in the 0DTE era (UNREVIEWED)",
+   "rule": "Rest-of-day return (open to close-30) vs last-30-minute return, one obs per day",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "Slope only",
+   "gross_or_net": "gross",
+   "sample": "SPX, 1,085 sessions 2022-04-14..2026-08-20",
+   "decay_evidence": "Unconditional slope +0.006 (t 0.6), flat each year; +0.055 (t 3.1) on short-gamma closes (15% of sessions)",
+   "source": "firmtape, dev.to blog post, 2026-08-27 (unreviewed practitioner)",
+   "url": "https://dev.to/firmtape/intraday-momentum-is-dead-in-the-0dte-era-we-measured-it-on-1085-spx-sessions-43g0",
+   "quote": "all 1,085 +0.006 +/- 0.009 +0.6 ... Flat overall, flat in every single year, signs alternating.",
+   "quote_location": "Post body, table 'The unconditional effect is gone' (cells flattened in the extract)",
+   "grade": "unverified",
+   "saved_path": "reports/stage_e20_briefs/shared/devto_firmtape_spx_retest.html",
+   "sha256": "7b66ef35a5dbd9b1c761128166f8d499248fd86fc329b8b0a773ffb993494d96"
+  },
+  {
+   "id": "E10",
+   "effect": "Pre-FOMC announcement drift, S&P 500",
+   "rule": "Long SPX before scheduled FOMC statements (24-hour window ending at the statement)",
+   "hold": "24 h (includes overnight); intraday portion on the FOMC morning not tabulated",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "49 bp per event over 24 h (98 ticks at L=2,000), but that window is not an intraday hold; the morning-only share is unsized",
+   "gross_or_net": "gross",
+   "sample": "SPX 1994-09..2011-03, 131 scheduled meetings (intraday)",
+   "decay_evidence": "E11: essentially disappeared after 2015 (abstract)",
+   "source": "Lucca and Moench, NY Fed Staff Report 512 (rev. 2013); J. Finance 70 (2015)",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr512.pdf",
+   "quote": "since 1994, the S&P500 index has on average increased 49 basis points in the 24 hours before scheduled FOMC announcements. These returns do not revert in subsequent trading days",
+   "quote_location": "Abstract page; intraday shape Sec. 3.1: 'it then drifts sharply higher in the morning of scheduled FOMC announcements'",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/shared/lucca_moench_sr512.pdf",
+   "sha256": "c7cb0f335c60cb9fc305189935fb7c51e98fa8461c2b33efd51eb5a5c3f2e34b"
+  },
+  {
+   "id": "E11",
+   "effect": "Pre-FOMC drift after 2015 (decay)",
+   "rule": "As E10, sample extended to 2019-12",
+   "hold": "24 h",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "Unsized in the abstract",
+   "gross_or_net": "unknown",
+   "sample": "US equities 1994-09..2019-12",
+   "decay_evidence": "'essentially disappeared after 2015'",
+   "source": "Kurov, Wolfe, Gilbert, Finance Research Letters 40 (2021)",
+   "url": "https://ideas.repec.org/a/eee/finlet/v40y2021ics1544612320315956.html",
+   "quote": "the pre-FOMC drift essentially disappeared after 2015 in both announcements accompanied by press conferences and announcements not accompanied by press conferences.",
+   "quote_location": "Abstract (IDEAS record); full text not retrieved (Skidmore copy 404)",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/shared/ideas_kurov_wolfe_gilbert_2021.html",
+   "sha256": "a55f8ef6bd4fd27a1d81cb50a4c427b8243b705fc03e87874e051cd687f77201"
+  },
+  {
+   "id": "E12",
+   "effect": "End-of-day momentum/reversal from LETF rebalancing and option gamma imbalance (single stocks)",
+   "rule": "Cross-sectional; last-half-hour returns vs LETF rebalancing demand and market-maker gamma imbalance",
+   "hold": "to the close",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "Stocks, not index futures; not converted",
+   "gross_or_net": "gross",
+   "sample": "US stocks 2005-05..2020-07",
+   "decay_evidence": "'significant in all subsamples between 2012 and 2019'; LETF effect 'remained constant'",
+   "source": "Barbon, Beckmeyer, Buraschi, Moerke, S/BF-HSG WP 2021/14",
+   "url": "https://www.alexandria.unisg.ch/server/api/core/bitstreams/5a99db31-0d37-4f86-9502-8cb0f3bff4fe/content",
+   "quote": "we find that the impact of delta-hedging has increased over time, whereas it remained constant for leveraged ETF rebalancing.",
+   "quote_location": "Introduction, txt lines 306-308",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/shared/barbon_beckmeyer_buraschi_moerke_letf.pdf",
+   "sha256": "4c2cbcd35d990144a1f859b511831530b5bba99a7a520ceb373fae7c5eb407d6"
+  },
+  {
+   "id": "E13",
+   "effect": "Noise-area intraday momentum, SPY (V34 dropped as unsized)",
+   "rule": "Bands = open +/- trailing 14-day average absolute move from the open at each minute; entries on half-hour marks; flat by the close",
+   "hold": "intraday, variable",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "No per-trade figure reported; unlevered 6.2%/yr net",
+   "gross_or_net": "net",
+   "sample": "SPY 2007..early 2024",
+   "decay_evidence": "Not reported per period here",
+   "source": "Zarattini, Aziz, Barbon, 'Beat the Market', WP (2024-05-10; 2025-02-03 version)",
+   "url": "https://alexandria.unisg.ch/server/api/core/bitstreams/a99aba00-f967-49b3-aceb-f544dc386e0b/content",
+   "quote": "Momentum         Opp.Band    100%    178%    6.2%   10.9%    0.61    54%",
+   "quote_location": "Table 1 (total return, IRR, vol, Sharpe, hit ratio)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/shared/zarattini_aziz_barbon_beat_the_market.pdf",
+   "sha256": "41d635d162551c4add329d2a11cd9571aea391befd00e472ed81c0070bb207ad"
+  },
+  {
+   "id": "E14",
+   "effect": "Overnight return -> last half-hour; first half-hour not predictive (ETFs, 12 index futures)",
+   "rule": "n/a",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "n/a",
+   "gross_or_net": "unknown",
+   "sample": "1999-2014 (search snippet)",
+   "decay_evidence": "n/a",
+   "source": "Liu and Tse, Int. Rev. Economics and Finance 48 (2017)",
+   "url": "https://doi.org/10.1016/j.iref.2017.01.005",
+   "quote": "",
+   "quote_location": "Not retrieved (SelectedWorks retired); search-result summary only",
+   "grade": "unverified",
+   "saved_path": "",
+   "sha256": ""
+  },
+  {
+   "id": "E15",
+   "effect": "Intraday momentum and reversal in 20 equity, bond and FX futures, 2008-01..2024-10 (Aalto thesis)",
+   "rule": "n/a",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "No figures available",
+   "gross_or_net": "unknown",
+   "sample": "20 futures, 2008-2024",
+   "decay_evidence": "Abstract: patterns persist, trading 'may not be feasible' after costs",
+   "source": "Majorin (Aalto University thesis, 2025); shared, see shared/aalto_thesis_notes.md (ZN reader)",
+   "url": "https://aaltodoc.aalto.fi/items/1011f043-edd1-4cb2-9694-b1216d77561f",
+   "quote": "",
+   "quote_location": "[shared, see reports/stage_e20_briefs/shared/aalto_thesis_notes.md]",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/shared/aalto_thesis_notes.md",
+   "sha256": "64b1f49432eb03365cfdc79ad348ce76ff6077eb5efc31b4ed5dcad56d1a364d"
+  }
+ ],
+ "availability": [
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar (O, C, first-bar rule)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2017-07-10..2019-05-05 (RTY not on CME before); 2019-05-06..2024-02-29",
+   "basis": "RTY first CME trade date 2017-07-10 (E.16 S04 CME 17-110; confirmed by CFTC-hosted Nadex filing ptc062517nadexdcm001); E.16 backward window 2017-06-01..2019-05-05; calendars data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced), data/calendars/equity.py (2019-05-01..2026-06-19)",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2017-07-10..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "RTY first CME trade date 2017-07-10 (E.16 S04 CME 17-110; confirmed by CFTC-hosted Nadex filing ptc062517nadexdcm001); E.16 backward window 2017-06-01..2019-05-05; data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced), data/calendars/equity.py (2019-05-01..2026-06-19)",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2017-07-10..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "RTY first CME trade date 2017-07-10 (E.16 S04 CME 17-110; confirmed by CFTC-hosted Nadex filing ptc062517nadexdcm001); E.16 backward window 2017-06-01..2019-05-05; data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced), data/calendars/equity.py (2019-05-01..2026-06-19)",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "from 2017-07-11 (needs a prior complete RTY date); 2019-05-06..2024-02-29",
+   "basis": "RTY first CME trade date 2017-07-10 (E.16 S04 CME 17-110; confirmed by CFTC-hosted Nadex filing ptc062517nadexdcm001); E.16 backward window 2017-06-01..2019-05-05; data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced), data/calendars/equity.py (2019-05-01..2026-06-19)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g01_ret30 .. g04_ret_day (G1-G4)",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar",
+    "sigma_X,d (20 prior dates)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "from about 2017-08-07 (21st RTY trade date; sigma needs 20 dates); 2019-05-06..2024-02-29",
+   "basis": "RTY bars from 2017-07-10 only; trade dates counted from data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced) (weekdays minus full closures; early-halt dates have no rows, so milestones move a few days later)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap (G5)",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar (previous trade date, C_X)",
+    "sigma_X,d"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "from about 2017-08-07; not applicable after early-halt dates (reading SG-4)",
+   "basis": "RTY bars from 2017-07-10 only; data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced); data/calendars/equity.py (2019-05-01..2026-06-19)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06_rv60 (G6)",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "from about 2017-08-07 (mean over 20 previous row dates)",
+   "basis": "RTY bars from 2017-07-10 only; data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g07_range (G7)",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar",
+    "sigma_X,d"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "from about 2017-08-07",
+   "basis": "RTY bars from 2017-07-10 only; data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g08_prev_ret (G8)",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar",
+    "sigma_X,d"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "from about 2017-08-07",
+   "basis": "RTY bars from 2017-07-10 only; data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g09_vol_state (G9)",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar",
+    "sigma_X,d",
+    "120-date median"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "from about 2018-01-24 (141st RTY trade date); search window from start (lookback reaches back into 2018-2019)",
+   "basis": "RTY bars from 2017-07-10 only; data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g10_logvol30 (G10)",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "from about 2017-08-07 (20 previous row dates)",
+   "basis": "RTY bars from 2017-07-10 only; data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11_t_index, g12_dow, g16_month_end (G11, G12, G16)",
+   "legs": [
+    "RTY (rows only)"
+   ],
+   "calendars": [
+    "equity group calendar"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "calendar covers 2010-06-01..2019-05-31, but RTY rows exist only from 2017-07-10",
+   "basis": "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced); data/calendars/equity.py (2019-05-01..2026-06-19)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel, g14_min_since_rel, g15_rel_day (G13-G15)",
+   "legs": [
+    "RTY (rows only)"
+   ],
+   "calendars": [
+    "frozen release calendar, M2K D8 list: NFP, FOMC, ISM_SERVICES"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019: only FOMC on file (E.14, 15 statements in 2017-07-10..2019-05-05); NFP and ISM_SERVICES have no 2010-2019 file. 2019-2024: 151 releases in window (NFP 57, FOMC 37, ISM_SERVICES 57)",
+   "basis": "reports/stage_e2b_release_calendar.json coverage 2019-05-01..2026-06-21; reports/stage_e14_cal_releases.json 2010-06-01..2019-05-31 (NGS, WPSR, FOMC only)",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md"
+  },
+  {
+   "feature": "k9_anncday",
+   "legs": [
+    "RTY (M2K rows)"
+   ],
+   "calendars": [
+    "EC-K9 date set (FOMC, NFP, GDP first/last, ISM manufacturing, earlier of CPI/PPI)"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "2019-05-01..2024-02-29, 240 dates, no uncovered span; no 2010-2019 file (FOMC component only)",
+   "basis": "reports/stage_e12_ec_k9_2019_2024.json window 2019-05-01..2024-02-29",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md"
+  },
+  {
+   "feature": "g17_nq",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "no",
+   "dates": "not applicable on RTY rows by design: the lead of RTY's own cluster K1 is excluded (generic.py _lead: ok &= view.cluster != own_cluster)",
+   "basis": "code, ml_route_v2/signals/generic.py lines 339-357; constants.CLUSTER_LEADS K1 = NQ",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_zn",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "ZN listing"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "applies on RTY rows; lead-leg listing audited by the ZN reader",
+   "basis": "G17 lead audit is the lead root's reader's (brief section 7)",
+   "shared_ref": "reports/stage_e20_briefs/product_ZN.md"
+  },
+  {
+   "feature": "g17_6e",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "6E listing"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "applies on RTY rows; audited by the 6E reader",
+   "basis": "brief section 7",
+   "shared_ref": "reports/stage_e20_briefs/product_6E.md"
+  },
+  {
+   "feature": "g17_cl",
+   "legs": [
+    "CL"
+   ],
+   "calendars": [
+    "CL listing"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "applies on RTY rows; audited by the CL reader",
+   "basis": "brief section 7",
+   "shared_ref": "reports/stage_e20_briefs/product_CL.md"
+  },
+  {
+   "feature": "g17_gc",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "GC listing"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "applies on RTY rows; audited by the GC reader",
+   "basis": "brief section 7",
+   "shared_ref": "reports/stage_e20_briefs/product_GC.md"
+  },
+  {
+   "feature": "g17_zc",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "ZC listing"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "applies on RTY rows; audited by the ZC reader",
+   "basis": "brief section 7",
+   "shared_ref": "reports/stage_e20_briefs/product_ZC.md"
+  },
+  {
+   "feature": "g17_mes",
+   "legs": [
+    "MES (not one of the 17 roots)"
+   ],
+   "calendars": [
+    "MES listing"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "MES first trade date 2019-05-06 (CME/CBOT self-certification, CFTC ptc041519cmedcm003 line 77: 'effective on Sunday, May 5, 2019, for trade date Monday, May 6, 2019'); leg outside the 17 roots",
+   "basis": "CFTC-hosted CME filing, fetched 2026-10-11T17:46:01Z",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mbt",
+   "legs": [
+    "MBT (not one of the 17 roots)"
+   ],
+   "calendars": [
+    "MBT listing"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MBT listed 2021 (brief section 7); leg outside the 17 roots; not verified by this reader",
+   "basis": "brief section 7 (not re-verified)",
+   "shared_ref": null
+  },
+  {
+   "feature": "r_rod, r_rod_abs_ratio (added by the E.20 prompt; context only)",
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "equity group calendar C = 15:00 CT",
+    "60 previous trade dates"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "r_rod from 2017-07-11 (needs prior close); |r_ROD| ratio from about 2017-10-02 (61st RTY trade date)",
+   "basis": "RTY bars from 2017-07-10 only; data/calendars/hist2010/equity.json (2010-06-01..2019-05-31, 0 unsourced)",
+   "shared_ref": null
+  },
+  {
+   "feature": "k1_vwap_dist, k1_vxn_regime, k1_vxn_band, k8_wkndbtc_move",
+   "legs": [
+    "NQ / MBT"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "no",
+   "dates": "not applicable on RTY rows: these apply on MNQ rows only (E.11 coverage table)",
+   "basis": "reports/stage_e11_signal_coverage.md section 2",
+   "shared_ref": null
+  }
+ ],
+ "proposed_features": [
+  {
+   "name": "fomc_r1",
+   "source": "Gao, Han, Li, Zhou (JFE 2018; Dec 2015 WP read), Table 8 Panel B and Sec. 3.1",
+   "quote": "Release            FOMC           20.04**               5.84             3.43 | rule: 'we will take a long position in the market at the beginning of the last half-hour if the timing signal is positive, and take a short position otherwise ... the position (long or short) is closed at the market close' | r1: 'we calculate the first half-hour return using previous day's close price and the price at 10:00am Eastern time'",
+   "formula": "On RTY rows of trade date d: if d is a scheduled FOMC statement date in the FOMC calendar (E.14 2010-06-01..2019-05-31; frozen release calendar 2019-05-01..2026-06-21, release FOMC), value = close(bar b_{08:59 CT}, the bar closing 09:00 CT on d) / close(bar b_{C-1}, closing at C_X = 15:00 CT on the previous trade date of the equity group calendar) - 1, applicability flag 1; otherwise value 0, flag 0. Direction used by the paper: sign(value). Not applicable when the previous date is an early-halt date (no C_X close, as G5) or when either bar is absent (missing, row excluded).",
+   "decision_times": [
+    "t4"
+   ],
+   "horizons": [
+    "h60",
+    "F"
+   ],
+   "legs": [
+    "RTY"
+   ],
+   "calendars": [
+    "FOMC statement calendar: reports/stage_e14_cal_releases.json (FOMC rows) and reports/stage_e2b_release_calendar.json (FOMC rows)",
+    "equity group calendar: data/calendars/hist2010/equity.json, data/calendars/equity.py"
+   ],
+   "available_both_windows": true,
+   "expected_gross_per_trade_ticks": 15.9,
+   "derivation": "Published: 20.04%/yr on FOMC-day trades, annualized like a daily return, so 20.04/252 = 7.95 bp per trade gross (SPY, LH 15:30-16:00 ET, 1993-2013, about 165 events, t 2.46). M2K ticks per bp = L/1000: at L = 1,500 / 2,000 / 2,400 that is 11.9 / 15.9 / 19.1 ticks; D8 RT 6.346 ticks ($3.17), ratio 1.88 / 2.51 / 3.01. Caveats that lower the expectation: (a) SPY, not Russell (Gao Table 12: IWM's unconditional first-half-hour effect is larger than SPY's on the same mean-variance method, 11.72 vs 6.85 %/yr, different samples); (b) t4 with h60 = F holds 14:09-15:08 CT, 59 minutes, not the paper's 14:30-15:00 CT, and includes 15:00-15:08 after the cash close; (c) no post-2013 test of the FOMC interaction; the ONFH form weakens out of sample in later work (Baltussen Table B1 ES R2_OOS -1.68%; Rosa 2022, NQ reader) and the related pre-FOMC drift 'essentially disappeared after 2015' (Kurov et al. 2021, abstract only); (d) about 15 FOMC dates in RTY's backward window (2017-07-11..2019-05-05) and 37 in the search window; (e) the paper calls the dates 'FOMC minutes' while giving statement timing.",
+   "d8_rt_ticks": 6.346,
+   "ratio_to_d8": 2.51,
+   "clears_1p5x": true
+  }
+ ],
+ "shared_notes_written": [
+  "reports/stage_e20_briefs/shared/equity_class_notes.md",
+  "reports/stage_e20_briefs/shared/macro_calendars.md"
+ ],
+ "listing_check": {
+  "claim": "RTY: no CME unit before 2017-07-10 (E.16 R-S4)",
+  "verified": true,
+  "source": "CFTC-hosted Nadex rule certification dated 2017-06-22 (https://www.cftc.gov/filings/ptc/ptc062517nadexdcm001.pdf, fetched 2026-10-11T17:37:57Z, sha256 802b02d2d46dc098ffe531108ccbad3838fc4eb08b3bab1cdffb88b13e7d015e)",
+  "quote": "On April 12, 2017, CME announced that beginning on July 10, 2017, it would list futures (and options) contracts based on the Russell 2000 Index, including the E-mini® Russell 2000® Index Futures. The E-mini Russell 2000 Index Futures currently serves as the underlying asset class for the Nadex US SmallCap 2000 contracts, and is traded on ICE.",
+  "corroboration": "E.16's CME 17-110 copy (reports/stage_e16_briefs/pages/settlement/cftc_ptc041317cmedcm009.pdf.txt line 76): 'CME ClearPort effective on Sunday, July 9, 2017, for trade date of Monday, July 10, 2017.'",
+  "m2k_listing": "M2K (and MES) first trade date 2019-05-06 (CFTC ptc041519cmedcm003 line 77)"
+ },
+ "fetch_log": [
+  {
+   "url": "https://www.cftc.gov/robots.txt",
+   "utc": "2026-10-11T17:37:33Z",
+   "sha256": "1d500ec03ef610b457287a8e55e6ad2f83a7bb888a630325c23573dccdcd81bb",
+   "path": "reports/stage_e20_briefs/pages/RTY/cftc_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.cftc.gov/IndustryOversight/IndustryFilings/PTCDCMRules/36900",
+   "utc": "2026-10-11T17:37:37Z",
+   "sha256": "d2a57ce085d1a57894c5718961ed7b71dc5ba531dabaa3cabb1913cef3d1363f",
+   "path": "reports/stage_e20_briefs/pages/RTY/cftc_ptcdcm_36900.html",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://origin-website-prod.nadex.com/robots.txt",
+   "utc": "2026-10-11T17:37:37Z",
+   "sha256": "6384c100d405a10269d60bc3ce95a639df24c169d66c395396c0e2b336d54e91",
+   "path": "reports/stage_e20_briefs/pages/RTY/nadex_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.cftc.gov/filings/ptc/ptc062517nadexdcm001.pdf",
+   "utc": "2026-10-11T17:37:57Z",
+   "sha256": "802b02d2d46dc098ffe531108ccbad3838fc4eb08b3bab1cdffb88b13e7d015e",
+   "path": "reports/stage_e20_briefs/pages/RTY/cftc_ptc062517nadexdcm001.pdf",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.jean-sebastienfontaine.com/robots.txt",
+   "utc": "2026-10-11T17:38:20Z",
+   "sha256": "b620507312c5e97566a3c6cfaf99144fefc18a0da7d941401dfa0f5f58fb0368",
+   "path": "",
+   "status": "blocked",
+   "http": "404"
+  },
+  {
+   "url": "https://www.jean-sebastienfontaine.com/papers/0dte-options-volatility.pdf",
+   "utc": "2026-10-11T17:38:22Z",
+   "sha256": "6b256ade06bd64282dd8cfd4855521dfb1b0f404b687c0191c0edd61d73791ea",
+   "path": "reports/stage_e20_briefs/shared/adams_etal_0dte_fontaine.pdf",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://mpra.ub.uni-muenchen.de/96784",
+   "utc": "2026-10-11T17:38:24Z",
+   "sha256": "b9106e0456c7a32b14ab6e390bf879a312104dda6c024f19b44afd78562bacdb",
+   "path": "reports/stage_e20_briefs/pages/RTY/mpra_96784.html (file deleted: not evidence)",
+   "status": "blocked",
+   "http": "200"
+  },
+  {
+   "url": "https://apps.olin.wustl.edu/robots.txt",
+   "utc": "2026-10-11T17:39:04Z",
+   "sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f",
+   "path": "",
+   "status": "blocked",
+   "http": "404"
+  },
+  {
+   "url": "https://apps.olin.wustl.edu/faculty/zhou/",
+   "utc": "2026-10-11T17:39:07Z",
+   "sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f",
+   "path": "",
+   "status": "blocked",
+   "http": "404"
+  },
+  {
+   "url": "https://c.mql5.com/robots.txt",
+   "utc": "2026-10-11T17:39:29Z",
+   "sha256": "c36fc2650e0adcb6e334c43a415396a7d106d1b9f703f96fd3e557120673994a",
+   "path": "reports/stage_e20_briefs/shared/mql5c_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://c.mql5.com/forextsd/forum/173/intraday_momentum_-_the_first_half-hour_return_predicts_the_last_half-hour_return.pdf",
+   "utc": "2026-10-11T17:39:35Z",
+   "sha256": "050d5680d1424a5f53aeb175de283bc796b130be3874abf319aa1980941cc374",
+   "path": "reports/stage_e20_briefs/shared/gao_han_li_zhou_wp2015_mql5.pdf",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://dev.to/robots.txt",
+   "utc": "2026-10-11T17:40:07Z",
+   "sha256": "983a578c850154f61ee9f3bead038657f65cb9fbed891eddf8e95135989e4855",
+   "path": "reports/stage_e20_briefs/shared/devto_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://dev.to/firmtape/intraday-momentum-is-dead-in-the-0dte-era-we-measured-it-on-1085-spx-sessions-43g0",
+   "utc": "2026-10-11T17:40:09Z",
+   "sha256": "7b66ef35a5dbd9b1c761128166f8d499248fd86fc329b8b0a773ffb993494d96",
+   "path": "reports/stage_e20_briefs/shared/devto_firmtape_spx_retest.html",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://reading-9.eprints-hosting.org/robots.txt",
+   "utc": "2026-10-11T17:40:49Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "http": "000"
+  },
+  {
+   "url": "https://reading-9.eprints-hosting.org/95566/1/Accepted-Version.pdf",
+   "utc": "2026-10-11T17:40:51Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "http": "000"
+  },
+  {
+   "url": "https://eprints.soton.ac.uk/452387",
+   "utc": "2026-10-11T17:40:51Z",
+   "sha256": "311b864268f1a91705990768a27d148261abb997134f45e90b9507c7c63af6e6",
+   "path": "",
+   "status": "blocked",
+   "http": "401"
+  },
+  {
+   "url": "https://centaur.reading.ac.uk/robots.txt",
+   "utc": "2026-10-11T17:40:58Z",
+   "sha256": "6aff9e42de78ed7ab1890d644b228a7db96db8bd0f61e2888777dba468a1460f",
+   "path": "reports/stage_e20_briefs/shared/centaur_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://centaur.reading.ac.uk/95566/1/Accepted-Version.pdf",
+   "utc": "2026-10-11T17:41:00Z",
+   "sha256": "39add97e355b49c01ac9d5f0ba76a584fb593e8ec293545127e5c60ca2830bee",
+   "path": "reports/stage_e20_briefs/shared/li_sakkas_urquhart_2022_accepted.pdf",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.skidmore.edu/robots.txt",
+   "utc": "2026-10-11T17:41:34Z",
+   "sha256": "152feb407061ec207b256da56838677bfb7fce3207c620abb9b9f97b0affad4c",
+   "path": "reports/stage_e20_briefs/shared/skidmore_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.skidmore.edu/economics/documents/KurovWolfeGilbert-TheDisappearingPre-FOMC-Announce-Drift-200914.pdf",
+   "utc": "2026-10-11T17:41:37Z",
+   "sha256": "3d2681bec0d7d4832a67606eac3749d99762ce4382bd12cbe705a5ffa5e621e4",
+   "path": "",
+   "status": "blocked",
+   "http": "404"
+  },
+  {
+   "url": "https://www.skidmore.edu/economics/documents/KurovWolfeGilbert-TheDisappearingPre-FOMC-Announce-Drift-200914.pdf",
+   "utc": "2026-10-11T17:41:53Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "http": "404(scrapling get)"
+  },
+  {
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:42:03Z",
+   "sha256": "4620fbdb346382486937732e10fb82fe1cab79fa1d839d85de8a4798c1702d46",
+   "path": "reports/stage_e20_briefs/shared/ideas_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/finlet/v40y2021ics1544612320315956.html",
+   "utc": "2026-10-11T17:42:06Z",
+   "sha256": "a55f8ef6bd4fd27a1d81cb50a4c427b8243b705fc03e87874e051cd687f77201",
+   "path": "reports/stage_e20_briefs/shared/ideas_kurov_wolfe_gilbert_2021.html",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.efmaefm.org/robots.txt",
+   "utc": "2026-10-11T17:42:28Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "http": "000"
+  },
+  {
+   "url": "https://www.efmaefm.org/0EFMAMEETINGS/EFMA%20ANNUAL%20MEETINGS/2021-Leeds/papers/EFMA%202021_stage-2049_question-Full%20Paper_id-237.pdf",
+   "utc": "2026-10-11T17:42:30Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "http": "000"
+  },
+  {
+   "url": "https://www.efmaefm.org/robots.txt (and EFMA 2021 paper id 237)",
+   "utc": "2026-10-11T17:42:46Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "http": "blocked: TLS chain unverifiable (curl 60; scrapling get same)"
+  },
+  {
+   "url": "https://works.bepress.com/robots.txt",
+   "utc": "2026-10-11T17:43:00Z",
+   "sha256": "64a4a50e5760026450963cd1c047259162c43babf88cef3acfa434ff487492ef",
+   "path": "reports/stage_e20_briefs/shared/bepress_robots.txt (file deleted: not evidence)",
+   "status": "blocked",
+   "http": "200"
+  },
+  {
+   "url": "https://works.bepress.com/yiuman-tse/115",
+   "utc": "2026-10-11T17:43:03Z",
+   "sha256": "42440b34e52beff6d43cb0a825fa546656b1aabe2b0d91812e92c8d34dbcd720",
+   "path": "reports/stage_e20_briefs/shared/bepress_tse_115.html (file deleted: not evidence)",
+   "status": "blocked",
+   "http": "200"
+  },
+  {
+   "url": "https://works.bepress.com/yiuman-tse/115",
+   "utc": "2026-10-11T17:43:33Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "http": "gone: SelectedWorks retired page (Cloudflare); files not kept"
+  },
+  {
+   "url": "https://alexandria.unisg.ch/robots.txt",
+   "utc": "2026-10-11T17:43:46Z",
+   "sha256": "089cb19fd508b11e3bf1a55c3ddc878152a50947d18cd106fc21b82e19753277",
+   "path": "reports/stage_e20_briefs/shared/unisg_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://alexandria.unisg.ch/server/api/core/bitstreams/a99aba00-f967-49b3-aceb-f544dc386e0b/content",
+   "utc": "2026-10-11T17:43:49Z",
+   "sha256": "41d635d162551c4add329d2a11cd9571aea391befd00e472ed81c0070bb207ad",
+   "path": "reports/stage_e20_briefs/shared/zarattini_aziz_barbon_beat_the_market.pdf",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.skidmore.edu/economics/documents/KSSW2017-PriceDriftBeforeUSMacroeconomicNews.pdf",
+   "utc": "2026-10-11T17:44:42Z",
+   "sha256": "b13d13db3883e98fdda647d7f62a184ca81ac03e798d1fcda77a8ebe45ee86c7",
+   "path": "",
+   "status": "blocked",
+   "http": "404"
+  },
+  {
+   "url": "https://www.newyorkfed.org/robots.txt",
+   "utc": "2026-10-11T17:44:43Z",
+   "sha256": "0102c8c45bc1e99fc8dc018b304239d1f5a9b311f6321c47ba2dbef51cb5551e",
+   "path": "reports/stage_e20_briefs/shared/nyfed_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr512.pdf",
+   "utc": "2026-10-11T17:44:55Z",
+   "sha256": "c7cb0f335c60cb9fc305189935fb7c51e98fa8461c2b33efd51eb5a5c3f2e34b",
+   "path": "reports/stage_e20_briefs/shared/lucca_moench_sr512.pdf",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.cftc.gov/IndustryOversight/IndustryFilings/TradingOrganizationProducts/41359",
+   "utc": "2026-10-11T17:45:53Z",
+   "sha256": "9fc0fc648baf662b31fcd3913051d1fc97b8011d05fd85ad38d716e54ad7ef9d",
+   "path": "reports/stage_e20_briefs/pages/RTY/cftc_products_41359.html",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.cftc.gov/filings/ptc/ptc041519cmedcm003.pdf",
+   "utc": "2026-10-11T17:46:01Z",
+   "sha256": "224f824a95bad7f7e29ae3d8ba8452d1f0464a2e45f5db77f03073eb30de7d62",
+   "path": "reports/stage_e20_briefs/pages/RTY/cftc_ptc041519cmedcm003.pdf",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://en.wikipedia.org/robots.txt",
+   "utc": "2026-10-11T17:46:57Z",
+   "sha256": "48b98d80c8444d37cdf50cc9a4d2257b66039477e581066d2356062a4cbd678f",
+   "path": "reports/stage_e20_briefs/pages/RTY/wikipedia_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://en.wikipedia.org/w/index.php?title=Russell_2000_Index&action=raw",
+   "utc": "2026-10-11T17:46:59Z",
+   "sha256": "50d26b150bab699b4813cf2c4aff01b479dc58f9a3dbf49b85c938051d252a32",
+   "path": "reports/stage_e20_briefs/pages/RTY/wikipedia_russell2000_raw.txt (file deleted: not evidence)",
+   "status": "blocked",
+   "http": "200"
+  },
+  {
+   "url": "https://en.wikipedia.org/w/index.php?title=Russell_2000_Index&action=raw",
+   "utc": "2026-10-11T17:47:13Z",
+   "sha256": "",
+   "path": "",
+   "status": "terms-forbid",
+   "http": "withdrawn: path under robots 'Disallow: /w/' (read after fetch); copy deleted, refetched via /wiki/"
+  },
+  {
+   "url": "https://en.wikipedia.org/wiki/Russell_2000_Index",
+   "utc": "2026-10-11T17:47:15Z",
+   "sha256": "05305db4cdeee4aec1082e3b6cf80e0b4f8720fbcdce0ef945ba4ab634224b12",
+   "path": "reports/stage_e20_briefs/pages/RTY/wikipedia_russell2000.html",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.alexandria.unisg.ch/server/api/core/bitstreams/5a99db31-0d37-4f86-9502-8cb0f3bff4fe/content",
+   "utc": "2026-10-11T17:48:06Z",
+   "sha256": "4c2cbcd35d990144a1f859b511831530b5bba99a7a520ceb373fae7c5eb407d6",
+   "path": "reports/stage_e20_briefs/shared/barbon_beckmeyer_buraschi_moerke_letf.pdf",
+   "status": "ok",
+   "http": "200"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "cftc.gov",
+   "url": "https://www.cftc.gov/robots.txt",
+   "utc": "2026-10-11T17:37:33Z",
+   "ruling": "User-agent * Allow /; Content-Signal search=yes, ai-train=no, use=reference: reference reading of public filings allowed; no training use"
+  },
+  {
+   "site": "origin-website-prod.nadex.com",
+   "url": "https://origin-website-prod.nadex.com/robots.txt",
+   "utc": "2026-10-11T17:37:37Z",
+   "ruling": "Allow / (no page fetched from it; the Nadex filing was taken from cftc.gov)"
+  },
+  {
+   "site": "jean-sebastienfontaine.com",
+   "url": "https://www.jean-sebastienfontaine.com/robots.txt",
+   "utc": "2026-10-11T17:38:20Z",
+   "ruling": "404 (no robots.txt; GitHub Pages author site); public paper link, single fetch"
+  },
+  {
+   "site": "c.mql5.com",
+   "url": "https://c.mql5.com/robots.txt",
+   "utc": "2026-10-11T17:39:29Z",
+   "ruling": "User-agent * Allow /; single fetch of a publicly posted working paper (third-party host; flagged)"
+  },
+  {
+   "site": "dev.to",
+   "url": "https://dev.to/robots.txt",
+   "utc": "2026-10-11T17:40:07Z",
+   "ruling": "Article pages not disallowed; single fetch"
+  },
+  {
+   "site": "centaur.reading.ac.uk",
+   "url": "https://centaur.reading.ac.uk/robots.txt",
+   "utc": "2026-10-11T17:40:58Z",
+   "ruling": "Disallow /cgi/ only; accepted manuscript under CC BY-NC-ND 4.0"
+  },
+  {
+   "site": "skidmore.edu",
+   "url": "https://www.skidmore.edu/robots.txt",
+   "utc": "2026-10-11T17:41:34Z",
+   "ruling": "crawl-delay 5; documents path not disallowed; target PDFs 404"
+  },
+  {
+   "site": "ideas.repec.org",
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:42:03Z",
+   "ruling": "Disallow /cgi-bin/ only; abstract page allowed"
+  },
+  {
+   "site": "efmaefm.org",
+   "url": "https://www.efmaefm.org/robots.txt",
+   "utc": "2026-10-11T17:42:28Z",
+   "ruling": "not readable (TLS chain error); nothing fetched from the site"
+  },
+  {
+   "site": "alexandria.unisg.ch",
+   "url": "https://alexandria.unisg.ch/robots.txt",
+   "utc": "2026-10-11T17:43:46Z",
+   "ruling": "bitstream path not disallowed (only /server/opensearch, /search, admin paths)"
+  },
+  {
+   "site": "newyorkfed.org",
+   "url": "https://www.newyorkfed.org/robots.txt",
+   "utc": "2026-10-11T17:44:43Z",
+   "ruling": "staff report path not disallowed"
+  },
+  {
+   "site": "en.wikipedia.org",
+   "url": "https://en.wikipedia.org/robots.txt",
+   "utc": "2026-10-11T17:46:57Z",
+   "ruling": "Disallow /w/ for *; the /w/index.php?action=raw copy fetched at 17:46:59Z before reading this line was deleted and logged terms-forbid; /wiki/ page refetched (allowed)"
+  }
+ ],
+ "budget_notices": [
+  "WebSearch: 20 calls used of about 90; no over-budget notice. Firecrawl not used."
+ ],
+ "unfinished": [
+  "Gao et al. published JFE 2018 version not retrieved; numbers are from the Dec 2015 working paper (third-party host).",
+  "Kurov, Wolfe, Gilbert (2021) full text not retrieved (author copy 404); abstract only.",
+  "Liu and Tse (2017) not retrieved; [unverified].",
+  "EFMA 2021 copy of Beckmeyer-Moerke unreachable (TLS); the S/BF-HSG WP version was read instead.",
+  "Mean |r_ROD| for Russell not available from Baltussen, so no per-trade ROD -> LH figure for RTY.",
+  "g17 lead legs (ZN, 6E, CL, GC, ZC) left to their readers; MBT 2021 listing not re-verified.",
+  "No post-2015 Russell-specific intraday study found."
+ ],
+ "nq_only": null
+}

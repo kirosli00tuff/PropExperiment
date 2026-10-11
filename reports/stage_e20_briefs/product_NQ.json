@@ -1,0 +1,1048 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "NQ",
+ "reader": "ProductReader-NQ-OpusHigh",
+ "finished_utc": "2026-10-11T17:54:03Z",
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "Market intraday momentum, NQ regression",
+   "rule": "r_LH = a + b r_ROD; r_ROD = P(c-30)/P(c,t-1) - 1; c = 16:00 ET (15:00 CT)",
+   "hold": "30 min (14:30-15:00 CT)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "not printed for NQ",
+   "gross_or_net": "gross",
+   "sample": "NQ 1-min, 1996-04-12..2020-05-01, 6017 days",
+   "decay_evidence": "none per market (see E3)",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403",
+   "url": "https://pure.eur.nl/files/58145484/1_s2.0_S0304405X21001598_main.pdf",
+   "quote": "| NQ | 7.45*** (5.33) | 2.01 | 1.83*** | 6.95*** (5.03) | 5.14*** (4.74) | 11.54*** (3.26) | 4.31 | 3.58*** | 6.36*** (7.97) | 4.10 | 3.76*** |",
+   "quote_location": "Table B1 Panel B, line 3430 of saved copy; Table A1 line 3234",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E2",
+   "effect": "Equity 1/N portfolio eta(r_ROD)",
+   "rule": "long LH if r_ROD > 0 else short",
+   "hold": "30 min",
+   "gross_per_trade_bp": 2.72,
+   "gross_per_trade_ticks": 14.31,
+   "conversion": "6.86%/yr / 252 (factor assumed) = 2.72 bp; at 13,141.4 = 3.58 pts = 14.31 ticks ($7.15); at 4,129.8 = 1.12 pts = 4.50 ticks ($2.25). bp x price level / 1e4 = index points; / 0.25 = MNQ ticks; x $0.50. Levels: 13,141.4 (mean 2019-2023 year-end Nasdaq-100 closes) and 4,129.8 (2010-2018), Wikipedia Nasdaq-100 table, pages/NQ/wiki_nasdaq100.html",
+   "gross_or_net": "gross",
+   "sample": "17 equity index futures, to May 2020",
+   "decay_evidence": "E3",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403",
+   "url": "https://pure.eur.nl/files/58145484/1_s2.0_S0304405X21001598_main.pdf",
+   "quote": "| η(rROD) | 6.86 | 3.96 | 1.73 | 0.55 | 2.16 | 1.33 | 1.62 | 0.55 |",
+   "quote_location": "Table 6 Panel A, line 1736",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E3",
+   "effect": "Subsample stability, pooled equity",
+   "rule": "as E1 pooled",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "gross",
+   "sample": "pooled equity futures 1974-1999 vs 2000-2020",
+   "decay_evidence": "b_ROD 5.96 (t 4.80) -> 3.98 (t 6.65); R2 3.41 -> 2.34",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403",
+   "url": "https://pure.eur.nl/files/58145484/1_s2.0_S0304405X21001598_main.pdf",
+   "quote": "| Equity | 4.97*** (6.06) | 1.67 | 4.83*** (6.02) | 2.42*** (3.82) | 8.89*** (4.11) | 2.73 | 3.98*** (6.65) | 2.34 |",
+   "quote_location": "Table 5 Panel B, line 1666 (Panel A line 1661)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E4",
+   "effect": "Gamma conditioning (S&P 500 futures only)",
+   "rule": "E1 regression split by sign of NGE_t-1",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "gross",
+   "sample": "S&P 500 futures, Jan 1996-May 2020; 2930 negative, 3158 positive NGE days",
+   "decay_evidence": "none",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403",
+   "url": "https://pure.eur.nl/files/58145484/1_s2.0_S0304405X21001598_main.pdf",
+   "quote": "| NGEt-1 < 0 | -0.01 (-0.63) | 6.63*** (4.78) | 3.58 |",
+   "quote_location": "Table 7, lines 2060-2061",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E5",
+   "effect": "First-half-hour predictor and agreement filter",
+   "rule": "eta(r_ONFH); eta(r_ONFH, r_ROD) trades only when signs agree",
+   "hold": "30 min",
+   "gross_per_trade_bp": 1.67,
+   "gross_per_trade_ticks": 8.78,
+   "conversion": "eta(r_ONFH) 4.21%/yr / 252 = 1.67 bp = 8.78 ticks at 13,141.4 (2.76 at 4,129.8); agreement filter per-trade not derivable",
+   "gross_or_net": "gross",
+   "sample": "as E2",
+   "decay_evidence": "r_ROD wins OOS horse race (Table 3)",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403",
+   "url": "https://pure.eur.nl/files/58145484/1_s2.0_S0304405X21001598_main.pdf",
+   "quote": "| η(rONFH) | 4.21 | 3.95 | 1.07 | 0.55 | 1.08 | 1.33 | 0.81 | 0.53 |",
+   "quote_location": "Table 6 lines 1734-1735; NQ r_ONFH row line 3430",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E6",
+   "effect": "Overnight return -> last half hour; threshold form",
+   "rule": "threshold strategy beats always-on; threshold definition unverified",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "[unverified] S&P 500, Nasdaq 100, DJIA futures; Sep 1997-Dec 2020 (snippet)",
+   "decay_evidence": "The predictability disappears in the out-of-sample period (abstract)",
+   "source": "Rosa, Understanding intraday momentum strategies, J. Futures Markets 42(12) (2022) 2218-2234",
+   "url": "https://doi.org/10.1002/fut.22375",
+   "quote": "A strategy with thresholds delivers higher returns than a strategy that is always active.",
+   "quote_location": "abstract, IDEAS record abstract-body",
+   "grade": "unverified",
+   "saved_path": "reports/stage_e20_briefs/shared/rosa_ideas.html",
+   "sha256": "d4bf996acfc622a6e267d8705c018a083919814caf77ac37b17b8ffbb54f36b9"
+  },
+  {
+   "id": "E7",
+   "effect": "Post-2020 SPX retest (unreviewed blog)",
+   "rule": "last-30-min on open-to-(close-30) return",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "gross",
+   "sample": "SPX cash, 1,085 sessions 2022-04-14..2026-08-20",
+   "decay_evidence": "unconditional slope +0.006 (t +0.6); short-gamma interaction +0.055 (t +3.1)",
+   "source": "firmtape via dev.to [shared, see shared/equity_class_notes.md]",
+   "url": "https://firmtape.com/research/is-intraday-momentum-still-alive",
+   "quote": "The unconditional effect is gone",
+   "quote_location": "shared/devto_firmtape_spx_retest.txt (saved by RTY reader)",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/shared/devto_firmtape_spx_retest.txt",
+   "sha256": ""
+  },
+  {
+   "id": "E8",
+   "effect": "Persistence 2008-2024 (Aalto thesis)",
+   "rule": "ROD-type -> LH",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "20 equity, bond, FX futures 2008-01..2024-10",
+   "decay_evidence": "persists; most predictability in last ten minutes; mostly not feasible after costs",
+   "source": "Aalto master's thesis [shared, see shared/aalto_thesis_notes.md]",
+   "url": "",
+   "quote": "most of the predictability in the return of the last half an hour stems from the last ten-minute period",
+   "quote_location": "abstract, per shared/aalto_thesis_notes.md",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/shared/aalto_thesis_notes.md",
+   "sha256": ""
+  },
+  {
+   "id": "E9",
+   "effect": "Gamma and intraday momentum after 0DTE",
+   "rule": "not read by this reader",
+   "hold": "",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "",
+   "decay_evidence": "",
+   "source": "Adams, Dim, Eraker, Fontaine, Ornthanalai, Vilkov (2026 draft) [shared, see shared/equity_class_notes.md]",
+   "url": "",
+   "quote": "",
+   "quote_location": "",
+   "grade": "unverified",
+   "saved_path": "reports/stage_e20_briefs/shared/adams_etal_0dte_fontaine.pdf.txt",
+   "sha256": ""
+  },
+  {
+   "id": "E10",
+   "effect": "MNQ OHLCV intraday signal falsification (preprint, not a ROD test)",
+   "rule": "14 families, walk-forward; close fade 15:30 entry on VVG days",
+   "hold": "various",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "friction 2.0 pts = 8 MNQ ticks",
+   "gross_or_net": "net",
+   "sample": "MNQ 5-min, 947 days, 2021-2025",
+   "decay_evidence": "none for ROD",
+   "source": "Mesfin, arXiv 2605.04004 (2026)",
+   "url": "https://arxiv.org/abs/2605.04004",
+   "quote": "Eleven families fail because gross return before friction is 0.07-1.50 points, below the 2.0-point friction floor.",
+   "quote_location": "abstract; text lines 19-27, 339",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/NQ/arxiv_2605.04004.pdf",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80"
+  }
+ ],
+ "availability": [
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "k1_vwap_dist",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows; member table EQUITY_FULL_SESSIONS itself starts 2019-05-01, hist2010 is the 2010-2019 equivalent",
+   "shared_ref": null
+  },
+  {
+   "feature": "k1_vxn_regime",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "strategy/members/k1/_vxn.py VXN_CLOSE (2019-04-30..2026-06-19)",
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "2019-05-06..2024-02-29",
+   "basis": "VXN literal range starts 2019-04-30; no 2010-2019 table built (data/vendor source not opened)",
+   "shared_ref": null
+  },
+  {
+   "feature": "k1_vxn_band",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "strategy/members/k1/_vxn.py VXN_CLOSE (2019-04-30..2026-06-19)",
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "2019-05-06..2024-02-29",
+   "basis": "as k1_vxn_regime",
+   "shared_ref": null
+  },
+  {
+   "feature": "k8_wkndbtc_move",
+   "legs": [
+    "MBT"
+   ],
+   "calendars": [
+    "strategy/members/k8/_calendar.py WKNDBTC_DATES (2019-05-01..2026-06-18)"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "from 2021-05-03",
+   "basis": "MBT listed 2021-05-03 (reports/stage_e0_catalog_K8.md l.185); MBT not one of the 17 roots",
+   "shared_ref": null
+  },
+  {
+   "feature": "k9_anncday",
+   "legs": [],
+   "calendars": [
+    "reports/stage_e12_ec_k9_2019_2024.json (2019-05-01..2024-02-29)"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "2019-05-01..2024-02-29",
+   "basis": "no EC-K9 file for 2010-2019 found",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md"
+  },
+  {
+   "feature": "g01_ret30",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "g02_ret60",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "g03_ret120",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "g04_ret_day",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06_rv60",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "g07_range",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "g10_logvol30",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "g08_prev_ret",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "g09_vol_state",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01 plus 120-date warm-up..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11_t_index",
+   "legs": [],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "calendar only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g12_dow",
+   "legs": [],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "calendar only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g16_month_end",
+   "legs": [],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "calendar only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel",
+   "legs": [],
+   "calendars": [
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21; MNQ: FOMC, NFP, CPI, ISM_SERVICES)",
+    "reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31; FOMC, NGS, WPSR only)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019: FOMC only",
+   "basis": "no NFP, CPI or ISM Services rows for 2010-2019 in E.14's release calendar",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md"
+  },
+  {
+   "feature": "g14_min_since_rel",
+   "legs": [],
+   "calendars": [
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21; MNQ: FOMC, NFP, CPI, ISM_SERVICES)",
+    "reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31; FOMC, NGS, WPSR only)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019: FOMC only",
+   "basis": "no NFP, CPI or ISM Services rows for 2010-2019 in E.14's release calendar",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md"
+  },
+  {
+   "feature": "g15_rel_day",
+   "legs": [],
+   "calendars": [
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21; MNQ: FOMC, NFP, CPI, ISM_SERVICES)",
+    "reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31; FOMC, NGS, WPSR only)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019: FOMC only",
+   "basis": "no NFP, CPI or ISM Services rows for 2010-2019 in E.14's release calendar",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md"
+  },
+  {
+   "feature": "g17_nq",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows; lead leg read on other products' rows, not applicable on NQ rows",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_zn",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "that lead's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "audited by the lead's own reader",
+   "shared_ref": "reports/stage_e20_briefs/product_ZN.md"
+  },
+  {
+   "feature": "g17_6e",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "that lead's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "audited by the lead's own reader",
+   "shared_ref": "reports/stage_e20_briefs/product_6E.md"
+  },
+  {
+   "feature": "g17_cl",
+   "legs": [
+    "CL"
+   ],
+   "calendars": [
+    "that lead's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "audited by the lead's own reader",
+   "shared_ref": "reports/stage_e20_briefs/product_CL.md"
+  },
+  {
+   "feature": "g17_gc",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "that lead's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "audited by the lead's own reader",
+   "shared_ref": "reports/stage_e20_briefs/product_GC.md"
+  },
+  {
+   "feature": "g17_zc",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "that lead's group calendar"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "audited by the lead's own reader",
+   "shared_ref": "reports/stage_e20_briefs/product_ZC.md"
+  },
+  {
+   "feature": "g17_mbt",
+   "legs": [
+    "MBT"
+   ],
+   "calendars": [
+    "data/calendars/crypto.py"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "from 2021-05-03",
+   "basis": "MBT listed 2021-05-03; not one of the 17 roots",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mes",
+   "legs": [
+    "MES"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "from 2019-05-06",
+   "basis": "MES listed 2019-05-06; not one of the 17 roots; stage_e12_gate0_list uncovered_signals",
+   "shared_ref": null
+  },
+  {
+   "feature": "r_ROD(t) and abs r_ROD / 60-date median (E.20 additions)",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/equity.json (2010-06-01..2019-05-31)",
+    "data/calendars/equity.py / EQUITY_FULL_SESSIONS (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01 plus 60-date warm-up..2024-02-29",
+   "basis": "NQ listed 1999-06-21 (reports/stage_e0_catalog.md C8); Baltussen Table A1 NQ 1996-04-12..2020-05-01; MNQ listed 2019-05-06; equity calendars cover both windows",
+   "shared_ref": null
+  }
+ ],
+ "proposed_features": [],
+ "shared_notes_written": [
+  "reports/stage_e20_briefs/shared/baltussen_notes.md",
+  "reports/stage_e20_briefs/shared/rosa_2022_notes.md"
+ ],
+ "fetch_log": [
+  {
+   "url": "https://squeezemetrics.com/monitor/terms",
+   "utc": "2026-10-11T17:34:43Z",
+   "sha256": "695c1bbd930b8930777190e1fc966b26f35fa12dcb798ed99977c0cd132c169d",
+   "path": "pages/NQ/sm_terms.html",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://squeezemetrics.com/robots.txt",
+   "utc": "2026-10-11T17:34:47Z",
+   "sha256": "d465172175d35d493fb1633e237700022bd849fa123164790b168b8318acb090",
+   "path": "pages/NQ/sm_robots.html",
+   "status": "ok",
+   "note": "http 404"
+  },
+  {
+   "url": "https://squeezemetrics.com/monitor/dix",
+   "utc": "2026-10-11T17:34:52Z",
+   "sha256": "f8fc33b0d6b88dc815660bf6864c98e6b970ca98842b929b0b89193945701526",
+   "path": "pages/NQ/sm_dix.html",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://squeezemetrics.com/monitor/docs",
+   "utc": "2026-10-11T17:34:56Z",
+   "sha256": "e4fe792af74afc1f36d5cbe18c7f0130aac8f4a1091b10f6018b66b8b0258d46",
+   "path": "pages/NQ/sm_docs.html",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://squeezemetrics.com/monitor/static/js/dix.js",
+   "utc": "2026-10-11T17:35:19Z",
+   "sha256": "145e00f742bdc4bfce351c2d047e0ffb4ed25349b230b4f91d95e3f57046de9e",
+   "path": "pages/NQ/sm_dix.js",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://onlinelibrary.wiley.com/robots.txt",
+   "utc": "2026-10-11T17:36:38Z",
+   "sha256": "9bb321ba7d7be3a765d173af6bee54b35c8ea4fe3910d3b0c83fb520191a6d53",
+   "path": "pages/NQ/wiley_robots.txt",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://onlinelibrary.wiley.com/terms-and-conditions",
+   "utc": "2026-10-11T17:36:45Z",
+   "sha256": "e512cf1ca4500d60ae667fcb7d4f7df123c1024f604dd2976e55fa0faf4d00cd",
+   "path": "pages/NQ/wiley_terms.html",
+   "status": "blocked",
+   "note": "http 403"
+  },
+  {
+   "url": "https://onlinelibrary.wiley.com/doi/full/10.1002/fut.22375",
+   "utc": "2026-10-11T17:36:50Z",
+   "sha256": "7f06b14f9cd7613cab43ebc016324ab743a10afc59613b97b086638fcc527ca9",
+   "path": "pages/NQ/rosa_wiley_full.html",
+   "status": "terms-forbid",
+   "note": "http 403"
+  },
+  {
+   "url": "https://onlinelibrary.wiley.com/terms-and-conditions",
+   "utc": "2026-10-11T17:37:06Z",
+   "sha256": "2a5622a9136aac4b608e9a7f6d201d88ca10e92015bea19dced93cabd54f7a82",
+   "path": "pages/NQ/wiley_terms_scrapling_fetch.md",
+   "status": "ok",
+   "note": "ok (terms read; line 86 forbids automated access)"
+  },
+  {
+   "url": "https://onlinelibrary.wiley.com/terms-and-conditions",
+   "utc": "2026-10-11T17:37:00Z",
+   "sha256": "87299e073dba157e3251b44ac5fd559a6357618e43200377e66a3c59a628fd37",
+   "path": "pages/NQ/wiley_terms_sg.md",
+   "status": "blocked",
+   "note": "blocked (Cloudflare challenge)"
+  },
+  {
+   "url": "https://law-journals-books.vlex.com/robots.txt",
+   "utc": "2026-10-11T17:37:35Z",
+   "sha256": "6a0919b80ddd36ad89e8e55fe33e7ede9af182f21c2c705d974712ddabec1fa4",
+   "path": "pages/NQ/vlex_robots.html",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://vlex.com/terms-of-use",
+   "utc": "2026-10-11T17:37:40Z",
+   "sha256": "-",
+   "path": "(not kept)",
+   "status": "ok",
+   "note": "http 404"
+  },
+  {
+   "url": "https://vlex.com/terms",
+   "utc": "2026-10-11T17:38:12Z",
+   "sha256": "d5d90f41a2208df9a79a99d711d511916db3b0a349531dd0ce3e5ba4a5f94404",
+   "path": "pages/NQ/vlex_terms.html",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://api.openalex.org/works/doi:10.1002/fut.22375",
+   "utc": "2026-10-11T17:38:22Z",
+   "sha256": "8a709d6fddc57d0e518eef5838ddca4f07d12176aa834b249a8a17d9cf97517b",
+   "path": "pages/NQ/rosa_openalex.json",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://arxiv.org/robots.txt",
+   "utc": "2026-10-11T17:39:17Z",
+   "sha256": "eda2bc852443f3f29d31eb04d37b26476654dc33b29256fb882819da23d189a5",
+   "path": "pages/NQ/arxiv_robots.txt",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://arxiv.org/abs/2605.04004",
+   "utc": "2026-10-11T17:39:20Z",
+   "sha256": "b3d8d7c8338b5de914f78da614c2afcaa5063f6f1532cb9b2cdb35a3f901c2b4",
+   "path": "pages/NQ/arxiv_2605.04004_abs.html",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://www.joim.com/nasdaq-100-index-futures-intraday-momentum-reversal",
+   "utc": "2026-10-11T17:39:23Z",
+   "sha256": "-",
+   "path": "(not kept)",
+   "status": "ok",
+   "note": "http 404"
+  },
+  {
+   "url": "https://www.joim.com/robots.txt",
+   "utc": "2026-10-11T17:39:29Z",
+   "sha256": "1b61b647951531774acfc0b8803b9fe549091c2a4f7527618658f729e06f632e",
+   "path": "pages/NQ/joim_robots.txt",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2605.04004",
+   "utc": "2026-10-11T17:39:40Z",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80",
+   "path": "pages/NQ/arxiv_2605.04004.pdf",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://joim.com/downloads/nasdaq-100-index-futures-intraday-momentum-reversal",
+   "utc": "2026-10-11T17:39:54Z",
+   "sha256": "0b3c00b3441c989c505c1327a6db73b9d159f5da58042a38f389c7dd182cd466",
+   "path": "pages/NQ/joim_nq_dl.html",
+   "status": "ok",
+   "note": "http 404"
+  },
+  {
+   "url": "https://fred.stlouisfed.org/robots.txt",
+   "utc": "2026-10-11T17:40:32Z",
+   "sha256": "-",
+   "path": "-",
+   "status": "blocked",
+   "note": "blocked (HTTP/2 INTERNAL_ERROR)"
+  },
+  {
+   "url": "https://fred.stlouisfed.org/robots.txt",
+   "utc": "2026-10-11T17:41Z",
+   "sha256": "-",
+   "path": "-",
+   "status": "blocked",
+   "note": "blocked (hung >120 s, process ended); FRED not used"
+  },
+  {
+   "url": "https://en.wikipedia.org/wiki/Nasdaq-100",
+   "utc": "2026-10-11T17:44:15Z",
+   "sha256": "6ef889c1b0c677c953843466b14560f1b140e7878e4127c2d60f0915b4e5084e",
+   "path": "pages/NQ/wiki_nasdaq100.html",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://info.arxiv.org/help/robots.html",
+   "utc": "2026-10-11T17:50:07Z",
+   "sha256": "2b918d814927238ff46470ecf05a1f1e2474d51960b9a230eed4fe13ead32798",
+   "path": "pages/NQ/arxiv_robot_policy.html",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://en.wikipedia.org/robots.txt",
+   "utc": "2026-10-11T17:50:09Z",
+   "sha256": "48b98d80c8444d37cdf50cc9a4d2257b66039477e581066d2356062a4cbd678f",
+   "path": "pages/NQ/wiki_robots.txt",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:50:11Z",
+   "sha256": "4620fbdb346382486937732e10fb82fe1cab79fa1d839d85de8a4798c1702d46",
+   "path": "pages/NQ/ideas_robots.txt",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://api.openalex.org/robots.txt",
+   "utc": "2026-10-11T17:50:14Z",
+   "sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95",
+   "path": "pages/NQ/openalex_api_robots.txt",
+   "status": "ok",
+   "note": "http 200"
+  },
+  {
+   "url": "https://ideas.repec.org/a/wly/jfutmk/v42y2022i12p2218-2234.html",
+   "utc": "2026-10-11T17:36:09Z",
+   "sha256": "d4bf996acfc622a6e267d8705c018a083919814caf77ac37b17b8ffbb54f36b9",
+   "path": "shared/rosa_ideas.html",
+   "status": "ok",
+   "note": "http 200"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "squeezemetrics.com",
+   "url": "https://squeezemetrics.com/monitor/terms (robots.txt 404)",
+   "utc": "2026-10-11T17:34:43Z",
+   "ruling": "single download or reuse for one test allowed; no systematic retrieval; no redistribution"
+  },
+  {
+   "site": "onlinelibrary.wiley.com",
+   "url": "https://onlinelibrary.wiley.com/terms-and-conditions",
+   "utc": "2026-10-11T17:37:06Z",
+   "ruling": "automated access forbidden; Rosa full text not fetched"
+  },
+  {
+   "site": "vlex.com",
+   "url": "https://vlex.com/terms",
+   "utc": "2026-10-11T17:38:12Z",
+   "ruling": "automated access forbidden; not fetched"
+  },
+  {
+   "site": "arxiv.org",
+   "url": "https://arxiv.org/robots.txt; https://info.arxiv.org/help/robots.html",
+   "utc": "2026-10-11T17:39:17Z / 17:50:07Z",
+   "ruling": "allowed; policy page read after the fetch (deviation)"
+  },
+  {
+   "site": "en.wikipedia.org",
+   "url": "https://en.wikipedia.org/robots.txt",
+   "utc": "2026-10-11T17:50:09Z",
+   "ruling": "allowed; read after the fetch (deviation)"
+  },
+  {
+   "site": "ideas.repec.org",
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:50:11Z",
+   "ruling": "allowed; read after the fetch (deviation)"
+  },
+  {
+   "site": "api.openalex.org",
+   "url": "https://api.openalex.org/robots.txt",
+   "utc": "2026-10-11T17:50:14Z",
+   "ruling": "allowed; read after the fetch (deviation)"
+  },
+  {
+   "site": "joim.com",
+   "url": "https://www.joim.com/robots.txt",
+   "utc": "2026-10-11T17:39:29Z",
+   "ruling": "allowed; target pages 404"
+  }
+ ],
+ "budget_notices": [],
+ "unfinished": [
+  "Rosa 2022 full text not retrieved (Wiley, vLex terms forbid automation; OpenAlex closed): threshold variable, value, lookback, sample, figures unverified",
+  "252-day annualisation behind derived per-trade bp is assumed",
+  "No NQ-only trading-strategy return printed in Baltussen et al.",
+  "Table 1 time zone for Chicago products ambiguous (CT vs ET)",
+  "Adams et al. 2026 (E9) not read by this reader (RTY's)",
+  "Terms-before-fetch deviations for arXiv, Wikipedia, IDEAS, OpenAlex"
+ ],
+ "nq_only": {
+  "h6_details": {
+   "r_rod": "P(c-30,t)/P(c,t-1) - 1; c = 16:00 ET cash close = 15:00 CT; c-30 = 14:30 CT (Baltussen eq. 2, lines 589-596)",
+   "last_half_hour": "15:30-16:00 ET = 14:30-15:00 CT; NQ hours 09:30-16:00 (Table 1 line 895, Table A1 line 3234)",
+   "filters": "early-close days, non-business days, <100-contract days removed; roll on volume crossover",
+   "nq_row": {
+    "beta_rod_x100": 6.36,
+    "t_nw": 7.97,
+    "r2_pct": 4.1,
+    "r2_oos_pct": 3.76,
+    "sample": "1996-04-12..2020-05-01",
+    "obs": 6017,
+    "source_line": 3430
+   },
+   "equity_portfolio_eta_rod": {
+    "avg_ret_pct_yr": 6.86,
+    "std_pct": 3.96,
+    "sharpe": 1.73,
+    "success": 0.55,
+    "derived_bp_per_trade": 2.72,
+    "note": "1/N over 17 equity futures, gross; /252 assumed"
+   },
+   "negative_gamma_table7": {
+    "market": "S&P 500 futures only",
+    "sample": "1996-01..2020-05",
+    "nge_neg": {
+     "beta_x100": 6.63,
+     "t": 4.78,
+     "r2_pct": 3.58
+    },
+    "nge_nonneg": {
+     "beta_x100": 0.82,
+     "t": 1.03,
+     "r2_pct": 0.05
+    }
+   },
+   "post_2020_decay": "none in paper (ends 2020-05-01); SPX 2022-2026 retest (unreviewed) unconditional slope t 0.6, short-gamma interaction t 3.1; Aalto 2008-2024 persists, last 10 min, mostly not cost-feasible; within paper equity b 5.96 -> 3.98",
+   "rosa_threshold": "abstract only: overnight-return predictor, threshold beats always-on, OOS disappears; threshold variable/value/lookback/sample unverified",
+   "differences_vs_F5": [
+    "exit: F5 fills about 14:59 CT (bar at C-2, next open) vs paper 15:00 CT: drops final 1-2 min, where most LH predictability sits per Aalto",
+    "entry: F5 next-bar open after the C-30 bar vs paper's P(c-30) itself (no lag, no spread)",
+    "early-close days: paper removes them; F5 trades them (entry early close-30, exit at flatten F = early close-15)",
+    "roll: paper volume crossover; F5 program path with roll-blackout refusals",
+    "T2: no threshold in Baltussen; Rosa thresholds the overnight return (form unverified); 60-date median of abs r_ROD is the planning brief's variant, not published",
+    "T3: paper's NGE is S&P 500 gamma tested on S&P 500 futures; F5 applies SqueezeMetrics GEX sign to NQ; NGE scaled by market value vs GEX in dollars (sign unaffected)",
+    "sample: paper NQ 1996-2020; F5 2019-05..2024-02 with verdict 2020-06..2024-02 (after the paper's sample)",
+    "costs: paper gross; F5 D8 MNQ costs, 1.5x multiple",
+    "close C and prior close: same (15:00 CT cash close); NQ settlement was 15:15 CT until 2020-10-23, used by neither"
+   ]
+  },
+  "gex_ruling": {
+   "cleared": true,
+   "terms_quote": "As a user of the Platform, you agree not to: ... systematically retrieve data or other content from the Platform to create or compile, directly or indirectly, a collection, compilation, database, or directory without written permission from us; ... Using the Platform does not give you ownership or license of any intellectual property rights in the Platform or in any content, information or data accessed on or through the Platform",
+   "terms_url": "https://squeezemetrics.com/monitor/terms",
+   "terms_utc": "2026-10-11T17:34:43Z",
+   "terms_sha256": "695c1bbd930b8930777190e1fc966b26f35fa12dcb798ed99977c0cd132c169d",
+   "reasoning": "Terms byte-identical to E.14's 2026-10-05 copy; robots.txt 404. The only restrictive clause bans systematic retrieval to compile a collection or database; one download of the single file the free DIX page offers via its own download button (dix.js: window.location = '/monitor/static/DIX.csv') for one registered test is not that, and reusing E.14's copy retrieves nothing. No licence is granted, so no redistribution: CSV stays uncommitted (E.14 DO_NOT_COMMIT.txt). Residual risk: terms silent on the free CSV; written permission would remove doubt.",
+   "copy_to_use": "e14",
+   "e14_copy": {
+    "path": "reports/stage_e14_briefs/gex/DIX.csv",
+    "sha256": "51bef9ea5ee13af2f72b14f4198de57eeb865a36c1d3e244a3f64b3603e9ce62",
+    "fetched_utc": "2026-10-05T07:43:01Z",
+    "first_date": "2011-05-02",
+    "last_date": "2026-10-02",
+    "note": "values not read; does not cover 2010-07-01..2011-05-01"
+   }
+  }
+ }
+}

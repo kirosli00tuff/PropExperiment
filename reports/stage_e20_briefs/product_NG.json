@@ -1,0 +1,876 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "NG",
+ "reader": "ProductReader-NG-OpusHigh",
+ "finished_utc": "2026-10-11T17:50:32Z",
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "EIA storage-day short around the WNGSR release (pre- plus post-announcement), whole sample",
+   "rule": "On every EIA Weekly Natural Gas Storage Report day: sell the first-nearby NG future 90 min before the release (10:30 ET standard = 09:00 ET entry), buy back 30 min after (11:00 ET). Unconditional; no surprise data needed.",
+   "hold": "120 min (09:00-11:00 ET standard)",
+   "gross_per_trade_bp": 34.3,
+   "gross_per_trade_ticks": 10.3,
+   "conversion": "Annual 17.86% / 52 (paper annualizes with 52, fn 24) = 0.343% = 34.3 bp per event; x 0.30 ticks/bp at $3.00 = 10.3 ticks. Price level $3.00/MMBtu (EIA Henry Hub spot annual averages 2010-2023: 4.37, 4.00, 2.75, [2013 cell not parsed], 4.37, 2.62, 2.52, 2.99, 3.15, 2.56, 2.03, 3.89, 6.45, 2.53; saved pages/NG/eia_henryhub_annual.htm). NG tick 0.001 x 10,000 MMBtu = $10; 1 tick = 10/P bp = 3.33 bp at $3.00; notional $30,000; 1 bp = $3.00.",
+   "gross_or_net": "gross",
+   "sample": "NYMEX NG first nearby, 2003-03..2018-12, 699 announcements, 5-minute Thomson Reuters Tick History data",
+   "decay_evidence": "Table 8 Panel B (before 2011) raw 32.85%/yr (63.2 bp/event), Sharpe 4.22; Panel C (after 2011) raw 2.91%/yr (p 0.558; 5.6 bp/event), Sharpe 0.50; after bid-ask -0.90%/yr. Text: 'gradually decreasing to become insignificantly different from zero in the most recent period.' This is the published source of member K4-ngpre-01 (E.0 catalog K4-001, post-2011 null stated as the prior).",
+   "source": "Prokopczuk, Wese Simen, Wichmann (2021), The Natural Gas Announcement Day Puzzle, Energy Journal 42(2), doi 10.5547/01956574.42.2.mpro (accepted version, CentAUR)",
+   "url": "https://centaur.reading.ac.uk/90003/1/NG_paper_final_round.pdf",
+   "quote": "Raw (-90,30) 17.86 (0.000) 2.57 | Raw + TC 12.21 (0.003) 1.79 | Raw + TC + FC 12.01 (0.003) 1.76 ... Panel C: After 2011 Raw (-90,30) 2.91 (0.558) 0.50 | Raw + TC -0.90 (0.854) -0.16; fn 24: 'returns are annualized using a multiplier of 52 to represent the realisable return within a year'",
+   "quote_location": "Table 8 (accepted version p. 33; txt lines 1222-1258); footnote 24 (p. 16)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/NG/prokopczuk_wesesimen_wichmann_2021_ej_accepted.pdf",
+   "sha256": "4ffdbf721d5e0ef348b8477b863c77abe659fda1b839401d77ae6baf9c719c43"
+  },
+  {
+   "id": "E2",
+   "effect": "Same storage-day short, after 2011 (the decay result)",
+   "rule": "As E1, trades after 2011 only",
+   "hold": "120 min",
+   "gross_per_trade_bp": 5.6,
+   "gross_per_trade_ticks": 1.68,
+   "conversion": "2.91% / 52 = 0.056% = 5.6 bp; at $3.00 = 1.68 ticks vs D8 wall 2.408 ticks: ratio 0.70. Net of bid-ask: -0.90%/52 = -1.7 bp. Price level $3.00/MMBtu (EIA Henry Hub spot annual averages 2010-2023: 4.37, 4.00, 2.75, [2013 cell not parsed], 4.37, 2.62, 2.52, 2.99, 3.15, 2.56, 2.03, 3.89, 6.45, 2.53; saved pages/NG/eia_henryhub_annual.htm). NG tick 0.001 x 10,000 MMBtu = $10; 1 tick = 10/P bp = 3.33 bp at $3.00; notional $30,000; 1 bp = $3.00.",
+   "gross_or_net": "gross",
+   "sample": "NG first nearby, 2011..2018-12 (Panel C)",
+   "decay_evidence": "Not significant (p 0.558); net negative after transaction cost; Table 7 Panel B: positive-surprise pre-announcement mean -0.15% (p 0.070) in 2014-2018 vs -0.47% in 2007-2014 (ex-post surprise sign, not tradable).",
+   "source": "Prokopczuk, Wese Simen, Wichmann (2021), Energy Journal 42(2)",
+   "url": "https://centaur.reading.ac.uk/90003/1/NG_paper_final_round.pdf",
+   "quote": "In the more recent period, this has declined to only 3% and a Sharpe ratio of 0.5, which do not withstand transaction and funding costs.",
+   "quote_location": "Section V.C (accepted version p. 16; txt lines 722-726); Table 8 Panel C",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/NG/prokopczuk_wesesimen_wichmann_2021_ej_accepted.pdf",
+   "sha256": "4ffdbf721d5e0ef348b8477b863c77abe659fda1b839401d77ae6baf9c719c43"
+  },
+  {
+   "id": "E3",
+   "effect": "Decomposition of the storage-day return: 99% inside (-90,+30); half pre (-90,-5), half post (-5,+30)",
+   "rule": "Descriptive: mean log return on announcement days by window",
+   "hold": "n/a (windows of 85 and 35 min)",
+   "gross_per_trade_bp": 37.0,
+   "gross_per_trade_ticks": 11.1,
+   "conversion": "(-90,30) mean -0.37% = 37 bp (short side); pre -0.18%, post -0.19%. Whole sample 2003-2018 (dominated by pre-2011, see E2). At $3.00: 11.1 ticks.",
+   "gross_or_net": "gross",
+   "sample": "NG 2003-03..2018-12, 699 announcement days, 5-minute data",
+   "decay_evidence": "See E2; the 60- and 30-minute pre-windows weaken (fn 20: 'the effect steadily decreases').",
+   "source": "Prokopczuk, Wese Simen, Wichmann (2021)",
+   "url": "https://centaur.reading.ac.uk/90003/1/NG_paper_final_round.pdf",
+   "quote": "Average Return -0.37 -0.37 -0.00 ... % of Daily Return 100% 99.0% 1.0% ... (-90, -5) -0.18 ... (-5, 30) -0.19 ... 49.4% 50.6%",
+   "quote_location": "Table 5 Panels A and B (p. 30; txt lines 1120-1145)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/NG/prokopczuk_wesesimen_wichmann_2021_ej_accepted.pdf",
+   "sha256": "4ffdbf721d5e0ef348b8477b863c77abe659fda1b839401d77ae6baf9c719c43"
+  },
+  {
+   "id": "E4",
+   "effect": "Pre-announcement drift traded on an analyst-forecast predictor (informed-trading signal)",
+   "rule": "Buy (sell) NG 90 min before the WNGSR release if the predictor ('informed' consensus of historically accurate analysts minus the Bloomberg consensus) is negative (positive); close 5 min before the release",
+   "hold": "85 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "No per-trade return reported in the retrieved text; only Sharpe and Sortino ratios.",
+   "gross_or_net": "unknown",
+   "sample": "NG nearby, 2008-07..2016-01, 334 announcements (387 less 53 same-day WPSR days), 271 with non-zero predictor",
+   "decay_evidence": "24-month moving average of strategy returns 'positive for the entire sample period' (to 2016-01); no post-2016 evidence. Needs analyst-level storage forecasts (proprietary): not computable from bars or calendars (E.0 exclusion X-01).",
+   "source": "Gu and Kurov (2018), J. Futures Markets 38(9) 1079-1096, doi 10.1002/fut.21926; read in Chen Gu's WVU PhD dissertation (2018), chapter 1 (author's version; the published article was not retrieved)",
+   "url": "https://researchrepository.wvu.edu/cgi/viewcontent.cgi?article=9192&context=etd",
+   "quote": "a simple trading strategy that consists of buying (selling) a futures contract 90 minutes before the release time if the predictor is negative (positive), and closing the position 5 minutes ahead of the announcement would have earned an annualized Sharpe ratio of 0.84. ... Table 13 ... Full Sample (N=271) Sharpe Ratio 0.84 ... Large Values of Predictor (N=153) 1.26",
+   "quote_location": "Dissertation section 1.5.3 and Table 13 (firecrawl markdown lines 1100-1110, 1909-1925)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/NG/gu_2016_wvu_dissertation_firecrawl.md",
+   "sha256": "08c3c50d6f3e69182e249b21621520dc0c150f9af6aba7613d5e312690e3caca"
+  },
+  {
+   "id": "E5",
+   "effect": "Market intraday momentum ROD -> LH, NG's own regression row",
+   "rule": "r_LH (14:00-14:30 ET = 13:00-13:30 CT) regressed on r_ROD (previous 14:30 ET close to 14:00 ET); long if r_ROD > 0, short if < 0 at 14:00 ET, exit 14:30 ET (NG trading hours 09:00-14:30 ET in the paper)",
+   "hold": "30 min (13:00-13:30 CT)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "Slope 3.02 (x100) = 0.0302: expected r_LH = 3.02 bp per 1% of r_ROD = 0.906 ticks per 1% |r_ROD| at $3.00. Clearing 1.5 x 2.408 = 3.61 ticks needs |r_ROD| >= 3.99%; clearing 1x needs 2.66%. Unconditional per-trade mean not reported for NG alone.",
+   "gross_or_net": "gross",
+   "sample": "NG (Tickdata), 1993-01-06..2020-05-01, 6824 obs, 1-minute bars",
+   "decay_evidence": "Not reported per market; post-2020 class evidence: [shared, see reports/stage_e20_briefs/shared/baltussen_notes.md and shared/aalto_thesis_notes.md]. Hold is 30 min, under V2.2's 60-min minimum; the matching decision time is t3 = 13:00 CT but h60 exits 14:00 CT, 30 min after NG's 13:30 CT close.",
+   "source": "Baltussen, Da, Lammers, Martens (2021), JFE 142, 377-403, Table B3 Panel B (on-disk EUR copy)",
+   "url": "https://repub.eur.nl/ (copy: reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md)",
+   "quote": "| NG | 3.89***(5.49) | 0.68 | 0.61***(5.21) | 3.74***(5.21) | 1.80***(2.58) | 9.20***(3.44) | 1.34 | 0.94*** | 3.02***(6.15) | 1.04 | 0.92*** | ... Adjusted R2, R2OOS, and slope coefficients are multiplied by 100.; Table 1: 'Natural gas futures NYMEX | NG | 9:00 - 14:30' (U.S.-listed futures in Eastern time)",
+   "quote_location": "Table B3 Panel B, NG row (copy line 3771) and caption; Table 1 (line 900); Table A-commodity list (line 3296)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E6",
+   "effect": "Week-to-week reversal of NG storage surprises; prices impound analyst forecasts before the EIA release",
+   "rule": "Not codable from bars and calendars as published (needs analyst forecasts); the E.0 bar-proxy member K4-ngrev-01 was excluded on review R-06",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "no size found",
+   "gross_or_net": "unknown",
+   "sample": "not read",
+   "decay_evidence": "none found",
+   "source": "Ederington, Lin, Linn, Yang (2019), EIA Storage Announcements, Analyst Storage Forecasts, and Energy Prices, Energy Journal 40(5) 121-142",
+   "url": "https://www.montana.edu/regecon/publications/energyinformationannouncement/index.html",
+   "quote": "(abstract only, quoted in E.0 catalog K4-006 and E.0 review row 25): 'Storage flows higher or lower than analysts had expected one week tend to be partially reversed the following week'; 'Analyst's natural gas forecasts efficiently impound the available time-series information'",
+   "quote_location": "abstract; full text not retrieved; the Montana State research-brief page saved has no such sentence",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/NG/montana_ederington2019.html",
+   "sha256": "423297319ac6f53c2349e3a4adb5149bdd5b101860f9be38e08ded52e70775e5"
+  },
+  {
+   "id": "E7",
+   "effect": "Leveraged/futures-ETF rebalancing pressure in NG (and VIX, oil, gold, silver)",
+   "rule": "Trade against leverage-rebalancing demand; needs ETF holdings/AUM; daily horizon in the paper (not intraday-tested here)",
+   "hold": "daily (open to close per a search summary; [unverified])",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "no NG size retrieved",
+   "gross_or_net": "unknown",
+   "sample": "not read (PDF not obtained; BIS PDF URL redirected to the landing page)",
+   "decay_evidence": "none retrieved",
+   "source": "Todorov (2021), Passive funds affect prices: evidence from the most ETF-dominated asset classes, BIS WP 952 (later Review of Finance 2024 [secondary-only])",
+   "url": "https://www.bis.org/publ/work952.pdf",
+   "quote": "Leverage rebalancing has the largest effects. It amplifies price changes and exposes ETF counterparties negatively to variance.",
+   "quote_location": "BIS landing page abstract (bis_wp952_landing_scrapling.txt line 419)",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/NG/bis_wp952_landing_scrapling.txt",
+   "sha256": "fd04cb65a1b8cb75eb2e1ca6f40a2529269cb9c62e999f8dc15a1738bca83f5a"
+  },
+  {
+   "id": "E8",
+   "effect": "Weather-forecast revisions and intraday NG futures moves (00 and 18 UTC runs)",
+   "rule": "Conditional on forecast changes (weather data needed); no unconditional clock rule",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "none",
+   "gross_or_net": "unknown",
+   "sample": "Princeton senior thesis (2022), not peer reviewed; not retrieved",
+   "decay_evidence": "none",
+   "source": "Princeton senior thesis 'Weather Forecasts and Natural Gas Futures Price Dynamics' (2022), dataspace.princeton.edu/handle/88435/dsp01r781wk215",
+   "url": "https://dataspace.princeton.edu/handle/88435/dsp01r781wk215?mode=full",
+   "quote": "(search summary only, not retrieved text)",
+   "quote_location": "WebSearch summary 2026-10-11",
+   "grade": "unverified",
+   "saved_path": "",
+   "sha256": ""
+  },
+  {
+   "id": "E9",
+   "effect": "NG settlement window (13:28-13:30 CT), NG post-release reversal, NG time-of-day seasonality, NG intraday time-series momentum (other than E5)",
+   "rule": "none",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "none",
+   "gross_or_net": "unknown",
+   "sample": "n/a",
+   "decay_evidence": "Null search result: no post-2015 study found in 6 WebSearch queries and an OpenAlex query (1,927 hits for 'natural gas futures intraday' since 2015; top 50 titles screened). Unknown, not rejected.",
+   "source": "searches logged in md section 5",
+   "url": "",
+   "quote": "",
+   "quote_location": "",
+   "grade": "unverified",
+   "saved_path": "reports/stage_e20_briefs/pages/NG/openalex_ng_intraday.json",
+   "sha256": "ae7762a3e28152415f53ee1741a22ce9db43b7ec8dbcb1c85f29b4ca0a14a81e"
+  },
+  {
+   "id": "E10",
+   "effect": "Intraday patterns in NG futures from HFT data (VPIN/ML signals)",
+   "rule": "not read",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "none",
+   "gross_or_net": "unknown",
+   "sample": "not read",
+   "decay_evidence": "not read",
+   "source": "Song, Lopez de Prado, Simon, Wu (2015), Intraday Patterns in Natural Gas Futures: Extracting Signals from High-Frequency Trading Data, SSRN 2657224",
+   "url": "https://doi.org/10.2139/ssrn.2657224",
+   "quote": "(OpenAlex record only; no abstract in the record)",
+   "quote_location": "openalex_ng_detail.json",
+   "grade": "unverified",
+   "saved_path": "reports/stage_e20_briefs/pages/NG/openalex_ng_detail.json",
+   "sha256": "d62a5c028ee14ba2dca1eaf8ca71f1ce3fa17689572c704c0e5c0a977cbef7bc"
+  }
+ ],
+ "availability": [
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)",
+    "D6 O_X 08:00 CT"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "NG bars from 2010-07-01 (E.16 window) to 2024-02-29",
+   "basis": "close(O+29) - open(first bar of trade date d = 17:00 CT bar of d-1). Globex reopen 17:00 CT in both energy eras (hist2010 sessions: 17:00-16:15 to 2015-09-18, 17:00-16:00 from 2015-09-21; grade cme). Own path only. The ml_route_v2 signal code reads only the 2019+ tables; a 2010-2019 loader exists in c1_replication/tables.py (load_releases, load_full_sessions) and base_rules/calendars.py (hist2010), not wired into ml_route_v2.",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "OR over bars opening in [08:00, 08:15) CT; same calendars as cp1. O 08:00 is a D6 convention, UNVERIFIED as a CME-stated open 2015-09-21..2019-05-31.",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "latest close of bars opening in [O+15, C=13:30) beyond the OR; same calendars.",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01 (+1 port-complete day)..2024-02-29",
+   "basis": "CLV of the most recent port-complete day before d; needs d-1 and d same instrument_id; group calendar for the prior day.",
+   "shared_ref": null
+  },
+  {
+   "feature": "k4_ngpre_mto",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31, sha256 9a051211...; NGS 470 all official, WPSR 470 (1 time unsourced: 2012-11-01), FOMC 72 (14 times inferred 14:15 ET, 2010-06..2013-01)) via c1_replication NGS table less C13 drops (0 drop rows)",
+    "strategy/members/k4/_releases.py NGS (generated; 247 rows in 2019-05-06..2024-02-29: 239 at 09:30 CT, 8 at 11:00 CT; 5 E.5 confirmation drops 2019-12-26, 2020-01-02, 2020-11-12, 2021-01-21, 2023-11-09; 4 actual Friday releases not added)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "NGS 2010-06-03..2019-05-30 (470: 457 at 10:30 ET, 13 at 12:00 ET; Thu 444, Wed 13, Fri 12, Tue 1); 2019-05-02..2024-02-29 (247 kept)",
+   "basis": "Fixed-clock flag: minutes to T (T = 09:30 CT standard, 11:00 CT exception). Applies at t1 (08:30) on NGS days only. 2010-2019 rows all graded official (28 schedule-only weeks without report-page confirmation). The ml_route_v2 signal code reads only the 2019+ tables; a 2010-2019 loader exists in c1_replication/tables.py (load_releases, load_full_sessions) and base_rules/calendars.py (hist2010), not wired into ml_route_v2.",
+   "shared_ref": null
+  },
+  {
+   "feature": "k4_ngpre_msince",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31, sha256 9a051211...; NGS 470 all official, WPSR 470 (1 time unsourced: 2012-11-01), FOMC 72 (14 times inferred 14:15 ET, 2010-06..2013-01))",
+    "strategy/members/k4/_releases.py NGS (generated; 247 rows in 2019-05-06..2024-02-29: 239 at 09:30 CT, 8 at 11:00 CT; 5 E.5 confirmation drops 2019-12-26, 2020-01-02, 2020-11-12, 2021-01-21, 2023-11-09; 4 actual Friday releases not added)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "as k4_ngpre_mto",
+   "basis": "minutes since T; applies at t2 (10:30) and t3 (13:00) on NGS days. The ml_route_v2 signal code reads only the 2019+ tables; a 2010-2019 loader exists in c1_replication/tables.py (load_releases, load_full_sessions) and base_rules/calendars.py (hist2010), not wired into ml_route_v2.",
+   "shared_ref": null
+  },
+  {
+   "feature": "k4_ovr_ret",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "reports/stage_e14_cal_energy_full_sessions.json (2,250 dates 2010-06-01..2019-05-31, sha256 3f2a273a..., C1's recomputed rule agrees)",
+    "strategy/members/k4/_calendar.py ENERGY_FULL_SESSIONS (2019-05-01..2026-06-18)",
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29 (slots 09:00-13:00 CT)",
+   "basis": "r(tau) = (close(tau-1) - open(tau-60))/open(tau-60) at the latest slot tau in {09:00..13:00} known by t; applies t2/t3; own path. The ml_route_v2 signal code reads only the 2019+ tables; a 2010-2019 loader exists in c1_replication/tables.py (load_releases, load_full_sessions) and base_rules/calendars.py (hist2010), not wired into ml_route_v2.",
+   "shared_ref": null
+  },
+  {
+   "feature": "k4_ovr_pct",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "reports/stage_e14_cal_energy_full_sessions.json (2,250 dates 2010-06-01..2019-05-31, sha256 3f2a273a..., C1's recomputed rule agrees)",
+    "strategy/members/k4/_calendar.py ENERGY_FULL_SESSIONS (2019-05-01..2026-06-18)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01 + 20 full-session warm-up (about 2010-08)..2024-02-29",
+   "basis": "position of r(tau) among the 5-slot values of the 20 most recent ENERGY_FULL_SESSIONS dates before d (>= 80 values); 2010-2019 full-session list exists (E.14). The ml_route_v2 signal code reads only the 2019+ tables; a 2010-2019 loader exists in c1_replication/tables.py (load_releases, load_full_sessions) and base_rules/calendars.py (hist2010), not wired into ml_route_v2.",
+   "shared_ref": null
+  },
+  {
+   "feature": "g01_ret30",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "own path; close(t) - close(t-30), sigma_X,d (20-date) warm-up",
+   "shared_ref": null
+  },
+  {
+   "feature": "g02_ret60",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "own path",
+   "shared_ref": null
+  },
+  {
+   "feature": "g03_ret120",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "own path",
+   "shared_ref": null
+  },
+  {
+   "feature": "g04_ret_day",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "own path, first bar of trade date (17:00 CT d-1)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "open of O bar minus close of C-1 bar of the previous trade date; not applicable after an early-halt date (hist2010 energy: 73 early halts, 26 closures)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06_rv60",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "own path; 20 previous row dates warm-up",
+   "shared_ref": null
+  },
+  {
+   "feature": "g07_range",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "own path",
+   "shared_ref": null
+  },
+  {
+   "feature": "g08_prev_ret",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "close(C-1) - open(O) of the most recent complete date",
+   "shared_ref": null
+  },
+  {
+   "feature": "g09_vol_state",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "sigma_X,d over its 120-date median: rows before about 140 trade dates of NG bars (about 2010-07..2011-01) are missing for data reasons (warm-up), not causally unavailable",
+   "shared_ref": null
+  },
+  {
+   "feature": "g10_logvol30",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "own path volume; 20 previous row dates",
+   "shared_ref": null
+  },
+  {
+   "feature": "g16_month_end",
+   "legs": [
+    "NG"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/energy.json (2010-06-01..2019-05-31, sha256 c7a58e90..., grade cme; O 08:00 CT UNVERIFIED 2015-09-21..2019-05-31, secondary S40 per stage_e16_settlement.md)",
+    "data/calendars/energy.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "last two trade dates of the month of the energy group calendar",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11_t_index",
+   "legs": [],
+   "calendars": [
+    "V2.2 clock (energy t1 08:30, t2 10:30, t3 13:00; t4 14:08 added by E.20)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "clock only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g12_dow",
+   "legs": [],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "date only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel",
+   "legs": [],
+   "calendars": [
+    "reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31, sha256 9a051211...; NGS 470 all official, WPSR 470 (1 time unsourced: 2012-11-01), FOMC 72 (14 times inferred 14:15 ET, 2010-06..2013-01))",
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21, sha256 839f2437...; NG D8 list = NGS, WPSR, FOMC; in 2019-05-06..2024-02-29: NGS 252 (evidence field 'unverified' 251, 'verified' 1; E.5 check found 5 wrong dates), WPSR 250 verified, FOMC 37 verified)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "NGS/WPSR/FOMC 2010-06..2019-05 and 2019-05..2024-02",
+   "basis": "NG's D8 list = NGS, WPSR, FOMC (release_products in the frozen calendar). 2019-2024: G13-G15 read ReleaseCalendar.by_root directly, so they carry the 5 NGS rows the E.5 check found misdated (dropped only from the k4 NGS table) and miss the actual Friday releases. 2010-2019: E.14 file has every row; FOMC part is the macro calendar. The ml_route_v2 signal code reads only the 2019+ tables; a 2010-2019 loader exists in c1_replication/tables.py (load_releases, load_full_sessions) and base_rules/calendars.py (hist2010), not wired into ml_route_v2.",
+   "shared_ref": "FOMC: reports/stage_e20_briefs/shared/macro_calendars.md (RTY reader)"
+  },
+  {
+   "feature": "g14_min_since_rel",
+   "legs": [],
+   "calendars": [
+    "reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31, sha256 9a051211...; NGS 470 all official, WPSR 470 (1 time unsourced: 2012-11-01), FOMC 72 (14 times inferred 14:15 ET, 2010-06..2013-01))",
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21, sha256 839f2437...; NG D8 list = NGS, WPSR, FOMC; in 2019-05-06..2024-02-29: NGS 252 (evidence field 'unverified' 251, 'verified' 1; E.5 check found 5 wrong dates), WPSR 250 verified, FOMC 37 verified)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "as g13",
+   "basis": "as g13",
+   "shared_ref": "FOMC: shared/macro_calendars.md"
+  },
+  {
+   "feature": "g15_rel_day",
+   "legs": [],
+   "calendars": [
+    "reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31, sha256 9a051211...; NGS 470 all official, WPSR 470 (1 time unsourced: 2012-11-01), FOMC 72 (14 times inferred 14:15 ET, 2010-06..2013-01))",
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21, sha256 839f2437...; NG D8 list = NGS, WPSR, FOMC; in 2019-05-06..2024-02-29: NGS 252 (evidence field 'unverified' 251, 'verified' 1; E.5 check found 5 wrong dates), WPSR 250 verified, FOMC 37 verified)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "as g13",
+   "basis": "as g13",
+   "shared_ref": "FOMC: shared/macro_calendars.md"
+  },
+  {
+   "feature": "g17_nq",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "NQ window 2010-07-01..2024-02-29 (stage_e16_windows.json)",
+   "basis": "lead leg listed throughout; listing audited by the NQ reader",
+   "shared_ref": "product_NQ.md"
+  },
+  {
+   "feature": "g17_zn",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "lead leg",
+   "shared_ref": "product_ZN.md"
+  },
+  {
+   "feature": "g17_6e",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "lead leg",
+   "shared_ref": "product_6E.md"
+  },
+  {
+   "feature": "g17_gc",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "lead leg",
+   "shared_ref": "product_GC.md"
+  },
+  {
+   "feature": "g17_zc",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "lead leg",
+   "shared_ref": "product_ZC.md"
+  },
+  {
+   "feature": "g17_cl",
+   "legs": [
+    "CL"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "NOT APPLICABLE on NG rows by construction: CL is K4's own cluster lead (generic.py docstring: 'the row's own cluster lead is not applicable'); CL leg exists in both windows",
+   "shared_ref": "product_CL.md"
+  },
+  {
+   "feature": "g17_mbt",
+   "legs": [
+    "MBT"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MBT listed 2021 (brief section 7; not one of the 17 roots)",
+   "basis": "leg outside the 17 roots; no MBT in 2010-2019",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mes",
+   "legs": [
+    "MES"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "MES listed 2019-05-06 (brief section 7; not one of the 17 roots); backward window ends 2019-05-05",
+   "basis": "leg outside the 17 roots",
+   "shared_ref": null
+  }
+ ],
+ "proposed_features": [],
+ "proposed_features_note": "Zero proposals: (1) the only unconditional NG-specific rule with a sized per-trade figure (E1/E2, storage-day short) is already in the library as k4_ngpre_mto/msince (member K4-ngpre-01, built from the same paper), and its post-2011 gross (5.6 bp, 1.68 ticks at $3.00) is 0.70x the D8 wall 2.408 ticks, below 1.5x; (2) the NG ROD->LH slope (E5) is r_ROD, already added by the prompt; (3) every other NG effect found needs data outside bars and calendars (analyst forecasts E4/E6, ETF holdings E7, weather forecasts E8) or has no published size.",
+ "shared_notes_written": [],
+ "fetch_log": [
+  {
+   "url": "https://centaur.reading.ac.uk/robots.txt",
+   "utc": "2026-10-11T17:37:20Z",
+   "sha256": "6aff9e42de78ed7ab1890d644b228a7db96db8bd0f61e2888777dba468a1460f",
+   "path": "reports/stage_e20_briefs/pages/NG/centaur_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://centaur.reading.ac.uk/90003/",
+   "utc": "2026-10-11T17:37:28Z",
+   "sha256": "3f4b36a9a0d83cab60baf07f8b7eeff185e846c61ca14d09d341f4b029bef3d4",
+   "path": "reports/stage_e20_briefs/pages/NG/centaur_90003.html",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://centaur.reading.ac.uk/1492/1/End_User_Agreement_version_C1%2000.pdf",
+   "utc": "2026-10-11T17:37:40Z",
+   "sha256": "1841d1bff0d8178eff53eda522a2a57a37afc1ed3c64d17a710d298fe1420006",
+   "path": "reports/stage_e20_briefs/pages/NG/centaur_end_user_agreement.pdf",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://centaur.reading.ac.uk/90003/1/NG_paper_final_round.pdf",
+   "utc": "2026-10-11T17:37:46Z",
+   "sha256": "4ffdbf721d5e0ef348b8477b863c77abe659fda1b839401d77ae6baf9c719c43",
+   "path": "reports/stage_e20_briefs/pages/NG/prokopczuk_wesesimen_wichmann_2021_ej_accepted.pdf",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://researchrepository.wvu.edu/robots.txt",
+   "utc": "2026-10-11T17:38:38Z",
+   "sha256": "a0a51283a93c222a2c84c50f3f198b54e648ba92b4dee54e1f0204ec02bb728c",
+   "path": "reports/stage_e20_briefs/pages/NG/wvu_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://researchrepository.wvu.edu/etd/8184/",
+   "utc": "2026-10-11T17:38:42Z",
+   "sha256": "b246dd0336489e816797bb2873d165832f3d7bcacc2d7bcbf94f4d2d2c5cc71c",
+   "path": "reports/stage_e20_briefs/pages/NG/wvu_etd_8184.html",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://researchrepository.wvu.edu/cgi/viewcontent.cgi?article=9192&context=etd",
+   "utc": "2026-10-11T17:38:51Z",
+   "sha256": "2cb6c4fa6ed2452c07f4a1981d2b230050ad4eb3d2afc4e946d9a5c33b526725",
+   "path": "reports/stage_e20_briefs/pages/NG/gu_2016_wvu_dissertation_403_cloudflare.html",
+   "status": "blocked",
+   "http": "403"
+  },
+  {
+   "url": "https://researchrepository.wvu.edu/cgi/viewcontent.cgi?article=9192&context=etd",
+   "utc": "2026-10-11T17:40:54Z",
+   "sha256": "08c3c50d6f3e69182e249b21621520dc0c150f9af6aba7613d5e312690e3caca",
+   "path": "reports/stage_e20_briefs/pages/NG/gu_2016_wvu_dissertation_firecrawl.md",
+   "status": "ok",
+   "http": "200(firecrawl)"
+  },
+  {
+   "url": "https://www.bis.org/robots.txt",
+   "utc": "2026-10-11T17:43:16Z",
+   "sha256": "1b8d27c888985118a03b777cee6d51f16badb011bd4523514e01e09fcc7b98f4",
+   "path": "reports/stage_e20_briefs/pages/NG/bis_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.bis.org/terms_conditions.htm",
+   "utc": "2026-10-11T17:43:20Z",
+   "sha256": "6409625485be1b91e830f230dcd289ffd2af571da7f781d4939ba2bd99e243d4",
+   "path": "reports/stage_e20_briefs/pages/NG/bis_terms.htm",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.bis.org/publ/work952.pdf",
+   "utc": "2026-10-11T17:43:31Z",
+   "sha256": "e475043effbbe32aa1149b594db1f76e143d8283cc1482240d1d81ee4e1ae723",
+   "path": "reports/stage_e20_briefs/pages/NG/todorov_bis_wp952_landing.html",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.bis.org/publ/work952.pdf",
+   "utc": "2026-10-11T17:43:45Z",
+   "sha256": "fd04cb65a1b8cb75eb2e1ca6f40a2529269cb9c62e999f8dc15a1738bca83f5a",
+   "path": "reports/stage_e20_briefs/pages/NG/bis_wp952_landing_scrapling.txt",
+   "status": "ok",
+   "http": "200(scrapling get; PDF URL redirected to landing)"
+  },
+  {
+   "url": "https://api.openalex.org/works?search=natural%20gas%20futures%20intraday&filter=from_publication_date:2015-01-01&per-page=50&select=id,display_name,publication_year,primary_location,doi&mailto=",
+   "utc": "2026-10-11T17:44:22Z",
+   "sha256": "ae7762a3e28152415f53ee1741a22ce9db43b7ec8dbcb1c85f29b4ca0a14a81e",
+   "path": "reports/stage_e20_briefs/pages/NG/openalex_ng_intraday.json",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://api.openalex.org/works?filter=doi:10.2139/ssrn.2657224|10.2139/ssrn.7458058|10.1002/fut.22402|10.1016/j.najef.2025.102494&select=id,display_name,publication_year,authorships,open_access,abstract_inverted_index,best_oa_location",
+   "utc": "2026-10-11T17:44:33Z",
+   "sha256": "d62a5c028ee14ba2dca1eaf8ca71f1ce3fa17689572c704c0e5c0a977cbef7bc",
+   "path": "reports/stage_e20_briefs/pages/NG/openalex_ng_detail.json",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.osti.gov/robots.txt",
+   "utc": "2026-10-11T17:44:50Z",
+   "sha256": "6c83c102ef46cc73b9c0895afa41e60aaed110ad962de8178379f4b808a0fe70",
+   "path": "reports/stage_e20_briefs/pages/NG/osti_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.osti.gov/api/v1/records?q=%22natural%20gas%20futures%22%20Wu%20Simon&rows=10",
+   "utc": "2026-10-11T17:45:31Z",
+   "sha256": "",
+   "path": "reports/stage_e20_briefs/pages/NG/osti_ng_search.json",
+   "status": "failed",
+   "http": "000"
+  },
+  {
+   "url": "https://www.montana.edu/robots.txt",
+   "utc": "2026-10-11T17:47:12Z",
+   "sha256": "c9017f3ebb82438a9006c9831b6c7869a8aa4fd58fe3b00d8525d3937881269b",
+   "path": "reports/stage_e20_briefs/pages/NG/montana_robots.txt",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.montana.edu/regecon/publications/energyinformationannouncement/index.html",
+   "utc": "2026-10-11T17:47:14Z",
+   "sha256": "423297319ac6f53c2349e3a4adb5149bdd5b101860f9be38e08ded52e70775e5",
+   "path": "reports/stage_e20_briefs/pages/NG/montana_ederington2019.html",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://www.eia.gov/dnav/ng/hist/rngwhhda.htm",
+   "utc": "2026-10-11T17:47:48Z",
+   "sha256": "34011c96383f5a557ff8b380c548b1a5aa7fdd0b35c3cf79b4d00ed3f3bc5d2f",
+   "path": "reports/stage_e20_briefs/pages/NG/eia_henryhub_annual.htm",
+   "status": "ok",
+   "http": "200"
+  },
+  {
+   "url": "https://researchrepository.wvu.edu/cgi/viewcontent.cgi?article=9192&context=etd",
+   "utc": "2026-10-11T17:38:57Z",
+   "sha256": "",
+   "path": "(scratch only, 59 bytes)",
+   "status": "blocked",
+   "http": "403 (scrapling extract get)"
+  },
+  {
+   "url": "https://researchrepository.wvu.edu/cgi/viewcontent.cgi?article=9192&context=etd",
+   "utc": "2026-10-11T17:39:08Z",
+   "sha256": "",
+   "path": "(scratch only, 0 bytes)",
+   "status": "failed",
+   "http": "200 empty (scrapling extract fetch; PDF viewer)"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "centaur.reading.ac.uk",
+   "url": "https://centaur.reading.ac.uk/robots.txt; https://centaur.reading.ac.uk/1492/1/End_User_Agreement_version_C1%2000.pdf",
+   "utc": "2026-10-11T17:37:20Z / 17:37:40Z",
+   "ruling": "robots allows (Disallow /cgi/ only). End User Agreement: cl. 2 'single copies ... for personal research, study, educational, non-commercial' allowed; cl. 8 'Whole items must not be harvested by robots except transiently for full-text indexing or citation analysis'. The agreement was fetched just before the paper in the same command and read after: one item, one request, single copy for research (cl. 2). Flagged for the lead under cl. 8."
+  },
+  {
+   "site": "researchrepository.wvu.edu",
+   "url": "https://researchrepository.wvu.edu/robots.txt",
+   "utc": "2026-10-11T17:38:38Z",
+   "ruling": "robots: User-agent * disallows /cgi/ dashboards only, not viewcontent. Dissertation rights statement: 'You are free to use this Dissertation in any way that is permitted by the copyright and related rights legislation that applies to your use.' Cloudflare challenge blocked curl and scrapling; obtained via Firecrawl (fallback order followed: curl 403, scrapling get 403, scrapling fetch empty, Firecrawl 60 of 132 pages)."
+  },
+  {
+   "site": "bis.org",
+   "url": "https://www.bis.org/robots.txt; https://www.bis.org/terms_conditions.htm",
+   "utc": "2026-10-11T17:43:16Z / 17:43:20Z",
+   "ruling": "robots allows; terms: 'Users may reproduce a limited extract of BIS Material ... provided the BIS is cited as the source.' Allowed; PDF not obtained (redirect to landing page)."
+  },
+  {
+   "site": "api.openalex.org",
+   "url": "https://api.openalex.org/works",
+   "utc": "2026-10-11T17:44:22Z",
+   "ruling": "terms NOT read in this session before two metadata queries (OpenAlex metadata is commonly stated to be CC0 [unverified here]); metadata only, no full text."
+  },
+  {
+   "site": "osti.gov",
+   "url": "https://www.osti.gov/robots.txt",
+   "utc": "2026-10-11T17:44:50Z",
+   "ruling": "robots allows /api; one API query timed out (no file)."
+  },
+  {
+   "site": "montana.edu",
+   "url": "https://www.montana.edu/robots.txt",
+   "utc": "2026-10-11T17:47:12Z",
+   "ruling": "robots allows (Disallow /vote/, /cgi-bin/); one public research-brief page."
+  },
+  {
+   "site": "eia.gov",
+   "url": "https://www.eia.gov/about/copyrights_reuse.php (E.14 reading, reports/stage_e14_briefs/pages/terms_checks.md row eia.gov)",
+   "utc": "2026-10-05T08:10Z (E.14)",
+   "ruling": "public domain; one page fetched (Henry Hub annual averages, for the bp-to-tick conversion)."
+  }
+ ],
+ "budget_notices": [
+  "none: 10 WebSearch calls used of about 50; no over-budget notice; Firecrawl 1 scrape (no credit notice); a 'COST CRITICAL' session-cost hook notice appeared (informational, not a stop)"
+ ],
+ "unfinished": [
+  "Gu and Kurov (2018) published JFM version not retrieved (dissertation chapter read; Firecrawl returned pages 1-60 of 132, chapter 1 complete).",
+  "Ederington et al. (2019) full text not retrieved (abstract-level only).",
+  "Todorov (BIS WP 952) PDF not obtained; NG-specific size unknown.",
+  "Song, Lopez de Prado, Simon, Wu (2015) not retrieved (OSTI query timed out; SSRN not fetched by rule).",
+  "Princeton 2022 senior thesis on weather forecasts not retrieved.",
+  "Energy-class evidence not read here: cite reports/stage_e20_briefs/shared/energy_class_notes.md (CL reader); Aalto thesis NG/energy rows: shared/aalto_thesis_notes.md (ZN reader); post-2020 ROD->LH decay: shared/baltussen_notes.md (NQ reader). None of those files existed when this file was written.",
+  "Unconditional per-trade gross of ROD->LH for NG alone is not published; the threshold arithmetic in E5 is from the slope only.",
+  "Shared scratch-path collision: another reader's fetch.sh at the shared scratchpad path wrote this reader's first two fetches (CentAUR robots, reading-clone robots) into reports/stage_e20_briefs/pages/LE/ (file centaur_robots.txt and two lines in pages/LE/fetch_log.tsv); left untouched. pages/NG/wrap_robots.txt is not this reader's (it belongs to the 6E reader's log)."
+ ],
+ "nq_only": null
+}

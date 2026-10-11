@@ -1,0 +1,948 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "ZN",
+ "reader": "ProductReader-ZN-OpusHigh",
+ "finished_utc": "2026-10-11T17:56:53Z",
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "Market intraday momentum ROD->LH, bond futures",
+   "rule": "at 13:30 CT long if P(13:30)/P(prior 14:00 close)-1>0 else short; exit 14:00 CT (end of settlement period)",
+   "hold": "30 min",
+   "gross_per_trade_bp": 0.86,
+   "gross_per_trade_ticks": 0.6,
+   "conversion": "2.16%/yr / 252 trades = 0.86 bp; /1.42 bp per tick",
+   "gross_or_net": "gross",
+   "sample": "16 developed bond futures, 1/N portfolio, 1974-12..2020-05, 1-min; TY 1983-01-05..2020-05-01, 08:20-15:00 EST",
+   "decay_evidence": "Table 5 bonds beta_ROD 3.19*** (8.38) R2 1.28 in 1974-1999 vs 1.53*** (3.61) R2 0.47 in 2000-2020; LETF diff-in-diff 'bond market results remain positive but insignificantly so'",
+   "source": "Baltussen, Da, Lammers, Martens (2021), Hedging demand and market intraday momentum, JFE 142",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0304405X21001598",
+   "quote": "Table 6 Panel B (government bond futures): η(rROD) | 2.16 | 1.33 | 1.62 | 0.55; Table B2: TY ... 2.53*** (6.96) | 1.06 | 0.86***; 'For all but Australian and Japanese bond futures, this results in using the regular opening hours of the futures as open, and the end of the daily settlement period as close.'",
+   "quote_location": "on-disk md lines 1704-1750 (Table 6), 3614 (Table B2 TY), 554-560 (Section 2), 1662-1667 (Table 5)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": ""
+  },
+  {
+   "id": "E2",
+   "effect": "Intraday momentum and reversal, 20 equity/bond/FX futures 2008-2024",
+   "rule": "ROD/first-half-hour -> last half hour (thesis); details unreadable",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "net",
+   "sample": "20 futures indices in equities, bonds and currencies, 2008-01..2024-10",
+   "decay_evidence": "'the intraday momentum patterns still exist in our dataset spanning January 2008 to October 2024'",
+   "source": "Majorin (2025), Intraday momentum in futures markets, Aalto University MSc thesis",
+   "url": "https://aaltodoc.aalto.fi/items/1011f043-edd1-4cb2-9694-b1216d77561f",
+   "quote": "we find that most intraday momentum and reversal trading strategies may not be feasible after transactions costs, especially in bond and currency futures.",
+   "quote_location": "dc.description.abstract (repository REST API)",
+   "grade": "unverified",
+   "saved_path": "reports/stage_e20_briefs/shared/aalto_thesis_item_api.json",
+   "sha256": "0d301069918a97651b2a53431dce0b924450b65f42bdf550a94158cdcae9ac46"
+  },
+  {
+   "id": "E3",
+   "effect": "10-year auction day, pre-auction price decline",
+   "rule": "10Y auction days: SELL at T_a-180 min (09:00 CT), cover at auction close 12:00 CT (13:00 ET)",
+   "hold": "180 min",
+   "gross_per_trade_bp": 2.64,
+   "gross_per_trade_ticks": 1.86,
+   "conversion": "cash 10Y pre-auction return -3.822 bp x0.69 = 2.64 bp ZN; /1.42. Yield route: 0.442 bp x6 = 2.65 bp = 1.87 ticks. ZN tick 1/64 pt = 1.42 bp at price 110 [assumption]; yield bp x6 = ZN price bp (Hartley-Schwarz: 'So a 10-year futures contract has a duration of about 6 years.'); cash 10Y price bp x0.69 = ZN price bp (cash duration 8.7 [assumption])",
+   "gross_or_net": "gross",
+   "sample": "on-the-run cash 10Y, GovPX 1991-06..2000-12, BrokerTec 2001-01..2024-07, 1-min",
+   "decay_evidence": "Table 2 10Y yield pressure S1 1991-2006 1.491***, S2 2007-2014 1.732***, S3 2015-2024 0.593*; 'the post-2015 period displays markedly weaker yield pressure—less than half the earlier magnitudes'",
+   "source": "Fleming, Liu, Nguyen (2026), Intraday Price Pressure and Order Flow Around U.S. Treasury Auctions, FRBNY Staff Report 1188",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "quote": "Pre-auction Return (bps) −0.733∗∗∗ −1.134∗∗∗ −2.523∗∗∗ −1.204 −3.822∗∗∗ −12.075∗∗∗ [2Y 3Y 5Y 7Y 10Y 30Y]; ∆Y (pre) 0.397∗∗∗ 0.355∗∗∗ 0.565∗∗∗ 0.221 0.442∗∗∗ 0.634∗∗∗",
+   "quote_location": "Table 3 Panel A (p.48), Table 2 Panel A (p.47); text p.20",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/nyfed_sr1188.pdf",
+   "sha256": "93f9b196946d3c41e9670052eb3d8d0fce30fb892f8f1553c1b469c05193095b"
+  },
+  {
+   "id": "E4",
+   "effect": "10-year auction day, post-auction price recovery",
+   "rule": "10Y auction days: BUY after results release (~12:02 CT), exit +180 min (~15:02 CT)",
+   "hold": "180 min",
+   "gross_per_trade_bp": 4.2,
+   "gross_per_trade_ticks": 2.96,
+   "conversion": "cash 10Y post-auction return 6.084 bp x0.69 = 4.20 bp ZN; /1.42. 2015-2024 total (both legs) 5.165 bp x0.69 = 3.56 bp = 2.51 ticks for two trades (~1.25/leg if even split, assumption). ZN tick 1/64 pt = 1.42 bp at price 110 [assumption]; yield bp x6 = ZN price bp (Hartley-Schwarz: 'So a 10-year futures contract has a duration of about 6 years.'); cash 10Y price bp x0.69 = ZN price bp (cash duration 8.7 [assumption])",
+   "gross_or_net": "gross",
+   "sample": "as E3",
+   "decay_evidence": "Table 3 10Y price pressure S1 10.883***, S2 15.222***, S3 2015-2024 5.165* (no leg split); F-test S3=S2 3.507*",
+   "source": "Fleming, Liu, Nguyen (2026), FRBNY SR 1188",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "quote": "Post-auction Return (bps) 0.603∗∗ 1.120∗∗∗ 2.107∗∗∗ 2.816∗∗∗ 6.084∗∗∗ 5.031; S3: 2015-2024 0.887∗∗∗ 1.216∗∗ 4.482∗∗∗ 2.509 5.165∗ 14.224∗",
+   "quote_location": "Table 3 Panels A and B (p.48)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/nyfed_sr1188.pdf",
+   "sha256": "93f9b196946d3c41e9670052eb3d8d0fce30fb892f8f1553c1b469c05193095b"
+  },
+  {
+   "id": "E5",
+   "effect": "Cross-tenor auction spillover into the 10-year",
+   "rule": "E3/E4 V around 5Y and 7Y auctions, measured in the on-the-run 10-year",
+   "hold": "2 x 180 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": 1.55,
+   "conversion": "10y yield pressure (both legs) 5Y 0.736 bp x6 = 4.42 bp = 3.11 ticks total (~1.55/leg, even split assumed); 7Y 0.490 bp = 2.07 ticks total (~1.04/leg). ZN tick 1/64 pt = 1.42 bp at price 110 [assumption]; yield bp x6 = ZN price bp (Hartley-Schwarz: 'So a 10-year futures contract has a duration of about 6 years.'); cash 10Y price bp x0.69 = ZN price bp (cash duration 8.7 [assumption])",
+   "gross_or_net": "gross",
+   "sample": "as E3, full sample only",
+   "decay_evidence": "none reported for spillovers; own-tenor effect halves after 2014",
+   "source": "Fleming, Liu, Nguyen (2026), FRBNY SR 1188",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "quote": "5-Year 0.966∗∗∗ 0.921∗∗∗ 1.038∗∗∗ 0.497∗ 0.736∗∗∗ 0.562∗∗∗; 7-Year 0.297∗ 0.531∗∗∗ 0.715∗∗∗ 0.659∗∗∗ 0.490∗∗ 0.353∗ [columns 2Y 3Y 5Y 7Y 10Y 30Y]; 'Auctions of 5-, 7-, and 10-year notes are associated with significant yield pressure across the entire curve.'",
+   "quote_location": "Table 4 (p.49); Section 4.3 (p.23)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/nyfed_sr1188.pdf",
+   "sha256": "93f9b196946d3c41e9670052eb3d8d0fce30fb892f8f1553c1b469c05193095b"
+  },
+  {
+   "id": "E6",
+   "effect": "10-year auction day, ZN futures decline ahead of the auction",
+   "rule": "ZN short ahead of 10Y auction, long after (window unstated)",
+   "hold": "unstated",
+   "gross_per_trade_bp": 6.0,
+   "gross_per_trade_ticks": 4.2,
+   "conversion": "6 bp of ZN price / 1.42 bp per tick (price 110 assumption)",
+   "gross_or_net": "gross",
+   "sample": "US 10-year T-Note futures, Tickdata, 1983-01..2024-08, 382 million transactions",
+   "decay_evidence": "none reported",
+   "source": "Houweling, Penninga, Martinetti (Robeco), Quant chart: US Treasuries up for auction, 2025-03-27",
+   "url": "https://www.robeco.com/en-au/insights/2025/03/quant-chart-us-treasuries-up-for-auction",
+   "quote": "The intraday chart in Figure 1 illustrates a clear pattern: ahead of the auction, on average futures prices decline by 6 basis points, only to recover in the hours that follow.",
+   "quote_location": "article body, Figure 1 text",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/robeco_quant_chart_auctions.html",
+   "sha256": "e859ba7cf3ff808d7b9b2e5172808c865510e93080568c6ab32b28deaf4535aa"
+  },
+  {
+   "id": "E7",
+   "effect": "Pre-announcement drift (macro releases)",
+   "rule": "trade in the direction of the later surprise from release-30 min (not causal: needs the surprise sign)",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "gross",
+   "sample": "10-year T-note and ES futures, second-by-second, 2008-01..2014-03",
+   "decay_evidence": "'the price drift has increased since 2007'; post-2015 unknown",
+   "source": "Kurov, Sancetta, Strasser, Wolfe, ECB WP 1901 (2016); JFQA 54 (2019)",
+   "url": "https://www.ecb.europa.eu/pub/pdf/scpwps/ecbwp1901.en.pdf",
+   "quote": "This drift accounts for 49 per- cent and 39 percent of the overall price adjustments in the E-mini S&P 500 and 10-year Treasury note futures markets, respectively; ... some drift (only about one basis point) ...; The median bid-ask spread is 0.020% for the E-mini S&P 500 futures and 0.013% for 10-year Treasury notes futures.",
+   "quote_location": "Section 6 Conclusion (p.46); footnote 16 (p.20); Section 4.3 (p.24)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/kssw_ecbwp1901.pdf",
+   "sha256": "6bec58a8c4c296fc29ac49998ae1c3aa373b38701b5ad901b6ce948355887d67"
+  },
+  {
+   "id": "E8",
+   "effect": "Pre-FOMC drift in Treasuries (null)",
+   "rule": "long into the FOMC statement",
+   "hold": "24 h (2pm-2pm)",
+   "gross_per_trade_bp": 0.0,
+   "gross_per_trade_ticks": 0.0,
+   "conversion": "null result (10-year coefficient < 1 bp, significant only at 10% in 1980-2011)",
+   "gross_or_net": "gross",
+   "sample": "1994-2011 and 1980-2011, daily windows",
+   "decay_evidence": "n/a",
+   "source": "Lucca and Moench, The Pre-FOMC Announcement Drift, FRBNY SR 512 (rev. 2013); JF 2015",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr512.pdf",
+   "quote": "we find no such effect in U.S. Treasury securities and money market futures. ... For the 1980-2011 sample the on-the-run ten-year Treasury is significant at the 10% level with a coefficient of less than a basis point.",
+   "quote_location": "abstract; Section 4 (p.16-17)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/shared/lucca_moench_sr512.pdf.txt",
+   "sha256": ""
+  },
+  {
+   "id": "E9",
+   "effect": "Post-FOMC drift in long bond futures",
+   "rule": "long after expansionary, short after contractionary FOMC shocks",
+   "hold": "up to 15 days",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "gross",
+   "sample": "post-GFC transaction-level US and German long bond futures",
+   "decay_evidence": "'absence of pre-FOMC announcement drift'",
+   "source": "Indriawan, Jiao, Tse (2021), J. Banking & Finance 123, 106027",
+   "url": "https://ideas.repec.org/a/eee/jbfina/v123y2021ics0378426620302880.html",
+   "quote": "we observe a sizable post-announcement drift in government bond markets. A trading strategy of investing in the market after expansionary shocks and shorting the market following contractionary surprises yields up to four times the Sharpe ratio of buy-and-hold investment.",
+   "quote_location": "abstract (IDEAS record)",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/ideas_indriawan_jiao_tse_2021.html",
+   "sha256": "b931c295046bd2d6db662a01abe93e81402f88988ae224d86f5d16095bd1d768"
+  },
+  {
+   "id": "E10",
+   "effect": "End-of-month Treasury futures returns (close-to-close, not intraday)",
+   "rule": "long 10Y futures over the last t days of the month",
+   "hold": "1 to 5 days incl. overnight",
+   "gross_per_trade_bp": 9.0,
+   "gross_per_trade_ticks": 6.3,
+   "conversion": "0.09 percentage points = 9 bp (last day); /1.42; includes overnight, so not an intraday figure",
+   "gross_or_net": "gross",
+   "sample": "Treasury futures 1990-2018, daily",
+   "decay_evidence": "not reported",
+   "source": "Hartley and Schwarz (2019), Predictable End-of-Month Treasury Returns, Wharton Rodney White Center WP",
+   "url": "https://rodneywhitecenter.wharton.upenn.edu/wp-content/uploads/2019/12/17-19.Schwarz.pdf",
+   "quote": "10-Year 0.09*** 0.14*** 0.17*** 0.18*** 0.22*** 0.20*** -0.06 -0.08* -0.10** -0.04 ... The units are (approximate) percentage points per month ... The sample period is from 1990 to 2018.",
+   "quote_location": "Table 8 and notes (p.32)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/hartley_schwarz_2019.pdf",
+   "sha256": "56403762378f606f595dcce11afcf1f1eaccf8810237c58999f653a230a32809"
+  },
+  {
+   "id": "E11",
+   "effect": "Month-end index strike time (activity, no returns)",
+   "rule": "n/a",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "Treasury cash trading activity",
+   "decay_evidence": "strike moved 3 pm to 4 pm ET in January 2021",
+   "source": "Dyer, Fleming, Shachar, Treasury Trading at the Close, Liberty Street Economics, 2026-09-22",
+   "url": "https://libertystreeteconomics.newyorkfed.org/2026/09/treasury-trading-at-the-close/",
+   "quote": "We also document a marked shift in trading activity from around 3 p.m. (ET) to around 4 p.m. after a major fixed-income index provider moved its strike time from 3 p.m. to 4 p.m. in January 2021.",
+   "quote_location": "introduction",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/lse_index_strike.html",
+   "sha256": "2036a2f067b9c0639d01ede8cb3dd0991f57dd0dea5874cdd06819c6c2336553"
+  },
+  {
+   "id": "E12",
+   "effect": "First-15 to last-15 minute momentum, Chinese Treasury bond futures",
+   "rule": "sign of first 15-min return -> last 15 min",
+   "hold": "15 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "CFFEX Treasury bond futures (years not seen)",
+   "decay_evidence": "unknown",
+   "source": "Zhang, Wang, Li (2021), Bond intraday momentum, J. Behavioral and Experimental Finance 31",
+   "url": "https://ideas.repec.org/a/eee/beexfi/v31y2021ics2214635021000599.html",
+   "quote": "By utilizing high-frequency data from the Chinese Treasury bond futures market, we find that the first fifteen-minute return is a good predictor of the last fifteen-minute return.",
+   "quote_location": "abstract (IDEAS record); full text blocked (ScienceDirect 403)",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/ideas_zhang_wang_li_2021_bond_intraday_momentum.html",
+   "sha256": "449b680f2a3d29e89e82027b2be95de5b83d3d3ca72ddfb41941c5b400d20b19"
+  },
+  {
+   "id": "E13",
+   "effect": "Intraday trend (>=1 h) and reversion (<=16 min), pooled incl. US 10-year futures",
+   "rule": "nonlinear regression of next return on trend strength",
+   "hold": "1 h+",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "R2_adj OOS 0.020 bp: not tradable size",
+   "gross_or_net": "gross",
+   "sample": "24 futures (US/Can/Ger/UK 10-year among rates), end-of-minute, 2010-2023",
+   "decay_evidence": "n/a",
+   "source": "Safari and Schmidhuber (2025), Trends and Reversion in Financial Markets on Time Scales from Minutes to Decades, arXiv 2501.16772v2",
+   "url": "https://arxiv.org/pdf/2501.16772",
+   "quote": "Regression results for trend horizons ≥ 1 hour ... b +0.132% ±0.046% +2.9 ... R2adj 0.009 bp 0.020 bp",
+   "quote_location": "Table 6 (p.18)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/arxiv_2501.16772.pdf",
+   "sha256": "9b40ea4bd1605b484d1265e07e3bf03438910be7595444179369903790ba3a2e"
+  }
+ ],
+ "availability": [
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "rates group calendar (Globex open 17:00 CT)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "missing 2010-07-01..2011-09-30 (Globex opened 17:30 CT); yes from trade date 2011-10-03",
+   "basis": "data/calendars/hist2010/rates.json (sha256 099ac84e..., 2010-06-01..2019-05-31) sessions: 2010-06-01..2011-09-30 start_ct 17:30 (zn_specs_2010), 2011-10-03..2019-05-31 17:00 (globex_20110919); ml_route_v2/signals/ports._first_bar needs the exact 17:00 CT bar of d-1",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "rates group calendar (O 07:20)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "opening range from O=07:20 in both hist2010 eras and rates.py",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "rates group calendar (O 07:20)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "as cp2_range",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "rates group calendar (O, C)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "prior complete day session 07:20-14:00",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_auction_mto",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "10Y Treasury auctions (AUCTION_TENOR ZN->10Y)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019: 106 10Y rows 2010-07-13..2019-04-10 (105 at 13:00 ET, 1 at 11:30 ET on 2012-12-12); 2019-2024: 59 rows 2019-05-08..2024-02-07, all 13:00 ET",
+   "basis": "reports/stage_e16_calendars/ec_auc_2010_2019.json (sha256 e3b5f452..., FiscalData, official; no 2010-2019 literal table in k2/_releases.py, which starts 2019-05); reports/stage_e2b_release_calendar.json (sha256 839f2437...)",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_auction_msince",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "10Y Treasury auctions"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "as k2_auction_mto",
+   "basis": "as k2_auction_mto",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_fomc_mto",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "FOMC statement dates; fixed 13:00 CT anchor"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019: 71 statements in window; 50 at 14:00 ET (13:00 CT) from 2013-03-20; 21 earlier at 14:15 (13), 12:30 (4), 12:35 (3), 12:20 (1) ET, last 2013-01-30; 2019-2024: 37 in window",
+   "basis": "reports/stage_e14_cal_releases.json (sha256 9a051211...); ml_route_v2/signals/k2.py uses a fixed FOMC_MIN (13:00 CT): correct only from 2013-03-20; the 8 statements at 12:20-12:35 ET precede t3 12:50 CT",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_monthend_msince",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "month-end N-1, N (EC-CAL rates)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019 derivable from hist2010 rates trade dates; 2019-2024 k2/_month_end.py 2019-05-30..2026-05-28",
+   "basis": "data/calendars/hist2010/rates.json (sha256 099ac84e..., 2010-06-01..2019-05-31); no generated 2010-2019 literal table",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_predrift_move",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "ISM Services release dates"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "2019-2024: 57 ISM_SERVICES dates in window",
+   "basis": "no 2010-2019 ISM Services calendar on disk (E.14 release calendar holds NGS, WPSR, FOMC only; searched reports/*.json, data/calendars)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g01_ret30",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "own path; g04 uses the actual first bar of the trade date (generic._own), valid in both Globex eras",
+   "shared_ref": null
+  },
+  {
+   "feature": "g02_ret60",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "own path; g04 uses the actual first bar of the trade date (generic._own), valid in both Globex eras",
+   "shared_ref": null
+  },
+  {
+   "feature": "g03_ret120",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "own path; g04 uses the actual first bar of the trade date (generic._own), valid in both Globex eras",
+   "shared_ref": null
+  },
+  {
+   "feature": "g04_ret_day",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "own path; g04 uses the actual first bar of the trade date (generic._own), valid in both Globex eras",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06_rv60",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "own path; g04 uses the actual first bar of the trade date (generic._own), valid in both Globex eras",
+   "shared_ref": null
+  },
+  {
+   "feature": "g07_range",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "own path; g04 uses the actual first bar of the trade date (generic._own), valid in both Globex eras",
+   "shared_ref": null
+  },
+  {
+   "feature": "g10_logvol30",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "own path; g04 uses the actual first bar of the trade date (generic._own), valid in both Globex eras",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "rates group calendar"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29 (g09 after a 120-date warm-up)",
+   "basis": "data/calendars/hist2010/rates.json (sha256 099ac84e..., 2010-06-01..2019-05-31); data/calendars/rates.py",
+   "shared_ref": null
+  },
+  {
+   "feature": "g08_prev_ret",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "rates group calendar"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29 (g09 after a 120-date warm-up)",
+   "basis": "data/calendars/hist2010/rates.json (sha256 099ac84e..., 2010-06-01..2019-05-31); data/calendars/rates.py",
+   "shared_ref": null
+  },
+  {
+   "feature": "g09_vol_state",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "rates group calendar"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29 (g09 after a 120-date warm-up)",
+   "basis": "data/calendars/hist2010/rates.json (sha256 099ac84e..., 2010-06-01..2019-05-31); data/calendars/rates.py",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11_t_index",
+   "legs": [],
+   "calendars": [
+    "rates group calendar"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "flags from the group calendar",
+   "shared_ref": null
+  },
+  {
+   "feature": "g12_dow",
+   "legs": [],
+   "calendars": [
+    "rates group calendar"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "flags from the group calendar",
+   "shared_ref": null
+  },
+  {
+   "feature": "g16_month_end",
+   "legs": [],
+   "calendars": [
+    "rates group calendar"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "flags from the group calendar",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "TREASURY_AUCTION (all tenors)",
+    "NFP",
+    "FOMC",
+    "ISM_SERVICES"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2019-2024: 545 ZN rows (auctions 394, ISM_SERVICES 57, NFP 57, FOMC 37); 2010-2019: auctions 636 rows (2Y 97, 3Y 106, 5Y 107, 7Y 114, 10Y 106, 30Y 106), FOMC 71, NFP see shared ref, ISM Services none",
+   "basis": "ZN's D8 list from reports/stage_e2b_release_calendar.json products field; EC-AUC; E.14 releases",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md (RTY reader) for NFP 2010-2019"
+  },
+  {
+   "feature": "g14_min_since_rel",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "TREASURY_AUCTION (all tenors)",
+    "NFP",
+    "FOMC",
+    "ISM_SERVICES"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2019-2024: 545 ZN rows (auctions 394, ISM_SERVICES 57, NFP 57, FOMC 37); 2010-2019: auctions 636 rows (2Y 97, 3Y 106, 5Y 107, 7Y 114, 10Y 106, 30Y 106), FOMC 71, NFP see shared ref, ISM Services none",
+   "basis": "ZN's D8 list from reports/stage_e2b_release_calendar.json products field; EC-AUC; E.14 releases",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md (RTY reader) for NFP 2010-2019"
+  },
+  {
+   "feature": "g15_rel_day",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "TREASURY_AUCTION (all tenors)",
+    "NFP",
+    "FOMC",
+    "ISM_SERVICES"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2019-2024: 545 ZN rows (auctions 394, ISM_SERVICES 57, NFP 57, FOMC 37); 2010-2019: auctions 636 rows (2Y 97, 3Y 106, 5Y 107, 7Y 114, 10Y 106, 30Y 106), FOMC 71, NFP see shared ref, ISM Services none",
+   "basis": "ZN's D8 list from reports/stage_e2b_release_calendar.json products field; EC-AUC; E.14 releases",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md (RTY reader) for NFP 2010-2019"
+  },
+  {
+   "feature": "g17_nq",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "lead listed before 2010; listing audited by that lead's reader",
+   "shared_ref": "reports/stage_e20_briefs/product_NQ.json"
+  },
+  {
+   "feature": "g17_6e",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "lead listed before 2010; listing audited by that lead's reader",
+   "shared_ref": "reports/stage_e20_briefs/product_6E.json"
+  },
+  {
+   "feature": "g17_cl",
+   "legs": [
+    "CL"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "lead listed before 2010; listing audited by that lead's reader",
+   "shared_ref": "reports/stage_e20_briefs/product_CL.json"
+  },
+  {
+   "feature": "g17_gc",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "lead listed before 2010; listing audited by that lead's reader",
+   "shared_ref": "reports/stage_e20_briefs/product_GC.json"
+  },
+  {
+   "feature": "g17_zc",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "both windows",
+   "basis": "lead listed before 2010; listing audited by that lead's reader",
+   "shared_ref": "reports/stage_e20_briefs/product_ZC.json"
+  },
+  {
+   "feature": "g17_zn (on ZN rows)",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "no",
+   "dates": "n/a by design",
+   "basis": "own cluster K2: generic._lead sets ok &= view.cluster != own_cluster",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_zn (as lead leg on K1, K3-K7 rows)",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "ZN roll dates (n/a per V2.2)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "ZN listed long before 2010 (TY data from 1983-01-05)",
+   "basis": "Baltussen et al. Table A: 'US 10-year T-note futures | TY | 1983-01-05 | 2020-05-01'; E.16 R-S4 names only RTY and TN as late listings; stage_e16_windows.json ZN window_start_on_or_after 2010-07-01; rates Globex session (17:30/17:00-16:00 CT) spans every group's t1-t4",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mbt",
+   "legs": [
+    "MBT"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MBT listed 2021",
+   "basis": "brief section 7; outside the 17 roots",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mes",
+   "legs": [
+    "MES"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MES listed 2019-05",
+   "basis": "brief section 7; uncovered in reports/stage_e12_gate0_list.json",
+   "shared_ref": null
+  },
+  {
+   "feature": "k9_anncday",
+   "legs": [],
+   "calendars": [
+    "EC-K9"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "no",
+   "dates": "not applicable on ZN rows",
+   "basis": "V2.3: applies on MNQ, M2K, MYM rows only",
+   "shared_ref": null
+  },
+  {
+   "feature": "r_ROD and |r_ROD| vs 60-date median (prompt-added)",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "rates group calendar, C=14:00 CT"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2019-05-05; 2019-05-06..2024-02-29",
+   "basis": "own path and group calendar in both eras; listed, not proposed",
+   "shared_ref": null
+  }
+ ],
+ "proposed_features": [],
+ "proposed_features_note": "None. Sized and rejected: cross-tenor 5Y/7Y auction flags (about 1.55 and 1.04 ticks per leg, ratios 1.33 and 0.89, full sample, below 1.5x); post-FOMC continuation at t4 (no intraday size published); last-10-minute momentum (no rates decision time at 13:50-14:00 CT; figures unreadable). Own-tenor auction V already in the library.",
+ "shared_notes_written": [
+  "reports/stage_e20_briefs/shared/aalto_thesis_notes.md",
+  "reports/stage_e20_briefs/shared/rates_class_notes.md"
+ ],
+ "fetch_log": [
+  {
+   "url": "https://aaltodoc.aalto.fi/robots.txt",
+   "utc": "2026-10-11T17:34:03Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked"
+  },
+  {
+   "url": "https://aaltodoc.aalto.fi/items/1011f043-edd1-4cb2-9694-b1216d77561f",
+   "utc": "2026-10-11T17:36Z (approx., to the minute)",
+   "sha256": "",
+   "path": "",
+   "status": "blocked"
+  },
+  {
+   "url": "https://aaltodoc.aalto.fi/server/api/core/items/1011f043-edd1-4cb2-9694-b1216d77561f",
+   "utc": "2026-10-11T17:36:51Z (file mtime)",
+   "sha256": "0d301069918a97651b2a53431dce0b924450b65f42bdf550a94158cdcae9ac46",
+   "path": "reports/stage_e20_briefs/shared/aalto_thesis_item_api.json",
+   "status": "ok"
+  },
+  {
+   "url": "https://aaltodoc.aalto.fi/server/api/core/items/1011f043-edd1-4cb2-9694-b1216d77561f/bundles",
+   "utc": "2026-10-11T17:37:18Z (file mtime)",
+   "sha256": "5ab2d147bb5afb7d225d55eadda150548477e79fc341c5009fa9b50371158950",
+   "path": "reports/stage_e20_briefs/shared/aalto_thesis_bundles_api.json",
+   "status": "ok"
+  },
+  {
+   "url": "https://aaltodoc.aalto.fi/server/api/core/items/1011f043-edd1-4cb2-9694-b1216d77561f/accessStatus",
+   "utc": "2026-10-11T17:37:19Z (file mtime)",
+   "sha256": "c1e2559dd40aae2d6ed5a29fa6c17663f72f6804a4ea5be42537d0086d6214bd",
+   "path": "reports/stage_e20_briefs/shared/aalto_thesis_accessstatus_api.json",
+   "status": "ok"
+  },
+  {
+   "url": "https://aaltodoc.aalto.fi/info/end-user-agreement",
+   "utc": "2026-10-11T17:38Z (approx., to the minute)",
+   "sha256": "",
+   "path": "",
+   "status": "blocked"
+  },
+  {
+   "url": "https://www.aalto.fi/en/news/aalto-thesis-database-now-available-from-outside-the-learning-centre",
+   "utc": "2026-10-11T17:39:39Z (file mtime)",
+   "sha256": "112721737613c5f2931bd3d91a253156d89066bd79fbcb3a0c7a9434f5880f38",
+   "path": "reports/stage_e20_briefs/shared/aalto_thesis_database_news.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.skidmore.edu/economics/documents/KSSW2017-PriceDriftBeforeUSMacroeconomicNews.pdf",
+   "utc": "2026-10-11T17:42:32Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked"
+  },
+  {
+   "url": "https://www.ecb.europa.eu/pub/pdf/scpwps/ecbwp1901.en.pdf",
+   "utc": "2026-10-11T17:42:45Z (file mtime)",
+   "sha256": "6bec58a8c4c296fc29ac49998ae1c3aa373b38701b5ad901b6ce948355887d67",
+   "path": "reports/stage_e20_briefs/pages/ZN/kssw_ecbwp1901.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "utc": "2026-10-11T17:43:34Z (file mtime)",
+   "sha256": "93f9b196946d3c41e9670052eb3d8d0fce30fb892f8f1553c1b469c05193095b",
+   "path": "reports/stage_e20_briefs/pages/ZN/nyfed_sr1188.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.robeco.com/en-au/insights/2025/03/quant-chart-us-treasuries-up-for-auction",
+   "utc": "2026-10-11T17:44:13Z (file mtime)",
+   "sha256": "e859ba7cf3ff808d7b9b2e5172808c865510e93080568c6ab32b28deaf4535aa",
+   "path": "reports/stage_e20_briefs/pages/ZN/robeco_quant_chart_auctions.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://rodneywhitecenter.wharton.upenn.edu/wp-content/uploads/2019/12/17-19.Schwarz.pdf",
+   "utc": "2026-10-11T17:44:41Z (file mtime)",
+   "sha256": "56403762378f606f595dcce11afcf1f1eaccf8810237c58999f653a230a32809",
+   "path": "reports/stage_e20_briefs/pages/ZN/hartley_schwarz_2019.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2501.16772",
+   "utc": "2026-10-11T17:45:10Z (file mtime)",
+   "sha256": "9b40ea4bd1605b484d1265e07e3bf03438910be7595444179369903790ba3a2e",
+   "path": "reports/stage_e20_briefs/pages/ZN/arxiv_2501.16772.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/beexfi/v31y2021ics2214635021000599.html",
+   "utc": "2026-10-11T17:45:49Z (file mtime)",
+   "sha256": "449b680f2a3d29e89e82027b2be95de5b83d3d3ca72ddfb41941c5b400d20b19",
+   "path": "reports/stage_e20_briefs/pages/ZN/ideas_zhang_wang_li_2021_bond_intraday_momentum.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.sciencedirect.com/science/article/pii/S2214635021000599",
+   "utc": "2026-10-11T17:46Z (approx., to the minute)",
+   "sha256": "",
+   "path": "reports/stage_e20_briefs/pages/ZN/sciencedirect_robots_403_blockpage.html",
+   "status": "blocked"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2508.06788",
+   "utc": "2026-10-11T17:49:20Z (file mtime)",
+   "sha256": "79bb14f8e7d8d859e971187825433511c6d0ce00f1ff267be24887a48bbb95b2",
+   "path": "reports/stage_e20_briefs/pages/ZN/arxiv_2508.06788.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://works.bepress.com/yiuman-tse/141",
+   "utc": "2026-10-11T17:49:37Z (file mtime)",
+   "sha256": "3b0fb000db6867bd363d27f5dd76a894feb56d93978bfc11ed4e6e9440384d9d",
+   "path": "reports/stage_e20_briefs/pages/ZN/bepress_tse_141.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/jbfina/v123y2021ics0378426620302880.html",
+   "utc": "2026-10-11T17:49:52Z (file mtime)",
+   "sha256": "b931c295046bd2d6db662a01abe93e81402f88988ae224d86f5d16095bd1d768",
+   "path": "reports/stage_e20_briefs/pages/ZN/ideas_indriawan_jiao_tse_2021.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://libertystreeteconomics.newyorkfed.org/2026/09/treasury-trading-at-the-close/",
+   "utc": "2026-10-11T17:51:10Z (file mtime)",
+   "sha256": "2036a2f067b9c0639d01ede8cb3dd0991f57dd0dea5874cdd06819c6c2336553",
+   "path": "reports/stage_e20_briefs/pages/ZN/lse_index_strike.html",
+   "status": "ok"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "aaltodoc.aalto.fi",
+   "url": "https://aaltodoc.aalto.fi/robots.txt",
+   "utc": "2026-10-11T17:34:03Z",
+   "ruling": "unreadable (502, timeout); end-user agreement unreadable; only 3 public metadata API GETs made; record is metadata.only (no full text exists to fetch)"
+  },
+  {
+   "site": "skidmore.edu",
+   "url": "https://www.skidmore.edu/robots.txt",
+   "utc": "2026-10-11T17:42:28Z (file mtime)",
+   "ruling": "allowed (crawl-delay 5); target 404"
+  },
+  {
+   "site": "ecb.europa.eu",
+   "url": "https://www.ecb.europa.eu/robots.txt",
+   "utc": "2026-10-11T17:42:39Z (file mtime)",
+   "ruling": "allowed (/pub/pdf not disallowed)"
+  },
+  {
+   "site": "newyorkfed.org",
+   "url": "https://www.newyorkfed.org/robots.txt",
+   "utc": "2026-10-11T17:43:29Z (file mtime)",
+   "ruling": "allowed (medialibrary not disallowed)"
+  },
+  {
+   "site": "robeco.com",
+   "url": "https://www.robeco.com/robots.txt",
+   "utc": "2026-10-11T17:44:07Z (file mtime)",
+   "ruling": "allowed (insights pages not disallowed)"
+  },
+  {
+   "site": "rodneywhitecenter.wharton.upenn.edu",
+   "url": "https://rodneywhitecenter.wharton.upenn.edu/robots.txt",
+   "utc": "2026-10-11T17:44:38Z (file mtime)",
+   "ruling": "allowed (nothing disallowed)"
+  },
+  {
+   "site": "arxiv.org",
+   "url": "https://arxiv.org/robots.txt",
+   "utc": "2026-10-11T17:45:07Z (file mtime)",
+   "ruling": "allowed (/pdf allowed, crawl-delay 15; 2 fetches 4 min apart)"
+  },
+  {
+   "site": "ideas.repec.org",
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:45:46Z (file mtime)",
+   "ruling": "allowed (only /cgi-bin/ disallowed)"
+  },
+  {
+   "site": "sciencedirect.com",
+   "url": "https://www.sciencedirect.com/robots.txt",
+   "utc": "2026-10-11T17:45:56Z (file mtime)",
+   "ruling": "blocked (403 on robots and article); not retried"
+  },
+  {
+   "site": "works.bepress.com",
+   "url": "https://works.bepress.com/robots.txt",
+   "utc": "2026-10-11T17:49:33Z (file mtime)",
+   "ruling": "302; one page; SelectedWorks retired"
+  }
+ ],
+ "budget_notices": [
+  "No WebSearch over-budget notice (18 WebSearch calls). Firecrawl: 1 search, 4 credits, no credit notice. Tool cost notice 'COST CRITICAL ... Informational only' seen; treated as informational."
+ ],
+ "unfinished": [
+  "Aalto thesis full text restricted (Aaltodoc accessStatus metadata.only; Aalto Thesis Database, no saving): no per-class or per-market figures.",
+  "Aaltodoc robots.txt and end-user agreement unreadable (502/timeouts).",
+  "Tick conversions rest on assumptions (ZN price 110; cash 10Y duration 8.7; 10Y yield as proxy for the CTD yield): about +/-20%.",
+  "SR 1188 2015-2024 pre/post split per leg not published; per-leg post-2014 figure assumes an even split.",
+  "Zhang-Wang-Li 2021 and Indriawan-Jiao-Tse 2021: abstract only (ScienceDirect 403).",
+  "Not found: 'Drift Begone'; US Treasury futures intraday momentum studies since 2015 other than Baltussen et al.; settlement-window return effects; ES->ZN lead-lag at retail latency.",
+  "NFP 2010-2019 coverage for g13-g15 left to shared/macro_calendars.md (RTY reader), not on disk when written."
+ ],
+ "nq_only": null
+}

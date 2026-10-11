@@ -1,0 +1,763 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "ZC",
+ "reader": "ProductReader-ZC-OpusHigh",
+ "finished_utc": "2026-10-11T17:56:14Z",
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "ROD -> last half-hour momentum, corn (CN)",
+   "rule": "r_LH = a + b*r_ROD; r_ROD = P(close-30min)/P(prior close)-1; trade sign of r_ROD over the last 30 min (12:50-13:20 CT in the paper's 08:30-13:20 window)",
+   "hold": "30 min",
+   "gross_per_trade_bp": 1.44,
+   "gross_per_trade_ticks": 0.26,
+   "conversion": "b=0.0082 x E|r_ROD|; E|r_ROD| proxied by 0.022*sqrt(2/pi)=1.76% (Anderson et al. 2024 Table 1 corn WASDE-day sd, an upper-bound stand-in); 1 tick = 25/P bp, P=$4.50/bu [assumed] -> 5.56 bp/tick (0.37 ticks at $6.50)",
+   "gross_or_net": "gross",
+   "sample": "CN 1982-07-06..2020-05-01, 1-min, 9,462 days",
+   "decay_evidence": "full-sample R2_OOS -0.01% (negative); Fig.4(c) 2006-06..2020-05 t 2.8 in-sample",
+   "source": "Baltussen, Da, Lammers, Martens (2021) JFE 142:377-403, Table B3 Panel B",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0304405X21001598",
+   "quote": "| CN | -0.13(-0.26) | -0.01 | -0.05 | -0.21(-0.41) | 2.89***(3.54) | 0.79(0.42) | 0.21 | 0.03*** | 0.82**(2.09) | 0.05 | -0.01 |",
+   "quote_location": "on-disk copy L3774 (columns per header L3759: ... beta_ROD, R2, R2_OOS); L3299 sample row; L2463 Fig.4(c) 'CN | 10.0 | 2.8'",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E2",
+   "effect": "ROD -> LH, 'Softs' pool (grains, livestock, softs)",
+   "rule": "as E1, pooled",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "gross",
+   "sample": "1981-04..2020-05",
+   "decay_evidence": "R2_OOS -0.01%",
+   "source": "Baltussen et al. (2021) Table B3 Panel A",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0304405X21001598",
+   "quote": "| Softs | 0.25 (0.70) | 0.00 | -0.06 | 0.19 (0.57) | 0.61* (1.70) | 3.50*** (2.62) | 0.09 | -0.14 | 0.65** (2.16) | 0.04 | -0.01 |",
+   "quote_location": "on-disk copy L3715",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E3",
+   "effect": "Commodity class eta(r_ROD) portfolio",
+   "rule": "1/N commodity futures, sign of r_ROD",
+   "hold": "30 min",
+   "gross_per_trade_bp": 1.72,
+   "gross_per_trade_ticks": null,
+   "conversion": "NQ reader's /252 derivation of 4.34%/yr",
+   "gross_or_net": "gross",
+   "sample": "to 2020-05",
+   "decay_evidence": "class beta 1.59 (t 3.92) 1974-1999 vs 1.04 (t 2.86) 2000-2020",
+   "source": "[shared, see shared/baltussen_notes.md]",
+   "url": "",
+   "quote": "| η(rROD) | 4.34 | 3.05 | 1.42 | 0.56 | 0.85 | 0.98 | 0.87 | 0.53 |",
+   "quote_location": "on-disk copy L1742 (via shared/baltussen_notes.md)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E4",
+   "effect": "WASDE surprise response, corn and soybeans",
+   "rule": "return over w after release = b0 + b1*News (Bloomberg poll of world ending stocks); w = 10 min, 30 min, day close",
+   "hold": "10 min / 30 min / to close",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "gross",
+   "sample": "122 WASDE releases, 2010-2021",
+   "decay_evidence": "corn adjusts very little after 30 min (no post-30-min drift); needs proprietary poll",
+   "source": "Anderson, McKenzie, Noyes (2024) NCCC-134 working paper",
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2024/pdf/Anderson_McKenzie_Noyes_NCCC-134_2024.pdf",
+   "quote": "Corn News -0.023 -0.041** -0.044* ... This figure makes it clear that corn adjusts very little past the initial 30-minute time window.",
+   "quote_location": "pdf.txt lines 193-202 (Table 2 and text)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZC/anderson_mckenzie_noyes_2024.pdf",
+   "sha256": "e9df84b1f3fdad98fb7d701d0203c6ce34ad6114c5e66d3bbc9b593ebce746f0"
+  },
+  {
+   "id": "E5",
+   "effect": "WASDE-day intraday volatility curve, corn and soybeans",
+   "rule": "none (volatility only)",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "2013-01..2023-04, 08:30-14:00 CT",
+   "decay_evidence": "n/a",
+   "source": "Lee and Park (2024), summarized by co-author E. Park, Southern Ag Today",
+   "url": "https://sat-wp.afpc.tamu.edu/?p=42948",
+   "quote": "On WASDE days, volatility is comparatively calm into late morning, jumps right after the 11:00 a.m. Central Time (CT) release, and then eases within about an hour.",
+   "quote_location": "page body",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/ZC/tamu_afpc_wasde_days.html",
+   "sha256": "ec0432ae47cf4fb6e05e5fb9ef584b0e3041046d036fdaf17fde42462e7ef45a"
+  },
+  {
+   "id": "E6",
+   "effect": "Intraday jumps around USDA reports, corn",
+   "rule": "none (jump risk)",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "corn nearby, 2008-2015",
+   "decay_evidence": "n/a",
+   "source": "Couleau, Serra, Garcia (2018) NCCC-134; AJAE 2020",
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2018/pdf/Couleau_Serra_Garcia_NCCC-134_2018.pdf",
+   "quote": "Our results suggest that the real-time trading of major USDA reports has substantially increased the frequency and the magnitude of jump risk.",
+   "quote_location": "abstract, pdf.txt lines 38-40",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZC/couleau_serra_garcia_2018.pdf",
+   "sha256": "82de7a764b0ce18ec02c1a9c3dfa9215fe919c28da188ee32aa441c0de6e4ec3"
+  },
+  {
+   "id": "E7",
+   "effect": "Corn-soy volatility and spillover on USDA days",
+   "rule": "none",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "CME mid-quotes, 11:00 releases",
+   "decay_evidence": "n/a",
+   "source": "Bian, Serra, Garcia (2018) NCCC-134",
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2018/pdf/Bian_Serra_Garcia_NCCC-134_2018.pdf",
+   "quote": "The elevated level of volatilities would not settle down within the first hour after announcements.",
+   "quote_location": "abstract, pdf.txt lines 60-61",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZC/bian_serra_garcia_2018.pdf",
+   "sha256": "b162e8b704e5267ac65356f016c9d1e54b2275c402fb58c7357676b550704a02"
+  },
+  {
+   "id": "E8",
+   "effect": "Adjustment speed after in-session releases",
+   "rule": "none",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "2009-2014 intraday",
+   "decay_evidence": "n/a",
+   "source": "Adjemian and Irwin (2018) AJAE 100(4), p.1169, quoted by Isengildina-Massa (Virginia Tech)",
+   "url": "https://aaec.vt.edu/people/faculty/Isengildina_Olga/report/insights.html",
+   "quote": "Moreover, markets appear to now have a more difficult time distinguishing between the newsworthiness of USDA reports, at least in the very short-run, but these differences persist only for a handful of trading minutes.",
+   "quote_location": "VT page, Adjemian and Irwin paragraph",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/ZC/vt_isengildina_insights.html",
+   "sha256": "ea535d57f556cf459f9757bf414060f28139900c8e18256134deb526d6dba7ce"
+  },
+  {
+   "id": "E9",
+   "effect": "Trend of USDA announcement effects (daily volatility)",
+   "rule": "none",
+   "hold": "daily",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "corn, soybeans, multi-decade daily",
+   "decay_evidence": "generally increasing impact; some reports declining",
+   "source": "Ying, Chen, Dorfman (2017) NCCC-134",
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2017/pdf/Ying_Chen_Dorfman_NCCC-134_2017.pdf",
+   "quote": "USDA reports are still informative and influential in commodity futures markets, with a generally increasing trend in the impact of announcement effects, while there are some reports whose impact show a declining potential.",
+   "quote_location": "abstract, pdf.txt lines 56-58",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZC/ying_chen_dorfman_2017.pdf",
+   "sha256": "29adee4cc23a5af1f1389a4d6b90ecdc04323efb88b07e789490290f605ba2d8"
+  },
+  {
+   "id": "E10",
+   "effect": "Limit-day continuation (9 commodities incl. corn)",
+   "rule": "after a limit-up (down) close, long (short) next day",
+   "hold": "next-day close-to-close (includes overnight)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "pooled 40-62 bp (up), -38 to -63 bp (down), close-to-close; day-session share not published; corn row not retained",
+   "gross_or_net": "gross",
+   "sample": "1991-01-07..2016-05-23 daily",
+   "decay_evidence": "90%-of-limit moves show small returns",
+   "source": "Janardanan, Qiao, Rouwenhorst, JFM 39(8) 2019 (WP Feb 2017)",
+   "url": "https://ideas.repec.org/a/wly/jfutmk/v39y2019i8p946-961.html",
+   "quote": "For limit up days, the average return on the following day is 40 to 62 basis points, and for limit down days, the average return on the following day is -38 to -63 basis points.",
+   "quote_location": "reports/stage_e0_research_K6.md line 156 (P-K6-002-b, E.0's quote of the WP p.1)",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e0_research_K6.md",
+   "sha256": "0309f32720d9459e1bba56e6c904c1971f6ae5fc6277c637fc39601431e05b23"
+  }
+ ],
+ "availability": [
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "missing 2010-07-01..2012-05-18 (no 08:59 bar); 2012-05-21..2013-04-05 computable but pre-open by calendar (O 09:30); as defined from 2013-04-08",
+   "basis": "hist2010 grains.json sessions: 2010-06-01..2012-05-18 Globex 18:00-07:15 + 09:30-13:15; 2012-05-21..2013-04-05 17:00-14:00 continuous (day 09:30-14:00); 2013-04-08.. 19:00-07:45 + 08:30-13:15 (13:20 from 2015-07-06)",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "as cp1_ret ([08:30,08:45) bars absent to 2012-05-18)",
+   "basis": "hist2010 grains.json sessions: 2010-06-01..2012-05-18 Globex 18:00-07:15 + 09:30-13:15; 2012-05-21..2013-04-05 17:00-14:00 continuous (day 09:30-14:00); 2013-04-08.. 19:00-07:45 + 08:30-13:15 (13:20 from 2015-07-06)",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "as cp2_range",
+   "basis": "hist2010 grains.json sessions: 2010-06-01..2012-05-18 Globex 18:00-07:15 + 09:30-13:15; 2012-05-21..2013-04-05 17:00-14:00 continuous (day 09:30-14:00); 2013-04-08.. 19:00-07:45 + 08:30-13:15 (13:20 from 2015-07-06)",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "yes",
+   "dates": "eras match D6 from 2013-04-08; earlier: no O bar (to 2012-05-18), C 14:00 (2012-06-25..2013-04-05)",
+   "basis": "hist2010 grains.json sessions: 2010-06-01..2012-05-18 Globex 18:00-07:15 + 09:30-13:15; 2012-05-21..2013-04-05 17:00-14:00 continuous (day 09:30-14:00); 2013-04-08.. 19:00-07:45 + 08:30-13:15 (13:20 from 2015-07-06); family H port-complete test behaviour pre-2013 is a code question",
+   "shared_ref": null
+  },
+  {
+   "feature": "k6_wasdepre_drift",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "strategy/members/k6/_wasde.py",
+    "reports/stage_e2b_release_calendar.json"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "2019-2024: WASDE_DATES 2019-05-10..2026-06-11 (58 in window); 2010-2019: no WASDE calendar on disk; semantics (pre-release) hold only from Jan 2013 (07:30 CT release before)",
+   "basis": "k6/_wasde.py WASDE_RANGE 2019-05-01..2026-06-19 from frozen release calendar sha256 839f2437...; E.14 releases JSON 2010-06-01..2019-05-31 holds NGS, WPSR, FOMC only; ESMIS dated WASDE list back to 1973-09 (source exists, calendar not built); Couleau et al. 2018 release times",
+   "shared_ref": "reports/stage_e20_briefs/shared/grains_class_notes.md"
+  },
+  {
+   "feature": "g01_ret30..g03_ret120",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "t1 rows missing 2010-07-01..2012-05-18 (no bar at 09:00); g01 at 09:00 not applicable from 2013-04-08 (07:45-08:30 pause, SG-3)",
+   "basis": "hist2010 grains.json sessions: 2010-06-01..2012-05-18 Globex 18:00-07:15 + 09:30-13:15; 2012-05-21..2013-04-05 17:00-14:00 continuous (day 09:30-14:00); 2013-04-08.. 19:00-07:45 + 08:30-13:15 (13:20 from 2015-07-06)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g04",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "evening-session first bar exists every era; t1 rows missing to 2012-05-18",
+   "basis": "hist2010 grains.json sessions: 2010-06-01..2012-05-18 Globex 18:00-07:15 + 09:30-13:15; 2012-05-21..2013-04-05 17:00-14:00 continuous (day 09:30-14:00); 2013-04-08.. 19:00-07:45 + 08:30-13:15 (13:20 from 2015-07-06)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "no 08:30 bar to 2012-05-18; 13:14 not the settlement close 2012-06-25..2013-04-05 (S 14:00); as defined from 2013-04-08",
+   "basis": "hist2010 grains.json sessions: 2010-06-01..2012-05-18 Globex 18:00-07:15 + 09:30-13:15; 2012-05-21..2013-04-05 17:00-14:00 continuous (day 09:30-14:00); 2013-04-08.. 19:00-07:45 + 08:30-13:15 (13:20 from 2015-07-06); reports/stage_e16_settlement.md lines 50-53",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06,g07,g09,g10",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "t2-t4 every era; t1 missing 2010-07-01..2012-05-18",
+   "basis": "hist2010 grains.json sessions: 2010-06-01..2012-05-18 Globex 18:00-07:15 + 09:30-13:15; 2012-05-21..2013-04-05 17:00-14:00 continuous (day 09:30-14:00); 2013-04-08.. 19:00-07:45 + 08:30-13:15 (13:20 from 2015-07-06)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g08_prev_ret",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "no O bar to 2012-05-18",
+   "basis": "hist2010 grains.json sessions: 2010-06-01..2012-05-18 Globex 18:00-07:15 + 09:30-13:15; 2012-05-21..2013-04-05 17:00-14:00 continuous (day 09:30-14:00); 2013-04-08.. 19:00-07:45 + 08:30-13:15 (13:20 from 2015-07-06)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11,g12,g16",
+   "legs": [],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "hist2010 grains 2010-06-01..2019-05-31; grains.py 2019-05-01..2026-06-19",
+   "basis": "group calendar coverage, 0 unsourced (E.14)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel,g14_min_since_rel,g15_rel_day",
+   "legs": [],
+   "calendars": [
+    "reports/stage_e2b_release_calendar.json",
+    "reports/stage_e14_cal_releases.json"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2019-2024: 267 ZC releases (CROP_PROGRESS, CROP, WASDE, CROP_ANNUAL, FOMC); 2010-2019: FOMC only (E.14, 72 rows); no USDA rows; Grain Stocks/Acreage/Prospective Plantings absent from ZC's D8 list in both windows",
+   "basis": "frozen release calendar 2019-05-01..2026-06-21; E.14 releases JSON 2010-06-01..2019-05-31",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md"
+  },
+  {
+   "feature": "g17_nq,g17_zn,g17_6e,g17_cl,g17_gc (on ZC rows)",
+   "legs": [
+    "NQ",
+    "ZN",
+    "6E",
+    "CL",
+    "GC"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "per lead readers",
+   "basis": "audited by lead readers",
+   "shared_ref": "reports/stage_e20_briefs/product_NQ.md, product_ZN.md, product_6E.md, product_CL.md, product_GC.md"
+  },
+  {
+   "feature": "g17_mbt (on ZC rows)",
+   "legs": [
+    "MBT"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MBT listed 2021-05",
+   "basis": "leg outside the 17 roots (brief section 7); MBTX table from 2021-05",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mes (on ZC rows)",
+   "legs": [
+    "MES"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "MES listed 2019-05",
+   "basis": "leg outside the 17 roots (brief section 7)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_zc (ZC as lead, on non-K6 rows)",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "listed throughout; not applicable on K6 rows (ZC ZS ZL HE LE, SG-2); stale as-of values when ZC is closed: t4 14:08 rows read ZC's last bar before 13:15/13:20 (14:00 in 2012-05-21..2013-04-05); equity t1 09:00 reads ZC to 07:14 in 2010-07..2012-05-18; rates/FX/gold t1 07:50 read to 07:44 from 2013-04-08; ZC roll-blackout dates not applicable",
+   "basis": "hist2010 grains.json Globex segments from 2010-06-01 (CME sources); grains.py from 2019-05-01; side-by-side electronic since 2006-08-01 [secondary-only]; E.16 windows ZC priced from 2010-07",
+   "shared_ref": "reports/stage_e20_briefs/shared/grains_class_notes.md"
+  },
+  {
+   "feature": "r_ROD, |r_ROD|/median60 (prompt-added)",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json",
+    "data/calendars/grains.py"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "13:14 bar exists every era; 'prior close' meaning differs 2012-06-25..2013-04-05 (S 14:00); hist2010 C 13:20 from 2015-07-06 vs settlement 13:14-13:15",
+   "basis": "hist2010 grains.json sessions: 2010-06-01..2012-05-18 Globex 18:00-07:15 + 09:30-13:15; 2012-05-21..2013-04-05 17:00-14:00 continuous (day 09:30-14:00); 2013-04-08.. 19:00-07:45 + 08:30-13:15 (13:20 from 2015-07-06); stage_e16_settlement.md",
+   "shared_ref": null
+  },
+  {
+   "feature": "k6_wasdepost (K6-wasdepost-01; excluded in V2.3, reachable at t4 12:18)",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "strategy/members/k6/_wasde.py",
+    "reports/stage_e2b_release_calendar.json"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "value known 11:15 CT < t4 12:18; 2010-2019 calendar absent; semantics from Jan 2013",
+   "basis": "member_inventory K6-wasdepost-01; signal_coverage section 2 exclusion by clock",
+   "shared_ref": null
+  }
+ ],
+ "proposed_features": [],
+ "proposed_features_note": "None: the only sized corn intraday rule (Baltussen CN r_ROD) is already prompt-added and sizes at ~0.17-0.25x D8 RT with negative OOS R2; USDA-window direction needs proprietary survey surprises; corn's response completes within ~30 min (no t4 drift); limit continuation is close-to-close only.",
+ "shared_notes_written": [
+  "reports/stage_e20_briefs/shared/grains_class_notes.md"
+ ],
+ "fetch_log": [
+  {
+   "url": "https://ageconsearch.umn.edu/record/235772/files/AAEA2016_USDA%20Report%20Effects.pdf",
+   "utc": "2026-10-11T17:37:05Z",
+   "sha256": "a54720d65ef322e6700f78fff6d938753b85df399f2cbd2c9009e492a7f6aed5",
+   "path": "reports/stage_e20_briefs/pages/ZC/aaea2016_usda_report_effects.pdf (deleted)",
+   "status": "blocked"
+  },
+  {
+   "url": "https://ageconsearch.umn.edu/record/285838/files/Bunek_Janzen_NCCC_134_2015.pdf",
+   "utc": "2026-10-11T17:37:11Z",
+   "sha256": "e57495e855f81e3d388f4e618c7ffc770e9bd8bf92b9abe8822849648426f3a4",
+   "path": "reports/stage_e20_briefs/pages/ZC/bunek_janzen_2015.pdf (deleted)",
+   "status": "blocked"
+  },
+  {
+   "url": "https://ageconsearch.umn.edu/record/343571/files/27969.pdf",
+   "utc": "2026-10-11T17:37:18Z",
+   "sha256": "bba181395d3757e7bd4e2f31c0a5f6c68b71953d7a9cf7a0eefb1dae5d0704f5",
+   "path": "reports/stage_e20_briefs/pages/ZC/agecon_343571.pdf (deleted)",
+   "status": "blocked"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2018/pdf/Bian_Serra_Garcia_NCCC-134_2018.pdf",
+   "utc": "2026-10-11T17:37:30Z",
+   "sha256": "b162e8b704e5267ac65356f016c9d1e54b2275c402fb58c7357676b550704a02",
+   "path": "reports/stage_e20_briefs/pages/ZC/bian_serra_garcia_2018.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://ageconsearch.umn.edu/record/235772/files/AAEA2016_USDA%20Report%20Effects.pdf",
+   "utc": "2026-10-11T17:38:14Z",
+   "sha256": "940a6dc1bbdda082fd7e167426ce4763ef56407b81ae4f4ecb8c8f5dd5dc82f4",
+   "path": "reports/stage_e20_briefs/pages/ZC/aaea2016_usda_report_effects.md",
+   "status": "blocked"
+  },
+  {
+   "url": "https://ageconsearch.umn.edu/record/235772",
+   "utc": "2026-10-11T17:38:23Z",
+   "sha256": "940a6dc1bbdda082fd7e167426ce4763ef56407b81ae4f4ecb8c8f5dd5dc82f4",
+   "path": "reports/stage_e20_briefs/pages/ZC/aaea2016_record.md",
+   "status": "blocked"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2018/pdf/Couleau_Serra_Garcia_NCCC-134_2018.pdf",
+   "utc": "2026-10-11T17:39:52Z",
+   "sha256": "82de7a764b0ce18ec02c1a9c3dfa9215fe919c28da188ee32aa441c0de6e4ec3",
+   "path": "reports/stage_e20_briefs/pages/ZC/couleau_serra_garcia_2018.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2017/pdf/Ying_Chen_Dorfman_NCCC-134_2017.pdf",
+   "utc": "2026-10-11T17:40:04Z",
+   "sha256": "29adee4cc23a5af1f1389a4d6b90ecdc04323efb88b07e789490290f605ba2d8",
+   "path": "reports/stage_e20_briefs/pages/ZC/ying_chen_dorfman_2017.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2024/pdf/Yang_McKenzie_NCCC-134_2024.pdf",
+   "utc": "2026-10-11T17:40:16Z",
+   "sha256": "a4c9fad7c114a9c99211a430649020adca317d8e9dbe1409cc4aa8fa78aa4a29",
+   "path": "reports/stage_e20_briefs/pages/ZC/yang_mckenzie_2024.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2019/pdf/Janzen_Legrand_NCCC-134_2019.pdf",
+   "utc": "2026-10-11T17:40:28Z",
+   "sha256": "599ebf53c6a2ea2b3e9fc255015b336a0fd19498264880142eb489a6f3a8a968",
+   "path": "reports/stage_e20_briefs/pages/ZC/janzen_legrand_2019.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://aaec.vt.edu/people/faculty/Isengildina_Olga/report/insights.html",
+   "utc": "2026-10-11T17:41:11Z",
+   "sha256": "ea535d57f556cf459f9757bf414060f28139900c8e18256134deb526d6dba7ce",
+   "path": "reports/stage_e20_briefs/pages/ZC/vt_isengildina_insights.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.k-state.edu/riskmanagement/documents/agcon/Jones.pdf",
+   "utc": "2026-10-11T17:41:16Z",
+   "sha256": "27142177879e55997bfcfef9178df2bc452b983d6f1c19fe784af96f96b34084",
+   "path": "reports/stage_e20_briefs/pages/ZC/kstate_jones_hft.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.usda.gov/sites/default/files/documents/USDA_Release_time_change_9_19_12.pdf",
+   "utc": "2026-10-11T17:42:04Z",
+   "sha256": "8e479d7b2a04d6577f01d24fb5e9747d1c770285169f1117567fe7582acde61a",
+   "path": "reports/stage_e20_briefs/pages/ZC/usda_release_time_change_2012-09-19.pdf",
+   "status": "blocked"
+  },
+  {
+   "url": "https://www.govinfo.gov/content/pkg/FR-2012-06-08/pdf/2012-13951.pdf",
+   "utc": "2026-10-11T17:42:10Z",
+   "sha256": "c4fd596b35cbb0b7c94d965023dea0115ac04668afba41c4e7c2f3494b6e427c",
+   "path": "reports/stage_e20_briefs/pages/ZC/fr_2012-06-08_nass_release_times.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.nass.usda.gov/Newsroom/printable/2012/08_03_12.pdf",
+   "utc": "2026-10-11T17:42:19Z",
+   "sha256": "64329b41a8aa4b7211fa78806c2f2c518c306770b200627d31dc270ba4b4db0c",
+   "path": "reports/stage_e20_briefs/pages/ZC/nass_newsroom_2012-08-03.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.usda.gov/sites/default/files/documents/USDA_Release_time_change_9_19_12.pdf",
+   "utc": "2026-10-11T17:42:26Z",
+   "sha256": "",
+   "path": "reports/stage_e20_briefs/pages/ZC/usda_release_time_change_2012-09-19_b.pdf (deleted)",
+   "status": "blocked"
+  },
+  {
+   "url": "https://www.nass.usda.gov/Newsroom/printable/2012/09_19_12.pdf",
+   "utc": "2026-10-11T17:42:33Z",
+   "sha256": "80c3fe2ae1062abf56456f52518bd670f9ec3917b7f85e152b347ac6b6faf880",
+   "path": "reports/stage_e20_briefs/pages/ZC/nass_newsroom_2012-09-19.pdf (deleted)",
+   "status": "blocked"
+  },
+  {
+   "url": "https://sat-wp.afpc.tamu.edu/?p=42948",
+   "utc": "2026-10-11T17:43:17Z",
+   "sha256": "ec0432ae47cf4fb6e05e5fb9ef584b0e3041046d036fdaf17fde42462e7ef45a",
+   "path": "reports/stage_e20_briefs/pages/ZC/tamu_afpc_wasde_days.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2024/pdf/Anderson_McKenzie_Noyes_NCCC-134_2024.pdf",
+   "utc": "2026-10-11T17:43:44Z",
+   "sha256": "e9df84b1f3fdad98fb7d701d0203c6ce34ad6114c5e66d3bbc9b593ebce746f0",
+   "path": "reports/stage_e20_briefs/pages/ZC/anderson_mckenzie_noyes_2024.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://esmis.nal.usda.gov/publication/world-agricultural-supply-and-demand-estimates",
+   "utc": "2026-10-11T17:44:59Z",
+   "sha256": "841f5fba837158e14db9a0da37a15d879e9956998dddccbd93a4e5a77f8a7186",
+   "path": "reports/stage_e20_briefs/pages/ZC/esmis_wasde_publication.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://esmis.nal.usda.gov/publication/world-agricultural-supply-and-demand-estimates?date=2013-01",
+   "utc": "2026-10-11T17:45:33Z",
+   "sha256": "573e0704c7cbcc3b47ab0275b61a710081cbb964b6acf029164212e52ad43e51",
+   "path": "reports/stage_e20_briefs/pages/ZC/esmis_wasde_2013-01.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://esmis.nal.usda.gov/publication/world-agricultural-supply-and-demand-estimates?date=2012-12",
+   "utc": "2026-10-11T17:45:41Z",
+   "sha256": "3ae499e961f6bdb2ba56f9f49a870d7228089a32143d288a8a4308b18dc79661",
+   "path": "reports/stage_e20_briefs/pages/ZC/esmis_wasde_2012-12.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.sec.gov/Archives/edgar/data/1161448/000119312506088998/dex992.htm",
+   "utc": "2026-10-11T17:46:49Z",
+   "sha256": "b53af5ae543436e677eb72c3f38b35741ae6f910907a6228922c17494ce17537",
+   "path": "reports/stage_e20_briefs/pages/ZC/sec_cbot_2006_dex992.htm",
+   "status": "blocked"
+  },
+  {
+   "url": "https://www.ou.edu/content/dam/price/Finance/energyfinanceconference/papers/Janardanan-et-al-Limits%20Paper.pdf",
+   "utc": "2026-10-11T17:47:15Z",
+   "sha256": "f8a3ed6596667a3d37fd17cc879f7b594bd91242b743a34829f602a3d1ec28fc",
+   "path": "reports/stage_e20_briefs/pages/ZC/janardanan_etal_limits.pdf (deleted)",
+   "status": "terms-forbid"
+  },
+  {
+   "url": "https://www.ers.usda.gov/amber-waves/2021/december/usda-s-corn-output-projections-inform-futures-price-movements",
+   "utc": "2026-10-11T17:48:46Z",
+   "sha256": "80585ced43681719d0ee9a620e2e62d19564e8e7de03e8f8da860974f51bab40",
+   "path": "reports/stage_e20_briefs/pages/ZC/ers_amberwaves_2021_corn_projections.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://primary.ers.usda.gov/webdocs/publications/101815/err-293_summary.pdf",
+   "utc": "2026-10-11T17:48:46Z",
+   "sha256": "",
+   "path": "reports/stage_e20_briefs/pages/ZC/ers_err293_summary.pdf (deleted)",
+   "status": "blocked"
+  },
+  {
+   "url": "https://farmdocdaily.illinois.edu/wp-content/uploads/2025/09/fdd091525.pdf",
+   "utc": "2026-10-11T17:49:23Z",
+   "sha256": "f3302cffd6eb39ac040202921683b075443d3fcba4e3aae3326be008366eecb1",
+   "path": "reports/stage_e20_briefs/pages/ZC/farmdocdaily_2025-09-15.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "http://www.efmaefm.org/0EFMAMEETINGS/EFMA%20ANNUAL%20MEETINGS/2024-Lisbon/papers/EndofDayReversal_withnames.pdf",
+   "utc": "2026-10-11T17:50:40Z",
+   "sha256": "4a16b6ed72b3404cc321863cbe1f02a6d80ed71556906c0b74c2407509f27df6",
+   "path": "reports/stage_e20_briefs/pages/ZC/baltussen_da_soebhag_eod_reversal_2024.pdf",
+   "status": "ok"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "ageconsearch.umn.edu",
+   "url": "https://ageconsearch.umn.edu/robots.txt",
+   "utc": "2026-10-11T17:37:00Z",
+   "ruling": "robots allows /record/*/files (Crawl-Delay 5); AWS WAF bot challenge blocks; not bypassed (gap) [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "farmdoc.illinois.edu",
+   "url": "https://farmdoc.illinois.edu/robots.txt",
+   "utc": "2026-10-11T17:39:40Z",
+   "ruling": "Crawl-delay 10, no relevant disallow; papers allow verbatim non-commercial copies; first fetch preceded robots reading (slip) [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "farmdocdaily.illinois.edu",
+   "url": "https://farmdocdaily.illinois.edu/robots.txt",
+   "utc": "2026-10-11T17:49:20Z",
+   "ruling": "Crawl-delay 10, no relevant disallow [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "aaec.vt.edu",
+   "url": "https://aaec.vt.edu/robots.txt",
+   "utc": "2026-10-11T17:59:00Z",
+   "ruling": "after 301: User-agent * Disallow: (empty) - allowed; read after the fetch (slip) [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "k-state.edu",
+   "url": "https://www.k-state.edu/robots.txt",
+   "utc": "2026-10-11T17:41:10Z",
+   "ruling": "disallows /KSU_resources/ only [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "usda.gov",
+   "url": "https://www.usda.gov/robots.txt",
+   "utc": "2026-10-11T17:42:00Z",
+   "ruling": "Akamai 403; no content obtained [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "nass.usda.gov",
+   "url": "https://www.nass.usda.gov/robots.txt",
+   "utc": "2026-10-11T17:42:33Z",
+   "ruling": "disallows /Quick_Stats/CDQT/ only; read 14 s after the first fetch (slip) [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "esmis.nal.usda.gov",
+   "url": "https://esmis.nal.usda.gov/robots.txt",
+   "utc": "2026-10-11T17:44:30Z",
+   "ruling": "Drupal default; publication pages allowed [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "sat-wp.afpc.tamu.edu",
+   "url": "https://sat-wp.afpc.tamu.edu/robots.txt",
+   "utc": "2026-10-11T17:43:15Z",
+   "ruling": "Disallow: (empty) - allowed [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "ou.edu",
+   "url": "https://www.ou.edu/robots.txt",
+   "utc": "2026-10-11T17:58:00Z",
+   "ruling": "after 301: Disallow: /content - the fetched PDF path is disallowed; fetched before reading (slip); file deleted, corn numbers not used [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "govinfo.gov",
+   "url": "https://www.govinfo.gov/robots.txt",
+   "utc": "2026-10-11T17:59:00Z",
+   "ruling": "no rule on /content; federal public document [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "sec.gov",
+   "url": "https://www.sec.gov/robots.txt",
+   "utc": "2026-10-11T17:46:45Z",
+   "ruling": "rate-threshold page; SEC requires declared contact; not supplied; nothing used [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "efmaefm.org",
+   "url": "http://www.efmaefm.org/robots.txt",
+   "utc": "2026-10-11T17:50:35Z",
+   "ruling": "404 (no robots); paper not used (stocks only) [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  },
+  {
+   "site": "ers.usda.gov",
+   "url": "https://www.ers.usda.gov/robots.txt",
+   "utc": "2026-10-11T17:48:50Z",
+   "ruling": "Drupal default (disallows /core/, /profiles/); page not used (not intraday) [utc approximate: robots reads were not timestamped; bracketed by adjacent logged fetches]"
+  }
+ ],
+ "budget_notices": [],
+ "unfinished": [
+  "public corn price level for bp-to-tick conversion not saved (P=$4.50 assumed, $6.50 alternative)",
+  "E1 r_ROD dispersion proxied by Anderson et al. WASDE-day sd 0.022",
+  "USDA 2012-09-19 release-time decision document blocked (403); Jan 2013 noon switch verified via Couleau et al. and Bian et al. only",
+  "Adjemian and Irwin 2018 secondary-only; all AgEcon-only papers blocked (Joseph-Garcia AAEA 2016, Bunek-Janzen, Aitkulova et al. 2026, Zhu et al. 2026)",
+  "2006-08-01 side-by-side listing secondary-only",
+  "ESMIS 2010-2019 completeness not audited (2013-01 filter returned no dated entry)",
+  "cp3_clv pre-2013 behaviour undetermined (code question)",
+  "post-2014 variable-limit evidence for corn not found; Janardanan corn-specific row dropped (robots.txt disallow)",
+  "process incident: first four fetches landed in pages/LE/ via a shared scratchpad script; moved to pages/ZC/ and four lines removed from pages/LE/fetch_log.tsv"
+ ],
+ "nq_only": null
+}

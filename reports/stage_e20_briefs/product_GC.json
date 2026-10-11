@@ -1,0 +1,1018 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "GC",
+ "reader": "ProductReader-GC-OpusHigh",
+ "finished_utc": "2026-10-11T17:53:22Z",
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "ROD->LH market intraday momentum (GC row; commodity portfolio)",
+   "rule": "long if r_ROD=P(close-30)/P(prior close)-1 >0 else short, hold last 30 min of GC day 08:20-13:30 ET (12:00-12:30 CT)",
+   "hold": "30 min ending 12:30 CT",
+   "gross_per_trade_bp": 1.72,
+   "gross_per_trade_ticks": 3.1,
+   "conversion": "commodity 1/N portfolio 4.34%/yr / 252 = 1.72 bp (derived; annualization convention unverified); MGC 10 oz, tick $0.10/oz = $1; at $1,800.09 (LBMA 2022 avg, kitco page) 1 bp = $1.80 = 1.80 ticks; GC beta 1.09e-2 -> 1.09 bp (1.96 ticks) per 1% r_ROD",
+   "gross_or_net": "gross",
+   "sample": "GC 1984-01-05..2020-05-01, 9044 obs, 1-min",
+   "decay_evidence": "commodity beta_ROD 1.59 (t3.92) 1974-1999 vs 1.04 (t2.86) 2000-2020; GC R2_OOS 0.08%; no post-2020 metals evidence (Aalto thesis has no commodities)",
+   "source": "Baltussen, Da, Lammers, Martens, JFE 142 (2021) 377-403",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0304405X21001598",
+   "quote": "| GC | 1.43***(2.98) | 0.23 | 0.18***(2.98) | 1.43***(2.97) | 0.68(1.20) | 0.84(0.44) | 0.26 | -0.19 | 1.09***(2.95) | 0.25 | 0.08** | ; | η(rROD) | 4.34 | 3.05 | 1.42 | 0.56 |",
+   "quote_location": "on-disk copy L3764 (Table B3 Panel B), L1742 (Table 6 Panel C), L1668 (Table 5 Panel B), L3289 (Table A3)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E2",
+   "effect": "London fix window in GC before/after 2015 auction reform",
+   "rule": "CAR from fix start signed by eventual fix direction (informed view)",
+   "hold": "10/30/60 min",
+   "gross_per_trade_bp": 5.65,
+   "gross_per_trade_ticks": 6.7,
+   "conversion": "post-reform CAR10 5.65 bp at post mean fix $1,192.57 -> 1.19 ticks/bp; pre 9.41 bp at $1,433.61 -> 13.5 ticks; foresight-signed, not tradeable",
+   "gross_or_net": "gross",
+   "sample": "GC Globex 2012-02-14..2015-04-30",
+   "decay_evidence": "pre 9.41 vs post 5.65 bp, diff -3.76 n.s.; post-reform 'no significant leakage prior to the start of the fix'",
+   "source": "Aspris, Foley, Gratton, O'Neill (2017) Transparency in Commodities Markets, EFMA Athens WP",
+   "url": "http://efmaefm.org/0EFMAMEETINGS/EFMA%20ANNUAL%20MEETINGS/2017-Athens/papers/EFMA2017_0580_fullpaper.pdf",
+   "quote": "Car 10mins (bps)               7.68    -1.43      -9.11***          9.41         5.65            -3.76 ; there is no significant leakage prior to the start of the fix and within minutes of the start, most of the price discovery process is complete.",
+   "quote_location": "Table 2 (PDF p.10-11); section 4.2.1",
+   "grade": "primary",
+   "saved_path": "pages/GC/aspris_etal_2017_efma.pdf",
+   "sha256": "81c77b19eac1a4c4c89f421f3e0e0933af6f134bfd926ca8549db2d69934db1f"
+  },
+  {
+   "id": "E3",
+   "effect": "PM fix leakage under the pre-2015 telephone fixing (context; published 2014)",
+   "rule": "informed trader signed by fix direction; public predictor GC direction 15:00-15:06 London",
+   "hold": "4 min after fix start",
+   "gross_per_trade_bp": 10.0,
+   "gross_per_trade_ticks": null,
+   "conversion": "foresight-signed; tick conversion not meaningful",
+   "gross_or_net": "gross",
+   "sample": "GC 2007-01-01..2012-12-31, 1504 days, 1-min",
+   "decay_evidence": "regime replaced 2015-03-20; E2 finds no pre-start leakage after",
+   "source": "Caminschi & Heaney, J. Futures Markets 34(11) 2014 1003-1039 (UWA AAM)",
+   "url": "https://api.research-repository.uwa.edu.au/ws/files/4725264/A0205_use_this.pdf",
+   "quote": "advantage of around 10bps in the four minutes following the start of the fixing, and a possible further 4bps in the two minutes before the end of the fixing",
+   "quote_location": "Introduction (AAM)",
+   "grade": "primary",
+   "saved_path": "pages/GC/caminschi_heaney_2014_uwa_aam.pdf",
+   "sha256": "76ff3e190c179ff3eb80105ddeeeca6c8b8ebf605a5eb83387e17c5471218556"
+  },
+  {
+   "id": "E4",
+   "effect": "Hat-shaped 24h gold pattern; drop into AM/PM London fix",
+   "rule": "30-min window before fix; West hours falling leg",
+   "hold": "30 min",
+   "gross_per_trade_bp": -1.7,
+   "gross_per_trade_ticks": -3.0,
+   "conversion": "-4.2 pp annualized /252 (convention unverified) ~ -1.7 bp/day; x1.80 ticks/bp",
+   "gross_or_net": "gross",
+   "sample": "GC1/GC2 5-min 2001-2018",
+   "decay_evidence": "PM fix strong 2007-2011, 'small and insignificant' before and after; West significant only 2013, 2015, 2017; strategies underperform after spread costs",
+   "source": "Donati & Jung, Gold Price Dynamics Around the Clock, CBS MSc thesis 2019",
+   "url": "https://research-api.cbs.dk/ws/portalfiles/portal/59803241/651553_Thesis_Contract_13383.pdf",
+   "quote": "Within 30 minutes returns first drop by 3.7 percentage points at 5:30 and in a second downward spike returns drop within 30 minutes by 4.2 percentage points at 10:00. ; especially between 2007 and 2011 returns are strong in magnitude and in four cases they are statistically significant - before and after that time they are small and insignificant.",
+   "quote_location": "txt L1441-1443 (p.37); L1937-1939 (section 5.2)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e10_research/overnight/cbs_gold_thesis.pdf",
+   "sha256": "63858a7564d0a666ceaa9692b2c695f99542f19975790609ad7064a04a3674b5"
+  },
+  {
+   "id": "E5",
+   "effect": "Abnormal-return-day momentum (S1, look-ahead) and next-day contrarian for gold (S2)",
+   "rule": "abnormal day: daily return > mean + 2 sd; S1 trade in its direction from the timing hour to day end; S2 next day contrarian from day start",
+   "hold": "to day end (GMT+3)",
+   "gross_per_trade_bp": 7.0,
+   "gross_per_trade_ticks": 12.6,
+   "conversion": "S2 positive case 0.07%/trade = 7 bp x1.80; not significant (t1.36); negative case 0.15% (t0.73)",
+   "gross_or_net": "gross",
+   "sample": "broker (MetaQuotes) hourly 2009-01-01..2020-03-31",
+   "decay_evidence": "none; S2 'Not rejected' vs random; S1 selects days by ex-post daily return",
+   "source": "Caporale & Plastun, Financial Markets and Portfolio Management 35 (2021) 353-368",
+   "url": "https://bura.brunel.ac.uk/bitstream/2438/21825/6/FullText.pdf",
+   "quote": "Golda               59                35                   59                     4.26      0.43               0.07                  1.36           Not rejected ; Our analysis does not incorporate transaction costs",
+   "quote_location": "Table 3, Table 4; section 3",
+   "grade": "primary",
+   "saved_path": "reports/stage_e10_research/regime/caporale_plastun_2020_gold_oil_brunel.pdf",
+   "sha256": "1f5d5cfb56cd1b6d8ece1870ed33b160b26503e24f593a3b791e90435a55427d"
+  },
+  {
+   "id": "E6",
+   "effect": "FOMC surprise response in gold futures",
+   "rule": "5/10-min returns after FOMC rate surprise",
+   "hold": "5-10 min",
+   "gross_per_trade_bp": 23.0,
+   "gross_per_trade_ticks": null,
+   "conversion": "per 1-sd loosening surprise (needs surprise measure); 4 bp for tightening; no tradeable rule",
+   "gross_or_net": "gross",
+   "sample": "GC 5-min 2007-01-02..2020-12-31",
+   "decay_evidence": "none",
+   "source": "Awartani, Hussain, Virk, IRFA 103486 (2024), AAM",
+   "url": "https://ndownloader.figshare.com/files/65204829",
+   "quote": "One standard error of monetary policy shock could move gold returns by 23 basis points if the policy lowers rates more than expected. However, it changes gold returns by only four basis points ; the adjustment 10 minutes after the shock is significantly threefold higher than after 5 minutes",
+   "quote_location": "AAM txt L316-321, L933-937",
+   "grade": "primary",
+   "saved_path": "pages/GC/awartani_etal_2024_irfa_aam.pdf",
+   "sha256": "095015c35d6de6ad2b01341700d58b2e836d5cfb171cfa904381d5f5d0dc649a"
+  },
+  {
+   "id": "E7",
+   "effect": "Intraday overreaction-reversal (turning points, ex post)",
+   "rule": "contrarian after decile-1 move between turning points; 20% of reversal range",
+   "hold": "to next turning point",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "GC decile-1 0.15 (table units unverified, probably %); not causally codable",
+   "gross_or_net": "gross",
+   "sample": "20 futures incl GC, 2019-11-20..2020-06-03",
+   "decay_evidence": "Covid-dominated; no OOS",
+   "source": "Borgards, Czudaj, Hoang, Resources Policy 71 (2021) 101966",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9759686/fullTextXML",
+   "quote": "Table 2 Mean trading return of a short position after positive price overreactions ( L 1 ) for the period in advance of the Covid-19 pandemic. Table 2 Decile CL CO HO NG GC SI PL PA HG AA 1 0.51 0.44 0.47 0.53 0.15",
+   "quote_location": "Table 2",
+   "grade": "primary",
+   "saved_path": "pages/GC/borgards_etal_2021_pmc9759686.xml",
+   "sha256": "98fd726eba6419bce35481ea51a336efb2033e867120947a38b44275630e49bc"
+  },
+  {
+   "id": "E8",
+   "effect": "Negative day (open-to-close) returns in COMEX gold",
+   "rule": "day return <0, overnight >0",
+   "hold": "day session",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "COMEX GC front; 1985-2012 (2014 paper)",
+   "decay_evidence": "'The asymmetry has weakened substantially over the years, but it is still present' (2014)",
+   "source": "Blose, Gondhalekar, Kort, J. Econ. Finance 42(3) 2018; Blose & Gondhalekar AEL 2014",
+   "url": "https://ideas.repec.org/a/spr/jecfin/v42y2018i3d10.1007_s12197-017-9403-0.html",
+   "quote": "Overnight returns are significantly positive while day returns are significantly negative in the COMEX gold front futures contract ... The results are economically important even with transaction costs.",
+   "quote_location": "abstract",
+   "grade": "secondary-only",
+   "saved_path": "pages/GC/repec_blose_etal_2018.html",
+   "sha256": "7300985d5df69900f0cce7dc0816b7566c6daa0175b7b2dd60a9ec90166e5781"
+  },
+  {
+   "id": "E9",
+   "effect": "Flight to gold after extreme negative 5-min S&P 500 returns (K8-flight source)",
+   "rule": "unsized",
+   "hold": "minutes",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "2007-2018 intraday gold and S&P500",
+   "decay_evidence": "",
+   "source": "Baur & Kuck, Finance Research Letters 33 (2020)",
+   "url": "https://ideas.repec.org/a/eee/finlet/v33y2020ics1544612319301448.html",
+   "quote": "extreme negative 5-min S&P500 returns lead to a positive reaction of the gold price",
+   "quote_location": "abstract",
+   "grade": "secondary-only",
+   "saved_path": "pages/GC/repec_baur_kuck_2020.html",
+   "sha256": "8c876d9b7c74790d8fcd75081cc1bac231aacf01ae0d928350a3fc7b4ece8c9a"
+  },
+  {
+   "id": "E10",
+   "effect": "Fix reform, daily gold futures (not intraday)",
+   "rule": "daily pre/post 2015-03-20",
+   "hold": "daily",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "CME Globex SI/GC daily 2008-01-01..2018-06-27",
+   "decay_evidence": "n/a",
+   "source": "Crain, Hoelscher, Jones, ACRN JoFRP 9 (2020) 177-197",
+   "url": "http://www.acrn-journals.eu/resources/jofrp09m.pdf",
+   "quote": "The change in the gold fix occurred on March 20, 2015, when the new auction platform replaced the twice-daily telephone conference fixing process by five market participants",
+   "quote_location": "p.178, History of the Gold Fix",
+   "grade": "primary",
+   "saved_path": "pages/GC/crain_etal_2020_jofrp09m.pdf",
+   "sha256": "5e772b27baf96671571a790e1ba1a6c2640c27bcd62f75bf4cf23d29e86e2231"
+  },
+  {
+   "id": "E11",
+   "effect": "First half-hour momentum in SHFE gold; disappears after night trading",
+   "rule": "r_first30 predicts later half-hours",
+   "hold": "30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "SHFE gold 2008-01-10..2021-10-20",
+   "decay_evidence": "predictability disappears after night-session launch",
+   "source": "Zhou (Ivy) et al., Night trading momentum..., ACFR conference paper",
+   "url": "https://acfr.aut.ac.nz/__data/assets/pdf_file/0008/686816/4a-Z-Ivy-Zhou.pdf",
+   "quote": "After the launch of night trading, the predictive ability of the first half-hour return in the daytime disappears",
+   "quote_location": "Firecrawl query answer (not saved raw)",
+   "grade": "secondary-only",
+   "saved_path": "",
+   "sha256": ""
+  },
+  {
+   "id": "E12",
+   "effect": "Macro announcement response in gold futures complete within 90 s",
+   "rule": "10-s intervals",
+   "hold": "90 s",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "GC 2006-11-24..2012-12-31",
+   "decay_evidence": "",
+   "source": "Smales & Yang, IRFA 41 (2015) 292-302",
+   "url": "https://espace.curtin.edu.au/bitstream/20.500.11937/40677/4/227313.pdf",
+   "quote": "with the majority of the reaction complete within 90-seconds",
+   "quote_location": "E.0 log reports/stage_e0_research_K5.md K5-004 (not re-fetched)",
+   "grade": "secondary-only",
+   "saved_path": "",
+   "sha256": ""
+  },
+  {
+   "id": "E13",
+   "effect": "Fix reform improved spreads and depth in exchange products",
+   "rule": "n/a",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "",
+   "decay_evidence": "",
+   "source": "Aspris, Foley, O'Neill, JFM 40(11) 2020",
+   "url": "https://ideas.repec.org/a/wly/jfutmk/v40y2020i11p1691-1710.html",
+   "quote": "We find that reforms to the Fix have reduced quoted and effective bid-ask spreads and improved overall market depth.",
+   "quote_location": "abstract",
+   "grade": "secondary-only",
+   "saved_path": "pages/GC/repec_aspris_foley_oneill_2020.html",
+   "sha256": "5a39de936641ef194c4a2a72aefaa235327950dfcdcfb8ec4fb5ca6703106281"
+  },
+  {
+   "id": "E14",
+   "effect": "COMEX settlement window (12:29-12:30 CT) effects",
+   "rule": "searched; no study found",
+   "hold": "",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "",
+   "gross_or_net": "unknown",
+   "sample": "",
+   "decay_evidence": "null result of 2 searches: gap, not evidence of absence",
+   "source": "",
+   "url": "",
+   "quote": "",
+   "quote_location": "",
+   "grade": "unverified",
+   "saved_path": "",
+   "sha256": ""
+  }
+ ],
+ "availability": [
+  {
+   "feature": "k5_ovr_ret",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "O_X/C_X",
+    "trade dates",
+    "METALS_FULL_SESSIONS"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010-07-01..2024-02-29",
+   "basis": "member clock 08:20..12:20 CT; MFS 2019-05-01..2026-06-18; 2010-2019 derivable from data/calendars/hist2010/metals.json 2010-06-01..2019-05-31 (no member table yet)",
+   "shared_ref": null
+  },
+  {
+   "feature": "k5_ovr_pct",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "METALS_FULL_SESSIONS (20 prior full sessions, 80% floor)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "after 20-session warm-up",
+   "basis": "as k5_ovr_ret; derivation from hist2010 metals needed",
+   "shared_ref": null
+  },
+  {
+   "feature": "k5_pmfix_move",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "GOLD_PM_AUCTIONS"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "GPM 2019-05-01..2026-06-19",
+   "basis": "no 2010-2019 gold fix/auction calendar on disk; event = London PM fixing 15:00 London (teleconference) to 2015-03-19, IBA auction 15:00 London from 2015-03-20",
+   "shared_ref": null
+  },
+  {
+   "feature": "k5_preauc_msince",
+   "legs": [],
+   "calendars": [
+    "GOLD_AM_AUCTIONS"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "GAM 2019-05-01..2026-06-19",
+   "basis": "no 2010-2019 AM fix calendar on disk; AM fixing 10:30 London pre-2015",
+   "shared_ref": null
+  },
+  {
+   "feature": "K5-fomc-01 (excluded in V2.3; fact for t4)",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "FOMC instants"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "REL10 FOMC 72 rows 2010-06..2019-05; REL19 57 rows",
+   "basis": "move known 13:05 CT < t4 14:08 CT; REL10 instants CT: 13:15 (14), 11:20-11:35 (8), 13:00 (50); member table keeps 13:00 CT only; lead decides",
+   "shared_ref": null
+  },
+  {
+   "feature": "k8_flight_ret",
+   "legs": [
+    "MES"
+   ],
+   "calendars": [
+    "FLIGHT_DATES",
+    "release guard"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "MES listed 2019-05-06; FLT 2019-05-01..2026-06-19",
+   "basis": "MES not one of the 17 roots",
+   "shared_ref": null
+  },
+  {
+   "feature": "k8_flight_tail",
+   "legs": [
+    "MES"
+   ],
+   "calendars": [
+    "FLIGHT_DATES (20 dates, n>=1200)"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "as above plus warm-up",
+   "basis": "MES not one of the 17 roots",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "O_X",
+    "trade dates"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "O_X",
+    "trade dates"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "O_X",
+    "trade dates"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "O_X",
+    "C_X (12:30 primary, stage_e16_settlement.md)",
+    "trade dates"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g01_ret30",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "group trade dates/early halts"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g02_ret60",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "group trade dates/early halts"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g03_ret120",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "group trade dates/early halts"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g04_ret_day",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "group trade dates/early halts"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "group trade dates/early halts"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06_rv60",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "group trade dates/early halts"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g07_range",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "group trade dates/early halts"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g08_prev_ret",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "group trade dates/early halts"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g09_vol_state",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "group trade dates/early halts"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g10_logvol30",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "group trade dates/early halts"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11_t_index",
+   "legs": [],
+   "calendars": [
+    "clock"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "",
+   "shared_ref": null
+  },
+  {
+   "feature": "g12_dow",
+   "legs": [],
+   "calendars": [
+    "clock"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel",
+   "legs": [],
+   "calendars": [
+    "D8 list MGC/GC: FOMC, NFP, CPI, G.17"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "REL19 2019-05-01..2026-06-21 (FOMC 57, NFP 85, CPI 85, G17 85); REL10 2010-06-01..2019-05-31 FOMC only",
+   "basis": "NFP, CPI, G.17 absent 2010-2019 on disk",
+   "shared_ref": "shared/macro_calendars.md (RTY; not on disk at finish)"
+  },
+  {
+   "feature": "g14_min_since_rel",
+   "legs": [],
+   "calendars": [
+    "D8 list MGC/GC: FOMC, NFP, CPI, G.17"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "REL19 2019-05-01..2026-06-21 (FOMC 57, NFP 85, CPI 85, G17 85); REL10 2010-06-01..2019-05-31 FOMC only",
+   "basis": "NFP, CPI, G.17 absent 2010-2019 on disk",
+   "shared_ref": "shared/macro_calendars.md (RTY; not on disk at finish)"
+  },
+  {
+   "feature": "g15_rel_day",
+   "legs": [],
+   "calendars": [
+    "D8 list MGC/GC: FOMC, NFP, CPI, G.17"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "REL19 2019-05-01..2026-06-21 (FOMC 57, NFP 85, CPI 85, G17 85); REL10 2010-06-01..2019-05-31 FOMC only",
+   "basis": "NFP, CPI, G.17 absent 2010-2019 on disk",
+   "shared_ref": "shared/macro_calendars.md (RTY; not on disk at finish)"
+  },
+  {
+   "feature": "g16_month_end",
+   "legs": [],
+   "calendars": [
+    "group trade dates"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "data/calendars/hist2010/metals.json 2010-06-01..2019-05-31; data/calendars/metals.py 2019-05-01..2026-06-19",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_gc",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "GC listed both windows",
+   "basis": "stage_e16_windows.json GC start 2010-07-01 (C1 ext2010 bars); hist2010 metals product list; Baltussen Table A3 GC 1984-01-05..2020-05-01; not applicable on GC rows (own cluster)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mbt",
+   "legs": [
+    "MBT"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MBT listed 2021",
+   "basis": "outside 17 roots",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mes",
+   "legs": [
+    "MES"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MES listed 2019-05-06",
+   "basis": "outside 17 roots",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_nq/zn/6e/cl/zc (on GC rows)",
+   "legs": [
+    "NQ",
+    "ZN",
+    "6E",
+    "CL",
+    "ZC"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "audited by those lead readers",
+   "shared_ref": "product_<ROOT>.md"
+  }
+ ],
+ "proposed_features": [],
+ "shared_notes_written": [],
+ "fetch_log": [
+  {
+   "url": "https://efmaefm.org/robots.txt",
+   "utc": "2026-10-11T17:38:28Z",
+   "sha256": "",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_efma.txt",
+   "status": "blocked"
+  },
+  {
+   "url": "https://www.acrn-journals.eu/robots.txt",
+   "utc": "2026-10-11T17:38:29Z",
+   "sha256": "f5850d6083c3c95d21c10c667c7ebe8e918b960528d9cf2420dd922a356c3b9d",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_acrn.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://figshare.com/robots.txt",
+   "utc": "2026-10-11T17:38:29Z",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_figshare.txt",
+   "status": "blocked"
+  },
+  {
+   "url": "https://www.ebi.ac.uk/robots.txt",
+   "utc": "2026-10-11T17:38:30Z",
+   "sha256": "dba5a7181db78df7e26e89b668b54ed565f8ac3dec551ba2327078d1f431a55c",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_ebi.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://research-repository.uwa.edu.au/robots.txt",
+   "utc": "2026-10-11T17:38:31Z",
+   "sha256": "0c329ac125626654b3b718bcf3aaaa3ae287c53ca1e38d9b39ba6d209dba6158",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_uwa.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.lbma.org.uk/robots.txt",
+   "utc": "2026-10-11T17:38:32Z",
+   "sha256": "2031b7445119191e0582cc21ba037a530af6076cbda1f83e1dd84a381d047dfe",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_lbma.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.ice.com/robots.txt",
+   "utc": "2026-10-11T17:38:32Z",
+   "sha256": "f0eeea2d957bf01835713ed443da5d043364c214c8b991034e3452fd0ec5876f",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_ice.txt",
+   "status": "ok"
+  },
+  {
+   "url": "http://efmaefm.org/robots.txt",
+   "utc": "2026-10-11T17:38:37Z",
+   "sha256": "8a14358aa26b33599850f263a7e969219d8a03d2e155ca571279f974150dd959",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_efma.txt",
+   "status": "ok"
+  },
+  {
+   "url": "http://efmaefm.org/0EFMAMEETINGS/EFMA%20ANNUAL%20MEETINGS/2017-Athens/papers/EFMA2017_0580_fullpaper.pdf",
+   "utc": "2026-10-11T17:38:42Z",
+   "sha256": "81c77b19eac1a4c4c89f421f3e0e0933af6f134bfd926ca8549db2d69934db1f",
+   "path": "reports/stage_e20_briefs/pages/GC/aspris_etal_2017_efma.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "http://www.acrn-journals.eu/resources/jofrp09m.pdf",
+   "utc": "2026-10-11T17:38:46Z",
+   "sha256": "5e772b27baf96671571a790e1ba1a6c2640c27bcd62f75bf4cf23d29e86e2231",
+   "path": "reports/stage_e20_briefs/pages/GC/crain_etal_2020_jofrp09m.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://research-repository.uwa.edu.au/files/4725264/A0205_use_this.pdf",
+   "utc": "2026-10-11T17:39:13Z",
+   "sha256": "21bdffc51add2a1797db02a6b2c2931c5617df081c43f5b32e3eb2ce78cf5e55",
+   "path": "reports/stage_e20_briefs/pages/GC/caminschi_heaney_2014_uwa_aam.pdf",
+   "status": "blocked"
+  },
+  {
+   "url": "https://ndownloader.figshare.com/files/65204829",
+   "utc": "2026-10-11T17:39:46Z",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "path": "reports/stage_e20_briefs/pages/GC/awartani_etal_2024_irfa_aam.pdf",
+   "status": "blocked"
+  },
+  {
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9759686/fullTextXML",
+   "utc": "2026-10-11T17:39:50Z",
+   "sha256": "98fd726eba6419bce35481ea51a336efb2033e867120947a38b44275630e49bc",
+   "path": "reports/stage_e20_briefs/pages/GC/borgards_etal_2021_pmc9759686.xml",
+   "status": "ok"
+  },
+  {
+   "url": "https://ndownloader.figshare.com/files/65204829",
+   "utc": "2026-10-11T17:40:05Z",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "path": "reports/stage_e20_briefs/pages/GC/awartani_etal_2024_irfa_aam.pdf",
+   "status": "blocked"
+  },
+  {
+   "url": "https://ndownloader.figshare.com/files/65204829 (via scrapling get redirect to figshare S3, then curl)",
+   "utc": "2026-10-11T17:40:33Z",
+   "sha256": "095015c35d6de6ad2b01341700d58b2e836d5cfb171cfa904381d5f5d0dc649a",
+   "path": "reports/stage_e20_briefs/pages/GC/awartani_etal_2024_irfa_aam.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://sbfc.sydney.edu.au/2019/papers/P250_Named.pdf",
+   "utc": "2026-10-11T17:41:52Z",
+   "sha256": "b9347f234dc3c8d56e015e86d88a1400415db8f7a5ad91f02b6a2323c10a4187",
+   "path": "reports/stage_e20_briefs/pages/GC/sbfc2019_P250.pdf",
+   "status": "blocked"
+  },
+  {
+   "url": "https://hull-repository.worktribe.com/OutputFile/3303156",
+   "utc": "2026-10-11T17:41:56Z",
+   "sha256": "88810a826a98bf3a9831ead89a808153483a39fa1227cd5e78912a5432ee35b4",
+   "path": "reports/stage_e20_briefs/pages/GC/hull_3303156.pdf",
+   "status": "blocked"
+  },
+  {
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:42:48Z",
+   "sha256": "4620fbdb346382486937732e10fb82fe1cab79fa1d839d85de8a4798c1702d46",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_repec.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/finlet/v33y2020ics1544612319301448.html",
+   "utc": "2026-10-11T17:42:49Z",
+   "sha256": "8c876d9b7c74790d8fcd75081cc1bac231aacf01ae0d928350a3fc7b4ece8c9a",
+   "path": "reports/stage_e20_briefs/pages/GC/repec_baur_kuck_2020.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/wly/jfutmk/v40y2020i11p1691-1710.html",
+   "utc": "2026-10-11T17:42:59Z",
+   "sha256": "5a39de936641ef194c4a2a72aefaa235327950dfcdcfb8ec4fb5ca6703106281",
+   "path": "reports/stage_e20_briefs/pages/GC/repec_aspris_foley_oneill_2020.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/finana/v78y2021ics1057521921002209.html",
+   "utc": "2026-10-11T17:43:02Z",
+   "sha256": "e8a59b9b461edbe8ef9214e7d02e8457858dcb1d0ff83f6eb69edde6dd1cbbb1",
+   "path": "reports/stage_e20_briefs/pages/GC/repec_sobti_etal_2021.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/taf/apeclt/v21y2014i18p1269-1272.html",
+   "utc": "2026-10-11T17:43:43Z",
+   "sha256": "8be27e39be3ba45aecc162b2f29fb1caa69600ab2eec6ddf11ef57be404133b9",
+   "path": "reports/stage_e20_briefs/pages/GC/repec_blose_gondhalekar_2014.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/spr/jecfin/v42y2018i3d10.1007_s12197-017-9403-0.html",
+   "utc": "2026-10-11T17:43:47Z",
+   "sha256": "7300985d5df69900f0cce7dc0816b7566c6daa0175b7b2dd60a9ec90166e5781",
+   "path": "reports/stage_e20_briefs/pages/GC/repec_blose_etal_2018.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://acfr.aut.ac.nz/robots.txt",
+   "utc": "2026-10-11T17:44:14Z",
+   "sha256": "8633f52ff23662dba5fd5f1c9c5f53bb8c954b12e23cf0d293f35fd94b39459a",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_acfr.txt",
+   "status": "blocked"
+  },
+  {
+   "url": "https://thesis.eur.nl/robots.txt",
+   "utc": "2026-10-11T17:44:14Z",
+   "sha256": "69f12e2c812fefcbed287f5d423a9d7c6fd5341cf9bb3f1af49b37c14cd852a3",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_thesis_eur.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://acfr.aut.ac.nz/__data/assets/pdf_file/0008/686816/4a-Z-Ivy-Zhou.pdf",
+   "utc": "2026-10-11T17:44:16Z",
+   "sha256": "8b9c43f8dd98295f5c7adc96b673e5d621365af83f576e520c7a4bae81a1fce6",
+   "path": "reports/stage_e20_briefs/pages/GC/acfr_zhou_4a.pdf",
+   "status": "blocked"
+  },
+  {
+   "url": "https://api.research-repository.uwa.edu.au/ws/files/4725264/A0205_use_this.pdf",
+   "utc": "2026-10-11T17:47:51Z",
+   "sha256": "76ff3e190c179ff3eb80105ddeeeca6c8b8ebf605a5eb83387e17c5471218556",
+   "path": "reports/stage_e20_briefs/pages/GC/caminschi_heaney_2014_uwa_aam.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.kitco.com/robots.txt",
+   "utc": "2026-10-11T17:48:32Z",
+   "sha256": "bca62d2dcade8097d9a60f6892a2ad647010f3e01b4c739762832122fb22d2ea",
+   "path": "reports/stage_e20_briefs/pages/GC/robots_kitco.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.kitco.com/news/article/2023-01-27/gold-and-palladium-were-winners-2022-silver-and-platinum-lagged-lbma",
+   "utc": "2026-10-11T17:48:32Z",
+   "sha256": "4057c271c459c9b9d495151657a70ee9bb940068de3675e3bc52874c5fe3e3c7",
+   "path": "reports/stage_e20_briefs/pages/GC/kitco_lbma_2022_averages.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://api.figshare.com/v2/articles/32489703",
+   "utc": "2026-10-11T17:40:00Z",
+   "sha256": "e95b51f2df537947e1b429889789b2815b59fbf5d0f4ec11792ca2475663fdf9",
+   "path": "reports/stage_e20_briefs/pages/GC/awartani_figshare_api.json",
+   "status": "ok"
+  },
+  {
+   "url": "https://acfr.aut.ac.nz/__data/assets/pdf_file/0008/686816/4a-Z-Ivy-Zhou.pdf (Firecrawl query)",
+   "utc": "2026-10-11T17:45:00Z",
+   "sha256": "",
+   "path": "",
+   "status": "ok"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "efmaefm.org",
+   "url": "http://efmaefm.org/robots.txt",
+   "utc": "2026-10-11T17:38:37Z",
+   "ruling": "no robots.txt (404); fetched"
+  },
+  {
+   "site": "acrn-journals.eu",
+   "url": "https://www.acrn-journals.eu/robots.txt",
+   "utc": "2026-10-11T17:38:29Z",
+   "ruling": "no robots.txt (404); CC-BY-SA journal PDF fetched"
+  },
+  {
+   "site": "figshare.com",
+   "url": "https://figshare.com/robots.txt",
+   "utc": "2026-10-11T17:38:29Z",
+   "ruling": "robots 202 empty (WAF); item CC BY-NC-ND 4.0 per API; fetched via scrapling-resolved redirect"
+  },
+  {
+   "site": "ebi.ac.uk",
+   "url": "https://www.ebi.ac.uk/robots.txt",
+   "utc": "2026-10-11T17:38:30Z",
+   "ruling": "Crawl-Delay 10; REST path allowed"
+  },
+  {
+   "site": "research-repository.uwa.edu.au",
+   "url": "https://research-repository.uwa.edu.au/robots.txt",
+   "utc": "2026-10-11T17:38:31Z",
+   "ruling": "Crawl-Delay 5; files allowed"
+  },
+  {
+   "site": "ideas.repec.org",
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:42:48Z",
+   "ruling": "only /cgi-bin/ disallowed"
+  },
+  {
+   "site": "kitco.com",
+   "url": "https://www.kitco.com/robots.txt",
+   "utc": "2026-10-11T17:48:32Z",
+   "ruling": "Allow /"
+  },
+  {
+   "site": "acfr.aut.ac.nz",
+   "url": "https://acfr.aut.ac.nz/robots.txt",
+   "utc": "2026-10-11T17:44:14Z",
+   "ruling": "robots 403; PDF read only via Firecrawl query"
+  },
+  {
+   "site": "lbma.org.uk",
+   "url": "https://www.lbma.org.uk/robots.txt",
+   "utc": "2026-10-11T17:38:32Z",
+   "ruling": "read; no page fetched"
+  },
+  {
+   "site": "ice.com",
+   "url": "https://www.ice.com/robots.txt",
+   "utc": "2026-10-11T17:38:32Z",
+   "ruling": "read; no page fetched"
+  },
+  {
+   "site": "cmegroup.com",
+   "url": "n/a",
+   "utc": "n/a",
+   "ruling": "never fetched (brief rule)"
+  },
+  {
+   "site": "all",
+   "url": "n/a",
+   "utc": "n/a",
+   "ruling": "only robots.txt read; no site terms page read (gap)"
+  }
+ ],
+ "budget_notices": [
+  "none; 20 WebSearch calls used; Firecrawl 2 scrapes (49 credits each), no exhaustion"
+ ],
+ "unfinished": [
+  "no 2010-2019 gold AM/PM fix calendar on disk (decides k5_pmfix_move, k5_preauc_msince = no)",
+  "METALS_FULL_SESSIONS 2010-2019 equivalence derivable from hist2010 metals but not built or verified",
+  "annualization conventions (Baltussen x252; CBS thesis) unverified; Borgards Table 2 units unverified",
+  "abstract-only: Blose 2018, Baur & Kuck 2020, Aspris 2020, Sobti 2021; secondary-only: Smales & Yang 2015, SHFE Zhou",
+  "not retrieved: Nilsson SSRN 2657767, Abrantes-Metz & Metz 2014, Batten Lucey Peat 2016, Sobti 2025, Gu Kurov Stan 2023",
+  "settlement-window evidence: none found (gap)",
+  "shared/macro_calendars.md not on disk at finish; G.17 not in RTY's list and absent 2010-2019",
+  "foreign row (ageconsearch robots) written into pages/GC by another worker; left untouched"
+ ],
+ "nq_only": null,
+ "notes": {
+  "proposals": "none: no sized post-2015 gold rule clears 1.5x D8 (8.40 MGC ticks, ~4.66 bp at $1,800); ROD->LH (~3.1 ticks) already in the prompt; fix effects foresight-signed or decayed and lack 2010-2019 calendar",
+  "t4_fact": "K5-fomc-01 move (known 13:05 CT) is available at E.20 t4 14:08 CT on FOMC dates; FOMC calendars exist both windows",
+  "d8": {
+   "rt_ticks": 5.597,
+   "rt_usd": 5.6,
+   "hurdle_1p5x_ticks": 8.4
+  }
+ }
+}

@@ -1,0 +1,558 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "UB",
+ "reader": "ProductReader-UB-OpusHigh",
+ "finished_utc": "2026-10-11T17:45:05Z",
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "ROD->LH intraday momentum, UB's own regression row",
+   "rule": "at 14:30 ET (13:30 CT) long if r_ROD=P(14:30 ET)/P(prior 15:00 ET close)-1>0, short if <0; exit 15:00 ET (14:00 CT)",
+   "hold": "30 min",
+   "gross_per_trade_bp": 2.1,
+   "gross_per_trade_ticks": 1.01,
+   "conversion": "DERIVED, not published: beta 0.0339 x E|r_ROD| 0.62% (sqrt(2/pi) x 12.4%/sqrt(252), the 30Y cash bond's realized vol from SR1188 Table 1, a proxy); ticks = bp x P/312.5; 0.81/1.01/1.21 ticks at P=120/150/180 (price level [unverified])",
+   "gross_or_net": "gross",
+   "sample": "UB 2010-02-03..2020-05-01, 2564 days, 1-min Tickdata bars, hours 08:20-15:00 ET",
+   "decay_evidence": "R2_OOS -3.40% on UB (r_ONFH -2.24, 3-variable model -1.92): negative out of sample",
+   "source": "Baltussen, Da, Lammers, Martens (JFE 142, 2021) Table B2 Panel B, Table A2",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0304405X21001598",
+   "quote": "| UB | 2.46*** (2.79) | 0.61 | -2.24 | 2.44*** (2.77) | 3.73*** (3.30) | 15.06** (2.52) | 3.49 | -1.92** | 3.39*** (4.36) | 2.35 | -3.40* |",
+   "quote_location": "Table B2 Panel B (columns ... betaROD, R2, R2OOS; x100), line 3616 of the on-disk copy; Table A2 line 3266",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E2",
+   "effect": "Pre-auction concession, 30-year bond (UB's auction tenor)",
+   "rule": "short from 180 min before the 30Y auction close to 1 min before it (09:00->12:00 CT for a 13:00 ET close)",
+   "hold": "180 min",
+   "gross_per_trade_bp": 12.075,
+   "gross_per_trade_ticks": 5.8,
+   "conversion": "ticks = bp x P/312.5 (UB tick 1/32 pt); 4.64/5.80/6.96 ticks at P=120/150/180 (price level [unverified]); the t2 h60 slice (60 of 180 min) under a uniform-drift assumption is about 4.0 bp = 1.55/1.93/2.32 ticks; with the 2015-2024 total scaled by the full-sample pre share, about 3.3 bp = 1.28/1.60/1.92 ticks",
+   "gross_or_net": "gross",
+   "sample": "on-the-run CASH 30-year bond, GovPX/BrokerTec midquotes, 223 auctions, 1991-06-25..2024-07-24",
+   "decay_evidence": "2015-2024 total price pressure 14.224* vs 25.514*** in 2007-2014 (F S3=S2 1.116, n.s.); 30Y yield pressure 2015-2024 0.592, not significant; 'the post-2015 period displays markedly weaker yield pressure—less than half the earlier magnitudes'",
+   "source": "Fleming, Liu, Nguyen, FRBNY Staff Report 1188 (March 2026, revised July 2026), Tables 2-3, pp.4, 19-21",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "quote": "Pre-auction Return (bps)    −0.733∗∗∗   −1.134∗∗∗      −2.523∗∗∗   −1.204      −3.822∗∗∗    −12.075∗∗∗ ;; S3: 2015-2024              0.887∗∗∗    1.216∗∗        4.482∗∗∗    2.509        5.165∗      14.224∗ ;; Yields rise steadily in the hours leading up to the auction and reverse in the hours following the release of auction results",
+   "quote_location": "Table 3 Panels A and B (printed p.48; last column = 30-year); p.4",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/UB/nyfed_sr1188.pdf",
+   "sha256": "93f9b196946d3c41e9670052eb3d8d0fce30fb892f8f1553c1b469c05193095b"
+  },
+  {
+   "id": "E3",
+   "effect": "Post-auction reversal, 30-year bond",
+   "rule": "long from results release +1 min to +180 min (about 12:01->15:01 CT)",
+   "hold": "180 min",
+   "gross_per_trade_bp": 5.031,
+   "gross_per_trade_ticks": 2.41,
+   "conversion": "at P=150; NOT significant",
+   "gross_or_net": "gross",
+   "sample": "as E2",
+   "decay_evidence": "null over the full sample",
+   "source": "Fleming, Liu, Nguyen (2026) Table 3, p.19",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "quote": "with the two components broadly similar in magnitude except for the 30-year bond, where the post-auction adjustment is negligible.",
+   "quote_location": "p.19; Table 3 Panel A Post-auction Return 30-year 5.031 (no star)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/UB/nyfed_sr1188.pdf",
+   "sha256": "93f9b196946d3c41e9670052eb3d8d0fce30fb892f8f1553c1b469c05193095b"
+  },
+  {
+   "id": "E4",
+   "effect": "FOMC and employment windows: no auction-style V-shape",
+   "rule": "same 6-hour window",
+   "hold": "-",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "unsized null",
+   "gross_or_net": "unknown",
+   "sample": "as E2",
+   "decay_evidence": "",
+   "source": "Fleming, Liu, Nguyen (2026) p.4",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "quote": "similar analysis of yield movements around Federal Open Market Commit- tee (FOMC) and employment announcements does not produce the same inverted V-shape",
+   "quote_location": "p.4",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/UB/nyfed_sr1188.pdf",
+   "sha256": "93f9b196946d3c41e9670052eb3d8d0fce30fb892f8f1553c1b469c05193095b"
+  },
+  {
+   "id": "E5",
+   "effect": "Post-FOMC drift in long-term US bond futures",
+   "rule": "long after expansionary FOMC surprises, short after contractionary (surprise measure not visible)",
+   "hold": "days (persists 15 days)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "unsized",
+   "gross_or_net": "unknown",
+   "sample": "long-term US and German bond futures, transaction data, post-financial-crisis period (contract and years not visible)",
+   "decay_evidence": "none visible",
+   "source": "Indriawan, Jiao, Tse (J. Banking & Finance 123, 2021), doi 10.1016/j.jbankfin.2020.106027",
+   "url": "https://ideas.repec.org/a/eee/jbfina/v123y2021ics0378426620302880.html",
+   "quote": "Using transaction-level data during the post-financial crisis period, we observe a sizable post-announcement drift in government bond markets. A trading strategy of investing in the market after expansionary shocks and shorting the market following contractionary surprises yields up to four times the Sharpe ratio of buy-and-hold investment.",
+   "quote_location": "IDEAS abstract",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/UB/ideas_indriawan_jiao_tse_2021.html",
+   "sha256": "b931c295046bd2d6db662a01abe93e81402f88988ae224d86f5d16095bd1d768"
+  },
+  {
+   "id": "E6",
+   "effect": "Leveraged-ETF share (mechanism of E1): UB largest among bond futures",
+   "rule": "-",
+   "hold": "-",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "not a trade",
+   "gross_or_net": "unknown",
+   "sample": "2006-06..2020-05",
+   "decay_evidence": "bond diff-in-diff 'positive but insignificantly so' (Section 4.2)",
+   "source": "Baltussen et al. (2021) Fig. 4 panel (b)",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0304405X21001598",
+   "quote": "| UB | 0.028 | 4.4 |",
+   "quote_location": "Fig. 4 panel (b), line 2447; caption line 2477",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  }
+ ],
+ "availability": [
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)",
+    "first bar = exact 17:00 CT bar of d-1 (k2/cp1.py:47)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2011-10-03..2019-05-05 only",
+   "basis": "hist2010 rates session R1 2010-06-01..2011-09-30: Globex open 17:30 CT, so no 17:00 CT bar; R2 from 2011-10-03 17:00 CT. Pooled always-applicable signal: missing would drop rows. Same for all rates roots",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "O 07:20/C 14:00 in both eras",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "same",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "same",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_auction_mto",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "30Y TREASURY_AUCTIONS: k2/_releases.py (2019-05..2026-06)",
+    "reports/stage_e16_calendars/ec_auc_2010_2019.json"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2010: 106 30Y rows 2010-07-14..2019-04-11 (105 at 13:00 ET, 1 at 11:30 ET 2012-09-13); 2019-2024: 58 rows 2019-05-09..2024-02-08, T_a 12:00 CT",
+   "basis": "EC-AUC from FiscalData; overlap with frozen rows exact except source; announcements 5-8 days ahead (F-04 t-3 rule holds); no member literal table for 2010-2019 yet",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_auction_msince",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "as k2_auction_mto"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "as above",
+   "basis": "as above; also applies at t4 14:08",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_fomc_mto",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "FOMC_STATEMENT_DATES (13:00 CT instants only): k2/_releases.py",
+    "reports/stage_e14_cal_releases.json"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2013-03-20..2019-05-01 (50 statements at 14:00 ET); 2019-2024: 37 dates 2019-06-19..2024-01-31",
+   "basis": "22 statements 2010-06-23..2013-01-30 not at 13:00 CT: 14 at 14:15 ET (time inferred), 8 at 12:20-12:35 ET (11:20-11:35 CT)",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_fomc_msince (left out at E.11, SC-9)",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "as k2_fomc_mto"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "as k2_fomc_mto",
+   "basis": "SC-9 reason (13:00 after 12:50) does not hold at t4 14:08: reachable at t4",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_monthend_msince",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "k2/_month_end.py (2019-05..2026-05)",
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, 0 unsourced)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "2019-2024: 58 months",
+   "basis": "2010-2019 derivable from hist2010 trade dates (2,324 trade dates, 25 closures, 97 early halts, 0 unsourced) by the member's rule",
+   "shared_ref": null
+  },
+  {
+   "feature": "k2_predrift_move",
+   "legs": [
+    "ZN",
+    "ZB"
+   ],
+   "calendars": [
+    "ISM_SERVICES_DATES"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "not applicable on UB rows (EXPOSURES ZN, ZB)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g01-g03 returns, g04_ret_day, g07_range, g08_prev_ret",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "calendars cover both; sigma warm-up at start is a data question",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "early halts listed in both (SG-4)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06_rv60, g09_vol_state, g10_logvol30",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "120-date lookback warm-up needs bars before the first row (undetermined from calendars)",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11_t_index, g12_dow",
+   "legs": [],
+   "calendars": [],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "no input",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel, g14_min_since_rel, g15_rel_day",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "UB D8 list: FOMC, NFP, TREASURY_AUCTION (all nominal tenors) from reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21)",
+    "ec_auc_2010_2019.json",
+    "stage_e14_cal_releases.json",
+    "NFP 2010-2019: RTY reader"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "auctions and FOMC covered 2010-2019; NFP deferred; the frozen ReleaseCalendar loads only the 2019+ file",
+   "shared_ref": "reports/stage_e20_briefs/shared/macro_calendars.md"
+  },
+  {
+   "feature": "g16_month_end",
+   "legs": [
+    "UB"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/rates.json (2010-06-01..2019-05-31, 0 unsourced)",
+    "data/calendars/rates.py (2019-05-01..2026-06-19)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_nq, g17_6e, g17_cl, g17_gc, g17_zc",
+   "legs": [
+    "NQ",
+    "6E",
+    "CL",
+    "GC",
+    "ZC"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "audited by the lead roots' readers",
+   "shared_ref": "reports/stage_e20_briefs/product_NQ.md, product_6E.md, product_CL.md, product_GC.md, product_ZC.md"
+  },
+  {
+   "feature": "g17_mbt",
+   "legs": [
+    "MBT"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MBT listed 2021",
+   "basis": "leg outside the 17 roots",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mes",
+   "legs": [
+    "MES"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "MES listed 2019",
+   "basis": "leg outside the 17 roots",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_zn",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "not applicable on UB rows (own cluster lead K2)",
+   "shared_ref": null
+  },
+  {
+   "feature": "k9_anncday",
+   "legs": [],
+   "calendars": [
+    "EC-K9"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "",
+   "basis": "not applicable on UB rows (MNQ, M2K, MYM only)",
+   "shared_ref": null
+  }
+ ],
+ "proposed_features": [],
+ "proposed_features_reason": "none: the sized UB-tenor effect (30Y pre-auction, E2) is already k2_auction_mto/msince; ROD->LH on UB has negative OOS R2, a derived gross under 1.5x D8, and no decision time in its window; post-FOMC drift is secondary-only and unsized and needs a surprise input",
+ "lead_facts": [
+  "k2_fomc_msince becomes reachable at t4=14:08 CT (SC-9 reason removed); the same holds for K5-fomc-01's 13:05 move on GC rows",
+  "cp1_ret frozen first-bar rule (17:00 CT) has no bar 2010-07-01..2011-09-30 for rates (Globex open 17:30 CT)",
+  "on 30Y auction days t2 h120 exits at 12:20 CT, after the 12:00 CT auction close and release"
+ ],
+ "listing": {
+  "date": "2010-01-11",
+  "quote": "the Long-Term U.S. Treasury Bond (\"Ultra\") futures that the Exchange listed for trading on January 11, 2010",
+  "source": "reports/stage_e20_briefs/pages/UB/cftc_rul052110cbot001.pdf p.1 (CBOT filing to CFTC, 2010-05-21)"
+ },
+ "shared_notes_written": [],
+ "fetch_log": [
+  {
+   "url": "https://www.newyorkfed.org/robots.txt",
+   "utc": "2026-10-11T17:37:05Z",
+   "sha256": "0102c8c45bc1e99fc8dc018b304239d1f5a9b311f6321c47ba2dbef51cb5551e",
+   "path": "reports/stage_e20_briefs/pages/UB/newyorkfed_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.newyorkfed.org/terms-of-use",
+   "utc": "2026-10-11T17:37:12Z",
+   "sha256": "",
+   "path": "(deleted; Page Not Found)",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.newyorkfed.org/privacy/termsofuse",
+   "utc": "2026-10-11T17:37:28Z",
+   "sha256": "3196c3013fecfd3acb255691b63e6e22ced0f5da4de14f216f8778fc92bdcc8e",
+   "path": "reports/stage_e20_briefs/pages/UB/newyorkfed_terms.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "utc": "2026-10-11T17:37:42Z",
+   "sha256": "93f9b196946d3c41e9670052eb3d8d0fce30fb892f8f1553c1b469c05193095b",
+   "path": "reports/stage_e20_briefs/pages/UB/nyfed_sr1188.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://works.bepress.com/yiuman-tse/141",
+   "utc": "2026-10-11T17:38Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "note": "302 redirect to digitalcommons.elsevier.com, not followed"
+  },
+  {
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:39Z",
+   "sha256": "4620fbdb346382486937732e10fb82fe1cab79fa1d839d85de8a4798c1702d46",
+   "path": "reports/stage_e20_briefs/pages/UB/repec_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/jbfina/v123y2021ics0378426620302880.html",
+   "utc": "2026-10-11T17:39:19Z",
+   "sha256": "b931c295046bd2d6db662a01abe93e81402f88988ae224d86f5d16095bd1d768",
+   "path": "reports/stage_e20_briefs/pages/UB/ideas_indriawan_jiao_tse_2021.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://em.seu.edu.cn/robots.txt",
+   "utc": "2026-10-11T17:39Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "note": "404, no robots file (not a block)"
+  },
+  {
+   "url": "https://em.seu.edu.cn/2021/1101/c29365a388728/page.htm",
+   "utc": "2026-10-11T17:39:41Z",
+   "sha256": "0906a81f21bafa48144d8cdb54fead580fb4c45a65778abbd509e4b2ebbc10c6",
+   "path": "reports/stage_e20_briefs/pages/UB/seu_tse_lecture.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://cftc.gov/stellent/groups/public/@rulesandproducts/documents/ifdocs/rul052110cbot001.pdf",
+   "utc": "2026-10-11T17:40:07Z",
+   "sha256": "980d62055d83626bb9c7edb80d03a207f659226478ba1db1fbc33df15af75b88",
+   "path": "reports/stage_e20_briefs/pages/UB/cftc_rul052110cbot001.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://faculty.fordham.edu/rchen/JFI-Chen-Leisikow.pdf",
+   "utc": "2026-10-11T17:40:20Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "note": "404 not found (not a block)"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "newyorkfed.org",
+   "url": "https://www.newyorkfed.org/privacy/termsofuse",
+   "utc": "2026-10-11T17:37:28Z",
+   "ruling": "allowed: 'non-exclusive license ... to use, copy, and distribute Content'; no automation ban; robots disallows 3 paths"
+  },
+  {
+   "site": "ideas.repec.org",
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:39Z",
+   "ruling": "robots disallows /cgi-bin/ only; terms page not looked for; one page"
+  },
+  {
+   "site": "em.seu.edu.cn",
+   "url": "https://em.seu.edu.cn/robots.txt",
+   "utc": "2026-10-11T17:39Z",
+   "ruling": "no robots (404), no terms found; one page"
+  },
+  {
+   "site": "cftc.gov",
+   "url": "https://www.cftc.gov/webpolicy/index.htm",
+   "utc": "2026-10-05T08:10Z (E.14 reading reused)",
+   "ruling": "public domain; single filings allowed (reports/stage_e14_briefs/pages/terms_checks.md line 8)"
+  }
+ ],
+ "budget_notices": [],
+ "websearch_calls": 12,
+ "webfetch_calls": 1,
+ "unfinished": [
+  "no public UB price level sourced; tick conversions at illustrative P=120/150/180 [unverified]",
+  "E1 per-trade gross is a derivation from beta and a proxy volatility, not published",
+  "E2 is cash 30Y, not UB futures; equal return in bp is assumed [unverified]; uniform-drift slice assumed; 2015-2024 pre/post split not found (online appendix not read)",
+  "E5 full text paywalled: contract, years, intraday component unknown",
+  "Robeco 2025 10Y auction note and Hartley-Schwarz month-end: class leads, not fetched [unverified]; see shared/rates_class_notes.md",
+  "g13-g15 NFP 2010-2019 deferred to shared/macro_calendars.md; g17 lead listings deferred to lead readers",
+  "no UB-specific intraday study since 2015 beyond Baltussen's UB rows found: a search gap, not evidence of absence"
+ ],
+ "nq_only": null
+}

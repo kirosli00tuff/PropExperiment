@@ -1,0 +1,934 @@
+{
+ "schema": "stage_e20_product/1",
+ "root": "ZS",
+ "reader": "ProductReader-ZS-OpusHigh",
+ "finished_utc": "2026-10-11T17:48:05Z",
+ "evidence": [
+  {
+   "id": "E1",
+   "effect": "ROD->LH market intraday momentum on soybeans: null; ONFH->LH reversal, negative OOS R2",
+   "rule": "r_LH regressed on r_ROD (prior close to close-30) and on r_ONFH; SY hours 08:30-13:20",
+   "hold": "last 30 min (12:50-13:20 CT)",
+   "gross_per_trade_bp": 0.0,
+   "gross_per_trade_ticks": null,
+   "conversion": "beta_ROD -0.05e-2 per unit r_ROD: about -0.05 bp per 1% r_ROD (nil); beta_ONFH -1.17e-2: -1.17 bp per 1% r_ONFH; no per-trade figure published",
+   "gross_or_net": "gross",
+   "sample": "SY CBOT soybeans, 1-min, 1982-07-06..2020-05-01 (Table B3 panel Apr 1981..May 2020)",
+   "decay_evidence": "R2_OOS -0.07 (ROD) and -0.04 (ONFH) on SY; pooled Softs ROD R2_OOS -0.01",
+   "source": "Baltussen, Da, Lammers, Martens (2021), J. Financial Economics 142, 377-403, Table B3 Panel B",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0304405X21001598",
+   "quote": "| SY | -1.17**(-2.17) | 0.06 | -0.04** | -1.23**(-2.26) | 1.68**(2.01) | 3.11(1.19) | 0.15 | -0.45 | -0.05(-0.13) | -0.01 | -0.07 |",
+   "quote_location": "on-disk copy line 3776 (header line 3762; caption: slopes and R2 x100)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "id": "E2",
+   "effect": "WASDE news -> soybean price reaction grows after 30 minutes (to the day close)",
+   "rule": "ln(P_end/P_start) on news = mean_j ln(WASDE world ending stocks / analyst j forecast); windows from release (or open if pre-open) to +10, +30 min, day close",
+   "hold": "10 min / 30 min / to close",
+   "gross_per_trade_bp": 14.6,
+   "gross_per_trade_ticks": null,
+   "conversion": "upper bound with perfect news sign: |-0.124-(-0.061)| x 0.798 x 0.029 = 0.00146 = 14.6 bp over ~11:30-13:15; see proposed feature P1 for t4 pro-rating and ticks",
+   "gross_or_net": "gross",
+   "sample": "CME nearby corn and soybeans, 2010-2021, 122 WASDE events (26% early release)",
+   "decay_evidence": "none (no OOS, single sample)",
+   "source": "Anderson, McKenzie, Noyes (2024), NCCC-134 proceedings",
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2024/pdf/Anderson_McKenzie_Noyes_NCCC-134_2024.pdf",
+   "quote": "Soy News -0.028 -0.061** -0.124** ... By the end of the release day, the corn reaction doesn't change much but the soybean price reaction grows after 30 minutes.",
+   "quote_location": "Table 2 (txt line 197); Results (lines 190-191); Table 1 Soybean News sd 0.029 (line 154)",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZS/anderson_mckenzie_noyes_2024.pdf",
+   "sha256": "e9df84b1f3fdad98fb7d701d0203c6ce34ad6114c5e66d3bbc9b593ebce746f0"
+  },
+  {
+   "id": "E3",
+   "effect": "USDA report windows in ZS: volatility spike, no systematic under/overreaction",
+   "rule": "15-second returns, -15 to +60 min around WASDE, CP, GS, AC, PP releases",
+   "hold": "up to 60 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "no directional effect",
+   "gross_or_net": "unknown",
+   "sample": "ZS nearby, Globex time and sales, Jun 2010-May 2014, 59 releases",
+   "decay_evidence": "n/a",
+   "source": "Joseph and Garcia (2016), AAEA selected paper, AgEcon 10.22004/ag.econ.235772",
+   "url": "https://ageconsearch.umn.edu/record/235772/files/AAEA2016_USDA%20Report%20Effects.pdf",
+   "quote": "Return correlations provide little evidence to support systematic under- or overreaction in prices regardless of when the report is released, reflecting the efficiency of the market.",
+   "quote_location": "Abstract (txt lines 60-62); release-time shift lines 70-72",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZS/joseph_garcia_2016_aaea.pdf",
+   "sha256": "cad7b872368a28098d13a87911c7ee50dae70578a0c4e2bfe281f6bf11f4be06"
+  },
+  {
+   "id": "E4",
+   "effect": "Crush-spread intraday deviations from USDA-implied processing relationship mean-revert; profitable after costs (claimed)",
+   "rule": "not stated in abstract",
+   "hold": "not stated",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "n/a",
+   "gross_or_net": "net",
+   "sample": "8,650 trading days, Sep 1990-May 2021",
+   "decay_evidence": "not stated",
+   "source": "Abdoh and Chitavi (2025), Int. Rev. Econ. Finance 101, 104186",
+   "url": "https://ideas.repec.org/a/eee/reveco/v101y2025ics1059056025003491.html",
+   "quote": "Our simulations demonstrate that trading strategies based on these findings would have been profitable, even after accounting for transaction costs. This analysis is based on 8650 trading days from September 1990 to May 2021.",
+   "quote_location": "IDEAS abstract",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/ZS/ideas_abdoh_chitavi_2025.html",
+   "sha256": "9204c6f2e28a411927d63e79dc92f65960cc08ad776fc0777f5d99e956292aac"
+  },
+  {
+   "id": "E5",
+   "effect": "Soybean-complex intraday cointegration depends on liquidity and time of day (no trading rule)",
+   "rule": "VECM on 1-min LOB snapshots of ZS, ZL, ZM",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "n/a",
+   "gross_or_net": "unknown",
+   "sample": "CME 2015, 243 trading days",
+   "decay_evidence": "n/a",
+   "source": "Zhou, Bagnarosa, Gohin, Pennings, Debie (2023), J. Commodity Markets 30, 100314 (CC BY)",
+   "url": "https://edepot.wur.nl/629433",
+   "quote": "Our analysis further suggests that the presence of cointegration among assets is related to the time of day and the contract maturities traded at a given time.",
+   "quote_location": "Abstract (txt lines 42-44); data line 587",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZS/zhou_etal_2023_jcm.pdf",
+   "sha256": "908bb3f449d993435184af2cd3ef65992b95dc93155d846169f8e0e80b9fcf1a"
+  },
+  {
+   "id": "E6",
+   "effect": "Crop Progress good+excellent rating vs next-day November soybean price level",
+   "rule": "ln(next-day 13:30 close) on ln(condition) and trend (levels)",
+   "hold": "next day (report after the close)",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "-0.45% per +1% rating; not a per-trade figure; needs released CPR value",
+   "gross_or_net": "unknown",
+   "sample": "Nov ZS, weeks 25-40, 1995-2018, 448 reports",
+   "decay_evidence": "none",
+   "source": "Bethlem, Lima, Lima (2023), Revista de Economia e Sociologia Rural 61(2)",
+   "url": "https://www.scielo.br/j/resr/a/vcxYjcBRQYWDd6HL6Vq85WF/?lang=en",
+   "quote": "a 1% increase in soybean crop area evaluated as “good” and “excellent” (Condition variable) in the weekly CPR reduced soybean futures contract prices by 0.45% the day following the report’s release",
+   "quote_location": "Abstract; method paragraph ('1:30 p.m. CBOT closing on the day following')",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZS/bethlem_etal_2023_resr.html",
+   "sha256": "e7afe9995b73fd9211db1eb54ae66034bcdf1ea7e3432cccd0cc51ff2e744345"
+  },
+  {
+   "id": "E7",
+   "effect": "Dalian soybean first-30-min -> last-30-min momentum (not the vehicle)",
+   "rule": "r_last30 on r_first30 (excl. overnight)",
+   "hold": "last 30 min",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "slope 0.073: 7.3 bp per 1% first-30 return; insignificant with overnight included",
+   "gross_or_net": "gross",
+   "sample": "DCE soybean No.1, 2002-07-01..2013-06-27",
+   "decay_evidence": "n/a",
+   "source": "Jin, Kearney, Li, Yang (2020), J. Futures Markets 40(4) 632-650 (MPRA WP 97134 read)",
+   "url": "https://mpra.ub.uni-muenchen.de/97134/1/MPRA_paper_97134.pdf",
+   "quote": "first 30-minute returns positively predict the last 30-minute returns for all four contracts with a slope of 0.073 for soybean",
+   "quote_location": "txt lines 621-623; line 748",
+   "grade": "primary",
+   "saved_path": "reports/stage_e20_briefs/pages/ZS/jin_etal_mpra_97134.pdf",
+   "sha256": "079f1b4ae45a263199465d01a5ce5e4c2e47cde5702f70206c6f77d5082de869"
+  },
+  {
+   "id": "E8",
+   "effect": "Chinese soybean complex reacts to USDA reports at the Dalian open (not the vehicle)",
+   "rule": "intraday event study",
+   "hold": "minutes",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "n/a",
+   "gross_or_net": "unknown",
+   "sample": "Dalian, Jan 2011-Apr 2021",
+   "decay_evidence": "n/a",
+   "source": "Hu and Mallory (2025), J. Futures Markets 45(11) 2109-2127",
+   "url": "https://ideas.repec.org/a/wly/jfutmk/v45y2025i11p2109-2127.html",
+   "quote": "The results show that the strongest price and volume reactions occur immediately after the market opens. On average, price reactions dissipate within a few minutes",
+   "quote_location": "IDEAS abstract",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/ZS/ideas_jfm_2025_v45i11.html",
+   "sha256": "f3ebb55fd919682b3493c94b586699bb2c6b647a4d59da0fde4e76fffb209991"
+  },
+  {
+   "id": "E9",
+   "effect": "CBOT corn real-time USDA release volatility moderates quickly (class row; see ZC)",
+   "rule": "daily and intraday volatility",
+   "hold": "n/a",
+   "gross_per_trade_bp": null,
+   "gross_per_trade_ticks": null,
+   "conversion": "n/a",
+   "gross_or_net": "unknown",
+   "sample": "CBOT corn",
+   "decay_evidence": "n/a",
+   "source": "Adjemian and Irwin (2020), J. Commodity Markets 19, 100110",
+   "url": "https://ideas.repec.org/a/eee/jocoma/v19y2020ics2405851319300753.html",
+   "quote": "these volatility spikes moderate fairly quickly, and that the CBOT corn market has a more difficult time distinguishing important news events.",
+   "quote_location": "IDEAS abstract",
+   "grade": "secondary-only",
+   "saved_path": "reports/stage_e20_briefs/pages/ZS/ideas_jocoma_v19_2020.html",
+   "sha256": "16305f09f9c23d6826f3b90a732ace238992acd7b2e69c48418d09d2c5903ff7"
+  }
+ ],
+ "availability": [
+  {
+   "feature": "cp1_ret",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)",
+    "D6 O 08:30"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "absent 2010-07-01..2012-05-18 (08:59 in Globex pause 07:15-09:30); exists from 2012-05-21",
+   "basis": "hist2010 grains session eras",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_range",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)",
+    "OR [08:30,08:45)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "absent 2010-07-01..2012-05-18",
+   "basis": "hist2010 grains session eras",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp2_brk",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)",
+    "OR [08:30,08:45)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "absent 2010-07-01..2012-05-18",
+   "basis": "hist2010 grains session eras",
+   "shared_ref": null
+  },
+  {
+   "feature": "cp3_clv",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "all eras; C 14:00 in 2012-05-21..2013-04-05",
+   "basis": "day H/L/C exist every era",
+   "shared_ref": null
+  },
+  {
+   "feature": "k6_crushgap_gap",
+   "legs": [
+    "ZS",
+    "ZM",
+    "ZL"
+   ],
+   "calendars": [
+    "strategy/members/k6/_calendar.py GRAIN_FULL_SESSIONS, GRAIN_TRADE_DATES (2019-05-01..2026-06-19)",
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "k6 literal tables absent before 2019-05-01 (derivable from hist2010 grains, not built); 08:30 bars absent 2010-07-01..2012-05-18; ZS/ZM/ZL windows start 2010-07 (stage_e16_windows.json)",
+   "basis": "ZM is not one of the 17 roots (fails F6 leg rule regardless)",
+   "shared_ref": null
+  },
+  {
+   "feature": "k6_wasdepre_drift",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "strategy/members/k6/_wasde.py WASDE_DATES (2019-05-10..2026-06-11)",
+    "GRAIN_FULL_SESSIONS"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "no 2010-2019 WASDE calendar in repo; WASDE at 07:30 CT (pre-open) before Jan 2013",
+   "basis": "grep of reports/, data/calendars/, screening/; E.14 release calendar has NGS, WPSR, FOMC only; Joseph-Garcia 2016 lines 70-72",
+   "shared_ref": "shared/grains_class_notes.md"
+  },
+  {
+   "feature": "k6_wasdepost (EXCLUDED; ZC rows only)",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [
+    "WASDE_DATES"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "yes",
+   "dates": "not on ZS rows; exclusion reason (known 11:15 > 11:00) does not hold at t4 12:18",
+   "basis": "stage_e11_signal_coverage.md section 3",
+   "shared_ref": "product_ZC.json"
+  },
+  {
+   "feature": "g01_ret30",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)",
+    "group session intervals (SG-3)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "lookbacks crossing the pause are not applicable (SG-3)",
+   "basis": "bars plus group calendar",
+   "shared_ref": null
+  },
+  {
+   "feature": "g02_ret60",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)",
+    "group session intervals (SG-3)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "lookbacks crossing the pause are not applicable (SG-3)",
+   "basis": "bars plus group calendar",
+   "shared_ref": null
+  },
+  {
+   "feature": "g03_ret120",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)",
+    "group session intervals (SG-3)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "lookbacks crossing the pause are not applicable (SG-3)",
+   "basis": "bars plus group calendar",
+   "shared_ref": null
+  },
+  {
+   "feature": "g04_ret_day",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)",
+    "group session intervals (SG-3)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "lookbacks crossing the pause are not applicable (SG-3)",
+   "basis": "bars plus group calendar",
+   "shared_ref": null
+  },
+  {
+   "feature": "g05_gap",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)",
+    "D6 C 13:15"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "13:14 bar exists in every era; n/a after early halts (SG-4)",
+   "basis": "bars plus group calendar",
+   "shared_ref": null
+  },
+  {
+   "feature": "g06_rv60",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "bars only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g07_range",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "bars only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g08_prev_ret",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "bars only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g09_vol_state",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "bars only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g10_logvol30",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "bars only",
+   "shared_ref": null
+  },
+  {
+   "feature": "g11_t_index",
+   "legs": [],
+   "calendars": [
+    "V2.2 clock"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "t1 rows absent 2010-07-01..2012-05-18",
+   "basis": "clock",
+   "shared_ref": null
+  },
+  {
+   "feature": "g12_dow",
+   "legs": [],
+   "calendars": [
+    "V2.2 clock"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "t1 rows absent 2010-07-01..2012-05-18",
+   "basis": "clock",
+   "shared_ref": null
+  },
+  {
+   "feature": "g13_min_to_rel",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21; ZS: WASDE, CROP, CROP_ANNUAL, FOMC)",
+    "reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31; FOMC only for ZS)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019: FOMC rows only (72); no USDA rows",
+   "basis": "calendar files",
+   "shared_ref": "shared/macro_calendars.md"
+  },
+  {
+   "feature": "g14_min_since_rel",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21; ZS: WASDE, CROP, CROP_ANNUAL, FOMC)",
+    "reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31; FOMC only for ZS)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019: FOMC rows only (72); no USDA rows",
+   "basis": "calendar files",
+   "shared_ref": "shared/macro_calendars.md"
+  },
+  {
+   "feature": "g15_rel_day",
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "reports/stage_e2b_release_calendar.json (2019-05-01..2026-06-21; ZS: WASDE, CROP, CROP_ANNUAL, FOMC)",
+    "reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31; FOMC only for ZS)"
+   ],
+   "exists_2010_2019": "partial",
+   "exists_2019_2024": "yes",
+   "dates": "2010-2019: FOMC rows only (72); no USDA rows",
+   "basis": "calendar files",
+   "shared_ref": "shared/macro_calendars.md"
+  },
+  {
+   "feature": "g16_month_end",
+   "legs": [],
+   "calendars": [
+    "data/calendars/hist2010/grains.json (2010-06-01..2019-05-31, cme, 0 unsourced)",
+    "data/calendars/grains.py (2019-05-01..2026-06-19, cme)"
+   ],
+   "exists_2010_2019": "yes",
+   "exists_2019_2024": "yes",
+   "dates": "",
+   "basis": "grain trade dates",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_nq",
+   "legs": [
+    "NQ"
+   ],
+   "calendars": [
+    "lead listing"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "owned by the lead reader",
+   "basis": "shared",
+   "shared_ref": "product_NQ.json"
+  },
+  {
+   "feature": "g17_zn",
+   "legs": [
+    "ZN"
+   ],
+   "calendars": [
+    "lead listing"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "owned by the lead reader",
+   "basis": "shared",
+   "shared_ref": "product_ZN.json"
+  },
+  {
+   "feature": "g17_6e",
+   "legs": [
+    "6E"
+   ],
+   "calendars": [
+    "lead listing"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "owned by the lead reader",
+   "basis": "shared",
+   "shared_ref": "product_6E.json"
+  },
+  {
+   "feature": "g17_cl",
+   "legs": [
+    "CL"
+   ],
+   "calendars": [
+    "lead listing"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "owned by the lead reader",
+   "basis": "shared",
+   "shared_ref": "product_CL.json"
+  },
+  {
+   "feature": "g17_gc",
+   "legs": [
+    "GC"
+   ],
+   "calendars": [
+    "lead listing"
+   ],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "owned by the lead reader",
+   "basis": "shared",
+   "shared_ref": "product_GC.json"
+  },
+  {
+   "feature": "g17_zc",
+   "legs": [
+    "ZC"
+   ],
+   "calendars": [],
+   "exists_2010_2019": "undetermined",
+   "exists_2019_2024": "undetermined",
+   "dates": "not applicable on ZS rows: own cluster lead (SG-2)",
+   "basis": "stage_e11_signal_coverage.md SG-2",
+   "shared_ref": "product_ZC.json"
+  },
+  {
+   "feature": "g17_mbt",
+   "legs": [
+    "MBT"
+   ],
+   "calendars": [
+    "listing"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MBT listed 2021; not one of the 17",
+   "basis": "brief section 7",
+   "shared_ref": null
+  },
+  {
+   "feature": "g17_mes",
+   "legs": [
+    "MES"
+   ],
+   "calendars": [
+    "listing"
+   ],
+   "exists_2010_2019": "no",
+   "exists_2019_2024": "partial",
+   "dates": "MES listed 2019-05; not one of the 17; uncovered in gate0 list",
+   "basis": "brief section 7; stage_e12_gate0_list.json",
+   "shared_ref": null
+  }
+ ],
+ "proposed_features": [
+  {
+   "name": "zs_wasde_post_t4",
+   "source": "Anderson, McKenzie, Noyes (2024), NCCC-134 (E2)",
+   "quote": "Soy News -0.028 -0.061** -0.124** ... the soybean price reaction grows after 30 minutes.",
+   "formula": "on WASDE date d at t4=12:18 CT: x = (close(ZS 12:17 bar of d) - close(ZS 10:59 bar of d)) / tick, same instrument_id; else 0 with flag 0",
+   "decision_times": [
+    "t4"
+   ],
+   "horizons": [
+    "h60",
+    "F"
+   ],
+   "legs": [
+    "ZS"
+   ],
+   "calendars": [
+    "WASDE dates (11:00 CT release)",
+    "grains group calendar"
+   ],
+   "available_both_windows": false,
+   "expected_gross_per_trade_ticks": 3.8,
+   "derivation": "UPPER BOUND with perfect news sign: |beta_day-beta_30| x E|news| = 0.063 x 0.798 x 0.029 = 14.6 bp over ~11:30-13:15; x 57/105 (t4 window, linear drift assumed) = 7.9 bp; at $12.00/bu [unverified assumption] = 0.95 c = 3.80 ticks ($47.5). Bar-only proxy scales by (2p-1), p unknown; 1.5x needs p >= 0.82. 2010-2019 WASDE calendar absent; 11:00 CT release only from Jan 2013.",
+   "d8_rt_ticks": 1.644,
+   "ratio_to_d8": 2.31,
+   "clears_1p5x": false
+  }
+ ],
+ "shared_notes_written": [],
+ "fetch_log": [
+  {
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:37:01Z",
+   "sha256": "4620fbdb346382486937732e10fb82fe1cab79fa1d839d85de8a4798c1702d46",
+   "path": "reports/stage_e20_briefs/pages/ZS/ideas_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/reveco/v101y2025ics1059056025003491.html",
+   "utc": "2026-10-11T17:37:05Z",
+   "sha256": "9204c6f2e28a411927d63e79dc92f65960cc08ad776fc0777f5d99e956292aac",
+   "path": "reports/stage_e20_briefs/pages/ZS/ideas_abdoh_chitavi_2025.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/p/ags/nccc24/379012.html",
+   "utc": "2026-10-11T17:37:08Z",
+   "sha256": "457df93c5d2b54a5b4cfd2ed78bf651f8f957c852424d5291c39e7d701478f78",
+   "path": "reports/stage_e20_briefs/pages/ZS/ideas_nccc24_379012.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://archive.org/robots.txt",
+   "utc": "2026-10-11T17:37:52Z",
+   "sha256": "83e00f46c71e9fa872694af73fa9c15a615b9052b2f10820a3d146bc506c6161",
+   "path": "reports/stage_e20_briefs/pages/ZS/archive_org_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://web.archive.org/web/20241117204227/https://ageconsearch.umn.edu/record/235772/files/AAEA2016_USDA%20Report%20Effects.pdf",
+   "utc": "2026-10-11T17:37:55Z",
+   "sha256": "7cec3762203a0b8eb5de256038fabf82ac2fc70bc6ab1ad0dfa127a53a7a4a51",
+   "path": "reports/stage_e20_briefs/pages/ZS/joseph_garcia_2016_aaea.pdf",
+   "status": "blocked"
+  },
+  {
+   "url": "https://web.archive.org/web/20241117204227id_/https://ageconsearch.umn.edu/nanna/record/235772/files/AAEA2016_USDA%20Report%20Effects.pdf",
+   "utc": "2026-10-11T17:38:06Z",
+   "sha256": "cad7b872368a28098d13a87911c7ee50dae70578a0c4e2bfe281f6bf11f4be06",
+   "path": "reports/stage_e20_briefs/pages/ZS/joseph_garcia_2016_aaea.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/robots.txt",
+   "utc": "2026-10-11T17:38:22Z",
+   "sha256": "8219ec175e69f4216c1c6462f625ab06abd02b04e2a26272d45c96d4be2f31c1",
+   "path": "reports/stage_e20_briefs/pages/ZS/farmdoc_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "http://farmdoc.illinois.edu/irwin/research/USDA_Announcement_Effects_in_Real_Time.pdf",
+   "utc": "2026-10-11T17:38:25Z",
+   "sha256": "25fb23868ebf48348f9e438e00cb9b9d9b3a054f32482a781c762cc4f9cc6393",
+   "path": "reports/stage_e20_briefs/pages/ZS/adjemian_irwin_2018_wp.pdf",
+   "status": "blocked"
+  },
+  {
+   "url": "http://farmdoc.illinois.edu/irwin/research/USDA_Announcement_Effects_in_Real_Time.pdf",
+   "utc": "2026-10-11T17:38:40Z",
+   "sha256": "",
+   "path": "reports/stage_e20_briefs/pages/ZS/adjemian_irwin_2018_wp.pdf(deleted)",
+   "status": "blocked"
+  },
+  {
+   "url": "https://scotthirwin.com/pubs/",
+   "utc": "2026-10-11T17:38:53Z",
+   "sha256": "25fb23868ebf48348f9e438e00cb9b9d9b3a054f32482a781c762cc4f9cc6393",
+   "path": "reports/stage_e20_briefs/pages/ZS/irwin_pubs.html",
+   "status": "blocked"
+  },
+  {
+   "url": "https://scotthirwin.com/pubs/",
+   "utc": "2026-10-11T17:39:00Z",
+   "sha256": "5ef4f76688946464a0849e9becbf792179cba8da2ceaf4cbcfe49badf9e5e7e1",
+   "path": "reports/stage_e20_briefs/pages/ZS/irwin_pubs.md",
+   "status": "ok"
+  },
+  {
+   "url": "https://edepot.wur.nl/robots.txt",
+   "utc": "2026-10-11T17:39:29Z",
+   "sha256": "4ac27bf2028144278be359b3ed815ad5ff1ee24510c7f8af9b25cce75ee06f11",
+   "path": "reports/stage_e20_briefs/pages/ZS/edepot_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://hull-repository.worktribe.com/robots.txt",
+   "utc": "2026-10-11T17:39:30Z",
+   "sha256": "d7b6be87ccebbdc9886d591cb5fb8344d1791574a898912784f4fa898e26dd04",
+   "path": "reports/stage_e20_briefs/pages/ZS/hull_robots.txt",
+   "status": "blocked"
+  },
+  {
+   "url": "https://edepot.wur.nl/629433",
+   "utc": "2026-10-11T17:39:32Z",
+   "sha256": "908bb3f449d993435184af2cd3ef65992b95dc93155d846169f8e0e80b9fcf1a",
+   "path": "reports/stage_e20_briefs/pages/ZS/zhou_etal_2023_jcm.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://hull-repository.worktribe.com/OutputFile/3303156",
+   "utc": "2026-10-11T17:39:38Z",
+   "sha256": "6babbb163866d5c071c5fbb0cdeb71ac9c5969d108aa9fd978a0117a37f8475a",
+   "path": "reports/stage_e20_briefs/pages/ZS/jin_etal_2020_jfm.pdf",
+   "status": "blocked"
+  },
+  {
+   "url": "https://hull-repository.worktribe.com/OutputFile/3303156",
+   "utc": "2026-10-11T17:40:04Z",
+   "sha256": "",
+   "path": "reports/stage_e20_briefs/pages/ZS/jin_etal_2020_jfm.pdf(deleted)",
+   "status": "blocked"
+  },
+  {
+   "url": "https://mpra.ub.uni-muenchen.de/robots.txt",
+   "utc": "2026-10-11T17:40:04Z",
+   "sha256": "5ef5e0cbc88a0789a7cf2f03f6e62c84ebbdaa7b8f797f946a0d358bb0d612d0",
+   "path": "reports/stage_e20_briefs/pages/ZS/mpra_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://mpra.ub.uni-muenchen.de/97134/",
+   "utc": "2026-10-11T17:40:07Z",
+   "sha256": "3acd6c6ebec3dcd78ad299eeeb2ddb017c4e74e2a3c4ae6d0b212800e9ef86af",
+   "path": "reports/stage_e20_briefs/pages/ZS/mpra_97134.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://mpra.ub.uni-muenchen.de/97134/1/MPRA_paper_97134.pdf",
+   "utc": "2026-10-11T17:40:18Z",
+   "sha256": "079f1b4ae45a263199465d01a5ce5e4c2e47cde5702f70206c6f77d5082de869",
+   "path": "reports/stage_e20_briefs/pages/ZS/jin_etal_mpra_97134.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/ags/revi24/340926.html",
+   "utc": "2026-10-11T17:40:57Z",
+   "sha256": "da380b7c4750648e986536ab786d41d62df140d3b862f1557d212602510ebce4",
+   "path": "reports/stage_e20_briefs/pages/ZS/ideas_revi24_340926.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/jocoma/v19y2020ics2405851319300753.html",
+   "utc": "2026-10-11T17:41:01Z",
+   "sha256": "16305f09f9c23d6826f3b90a732ace238992acd7b2e69c48418d09d2c5903ff7",
+   "path": "reports/stage_e20_briefs/pages/ZS/ideas_jocoma_v19_2020.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/a/wly/jfutmk/v45y2025i11p2109-2127.html",
+   "utc": "2026-10-11T17:41:06Z",
+   "sha256": "f3ebb55fd919682b3493c94b586699bb2c6b647a4d59da0fde4e76fffb209991",
+   "path": "reports/stage_e20_briefs/pages/ZS/ideas_jfm_2025_v45i11.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.scielo.br/robots.txt",
+   "utc": "2026-10-11T17:41:30Z",
+   "sha256": "3fe6c27cd1b7db67fb9b09cd63f40ad43b3181ad20b18970a47d7ef4213cf12a",
+   "path": "reports/stage_e20_briefs/pages/ZS/scielo_robots.txt",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.scielo.br/j/resr/a/vcxYjcBRQYWDd6HL6Vq85WF/?lang=en",
+   "utc": "2026-10-11T17:41:34Z",
+   "sha256": "e7afe9995b73fd9211db1eb54ae66034bcdf1ea7e3432cccd0cc51ff2e744345",
+   "path": "reports/stage_e20_briefs/pages/ZS/bethlem_etal_2023_resr.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/assets/meetings/nccc134/conf_2024/pdf/Anderson_McKenzie_Noyes_NCCC-134_2024.pdf",
+   "utc": "2026-10-11T17:42:29Z",
+   "sha256": "e9df84b1f3fdad98fb7d701d0203c6ce34ad6114c5e66d3bbc9b593ebce746f0",
+   "path": "reports/stage_e20_briefs/pages/ZS/anderson_mckenzie_noyes_2024.pdf",
+   "status": "ok"
+  },
+  {
+   "url": "https://ideas.repec.org/t/copyright.html",
+   "utc": "2026-10-11T17:44:35Z",
+   "sha256": "d98583e7b7d5f692c80bd7a7b502b1ae60dff7490c49aeb931006df70f990c17",
+   "path": "reports/stage_e20_briefs/pages/ZS/terms_repec_copyright.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://mpra.ub.uni-muenchen.de/policies.html",
+   "utc": "2026-10-11T17:44:38Z",
+   "sha256": "57888c138cf92b8a71fd260e7d569cd556a60d6a2f1e09636ee43c628f6f89e2",
+   "path": "reports/stage_e20_briefs/pages/ZS/terms_mpra_policies.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://www.scielo.br/about/",
+   "utc": "2026-10-11T17:44:40Z",
+   "sha256": "cd076a77ed8f342ae022b90066c44087c02fcbeaa944958d7667030c67b25eab",
+   "path": "reports/stage_e20_briefs/pages/ZS/terms_scielo_about.html",
+   "status": "ok"
+  },
+  {
+   "url": "https://farmdoc.illinois.edu/terms-of-use",
+   "utc": "2026-10-11T17:44:43Z",
+   "sha256": "377caf7d2ece1bb018be1e2229e1b051ff1ee8cb9261c64bfc3db5528d860014",
+   "path": "reports/stage_e20_briefs/pages/ZS/terms_farmdoc.html",
+   "status": "ok"
+  }
+ ],
+ "terms_read": [
+  {
+   "site": "ideas.repec.org",
+   "url": "https://ideas.repec.org/robots.txt",
+   "utc": "2026-10-11T17:37:01Z",
+   "ruling": "robots disallows /cgi-bin/ only; terms URL 404; fetch allowed"
+  },
+  {
+   "site": "web.archive.org",
+   "url": "https://archive.org/robots.txt",
+   "utc": "2026-10-11T17:37:52Z",
+   "ruling": "disallows /control/, /report/ only; Wayback copy of AgEcon PDF used (AgEcon blocks automation per E.0)"
+  },
+  {
+   "site": "farmdoc.illinois.edu",
+   "url": "https://farmdoc.illinois.edu/robots.txt",
+   "utc": "2026-10-11T17:38:22Z",
+   "ruling": "disallows /lucee, /wp-admin; terms URL 404; one 403 logged as blocked"
+  },
+  {
+   "site": "scotthirwin.com",
+   "url": "https://scotthirwin.com/robots.txt",
+   "utc": "2026-10-11T17:38:45Z",
+   "ruling": "disallows /wp-admin/ only (read inline, not saved); scrapling get after curl 403"
+  },
+  {
+   "site": "edepot.wur.nl",
+   "url": "https://edepot.wur.nl/robots.txt",
+   "utc": "2026-10-11T17:39:29Z",
+   "ruling": "Disallow /WebQuery; Crawl-delay 600: one PDF request only; article CC BY"
+  },
+  {
+   "site": "hull-repository.worktribe.com",
+   "url": "https://hull-repository.worktribe.com/robots.txt",
+   "utc": "2026-10-11T17:39:30Z",
+   "ruling": "blocked (Cloudflare 403); not pursued"
+  },
+  {
+   "site": "mpra.ub.uni-muenchen.de",
+   "url": "https://mpra.ub.uni-muenchen.de/robots.txt",
+   "utc": "2026-10-11T17:40:04Z",
+   "ruling": "disallows /cgi/; policies page has no automated-access clause found"
+  },
+  {
+   "site": "www.scielo.br",
+   "url": "https://www.scielo.br/robots.txt",
+   "utc": "2026-10-11T17:41:30Z",
+   "ruling": "Allow / (admin disallowed); open access"
+  }
+ ],
+ "budget_notices": [
+  "none; 11 WebSearch calls of ~50; Firecrawl not used"
+ ],
+ "unfinished": [
+  "Adjemian and Irwin (2018, AJAE) full text blocked (farmdoc 403, no Wayback): [unverified]",
+  "Abdoh and Chitavi (2025) paywalled: rule and size unknown [secondary-only]",
+  "Jin et al. (2020) read as MPRA WP, not JFM version (Hull Cloudflare block)",
+  "grains class evidence: cite shared/grains_class_notes.md (absent when written); FOMC coverage: cite shared/macro_calendars.md (absent when written)",
+  "price level $12.00/bu for bp->tick conversion is an assumption",
+  "no NOPA crush-report intraday study found (trade press only)",
+  "no 2010-2019 WASDE / Crop Production calendar in repo"
+ ],
+ "nq_only": null
+}

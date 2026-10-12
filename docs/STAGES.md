@@ -166,6 +166,12 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     for every size, path and sizing in the policy band (best 50K -$250 per cycle); break-even net Sharpe about 0
     (50K), 0.34-0.52 (100K), 0.54-0.86 (150K); Fable reproduced the headline; account stacking and excessive
     purchases are the binding terms.
+  - Stage E.20 — Pattern search with per-product research: 17 literature readers (one per root with 2010-2019
+    history), H6 (rest-of-day to last-half-hour momentum on NQ at MNQ cost, T1-T3) and the ML route's net pipeline
+    on the 17 roots with a fourth decision time and the r_ROD features. Run 2026-10-11 (see reports/E.20_RETURN.md):
+    no post-2015 effect cleared 1.5 x cost, 0 Part A features accepted; H6 FAIL on all three tests (T1 gross 1.25
+    ticks vs 4.08 cost, t -0.53); search screen FAIL (median-path t -1.33, PBO 0.60, net Sharpe -0.83; all 45
+    configurations negative out of sample), so no backward test; Fable verified; N 480 -> 528.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

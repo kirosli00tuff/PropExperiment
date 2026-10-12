@@ -1,0 +1,1855 @@
+{
+ "schema": "stage_e20_backward_swap_table/1",
+ "built_pdt": "2026-10-11 16:35 PDT",
+ "by": "BackwardTables-OpusXHigh (worker; calendars, code and report files only)",
+ "sources": {
+  "HIST_CAL": {
+   "paths": {
+    "equity": "data/calendars/hist2010/equity.json",
+    "rates": "data/calendars/hist2010/rates.json",
+    "fx": "data/calendars/hist2010/fx.json",
+    "energy": "data/calendars/hist2010/energy.json",
+    "metals": "data/calendars/hist2010/metals.json",
+    "grains": "data/calendars/hist2010/grains.json"
+   },
+   "sha256": {
+    "equity": "b12aee433635bc8334adb15d8f06c21255b0cb24889ea123a4d4375fb22657be",
+    "rates": "099ac84eb88c4e2bef67814e668d04fc4e88ad2ef1b3ea52114c53abd25382a4",
+    "fx": "463c256b38a530fb1b150b542db21449d704d5b4cfa5308bd018d2e0e05b0591",
+    "energy": "c7a58e904571028f412dfe7f1039aa3c6cc89da8117e112e99a39d6d0bdeee6c",
+    "metals": "7eb64ead635aafb932422f5f31d2ff483ed22247ae0eaacccc71f798386991e9",
+    "grains": "1197496f224636e7330f6da0b50ae45063ffb085fc780e95b54bc078955a7a61"
+   },
+   "schema": "e14_hist_calendar/1 (data.hist_calendar.parse_hist_calendar -> HistGroupCalendar)",
+   "first": "2010-06-01",
+   "last": "2019-05-31",
+   "provenance": "E.14 calendar builders; pinned in reports/stage_e14_c1_freeze_inputs.json (C1) and reports/stage_e16_freeze.json; byte-identical to reports/stage_e14_cal_<group>.json"
+  },
+  "HIST_LIVESTOCK": {
+   "path": "reports/stage_e16_calendars/hist2010_livestock.json",
+   "copy": "data/calendars/hist2010/livestock.json (byte copy, harness v12 seventh group)",
+   "sha256": "802a4dd98a71776af58748c43c2a70772a966a2e37dd08e32fef1ebfe023ba5d",
+   "schema": "e14_hist_calendar/1",
+   "first": "2010-06-01",
+   "last": "2019-05-31",
+   "provenance": "E.16 Task 3b (build_livestock.py, post_livestock.py); pinned in reports/stage_e16_freeze.json; 25 unsourced dates, 295 scheduled late opens"
+  },
+  "E14_RELEASES": {
+   "path": "reports/stage_e14_cal_releases.json",
+   "sha256": "9a051211fe381cd2d1894180259624cc6729e8ddc89649e398b59e13666080a7",
+   "schema": "e14_release_calendar/1 (rows in reports/stage_e2b_release_calendar.json's row format)",
+   "first": "2010-06-01",
+   "last": "2019-05-31",
+   "rows": {
+    "WPSR": [
+     470,
+     "2010-06-03",
+     "2019-05-30"
+    ],
+    "NGS": [
+     470,
+     "2010-06-03",
+     "2019-05-30"
+    ],
+    "FOMC": [
+     72,
+     "2010-06-23",
+     "2019-05-01"
+    ]
+   },
+   "grade": "every row evidence 'official'; WPSR-2012-11-01 has null instant/time (listed in unsourced[], 'release moved off schedule; no EIA record of the time found'); every NGS row states drop_actual_differs=false",
+   "provenance": "E.14; pinned by C1 and the E.16 freeze"
+  },
+  "E14_ENERGY_FULL": {
+   "path": "reports/stage_e14_cal_energy_full_sessions.json",
+   "sha256": "3f2a273a61613a73867929160d777367e06749b963fcf18b0b27e3f325083d74",
+   "schema": "{rule, source_file, source_sha256, range{first,last}, ENERGY_FULL_SESSIONS: [ISO dates]}",
+   "first": "2010-06-01",
+   "last": "2019-05-31",
+   "rows": 2250,
+   "provenance": "E.14; pinned by C1; c1_replication.tables.parse_full_sessions recomputes it from the hist energy calendar and refuses a mismatch"
+  },
+  "EC_AUC": {
+   "path": "reports/stage_e16_calendars/ec_auc_2010_2019.json",
+   "sha256": "e3b5f4522dad8e8dd9ad4a1f4fa04750bab769b089c54ced6f67a01a5a00b9e5",
+   "schema": "header.schema e16_ec_auc_hist/1; releases[] in reports/stage_e2b_release_calendar.json's TREASURY_AUCTION row format plus the F-04 fields",
+   "first": "2010-01-12",
+   "last": "2019-06-27",
+   "rows": 684,
+   "grade": "every row evidence 'verified'; source fiscaldata auctions_query (saved page reports/stage_e16_briefs/pages/fiscaldata/auctions_query_notes_bonds_20100101_20190630.json, sha256 b68e0b919bb652c5648ec1f3ecba7e83fa0a2efa2eebf10b9c2a5bb56fcadb6a)",
+   "provenance": "E.16 Task 3b (R-C4); pinned in reports/stage_e16_freeze.json; header overlap_check_vs_frozen: 12 of 12 rows equal to E.2b on 2019-05-01..2019-06-30"
+  },
+  "E2B_FROZEN": {
+   "path": "reports/stage_e2b_release_calendar.json",
+   "sha256": "839f2437bedbeb7b3423d7058a9955a0d4ccd1aebc4b01c62be624ab11d7bcb8",
+   "first": "2019-05-01",
+   "last": "2026-06-21",
+   "provenance": "frozen D8 calendar (the 2019-on tables' source)"
+  }
+ },
+ "swap_rows": [
+  {
+   "id": "S1",
+   "attribute": "data.group_session.load_group_calendar + ml_route.inputs._group_calendar (lru_cache)",
+   "file_line": "data/group_session.py:197; ml_route/inputs.py:228-232",
+   "readers": "decision clock (clock.session_group :91-102, clock._day_times :132-136 -> inputs.day_times :249-262); signals._daily._halt_days :75-81 and _intervals :155-159 (sigma_X,d, CP3, G5, G8, G9, in_session for G1-G3); generic._previous_trade_day :137-143 (G5, rod_ret); generic._month_end_days :316-325 (G16); synthetic.training_calendar :213 (B1 calendar); data.group_session.roll_blackout (own blackout)",
+   "frozen_coverage": "2019-05-01..2026-06-19 (data/calendars/*.py; equity 2019-01-01..2026-12-31)",
+   "source": "HIST_CAL (six groups) + HIST_LIVESTOCK",
+   "schema_match": "yes: HistGroupCalendar is a GroupCalendar subclass; same methods (is_trade_date, early_halt_ct, spec_for, session_intervals, covers)",
+   "derivation": "none for equity/rates/fx/energy/grains. metals: the hist file's subgroup_of_product is empty, so clock.session_group('MGC') raises ClockError('MGC: no metals sub-group') under C1's swap (verified in this session); the ports call session_group for every vehicle too. Supply dataclasses.replace(hist_metals, subgroup_of_product=<frozen metals calendar's map {GC,MGC: gold, SI,SIL: silver, HG,MHG: copper}>) (no file edit). livestock: C1's loader raises HistCalendarError for 'livestock' (verified); add the livestock HistGroupCalendar (data.hist_calendar.load_hist_group_calendar('livestock'), harness v12) to the loader map.",
+   "mechanism": "setattr on both module attributes (C1 PATCHES 1), caches cleared on entry and exit (C1 clear_caches; ml_route.inputs and ml_route_v2.clock are in CACHE_MODULES)",
+   "verdict": "NEEDS-DERIVATION (two additions to C1's patch: livestock calendar; metals sub-group map). With both added the frozen clock forms rows on sample dates of every group (verified: ZC 2011-03-01 10:00/10:30/11:00, LE 2015-03-03 08:30/09:30/11:00, MGC 07:50/10:20/12:50)"
+  },
+  {
+   "id": "S2",
+   "attribute": "rules.sessions._DEFAULT and _DEFAULT_LATE (cached default_holidays / default_late_opens)",
+   "file_line": "rules/sessions.py:261-276 (read by day_rule :297-324, flatten_time_ct :327)",
+   "readers": "decision clock F_X (inputs.day_times -> rules.sessions.flatten_time_ct); EQUITY_FULL_SESSIONS rule; engine flatten",
+   "frozen_coverage": "2019-05-01 on (data/cme_calendar.py, data/calendars/*.py HOLIDAYS)",
+   "source": "HIST_CAL holidays and scheduled late opens (+ HIST_LIVESTOCK)",
+   "schema_match": "yes (group -> {date: Holiday}, group -> {date: time})",
+   "derivation": "C1's replacement dicts hold six groups; day_rule indexes default_holidays()[group], so livestock (HE, LE) needs its key (hist livestock holidays; 295 scheduled late opens)",
+   "mechanism": "setattr (C1 PATCHES 2) plus the livestock key",
+   "verdict": "NEEDS-DERIVATION (livestock key only)"
+  },
+  {
+   "id": "S3",
+   "attribute": "rules.sessions.TOPSTEP_HOLIDAYS, TOPSTEP_EARLY_CLOSE_LEAD",
+   "file_line": "rules/sessions.py:100, :210 (read in day_rule :307, :315)",
+   "readers": "decision clock F_X for every group (a Topstep row applies to all groups); EQUITY_FULL_SESSIONS rule",
+   "frozen_coverage": "rows from 2019-05-01 (E.5 Rule H-1 rows, published 2024-2026); leads 2019-2026",
+   "source": "Rule H-1 rows derived from the hist equity calendar (c1_replication.tables.h1_rows: 95 rows before 2019-05-01, disjoint from the frozen rows); 30-minute lead for 2010-2018 (lead ruling L-E5-2 as applied in C1)",
+   "schema_match": "yes (TopstepHoliday rows; year -> timedelta)",
+   "derivation": "C1's own (registered in C1): h1_rows(hist equity); every July 3 unsettled",
+   "mechanism": "setattr (C1 PATCHES 3)",
+   "verdict": "SWAP-READY (C1)"
+  },
+  {
+   "id": "S4",
+   "attribute": "strategy.members.k1._calendar.EQUITY_FULL_SESSIONS",
+   "file_line": "strategy/members/k1/_calendar.py:420 (read by ml_route_v2/signals/k1.py:56-59, an import inside _full_sessions at call time)",
+   "readers": "k1_vwap_dist (MNQ rows on full sessions only; off-list rows are not applicable)",
+   "frozen_coverage": "[1779, '2019-05-01', '2026-06-18']",
+   "source": "derived from HIST_CAL equity under S2+S3",
+   "schema_match": "yes once derived (tuple of ISO dates)",
+   "derivation": "rule of reports/stage_e7_briefs/gen_k1_tables.py equity_tables() lines 138-150: equity trade dates with early_halt_ct None AND rules.sessions.flatten_time_ct(MNQ/M2K/MYM, d) == 15:08 (one F for the three roots asserted). The generator function itself asserts 2019-05-01..2026-06-19 coverage, so the same loop is run on the hist calendar under C1's swap. Result: 2247 dates 2010-06-01..2019-05-31 (2203 in 2010-07-01..2019-04-30; 77 trade dates removed in that span); early-halt test and F test disagree on 0 dates; 2019-05 overlap: 22 = 22 dates, equal = True",
+   "mechanism": "setattr strategy.members.k1._calendar.EQUITY_FULL_SESSIONS = hist list + frozen list (overlap equal)",
+   "verdict": "NEEDS-DERIVATION (rule named and verified on the 2019-05 overlap)"
+  },
+  {
+   "id": "S5",
+   "attribute": "strategy.members.k2._releases.TREASURY_AUCTIONS (with k2._event_common.AUCTION_TENOR)",
+   "file_line": "strategy/members/k2/_releases.py:24; AUCTION_TENOR strategy/members/k2/_event_common.py:43 (read by ml_route_v2/signals/k2.py:61-74, imports inside _auction)",
+   "readers": "k2_auction_mto, k2_auction_msince (ZT, ZF, ZN, TN, ZB, UB rows)",
+   "frozen_coverage": "[340, ['2019-05-08', '10Y', '12:00'], ['2026-06-11', '30Y', '12:00']]; AUCTION_TENOR is date-independent (ZT 2Y, ZF 5Y, ZN/TN 10Y, ZB/UB 30Y), no swap",
+   "source": "EC_AUC",
+   "schema_match": "no as stored (E.2b row format); yes after the frozen generator's transform",
+   "derivation": "reports/stage_e3_briefs/gen_k2_releases.py build(): every TREASURY_AUCTION row whose id ends -2Y/-5Y/-10Y/-30Y, T_a = instant_utc in CT. Applied to EC_AUC: 447 rows 2010-01-13..2019-06-26, by tenor {'10Y': 114, '30Y': 114, '2Y': 105, '5Y': 114} (in 2010-07-01..2019-04-30: {'10Y': 106, '30Y': 106, '2Y': 97, '5Y': 107}), T_a {'12:00': 433, '10:30': 14}; overlap 2019-05-01..2019-06-30 equal to the frozen table: True (7 rows). Tenor convention (frozen, shared with E.2b): tenor from original_security_term, so a cross-tenor reopening keeps the old tenor; in the window 9 two-year auctions are labelled 5Y (6) or 7Y (3) and 5 five-year auctions are labelled 7Y (the frozen 2019-05-28 5Y row has the same label), so ZT lacks 9 events and ZF has 6 two-year events and lacks 5 five-year events, by the frozen rule",
+   "mechanism": "setattr strategy.members.k2._releases.TREASURY_AUCTIONS = hist rows (< 2019-05-01) + frozen rows",
+   "verdict": "NEEDS-DERIVATION (format transform by the frozen generator; verified on the overlap)"
+  },
+  {
+   "id": "S6",
+   "attribute": "strategy.members.k2.monthend.EVENT_DATES (frozenset built from k2._month_end.MONTH_END at import)",
+   "file_line": "strategy/members/k2/monthend.py:49; MONTH_END strategy/members/k2/_month_end.py:26 (read by ml_route_v2/signals/k2.py:90-95, import inside _monthend)",
+   "readers": "k2_monthend_msince (rates rows). Not listed in the plan review's eleven; it is a 2019-05-on literal as well",
+   "frozen_coverage": "MONTH_END 85 months 2019-05..2026-05",
+   "source": "derived from HIST_CAL rates",
+   "schema_match": "yes once derived (frozenset of date)",
+   "derivation": "reports/stage_e3_briefs/gen_k2_month_end.py month_end_rows() run unchanged with its load_group_calendar bound to the hist rates calendar (N = last trade date of the month, N-1 = previous trade date, months whose N the calendar covers): 108 months 2010-06..2019-05, 212 event dates in 2010-07-01..2019-04-30; 2019-05 row equal to the frozen one: True. 11 event dates are early-halt trade dates (as the frozen convention lists them; the clock excludes early-halt dates anyway)",
+   "mechanism": "setattr strategy.members.k2.monthend.EVENT_DATES = frozenset(hist N-1, N) | frozen EVENT_DATES",
+   "verdict": "NEEDS-DERIVATION (rule named and verified on the 2019-05 overlap)"
+  },
+  {
+   "id": "S7",
+   "attribute": "strategy.members.k4.eiafade.make_mcl (EiaFade.wpsr default = k4._releases.WPSR, bound at import)",
+   "file_line": "strategy/members/k4/eiafade.py:81 (default), :137-138 (make_mcl); WPSR strategy/members/k4/_releases.py:88 (read by ml_route_v2/signals/k4.py:80-97 via eiafade.release_minutes(eiafade.make_mcl().wpsr))",
+   "readers": "k4_eiafade_move (MCL rows)",
+   "frozen_coverage": "369 rows 2019-05-01..2026-06-17",
+   "source": "E14_RELEASES (WPSR rows)",
+   "schema_match": "no as stored (E.2b row format); yes after the frozen transform: (date, T_W 'HH:MM' CT, weekday, standard)",
+   "derivation": "reports/stage_e4_briefs/gen_k4_releases.py wpsr_rows(calendar, dropped) applied to the E.14 rows less the one null-instant row WPSR-2012-11-01 (listed in unsourced[]; the frozen function cannot place a row without an instant): 469 rows 2010-06-03..2019-05-30, 398 standard, T_W {'10:00': 70, '09:30': 399}; all pass release_minutes' T_W + 15 <= 13:13 (459 in 2010-07-01..2019-04-30). 2019-05 overlap (5 rows) equal to the frozen WPSR: True. Drops: the frozen 2019-2024 rows had no WPSR drop check (DROPPED_WPSR is research-window only); E.14's WPSR rows carry no drop field, so none are dropped",
+   "mechanism": "factory swap: setattr strategy.members.k4.eiafade.make_mcl = lambda: EiaFade('MCL', wpsr=<hist rows + frozen rows>) (as C1 did for ngpre.make_ng)",
+   "verdict": "NEEDS-DERIVATION (frozen rule, verified on the overlap). A 2010-2019 table in eiafade's schema can be built; 2012-11-01 has no time (lead: exclude the date as unsourced, as C1's C12 did, or leave it eventless)"
+  },
+  {
+   "id": "S8",
+   "attribute": "strategy.members.k4.ngpre.make_ng (NgPre.ngs default = k4._releases.NGS, bound at import)",
+   "file_line": "strategy/members/k4/ngpre.py:63 (default), :106-107 (make_ng); NGS strategy/members/k4/_releases.py:277 (read by ml_route_v2/signals/k4.py:118-126)",
+   "readers": "k4_ngpre_mto, k4_ngpre_msince (NG rows)",
+   "frozen_coverage": "367 rows 2019-05-02..2026-06-18",
+   "source": "E14_RELEASES (NGS rows) via c1_replication.tables.parse_releases (ngs_table)",
+   "schema_match": "yes ((ISO date, 'HH:MM' CT))",
+   "derivation": "C1's own: NGS rows less C13 drop rows (none: every row drop_actual_differs=false): 470 rows 2010-06-03..2019-05-30; equals the frozen generator's ngs_rows on the same rows: True; T_N {'09:30': 457, '11:00': 13}; 2019-05 overlap equal: True; 461 schedule dates in 2010-07-01..2019-04-30",
+   "mechanism": "factory swap (C1 PATCHES 4)",
+   "verdict": "SWAP-READY (C1)"
+  },
+  {
+   "id": "S9",
+   "attribute": "strategy.members.k4._calendar.ENERGY_FULL_SESSIONS; strategy.members.k4.ovr.ENERGY_FULL_SESSIONS, _FULL_SESSIONS, _FULL_ORDINALS",
+   "file_line": "strategy/members/k4/_calendar.py:24; strategy/members/k4/ovr.py:40, :72-73, reference_dates :76-80 (read by ml_route_v2/signals/k4.py:158-200 ovr_frames via mod.reference_dates)",
+   "readers": "k4_ovr_ret, k4_ovr_pct (MCL, NG rows)",
+   "frozen_coverage": "[1784, '2019-05-01', '2026-06-18']",
+   "source": "E14_ENERGY_FULL",
+   "schema_match": "yes (ISO dates; C1 converts to the date tuple and ordinal array)",
+   "derivation": "none: the file equals the frozen rule (k4/_calendar.py: energy trade dates with early_halt_ct None; c1_replication.tables.full_sessions_rule) on the hist energy calendar: True; 2019-05 overlap (22 dates) equal to the frozen table: True. Without the swap reference_dates(d) is empty before 2019-05, k4_ovr_pct is NaN while applicable, and every MCL and NG row at t2..t4 would be dropped (missing), not flagged",
+   "mechanism": "setattr x4 (C1 PATCHES 5)",
+   "verdict": "SWAP-READY (C1)"
+  },
+  {
+   "id": "S10",
+   "attribute": "strategy.members.k5.ovr._FULL_SESSIONS, _FULL_ORDINALS (and METALS_FULL_SESSIONS in k5.ovr and k5._calendar)",
+   "file_line": "strategy/members/k5/_calendar.py:24; strategy/members/k5/ovr.py:44, :75-76, reference_dates :97-101 (read through ml_route_v2/signals/k5.py -> signals/k4.py ovr_frames)",
+   "readers": "k5_ovr_ret, k5_ovr_pct (MGC rows)",
+   "frozen_coverage": "[1784, '2019-05-01', '2026-06-18']",
+   "source": "derived from HIST_CAL metals",
+   "schema_match": "yes once derived",
+   "derivation": "rule of reports/stage_e4_briefs/gen_k5_calendar.py full_sessions() (metals trade dates with early_halt_ct None; the function asserts 2019-on coverage, so its expression is applied through c1_replication.tables.full_sessions_rule, the same expression C1 uses for energy): 2250 dates 2010-06-01..2019-05-31; 2019-05 overlap 22 = 22, equal: True. Same row-drop failure as S9 without the swap",
+   "mechanism": "setattr on k5.ovr._FULL_SESSIONS (date tuple), _FULL_ORDINALS (int64 ordinals), METALS_FULL_SESSIONS (k5.ovr, k5._calendar) - the C1 PATCHES 5 pattern for metals",
+   "verdict": "NEEDS-DERIVATION (rule named and verified on the 2019-05 overlap)"
+  },
+  {
+   "id": "S11",
+   "attribute": "release calendar object passed to targets.build_targets(releases=...) and portfolio.release_window_mask (frozen: screening.stage_e_rules.load_release_calendar of E2B_FROZEN)",
+   "file_line": "ml_route_v2/targets.py:223; signals/_core.py:323-342 (release_times by vehicle then path root, cpi_times); ml_route_v2/portfolio.py:91",
+   "readers": "targets: D9.5a entry/exit deferral, D8 event-window cost, release_window flag (portfolio filter). No kept feature (G13-G15 and k9 dropped)",
+   "frozen_coverage": "2019-05-01..2026-06-21",
+   "source": "E14_RELEASES (FOMC, NGS, WPSR) + EC_AUC (all coupon tenors) before 2019-05-01, combined with E2B_FROZEN by base_rules.costs.combine_rows / build_release_rules (E.16)",
+   "schema_match": "yes for the rows that exist (release_calendar_from_dict -> ReleaseCalendar.by_root from products; every one of the 17 vehicles has FOMC rows, so release_times never raises)",
+   "derivation": "types with no 2010-2019 rows per vehicle: NQ CPI/ISM_SERVICES/NFP; RTY ISM_SERVICES/NFP; ZT ZF TN UB NFP; ZN ZB ISM_SERVICES/NFP; 6E NFP; MCL API_WSB; MGC CPI/G17/NFP; ZC CROP/CROP_ANNUAL/CROP_PROGRESS/WASDE; ZS ZL HE LE CROP/CROP_ANNUAL/WASDE. E.16's conservative fallback (base_rules.costs.ReleaseRules._fallback_hit, by CT clock time) is a method of ReleaseRules, not rows of a ReleaseCalendar, so the frozen targets code cannot read it as is; expressing it as rows at every fallback clock time on every pre-2019-05 date would also fire the deferral and the release_window filter every day at those times. WPSR-2012-11-01 (no instant) is expanded by base_rules to every WPSR clock time",
+   "mechanism": "an argument, not a module attribute (no setattr): pass the combined ReleaseCalendar",
+   "verdict": "NEEDS-DERIVATION (lead decision: how the fallback types enter the frozen targets/portfolio path)"
+  },
+  {
+   "id": "S12",
+   "attribute": "screening.stage_e_frozen.load_frozen_tables().day_session_ct (D6) and the D8 cost tables",
+   "file_line": "ml_route_v2/signals/_daily.py:66-71 (session_minutes); ml_route_v2/targets.py:72 frozen_costs",
+   "readers": "ports, G5, G8, sigma_X,d, CP3, rod_ret (C), k1 (O), k2 monthend anchor, k5 ovr clocks; target costs",
+   "frozen_coverage": "date-independent",
+   "source": "none needed",
+   "schema_match": "n/a",
+   "derivation": "none; kept frozen as in C1. Mixed with the hist calendars' per-date O_X in the clock (PR-12): grains O_X 09:30 before 2013-04-08 and livestock O_X 08:00 in 2014-10-27..2016-02-28 differ from D6's 08:30 (Task 2)",
+   "mechanism": "no swap",
+   "verdict": "NO SWAP NEEDED"
+  },
+  {
+   "id": "S13",
+   "attribute": "strategy.members.k2._releases.FOMC_STATEMENT_DATES",
+   "file_line": "strategy/members/k2/_releases.py:141 (ml_route_v2/signals/k2.py:82-87)",
+   "readers": "k2_fomc_mto only (dropped by the lead, PR-2)",
+   "frozen_coverage": "[57, '2019-05-01', '2026-06-17']",
+   "source": "not needed",
+   "schema_match": "n/a",
+   "derivation": "n/a",
+   "mechanism": "none",
+   "verdict": "NOT NEEDED (feature dropped)"
+  }
+ ],
+ "feature_verdicts": [
+  {
+   "features": "cp1_ret, cp2_range, cp2_brk, cp3_clv",
+   "tables": "S1, S2, S3, S12",
+   "verdict": "SWAP-READY via calendars once S1's two additions are in (the ports call clock.session_group for every vehicle, so MGC fails without the metals map). Row losses: Task 2"
+  },
+  {
+   "features": "k1_vwap_dist",
+   "tables": "S4 (+S1-S3)",
+   "verdict": "NEEDS-DERIVATION: EQUITY_FULL_SESSIONS by the gen_k1_tables rule; verified on 2019-05"
+  },
+  {
+   "features": "k2_auction_mto, k2_auction_msince",
+   "tables": "S5",
+   "verdict": "NEEDS-DERIVATION: gen_k2_releases.build on EC-AUC; verified on 2019-05..06; frozen tenor convention noted"
+  },
+  {
+   "features": "k2_monthend_msince",
+   "tables": "S6",
+   "verdict": "NEEDS-DERIVATION: gen_k2_month_end.month_end_rows on the hist rates calendar; verified on 2019-05 (missing from the plan review's list)"
+  },
+  {
+   "features": "k4_eiafade_move",
+   "tables": "S7",
+   "verdict": "NEEDS-DERIVATION: gen_k4_releases.wpsr_rows on E.14 WPSR (469 rows); verified on 2019-05; one untimed date 2012-11-01"
+  },
+  {
+   "features": "k4_ngpre_mto, k4_ngpre_msince",
+   "tables": "S8",
+   "verdict": "SWAP-READY (C1 table and factory swap)"
+  },
+  {
+   "features": "k4_ovr_ret, k4_ovr_pct",
+   "tables": "S9",
+   "verdict": "SWAP-READY (C1 table and swap)"
+  },
+  {
+   "features": "k5_ovr_ret, k5_ovr_pct",
+   "tables": "S10",
+   "verdict": "NEEDS-DERIVATION: metals full sessions by the gen_k5_calendar rule; verified on 2019-05"
+  },
+  {
+   "features": "g01_ret30, g02_ret60, g03_ret120, g04_ret_day, g05_gap, g06_rv60, g07_range, g08_prev_ret, g09_vol_state, g10_logvol30, g11_t_index, g12_dow, g16_month_end",
+   "tables": "S1, S2, S3, S12",
+   "verdict": "SWAP-READY via calendars (no literal table). G5, G8, G9 and sigma_X,d share the ports' row losses on grains (Task 2)"
+  },
+  {
+   "features": "g17_nq, g17_zn, g17_6e, g17_cl, g17_gc, g17_zc",
+   "tables": "none",
+   "verdict": "no table; the leads' own bars and group trade-date assignment (S1)"
+  },
+  {
+   "features": "rod_ret, rod_absratio (new)",
+   "tables": "S1, S12",
+   "verdict": "SWAP-READY via calendars (group calendar previous trade date; D6 C)"
+  }
+ ],
+ "task2": {
+  "NQ": {
+   "vehicle": "MNQ",
+   "group": "equity",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2280,
+    "kept": 2203,
+    "x_early_halt": 77,
+    "cp1_missing": 6,
+    "ports_or_g5_missing_any": 6
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 618,
+     "kept": 598,
+     "x_early_halt": 20,
+     "cp1_missing": 2,
+     "ports_or_g5_missing_any": 2
+    },
+    "2012-11-19": {
+     "trade": 732,
+     "kept": 705,
+     "x_early_halt": 27,
+     "cp1_missing": 4,
+     "ports_or_g5_missing_any": 4
+    },
+    "2015-09-21": {
+     "trade": 930,
+     "kept": 900,
+     "x_early_halt": 30
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "08:30",
+     "F_X": "15:08",
+     "t": [
+      "09:00",
+      "11:00",
+      "13:00",
+      "14:08"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "15:00"
+    },
+    "2012-11-19": {
+     "O_X": "08:30",
+     "F_X": "15:08",
+     "t": [
+      "09:00",
+      "11:00",
+      "13:00",
+      "14:08"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "15:00"
+    },
+    "2015-09-21": {
+     "O_X": "08:30",
+     "F_X": "15:08",
+     "t": [
+      "09:00",
+      "11:00",
+      "13:00",
+      "14:08"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "15:00"
+    }
+   }
+  },
+  "RTY": {
+   "vehicle": "M2K",
+   "group": "equity",
+   "window": [
+    "2017-07-10",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 466,
+    "kept": 451,
+    "x_early_halt": 15
+   },
+   "eras": {
+    "2015-09-21": {
+     "trade": 466,
+     "kept": 451,
+     "x_early_halt": 15
+    }
+   },
+   "decision_times_by_era": {
+    "2015-09-21": {
+     "O_X": "08:30",
+     "F_X": "15:08",
+     "t": [
+      "09:00",
+      "11:00",
+      "13:00",
+      "14:08"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "15:00"
+    }
+   }
+  },
+  "ZT": {
+   "vehicle": "ZT",
+   "group": "rates",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2279,
+    "kept": 2182,
+    "cp1_missing": 313,
+    "ports_or_g5_missing_any": 313,
+    "x_early_halt": 96,
+    "x_early_close": 1
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 325,
+     "kept": 307,
+     "cp1_missing": 307,
+     "ports_or_g5_missing_any": 307,
+     "x_early_halt": 18
+    },
+    "2011-10-03": {
+     "trade": 1954,
+     "kept": 1875,
+     "x_early_halt": 78,
+     "cp1_missing": 6,
+     "ports_or_g5_missing_any": 6,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    },
+    "2011-10-03": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    }
+   }
+  },
+  "ZF": {
+   "vehicle": "ZF",
+   "group": "rates",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2279,
+    "kept": 2182,
+    "cp1_missing": 313,
+    "ports_or_g5_missing_any": 313,
+    "x_early_halt": 96,
+    "x_early_close": 1
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 325,
+     "kept": 307,
+     "cp1_missing": 307,
+     "ports_or_g5_missing_any": 307,
+     "x_early_halt": 18
+    },
+    "2011-10-03": {
+     "trade": 1954,
+     "kept": 1875,
+     "x_early_halt": 78,
+     "cp1_missing": 6,
+     "ports_or_g5_missing_any": 6,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    },
+    "2011-10-03": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    }
+   }
+  },
+  "ZN": {
+   "vehicle": "ZN",
+   "group": "rates",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2279,
+    "kept": 2182,
+    "cp1_missing": 313,
+    "ports_or_g5_missing_any": 313,
+    "x_early_halt": 96,
+    "x_early_close": 1
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 325,
+     "kept": 307,
+     "cp1_missing": 307,
+     "ports_or_g5_missing_any": 307,
+     "x_early_halt": 18
+    },
+    "2011-10-03": {
+     "trade": 1954,
+     "kept": 1875,
+     "x_early_halt": 78,
+     "cp1_missing": 6,
+     "ports_or_g5_missing_any": 6,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    },
+    "2011-10-03": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    }
+   }
+  },
+  "TN": {
+   "vehicle": "TN",
+   "group": "rates",
+   "window": [
+    "2016-01-11",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 851,
+    "kept": 827,
+    "x_early_halt": 24
+   },
+   "eras": {
+    "2011-10-03": {
+     "trade": 851,
+     "kept": 827,
+     "x_early_halt": 24
+    }
+   },
+   "decision_times_by_era": {
+    "2011-10-03": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    }
+   }
+  },
+  "ZB": {
+   "vehicle": "ZB",
+   "group": "rates",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2279,
+    "kept": 2182,
+    "cp1_missing": 313,
+    "ports_or_g5_missing_any": 313,
+    "x_early_halt": 96,
+    "x_early_close": 1
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 325,
+     "kept": 307,
+     "cp1_missing": 307,
+     "ports_or_g5_missing_any": 307,
+     "x_early_halt": 18
+    },
+    "2011-10-03": {
+     "trade": 1954,
+     "kept": 1875,
+     "x_early_halt": 78,
+     "cp1_missing": 6,
+     "ports_or_g5_missing_any": 6,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    },
+    "2011-10-03": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    }
+   }
+  },
+  "UB": {
+   "vehicle": "UB",
+   "group": "rates",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2279,
+    "kept": 2182,
+    "cp1_missing": 313,
+    "ports_or_g5_missing_any": 313,
+    "x_early_halt": 96,
+    "x_early_close": 1
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 325,
+     "kept": 307,
+     "cp1_missing": 307,
+     "ports_or_g5_missing_any": 307,
+     "x_early_halt": 18
+    },
+    "2011-10-03": {
+     "trade": 1954,
+     "kept": 1875,
+     "x_early_halt": 78,
+     "cp1_missing": 6,
+     "ports_or_g5_missing_any": 6,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    },
+    "2011-10-03": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    }
+   }
+  },
+  "6E": {
+   "vehicle": "6E",
+   "group": "fx",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2280,
+    "kept": 2182,
+    "x_early_halt": 95,
+    "cp1_missing": 6,
+    "ports_or_g5_missing_any": 6,
+    "x_early_close": 3
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 2280,
+     "kept": 2182,
+     "x_early_halt": 95,
+     "cp1_missing": 6,
+     "ports_or_g5_missing_any": 6,
+     "x_early_close": 3
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "14:00"
+    }
+   }
+  },
+  "CL": {
+   "vehicle": "MCL",
+   "group": "energy",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2278,
+    "kept": 2203,
+    "x_early_halt": 72,
+    "x_early_close": 3
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 1348,
+     "kept": 1301,
+     "x_early_halt": 45,
+     "x_early_close": 2
+    },
+    "2015-09-21": {
+     "trade": 930,
+     "kept": 902,
+     "x_early_halt": 27,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "08:00",
+     "F_X": "15:08",
+     "t": [
+      "08:30",
+      "10:30",
+      "13:00",
+      "14:08"
+     ],
+     "frozen_D6_O": "08:00",
+     "frozen_D6_C": "13:30"
+    },
+    "2015-09-21": {
+     "O_X": "08:00",
+     "F_X": "15:08",
+     "t": [
+      "08:30",
+      "10:30",
+      "13:00",
+      "14:08"
+     ],
+     "frozen_D6_O": "08:00",
+     "frozen_D6_C": "13:30"
+    }
+   }
+  },
+  "NG": {
+   "vehicle": "NG",
+   "group": "energy",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2278,
+    "kept": 2203,
+    "x_early_halt": 72,
+    "x_early_close": 3
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 1348,
+     "kept": 1301,
+     "x_early_halt": 45,
+     "x_early_close": 2
+    },
+    "2015-09-21": {
+     "trade": 930,
+     "kept": 902,
+     "x_early_halt": 27,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "08:00",
+     "F_X": "15:08",
+     "t": [
+      "08:30",
+      "10:30",
+      "13:00",
+      "14:08"
+     ],
+     "frozen_D6_O": "08:00",
+     "frozen_D6_C": "13:30"
+    },
+    "2015-09-21": {
+     "O_X": "08:00",
+     "F_X": "15:08",
+     "t": [
+      "08:30",
+      "10:30",
+      "13:00",
+      "14:08"
+     ],
+     "frozen_D6_O": "08:00",
+     "frozen_D6_C": "13:30"
+    }
+   }
+  },
+  "GC": {
+   "vehicle": "MGC",
+   "group": "metals",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2278,
+    "kept": 2203,
+    "x_early_halt": 72,
+    "x_early_close": 3
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 1348,
+     "kept": 1301,
+     "x_early_halt": 45,
+     "x_early_close": 2
+    },
+    "2015-09-21": {
+     "trade": 930,
+     "kept": 902,
+     "x_early_halt": 27,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "12:30"
+    },
+    "2015-09-21": {
+     "O_X": "07:20",
+     "F_X": "15:08",
+     "t": [
+      "07:50",
+      "10:20",
+      "12:50",
+      "14:08"
+     ],
+     "frozen_D6_O": "07:20",
+     "frozen_D6_C": "12:30"
+    }
+   }
+  },
+  "ZC": {
+   "vehicle": "ZC",
+   "group": "grains",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2225,
+    "kept": 2199,
+    "cp1_missing": 476,
+    "cp2_missing": 476,
+    "cp3_missing": 477,
+    "g5_missing": 476,
+    "sigma_complete_absent_today": 476,
+    "sigma_lt20_complete_before": 493,
+    "ports_or_g5_missing_any": 477,
+    "F_bar_absent(hF,t4-h60 exit)": 1031,
+    "clock_O_differs_from_frozen_D6_O": 689,
+    "x_early_halt": 23,
+    "x_early_close": 3
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 476,
+     "kept": 473,
+     "cp1_missing": 473,
+     "cp2_missing": 473,
+     "cp3_missing": 473,
+     "g5_missing": 473,
+     "sigma_complete_absent_today": 473,
+     "sigma_lt20_complete_before": 473,
+     "ports_or_g5_missing_any": 473,
+     "F_bar_absent(hF,t4-h60 exit)": 473,
+     "clock_O_differs_from_frozen_D6_O": 473,
+     "x_early_halt": 3
+    },
+    "2012-05-21": {
+     "trade": 221,
+     "kept": 216,
+     "cp3_missing": 4,
+     "sigma_lt20_complete_before": 20,
+     "ports_or_g5_missing_any": 4,
+     "clock_O_differs_from_frozen_D6_O": 216,
+     "x_early_halt": 3,
+     "cp1_missing": 3,
+     "cp2_missing": 3,
+     "g5_missing": 3,
+     "sigma_complete_absent_today": 3,
+     "x_early_close": 2
+    },
+    "2013-04-08": {
+     "trade": 565,
+     "kept": 558,
+     "F_bar_absent(hF,t4-h60 exit)": 558,
+     "x_early_halt": 7
+    },
+    "2015-07-06": {
+     "trade": 963,
+     "kept": 952,
+     "x_early_halt": 10,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "09:30",
+     "F_X": "13:18",
+     "t": [
+      "10:00",
+      "10:30",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    },
+    "2012-05-21": {
+     "O_X": "09:30",
+     "F_X": "13:18",
+     "t": [
+      "10:00",
+      "10:30",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    },
+    "2013-04-08": {
+     "O_X": "08:30",
+     "F_X": "13:18",
+     "t": [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    },
+    "2015-07-06": {
+     "O_X": "08:30",
+     "F_X": "13:18",
+     "t": [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    }
+   }
+  },
+  "ZS": {
+   "vehicle": "ZS",
+   "group": "grains",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2225,
+    "kept": 2199,
+    "cp1_missing": 476,
+    "cp2_missing": 476,
+    "cp3_missing": 477,
+    "g5_missing": 476,
+    "sigma_complete_absent_today": 476,
+    "sigma_lt20_complete_before": 493,
+    "ports_or_g5_missing_any": 477,
+    "F_bar_absent(hF,t4-h60 exit)": 1031,
+    "clock_O_differs_from_frozen_D6_O": 689,
+    "x_early_halt": 23,
+    "x_early_close": 3
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 476,
+     "kept": 473,
+     "cp1_missing": 473,
+     "cp2_missing": 473,
+     "cp3_missing": 473,
+     "g5_missing": 473,
+     "sigma_complete_absent_today": 473,
+     "sigma_lt20_complete_before": 473,
+     "ports_or_g5_missing_any": 473,
+     "F_bar_absent(hF,t4-h60 exit)": 473,
+     "clock_O_differs_from_frozen_D6_O": 473,
+     "x_early_halt": 3
+    },
+    "2012-05-21": {
+     "trade": 221,
+     "kept": 216,
+     "cp3_missing": 4,
+     "sigma_lt20_complete_before": 20,
+     "ports_or_g5_missing_any": 4,
+     "clock_O_differs_from_frozen_D6_O": 216,
+     "x_early_halt": 3,
+     "cp1_missing": 3,
+     "cp2_missing": 3,
+     "g5_missing": 3,
+     "sigma_complete_absent_today": 3,
+     "x_early_close": 2
+    },
+    "2013-04-08": {
+     "trade": 565,
+     "kept": 558,
+     "F_bar_absent(hF,t4-h60 exit)": 558,
+     "x_early_halt": 7
+    },
+    "2015-07-06": {
+     "trade": 963,
+     "kept": 952,
+     "x_early_halt": 10,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "09:30",
+     "F_X": "13:18",
+     "t": [
+      "10:00",
+      "10:30",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    },
+    "2012-05-21": {
+     "O_X": "09:30",
+     "F_X": "13:18",
+     "t": [
+      "10:00",
+      "10:30",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    },
+    "2013-04-08": {
+     "O_X": "08:30",
+     "F_X": "13:18",
+     "t": [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    },
+    "2015-07-06": {
+     "O_X": "08:30",
+     "F_X": "13:18",
+     "t": [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    }
+   }
+  },
+  "ZL": {
+   "vehicle": "ZL",
+   "group": "grains",
+   "window": [
+    "2010-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 2225,
+    "kept": 2199,
+    "cp1_missing": 476,
+    "cp2_missing": 476,
+    "cp3_missing": 477,
+    "g5_missing": 476,
+    "sigma_complete_absent_today": 476,
+    "sigma_lt20_complete_before": 493,
+    "ports_or_g5_missing_any": 477,
+    "F_bar_absent(hF,t4-h60 exit)": 1031,
+    "clock_O_differs_from_frozen_D6_O": 689,
+    "x_early_halt": 23,
+    "x_early_close": 3
+   },
+   "eras": {
+    "2010-06-01": {
+     "trade": 476,
+     "kept": 473,
+     "cp1_missing": 473,
+     "cp2_missing": 473,
+     "cp3_missing": 473,
+     "g5_missing": 473,
+     "sigma_complete_absent_today": 473,
+     "sigma_lt20_complete_before": 473,
+     "ports_or_g5_missing_any": 473,
+     "F_bar_absent(hF,t4-h60 exit)": 473,
+     "clock_O_differs_from_frozen_D6_O": 473,
+     "x_early_halt": 3
+    },
+    "2012-05-21": {
+     "trade": 221,
+     "kept": 216,
+     "cp3_missing": 4,
+     "sigma_lt20_complete_before": 20,
+     "ports_or_g5_missing_any": 4,
+     "clock_O_differs_from_frozen_D6_O": 216,
+     "x_early_halt": 3,
+     "cp1_missing": 3,
+     "cp2_missing": 3,
+     "g5_missing": 3,
+     "sigma_complete_absent_today": 3,
+     "x_early_close": 2
+    },
+    "2013-04-08": {
+     "trade": 565,
+     "kept": 558,
+     "F_bar_absent(hF,t4-h60 exit)": 558,
+     "x_early_halt": 7
+    },
+    "2015-07-06": {
+     "trade": 963,
+     "kept": 952,
+     "x_early_halt": 10,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2010-06-01": {
+     "O_X": "09:30",
+     "F_X": "13:18",
+     "t": [
+      "10:00",
+      "10:30",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    },
+    "2012-05-21": {
+     "O_X": "09:30",
+     "F_X": "13:18",
+     "t": [
+      "10:00",
+      "10:30",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    },
+    "2013-04-08": {
+     "O_X": "08:30",
+     "F_X": "13:18",
+     "t": [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    },
+    "2015-07-06": {
+     "O_X": "08:30",
+     "F_X": "13:18",
+     "t": [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:18"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:15"
+    }
+   }
+  },
+  "HE": {
+   "vehicle": "HE",
+   "group": "livestock",
+   "window": [
+    "2017-07-01",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 460,
+    "x_early_halt": 6,
+    "kept": 453,
+    "unsourced": 4,
+    "x_early_close": 1
+   },
+   "eras": {
+    "2016-02-29": {
+     "trade": 460,
+     "x_early_halt": 6,
+     "kept": 453,
+     "unsourced": 4,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2016-02-29": {
+     "O_X": "08:30",
+     "F_X": "13:03",
+     "t": [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:03"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:00"
+    }
+   }
+  },
+  "LE": {
+   "vehicle": "LE",
+   "group": "livestock",
+   "window": [
+    "2014-12-15",
+    "2019-04-30"
+   ],
+   "counts": {
+    "trade": 1103,
+    "kept": 1086,
+    "t1_bar_absent": 63,
+    "cp1_missing": 63,
+    "cp2_missing": 63,
+    "cp3_missing": 63,
+    "g5_missing": 63,
+    "sigma_complete_absent_today": 63,
+    "ports_or_g5_missing_any": 63,
+    "t1_ports_not_known:cp1+cp2+cp3+g5": 296,
+    "clock_O_differs_from_frozen_D6_O": 296,
+    "unsourced": 14,
+    "x_early_close": 2,
+    "x_closure": 2,
+    "x_early_halt": 13
+   },
+   "eras": {
+    "2014-10-27": {
+     "trade": 304,
+     "kept": 296,
+     "t1_bar_absent": 62,
+     "cp1_missing": 62,
+     "cp2_missing": 62,
+     "cp3_missing": 62,
+     "g5_missing": 62,
+     "sigma_complete_absent_today": 62,
+     "ports_or_g5_missing_any": 62,
+     "t1_ports_not_known:cp1+cp2+cp3+g5": 296,
+     "clock_O_differs_from_frozen_D6_O": 296,
+     "unsourced": 8,
+     "x_early_close": 1,
+     "x_early_halt": 5
+    },
+    "2016-02-29": {
+     "trade": 799,
+     "kept": 790,
+     "unsourced": 6,
+     "x_early_halt": 8,
+     "t1_bar_absent": 1,
+     "cp1_missing": 1,
+     "cp2_missing": 1,
+     "cp3_missing": 1,
+     "g5_missing": 1,
+     "sigma_complete_absent_today": 1,
+     "ports_or_g5_missing_any": 1,
+     "x_early_close": 1
+    }
+   },
+   "decision_times_by_era": {
+    "2014-10-27": {
+     "O_X": "08:00",
+     "F_X": "13:03",
+     "t": [
+      "08:30",
+      "09:30",
+      "11:00",
+      "12:03"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:00"
+    },
+    "2016-02-29": {
+     "O_X": "08:30",
+     "F_X": "13:03",
+     "t": [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:03"
+     ],
+     "frozen_D6_O": "08:30",
+     "frozen_D6_C": "13:00"
+    }
+   }
+  }
+ },
+ "task1_raw": {
+  "energy_full": {
+   "file_rows": 2250,
+   "file_first": "2010-06-01",
+   "file_last": "2019-05-31",
+   "rule_equals_file": true,
+   "overlap_hist": [
+    "2019-05-01",
+    "2019-05-02",
+    "2019-05-03",
+    "2019-05-06",
+    "2019-05-07",
+    "2019-05-08",
+    "2019-05-09",
+    "2019-05-10",
+    "2019-05-13",
+    "2019-05-14",
+    "2019-05-15",
+    "2019-05-16",
+    "2019-05-17",
+    "2019-05-20",
+    "2019-05-21",
+    "2019-05-22",
+    "2019-05-23",
+    "2019-05-24",
+    "2019-05-28",
+    "2019-05-29",
+    "2019-05-30",
+    "2019-05-31"
+   ],
+   "overlap_frozen": [
+    "2019-05-01",
+    "2019-05-02",
+    "2019-05-03",
+    "2019-05-06",
+    "2019-05-07",
+    "2019-05-08",
+    "2019-05-09",
+    "2019-05-10",
+    "2019-05-13",
+    "2019-05-14",
+    "2019-05-15",
+    "2019-05-16",
+    "2019-05-17",
+    "2019-05-20",
+    "2019-05-21",
+    "2019-05-22",
+    "2019-05-23",
+    "2019-05-24",
+    "2019-05-28",
+    "2019-05-29",
+    "2019-05-30",
+    "2019-05-31"
+   ],
+   "overlap_equal": true,
+   "in_window_2010_07_01_2019_04_30": 2206
+  },
+  "metals_full": {
+   "rows": 2250,
+   "first": "2010-06-01",
+   "last": "2019-05-31",
+   "overlap_equal": true,
+   "overlap_hist_n": 22,
+   "overlap_frozen_n": 22,
+   "diff": []
+  },
+  "wpsr": {
+   "rows": 469,
+   "first": "2010-06-03",
+   "last": "2019-05-30",
+   "null_instant_ids": [
+    "WPSR-2012-11-01"
+   ],
+   "standard": 398,
+   "times_ct": {
+    "10:00": 70,
+    "09:30": 399
+   },
+   "weekday": {
+    "3": 64,
+    "2": 398,
+    "4": 6,
+    "0": 1
+   },
+   "overlap_hist": [
+    [
+     "2019-05-01",
+     "09:30",
+     2,
+     true
+    ],
+    [
+     "2019-05-08",
+     "09:30",
+     2,
+     true
+    ],
+    [
+     "2019-05-15",
+     "09:30",
+     2,
+     true
+    ],
+    [
+     "2019-05-22",
+     "09:30",
+     2,
+     true
+    ],
+    [
+     "2019-05-30",
+     "10:00",
+     3,
+     false
+    ]
+   ],
+   "overlap_frozen": [
+    [
+     "2019-05-01",
+     "09:30",
+     2,
+     true
+    ],
+    [
+     "2019-05-08",
+     "09:30",
+     2,
+     true
+    ],
+    [
+     "2019-05-15",
+     "09:30",
+     2,
+     true
+    ],
+    [
+     "2019-05-22",
+     "09:30",
+     2,
+     true
+    ],
+    [
+     "2019-05-30",
+     "10:00",
+     3,
+     false
+    ]
+   ],
+   "overlap_equal": true,
+   "release_minutes_rows": 469,
+   "release_minutes_in_window": 459,
+   "frozen_release_minutes_rows": 369
+  },
+  "ngs": {
+   "gen_rows": 470,
+   "c1_rows": 470,
+   "gen_equals_c1": true,
+   "dropped_c13": [],
+   "first": "2010-06-03",
+   "last": "2019-05-30",
+   "times_ct": {
+    "09:30": 457,
+    "11:00": 13
+   },
+   "overlap_equal": true,
+   "overlap_hist": [
+    [
+     "2019-05-02",
+     "09:30"
+    ],
+    [
+     "2019-05-09",
+     "09:30"
+    ],
+    [
+     "2019-05-16",
+     "09:30"
+    ],
+    [
+     "2019-05-23",
+     "09:30"
+    ],
+    [
+     "2019-05-30",
+     "09:30"
+    ]
+   ],
+   "overlap_frozen": [
+    [
+     "2019-05-02",
+     "09:30"
+    ],
+    [
+     "2019-05-09",
+     "09:30"
+    ],
+    [
+     "2019-05-16",
+     "09:30"
+    ],
+    [
+     "2019-05-23",
+     "09:30"
+    ],
+    [
+     "2019-05-30",
+     "09:30"
+    ]
+   ],
+   "schedule_in_window": 461
+  },
+  "auctions": {
+   "rows": 447,
+   "first": "2010-01-13",
+   "last": "2019-06-26",
+   "by_tenor": {
+    "10Y": 114,
+    "30Y": 114,
+    "2Y": 105,
+    "5Y": 114
+   },
+   "by_tenor_in_window": {
+    "10Y": 106,
+    "30Y": 106,
+    "2Y": 97,
+    "5Y": 107
+   },
+   "times_ct": {
+    "12:00": 433,
+    "10:30": 14
+   },
+   "overlap_hist": [
+    [
+     "2019-05-08",
+     "10Y",
+     "12:00"
+    ],
+    [
+     "2019-05-09",
+     "30Y",
+     "12:00"
+    ],
+    [
+     "2019-05-28",
+     "2Y",
+     "10:30"
+    ],
+    [
+     "2019-06-12",
+     "10Y",
+     "12:00"
+    ],
+    [
+     "2019-06-13",
+     "30Y",
+     "12:00"
+    ],
+    [
+     "2019-06-25",
+     "2Y",
+     "12:00"
+    ],
+    [
+     "2019-06-26",
+     "5Y",
+     "12:00"
+    ]
+   ],
+   "overlap_frozen": [
+    [
+     "2019-05-08",
+     "10Y",
+     "12:00"
+    ],
+    [
+     "2019-05-09",
+     "30Y",
+     "12:00"
+    ],
+    [
+     "2019-05-28",
+     "2Y",
+     "10:30"
+    ],
+    [
+     "2019-06-12",
+     "10Y",
+     "12:00"
+    ],
+    [
+     "2019-06-13",
+     "30Y",
+     "12:00"
+    ],
+    [
+     "2019-06-25",
+     "2Y",
+     "12:00"
+    ],
+    [
+     "2019-06-26",
+     "5Y",
+     "12:00"
+    ]
+   ],
+   "overlap_equal": true
+  },
+  "month_end": {
+   "rows": 108,
+   "first": [
+    "2010-06",
+    "2010-06-29",
+    "2010-06-30"
+   ],
+   "last": [
+    "2019-05",
+    "2019-05-30",
+    "2019-05-31"
+   ],
+   "overlap_hist": [
+    [
+     "2019-05",
+     "2019-05-30",
+     "2019-05-31"
+    ]
+   ],
+   "overlap_frozen": [
+    [
+     "2019-05",
+     "2019-05-30",
+     "2019-05-31"
+    ]
+   ],
+   "overlap_equal": true,
+   "event_dates_in_window": 212,
+   "early_halt_event_dates": [
+    "2010-12-31",
+    "2011-05-30",
+    "2012-08-31",
+    "2013-08-30",
+    "2013-11-28",
+    "2013-11-29",
+    "2014-08-29",
+    "2014-11-27",
+    "2014-11-28",
+    "2015-11-27",
+    "2016-05-30"
+   ]
+  },
+  "equity_full": {
+   "trade_dates": 2325,
+   "rows": 2247,
+   "first": "2010-06-01",
+   "last": "2019-05-31",
+   "disagree": [],
+   "overlap_equal": true,
+   "overlap_hist_n": 22,
+   "overlap_frozen_n": 22,
+   "diff": [],
+   "removed_in_window": 77,
+   "rows_in_window": 2203
+  },
+  "clock_probe_under_c1_swap": {
+   "session_group_MGC": null,
+   "session_group_MGC_error": "ClockError: MGC: no metals sub-group",
+   "day_times_livestock_error": "HistCalendarError: C1 replication: no hist calendar for group 'livestock' (hist groups ['energy', 'equity', 'fx', 'grains', 'metals', 'rates'])"
+  },
+  "h1_rows": 95,
+  "frozen_counts": {
+   "EQUITY_FULL_SESSIONS": [
+    1779,
+    "2019-05-01",
+    "2026-06-18"
+   ],
+   "ENERGY_FULL_SESSIONS": [
+    1784,
+    "2019-05-01",
+    "2026-06-18"
+   ],
+   "METALS_FULL_SESSIONS": [
+    1784,
+    "2019-05-01",
+    "2026-06-18"
+   ],
+   "MONTH_END": [
+    85,
+    [
+     "2019-05",
+     "2019-05-30",
+     "2019-05-31"
+    ],
+    [
+     "2026-05",
+     "2026-05-28",
+     "2026-05-29"
+    ]
+   ],
+   "TREASURY_AUCTIONS": [
+    340,
+    [
+     "2019-05-08",
+     "10Y",
+     "12:00"
+    ],
+    [
+     "2026-06-11",
+     "30Y",
+     "12:00"
+    ]
+   ],
+   "WPSR": [
+    369,
+    [
+     "2019-05-01",
+     "09:30",
+     2,
+     true
+    ],
+    [
+     "2026-06-17",
+     "09:30",
+     2,
+     true
+    ]
+   ],
+   "NGS": [
+    367,
+    [
+     "2019-05-02",
+     "09:30"
+    ],
+    [
+     "2026-06-18",
+     "09:30"
+    ]
+   ],
+   "FOMC_STATEMENT_DATES": [
+    57,
+    "2019-05-01",
+    "2026-06-17"
+   ]
+  }
+ }
+}

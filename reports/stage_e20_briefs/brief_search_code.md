@@ -32,7 +32,16 @@ open, STOP that item and report it with options; do not decide a rule yourself.
 - `rows.py`: the frozen decision rows plus t4 rows (plan section 4).
 - `features.py`: rod_ret and rod_absratio (plan 5.2), zscore_causal, masks, flags, availability
   asserts, attached to the frozen Panel via dataclasses.replace.
-- `panel.py`: rows -> SignalContext -> build_targets -> build_panel(signals = the plan's 35 KEPT
+- `backward.py`: the 2010-2019 swap context of plan section 10.1 (every listed module attribute or
+  factory swapped by setattr and restored on exit, as c1_replication/context.hist_tables does, for all
+  seven groups and the KEPT members' tables), used only by the Step 6 sentinel dry check now and by
+  the B1 evaluation later. It opens no store.
+- `dry_check.py`: the Step 6 sentinel dry check (plan section 13): synthetic sentinel frames for every
+  leg in its 2010-2019 listing and calendar state, the swaps applied, every KEPT feature computed and
+  shown applicable on its event rows; removing one leg's frames stops the build; the declared row-loss
+  shares of section 10.1 reproduced. Its report goes to reports/stage_e20_dry_check_step6.md; any
+  feature that fails is reported to the lead (the lead drops it before the freeze).
+- `panel.py` (also re-applies every frozen check plan section 6 names): rows -> SignalContext -> build_targets -> build_panel(signals = the plan's 34 KEPT
   names, exactly) -> the r_ROD features -> checks (every feature finite on every ok row; t4 rows
   have ok_h120 False; the feature list equals the plan's).
 - `search.py`: the admissibility filter with the empty-set refusal; the ConfigLedger in the state

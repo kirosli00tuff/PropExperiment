@@ -100,3 +100,7 @@ for r in ROOTS:
         if h(e["path"]) != e["sha256"]: bad.append((r, kind))
 print("stores checked", n, "mismatches", bad)
 PY
+echo "\$ E.20 H6 freeze: PYTHONPATH=. uv run python reports/stage_e20_briefs/h6_freeze_manifest.py verify 22e606f0b74532e267a4155d93e295702ff86f6e8f4143236882f3c2f230e795"
+if [ -f reports/stage_e20_h6_freeze.json ]; then P9=$(mktemp -d "$SCR/e20pyc.XXXXXX"); PYTHONPATH=. PYTHONPYCACHEPREFIX=$P9 uv run python reports/stage_e20_briefs/h6_freeze_manifest.py verify 22e606f0b74532e267a4155d93e295702ff86f6e8f4143236882f3c2f230e795; echo "exit $?"; else echo "not yet written"; fi
+echo "\$ E.20 search freeze: uv run python -m pattern_search.freeze_manifest verify --sha256 94ee86b02d1cb644c9307be958b7791587d42c062996a6220dc901d4fe5a0f2f"
+if [ -f reports/stage_e20_search_freeze.json ]; then P10=$(mktemp -d "$SCR/e20pyc.XXXXXX"); PYTHONPYCACHEPREFIX=$P10 uv run python -m pattern_search.freeze_manifest verify --sha256 94ee86b02d1cb644c9307be958b7791587d42c062996a6220dc901d4fe5a0f2f 2>&1 | tail -2; echo "exit ${PIPESTATUS[0]}"; else echo "not yet written"; fi

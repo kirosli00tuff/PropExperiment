@@ -101,6 +101,14 @@ file was affected). Terms or robots.txt were read after a fetch in a few cases (
 Wikipedia, ou.edu); two such files were deleted and not used (a Wikipedia path, an ou.edu PDF). No reader saw a
 web-search over-budget notice; each reader file logs its own search count.
 
+### 1.6 Amendment after the plan review (lead, 2026-10-11, before any fit)
+
+k2_fomc_mto moves from KEPT to DROPPED (review PR-2, reports/stage_e20_review_plan.md): its frozen 13:00 CT
+event minute misplaces or omits every FOMC statement before 2013-03-20 (released at 12:15 or 13:15 CT), so the
+feature changes meaning by design over 2010-07..2013-03, which F6 bans. KEPT is now 34 frozen signals (36
+features with rod_ret and rod_absratio); DROPPED is 33. The other KEPT member features' 2010-2019 tables are
+settled in the plan's section 10.1 (review PR-1).
+
 
 ## 2. Feature availability matrix
 
@@ -170,9 +178,9 @@ g17_cl                uu  uu  yy  uu  yy  uu  yy  uu  uu  yy  yy   .  uu  uu  uu
 g17_gc                uu  uu  yy  uu  yy  uu  yy  uu  uu   .  yy  yy  uu  uu  uu  uu  yy
 g17_zc                uu  uu  yy  uu  yy  uu  yy  uu  uu   .  yy   .  yy  uu  uu  uu  nn
 g17_mbt               np  np  np  np  np  np  np  np  np   .  np  np  np  np  ny  uu  np
-k8_flight_tail         .   .   .   .   .   .   .   .   .   .   .  ny   .   .   .   .   .
-g17_mes               ny  ny  np  ny  np  np  np  ny  np   .  ny  np  ny  np  ny  uu  ny
 k8_flight_ret          .   .   .   .   .   .   .   .   .   .   .  ny   .   .   .   .   .
+g17_mes               ny  ny  np  ny  np  np  np  ny  np   .  ny  np  ny  np  ny  uu  ny
+k8_flight_tail         .   .   .   .   .   .   .   .   .   .   .  ny   .   .   .   .   .
 ```
 
 ## 3. Per-root evidence, proposals and notes

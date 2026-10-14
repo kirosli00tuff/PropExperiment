@@ -15,12 +15,12 @@ Session start 03:04:10. Five-hour window: 4 h 00 (no new evaluation unless regis
 - Stores: 34 of 34 match reports/stage_e17_run_manifest.json (03:10)
 
 ## N
-- 528 at start. Planned: E21-T1..T4 -> 532.
+- 528 at start. 532 after r006-E21 (04:12:12).
 
 ## Guards
 - E.21 freeze: 0bb899e56729d84075f43d72ae7e4207a026a955f1b39b39b490330a2e03bb1e (04:11)
 - Holdout: all_ok True, unlocks_logged 0 (03:10). REGISTRATION.md 0 bytes (03:10).
-- No bar read yet.
+- No bar read before the marker (04:12:28); the evaluation reads bars from then on.
 
 ## Task status
 | Step | Status | Start | End | Artifacts |
@@ -40,7 +40,15 @@ Session start 03:04:10. Five-hour window: 4 h 00 (no new evaluation unless regis
 | 3e FreezeReviewer recheck (SendMessage) | done: APPROVE; FR-9 NOTE (backstop on an era-None mark) accepted as hardening | 04:07 | 04:10 | reports/stage_e21_review_freeze.md (Recheck) |
 | 3f MultidayCoder FR-9 hardening (SendMessage); lead: section B, FROZEN status lines | done: 62 tests (lead rerun 04:11), ruff clean | 04:10 | 04:11 | multiday/book.py, tests |
 | 3g Freeze manifest built and verified | done: reports/stage_e21_freeze.json sha256 0bb899e56729d84075f43d72ae7e4207a026a955f1b39b39b490330a2e03bb1e (66 files, 18 inputs) | 04:11 | 04:11 | reports/stage_e21_freeze.json |
-| 3h Commit 'E.21 freeze' | running | 04:12 | | git |
+| 3h Commit 'E.21 freeze' | done: 839efc9 at 04:12:01 (git) | 04:12 | 04:12 | git |
+| 4a Register E21 | done: r006-E21, ids E21-T1..T4, N 528 -> 532, time_local 2026-10-14T04:12:12-07:00, freeze 0bb899e5..., harness ece91ae8... (registry line 7) | 04:12 | 04:12 | ledger/trial_registrations.jsonl |
+| 4b Evaluate once (detached, nice 10, /usr/bin/time -v) | done rc 0: ALL FAIL. T1 Sharpe 0.498 CI [-0.06,1.05] t 1.78 p 0.042; T2 0.436 [-0.11,0.98] t 1.56 p 0.064; T3 0.146 [-0.40,0.71] t 0.53 p 0.30; T4 0.117 [-0.37,0.60] t 0.43 p 0.34; Holm rejects none; 2:11 wall, 1.47 GB peak | 04:12 | 04:14 | reports/stage_e21_runs/, reports/stage_e21_RUN_ONCE.json, briefs/evaluate.log |
+| 5 VerdictVerifier-FableXHigh (fable xhigh) | done: VERIFIED WITH NOTES (0 BLOCKING, 0 SHOULD FIX, 5 NOTE); 152 numbers MATCH; VV-1 lookback missing bars = weekend double roll instants (store metadata) | 04:15 | 04:35 | reports/stage_e21_review_verdict.md |
+| 4c EconWorker-OpusHigh F8 (opus high) | done: K_min T1 $415K-$691K (LE binds), T2 $323K-$538K, T3 $34K-$57K; PropEd T1/T2 breach 46-100% (One Plan 24-57%); T4 vol dominated by 3 H5-scaling spikes | 04:15 | 04:20 | reports/stage_e21_economics.md/.json |
+| 6a End pytest (detached) | done: 7402 passed, 3 skipped, 3 xfailed, rc 0 (20:33) | 04:15 | 04:35 | reports/stage_e21_briefs/pytest_end.out |
+| 6b End checks | done: all pass; holdout 0 unlocks; N 532; ledger unchanged; E.21 freeze verifies | 04:35 | 04:36 | reports/stage_e21_briefs/end_checks.txt |
+| 6c Return, progress.md, STAGES.md, cost, final commit | running | 04:36 | | reports/E.21_RETURN.md |
+
 
 ## Next step
-FreezeReviewer running; then fixes, freeze manifest build, commit 'E.21 freeze', register E21 (N 528->532), evaluate once (detached), VerdictVerifier + F8 economics in parallel.
+Stage complete after the final commit 'Stage E.21 multi-day round'. Nothing running (checked 04:40: no evaluate, pytest or worker process). No push.

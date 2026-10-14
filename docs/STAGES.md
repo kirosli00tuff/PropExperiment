@@ -172,6 +172,12 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     no post-2015 effect cleared 1.5 x cost, 0 Part A features accepted; H6 FAIL on all three tests (T1 gross 1.25
     ticks vs 4.08 cost, t -0.53); search screen FAIL (median-path t -1.33, PBO 0.60, net Sharpe -0.83; all 45
     configurations negative out of sample), so no backward test; Fable verified; N 480 -> 528.
+  - Stage E.21 — Multi-day round on 17 roots, 2010-2024 owned data: TSMOM-12 (MOP 2012), the 1/3/12-month trend
+    blend (HOP 2017), the equity turn of the month on NQ/RTY (NYSE day numbering) and an equal-risk book with H2;
+    literature-checked and Fable-reviewed before the freeze. Run 2026-10-14 (see reports/E.21_RETURN.md): all four
+    FAIL (Holm 0.025); T1 net Sharpe 0.50 [-0.06, 1.05], t 1.78, p 0.042 and T2 0.44, both above the 0.3 bar but
+    underpowered; T3 0.15, T4 0.12; Fable verified every number; PropEd automation not granted publicly; no
+    purchase; N 528 -> 532.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

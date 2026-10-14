@@ -4060,3 +4060,87 @@ These are token counts, not plan-credit percentages; the /usage meter is the use
 | CodeMapper-models-cpcv-selection-OpusHigh | claude-opus-5-5 | high | 10:42 | 10:47 | 3,255,001 |
 | CodeMapper-sizing-sim-engine-OpusHigh | claude-opus-5-5 | high | 10:42 | 10:48 | 6,028,124 |
 | CodeMapper-phase1-world-OpusHigh | claude-opus-5-5 | high | 10:42 | 10:47 | 4,929,967 |
+
+## 2026-10-14 — Stage E.21: multi-day round (TSMOM-12, trend blend, turn of the month, combined book); all four FAIL; N = 532
+
+Prompt docs/prompts/STAGE_E.21.md (V38). Lead Opus 5.5 xhigh, ultracode on, session 13fe2d4e, unattended, no
+pauses. Return: reports/E.21_RETURN.md.
+
+- **Step 1 (four opus-high readers at once, 03:13-03:33):** T1 matches MOP 2012. HOP's 10% portfolio
+  scaling for T2 was not adopted, a declared deviation (A6). The T3 parenthetical was corrected (day -2 =
+  the second-to-last trade date). From the calendar-only counts, T3 was renumbered on NYSE trading days
+  (A12: the futures calendar books US holidays as trade dates). PropEd: no public page grants automation
+  (terms "only where supported and permitted"; FAQ: bots not allowed).
+- **Freeze:** multiday/ (62 synthetic tests). FreezeReviewer-FableXHigh: APPROVE WITH FIXES, then APPROVE.
+  Freeze 0bb899e5..., commit 839efc9. Registered r006-E21 (E21-T1..T4), N 528 -> 532. Evaluated once
+  (marker 04:12:28; 2:11 wall, 1.47 GB).
+- **Verdicts (base case, Holm 0.025):**
+  - T1: net Sharpe 0.50 [-0.06, 1.05], t 1.78, p 0.042.
+  - T2: 0.44 [-0.11, 0.98], t 1.56, p 0.064.
+  - T3: 0.15, p 0.30.
+  - T4: 0.12, p 0.34.
+  - All FAIL. T1 and T2 clear the 0.3 bar but are underpowered: about 25 years are needed at a Sharpe of
+    0.5. Published post-2010: AQR TSMOM 0.39 gross, SG Trend 0.35 net.
+  - T4 is dominated by H5-scaling spikes at H2's hold starts.
+  - VerdictVerifier-FableXHigh matched all 152 numbers (VERIFIED WITH NOTES). The 171 missing lookbacks in
+    ZC, ZL, ZS, LE and HE come from double weekend roll instants in the store metadata (VV-1).
+- **F8 (descriptive):** the 17-root book needs $323K-$691K at one contract or more per root (LE binds).
+  PropEd cannot hold it: roots not listed, 46-100% of 21-day windows breach the drawdown. T3 fits several
+  plans but failed.
+- **Guardrails:**
+  - Holdout all_ok, 0 unlocks, at start and end. REGISTRATION.md 0 bytes.
+  - Spend ledger unchanged (36,402 lines, 034a454b...). Harness v12 and the E.14/E.16/E.18/E.20 freezes
+    verify.
+  - Nothing dated 2024-03-01 or later was read. No purchase, no Databento or TopstepX call, no push.
+  - Suites: start 7340 passed, end 7402 passed (+62 multiday).
+- **For the user:** close the trend test route on owned data, close T3 and T4, and make no PropEd purchase.
+  Pause the futures program until the AiTrader readout (2026-10-23); then stop, or register a forward paper
+  record (return section 7).
+
+### Session cost
+
+### Final ETA table (actuals; PDT; the initial estimate in brackets)
+
+| Task | Owner | Model | Effort | Mode | Start | End | Time (min) | Tokens | Status and deviations | [Initial estimate] |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 0 Startup checks | lead | opus | xhigh | first | 03:04 | 03:10 | 6 | in lead | done; all pass | [03:04-03:10] |
+| 0b Start pytest (detached) | lead (shell) | - | - | parallel | 03:10 | 03:31 | 21 | - | 7340 passed, 3 skipped, 3 xfailed | [~22 min, ~03:32] |
+| 1 SpecReaderTrend | SpecReaderTrend-OpusHigh | opus | high | 4 at once | 03:13 | 03:19 | 6 | 4,250,676 | done | [<=50 min, ~04:05] |
+| 1 SpecReaderTOM | SpecReaderTOM-OpusHigh | opus | high | 4 at once | 03:13 | 03:33 | 20 | 14,848,480 | done | [<=50 min, ~04:05] |
+| 1 SpecReaderPost2010 | SpecReaderPost2010-OpusHigh | opus | high | 4 at once | 03:13 | 03:25 | 12 | 11,239,686 | done | [<=50 min, ~04:05] |
+| 1 PropEdReader | PropEdReader-OpusHigh | opus | high | 4 at once | 03:13 | 03:26 | 13 | 7,206,887 | done; automation unresolved | [<=50 min, ~04:05] |
+| 2a Lead spec, prereg draft | lead | opus | xhigh | parallel with 1 | 03:13 | 03:20 | 7 | in lead | done | [~7 min] |
+| 2b MultidayCoder (build, then fixes Q1/Q2/A12, FR-1/2/6/7, FR-9 via SendMessage) | MultidayCoder-OpusXHigh | opus | xhigh | parallel with 1 (deviation: the plan said after 1) | 03:18 | 04:11 | 53 | 30,512,915 | done: 62 tests, ruff clean | [~80 min, ~04:45] |
+| 2c Literature and calendar rulings A1-A12, Q1-Q4 | lead | opus | xhigh | serial | 03:33 | 03:49 | 16 | in lead | done | [~10 min, ~04:15] |
+| 3b FreezeReviewer (review and recheck) | FreezeReviewer-FableXHigh | fable | xhigh | serial | 03:51 | 04:10 | 19 | 2,544,519 | APPROVE WITH FIXES (0 BLOCKING, 2 SHOULD FIX, 6 NOTE); recheck APPROVE (+FR-9 NOTE) | [~25 min, ~05:25] |
+| 3g Freeze manifest, commit 839efc9 | lead | opus | xhigh | serial | 04:11 | 04:12 | 1 | in lead | done | [~20 min with fixes, ~05:45] |
+| 4a Register r006-E21 (N 528 -> 532) | lead | opus | xhigh | serial | 04:12 | 04:12 | 0 | in lead | done 04:12:12 | [in 3c] |
+| 4b Evaluate once (detached) | lead (shell) | - | - | serial | 04:12 | 04:14 | 2 | - | rc 0; 2:11 wall; 1.47 GB peak; all FAIL | [~20 min, ~06:05] |
+| 4c F8 economics | EconWorker-OpusHigh | opus | high | parallel with 5 | 04:15 | 04:20 | 5 | 2,619,435 | done | [~25 min, ~06:30] |
+| 5 Verdict verification | VerdictVerifier-FableXHigh | fable | xhigh | parallel with 4c | 04:15 | 04:35 | 20 | 7,780,026 | VERIFIED WITH NOTES (152 numbers MATCH) | [~30 min, ~06:35] |
+| 6a End pytest (detached) | lead (shell) | - | - | parallel | 04:15 | 04:35 | 20 | - | 7402 passed, 3 skipped, 3 xfailed | [~22 min] |
+| 6b End checks | lead | opus | xhigh | serial | 04:35 | 04:36 | 1 | in lead | all pass | [-] |
+| 6c Return, progress, STAGES, cost, commit | lead | opus | xhigh | last | 04:36 | 04:40 | 4 | in lead | done | [~35 min, ~07:10] |
+| **Stage total** | lead + 8 workers | | | | 03:04 | 04:40 | 96 | 133,371,734 (lead 52,369,110; workers 81,002,624) | no pauses; no outage | [cumulative ETA ~07:10] |
+
+### Tokens per model (transcripts; reports/stage_e21_briefs/make_cost.py over the lead's .jsonl and every subagent transcript, each message's final usage)
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 1,528 | 130,716 | 9,708,950 | 483,351 | 10,324,545 |
+| claude-opus-5-5 | 1,174 | 727,411 | 120,180,685 | 2,137,919 | 123,047,189 |
+| all | 2,702 | 858,127 | 129,889,635 | 2,621,270 | 133,371,734 |
+
+Delegation share: lead 52,369,110 (39.3%), workers 81,002,624 (60.7%). By model: claude-fable-5-1 7.7%, claude-opus-5-5 92.3%
+
+| Spawn (name) | Model | Effort | First | Last | Tokens |
+|---|---|---|---|---|---|
+| lead (Opus 5.5) | claude-opus-5-5 | xhigh | 03:04 PDT | 2026-10-14T11:40:18 | 52,369,110 |
+| FreezeReviewer-FableXHigh | claude-fable-5-1 | xhigh | 03:51 PDT | 2026-10-14T11:10:03 | 2,544,519 |
+| VerdictVerifier-FableXHigh | claude-fable-5-1 | xhigh | 04:15 PDT | 2026-10-14T11:35:40 | 7,780,026 |
+| EconWorker-OpusHigh | claude-opus-5-5 | high | 04:15 PDT | 2026-10-14T11:20:35 | 2,619,435 |
+| MultidayCoder-OpusXHigh | claude-opus-5-5 | xhigh | 03:18 PDT | 2026-10-14T11:11:00 | 30,512,915 |
+| SpecReaderTrend-OpusHigh | claude-opus-5-5 | high | 03:13 PDT | 2026-10-14T10:19:18 | 4,250,676 |
+| SpecReaderTOM-OpusHigh | claude-opus-5-5 | high | 03:13 PDT | 2026-10-14T10:33:18 | 14,848,480 |
+| SpecReaderPost2010-OpusHigh | claude-opus-5-5 | high | 03:13 PDT | 2026-10-14T10:25:21 | 11,239,686 |
+| PropEdReader-OpusHigh | claude-opus-5-5 | high | 03:13 PDT | 2026-10-14T10:26:13 | 7,206,887 |

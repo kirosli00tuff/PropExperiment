@@ -674,3 +674,21 @@
   an assigned worker and cited by the rest, and fetches to one site are
   spaced (about 2 workers per domain at once); a throttled or blocked
   fetch is logged, never reported as missing evidence. E.20 updated.
+- 2026-10-14 (user, planning chat): V38. After E.20 (commit 2237731;
+  H6 T1-T3 FAIL, the search screen FAIL, N 528). The intraday program on
+  Topstep is closed: nothing in 528 trials passed, and no published
+  post-2015 intraday effect on the 17 roots exceeds 1.5 x the D8 round
+  trip (E.20 Part A, 157 evidence rows). No Combine is bought (V33 item
+  1). Multi-day holds were barely tested: H2 and H3 only (H4 was an
+  intraday fade, not a multi-day hold). Stage E.21 tests the published
+  multi-day effects with the longest records (12-month TSMOM, the
+  1/3/12-month trend blend, equity turn-of-month, and a combined book with
+  H2) on owned 2010-2024 data, no purchase, N 528 -> 532, in a five-hour
+  session the user cleared. Carry needs second-contract prices, which are
+  not owned. Main venue for a multi-day strategy (user): PropEd Capital,
+  the only firm found whose terms allow automated strategies with
+  overnight holds (weekend holds need an add-on; plan-level permission to
+  be confirmed in writing before any purchase); E.21 sources its rules.
+  Phidias Premium (semi-automated only) and a personal IBKR micro account
+  are the comparisons. AiTrader (options) stays a separate track; its
+  readout is due 2026-10-23.

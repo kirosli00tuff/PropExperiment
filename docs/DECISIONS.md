@@ -692,3 +692,29 @@
   Phidias Premium (semi-automated only) and a personal IBKR micro account
   are the comparisons. AiTrader (options) stays a separate track; its
   readout is due 2026-10-23.
+- 2026-10-16 (user, planning chat): V39. After E.21 (commit 90e41b0;
+  T1 TSMOM-12 net Sharpe 0.50 [-0.06, 1.05], T2 0.44, T3 0.15, T4 0.12,
+  all FAIL on Holm; N 532). Trend is recorded as consistent with the
+  published evidence, not established by this program's bar; no further
+  trend variant on 2010-2024. PropEd does not grant automation publicly
+  and cannot hold the trend book; no purchase. Automation is no longer
+  the user's priority; manual or semi-automated execution is acceptable.
+  Closed as directions: prediction markets (user), crypto (every prior
+  crypto line closed negative across the user's projects), commodity
+  event drift as a standalone stage (planning research: geopolitical news
+  is priced fast, OPEC drift has decayed; at most an overlay on trend).
+  Small caps: marginal per the planning research; a narrow long-only
+  stage (insider clusters, low-turnover issuance/value, index-deletion
+  rebound) needs Norgate Platinum (USD 630/yr) and the user's approval;
+  not run now. An ML overlay on trend is not built (published gains
+  vanish at 2-3 bp of cost). The user's goal of about $10K by year end
+  from prop payouts is not reachable with any tested strategy (E.19:
+  even at a net Sharpe of 0.5, $10K takes 86-121 Combine purchases);
+  no Combine is bought before a strategy passes. The user delegated
+  tonight's choices to the planner for a session ending 08:00 PDT:
+  Stage E.22 confirms the five unconfirmed Tier A members as frozen on
+  owned data (with full-size price paths where D4's power check fails,
+  the U8 condition met by this delegation) and designs the micro trend
+  book with a frozen forward registration (E22-F1, N 532 -> 533) and a
+  paper runner; no purchase, no data fetch. The AiTrader readout
+  (2026-10-23) remains the next decision point.

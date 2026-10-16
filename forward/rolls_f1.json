@@ -1,0 +1,175 @@
+{
+  "schema": "E22-F1-rolls/1",
+  "status": "DECLARED, to be checked against the exchange's published roll schedule before the clock starts",
+  "written_by": "ForwardRunnerCoder (E.22, 2026-10-16); the lead freezes it",
+  "rule": "Roll date of a listed contract = n_bdays business days before its anchor date. The reference contract on trade date d is the first listed contract whose roll date is after d. A due roll executes at the settlement of the first processed trade date on or after the roll date at which both contracts have a settlement (two fills per contract, D8 costs). A roll still pending on or after the held contract's anchor date is flagged roll_overdue.",
+  "business_days": "Monday to Friday; exchange holidays NOT modelled (declared approximation, UNSOURCED). The operator's pre-clock check compares forward.rolls.roll_schedule output with the exchange's published calendar.",
+  "quotes": "verbatim from the saved files, whitespace-normalised (table cells joined with ' | ')",
+  "contract_id_format":"root + month code (FGHJKMNQUVXZ) + 2-digit year, e.g. MNQZ26; a label the operator enters prices against",
+  "sources": {
+    "F46": {
+      "what": "AMP Futures contract specifications page (listed contract months per symbol)",
+      "url": "https://www.ampfutures.com/trading-info/contract-specifications",
+      "fetched_utc": "2026-10-03T21:51:07Z (Stage E.13, curl)",
+      "saved": "reports/stage_e13_briefs/pages/TrendCarry/amp_contract_specs.html (sha256 e9c943723defbf8b3e0901f7592d68b1d01ca2dbf7b54bdf2d87ae54a17abc13); text extract amp_contract_specs.txt (sha256 076f3a32eb02212c41357330fc52004ae356fbd1139010c3d752f40568ff501d)",
+      "log": "reports/stage_e13_briefs/pages/TrendCarry/fetch_log.md line 52"
+    },
+    "W-ES": {
+      "what": "Wayback capture of CME E-mini S&P 500 contract specifications (full-size parent rule for equity index)",
+      "url": "https://web.archive.org/web/20190130110517id_/http://www.cmegroup.com/trading/equity-index/us-index/e-mini-sandp500_contract_specifications.html",
+      "fetched_utc": "2026-10-05T08:12:55Z (Stage E.14, Wayback, not cmegroup.com)",
+      "saved": "reports/stage_e14_briefs/pages/cal_equity/wb20190130110517_es_specs.html (sha256 436f1da44fa79cb29da72c7a27bad95d605d5e3133275a4aac3b8fcce2c6b7c2)",
+      "quote": "Termination Of Trading Trading can occur up to 9:30 a.m. Eastern Time (ET) on the 3rd Friday of the contract month"
+    },
+    "W-6E": {
+      "what": "Wayback capture of CME Euro FX contract specifications",
+      "url": "https://web.archive.org/web/20190124194403id_/http://www.cmegroup.com/trading/fx/g10/euro-fx_contract_specifications.html",
+      "fetched_utc": "2026-10-05T08:46:03Z (Stage E.14, Wayback)",
+      "saved": "reports/stage_e14_briefs/pages/cal_equity/wb20190124194403_6e_specs.html (sha256 536c925e17e0d98973b2704c813ebc3d2c98ef5fc67c0691e44d796b085c1d8f)",
+      "quote": "Termination Of Trading 9:16 a.m. Central Time (CT) on the second business day immediately preceding the third Wednesday of the contract month (usually Monday)."
+    },
+    "W-CL": {
+      "what": "Wayback capture of NYMEX Light Sweet Crude contract specifications",
+      "url": "https://web.archive.org/web/20190201132205id_/https://www.cmegroup.com/trading/energy/crude-oil/light-sweet-crude_contract_specifications.html",
+      "fetched_utc": "2026-10-05T08:13:34Z (Stage E.14, Wayback)",
+      "saved": "reports/stage_e14_briefs/pages/cal_commod/wb20190201132205_cl_specs.html (sha256 59df22066a14295c8204bcc7be244b85089de42caa0b05a90cc0d56d97389247)",
+      "quote": "Trading in the current delivery month shall cease on the third business day prior to the twenty-fifth calendar day of the month preceding the delivery month."
+    },
+    "W-GC": {
+      "what": "Wayback capture of COMEX Gold contract specifications",
+      "url": "https://web.archive.org/web/20190214020242id_/https://www.cmegroup.com/trading/metals/precious/gold_contract_specifications.html",
+      "fetched_utc": "2026-10-05T08:20:39Z (Stage E.14, Wayback)",
+      "saved": "reports/stage_e14_briefs/pages/cal_commod/wb20190214020242_gc_specs.html (sha256 b294f9a43e8f5f62c4a0f917525ee459100670007dc2edef7494dbc4736908e8)",
+      "quote": "Trading terminates at 12:30 p.m. CT on the third last business day of the contract month."
+    },
+    "W-NG": {
+      "what": "Wayback capture of NYMEX Henry Hub Natural Gas contract specifications",
+      "url": "https://web.archive.org/web/20190217200620id_/https://www.cmegroup.com/trading/energy/natural-gas/natural-gas_contract_specifications.html",
+      "fetched_utc": "2026-10-05T08:20:07Z (Stage E.14, Wayback)",
+      "saved": "reports/stage_e14_briefs/pages/cal_commod/wb20190217200620_ng_specs.html (sha256 50d3aacd474d5689c22acaf07bd54685f3dd937b034abc6d8ac537bf35101204)",
+      "quote": "Trading of any delivery month shall cease three (3) business days prior to the first day of the delivery month."
+    },
+    "W-ZC": {
+      "what": "Wayback capture of CBOT Corn contract specifications",
+      "url": "https://web.archive.org/web/20190310134730id_/http://www.cmegroup.com/trading/agricultural/grain-and-oilseed/corn_contract_specifications.html",
+      "fetched_utc": "2026-10-05T08:58:54Z (Stage E.14, Wayback)",
+      "saved": "reports/stage_e14_briefs/pages/cal_equity/wb20190310134730_zc_specs.html (sha256 c3bdc836e3eecdf2ef09a13c2a7fe205ed88a7aefe4a3f694effcf513f281491)",
+      "quote": "Termination Of Trading The business day prior to the 15th calendar day of the contract month."
+    },
+    "counts_py": {
+      "what": "the program's own roll estimate for blackout counting",
+      "file": "base_rules/counts.py lines 4-7",
+      "quote": "equity and FX on the contract month's third Friday minus 8 days, every other product on the 5th-last trade date of the month before each listed month"
+    }
+  },
+  "instruments": {
+    "MNQ": {
+      "root": "MNQ", "cycle": "HMUZ",
+      "cycle_source": "F46 amp_contract_specs.txt line 844: 'Micro E-mini Nasdaq-100 | MNQ | CME | $2 x Nasdaq-100 Index | H,M,U,Z | 0.25 / $0.50'",
+      "anchor": {"kind": "nth_weekday", "weekday": 4, "nth": 3, "month_offset": 0},
+      "n_bdays": 6,
+      "rule_text": "6 business days before the 3rd Friday of the contract month (the Thursday of the week before; equals counts.py's third Friday minus 8 days)",
+      "anchor_source": "W-ES (full-size S&P 500 parent; the same 3rd-Friday termination for Nasdaq-100 micros is assumed, UNSOURCED for MNQ)",
+      "flags": ["micro termination rule UNSOURCED (parent-type rule assumed)", "to be checked against the exchange's published roll schedule before the clock starts"]
+    },
+    "M2K": {
+      "root": "M2K", "cycle": "HMUZ",
+      "cycle_source": "F46 amp_contract_specs.txt line 862: 'Micro E-mini Russell 2000 | M2K | CME | $5 x Russell 2000 Index | H,M,U,Z | 0.10 / $0.50'",
+      "anchor": {"kind": "nth_weekday", "weekday": 4, "nth": 3, "month_offset": 0},
+      "n_bdays": 6,
+      "rule_text": "6 business days before the 3rd Friday of the contract month",
+      "anchor_source": "W-ES (parent-type rule assumed, UNSOURCED for M2K)",
+      "flags": ["micro termination rule UNSOURCED (parent-type rule assumed)", "to be checked against the exchange's published roll schedule before the clock starts"]
+    },
+    "M6E": {
+      "root": "M6E", "cycle": "HMUZ",
+      "cycle_source": "F46 amp_contract_specs.txt line 1313: 'Micro EUR/USD | M6E | CME | 12,500 € | H,M,U,Z | 0.0001 / $1.25'",
+      "anchor": {"kind": "nth_weekday", "weekday": 2, "nth": 3, "month_offset": 0},
+      "n_bdays": 7,
+      "rule_text": "7 business days before the 3rd Wednesday of the contract month (the Monday of the week before; 5 business days before the 6E-rule last trade)",
+      "anchor_source": "W-6E (full-size parent; assumed for M6E, UNSOURCED for the micro)",
+      "flags": ["micro termination rule UNSOURCED (parent rule assumed)", "to be checked against the exchange's published roll schedule before the clock starts"]
+    },
+    "MGC": {
+      "root": "MGC", "cycle": "GJMQVZ",
+      "cycle_source": "F46 amp_contract_specs.txt line 1506: 'Micro Gold | MGC | COMEX/CME | 10 oz | G,J,M,Q,V,Z | 0.10/$1.00'",
+      "anchor": {"kind": "calendar_day", "day": 1, "month_offset": 0},
+      "n_bdays": 10,
+      "rule_text": "10 business days before the first calendar day of the contract month (before any first-notice date in the month before)",
+      "anchor_source": "W-GC gives the parent's termination (third last business day of the contract month); the first notice day is UNSOURCED, so the roll is placed before the contract month starts",
+      "flags": ["first notice day UNSOURCED", "micro rule assumed from parent", "to be checked against the exchange's published roll schedule before the clock starts"]
+    },
+    "MCL": {
+      "root": "MCL", "cycle": "FGHJKMNQUVXZ",
+      "cycle_source": "F46 amp_contract_specs.txt line 1381: 'Micro WTI Crude Oil | MCL | NYMEX/CME | 100 barrels | All | 0.01 / $1.00'",
+      "anchor": {"kind": "calendar_day", "day": 25, "month_offset": -1},
+      "n_bdays": 10,
+      "rule_text": "10 business days before the 25th calendar day of the month before the contract month (about 7 business days before the CL-rule last trade)",
+      "anchor_source": "W-CL (full-size parent: third business day before the 25th of the month preceding delivery); MCL's own termination UNSOURCED (it may be a day earlier than CL's)",
+      "flags": ["micro termination rule UNSOURCED", "to be checked against the exchange's published roll schedule before the clock starts"]
+    },
+    "MNG": {
+      "root": "MNG", "cycle": "FGHJKMNQUVXZ",
+      "cycle_source": "F46 amp_contract_specs.txt lines 1409-1415: 'Micro Henry Hub Natural Gas | MNG | NYMEX/CME | 1,000 MMBtu | All | 0.001 / $1.00'",
+      "anchor": {"kind": "calendar_day", "day": 1, "month_offset": 0},
+      "n_bdays": 10,
+      "rule_text": "10 business days before the first calendar day of the contract month (7 business days before the NG-rule last trade)",
+      "anchor_source": "W-NG (full-size parent: three business days prior to the first day of the delivery month); MNG's own termination UNSOURCED",
+      "flags": ["micro termination rule UNSOURCED", "to be checked against the exchange's published roll schedule before the clock starts"]
+    },
+    "2YY": {
+      "root": "2YY", "cycle": "HMUZ",
+      "cycle_source": "F46 amp_contract_specs.txt line 1763: 'Micro 2-Year Yield | 2YY | CBOT/CME | $10.00 DV01 | H,M,U,Z | 1/10 of 1bp / $1.00'",
+      "anchor": {"kind": "calendar_day", "day": 1, "month_offset": 0},
+      "n_bdays": 5,
+      "rule_text": "5 business days before the first calendar day of the contract month",
+      "anchor_source": "UNSOURCED: no saved page states the micro yield futures' termination; the roll is placed before the contract month starts so that any termination inside the contract month is avoided",
+      "flags": ["termination UNSOURCED", "to be checked against the exchange's published roll schedule before the clock starts"]
+    },
+    "10Y": {
+      "root": "10Y", "cycle": "HMUZ",
+      "cycle_source": "F46 amp_contract_specs.txt line 1736: 'Micro 10-Year Yield | 10YY | CBOT/CME | $10.00 DV01 | H,M,U,Z | 1/10 of 1bp / $1.00' (AMP prints the symbol 10YY; the spec S1 names it 10Y; the root is a label)",
+      "anchor": {"kind": "calendar_day", "day": 1, "month_offset": 0},
+      "n_bdays": 5,
+      "rule_text": "5 business days before the first calendar day of the contract month",
+      "anchor_source": "UNSOURCED (as 2YY)",
+      "flags": ["termination UNSOURCED", "symbol differs between AMP (10YY) and spec S1 (10Y)", "to be checked against the exchange's published roll schedule before the clock starts"]
+    },
+    "30Y": {
+      "root": "30Y", "cycle": "HMUZ",
+      "cycle_source": "F46 amp_contract_specs.txt line 1700: 'Micro 30-Year Yield | 30YY | CBOT/CME | $10.00 DV01 | H,M,U,Z | 1/10 of 1bp / $1.00' (AMP prints 30YY; spec S1 names 30Y)",
+      "anchor": {"kind": "calendar_day", "day": 1, "month_offset": 0},
+      "n_bdays": 5,
+      "rule_text": "5 business days before the first calendar day of the contract month",
+      "anchor_source": "UNSOURCED (as 2YY)",
+      "flags": ["termination UNSOURCED", "symbol differs between AMP (30YY) and spec S1 (30Y)", "to be checked against the exchange's published roll schedule before the clock starts"]
+    },
+    "MZC": {
+      "root": "MZC", "cycle": "HKNUZ",
+      "cycle_source": "F46 amp_contract_specs.txt line 1939: 'Micro Corn | MZC | CBOT/CME | 500 bushels | H,K,N,U,Z | 0.0050 / $2.50'",
+      "anchor": {"kind": "calendar_day", "day": 1, "month_offset": 0},
+      "n_bdays": 10,
+      "rule_text": "10 business days before the first calendar day of the contract month (before the grain first-notice period)",
+      "anchor_source": "W-ZC gives the parent's termination (business day prior to the 15th of the contract month); first notice day UNSOURCED, so the roll is placed before the contract month starts",
+      "flags": ["first notice day UNSOURCED", "micro rule assumed from parent", "to be checked against the exchange's published roll schedule before the clock starts"]
+    },
+    "MZS": {
+      "root": "MZS", "cycle": "FHKNQUX",
+      "cycle_source": "F46 amp_contract_specs.txt line 1993: 'Micro Soybean | MZS | CBOT/CME | 500 bushels | F,H,K,N,Q,U,X | 0.0050 / $2.50'",
+      "anchor": {"kind": "calendar_day", "day": 1, "month_offset": 0},
+      "n_bdays": 10,
+      "rule_text": "10 business days before the first calendar day of the contract month",
+      "anchor_source": "UNSOURCED for soybeans (no saved ZS page); the W-ZC grain structure is assumed",
+      "flags": ["termination and first notice UNSOURCED", "to be checked against the exchange's published roll schedule before the clock starts"]
+    },
+    "MZL": {
+      "root": "MZL", "cycle": "FHKNQUVZ",
+      "cycle_source": "F46 amp_contract_specs.txt line 2011: 'Micro Soybean Oil | MZL | CBOT/CME | 6,000 lbs | F,H,K,N,Q,U,V,Z | 0.02 / $1.20'",
+      "anchor": {"kind": "calendar_day", "day": 1, "month_offset": 0},
+      "n_bdays": 10,
+      "rule_text": "10 business days before the first calendar day of the contract month",
+      "anchor_source": "UNSOURCED for soybean oil (no saved ZL page); the W-ZC grain structure is assumed",
+      "flags": ["termination and first notice UNSOURCED", "to be checked against the exchange's published roll schedule before the clock starts"]
+    }
+  }
+}

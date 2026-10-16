@@ -1,0 +1,17 @@
+{
+ "schema": "stage_e_mes_closure_rulings/1",
+ "stage": "E.22",
+ "written_pdt": "2026-10-16T01:24:00-07:00",
+ "written_by": "HarnessBuilder-OpusXHigh (E.22 Part A, harness v13 N3), applying the E.22 lead's conditional ruling in reports/stage_e22_briefs/brief_harness_v13.md N3",
+ "ruling": "Lead's conditional ruling (E.22 brief N3): the MES rows of D.1f's confirmation store that the Stage E loader refused in E.12 (TradeDateMismatch, reports/stage_e12_briefs/phase1_build.log:2) are scheduled-closure prints, so they are handled by enumeration as harness v9 handles held closure bars for step 2 stores (data/step2_store.py load_closure_rulings and _closure_ruling; reports/stage_e12_closure_rulings.json): each listed row is re-booked to the equity group calendar's trade date and flagged in_scheduled_closure (the engine skips closure prints); every other label mismatch still refuses (data.stage_e_bars.check_bookings).",
+ "finding": "Diagnostic of 2026-10-16 (ts_event, the store's trade_date label and the equity calendar's booking of the mismatching rows only; no other column or row read): exactly 3 rows mismatch. Each is the 16:59 CT bar inside the equity group's daily 16:00-17:00 CT maintenance halt, beyond the close minute (data.group_session.assign_trade_dates on the timestamp alone: in_closure True, boundary False), labelled by D.1's builder with the session it follows and booked by the Stage E calendar (rule L-3) to the next trade date. D.1f's build flagged exactly 3 bars in_scheduled_closure (reports/stage_d1f_confirmation_build.json flag_counts), single bars on 2020-03-30, 2020-03-31 and 2020-06-30 (reports/stage_d1f_run_STATE.md row 2'), the same CT dates. Same class as NQ's 16:59 CT bars of 2020-03-31 and 2020-06-30 in reports/stage_e12_closure_rulings.json.",
+ "store": {
+  "path": "data/processed/MES/ohlcv-1m_MES_v_0_2019-05-01_2024-02-29_confirmation.parquet",
+  "sha256": "82e256b4a7418e68fbab5e5e0d961908f7160eaac5b7ba8f05f71896f36296b8"
+ },
+ "entries": [
+  {"root": "MES", "ts_event_ns": 1585605540000000000, "ct": "2020-03-30 Mon 16:59", "store_label": "2020-03-30", "trade_date": "2020-03-31", "ruling": "rebook_and_flag"},
+  {"root": "MES", "ts_event_ns": 1585691940000000000, "ct": "2020-03-31 Tue 16:59", "store_label": "2020-03-31", "trade_date": "2020-04-01", "ruling": "rebook_and_flag"},
+  {"root": "MES", "ts_event_ns": 1593554340000000000, "ct": "2020-06-30 Tue 16:59", "store_label": "2020-06-30", "trade_date": "2020-07-01", "ruling": "rebook_and_flag"}
+ ]
+}

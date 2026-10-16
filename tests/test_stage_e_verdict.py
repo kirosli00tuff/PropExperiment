@@ -651,8 +651,11 @@ def test_a_bad_series_is_refused(mutate: str) -> None:
 
 
 @pytest.mark.parametrize(("over", "match"), [
-    ({"k_holm": 8}, "K 8 is not 9"),
-    ({"k_holm": True}, "is not 9"),
+    ({"k_holm": 0}, r"K 0 is not an int in 1\.\.9"),  # v13 N5: K from the list, 1..9
+    ({"k_holm": 10}, r"K 10 is not an int in 1\.\.9"),
+    ({"k_holm": True}, "K True is not an int"),
+    ({"k_holm": "5"}, "K '5' is not an int"),
+    ({"k_holm": None}, "K None is not an int"),
     ({"bootstrap": {"seed_base": 20260921, "resamples": 10000, "mean_block": 5.0,
                     "ucb_quantile": 0.95}}, "seed base"),
     ({"bootstrap": {"seed_base": 20260923, "resamples": 2000, "mean_block": 5.0,
@@ -773,3 +776,141 @@ def test_load_records_refuses_a_cluster_record_not_in_the_list(tmp_path: Path) -
     (rec_dir / "K4_K4-z_confirmation.json").write_text("{}", encoding="utf-8")
     with pytest.raises(V.VerdictRefusal, match="K4_K4-z_confirmation.json"):
         V.load_records(rec_dir, payload)
+
+
+# ============================================ harness v13 (Stage E.22) ====
+def test_v13_k_holm_comes_from_the_list_and_is_echoed() -> None:
+    """N5: K is the list's k_holm (1..9), used by Holm and echoed (R-E22-A10 sets 5)."""
+    t, rec = _one()
+    verdict = run_verdict([t], {"K4-a": rec}, k_holm=5)
+    holm = verdict["edge_chain"]["holm"]
+    assert verdict["k_holm"] == 5 and holm["k"] == 5
+    assert holm["alpha_k"] == pytest.approx(0.05 / 5)
+    assert holm["rows"][0]["threshold"] == pytest.approx(0.01)
+    assert run_verdict([t], {"K4-a": rec}, k_holm=9)["edge_chain"]["holm"]["alpha_k"] == \
+        pytest.approx(0.05 / 9)
+
+
+def _not_run_trials() -> tuple[list[dict], dict[str, dict]]:
+    trials = [list_trial(1, "K4-a"),
+              list_trial(2, "K4-u", tier="A", run=False, labels=("untestable on owned data",)),
+              list_trial(3, "K4-d", tier="B", run=False, labels=("inconclusive by design",))]
+    return trials, {"K4-a": record(trials[0], _null_values(), 50)}
+
+
+def test_v13_a_not_run_tier_a_or_b_trial_needs_no_record_enters_holm_at_p1_not_covered() -> None:
+    """N4: an untestable or by-design Tier A/B trial listed run: false has no record; it enters
+    Holm at p = 1 and is named not covered; it blocks nothing."""
+    trials, records = _not_run_trials()
+    verdict = run_verdict(trials, records, k_holm=5)
+    rows, st = by_member(verdict), verdict["statement"]
+    holm = {r["member"]: r for r in verdict["edge_chain"]["holm"]["rows"]}
+    assert set(holm) == {"K4-a", "K4-u"} and holm["K4-u"]["p_value"] == 1.0
+    assert not holm["K4-u"]["reject"] and verdict["edge_chain"]["holm"]["m"] == 2
+    assert rows["K4-u"]["status"] == "not run" and rows["K4-u"]["record_status"] is None
+    assert rows["K4-u"]["reasons"] == ["Tier A listed not run: untestable on owned data"]
+    assert rows["K4-d"]["reasons"] == ["Tier B listed not run: inconclusive by design"]
+    assert "p_upper" not in rows["K4-u"] and not rows["K4-u"]["covered"]
+    dsr = verdict["edge_chain"]["dsr"]  # the not-run trials add no series to DSR or PBO
+    assert dsr["variance_over"] == ["K4-a"] and dsr["undefined"] is not None
+    assert verdict["edge_chain"]["pbo"]["over"] == ["K4-a"]
+    assert st["verdict"] == "null" and st["covered"] == ["K4-a"]
+    assert st["not_covered"] == [
+        {"member": "K4-u", "reason": "not run: untestable on owned data",
+         "labels": ["untestable on owned data"]},
+        {"member": "K4-d", "reason": "not run: inconclusive by design",
+         "labels": ["inconclusive by design"]}]
+
+
+def test_v13_a_runner_not_run_record_is_checked_and_not_used() -> None:
+    trials, records = _not_run_trials()
+    not_run = record(trials[1], [], 0, dates=[START], status="not_run",
+                     labels=["untestable on owned data"])
+    del not_run["s_x"]
+    rows = by_member(run_verdict(trials, {**records, "K4-u": not_run}))
+    assert rows["K4-u"]["record_status"] == "not_run" and rows["K4-u"]["status"] == "not run"
+    wrong = {**not_run, "labels": ["inconclusive by design"]}
+    with pytest.raises(V.VerdictRefusal, match="not-run record"):
+        run_verdict(trials, {**records, "K4-u": wrong})
+    plain = record(trials[0], [], 0, dates=[START], status="not_run",
+                   labels=["untestable on owned data"])
+    with pytest.raises(V.VerdictRefusal, match="not-run record"):  # K4-a is listed run
+        run_verdict(trials, {**records, "K4-a": plain})
+
+
+@pytest.mark.parametrize(("tier", "run", "labels", "match"), [
+    ("A", False, (), "disagree"),  # a plain Tier A trial is still run
+    ("B", False, ("source-overlap",), "disagree"),
+    ("A", True, ("untestable on owned data",), "cannot be listed run"),
+    ("excluded", True, ("inconclusive by design",), "disagree"),
+    ("A", False, ("untestable on own data",), "unknown labels"),
+])
+def test_v13_not_run_listing_rules(tier: str, run: bool, labels: tuple[str, ...],
+                                   match: str) -> None:
+    t = list_trial(1, "K4-a", tier=tier, run=run, labels=labels)
+    with pytest.raises(V.VerdictRefusal, match=match):
+        run_verdict([t], {})
+
+
+def test_v13_a_plain_tier_a_trial_without_a_record_is_still_refused() -> None:
+    trials, records = _not_run_trials()
+    with pytest.raises(V.VerdictRefusal, match="K4-a: marked run in the list, no record"):
+        run_verdict(trials, {})
+    assert "K4-u" not in records
+
+
+def test_v13_the_cli_records_the_registry_n_beside_program_n_without_refusing(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """R3: the registry's current N is recorded beside the list's program_n; a difference (or
+    an unreadable registry) does not refuse."""
+    from screening import trial_registry
+
+    monkeypatch.setattr(harness_freeze, "preflight", lambda e, root=None: e)
+    monkeypatch.setattr(trial_registry, "current_n", lambda: 533)
+    list_path, rec_dir, _payload = _write_inputs(tmp_path)
+    out = tmp_path / "verdict.json"
+    rc = V.main(["--harness-sha256", HARNESS, "--list", str(list_path), "--records",
+                 str(rec_dir), "--out", str(out)])
+    verdict = json.loads(out.read_text(encoding="utf-8"))
+    assert rc == 0 and verdict["program_n"] == 150
+    assert verdict["program_n_check"] == {"list_program_n": 150, "registry_current_n": 533,
+                                          "registry_error": None, "equal": False}
+
+    def broken() -> int:
+        raise trial_registry.TrialRegistryError("planted")
+
+    monkeypatch.setattr(trial_registry, "current_n", broken)
+    got = V.registry_n(533)
+    assert got["registry_current_n"] is None and "planted" in got["registry_error"]
+
+
+# ------------------------------------------------- review fixes N-3, N-12 ----
+def test_n3_the_descriptive_holm_at_k9_sits_beside_the_lists_k_and_decides_nothing() -> None:
+    """R-E22-A10: Holm at K = 9 on the same p values is reported; the verdicts use k_holm (5).
+    p = 0.008 rejects at 0.05 / 5 = 0.01 and not at 0.05 / 9 = 0.0056."""
+    clist = V.parse_list(conf_list([list_trial(1, "K4-a")], k_holm=5))
+    chain = V.edge_chain(clist, {"K4-a": {"p_upper": 0.008, "labels": []}}, {})
+    k9 = chain["holm_descriptive_k9"]
+    expected = holm_tier_a({"K4-a": 0.008}, 9)
+    assert (k9["k"], k9["m"]) == (9, 1) and k9["alpha_k"] == pytest.approx(expected.alpha_k)
+    assert [r["reject"] for r in k9["rows"]] == [False] and "descriptive" in k9["note"]
+    assert chain["holm"]["k"] == 5 and chain["holm"]["rows"][0]["reject"] is True
+    assert chain["trials"]["K4-a"]["passes"]["holm"] is True  # from K = 5, not the K = 9 figure
+    t, rec = _one()
+    verdict = run_verdict([t], {"K4-a": rec}, k_holm=5)
+    assert verdict["edge_chain"]["holm_descriptive_k9"]["rows"][0]["p_value"] == \
+        verdict["edge_chain"]["holm"]["rows"][0]["p_value"]
+
+
+def test_n12_a_not_run_record_must_carry_exactly_the_trials_not_run_label() -> None:
+    both = ("untestable on owned data", "inconclusive by design")
+    trials = [list_trial(1, "K4-a"), list_trial(2, "K4-u", tier="A", run=False, labels=both)]
+    records = {"K4-a": record(trials[0], _null_values(), 50)}
+    not_run = record(trials[1], [], 0, dates=[START], status="not_run",
+                     labels=["untestable on owned data"])
+    del not_run["s_x"]
+    assert by_member(run_verdict(trials, {**records, "K4-u": not_run}))["K4-u"][
+        "record_status"] == "not_run"
+    other = {**not_run, "labels": ["inconclusive by design"]}  # a label of the trial, not its own
+    with pytest.raises(V.VerdictRefusal, match="not-run record"):
+        run_verdict(trials, {**records, "K4-u": other})

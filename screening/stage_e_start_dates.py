@@ -32,6 +32,15 @@ written once, read-only; ``run_set`` calls screening.harness_freeze.preflight fi
   taken from D.1f's record reports/stage_d1f_step5_start_rule.json (sha256 pinned, S checked
   against D4's text, the rule re-run on the recorded medians).
 
+Harness v13 (Stage E.22 N2): a cluster set's vehicle or leg with a declared price path
+(reports/stage_e22_price_paths.json, sha256 pinned in PRICE_PATHS_SHA256, schema
+stage_e_price_paths/1; D2/D4: "the start rule then runs on the full-size contract") contributes
+its PATH root's entry, computed from the path root's research store (E.2a sha) and step 2 store,
+and the mapped root's own step 2 store is never opened; the declaration's path and sha256 join
+the set's inputs. ``price_paths()`` is the one reader of the declaration (the runner uses it
+too). ``write_start_rule`` refuses a document that disagrees with an existing set file on a
+shared root (the loader's StartRuleConflict, found at build time).
+
 Loader (used by screening.stage_e_runner and ml_route.inputs):
     load_start_dates(root=REPO_ROOT) -> Mapping[str, date]  # every per-set file merged
     start_date(root_symbol, root=REPO_ROOT) -> date
@@ -72,6 +81,7 @@ from data.stage_e_bars import (
     ParquetHashMismatch,
     StageEBarRefusal,
     check_bookings,
+    check_price_path,
 )
 from data.step2_store import step2_parquet_path
 from rules.products import UnknownProduct, product
@@ -108,6 +118,11 @@ MES_DAY_SESSION_CT = (time(8, 30), time(15, 0))  # NULL_CRITERIA 4.1: CT 08:30 t
 MES_D4_START = date(2020, 2, 3)  # D4: "so MES as a leg starts 2020-02-03"
 D1F_RECORD = REPORTS_DIR / "stage_d1f_step5_start_rule.json"
 D1F_RECORD_SHA256 = "4f2870f51a3551651466e919ba2941d11908c45807ba0ee72be63fb71d9bb11c"
+# Harness v13 (Stage E.22 N1/N2): the lead's declared price paths (R-E22-A4, R-E22-A5), written
+# before any confirmation read; also listed in harness_freeze.FROZEN_INPUTS.
+PRICE_PATHS_FILE = REPORTS_DIR / "stage_e22_price_paths.json"
+PRICE_PATHS_SCHEMA = "stage_e_price_paths/1"
+PRICE_PATHS_SHA256 = "860f4b11d75aaf8bacb52871944d902d858cbe5edaa9c00a0b76921f270bb425"
 
 
 class StartDatesRefusal(RuntimeError):
@@ -291,6 +306,69 @@ def mes_from_d1f(root: Path = REPO_ROOT) -> ProductStart:
     return ProductStart(MES, entry, ((D1F_RECORD.as_posix(), digest),))
 
 
+# -------------------------------------------------------------- price paths ----
+@dataclass(frozen=True)
+class PricePaths:
+    """The declared price paths {vehicle: path root} and the file that declares them."""
+
+    paths: Mapping[str, str]
+    file: str
+    sha256: str
+
+    def store_root(self, root_symbol: str) -> str:
+        """The root whose store and start-rule entry a confirmation leg of ``root_symbol``
+        reads: its declared path, else itself."""
+        return self.paths.get(root_symbol, root_symbol)
+
+    def provenance(self) -> dict[str, str]:
+        return {"path": self.file, "sha256": self.sha256}
+
+
+def load_price_paths(root: Path = REPO_ROOT, *, expected_sha256: str = PRICE_PATHS_SHA256
+                     ) -> PricePaths:
+    """The declaration, refused by name (the runner's PricePathInvalid) unless it hashes to the
+    pinned sha256, has the schema and maps each vehicle to another product of the same group,
+    price grid and tick (data.stage_e_bars.check_price_path), with no chain (a path root that is
+    itself mapped)."""
+    invalid = _runner().PricePathInvalid
+    path = Path(root) / PRICE_PATHS_FILE
+    name = PRICE_PATHS_FILE.as_posix()
+    if not path.is_file():
+        raise invalid(f"{name} does not exist: the declared price paths are a frozen input")
+    raw = path.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != expected_sha256:
+        raise invalid(f"{name}: sha256 {digest[:12]}... is not the pinned "
+                      f"{expected_sha256[:12]}...")
+    try:
+        doc = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise invalid(f"{name}: not valid JSON ({exc})") from exc
+    raw_paths = doc.get("paths") if isinstance(doc, dict) else None
+    if not isinstance(doc, dict) or doc.get("schema") != PRICE_PATHS_SCHEMA or not isinstance(
+            raw_paths, dict) or not raw_paths:
+        raise invalid(f"{name}: not a {PRICE_PATHS_SCHEMA} document with paths")
+    paths: dict[str, str] = {}
+    for vehicle, spec in raw_paths.items():
+        target = spec.get("path") if isinstance(spec, dict) else None
+        if not isinstance(target, str) or not target:
+            raise invalid(f"{name}: {vehicle} has no path root")
+        try:
+            check_price_path(str(vehicle), target)
+        except UnknownProduct as exc:
+            raise invalid(f"{name}: {vehicle} -> {target}: {exc}") from exc
+        paths[str(vehicle)] = target
+    chained = sorted(v for v, t in paths.items() if t in paths)
+    if chained:
+        raise invalid(f"{name}: {chained} map to a root that is itself mapped")
+    return PricePaths(MappingProxyType(paths), name, digest)
+
+
+def price_paths() -> PricePaths:
+    """The pinned declaration of this repository (tests replace this function)."""
+    return load_price_paths(REPO_ROOT)
+
+
 # --------------------------------------------------------------------- sets ----
 def check_set(set_id: str) -> str:
     if set_id not in SETS:
@@ -312,8 +390,12 @@ def set_roots(set_id: str, root: Path = REPO_ROOT, tables: FrozenTables | None =
     vehicles = {v for v, e in (tables or _frozen_tables()).vehicles.items()
                 if e.cluster == set_id}
     legs = {leg.root for m in freeze.members for leg in m.legs}
-    return (tuple(sorted(vehicles | legs)),
-            ((freeze_path(set_id).as_posix(), freeze.sha256),))
+    inputs = ((freeze_path(set_id).as_posix(), freeze.sha256),)
+    declared = price_paths()  # v13 N2: a mapped root contributes its path root's entry
+    named = vehicles | legs
+    if any(r in declared.paths for r in named):
+        inputs += ((declared.file, declared.sha256),)
+    return tuple(sorted({declared.store_root(r) for r in named})), inputs
 
 
 def start_rule_path(set_id: str, root: Path = REPO_ROOT) -> Path:
@@ -376,7 +458,7 @@ def write_start_rule(doc: Mapping[str, Any], root: Path = REPO_ROOT) -> Path:
     """Write the set's file once, read-only; the document must pass the loader's own checks."""
     set_id = check_set(str(doc.get("set")))
     path = start_rule_path(set_id, root)
-    _parse_doc(path.name, dict(doc))
+    _check_agrees(path.name, _parse_doc(path.name, dict(doc)), root)
     path.parent.mkdir(parents=True, exist_ok=True)
     data = json.dumps(doc, indent=2, sort_keys=True) + "\n"
     try:
@@ -546,6 +628,22 @@ def _differences(items: Sequence[tuple[_RootValues, str, str]]) -> list[str]:
         if any(getattr(v, name) != getattr(first, name) for v, _, _ in items[1:]):
             fields.append(name)
     return fields
+
+
+def _check_agrees(name: str, new: Mapping[str, _RootValues], root: Path) -> None:
+    """v13: a new set file must agree with every existing file on each shared root, so the
+    loader's StartRuleConflict is found before the file is written, not at the next run."""
+    for path in start_rule_files(root):
+        if path.name == name:
+            continue
+        _, values = _parse_file(path)
+        for root_symbol, value in values.items():
+            if root_symbol in new:
+                differ = _differences([(new[root_symbol], name, ""), (value, path.name, "")])
+                if differ:
+                    raise _runner().StartRuleConflict(
+                        f"{root_symbol}: {name} would differ from {path.name} on {differ}; "
+                        "nothing is written")
 
 
 def load_start_entries(root: Path = REPO_ROOT) -> Mapping[str, StartDateEntry]:

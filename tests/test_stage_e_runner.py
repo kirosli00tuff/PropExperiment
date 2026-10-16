@@ -364,7 +364,7 @@ def test_mean_at_or_below_zero_fails_even_where_the_stats_module_cannot_compute_
         monkeypatch) -> None:
     from screening import stage_e_stats as st
 
-    def no_s_x(legs, root):  # noqa: ANN001, ANN202
+    def no_s_x(legs, root, research_root=None):  # noqa: ANN001, ANN202 (v13: research_root)
         raise runner.StartRuleMissing("no frozen S_X for ['ZN']")
 
     monkeypatch.setattr(runner, "confirmation_supply_days", no_s_x)

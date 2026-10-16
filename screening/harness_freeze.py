@@ -264,6 +264,10 @@ FROZEN_INPUTS = (
     "data/calendars/hist2010/equity.json", "data/calendars/hist2010/rates.json",
     "data/calendars/hist2010/fx.json", "data/calendars/hist2010/energy.json",
     "data/calendars/hist2010/metals.json", "data/calendars/hist2010/grains.json",
+    # harness v13 (Stage E.22): the declared price paths (screening.stage_e_start_dates
+    # PRICE_PATHS_SHA256) and MES's enumerated closure rulings (data.stage_e_bars
+    # MES_CLOSURE_RULINGS_SHA256); each is also pinned by sha256 in its reading module.
+    "reports/stage_e22_price_paths.json", "reports/stage_e22_mes_closure_rulings.json",
 )
 FROZEN_INPUT_DIRS = ("reports/stage_e2a_funnel",)
 # M7.8: "every M7 test" is hashed with the pipeline; the other Stage E tests travel with it.

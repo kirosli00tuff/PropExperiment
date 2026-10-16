@@ -594,3 +594,122 @@ def test_the_writer_refuses_a_document_the_loader_would_refuse(tmp_path) -> None
     with pytest.raises(StartRuleInvalid, match="schema"):
         sd.write_start_rule(_doc("K2", {"ZN": "2019-05-06"}) | {"schema": "x"}, root=tmp_path)
     assert not (tmp_path / "reports" / "stage_e_start_rule_K2.json").exists()
+
+
+# ============================================ harness v13 (Stage E.22) N1/N2 ====
+from data.stage_e_bars import PricePathMismatch  # noqa: E402
+from screening.stage_e_runner import PricePathInvalid  # noqa: E402
+
+PRICE_PATHS = REPO_ROOT / "reports" / "stage_e22_price_paths.json"
+
+
+def _declare(tmp: Path, paths: dict, schema: str = "stage_e_price_paths/1") -> str:
+    path = tmp / "reports" / "stage_e22_price_paths.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"schema": schema,
+                                "paths": {v: {"path": p} for v, p in paths.items()}}),
+                    encoding="utf-8")
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def test_v13_the_pinned_declaration_maps_mgc_to_gc_and_mnq_to_nq() -> None:
+    got = sd.load_price_paths(REPO_ROOT)
+    assert dict(got.paths) == {"MGC": "GC", "MNQ": "NQ"}
+    assert got.sha256 == sd.PRICE_PATHS_SHA256 == hashlib.sha256(
+        PRICE_PATHS.read_bytes()).hexdigest()
+    assert got.file == "reports/stage_e22_price_paths.json"
+    assert got.store_root("MGC") == "GC" and got.store_root("MHG") == "MHG"
+    assert sd.price_paths() == got
+    assert "reports/stage_e22_price_paths.json" in harness_freeze.FROZEN_INPUTS
+
+
+def test_v13_a_declaration_other_than_the_pinned_one_is_refused(tmp_path) -> None:
+    with pytest.raises(PricePathInvalid, match="does not exist"):
+        sd.load_price_paths(tmp_path)
+    _declare(tmp_path, {"MGC": "GC", "MNQ": "NQ"})  # same mapping, other bytes
+    with pytest.raises(PricePathInvalid, match="not the pinned"):
+        sd.load_price_paths(tmp_path)
+    sha = _declare(tmp_path, {"MGC": "GC"}, schema="stage_e_price_paths/0")
+    with pytest.raises(PricePathInvalid, match="schema|stage_e_price_paths/1"):
+        sd.load_price_paths(tmp_path, expected_sha256=sha)
+    sha = _declare(tmp_path, {"MGC": "NQ"})
+    with pytest.raises(PricePathMismatch, match="group"):
+        sd.load_price_paths(tmp_path, expected_sha256=sha)
+    sha = _declare(tmp_path, {"MGC": "GC", "GC": "MGC"})
+    with pytest.raises(PricePathInvalid, match="itself mapped"):
+        sd.load_price_paths(tmp_path, expected_sha256=sha)
+    sha = _declare(tmp_path, {"MGC": "XX"})
+    with pytest.raises(PricePathInvalid, match="XX"):
+        sd.load_price_paths(tmp_path, expected_sha256=sha)
+
+
+def _mapped(tmp: Path, mapping: dict) -> sd.PricePaths:
+    return sd.PricePaths(MappingProxyType(mapping), "reports/stage_e22_price_paths.json",
+                         "9" * 64)
+
+
+def test_v13_a_mapped_vehicle_or_leg_contributes_its_path_root_and_names_the_declaration(
+        tmp_path, monkeypatch) -> None:
+    from screening.stage_e_freeze import MemberDecl, write_cluster_freeze
+    from strategy.stage_e.interface import LegSpec
+    from tests._stage_e_synthetic import install_member_package
+
+    module = install_member_package(tmp_path, monkeypatch, cluster="k2")
+    sha = write_cluster_freeze("K2", [
+        MemberDecl("K2-a", 1, module, "make_member", (LegSpec("MGC", True), LegSpec("MES", False))),
+        MemberDecl("K2-b", 2, module, "make_member", (LegSpec("ZN", True), LegSpec("MNQ", False)))],
+        root=tmp_path)
+    monkeypatch.setattr(sd, "price_paths", lambda: _mapped(tmp_path, {"MGC": "GC", "MNQ": "NQ"}))
+    roots, inputs = sd.set_roots("K2", root=tmp_path)
+    assert roots == ("GC", "MES", "NQ", "TN", "UB", "ZB", "ZF", "ZN", "ZT")
+    assert "MGC" not in roots and "MNQ" not in roots
+    assert inputs == (("reports/stage_e_k2_member_freeze.json", sha),
+                      ("reports/stage_e22_price_paths.json", "9" * 64))
+    monkeypatch.setattr(sd, "price_paths", lambda: _mapped(tmp_path, {"CL": "MCL"}))
+    roots, inputs = sd.set_roots("K2", root=tmp_path)  # nothing of the set is mapped
+    assert "MGC" in roots and len(inputs) == 1
+
+
+def test_v13_build_set_computes_the_path_roots_entry_and_never_opens_the_vehicles_store(
+        tmp_path, monkeypatch) -> None:
+    """N2: MNQ -> NQ: NQ's entry from NQ's research store (E.2a sha) and step 2 store; MNQ's
+    stores are never asked for; MES still comes from D.1f."""
+    from screening.stage_e_freeze import MemberDecl, write_cluster_freeze
+    from strategy.stage_e.interface import LegSpec
+    from tests._stage_e_synthetic import install_member_package
+
+    research, step2, sha = _d1f_stores(tmp_path, root="NQ")
+    (tmp_path / "reports").mkdir(exist_ok=True)
+    shutil.copyfile(D1F_RECORD, tmp_path / "reports" / D1F_RECORD.name)
+    module = install_member_package(tmp_path, monkeypatch, cluster="k2")
+    write_cluster_freeze("K2", [MemberDecl("K2-w", 1, module, "make_member",
+                                           (LegSpec("MNQ", True), LegSpec("MES", False)))],
+                         root=tmp_path)
+    tables = _tables_with(NQ=sha)
+    monkeypatch.setattr(sd, "_frozen_tables", lambda: replace(
+        tables, vehicles=MappingProxyType({})))
+    monkeypatch.setattr(sd, "price_paths", lambda: _mapped(tmp_path, {"MNQ": "NQ"}))
+    asked: list[tuple[str, str]] = []
+    monkeypatch.setattr(sd, "research_parquet_path",
+                        lambda r, base: asked.append(("research", r)) or research)
+    monkeypatch.setattr(sd, "step2_parquet_path",
+                        lambda r, base: asked.append(("step2", r)) or step2)
+    monkeypatch.setattr(harness_freeze, "preflight", lambda expected: expected)
+    doc = sd.build_set("K2", harness_sha256=HARNESS, research_root=tmp_path,
+                       step2_root=tmp_path, root=tmp_path)
+    assert set(doc["products"]) == {"MES", "NQ"} and asked == [("research", "NQ"),
+                                                                 ("step2", "NQ")]
+    assert doc["products"]["NQ"]["s_x"] == "2020-02-03"  # D.1f's medians on NQ's stores
+    assert doc["products"]["MES"]["source"].startswith("D.1f record")
+    assert {"path": "reports/stage_e22_price_paths.json", "sha256": "9" * 64} in doc["inputs"]
+
+
+def test_v13_a_set_file_that_would_conflict_with_an_existing_one_is_not_written(tmp_path) -> None:
+    _put(tmp_path, "K3", {"6C": "2019-05-06"})
+    with pytest.raises(StartRuleConflict, match="6C.*stage_e_start_rule_K3.json"):
+        sd.write_start_rule(_doc("K8", {"6C": "2019-06-03", "MCL": "2019-05-06"}),
+                            root=tmp_path)
+    assert not (tmp_path / "reports" / "stage_e_start_rule_K8.json").exists()
+    written = sd.write_start_rule(_doc("K8", {"6C": "2019-05-06", "MCL": "2019-05-06"}),
+                                  root=tmp_path)
+    assert written.exists() and set(sd.load_start_dates(tmp_path)) == {"6C", "MCL"}

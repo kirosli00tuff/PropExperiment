@@ -47,6 +47,22 @@ Per member, in order:
    only its power check undefined, recorded "power check undefined" (a question for the user).
 ``screen_cluster`` then assigns Tier A / B / excluded with stage_e_stats.assign_tiers.
 
+Harness v13 (Stage E.22), confirmation window and supply count only:
+- N1 price path: a leg whose root the pinned declaration maps (screening.stage_e_start_dates.
+  price_paths(), reports/stage_e22_price_paths.json) reads the PATH root's step 2 store with the
+  path root's S_X and pinned sha256, keyed by the vehicle (record ``s_x`` keyed by the vehicle,
+  value the path's S_X; ``price_path`` {vehicle: path} and ``price_path_declaration`` recorded);
+  the research window ignores the mapping;
+- N3 MES: its confirmation leg is D.1f's Stage D store under the research root (data.stage_e_bars);
+- N4 ``--untestable FILE`` (schema stage_e_untestable/1, confirmation ``--all`` only): a declared
+  member gets a not-run record (status "not_run", its label and reason, no series) and the cluster
+  continues; any undeclared refusal still aborts;
+- R1 ``--run-once-marker PATH``: refused if present; written O_EXCL, 0o444 after the preflight and
+  every member's start-rule, price-path and store (existence, pinned sha256; no row) resolution,
+  before any bar is read; any later exception writes ``<marker stem>_STOPPED.json`` beside it;
+- R2 ``--dry-run``: resolves all of that, counts each member's supply from the timestamp and
+  trade-date columns only, prints one line per member, writes nothing, never runs the engine.
+
 Records are written once (an existing file is never overwritten). Beside each member record,
 ``<record name>_trips.json`` (Stage E.4 H1) lists the member's round trips as extract_trips gives
 them, each with the sum of its fills' gross_realized_cents, and names the record file and the
@@ -60,9 +76,11 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import re
 import statistics
 import sys
+import traceback
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass
 from datetime import UTC, date, datetime
@@ -71,10 +89,12 @@ from pathlib import Path
 from typing import Any
 
 from data.stage_e_bars import (
+    CONFIRMATION_LAST_TRADE_DATE,
     RESEARCH,
     STEP2,
     LegFrame,
     StageEBarRefusal,
+    check_confirmation_store,
     load_confirmation_leg,
     load_research_leg,
     read_leg_dates,
@@ -116,6 +136,13 @@ LABEL_COVERAGE = "coverage_below_0.95"
 LABEL_MEAN_HOLD = "mean_holding_below_10min"
 LABEL_ENTRIES = "entries_above_20_per_day"
 LABEL_MIN_HOLD = "hold_below_2min"
+# Harness v13 N4: declared not-run members (screening.stage_e_verdict LIST_LABELS carries both).
+NOT_RUN_STATUS = "not_run"
+LABEL_UNTESTABLE = "untestable on owned data"
+LABEL_BY_DESIGN = "inconclusive by design"  # screening.stage_e_stats_power.LABEL_INCONCLUSIVE
+NOT_RUN_LABELS = (LABEL_UNTESTABLE, LABEL_BY_DESIGN)
+UNTESTABLE_SCHEMA = "stage_e_untestable/1"
+MARKER_SCHEMA = "stage_e_run_once/1"
 
 
 class RunnerRefusal(RuntimeError):
@@ -141,6 +168,14 @@ class StartRuleInvalid(RunnerRefusal):
 class StartRuleInconsistent(StartRuleInvalid):
     """A start-rule entry's s_x, v_ref, sensitivity dates or M* do not follow from its own
     monthly medians and first trade dates (review F-3)."""
+
+
+class PricePathInvalid(RunnerRefusal):
+    """The declared price-path file is missing, not the pinned one, or not a valid declaration."""
+
+
+class RunOnceRefusal(RunnerRefusal):
+    """The run-once marker exists, or the run-once path was asked for outside its use."""
 
 
 # --------------------------------------------------------------------- trips ----
@@ -294,9 +329,28 @@ def _legs_inputs(legs: Sequence[LegSpec]) -> dict[str, LegInputs]:
     return out
 
 
+def _price_paths() -> start_dates.PricePaths:
+    """The pinned price-path declaration (v13 N1), read through the start-rule module."""
+    return start_dates.price_paths()
+
+
+def _store_roots(legs: Sequence[LegSpec]) -> tuple[dict[str, str], dict]:
+    """Per leg root, the root whose store and S_X a confirmation read uses (its declared price
+    path, else itself), and the record's price-path fields."""
+    declared = _price_paths()
+    roots = {leg.root: declared.store_root(leg.root) for leg in legs}
+    return roots, {"price_path": {r: p for r, p in roots.items() if p != r},
+                   "price_path_declaration": declared.provenance()}
+
+
+def _source(leg_root: str, store_roots: Mapping[str, str]) -> str | None:
+    """The ``path_root`` argument of the bar loader: the declared path, None when unmapped."""
+    return None if store_roots[leg_root] == leg_root else store_roots[leg_root]
+
+
 def _load_frames(legs: Sequence[LegSpec], inputs: Mapping[str, LegInputs], window: str,
                  research_root: Path, step2_root: Path) -> tuple[dict[str, LegFrame], dict]:
-    if window == RESEARCH_WINDOW:
+    if window == RESEARCH_WINDOW:  # the screened series: each root's own bars (no price path)
         frames = {}
         for leg in legs:
             sha = inputs[leg.root].research_parquet_sha256
@@ -304,30 +358,41 @@ def _load_frames(legs: Sequence[LegSpec], inputs: Mapping[str, LegInputs], windo
                 raise RunnerRefusal(f"{leg.root}: no recorded research parquet sha256")
             frames[leg.root] = load_research_leg(leg.root, research_root, expected_sha256=sha)
         return frames, {}
-    starts, provenance = _start_dates([leg.root for leg in legs])
+    store_roots, path_meta = _store_roots(legs)
+    starts, provenance = _start_dates(list(dict.fromkeys(store_roots[leg.root] for leg in legs)))
     frames = {leg.root: load_confirmation_leg(  # the store S_X was computed from (review F-3)
-        leg.root, step2_root, starts[leg.root],
-        expected_sha256=provenance[leg.root]["step2_sha256"]) for leg in legs}
+        leg.root, step2_root, starts[store_roots[leg.root]],
+        expected_sha256=provenance[store_roots[leg.root]]["step2_sha256"],
+        path_root=_source(leg.root, store_roots), research_root=research_root) for leg in legs}
     return frames, {"start_rule": provenance,
-                    "s_x": {r: starts[r].isoformat() for r in frames}}
+                    "s_x": {r: starts[store_roots[r]].isoformat() for r in frames}, **path_meta}
 
 
-def confirmation_supply_days(legs: Sequence[LegSpec], step2_root: Path) -> tuple[int, dict]:
+def confirmation_supply_days(legs: Sequence[LegSpec], step2_root: Path,
+                             research_root: Path | None = None) -> tuple[int, dict]:
     """Days the member's confirmation window supplies after exclusions (D4), from the step 2
     store's trade dates and roll metadata only (no price column is read). A leg with an empty
-    window (no qualifying month) supplies 0 days (lead ruling on g2a Q-3)."""
-    starts, provenance = _start_dates([leg.root for leg in legs], allow_empty=True)
-    empty = [leg.root for leg in legs if leg.root not in starts]
+    window (no qualifying month) supplies 0 days (lead ruling on g2a Q-3). v13: a mapped leg
+    counts its price path's store from the path's S_X; MES counts D.1f's store under
+    ``research_root``."""
+    store_roots, path_meta = _store_roots(legs)
+    starts, provenance = _start_dates(list(dict.fromkeys(store_roots[leg.root] for leg in legs)),
+                                      allow_empty=True)
+    meta = {"start_rule": provenance, **path_meta}
+    empty = [leg.root for leg in legs if store_roots[leg.root] not in starts]
     if empty:
-        return 0, {"start_rule": provenance, "empty_window": empty, "note": EMPTY_WINDOW_NOTE}
+        return 0, {**meta, "empty_window": empty, "note": EMPTY_WINDOW_NOTE}
     days, black = [], []
     for leg in legs:
-        d, b = read_leg_dates(leg.root, step2_root, starts[leg.root],
-                              expected_sha256=provenance[leg.root]["step2_sha256"])
+        src = store_roots[leg.root]
+        d, b = read_leg_dates(leg.root, step2_root, starts[src],
+                              expected_sha256=provenance[src]["step2_sha256"],
+                              path_root=_source(leg.root, store_roots),
+                              research_root=research_root)
         days.append(set(d))
         black.append(b)
     common = set.intersection(*days) - frozenset().union(*black)
-    return len(common), {"start_rule": provenance}
+    return len(common), meta
 
 
 # ------------------------------------------------------------------- record ----
@@ -479,7 +544,8 @@ def screen_member(cluster: str, label: str, factory: Callable[[], Any] | None,
                 "dates": list(series.dates), "values": list(series.values),
                 "n_trips": series.n_trips},
         daily_net_usd=[float(Fraction(daily.get(d, 0)) / 100) for d in mw.dates])
-    record.update(_research_statistics(cluster, decl.ordinal, legs, series, step2_root)
+    record.update(_research_statistics(cluster, decl.ordinal, legs, series, step2_root,
+                                       research_root)
                   if window == RESEARCH_WINDOW else {"screen": None, "power": None})
     write_member_record(record, rows, out_dir)
     return record
@@ -505,7 +571,7 @@ def _screen(series: Any) -> Any:
 
 
 def _research_statistics(cluster: str, ordinal: int, legs: Sequence[LegSpec], series: Any,
-                         step2_root: Path) -> dict:
+                         step2_root: Path, research_root: Path | None = None) -> dict:
     """D5's screen and D4's power check. A member whose series has mean <= 0 fails the screen
     (Tier B, lead ruling on Q10); a zero-variance series leaves its power check undefined, which
     is recorded by name ("power check undefined", a question for the user) and the run goes on."""
@@ -513,7 +579,7 @@ def _research_statistics(cluster: str, ordinal: int, legs: Sequence[LegSpec], se
 
     screen = _screen(series)
     try:
-        supply, meta = confirmation_supply_days(legs, Path(step2_root))
+        supply, meta = confirmation_supply_days(legs, Path(step2_root), research_root)
     except (RunnerRefusal, StageEBarRefusal) as exc:  # named refusals, recorded, never guessed
         return {"screen": screen, "power": {"status": "not_run",
                                             "reason": f"{type(exc).__name__}: {exc}"}}
@@ -526,12 +592,84 @@ def _research_statistics(cluster: str, ordinal: int, legs: Sequence[LegSpec], se
                                         "check": check}}
 
 
+# ------------------------------------------------- v13 N4: declared not-run ----
+@dataclass(frozen=True)
+class NotRun:
+    """A member the lead declared not to run (N4): its label, reason and missing leg."""
+
+    label: str
+    reason: str
+    missing_leg: str | None
+
+
+def load_untestable(path: Path, cluster: str) -> tuple[dict[str, NotRun], dict]:
+    """(member -> NotRun, the file's path and sha256) from a stage_e_untestable/1 file:
+    {"schema", "cluster", "members": {label: {"label", "reason", "missing_leg"}}}. Every member
+    must be in the cluster's freeze; "untestable on owned data" must name one of the member's
+    frozen legs as missing; "inconclusive by design" (R-E22-A9) needs only a reason."""
+    path = Path(path)
+    raw = path.read_bytes()
+    try:
+        doc = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise RunnerRefusal(f"{path.name}: not valid JSON ({exc})") from exc
+    members = doc.get("members") if isinstance(doc, dict) else None
+    if not isinstance(doc, dict) or doc.get("schema") != UNTESTABLE_SCHEMA or doc.get(
+            "cluster") != cluster or not isinstance(members, dict) or not members:
+        raise RunnerRefusal(f"{path.name}: not a {UNTESTABLE_SCHEMA} declaration for {cluster} "
+                            "with members")
+    freeze = load_cluster_freeze(cluster)
+    out: dict[str, NotRun] = {}
+    for label, spec in members.items():
+        decl = freeze.member(label)  # an unknown member is refused by the freeze
+        if not isinstance(spec, dict) or set(spec) != {"label", "reason", "missing_leg"}:
+            raise RunnerRefusal(f"{path.name}: {label} must hold exactly label, reason and "
+                                "missing_leg")
+        lab, why, leg = spec["label"], spec["reason"], spec["missing_leg"]
+        if lab not in NOT_RUN_LABELS or not isinstance(why, str) or not why.strip():
+            raise RunnerRefusal(f"{path.name}: {label}: label {lab!r} is not one of "
+                                f"{NOT_RUN_LABELS}, or the reason is empty")
+        legs = {leg_.root for leg_ in decl.legs}
+        if lab == LABEL_UNTESTABLE and leg not in legs:
+            raise RunnerRefusal(f"{path.name}: {label}: missing leg {leg!r} is not one of its "
+                                f"frozen legs {sorted(legs)}")
+        if leg is not None and leg not in legs:
+            raise RunnerRefusal(f"{path.name}: {label}: missing leg {leg!r} is not a leg")
+        out[label] = NotRun(lab, why, leg)
+    return out, {"path": path.as_posix(), "sha256": hashlib.sha256(raw).hexdigest()}
+
+
+def not_run_member(cluster: str, label: str, window: str, not_run: NotRun, provenance: dict, *,
+                   harness_sha256: str, out_dir: Path) -> dict:
+    """The not-run record of a declared member (no bar is read, no engine run)."""
+    harness = harness_freeze.preflight(harness_sha256)
+    freeze = load_cluster_freeze(cluster)
+    decl = freeze.member(label)
+    record = {"schema": RECORD_SCHEMA, "cluster": cluster, "member": label,
+              "ordinal": decl.ordinal, "window": window,
+              "legs": [asdict(leg) for leg in decl.legs],
+              "primary_vehicle": next(leg.root for leg in decl.legs if leg.traded),
+              "harness_sha256": harness, "cluster_freeze_sha256": freeze.sha256,
+              "status": NOT_RUN_STATUS, "labels": [not_run.label], "reason": not_run.reason,
+              "missing_leg": not_run.missing_leg, "not_run_declaration": provenance,
+              "screen": None, "series": None, "power": None,
+              "created_utc": datetime.now(UTC).isoformat(timespec="seconds")}
+    write_member_record(record, (), out_dir)
+    return record
+
+
 def screen_cluster(cluster: str, window: str, *, harness_sha256: str, research_root: Path,
-                   step2_root: Path, out_dir: Path) -> dict:
-    """Every member of the cluster's freeze, in ordinal order, then D5's tiers (research)."""
+                   step2_root: Path, out_dir: Path, untestable: Path | None = None) -> dict:
+    """Every member of the cluster's freeze, in ordinal order, then D5's tiers (research).
+    ``untestable`` (v13 N4, confirmation only): the declared members get a not-run record."""
     harness_freeze.preflight(harness_sha256)
     freeze = load_cluster_freeze(cluster)
-    records = [screen_member(cluster, m.label, None, m.legs, window,
+    declared, provenance = ({}, None) if untestable is None else _declared_not_run(
+        untestable, cluster, window)
+    records = [not_run_member(cluster, m.label, window, declared[m.label], provenance,
+                              harness_sha256=harness_sha256, out_dir=out_dir)
+               if m.label in declared else
+               screen_member(cluster, m.label, None, m.legs, window,
                              harness_sha256=harness_sha256, research_root=research_root,
                              step2_root=step2_root, out_dir=out_dir)
                for m in sorted(freeze.members, key=lambda m: m.ordinal)]
@@ -539,6 +677,10 @@ def screen_cluster(cluster: str, window: str, *, harness_sha256: str, research_r
                            "refused_members": {r["member"]: r["refusal"] for r in records
                                                if r["status"] == "refused_case"},
                            "members": [r["member"] for r in records]}
+    if declared:
+        out["not_run_members"] = {r["member"]: r["reason"] for r in records
+                                  if r["status"] == NOT_RUN_STATUS}
+        out["not_run_declaration"] = provenance
     if window == RESEARCH_WINDOW:
         from screening import stage_e_stats as st
 
@@ -559,6 +701,192 @@ def screen_cluster(cluster: str, window: str, *, harness_sha256: str, research_r
     return out
 
 
+def _declared_not_run(path: Path, cluster: str, window: str) -> tuple[dict[str, NotRun], dict]:
+    if window != CONFIRMATION_WINDOW:
+        raise RunnerRefusal("a not-run declaration (--untestable) applies to the confirmation "
+                            "window only")
+    return load_untestable(path, cluster)
+
+
+# ---------------------------------------------- v13 R1/R2: plan, marker, dry run ----
+def check_out_dir_free(cluster: str, out_dir: Path | None) -> None:
+    """Review SF-1: refuse by name when ``out_dir`` already holds a confirmation record, trip
+    list or cluster record of this cluster (records are written once; found before any marker)."""
+    if out_dir is None or not Path(out_dir).is_dir():
+        return
+    taken = sorted({p.name for p in (
+        *Path(out_dir).glob(f"{cluster}_*_{CONFIRMATION_WINDOW}*.json"),
+        *Path(out_dir).glob(f"{cluster}_{CONFIRMATION_WINDOW}_cluster.json"))})
+    if taken:
+        raise RunnerRefusal(f"{out_dir} already holds {len(taken)} {cluster} confirmation "
+                            f"file(s) (first {taken[0]}): records are written once; use a fresh "
+                            "--out-dir")
+
+
+def plan_confirmation(cluster: str, *, research_root: Path, step2_root: Path,
+                      untestable: Path | None = None, supply: bool = False,
+                      out_dir: Path | None = None) -> dict:
+    """Every member's confirmation inputs resolved, no bar row read: the frozen member and legs,
+    each leg's store root (price path), S_X and start-rule provenance, the store's existence and
+    pinned sha256 (bytes hashed), the release calendar's coverage of S_X..2024-02-29; declared
+    not-run members listed; ``out_dir`` holds none of the cluster's confirmation files (SF-1).
+    ``supply``: also D4's supply per member (timestamp and trade-date columns only, as the power
+    check counts it). Any refusal raises by name."""
+    check_out_dir_free(cluster, out_dir)
+    freeze = load_cluster_freeze(cluster)
+    verify_cluster_code(freeze)
+    declared, provenance = ({}, None) if untestable is None else _declared_not_run(
+        untestable, cluster, CONFIRMATION_WINDOW)
+    releases = load_release_calendar()
+    hashed: dict[tuple, dict] = {}
+    members = []
+    for m in sorted(freeze.members, key=lambda m: m.ordinal):
+        if m.label in declared:
+            members.append({"member": m.label, "ordinal": m.ordinal, "status": NOT_RUN_STATUS,
+                            "label": declared[m.label].label})
+            continue
+        decl, _ = resolve_member(freeze, m.label, None)
+        _legs_inputs(decl.legs)
+        store_roots, path_meta = _store_roots(decl.legs)
+        starts, prov = _start_dates(list(dict.fromkeys(store_roots.values())))
+        stores = []
+        for leg in decl.legs:
+            src = store_roots[leg.root]
+            key = (leg.root, src, prov[src]["step2_sha256"])
+            if key not in hashed:
+                hashed[key] = check_confirmation_store(
+                    leg.root, step2_root, expected_sha256=prov[src]["step2_sha256"],
+                    path_root=_source(leg.root, store_roots), research_root=research_root)
+            stores.append(hashed[key])
+        first = max(starts.values())
+        if not releases.covers([first, CONFIRMATION_LAST_TRADE_DATE]):
+            raise RunnerRefusal(f"{m.label}: the release calendar ({releases.first}.."
+                                f"{releases.last}) does not cover {first}..2024-02-29")
+        row = {"member": m.label, "ordinal": m.ordinal, "status": "ready",
+               "s_x": {leg.root: starts[store_roots[leg.root]].isoformat() for leg in decl.legs},
+               **path_meta, "stores": stores}
+        if supply:
+            row["supply_days"] = confirmation_supply_days(decl.legs, step2_root,
+                                                          research_root)[0]
+        members.append(row)
+    return {"cluster": cluster, "cluster_freeze_sha256": freeze.sha256, "members": members,
+            "not_run_declaration": provenance,
+            "release_calendar": {"first": releases.first, "last": releases.last,
+                                 "sha256": releases.sha256}}
+
+
+def dry_run(cluster: str, *, harness_sha256: str, research_root: Path, step2_root: Path,
+            untestable: Path | None = None, out_dir: Path | None = None) -> dict:
+    """R2: the preflight, then ``plan_confirmation`` with the supply count. Writes nothing."""
+    harness = harness_freeze.preflight(harness_sha256)
+    plan = plan_confirmation(cluster, research_root=research_root, step2_root=step2_root,
+                             untestable=untestable, supply=True, out_dir=out_dir)
+    return {**plan, "harness_sha256": harness}
+
+
+def check_list_against_plan(payload: Mapping[str, Any], plan: Mapping[str, Any],
+                            name: str) -> None:
+    """Review SF-2, before the marker: the list parses as the verdict parses it; its trials are
+    exactly the frozen members with their ordinals; its Tier A/B trials listed run: false are
+    exactly the declared not-run members; its start_dates give every runnable member's resolved
+    S_X per leg root (vehicle keyed, as the record's s_x is)."""
+    from screening import stage_e_verdict as verdict
+
+    try:
+        clist = verdict.parse_list(payload)
+    except verdict.VerdictRefusal as exc:
+        raise RunOnceRefusal(f"{name}: the verdict would refuse the list: {exc}") from exc
+    frozen = {r["member"]: r["ordinal"] for r in plan["members"]}
+    listed = {t.member: t.ordinal for t in clist.trials}
+    if listed != frozen:
+        differ = sorted(set(frozen.items()) ^ set(listed.items()))
+        raise RunOnceRefusal(f"{name}: trials and ordinals differ from the frozen members: "
+                             f"{differ[:6]}")
+    not_run = {t.member for t in clist.trials if t.tier in ("A", "B") and not t.run}
+    declared = {r["member"] for r in plan["members"] if r["status"] == NOT_RUN_STATUS}
+    if not_run != declared:
+        raise RunOnceRefusal(f"{name}: Tier A/B trials listed run: false {sorted(not_run)} are "
+                             f"not the declared not-run members {sorted(declared)}")
+    for row in plan["members"]:
+        for root, s_x in row.get("s_x", {}).items():
+            got = clist.start_dates.get(root)
+            if got is None or got.isoformat() != s_x:
+                raise RunOnceRefusal(f"{name}: start_dates[{root}] {got} is not the resolved S_X "
+                                     f"{s_x} of {row['member']}")
+
+
+def write_marker(path: Path, content: Mapping[str, Any]) -> Path:
+    """The run-once marker: created O_EXCL, mode 0o444; an existing file refuses."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    body = (json.dumps(_jsonable(dict(content)), indent=1, sort_keys=True) + "\n").encode()
+    try:
+        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o444)
+    except FileExistsError as exc:
+        raise RunOnceRefusal(f"run-once marker {path} exists: this confirmation runs once") \
+            from exc
+    with os.fdopen(fd, "wb") as fh:
+        fh.write(body)
+    return path
+
+
+def stopped_path(marker: Path) -> Path:
+    return Path(marker).with_name(f"{Path(marker).stem}_STOPPED.json")
+
+
+def run_confirmation_once(cluster: str, *, harness_sha256: str, research_root: Path,
+                          step2_root: Path, out_dir: Path, marker: Path,
+                          list_path: Path | None = None, untestable: Path | None = None) -> dict:
+    """R1: refuse if the marker exists; the preflight; every member resolved (plan, no row
+    read); the marker written (O_EXCL, 0o444) before any bar is read; then the cluster run.
+    After the marker, any exception writes the STOPPED record beside it and re-raises."""
+    marker = Path(marker)
+    if marker.exists():
+        raise RunOnceRefusal(f"run-once marker {marker} exists: this confirmation runs once")
+    harness = harness_freeze.preflight(harness_sha256)
+    listed, doc = None, None
+    if list_path is not None:
+        raw = Path(list_path).read_bytes()
+        doc = json.loads(raw.decode("utf-8"))
+        if doc.get("cluster") != cluster or doc.get("harness_sha256") != harness:
+            raise RunOnceRefusal(f"{Path(list_path).name}: cluster {doc.get('cluster')!r} or "
+                                 f"harness {doc.get('harness_sha256')!r} is not {cluster} under "
+                                 f"{harness}")
+        listed = {"path": Path(list_path).as_posix(),
+                  "sha256": hashlib.sha256(raw).hexdigest()}
+    plan = plan_confirmation(cluster, research_root=research_root, step2_root=step2_root,
+                             untestable=untestable, out_dir=out_dir)
+    if doc is not None:
+        check_list_against_plan(doc, plan, Path(list_path).name)
+    header = {"schema": MARKER_SCHEMA, "cluster": cluster, "window": CONFIRMATION_WINDOW,
+              "harness_sha256": harness,
+              "cluster_freeze_sha256": plan["cluster_freeze_sha256"], "list": listed,
+              "members": len(plan["members"]),
+              "not_run": [r["member"] for r in plan["members"] if r["status"] == NOT_RUN_STATUS],
+              "not_run_declaration": plan["not_run_declaration"],
+              "stores": sorted({(s["root"], Path(s["path"]).name, s["sha256"])
+                                for r in plan["members"] for s in r.get("stores", ())}),
+              "out_dir": Path(out_dir).as_posix(),
+              "created_utc": datetime.now(UTC).isoformat(timespec="seconds")}
+    write_marker(marker, header)
+    try:
+        return screen_cluster(cluster, CONFIRMATION_WINDOW, harness_sha256=harness_sha256,
+                              research_root=research_root, step2_root=step2_root,
+                              out_dir=out_dir, untestable=untestable)
+    except BaseException as exc:
+        body = {**header, "schema": f"{MARKER_SCHEMA}:stopped", "status": "STOPPED",
+                "error": f"{type(exc).__name__}: {exc}",
+                "traceback": traceback.format_exc()[-4000:],
+                "stopped_utc": datetime.now(UTC).isoformat(timespec="seconds")}
+        stop = stopped_path(marker)
+        try:  # review N-11: a failed STOPPED write never replaces the original exception
+            with open(os.open(stop, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o444), "wb") as fh:
+                fh.write((json.dumps(_jsonable(body), indent=1, sort_keys=True) + "\n").encode())
+        except OSError as werr:
+            print(f"STOPPED record {stop} not written: {werr}", file=sys.stderr)
+        raise exc
+
+
 # ---------------------------------------------------------------------- CLI ----
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -571,22 +899,61 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--research-root", required=True, type=Path)
     parser.add_argument("--step2-root", required=True, type=Path)
     parser.add_argument("--out-dir", required=True, type=Path)
+    parser.add_argument("--untestable", type=Path, default=None,
+                        help="v13 N4: stage_e_untestable/1 declaration (confirmation --all)")
+    parser.add_argument("--run-once-marker", type=Path, default=None,
+                        help="v13 R1: run-once marker path (confirmation --all)")
+    parser.add_argument("--list", type=Path, default=None, dest="list_path",
+                        help="v13 R1: the confirmation list, hashed into the marker")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="v13 R2: resolve and count supply only (confirmation --all)")
     args = parser.parse_args(argv)
+    v13 = (args.untestable, args.run_once_marker, args.list_path, args.dry_run)
+    if any(v13) and not (args.all and args.window == CONFIRMATION_WINDOW):
+        parser.error("--untestable, --run-once-marker, --list and --dry-run need --all "
+                     "--window confirmation")
+    if args.list_path is not None and args.run_once_marker is None:
+        parser.error("--list is recorded in the run-once marker: give --run-once-marker")
+    if args.dry_run and args.run_once_marker is not None:
+        parser.error("--dry-run writes nothing: no --run-once-marker")
     from compute.platform import lower_priority
 
     lower_priority()
     common = {"harness_sha256": args.harness_sha256, "research_root": args.research_root,
               "step2_root": args.step2_root, "out_dir": args.out_dir}
-    if args.all:
-        out = screen_cluster(args.cluster, args.window, **common)
+    if args.dry_run:
+        plan = dry_run(args.cluster, harness_sha256=args.harness_sha256,
+                       research_root=args.research_root, step2_root=args.step2_root,
+                       untestable=args.untestable, out_dir=args.out_dir)
+        for row in plan["members"]:
+            print(_plan_line(row))
+        print(f"{args.cluster} dry run: {len(plan['members'])} members resolved, nothing written")
+        return 0
+    if args.all:  # review N-4: the same summary on the marker branch
+        out = (run_confirmation_once(args.cluster, **common, marker=args.run_once_marker,
+                                     list_path=args.list_path, untestable=args.untestable)
+               if args.run_once_marker is not None else
+               screen_cluster(args.cluster, args.window, **common, untestable=args.untestable))
         print(f"{args.cluster} {args.window}: {len(out['members'])} members, "
               f"{len(out['refused_members'])} refused")
+        for member, why in out.get("not_run_members", {}).items():
+            print(f"NOT RUN {member}: {why}")
         for member, why in out["refused_members"].items():
             print(f"REFUSED {member}: {why}")
     else:
         rec = screen_member(args.cluster, args.member, None, None, args.window, **common)
         print(f"{args.cluster} {args.member} {args.window}: {rec['status']} {rec['labels']}")
     return 0
+
+
+def _plan_line(row: Mapping[str, Any]) -> str:
+    if row["status"] == NOT_RUN_STATUS:
+        return f"{row['ordinal']:>3} {row['member']}: not run ({row['label']})"
+    stores = ", ".join(f"{s['root']}<-{Path(s['path']).name} {s['sha256'][:12]}"
+                       for s in row["stores"])
+    paths = "".join(f" path {v}->{p}" for v, p in row["price_path"].items())
+    return (f"{row['ordinal']:>3} {row['member']}: s_x {row['s_x']}{paths}; supply "
+            f"{row.get('supply_days')} days; stores {stores}")
 
 
 if __name__ == "__main__":

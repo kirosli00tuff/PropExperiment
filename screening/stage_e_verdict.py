@@ -31,6 +31,14 @@ registered holdout read. The cluster null statement and the per-exposure resolut
 NULL_CRITERIA_E 1 and 7; "inconclusive by design" and not-run (excluded) trials are named as not
 covered and block nothing (lead ruling L-E5-5).
 
+Harness v13 (Stage E.22): K is the list's ``k_holm`` (an int in 1..9, the range holm_tier_a
+accepts; R-E22-A10 sets 5), echoed in the output (N5). A Tier A or B trial labelled "untestable on
+owned data" or "inconclusive by design" may be listed ``run: false``: it needs no record (a
+runner not-run record, status "not_run", is checked when present), enters its cluster's Holm at
+p = 1 and is not covered; a plain Tier A/B trial without a record is still refused (N4). The CLI
+records screening.trial_registry.current_n() beside the list's program_n, without refusing when
+they differ (R3; R-E22-A11 fixes N for the DSR in the list).
+
     uv run python -m screening.stage_e_verdict --harness-sha256 SHA --list LIST.json \\
         --records DIR --out OUT.json
 """
@@ -73,7 +81,11 @@ UCB_QUANTILE = 0.95
 NULL_Z = 1.645  # as NULL_CRITERIA_E 3 writes it: Phi(eps_X / SE_boot - 1.645)
 NULL_POWER_MIN = 0.80
 INACTIVITY_MIN = 30
-HOLM_K = 9  # V14 (b)
+HOLM_K = 9  # V14 (b); the largest K holm_tier_a accepts (v13: the list's k_holm, 1..9)
+HOLM_K_MIN = 1
+HOLM_DESCRIPTIVE_K = 9  # review N-3: R-E22-A10 reports Holm at K = 9 beside the list's K
+HOLM_DESCRIPTIVE_NOTE = ("descriptive only (R-E22-A10): Holm at K = 9 on the same p values; the "
+                         "verdicts use the list's k_holm")
 DSR_MIN = 0.95
 T_MIN = HLZ_HURDLE  # 3.0
 PBO_MAX = 0.5
@@ -95,8 +107,12 @@ LABEL_EDGE_CANDIDATE = "edge candidate, composite pending"  # V14 (a)
 # The runner's D9 labels (screening/stage_e_runner.py LABEL_*), carried by excluded trials.
 RUNNER_LABELS = ("coverage_below_0.95", "mean_holding_below_10min", "entries_above_20_per_day",
                  "hold_below_2min")
+LABEL_UNTESTABLE = "untestable on owned data"  # v13 N4 (screening.stage_e_runner)
+NOT_RUN_STATUS = "not_run"  # the runner's declared not-run record (v13 N4)
+# v13 N4: a Tier A or B trial with one of these labels may be listed run: false, without record.
+NOT_RUN_LABELS = (LABEL_UNTESTABLE, LABEL_INCONCLUSIVE_BY_DESIGN)
 LIST_LABELS = frozenset((LABEL_SOURCE_OVERLAP, LABEL_CALENDAR_UNVERIFIED,
-                         LABEL_INCONCLUSIVE_BY_DESIGN, *RUNNER_LABELS))
+                         LABEL_INCONCLUSIVE_BY_DESIGN, LABEL_UNTESTABLE, *RUNNER_LABELS))
 
 NULL, NULL_INACTIVE, INCONCLUSIVE = "null", LABEL_INACTIVITY, "inconclusive"
 NO_EDGE = "no edge"
@@ -268,6 +284,13 @@ class ListTrial:
     def covered(self) -> bool:
         return self.run and not self.by_design
 
+    @property
+    def not_run_label(self) -> str | None:
+        """v13 N4: the label under which a Tier A/B trial is listed not run, else None."""
+        if self.run or self.tier == "excluded":
+            return None
+        return next(lab for lab in NOT_RUN_LABELS if lab in self.labels)
+
 
 @dataclass(frozen=True)
 class ConfirmationList:
@@ -277,6 +300,7 @@ class ConfirmationList:
     program_n: int
     start_dates: Mapping[str, date]
     trials: tuple[ListTrial, ...]
+    k_holm: int = HOLM_K
 
 
 def _int(value: object, what: str, minimum: int = 0) -> int:
@@ -297,14 +321,21 @@ def _trial(raw: Mapping[str, Any], seed_base: int) -> ListTrial:
         raise VerdictRefusal(f"a list trial has no member name: {raw!r}")
     ordinal = _int(raw.get("ordinal"), f"{member}: ordinal")
     tier, run, labels = raw.get("tier"), raw.get("run"), raw.get("labels")
-    if tier not in TIERS or not isinstance(run, bool) or (tier == "excluded") == run:
-        raise VerdictRefusal(f"{member}: tier {tier!r} and run {run!r} disagree (Tier A and B "
-                             "trials are run, excluded trials are not)")
     if not isinstance(labels, list) or not all(isinstance(x, str) for x in labels):
         raise VerdictRefusal(f"{member}: labels must be a list of strings")
     unknown = sorted(set(labels) - LIST_LABELS)
     if unknown:
         raise VerdictRefusal(f"{member}: unknown labels {unknown}")
+    not_run_ok = tier in ("A", "B") and run is False and any(
+        lab in labels for lab in NOT_RUN_LABELS)  # v13 N4
+    if tier not in TIERS or not isinstance(run, bool) or (
+            (tier == "excluded") == run and not not_run_ok):
+        raise VerdictRefusal(f"{member}: tier {tier!r} and run {run!r} disagree (Tier A and B "
+                             "trials are run unless labelled "
+                             f"{' or '.join(repr(x) for x in NOT_RUN_LABELS)}; excluded trials "
+                             "are not run)")
+    if run and LABEL_UNTESTABLE in labels:
+        raise VerdictRefusal(f"{member}: a trial {LABEL_UNTESTABLE!r} cannot be listed run")
     seed = _int(raw.get("bootstrap_seed"), f"{member}: bootstrap_seed")
     if seed != seed_base + ordinal:
         raise VerdictRefusal(f"{member}: bootstrap_seed {seed} is not {seed_base} + ordinal "
@@ -335,8 +366,11 @@ def parse_list(payload: Mapping[str, Any]) -> ConfirmationList:
     """The hashed confirmation list; every field the module reads is checked, or refused."""
     if payload.get("schema") != LIST_SCHEMA:
         raise VerdictRefusal(f"list schema {payload.get('schema')!r} is not {LIST_SCHEMA!r}")
-    if payload.get("k_holm") != HOLM_K or isinstance(payload.get("k_holm"), bool):
-        raise VerdictRefusal(f"list K {payload.get('k_holm')!r} is not {HOLM_K} (V14 b)")
+    k_holm = payload.get("k_holm")
+    if isinstance(k_holm, bool) or not isinstance(k_holm, int) or not (
+            HOLM_K_MIN <= k_holm <= HOLM_K):
+        raise VerdictRefusal(f"list K {k_holm!r} is not an int in {HOLM_K_MIN}..{HOLM_K} (the "
+                             "range holm_tier_a accepts)")
     boot = payload.get("bootstrap")
     expected = {"seed_base": BOOTSTRAP_SEED_BASE, "resamples": BOOTSTRAP_RESAMPLES,
                 "mean_block": MEAN_BLOCK_DAYS, "ucb_quantile": UCB_QUANTILE}
@@ -364,7 +398,8 @@ def parse_list(payload: Mapping[str, Any]) -> ConfirmationList:
         if len(set(values)) != len(values):
             raise VerdictRefusal(f"list repeats a trial {what}")
     return ConfirmationList(payload["cluster"], payload["harness_sha256"],
-                            payload["cluster_freeze_sha256"], program_n, start_dates, trials)
+                            payload["cluster_freeze_sha256"], program_n, start_dates, trials,
+                            k_holm)
 
 
 def record_name(cluster: str, member: str) -> str:
@@ -392,6 +427,13 @@ def check_record(record: Mapping[str, Any], trial: ListTrial, clist: Confirmatio
         if record.get(key) != value or isinstance(record.get(key), bool):
             raise VerdictRefusal(f"{who}: record {key} {record.get(key)!r} differs from the list "
                                  f"({value!r})")
+    if record.get("status") == NOT_RUN_STATUS:  # v13 N4: a declared not-run record, no S_X
+        labels = record.get("labels")
+        if trial.not_run_label is None or not isinstance(labels, list) or len(labels) != 1 or (
+                labels[0] != trial.not_run_label):  # review N-12: exactly the list's label
+            raise VerdictRefusal(f"{who}: a not-run record (labels {labels!r}) needs a Tier A/B "
+                                 f"trial listed run: false with that label")
+        return None
     s_x = record.get("s_x")
     if not isinstance(s_x, Mapping) or not s_x:
         raise VerdictRefusal(f"{who}: record has no S_X map")
@@ -474,6 +516,11 @@ def _trial_row(trial: ListTrial, series: Series | None, record_status: str | Non
         row.update(trial_figures(series, trial.eps_ticks, trial.bootstrap_seed, n_resamples))
     elif trial.run:  # a confirmation record that is not "run": no evidence (NULL_CRITERIA_E 6)
         row.update(status=INCONCLUSIVE, reasons=[f"record status {record_status!r}: no series"])
+    elif trial.not_run_label is not None:  # v13 N4: Holm at p = 1, not covered
+        reason = f"Tier {trial.tier} listed not run: {trial.not_run_label}"
+        if record_status is not None:
+            reason += f"; its record (status {record_status!r}) is present and not used"
+        row.update(status="not run", reasons=[reason])
     else:
         reason = "excluded (not Tier A or B): not run"
         if record_status is not None:
@@ -495,7 +542,7 @@ def edge_chain(clist: ConfirmationList, rows: Mapping[str, dict],
         return None
     # A Tier A trial without a series enters Holm at p = 1 (no evidence; it cannot reject).
     pvalues = {m: rows[m].get("p_upper", 1.0) for m in tier_a}
-    holm = holm_tier_a(pvalues, HOLM_K)
+    holm = holm_tier_a(pvalues, clist.k_holm)
     a_series = [m for m in tier_a if m in series]
     run_series = [t.member for t in clist.trials if t.member in series]
     moms = {m: moments(series[m].values.tolist()) for m in run_series}
@@ -510,8 +557,12 @@ def edge_chain(clist: ConfirmationList, rows: Mapping[str, dict],
     rejected = set(holm.rejected)
     verdicts = {m: _chain_verdict(m, m in rejected, moms.get(m), table, dsr_undefined, pbo_out,
                                   LABEL_SOURCE_OVERLAP in rows[m]["labels"]) for m in tier_a}
+    k9 = holm_tier_a(pvalues, HOLM_DESCRIPTIVE_K)  # review N-3, R-E22-A10: decides nothing
     return {"holm": {"k": holm.k_clusters, "alpha_k": holm.alpha_k, "m": holm.m,
                      "rows": [_holm_row(r) for r in holm.rows]},
+            "holm_descriptive_k9": {"k": k9.k_clusters, "alpha_k": k9.alpha_k, "m": k9.m,
+                                    "rows": [_holm_row(r) for r in k9.rows],
+                                    "note": HOLM_DESCRIPTIVE_NOTE},
             "composite": COMPOSITE_PENDING,
             "dsr": {**({k: v for k, v in table.items() if k not in ("dsr", "undefined")}
                        if table is not None else {}),
@@ -576,6 +627,7 @@ def null_statement(clist: ConfirmationList, rows: Mapping[str, dict],
     covered = [t for t in clist.trials if t.covered]
     not_covered = [{"member": t.member,
                     "reason": LABEL_INCONCLUSIVE_BY_DESIGN if t.run else
+                    f"not run: {t.not_run_label}" if t.not_run_label is not None else
                     "not run: excluded (not Tier A or B)", "labels": list(t.labels)}
                    for t in clist.trials if not t.covered]
     blocking = [{"member": t.member, "status": rows[t.member]["status"],
@@ -640,7 +692,7 @@ def evaluate(list_payload: Mapping[str, Any], records: Mapping[str, Mapping[str,
     return {"schema": VERDICT_SCHEMA, "cluster": clist.cluster,
             "harness_sha256": clist.harness_sha256,
             "cluster_freeze_sha256": clist.cluster_freeze_sha256,
-            "program_n": clist.program_n, "k_holm": HOLM_K,
+            "program_n": clist.program_n, "k_holm": clist.k_holm,
             "constants": {"seed_base": BOOTSTRAP_SEED_BASE, "resamples": n_resamples,
                           "mean_block": MEAN_BLOCK_DAYS, "ucb_quantile": UCB_QUANTILE,
                           "null_z": NULL_Z, "null_power_min": NULL_POWER_MIN,
@@ -703,6 +755,20 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
+def registry_n(program_n: int) -> dict:
+    """v13 R3: the trial registry's current N beside the list's program_n (descriptive: no
+    refusal when they differ; an unreadable registry is recorded by name)."""
+    from screening import trial_registry
+
+    try:
+        current = trial_registry.current_n()
+    except Exception as exc:  # noqa: BLE001 - recorded by name, never guessed
+        return {"list_program_n": program_n, "registry_current_n": None,
+                "registry_error": f"{type(exc).__name__}: {exc}", "equal": None}
+    return {"list_program_n": program_n, "registry_current_n": current,
+            "registry_error": None, "equal": current == program_n}
+
+
 def _run(args: argparse.Namespace) -> tuple[Path, dict]:
     harness = harness_freeze.preflight(args.harness_sha256)  # first, before any file is read
     if args.out.exists():
@@ -714,7 +780,7 @@ def _run(args: argparse.Namespace) -> tuple[Path, dict]:
                              f"preflighted {harness}")
     verdict = evaluate(payload, load_records(args.records, payload))
     verdict = {**verdict, "list_sha256": hashlib.sha256(raw).hexdigest(),
-               "list_file": args.list.name}
+               "list_file": args.list.name, "program_n_check": registry_n(verdict["program_n"])}
     return write_verdict(verdict, args.out), verdict
 
 

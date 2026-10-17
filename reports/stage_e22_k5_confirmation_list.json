@@ -1,0 +1,501 @@
+{
+ "schema": "stage_e_confirmation_list/1",
+ "cluster": "K5",
+ "stage": "E.22",
+ "created_pdt": "2026-10-16T02:40:06-07:00",
+ "harness_sha256": "dd2bcc6025144e0debd19be1ca8d43c983872a27c9258895ef55ee3c138609e4",
+ "cluster_freeze_sha256": "1d0c974f18e884e1ad073d8f6f94d7bb70ee6f43971c7f23ccacab54103b3655",
+ "k_holm": 5,
+ "program_n": 533,
+ "bootstrap": {
+  "seed_base": 20260923,
+  "resamples": 10000,
+  "mean_block": 5.0,
+  "ucb_quantile": 0.95
+ },
+ "start_dates": {
+  "MGC": "2019-05-06",
+  "MHG": "2022-06-01"
+ },
+ "price_paths": {
+  "MGC": "GC"
+ },
+ "confirmation_window": {
+  "MGC": [
+   "2019-05-06",
+   "2024-02-29"
+  ],
+  "MHG": [
+   "2022-06-01",
+   "2024-02-29"
+  ]
+ },
+ "rules": {
+  "null": "NULL_CRITERIA_E 3: UCB95 < eps_X and Phi(eps_X / SE_boot - 1.645) >= 0.80; zero trips or SE_boot = 0 inconclusive; < 30 closed trips 'null by inactivity'; a trial labelled 'inconclusive by design' or 'untestable on owned data' is not covered; OC-H-excluded trials are listed, not run, not covered (L-E5-5).",
+  "edge_chain": "D5 with V14 and the E.22 rulings: Holm over the Tier A one-sided p at 0.05 / K, K = 5 (R-E22-A10), a Tier A trial with no record at p = 1 (R-E22-A13); composite verdict pending, not built unless the rest passes (V14 a); DSR > 0.95 at program N = 533 (R-E22-A11) with the Sharpe variance over Tier A, or over every run trial of the cluster when fewer than two Tier A series exist (V14 c); daily t > 3.0 one-sided; CSCV PBO < 0.5 on 8 contiguous blocks over Tier A, or over every run trial when fewer than two Tier A series exist (L-E5-3), aligned on the union of the run trials' window dates, zeros off each trial's dates.",
+  "wording": "A trial passing Holm, DSR, t and PBO reads 'edge candidate, composite pending', never 'edge'; a source-overlap trial adds 'no edge claim without a registered holdout read'.",
+  "code": "screening/stage_e_verdict.py under the harness sha256 above; one confirmation run per cluster, behind a run-once marker."
+ },
+ "inputs": {
+  "reports/stage_e22_power_k5/K5_K5-cp1-01_MGC_research.json": "7c56cc3ccbe78fc28001fc85b911ea570a76a4b31fea0067887b3e63db9a14ef",
+  "reports/stage_e22_power_k5/K5_K5-cp1-01_MHG_research.json": "ed457df15cd8e399241abbadf6226864a06e18bd1096e0eb02f8cf8b3cd813f6",
+  "reports/stage_e22_power_k5/K5_K5-cp2-01_MGC_research.json": "2ba890d418107eea293128bf61c6dd7adbc5eef26f8de069cc258833fc3733f9",
+  "reports/stage_e22_power_k5/K5_K5-cp2-01_MHG_research.json": "b609097243b5b21cc4fda98c011729a0c9e8b93a27658d2bfe845794cf1f208c",
+  "reports/stage_e22_power_k5/K5_K5-cp3-01_MGC_research.json": "e0833d8eede1ae6a02864bd58ccfee99865d1e054813ed8bf9222b154c8942a8",
+  "reports/stage_e22_power_k5/K5_K5-cp3-01_MHG_research.json": "95eeb1217227a87a1c003d7e325acbe7e9c9cf4bfee87143527974083b55fe74",
+  "reports/stage_e22_power_k5/K5_K5-preauc-01_MGC_research.json": "c289f1a4dbeb1dbf0b8a55b4ffb3462457701e7fb1f57c5f6819dc1c35f73162",
+  "reports/stage_e22_power_k5/K5_K5-pmfix-01_MGC_research.json": "ea0d416d45e197ef2319f01f13a4a1a6230f4cd47fd806fecff6fc884e457a26",
+  "reports/stage_e22_power_k5/K5_K5-fomc-01_MGC_research.json": "08b9aedcd9164bd847f7e3f2d895929c247ac5db47af4462b610cde94b39893b",
+  "reports/stage_e22_power_k5/K5_K5-ovr-01_MGC_research.json": "ac557ba5d262599b0e9c42cb80d262e0cacb7ed55c6ff312420478df22c3e443",
+  "reports/stage_e22_power_k5/K5_K5-ovr-01_MHG_research.json": "3773139c6d224002fd159648c27b7ac372e80e600e01c3d5a78e548c5482f458",
+  "docs/NULL_CRITERIA_E.md": "b27ca69cf8f3ec411c0bc174b50c277e8b769e38f38581af171022ea3bef0cdd",
+  "docs/STAGE_E_DESIGN.md": "615bb1e14f9072b12f6a5c6206b463fc7828989ad0a9c8e463ebb301ea55103a",
+  "docs/DECISIONS.md": "bff1c296e34bd5bdfbc87a909f5843e18eebdf5ee86641a1886b0bdc8cf7a87e",
+  "reports/stage_e2a_source_window_amendment.md": "9fe401c1c156ebba38162256bf151d9888dec00e42cd24026d348d039e64f13d",
+  "reports/stage_e2a_epsilon.json": "4e2c773182a23e7d073305ca4eb0134d3b3ac554ccc8215730bc1e194eaff496",
+  "reports/stage_e22_briefs/partA_rulings.md": "c3a9b0ee52612d706ce2c18f05f8a6f6fa426b6df51bd75a4122b4a0f751f137",
+  "reports/stage_e22_price_paths.json": "860f4b11d75aaf8bacb52871944d902d858cbe5edaa9c00a0b76921f270bb425",
+  "reports/stage_e_start_rule_K8.json": "5612f0068e6d587f0cfb1c6027824e00de58029c89db156af0a4e74ad2f44d0c",
+  "reports/stage_e_start_rule_K5.json": "d5965f1718c20c824d45e2da8d72ec03ec16bfb71b9018362b278c239644b70e"
+ },
+ "trials": [
+  {
+   "ordinal": 1,
+   "member": "K5-cp1-01 MGC",
+   "vehicle": "MGC",
+   "legs": [
+    "MGC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 71,
+   "eps_usd_per_day_at_q": 71.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260924,
+   "power": {
+    "status": "run",
+    "supply_days": 1174,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 9,
+    "n_b_analytic": 9,
+    "n_b_sim": 9.0,
+    "n_a_chosen": 22,
+    "research_days": 295,
+    "mean_ticks": -0.6036949152542405,
+    "sd_day_ticks": 79.45523747464043,
+    "vif_boot": 1.080840281663305,
+    "seed": 20260923,
+    "flags": [
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "MGC": "2019-05-06"
+   },
+   "price_path": {
+    "MGC": "GC"
+   },
+   "notes": [
+    "price path declared before any read (reports/stage_e22_price_paths.json): MGC on GC bars with MGC's costs, tick value and q_c"
+   ]
+  },
+  {
+   "ordinal": 2,
+   "member": "K5-cp1-01 MHG",
+   "vehicle": "MHG",
+   "legs": [
+    "MHG"
+   ],
+   "q_c": 2,
+   "eps_ticks": 27,
+   "eps_usd_per_day_at_q": 67.5,
+   "tier": "excluded",
+   "run": false,
+   "labels": [
+    "coverage_below_0.95",
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260925,
+   "power": null,
+   "s_x": {
+    "MHG": "2022-06-01"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 3,
+   "member": "K5-cp2-01 MGC",
+   "vehicle": "MGC",
+   "legs": [
+    "MGC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 71,
+   "eps_usd_per_day_at_q": 71.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260926,
+   "power": {
+    "status": "run",
+    "supply_days": 1174,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 44,
+    "n_b_analytic": 44,
+    "n_b_sim": 44.36835956222924,
+    "n_a_chosen": 114,
+    "research_days": 295,
+    "mean_ticks": 10.557016949152544,
+    "sd_day_ticks": 200.5586680411627,
+    "vif_boot": 0.8857358082050305,
+    "seed": 20260925,
+    "flags": []
+   },
+   "s_x": {
+    "MGC": "2019-05-06"
+   },
+   "price_path": {
+    "MGC": "GC"
+   },
+   "notes": [
+    "price path declared before any read (reports/stage_e22_price_paths.json): MGC on GC bars with MGC's costs, tick value and q_c"
+   ]
+  },
+  {
+   "ordinal": 4,
+   "member": "K5-cp2-01 MHG",
+   "vehicle": "MHG",
+   "legs": [
+    "MHG"
+   ],
+   "q_c": 2,
+   "eps_ticks": 27,
+   "eps_usd_per_day_at_q": 67.5,
+   "tier": "excluded",
+   "run": false,
+   "labels": [
+    "coverage_below_0.95",
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260927,
+   "power": null,
+   "s_x": {
+    "MHG": "2022-06-01"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 5,
+   "member": "K5-cp3-01 MGC",
+   "vehicle": "MGC",
+   "legs": [
+    "MGC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 71,
+   "eps_usd_per_day_at_q": 71.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260928,
+   "power": {
+    "status": "run",
+    "supply_days": 1174,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 62,
+    "n_b_analytic": 62,
+    "n_b_sim": 61.87430771657023,
+    "n_a_chosen": 160,
+    "research_days": 295,
+    "mean_ticks": 8.494508474576268,
+    "sd_day_ticks": 184.24600131072663,
+    "vif_boot": 1.4801719425360547,
+    "seed": 20260927,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "MGC": "2019-05-06"
+   },
+   "price_path": {
+    "MGC": "GC"
+   },
+   "notes": [
+    "price path declared before any read (reports/stage_e22_price_paths.json): MGC on GC bars with MGC's costs, tick value and q_c"
+   ]
+  },
+  {
+   "ordinal": 6,
+   "member": "K5-cp3-01 MHG",
+   "vehicle": "MHG",
+   "legs": [
+    "MHG"
+   ],
+   "q_c": 2,
+   "eps_ticks": 27,
+   "eps_usd_per_day_at_q": 67.5,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260929,
+   "power": {
+    "status": "run",
+    "supply_days": 425,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 52,
+    "n_b_analytic": 52,
+    "n_b_sim": 59.31884797366112,
+    "n_a_chosen": 135,
+    "research_days": 295,
+    "mean_ticks": 3.2467525423728816,
+    "sd_day_ticks": 80.34811215534782,
+    "vif_boot": 0.9481119224045034,
+    "seed": 20260928,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "MHG": "2022-06-01"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 7,
+   "member": "K5-preauc-01 MGC",
+   "vehicle": "MGC",
+   "legs": [
+    "MGC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 71,
+   "eps_usd_per_day_at_q": 71.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260930,
+   "power": {
+    "status": "run",
+    "supply_days": 1174,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 6,
+    "n_b_analytic": 6,
+    "n_b_sim": 6.0,
+    "n_a_chosen": 14,
+    "research_days": 295,
+    "mean_ticks": 1.3052203389830492,
+    "sd_day_ticks": 62.73379356972257,
+    "vif_boot": 1.0985760316537578,
+    "seed": 20260929,
+    "flags": [
+     "sim_smaller_ignored_a",
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "MGC": "2019-05-06"
+   },
+   "price_path": {
+    "MGC": "GC"
+   },
+   "notes": [
+    "price path declared before any read (reports/stage_e22_price_paths.json): MGC on GC bars with MGC's costs, tick value and q_c"
+   ]
+  },
+  {
+   "ordinal": 8,
+   "member": "K5-pmfix-01 MGC",
+   "vehicle": "MGC",
+   "legs": [
+    "MGC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 71,
+   "eps_usd_per_day_at_q": 71.0,
+   "tier": "excluded",
+   "run": false,
+   "labels": [
+    "mean_holding_below_10min",
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260931,
+   "power": {
+    "status": "run",
+    "supply_days": 1174,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 11,
+    "n_b_analytic": 11,
+    "n_b_sim": 10.0,
+    "n_a_chosen": 28,
+    "research_days": 295,
+    "mean_ticks": -9.989559322033896,
+    "sd_day_ticks": 78.33919663921282,
+    "vif_boot": 1.391270386463247,
+    "seed": 20260930,
+    "flags": [
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "MGC": "2019-05-06"
+   },
+   "price_path": {
+    "MGC": "GC"
+   },
+   "notes": [
+    "price path declared before any read (reports/stage_e22_price_paths.json): MGC on GC bars with MGC's costs, tick value and q_c"
+   ]
+  },
+  {
+   "ordinal": 9,
+   "member": "K5-fomc-01 MGC",
+   "vehicle": "MGC",
+   "legs": [
+    "MGC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 71,
+   "eps_usd_per_day_at_q": 71.0,
+   "tier": "A",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260932,
+   "power": {
+    "status": "run",
+    "supply_days": 1174,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 1,
+    "n_b_analytic": 1,
+    "n_b_sim": 2.0,
+    "n_a_chosen": 2,
+    "research_days": 295,
+    "mean_ticks": 2.3498305084745765,
+    "sd_day_ticks": 21.90132303427003,
+    "vif_boot": 0.9491383132048186,
+    "seed": 20260931,
+    "flags": [
+     "zero_variance_draws",
+     "sim_censored_below_grid_a",
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "MGC": "2019-05-06"
+   },
+   "price_path": {
+    "MGC": "GC"
+   },
+   "notes": [
+    "price path declared before any read (reports/stage_e22_price_paths.json): MGC on GC bars with MGC's costs, tick value and q_c"
+   ]
+  },
+  {
+   "ordinal": 10,
+   "member": "K5-ovr-01 MGC",
+   "vehicle": "MGC",
+   "legs": [
+    "MGC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 71,
+   "eps_usd_per_day_at_q": 71.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260933,
+   "power": {
+    "status": "run",
+    "supply_days": 1174,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 29,
+    "n_b_analytic": 29,
+    "n_b_sim": 26.127732231225984,
+    "n_a_chosen": 75,
+    "research_days": 295,
+    "mean_ticks": -3.560779661016948,
+    "sd_day_ticks": 185.38202259046102,
+    "vif_boot": 0.6849799086212826,
+    "seed": 20260932,
+    "flags": []
+   },
+   "s_x": {
+    "MGC": "2019-05-06"
+   },
+   "price_path": {
+    "MGC": "GC"
+   },
+   "notes": [
+    "price path declared before any read (reports/stage_e22_price_paths.json): MGC on GC bars with MGC's costs, tick value and q_c"
+   ]
+  },
+  {
+   "ordinal": 11,
+   "member": "K5-ovr-01 MHG",
+   "vehicle": "MHG",
+   "legs": [
+    "MHG"
+   ],
+   "q_c": 2,
+   "eps_ticks": 27,
+   "eps_usd_per_day_at_q": 67.5,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260934,
+   "power": {
+    "status": "run",
+    "supply_days": 425,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 18,
+    "n_b_analytic": 18,
+    "n_b_sim": 13.273466907436232,
+    "n_a_chosen": 54,
+    "research_days": 295,
+    "mean_ticks": -3.3977084745762705,
+    "sd_day_ticks": 48.66016540128805,
+    "vif_boot": 0.8566866212292102,
+    "seed": 20260933,
+    "flags": [
+     "zero_variance_draws",
+     "sim_used_larger_a",
+     "sim_smaller_ignored_b"
+    ]
+   },
+   "s_x": {
+    "MHG": "2022-06-01"
+   },
+   "price_path": {},
+   "notes": []
+  }
+ ]
+}

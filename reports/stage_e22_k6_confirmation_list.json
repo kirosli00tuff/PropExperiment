@@ -1,0 +1,1196 @@
+{
+ "schema": "stage_e_confirmation_list/1",
+ "cluster": "K6",
+ "stage": "E.22",
+ "created_pdt": "2026-10-16T02:40:10-07:00",
+ "harness_sha256": "dd2bcc6025144e0debd19be1ca8d43c983872a27c9258895ef55ee3c138609e4",
+ "cluster_freeze_sha256": "a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604",
+ "k_holm": 5,
+ "program_n": 533,
+ "bootstrap": {
+  "seed_base": 20260923,
+  "resamples": 10000,
+  "mean_block": 5.0,
+  "ucb_quantile": 0.95
+ },
+ "start_dates": {
+  "HE": "2019-05-06",
+  "LE": "2019-05-06",
+  "ZC": "2019-05-06",
+  "ZL": "2019-05-06",
+  "ZM": "2019-05-06",
+  "ZS": "2019-05-06",
+  "ZW": "2019-05-06"
+ },
+ "price_paths": {},
+ "confirmation_window": {
+  "HE": [
+   "2019-05-06",
+   "2024-02-29"
+  ],
+  "LE": [
+   "2019-05-06",
+   "2024-02-29"
+  ],
+  "ZC": [
+   "2019-05-06",
+   "2024-02-29"
+  ],
+  "ZL": [
+   "2019-05-06",
+   "2024-02-29"
+  ],
+  "ZM": [
+   "2019-05-06",
+   "2024-02-29"
+  ],
+  "ZS": [
+   "2019-05-06",
+   "2024-02-29"
+  ],
+  "ZW": [
+   "2019-05-06",
+   "2024-02-29"
+  ]
+ },
+ "rules": {
+  "null": "NULL_CRITERIA_E 3: UCB95 < eps_X and Phi(eps_X / SE_boot - 1.645) >= 0.80; zero trips or SE_boot = 0 inconclusive; < 30 closed trips 'null by inactivity'; a trial labelled 'inconclusive by design' or 'untestable on owned data' is not covered; OC-H-excluded trials are listed, not run, not covered (L-E5-5).",
+  "edge_chain": "D5 with V14 and the E.22 rulings: Holm over the Tier A one-sided p at 0.05 / K, K = 5 (R-E22-A10), a Tier A trial with no record at p = 1 (R-E22-A13); composite verdict pending, not built unless the rest passes (V14 a); DSR > 0.95 at program N = 533 (R-E22-A11) with the Sharpe variance over Tier A, or over every run trial of the cluster when fewer than two Tier A series exist (V14 c); daily t > 3.0 one-sided; CSCV PBO < 0.5 on 8 contiguous blocks over Tier A, or over every run trial when fewer than two Tier A series exist (L-E5-3), aligned on the union of the run trials' window dates, zeros off each trial's dates.",
+  "wording": "A trial passing Holm, DSR, t and PBO reads 'edge candidate, composite pending', never 'edge'; a source-overlap trial adds 'no edge claim without a registered holdout read'.",
+  "code": "screening/stage_e_verdict.py under the harness sha256 above; one confirmation run per cluster, behind a run-once marker."
+ },
+ "inputs": {
+  "reports/stage_e22_power_k6/K6_K6-cp1-01_ZC_research.json": "2878f13bacaffaa3e62884241a43bae065dc01215bada0399113ec914d443a09",
+  "reports/stage_e22_power_k6/K6_K6-cp1-01_ZW_research.json": "2a6439e1ebf068c4a3a14df0236cd82b8bf38bae17330ae231d77e9fb522b408",
+  "reports/stage_e22_power_k6/K6_K6-cp1-01_ZS_research.json": "7e8f0a7c5dc9252a67262e38f669650711e698988d2e20187d5cce81dbb3ee31",
+  "reports/stage_e22_power_k6/K6_K6-cp1-01_ZM_research.json": "354a6c3a6874dd408d4cba9f68fc4fb0c28c9b73b6c8780a03852086f004bb35",
+  "reports/stage_e22_power_k6/K6_K6-cp1-01_ZL_research.json": "8d3f0a8e99bf364863656aa094e15a89c23ce2ec04ec5e53d6c1c361f8cfac20",
+  "reports/stage_e22_power_k6/K6_K6-cp1-01_HE_research.json": "8a9db44ba15cc543c75ec31e220bbcdd7c6af711b519be78360c84a1d4a64ce2",
+  "reports/stage_e22_power_k6/K6_K6-cp1-01_LE_research.json": "6fe5740f0221c280032fa30cb1efcae8fcd2228015a89ba007d281a08cfe5f38",
+  "reports/stage_e22_power_k6/K6_K6-cp2-01_ZC_research.json": "35cadeede4e3b7e6dae6820092f9f933c80027e351ab04b7620191365b95bd35",
+  "reports/stage_e22_power_k6/K6_K6-cp2-01_ZW_research.json": "e2efe3f49a4f3ab199a8aabf3c6c9cb12117aeb06d6cce8ee27c8362b0b3670c",
+  "reports/stage_e22_power_k6/K6_K6-cp2-01_ZS_research.json": "4bca7312f5bf09a7ef13191ebfe11e0e00db2b251e8e8afce5bd432972e1acb1",
+  "reports/stage_e22_power_k6/K6_K6-cp2-01_ZM_research.json": "bf99ce07c1f2a9522b60123d34f27e37cb5fc60c2f524a11b966b9a4119963dc",
+  "reports/stage_e22_power_k6/K6_K6-cp2-01_ZL_research.json": "7224a7cfa6685686f954c930fc743c20dcc25b91b6b75622543bdb1f6a11480e",
+  "reports/stage_e22_power_k6/K6_K6-cp2-01_HE_research.json": "6a015a3900a0cbc01f6cabdbf3d9068c9b93d44eb5e2efa82d5e13da90b83ea5",
+  "reports/stage_e22_power_k6/K6_K6-cp2-01_LE_research.json": "9be844bce39f901962fcaf058e95a0b0d01eff2a0c87612f844aca60cfc11024",
+  "reports/stage_e22_power_k6/K6_K6-cp3-01_ZC_research.json": "cf8edffb23bc160155161d9472dc690078938522c823ce2a09e2a3f5856b2449",
+  "reports/stage_e22_power_k6/K6_K6-cp3-01_ZW_research.json": "452ec2510666bf4a1b8b58ac88ec8be76704c238ba27e99bce0dd9c324e16fc6",
+  "reports/stage_e22_power_k6/K6_K6-cp3-01_ZS_research.json": "21d23a7c1e019a8cf89efe525d13e2b6e770a98787fe916f45658cadd4ea1490",
+  "reports/stage_e22_power_k6/K6_K6-cp3-01_ZM_research.json": "76ab48eeb461148c84607c64f18a8af9b2bb90b0b4247ada6e432798cd821e9c",
+  "reports/stage_e22_power_k6/K6_K6-cp3-01_ZL_research.json": "0a71d6df45d5a902d59fa2959c245c2b0b515e06c06441e59344939ed399140d",
+  "reports/stage_e22_power_k6/K6_K6-cp3-01_HE_research.json": "3a7867521468018c0dca649c7fe4a58efa2ea27cbc4c0dcd0715c7f3710be7c9",
+  "reports/stage_e22_power_k6/K6_K6-cp3-01_LE_research.json": "638d06237b8dcecc3b1e053a94729786d32f43d45127c3264a73d145ded59786",
+  "reports/stage_e22_power_k6/K6_K6-crushgap-01_ZS_research.json": "cc155f93d3ef5b4d2810a0674ccef15d0dd59bb178dc6ae368bf5399b4b5df68",
+  "reports/stage_e22_power_k6/K6_K6-limitcont-01_HE_research.json": "81c36410aa58653e4aff0891de77d92d024a9907d88c65bc67719eb71d7d016e",
+  "reports/stage_e22_power_k6/K6_K6-limitcont-01_LE_research.json": "eeff93ee2c6e4672fbe98ffccebc71974c79fb88f5c63c62e6eaf1c8a6995ba5",
+  "reports/stage_e22_power_k6/K6_K6-wasdepre-01_ZC_research.json": "32048fd13537027d963a2cdf3bbeb71efbe39e098a807fbaa14e7253fd80cccd",
+  "reports/stage_e22_power_k6/K6_K6-wasdepre-01_ZS_research.json": "e1424de066c47db70296f9e6a7b0b2a509697c6881206ee26245aec6f3759922",
+  "reports/stage_e22_power_k6/K6_K6-wasdepost-01_ZC_research.json": "b295f7ab6d0e2685305cd38eedae7346d95988c87b9f4b71f078c28ae718f70a",
+  "docs/NULL_CRITERIA_E.md": "b27ca69cf8f3ec411c0bc174b50c277e8b769e38f38581af171022ea3bef0cdd",
+  "docs/STAGE_E_DESIGN.md": "615bb1e14f9072b12f6a5c6206b463fc7828989ad0a9c8e463ebb301ea55103a",
+  "docs/DECISIONS.md": "bff1c296e34bd5bdfbc87a909f5843e18eebdf5ee86641a1886b0bdc8cf7a87e",
+  "reports/stage_e2a_source_window_amendment.md": "9fe401c1c156ebba38162256bf151d9888dec00e42cd24026d348d039e64f13d",
+  "reports/stage_e2a_epsilon.json": "4e2c773182a23e7d073305ca4eb0134d3b3ac554ccc8215730bc1e194eaff496",
+  "reports/stage_e22_briefs/partA_rulings.md": "c3a9b0ee52612d706ce2c18f05f8a6f6fa426b6df51bd75a4122b4a0f751f137",
+  "reports/stage_e22_price_paths.json": "860f4b11d75aaf8bacb52871944d902d858cbe5edaa9c00a0b76921f270bb425",
+  "reports/stage_e_start_rule_K6.json": "b12297d7b541a23f3b6fa6bd85c150396d30d16fed828b18040fc96d5889278d"
+ },
+ "trials": [
+  {
+   "ordinal": 1,
+   "member": "K6-cp1-01 ZC",
+   "vehicle": "ZC",
+   "legs": [
+    "ZC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 4,
+   "eps_usd_per_day_at_q": 50.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260924,
+   "power": {
+    "status": "run",
+    "supply_days": 1130,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 5,
+    "n_b_analytic": 5,
+    "n_b_sim": 5.0,
+    "n_a_chosen": 11,
+    "research_days": 276,
+    "mean_ticks": -1.3931797101449277,
+    "sd_day_ticks": 3.856171776429608,
+    "vif_boot": 0.6981390999236016,
+    "seed": 20260923,
+    "flags": [
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "ZC": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 2,
+   "member": "K6-cp1-01 ZW",
+   "vehicle": "ZW",
+   "legs": [
+    "ZW"
+   ],
+   "q_c": 1,
+   "eps_ticks": 4,
+   "eps_usd_per_day_at_q": 50.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260925,
+   "power": {
+    "status": "run",
+    "supply_days": 1129,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 11,
+    "n_b_analytic": 11,
+    "n_b_sim": 10.471441347230309,
+    "n_a_chosen": 28,
+    "research_days": 283,
+    "mean_ticks": -1.393079858657244,
+    "sd_day_ticks": 5.417173065994229,
+    "vif_boot": 0.9218263433707434,
+    "seed": 20260924,
+    "flags": []
+   },
+   "s_x": {
+    "ZW": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 3,
+   "member": "K6-cp1-01 ZS",
+   "vehicle": "ZS",
+   "legs": [
+    "ZS"
+   ],
+   "q_c": 1,
+   "eps_ticks": 5,
+   "eps_usd_per_day_at_q": 62.5,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260926,
+   "power": {
+    "status": "run",
+    "supply_days": 1136,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 15,
+    "n_b_analytic": 15,
+    "n_b_sim": 12.62053176097279,
+    "n_a_chosen": 39,
+    "research_days": 285,
+    "mean_ticks": -2.5300659649122808,
+    "sd_day_ticks": 7.433259778811398,
+    "vif_boot": 1.0840859669914973,
+    "seed": 20260925,
+    "flags": [
+     "sim_smaller_ignored_b"
+    ]
+   },
+   "s_x": {
+    "ZS": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 4,
+   "member": "K6-cp1-01 ZM",
+   "vehicle": "ZM",
+   "legs": [
+    "ZM"
+   ],
+   "q_c": 1,
+   "eps_ticks": 5,
+   "eps_usd_per_day_at_q": 50.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260927,
+   "power": {
+    "status": "run",
+    "supply_days": 1106,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 8,
+    "n_b_analytic": 8,
+    "n_b_sim": 8.0,
+    "n_a_chosen": 20,
+    "research_days": 278,
+    "mean_ticks": -1.4133884892086332,
+    "sd_day_ticks": 6.180310866915044,
+    "vif_boot": 0.8176569465151062,
+    "seed": 20260926,
+    "flags": [
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "ZM": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 5,
+   "member": "K6-cp1-01 ZL",
+   "vehicle": "ZL",
+   "legs": [
+    "ZL"
+   ],
+   "q_c": 1,
+   "eps_ticks": 11,
+   "eps_usd_per_day_at_q": 66.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260928,
+   "power": {
+    "status": "run",
+    "supply_days": 1129,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 14,
+    "n_b_analytic": 14,
+    "n_b_sim": 11.717139243470173,
+    "n_a_chosen": 35,
+    "research_days": 287,
+    "mean_ticks": -1.1361207897793266,
+    "sd_day_ticks": 15.611136580847889,
+    "vif_boot": 1.0672420894527304,
+    "seed": 20260927,
+    "flags": [
+     "sim_smaller_ignored_b"
+    ]
+   },
+   "s_x": {
+    "ZL": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 6,
+   "member": "K6-cp1-01 HE",
+   "vehicle": "HE",
+   "legs": [
+    "HE"
+   ],
+   "q_c": 1,
+   "eps_ticks": 7,
+   "eps_usd_per_day_at_q": 70.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260929,
+   "power": {
+    "status": "run",
+    "supply_days": 1104,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 7,
+    "n_b_analytic": 7,
+    "n_b_sim": 7.0,
+    "n_a_chosen": 16,
+    "research_days": 273,
+    "mean_ticks": -1.7365604395604397,
+    "sd_day_ticks": 7.7329742635345715,
+    "vif_boot": 0.8062807155020999,
+    "seed": 20260928,
+    "flags": [
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "HE": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 7,
+   "member": "K6-cp1-01 LE",
+   "vehicle": "LE",
+   "legs": [
+    "LE"
+   ],
+   "q_c": 1,
+   "eps_ticks": 8,
+   "eps_usd_per_day_at_q": 80.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260930,
+   "power": {
+    "status": "run",
+    "supply_days": 1109,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 28,
+    "n_b_analytic": 28,
+    "n_b_sim": 27.298604173277408,
+    "n_a_chosen": 71,
+    "research_days": 266,
+    "mean_ticks": -1.6910751879699253,
+    "sd_day_ticks": 16.262326387511354,
+    "vif_boot": 1.0682046830723848,
+    "seed": 20260929,
+    "flags": []
+   },
+   "s_x": {
+    "LE": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 8,
+   "member": "K6-cp2-01 ZC",
+   "vehicle": "ZC",
+   "legs": [
+    "ZC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 4,
+   "eps_usd_per_day_at_q": 50.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260931,
+   "power": {
+    "status": "run",
+    "supply_days": 1130,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 23,
+    "n_b_analytic": 23,
+    "n_b_sim": 23.18822530285615,
+    "n_a_chosen": 60,
+    "research_days": 276,
+    "mean_ticks": -1.236901449275362,
+    "sd_day_ticks": 8.527339483417583,
+    "vif_boot": 0.8172959557233521,
+    "seed": 20260930,
+    "flags": []
+   },
+   "s_x": {
+    "ZC": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": [
+    "tick history not source-verified for the research window (K6-L-16 13(a))"
+   ]
+  },
+  {
+   "ordinal": 9,
+   "member": "K6-cp2-01 ZW",
+   "vehicle": "ZW",
+   "legs": [
+    "ZW"
+   ],
+   "q_c": 1,
+   "eps_ticks": 4,
+   "eps_usd_per_day_at_q": 50.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260932,
+   "power": {
+    "status": "run",
+    "supply_days": 1129,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 64,
+    "n_b_analytic": 64,
+    "n_b_sim": 60.61690813059918,
+    "n_a_chosen": 166,
+    "research_days": 283,
+    "mean_ticks": -1.5500579505300356,
+    "sd_day_ticks": 12.972714200843695,
+    "vif_boot": 0.9806388133185125,
+    "seed": 20260931,
+    "flags": []
+   },
+   "s_x": {
+    "ZW": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": [
+    "tick history not source-verified for the research window (K6-L-16 13(a))"
+   ]
+  },
+  {
+   "ordinal": 10,
+   "member": "K6-cp2-01 ZS",
+   "vehicle": "ZS",
+   "legs": [
+    "ZS"
+   ],
+   "q_c": 1,
+   "eps_ticks": 5,
+   "eps_usd_per_day_at_q": 62.5,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260933,
+   "power": {
+    "status": "run",
+    "supply_days": 1136,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 73,
+    "n_b_analytic": 73,
+    "n_b_sim": 63.622675811465086,
+    "n_a_chosen": 189,
+    "research_days": 285,
+    "mean_ticks": -1.941838596491228,
+    "sd_day_ticks": 18.214403968730643,
+    "vif_boot": 0.8867623572313996,
+    "seed": 20260932,
+    "flags": []
+   },
+   "s_x": {
+    "ZS": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": [
+    "tick history not source-verified for the research window (K6-L-16 13(a))"
+   ]
+  },
+  {
+   "ordinal": 11,
+   "member": "K6-cp2-01 ZM",
+   "vehicle": "ZM",
+   "legs": [
+    "ZM"
+   ],
+   "q_c": 1,
+   "eps_ticks": 5,
+   "eps_usd_per_day_at_q": 50.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260934,
+   "power": {
+    "status": "run",
+    "supply_days": 1106,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 67,
+    "n_b_analytic": 67,
+    "n_b_sim": 64.59318550241363,
+    "n_a_chosen": 172,
+    "research_days": 278,
+    "mean_ticks": -3.2959172661870504,
+    "sd_day_ticks": 15.920180168226686,
+    "vif_boot": 1.0568537852989481,
+    "seed": 20260933,
+    "flags": []
+   },
+   "s_x": {
+    "ZM": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": [
+    "tick history not source-verified for the research window (K6-L-16 13(a))"
+   ]
+  },
+  {
+   "ordinal": 12,
+   "member": "K6-cp2-01 ZL",
+   "vehicle": "ZL",
+   "legs": [
+    "ZL"
+   ],
+   "q_c": 1,
+   "eps_ticks": 11,
+   "eps_usd_per_day_at_q": 66.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260935,
+   "power": {
+    "status": "run",
+    "supply_days": 1129,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 60,
+    "n_b_analytic": 60,
+    "n_b_sim": 62.87679391168772,
+    "n_a_chosen": 155,
+    "research_days": 287,
+    "mean_ticks": -0.548130081300813,
+    "sd_day_ticks": 35.515002823195466,
+    "vif_boot": 0.9289778979878773,
+    "seed": 20260934,
+    "flags": []
+   },
+   "s_x": {
+    "ZL": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": [
+    "tick history not source-verified for the research window (K6-L-16 13(a))"
+   ]
+  },
+  {
+   "ordinal": 13,
+   "member": "K6-cp2-01 HE",
+   "vehicle": "HE",
+   "legs": [
+    "HE"
+   ],
+   "q_c": 1,
+   "eps_ticks": 7,
+   "eps_usd_per_day_at_q": 70.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260936,
+   "power": {
+    "status": "run",
+    "supply_days": 1104,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 50,
+    "n_b_analytic": 50,
+    "n_b_sim": 49.806391399270765,
+    "n_a_chosen": 129,
+    "research_days": 273,
+    "mean_ticks": -3.6279010989010985,
+    "sd_day_ticks": 19.713788469242424,
+    "vif_boot": 1.015674761633202,
+    "seed": 20260935,
+    "flags": []
+   },
+   "s_x": {
+    "HE": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": [
+    "tick history not source-verified for the research window (K6-L-16 13(a))"
+   ]
+  },
+  {
+   "ordinal": 14,
+   "member": "K6-cp2-01 LE",
+   "vehicle": "LE",
+   "legs": [
+    "LE"
+   ],
+   "q_c": 1,
+   "eps_ticks": 8,
+   "eps_usd_per_day_at_q": 80.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260937,
+   "power": {
+    "status": "run",
+    "supply_days": 1109,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 191,
+    "n_b_analytic": 191,
+    "n_b_sim": 184.2918877214414,
+    "n_a_chosen": 493,
+    "research_days": 266,
+    "mean_ticks": -4.290733082706767,
+    "sd_day_ticks": 41.07652458154533,
+    "vif_boot": 1.1680763267821963,
+    "seed": 20260936,
+    "flags": []
+   },
+   "s_x": {
+    "LE": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": [
+    "tick history not source-verified for the research window (K6-L-16 13(a))"
+   ]
+  },
+  {
+   "ordinal": 15,
+   "member": "K6-cp3-01 ZC",
+   "vehicle": "ZC",
+   "legs": [
+    "ZC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 4,
+   "eps_usd_per_day_at_q": 50.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260938,
+   "power": {
+    "status": "run",
+    "supply_days": 1130,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 37,
+    "n_b_analytic": 37,
+    "n_b_sim": 35.630371019461755,
+    "n_a_chosen": 95,
+    "research_days": 276,
+    "mean_ticks": -0.6851188405797106,
+    "sd_day_ticks": 10.150812107896863,
+    "vif_boot": 0.9196705792579682,
+    "seed": 20260937,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "ZC": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 16,
+   "member": "K6-cp3-01 ZW",
+   "vehicle": "ZW",
+   "legs": [
+    "ZW"
+   ],
+   "q_c": 1,
+   "eps_ticks": 4,
+   "eps_usd_per_day_at_q": 50.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260939,
+   "power": {
+    "status": "run",
+    "supply_days": 1129,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 69,
+    "n_b_analytic": 69,
+    "n_b_sim": 67.13616612724147,
+    "n_a_chosen": 179,
+    "research_days": 283,
+    "mean_ticks": -0.07905583038869285,
+    "sd_day_ticks": 15.875288432780179,
+    "vif_boot": 0.7080950838938757,
+    "seed": 20260938,
+    "flags": []
+   },
+   "s_x": {
+    "ZW": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 17,
+   "member": "K6-cp3-01 ZS",
+   "vehicle": "ZS",
+   "legs": [
+    "ZS"
+   ],
+   "q_c": 1,
+   "eps_ticks": 5,
+   "eps_usd_per_day_at_q": 62.5,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260940,
+   "power": {
+    "status": "run",
+    "supply_days": 1136,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 108,
+    "n_b_analytic": 108,
+    "n_b_sim": 112.01487545183508,
+    "n_a_chosen": 278,
+    "research_days": 285,
+    "mean_ticks": -0.5618161403508776,
+    "sd_day_ticks": 20.018644898613413,
+    "vif_boot": 1.0814799267127195,
+    "seed": 20260939,
+    "flags": []
+   },
+   "s_x": {
+    "ZS": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 18,
+   "member": "K6-cp3-01 ZM",
+   "vehicle": "ZM",
+   "legs": [
+    "ZM"
+   ],
+   "q_c": 1,
+   "eps_ticks": 5,
+   "eps_usd_per_day_at_q": 50.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260941,
+   "power": {
+    "status": "run",
+    "supply_days": 1106,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 60,
+    "n_b_analytic": 60,
+    "n_b_sim": 61.47689958124811,
+    "n_a_chosen": 156,
+    "research_days": 278,
+    "mean_ticks": 0.47248920863309324,
+    "sd_day_ticks": 15.948391050370912,
+    "vif_boot": 0.9528237808138792,
+    "seed": 20260940,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "ZM": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 19,
+   "member": "K6-cp3-01 ZL",
+   "vehicle": "ZL",
+   "legs": [
+    "ZL"
+   ],
+   "q_c": 1,
+   "eps_ticks": 11,
+   "eps_usd_per_day_at_q": 66.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260942,
+   "power": {
+    "status": "run",
+    "supply_days": 1129,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 92,
+    "n_b_analytic": 92,
+    "n_b_sim": 92.14763964601987,
+    "n_a_chosen": 237,
+    "research_days": 287,
+    "mean_ticks": -1.9353368176538914,
+    "sd_day_ticks": 45.436842749289774,
+    "vif_boot": 0.8674062624999496,
+    "seed": 20260941,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "ZL": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 20,
+   "member": "K6-cp3-01 HE",
+   "vehicle": "HE",
+   "legs": [
+    "HE"
+   ],
+   "q_c": 1,
+   "eps_ticks": 7,
+   "eps_usd_per_day_at_q": 70.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260943,
+   "power": {
+    "status": "run",
+    "supply_days": 1104,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 70,
+    "n_b_analytic": 70,
+    "n_b_sim": 69.19938101546731,
+    "n_a_chosen": 180,
+    "research_days": 273,
+    "mean_ticks": -2.4697106227106227,
+    "sd_day_ticks": 25.7153540028746,
+    "vif_boot": 0.831110337997772,
+    "seed": 20260942,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "HE": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 21,
+   "member": "K6-cp3-01 LE",
+   "vehicle": "LE",
+   "legs": [
+    "LE"
+   ],
+   "q_c": 1,
+   "eps_ticks": 8,
+   "eps_usd_per_day_at_q": 80.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260944,
+   "power": {
+    "status": "run",
+    "supply_days": 1109,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 157,
+    "n_b_analytic": 157,
+    "n_b_sim": 149.99999999999997,
+    "n_a_chosen": 405,
+    "research_days": 266,
+    "mean_ticks": 1.5335676691729323,
+    "sd_day_ticks": 44.109027244603965,
+    "vif_boot": 0.831197769950184,
+    "seed": 20260943,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "LE": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 22,
+   "member": "K6-crushgap-01 ZS",
+   "vehicle": "ZS",
+   "legs": [
+    "ZS",
+    "ZM",
+    "ZL"
+   ],
+   "q_c": 1,
+   "eps_ticks": 5,
+   "eps_usd_per_day_at_q": 62.5,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260945,
+   "power": {
+    "status": "run",
+    "supply_days": 1028,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 97,
+    "n_b_analytic": 97,
+    "n_b_sim": 90.50984856472094,
+    "n_a_chosen": 249,
+    "research_days": 264,
+    "mean_ticks": -3.4807333333333337,
+    "sd_day_ticks": 20.927328833098088,
+    "vif_boot": 0.8871229868181207,
+    "seed": 20260944,
+    "flags": [
+     "zero_variance_draws"
+    ]
+   },
+   "s_x": {
+    "ZS": "2019-05-06",
+    "ZM": "2019-05-06",
+    "ZL": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 23,
+   "member": "K6-limitcont-01 HE",
+   "vehicle": "HE",
+   "legs": [
+    "HE"
+   ],
+   "q_c": 1,
+   "eps_ticks": 7,
+   "eps_usd_per_day_at_q": 70.0,
+   "tier": "A",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260946,
+   "power": {
+    "status": "run",
+    "supply_days": 1104,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 2,
+    "n_b_analytic": 2,
+    "n_b_sim": 2.0,
+    "n_a_chosen": 4,
+    "research_days": 273,
+    "mean_ticks": 0.18693772893772895,
+    "sd_day_ticks": 3.088718190221966,
+    "vif_boot": 0.9821276697237826,
+    "seed": 20260945,
+    "flags": [
+     "zero_variance_draws",
+     "sim_censored_below_grid_a",
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "HE": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": [
+    "Tier A on a single trip (research t 1.002 = sqrt(273/272))",
+    "limits are the frozen initial limits; expanded limits not encoded (K6-L-07)",
+    "settlements by the D9.7 proxy (one bar's close); official settlements not tested (R-T3-2)"
+   ]
+  },
+  {
+   "ordinal": 24,
+   "member": "K6-limitcont-01 LE",
+   "vehicle": "LE",
+   "legs": [
+    "LE"
+   ],
+   "q_c": 1,
+   "eps_ticks": 8,
+   "eps_usd_per_day_at_q": 80.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260947,
+   "power": {
+    "price_path": {},
+    "price_path_declaration": {
+     "path": "reports/stage_e22_price_paths.json",
+     "sha256": "860f4b11d75aaf8bacb52871944d902d858cbe5edaa9c00a0b76921f270bb425"
+    },
+    "reason": "the research-window series has zero variance (no trips, or every day identical): n_b cannot be measured",
+    "start_rule": {
+     "LE": {
+      "files": [
+       {
+        "path": "reports/stage_e_start_rule_K6.json",
+        "sha256": "b12297d7b541a23f3b6fa6bd85c150396d30d16fed828b18040fc96d5889278d"
+       }
+      ],
+      "s_x": "2019-05-06",
+      "step2_sha256": "3c22a79ddaf94c8d75e65338e46e5c05220352061cb907ec6a5c291bc6b76537"
+     }
+    },
+    "status": "power check undefined",
+    "supply_days": 1109
+   },
+   "s_x": {
+    "LE": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": [
+    "limits are the frozen initial limits; expanded limits not encoded (K6-L-07)",
+    "settlements by the D9.7 proxy; limit table partly contradicted by CME (R-1b-2)"
+   ]
+  },
+  {
+   "ordinal": 25,
+   "member": "K6-wasdepre-01 ZC",
+   "vehicle": "ZC",
+   "legs": [
+    "ZC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 4,
+   "eps_usd_per_day_at_q": 50.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260948,
+   "power": {
+    "status": "run",
+    "supply_days": 1130,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 14,
+    "n_b_analytic": 14,
+    "n_b_sim": 10.0,
+    "n_a_chosen": 35,
+    "research_days": 276,
+    "mean_ticks": -0.4729333333333333,
+    "sd_day_ticks": 5.985745564818087,
+    "vif_boot": 0.952191180350181,
+    "seed": 20260947,
+    "flags": [
+     "zero_variance_draws",
+     "sim_censored_below_grid_a",
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "ZC": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 26,
+   "member": "K6-wasdepre-01 ZS",
+   "vehicle": "ZS",
+   "legs": [
+    "ZS"
+   ],
+   "q_c": 1,
+   "eps_ticks": 5,
+   "eps_usd_per_day_at_q": 62.5,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260949,
+   "power": {
+    "status": "run",
+    "supply_days": 1136,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 23,
+    "n_b_analytic": 23,
+    "n_b_sim": 10.0,
+    "n_a_chosen": 58,
+    "research_days": 285,
+    "mean_ticks": -0.7410049122807018,
+    "sd_day_ticks": 9.726366242802639,
+    "vif_boot": 0.9523520990756611,
+    "seed": 20260948,
+    "flags": [
+     "zero_variance_draws",
+     "sim_censored_below_grid_a",
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "ZS": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  },
+  {
+   "ordinal": 27,
+   "member": "K6-wasdepost-01 ZC",
+   "vehicle": "ZC",
+   "legs": [
+    "ZC"
+   ],
+   "q_c": 1,
+   "eps_ticks": 4,
+   "eps_usd_per_day_at_q": 50.0,
+   "tier": "B",
+   "run": true,
+   "labels": [
+    "source-overlap"
+   ],
+   "bootstrap_seed": 20260950,
+   "power": {
+    "status": "run",
+    "supply_days": 1130,
+    "label": "power sufficient",
+    "inconclusive_by_design": false,
+    "n_b_chosen": 6,
+    "n_b_analytic": 6,
+    "n_b_sim": 6.0,
+    "n_a_chosen": 16,
+    "research_days": 276,
+    "mean_ticks": -0.17766376811594198,
+    "sd_day_ticks": 3.952269374476888,
+    "vif_boot": 0.9826243532418545,
+    "seed": 20260949,
+    "flags": [
+     "zero_variance_draws",
+     "sim_censored_below_grid_a",
+     "sim_censored_below_grid_b"
+    ]
+   },
+   "s_x": {
+    "ZC": "2019-05-06"
+   },
+   "price_path": {},
+   "notes": []
+  }
+ ]
+}

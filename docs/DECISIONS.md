@@ -718,3 +718,27 @@
   book with a frozen forward registration (E22-F1, N 532 -> 533) and a
   paper runner; no purchase, no data fetch. The AiTrader readout
   (2026-10-23) remains the next decision point.
+- 2026-10-17 (user, planning chat): V40. E.22 window: E.22 stopped at
+  02:41 PDT on 2026-10-16 at a usage limit before any confirmation read;
+  the user paused it and approved a new window that night (no
+  confirmation read after 02:00 PDT on 2026-10-17, return by 03:00),
+  replacing the prompt's 06:30/07:30 times and nothing else. After E.22
+  (commit 7547638, pushed): K5-fomc-01 MGC NULL, K3-ldnrev-01 6E NULL,
+  K6-limitcont-01 HE NULL by inactivity, K8-flight-01 HEOD MGC NULL,
+  K8-wkndbtc-01 inconclusive by design; no Holm rejection. Stage E's
+  intraday clusters are closed (E.22 return item 3 accepted); no holdout
+  read. The micro trend book design study (not evidence of edge): net
+  Sharpe at $25K 0.41 simple-rounded, realized maximum drawdown 63.5%,
+  IBKR margin above capital on about 5% of days; the book is not traded
+  live at $25K at a 20% target. E22-F1 is registered (N 533) and waits on
+  the user's choice of a daily settlement source; nothing is bought.
+  The four pre-E.22 freezes that pinned harness v12 stay as recorded.
+  Stage E.23 (user): change the hold, not the rule. The program's frozen
+  intraday triggers, each unchanged, are tested at 5- and 20-day holds
+  entered at the trigger day's settlement, as a new pre-registered
+  family in the multi-day track. The measure is alpha over the same
+  root's E.21 trend returns, so trend is not counted twice. At most 12
+  triggers and 24 trials (N 533 to at most 557), discovery on data the
+  trigger was screened on, confirmation once on owned data that never
+  selected it; owned data only, no purchase; two five-hour usage windows
+  from about 02:00 PDT on 2026-10-17, no outcome read after 10:30 PDT.

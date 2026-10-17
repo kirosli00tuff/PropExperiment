@@ -1,0 +1,977 @@
+{
+ "assignment": "K5",
+ "rows": [
+  {
+   "trigger_id": "K5-cp1-01 MGC",
+   "cluster_or_stage": "K5 (Stage E.4b)",
+   "member_id": "K5-cp1-01",
+   "module": "strategy/members/k5/cp1.py",
+   "freeze_file": "reports/stage_e_k5_member_freeze.json",
+   "traded_root": "MGC",
+   "vehicle": "MGC",
+   "w_ext_root": "GC",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the metals rows (the clock comes from the frozen tables: gold MGC O 07:20,\nC 12:30; copper MHG O 07:10, C 12:00):\n- Signal s = sign(close of the bar at O+29 minus open of the trade date's first bar), in vendor\n  ticks: MGC 07:49, MHG 07:39. The first bar is the Globex open: the bar opening 17:00 CT on the\n  calendar day before d, carrying trade_date d (E.3-L-05). If that bar is missing there is no\n  trade.\n- Both signal bars must be present and carry one instrument_id, else no trade (D6; E.3-L-06).\n  Zero signal: no trade.\n- Entry: market intent on the bar at C-31 (MGC 11:59, fills at 12:00; MHG 11:29, fills at 11:30),\n  buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).\n- Exit: market intent on the first present bar at or after C-2 (MGC 12:28, fills nominally at\n  12:29; MHG 11:58, fills at 11:59), resent while refused (S0.7, E.3-L-22). The engine's forced\n  flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more\n  that trade date.\n- Early halts are not tested here (a port follows D6: the engine's F governs, S0.8).\n- Release instants are not read: the engine's D9.5a guard moves a fill that meets one.\nOne traded leg, q_c contracts (MGC 1, MHG 2). No stop, no filter, no size rule beyond the spec.",
+   "trigger_event": "every trade date: sign of (close of the O+29 bar 07:49 CT minus open of the 17:00 CT Globex-open bar of the prior calendar day); zero or missing signal bar: no trade",
+   "decision_time_ct": "07:49 (signal bar, last bar the decision reads); entry intent on the 11:59 bar (C-31), fill at the next open",
+   "side_rule": "- Entry: market intent on the bar at C-31 (MGC 11:59, fills at 12:00; MHG 11:29, fills at 11:30), buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "- Exit: market intent on the first present bar at or after C-2 (MGC 12:28, fills nominally at 12:29; MHG 11:58, fills at 11:59), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every trade date with a nonzero signal (one entry decision per trade date). Counts: E.4b 284 trips in 295 dates (E.4_RETURN.md:392); E.22 1132 trips in 1174 days (E.22_RETURN.md:300)",
+   "inputs_needed": [
+    {
+     "input": "frozen D6 day-session clock O_X/C_X (MGC 07:20/12:30, MHG 07:10/12:00), read by _port_common.leg_facts via screening.stage_e_frozen.load_frozen_tables().day_session_ct",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e2a_vehicle_sizes.json (contracts.O_X/C_X; screening/stage_e_frozen.py:225-237)",
+     "stated_range": "not date-indexed (fixed clock); GC and HG rows carry the same O_X/C_X"
+    },
+    {
+     "input": "metals group calendar EC-CAL (trade dates, early_halt_ct, closures, engine F; roll blackout = data.group_session.roll_blackout over the store's splices)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "data/calendars/metals.py",
+     "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+    },
+    {
+     "input": "metals 2010-2019 group calendar (hist2010; products GC, MGC, SI, SIL, HG, MHG)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "data/calendars/hist2010/metals.json",
+     "stated_range": "coverage first 2010-06-01, last 2019-05-31 (counts: 2323 trade dates, 73 early halts, 0 unsourced)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4b",
+     "window_dates": "research 2025-04-01..2026-06-17, 295 trade dates on both roots (record window_dates)",
+     "purpose": "screen",
+     "source": "reports/E.4b_RETURN.md:12-16 (tier table); reports/E.4_RETURN.md:392-402; reports/stage_e4b_k5_screen/"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "research window 2025-04-01..2026-06-17 (power simulation only; K5 stopped before its list, R-D-1, confirmation window never read)",
+     "purpose": "power",
+     "source": "reports/stage_e5_k5_start_power.md:18-29; reports/E.5_RETURN.md:24, 283-293, 396-399"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "ML route v2 Gate 0, training window 2019-05..2024-02 (n_dates 1067-1068), MGC rows on GC bars, MHG rows on HG bars",
+     "purpose": "other",
+     "source": "reports/E.12_RETURN.md:9, 19; reports/stage_e12_gate0.md; ML-route feature cp1_ret (K1..K7 CP1 ports pooled, all 28 vehicles; reports/stage_e11_signal_coverage.md:40), not the frozen member run"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "Part C search features on the step2 search stores, S_X 2019-05-06 (GC)..2024-02-29; the ext2010 backward stores never read (search FAIL, no backward read)",
+     "purpose": "other",
+     "source": "reports/E.20_RETURN.md:16-24, 475, 508, 559; reports/stage_e20_product_summary.md (F6 KEPT list, lines 41-45, 74-75); ML-route feature cp1_ret on GC rows (pooled CP1 port), not the frozen member run"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (E.5 method power re-run under v13; matched screening records)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md:281-284; reports/stage_e22_power_k5/"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "W_cf 2019-05-06..2024-02-29, 1174 days after roll-blackout exclusions; MGC on GC bars (price_path {'MGC': 'GC'}, U8 via V39)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md:278, 296-313; reports/stage_e22_confirm_k5/ (K5_K5-cp1-01_MGC_confirmation.json, coverage 0.9967, 1132 trips)"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4b: Tier B; screen fail, 284 trips, mean -0.6037, t -0.131 (E.4_RETURN.md:392; partA_facts_K5_K3.md row 1)",
+    "E.5: \"not run (K5 stopped, R-D-1) | supply 0, n_b 9, inconclusive by design\" (E.5_RETURN.md:283)",
+    "E.22: \"| 1 | K5-cp1-01 MGC | B | null | 1174 | 1132 | -3.2051 | -2.1072 |\" (E.22_RETURN.md:300); cluster K5 \"no statement\""
+   ],
+   "settlement_note": "GC settlement 12:30 CT (window 12:29:00-12:30:00), 2010-06-07..2024-02-29, grade primary (reports/stage_e16_settlement.json products.GC.settle; MGC itself is not listed, GC is its price path in E.22). Decision data 07:49 and entry bar 11:59: before settlement; exit bar 12:28: before settlement.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K5-cp1-01 MHG",
+   "cluster_or_stage": "K5 (Stage E.4b)",
+   "member_id": "K5-cp1-01",
+   "module": "strategy/members/k5/cp1.py",
+   "freeze_file": "reports/stage_e_k5_member_freeze.json",
+   "traded_root": "MHG",
+   "vehicle": "MHG",
+   "w_ext_root": null,
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the metals rows (the clock comes from the frozen tables: gold MGC O 07:20,\nC 12:30; copper MHG O 07:10, C 12:00):\n- Signal s = sign(close of the bar at O+29 minus open of the trade date's first bar), in vendor\n  ticks: MGC 07:49, MHG 07:39. The first bar is the Globex open: the bar opening 17:00 CT on the\n  calendar day before d, carrying trade_date d (E.3-L-05). If that bar is missing there is no\n  trade.\n- Both signal bars must be present and carry one instrument_id, else no trade (D6; E.3-L-06).\n  Zero signal: no trade.\n- Entry: market intent on the bar at C-31 (MGC 11:59, fills at 12:00; MHG 11:29, fills at 11:30),\n  buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).\n- Exit: market intent on the first present bar at or after C-2 (MGC 12:28, fills nominally at\n  12:29; MHG 11:58, fills at 11:59), resent while refused (S0.7, E.3-L-22). The engine's forced\n  flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more\n  that trade date.\n- Early halts are not tested here (a port follows D6: the engine's F governs, S0.8).\n- Release instants are not read: the engine's D9.5a guard moves a fill that meets one.\nOne traded leg, q_c contracts (MGC 1, MHG 2). No stop, no filter, no size rule beyond the spec.",
+   "trigger_event": "every trade date: sign of (close of the O+29 bar 07:39 CT minus open of the 17:00 CT Globex-open bar of the prior calendar day); zero or missing signal bar: no trade",
+   "decision_time_ct": "07:39 (signal bar, last bar the decision reads); entry intent on the 11:29 bar (C-31), fill at the next open",
+   "side_rule": "- Entry: market intent on the bar at C-31 (MGC 11:59, fills at 12:00; MHG 11:29, fills at 11:30), buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "- Exit: market intent on the first present bar at or after C-2 (MGC 12:28, fills nominally at 12:29; MHG 11:58, fills at 11:59), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every trade date with a nonzero signal (one entry decision per trade date). Counts: none: never screened (coverage) and not run in E.22",
+   "inputs_needed": [
+    {
+     "input": "frozen D6 day-session clock O_X/C_X (MGC 07:20/12:30, MHG 07:10/12:00), read by _port_common.leg_facts via screening.stage_e_frozen.load_frozen_tables().day_session_ct",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e2a_vehicle_sizes.json (contracts.O_X/C_X; screening/stage_e_frozen.py:225-237)",
+     "stated_range": "not date-indexed (fixed clock); GC and HG rows carry the same O_X/C_X"
+    },
+    {
+     "input": "metals group calendar EC-CAL (trade dates, early_halt_ct, closures, engine F; roll blackout = data.group_session.roll_blackout over the store's splices)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "data/calendars/metals.py",
+     "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+    },
+    {
+     "input": "metals 2010-2019 group calendar (hist2010; products GC, MGC, SI, SIL, HG, MHG)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "data/calendars/hist2010/metals.json",
+     "stated_range": "coverage first 2010-06-01, last 2019-05-31 (counts: 2323 trade dates, 73 early halts, 0 unsourced)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4b",
+     "window_dates": "research 2025-04-01..2026-06-17, 295 trade dates on both roots (record window_dates); excluded_before_screening, coverage 0.9196 < 0.95, not screened",
+     "purpose": "screen",
+     "source": "reports/E.4b_RETURN.md:12-16 (tier table); reports/E.4_RETURN.md:392-402; reports/stage_e4b_k5_screen/"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "W_cf 2022-06-01..2024-02-29 (MHG S_X), 425 days; MHG bars",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md:278, 296-313; reports/stage_e22_confirm_k5/ (K5_K5-cp1-01_MHG_confirmation.json: excluded_before_screening, coverage 0.6303; not run)"
+    }
+   ],
+   "tier": "n/a",
+   "verdicts": [
+    "E.4b: \"excluded (OC-H) | cp1 MHG, cp2 MHG (coverage 0.9196, 0.8966: not screened)\" (E.4b_RETURN.md:15)",
+    "E.5: \"excluded | not run (K5 stopped, R-D-1) | coverage_below_0.95\" (E.5_RETURN.md:284)",
+    "E.22: \"| 2 | K5-cp1-01 MHG | excluded | not run |\" (E.22_RETURN.md:301)"
+   ],
+   "settlement_note": "HG settlement 12:00 CT (window 11:59:00-12:00:00), rows 2010-06-07..2017-09-25 and 2017-09-26..2024-02-29 (reports/stage_e16_settlement.json products.HG.settle; MHG itself is not listed). Decision data 07:39 and entry bar 11:29: before settlement; exit bar 11:58: before settlement.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K5-cp2-01 MGC",
+   "cluster_or_stage": "K5 (Stage E.4b)",
+   "member_id": "K5-cp2-01",
+   "module": "strategy/members/k5/cp2.py",
+   "freeze_file": "reports/stage_e_k5_member_freeze.json",
+   "traded_root": "MGC",
+   "vehicle": "MGC",
+   "w_ext_root": "GC",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the metals rows (the clock comes from the frozen tables: gold MGC O 07:20,\nC 12:30; copper MHG O 07:10, C 12:00):\n- Opening range: OR_high = max high, OR_low = min low of the present bars opening in\n  [O, O+15) of CT date d (MGC [07:20, 07:35), MHG [07:10, 07:25)). No range bar: no trade\n  (E.3-L-08). No minimum bar count and no instrument guard (D6 and B-H1 have none).\n- Buffer: 4 vendor ticks of the vehicle (MGC 4 x 0.10 = 0.40, MHG 4 x 0.0005 = 0.0020), equal to\n  4 ticks of the exposure's most active contract (MGC for gold, HG for copper; K5-L-07).\n  Compared in integer vendor ticks (S0.10).\n- Eligible bars: those opening in [O+15, C) of CT date d (MGC [07:35, 12:30), MHG [07:25, 12:00));\n  no entry from C on.\n- Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells;\n  a market intent on that bar. The first qualifying bar uses the trade date's one entry, whatever\n  the engine does with the intent (E.3-L-08).\n- Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the\n  present bars seen while the position is non-zero, from the bar after the entry decision bar; on\n  the 75th, a market intent closing the position (fills at the next open), resent while refused\n  (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2: the\n  template's C-2 exit is not part of CP2 (E.3-L-07). After an engine-forced exit (F, D9.7) the\n  member sends nothing more that trade date.\n- Early halts are not tested here (a port: the engine's F and entry skip govern, S0.8).\nOne traded leg, q_c contracts (MGC 1, MHG 2).",
+   "trigger_event": "first bar opening in 07:35..12:29 CT whose close is >= OR_high + 4 ticks or <= OR_low - 4 ticks of the opening range [07:20, 07:35); one entry per trade date",
+   "decision_time_ct": "variable: the first qualifying eligible bar, 07:35..12:29 CT (the intent is sent on that bar)",
+   "side_rule": "- Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells; a market intent on that bar. The first qualifying bar uses the trade date's one entry, whatever the engine does with the intent (E.3-L-08).",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "- Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2: the template's C-2 exit is not part of CP2 (E.3-L-07). After an engine-forced exit (F, D9.7) the member sends nothing more that trade date.",
+   "expected_events_per_year": "every trade date with a breakout bar before C (one entry per trade date). Counts: E.4b 295 trips in 295 dates (E.4_RETURN.md:394); E.22 1166 trips in 1174 days (E.22_RETURN.md:302)",
+   "inputs_needed": [
+    {
+     "input": "frozen D6 day-session clock O_X/C_X (MGC 07:20/12:30, MHG 07:10/12:00), read by _port_common.leg_facts via screening.stage_e_frozen.load_frozen_tables().day_session_ct",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e2a_vehicle_sizes.json (contracts.O_X/C_X; screening/stage_e_frozen.py:225-237)",
+     "stated_range": "not date-indexed (fixed clock); GC and HG rows carry the same O_X/C_X"
+    },
+    {
+     "input": "metals group calendar EC-CAL (trade dates, early_halt_ct, closures, engine F; roll blackout = data.group_session.roll_blackout over the store's splices)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "data/calendars/metals.py",
+     "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+    },
+    {
+     "input": "metals 2010-2019 group calendar (hist2010; products GC, MGC, SI, SIL, HG, MHG)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "data/calendars/hist2010/metals.json",
+     "stated_range": "coverage first 2010-06-01, last 2019-05-31 (counts: 2323 trade dates, 73 early halts, 0 unsourced)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4b",
+     "window_dates": "research 2025-04-01..2026-06-17, 295 trade dates on both roots (record window_dates)",
+     "purpose": "screen",
+     "source": "reports/E.4b_RETURN.md:12-16 (tier table); reports/E.4_RETURN.md:392-402; reports/stage_e4b_k5_screen/"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "research window 2025-04-01..2026-06-17 (power simulation only; K5 stopped before its list, R-D-1, confirmation window never read)",
+     "purpose": "power",
+     "source": "reports/stage_e5_k5_start_power.md:18-29; reports/E.5_RETURN.md:24, 283-293, 396-399"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "ML route v2 Gate 0, training window 2019-05..2024-02 (n_dates 1067-1068), MGC rows on GC bars, MHG rows on HG bars",
+     "purpose": "other",
+     "source": "reports/E.12_RETURN.md:9, 19; reports/stage_e12_gate0.md; ML-route feature cp2_range, cp2_brk (K1..K7 CP2 ports pooled; reports/stage_e11_signal_coverage.md:41), not the frozen member run"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "Part C search features on the step2 search stores, S_X 2019-05-06 (GC)..2024-02-29; the ext2010 backward stores never read (search FAIL, no backward read)",
+     "purpose": "other",
+     "source": "reports/E.20_RETURN.md:16-24, 475, 508, 559; reports/stage_e20_product_summary.md (F6 KEPT list, lines 41-45, 74-75); ML-route feature cp2_range, cp2_brk on GC rows (pooled CP2 port), not the frozen member run"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (E.5 method power re-run under v13; matched screening records)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md:281-284; reports/stage_e22_power_k5/"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "W_cf 2019-05-06..2024-02-29, 1174 days after roll-blackout exclusions; MGC on GC bars (price_path {'MGC': 'GC'}, U8 via V39)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md:278, 296-313; reports/stage_e22_confirm_k5/ (K5_K5-cp2-01_MGC_confirmation.json, coverage 0.9978, 1166 trips)"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4b: Tier B; screen fail, 295 trips, mean +10.5570, t 0.906 (E.4_RETURN.md:394)",
+    "E.5: \"not run (K5 stopped, R-D-1) | supply 0, n_b 44, inconclusive by design\" (E.5_RETURN.md:285)",
+    "E.22: \"| 3 | K5-cp2-01 MGC | B | null | 1174 | 1166 | -3.8527 | -0.3417 |\" (E.22_RETURN.md:302); cluster K5 \"no statement\""
+   ],
+   "settlement_note": "GC settlement 12:30 CT (window 12:29:00-12:30:00), 2010-06-07..2024-02-29, grade primary (reports/stage_e16_settlement.json products.GC.settle; MGC itself is not listed, GC is its price path in E.22). Entry decision bars 07:35..12:29: all before settlement (12:30); the exit 75 present bars after entry (or the engine's F, 15:08 CT on a regular metals day) can fall after settlement.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K5-cp2-01 MHG",
+   "cluster_or_stage": "K5 (Stage E.4b)",
+   "member_id": "K5-cp2-01",
+   "module": "strategy/members/k5/cp2.py",
+   "freeze_file": "reports/stage_e_k5_member_freeze.json",
+   "traded_root": "MHG",
+   "vehicle": "MHG",
+   "w_ext_root": null,
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the metals rows (the clock comes from the frozen tables: gold MGC O 07:20,\nC 12:30; copper MHG O 07:10, C 12:00):\n- Opening range: OR_high = max high, OR_low = min low of the present bars opening in\n  [O, O+15) of CT date d (MGC [07:20, 07:35), MHG [07:10, 07:25)). No range bar: no trade\n  (E.3-L-08). No minimum bar count and no instrument guard (D6 and B-H1 have none).\n- Buffer: 4 vendor ticks of the vehicle (MGC 4 x 0.10 = 0.40, MHG 4 x 0.0005 = 0.0020), equal to\n  4 ticks of the exposure's most active contract (MGC for gold, HG for copper; K5-L-07).\n  Compared in integer vendor ticks (S0.10).\n- Eligible bars: those opening in [O+15, C) of CT date d (MGC [07:35, 12:30), MHG [07:25, 12:00));\n  no entry from C on.\n- Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells;\n  a market intent on that bar. The first qualifying bar uses the trade date's one entry, whatever\n  the engine does with the intent (E.3-L-08).\n- Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the\n  present bars seen while the position is non-zero, from the bar after the entry decision bar; on\n  the 75th, a market intent closing the position (fills at the next open), resent while refused\n  (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2: the\n  template's C-2 exit is not part of CP2 (E.3-L-07). After an engine-forced exit (F, D9.7) the\n  member sends nothing more that trade date.\n- Early halts are not tested here (a port: the engine's F and entry skip govern, S0.8).\nOne traded leg, q_c contracts (MGC 1, MHG 2).",
+   "trigger_event": "first bar opening in 07:25..11:59 CT whose close is >= OR_high + 4 ticks or <= OR_low - 4 ticks of the opening range [07:10, 07:25); one entry per trade date",
+   "decision_time_ct": "variable: the first qualifying eligible bar, 07:25..11:59 CT (the intent is sent on that bar)",
+   "side_rule": "- Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells; a market intent on that bar. The first qualifying bar uses the trade date's one entry, whatever the engine does with the intent (E.3-L-08).",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "- Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2: the template's C-2 exit is not part of CP2 (E.3-L-07). After an engine-forced exit (F, D9.7) the member sends nothing more that trade date.",
+   "expected_events_per_year": "every trade date with a breakout bar before C (one entry per trade date). Counts: none: never screened (coverage) and not run in E.22",
+   "inputs_needed": [
+    {
+     "input": "frozen D6 day-session clock O_X/C_X (MGC 07:20/12:30, MHG 07:10/12:00), read by _port_common.leg_facts via screening.stage_e_frozen.load_frozen_tables().day_session_ct",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e2a_vehicle_sizes.json (contracts.O_X/C_X; screening/stage_e_frozen.py:225-237)",
+     "stated_range": "not date-indexed (fixed clock); GC and HG rows carry the same O_X/C_X"
+    },
+    {
+     "input": "metals group calendar EC-CAL (trade dates, early_halt_ct, closures, engine F; roll blackout = data.group_session.roll_blackout over the store's splices)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "data/calendars/metals.py",
+     "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+    },
+    {
+     "input": "metals 2010-2019 group calendar (hist2010; products GC, MGC, SI, SIL, HG, MHG)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "data/calendars/hist2010/metals.json",
+     "stated_range": "coverage first 2010-06-01, last 2019-05-31 (counts: 2323 trade dates, 73 early halts, 0 unsourced)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4b",
+     "window_dates": "research 2025-04-01..2026-06-17, 295 trade dates on both roots (record window_dates); excluded_before_screening, coverage 0.8966 < 0.95, not screened",
+     "purpose": "screen",
+     "source": "reports/E.4b_RETURN.md:12-16 (tier table); reports/E.4_RETURN.md:392-402; reports/stage_e4b_k5_screen/"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "W_cf 2022-06-01..2024-02-29 (MHG S_X), 425 days; MHG bars",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md:278, 296-313; reports/stage_e22_confirm_k5/ (K5_K5-cp2-01_MHG_confirmation.json: excluded_before_screening, coverage 0.6308; not run)"
+    }
+   ],
+   "tier": "n/a",
+   "verdicts": [
+    "E.4b: \"excluded (OC-H) | cp1 MHG, cp2 MHG (coverage 0.9196, 0.8966: not screened)\" (E.4b_RETURN.md:15)",
+    "E.5: \"excluded | not run (K5 stopped, R-D-1) | coverage_below_0.95\" (E.5_RETURN.md:286)",
+    "E.22: \"| 4 | K5-cp2-01 MHG | excluded | not run |\" (E.22_RETURN.md:303)"
+   ],
+   "settlement_note": "HG settlement 12:00 CT (window 11:59:00-12:00:00), rows 2010-06-07..2017-09-25 and 2017-09-26..2024-02-29 (reports/stage_e16_settlement.json products.HG.settle; MHG itself is not listed). Entry decision bars 07:25..11:59: all before settlement (12:00); the exit 75 present bars after entry (or the engine's F, 15:08 CT on a regular metals day) can fall after settlement.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K5-cp3-01 MGC",
+   "cluster_or_stage": "K5 (Stage E.4b)",
+   "member_id": "K5-cp3-01",
+   "module": "strategy/members/k5/cp3.py",
+   "freeze_file": "reports/stage_e_k5_member_freeze.json",
+   "traded_root": "MGC",
+   "vehicle": "MGC",
+   "w_ext_root": "GC",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the metals rows (the clock comes from the frozen tables: gold MGC O 07:20,\nC 12:30; copper MHG O 07:10, C 12:00):\n- Daily bar of trade date d, from its bars on CT date d opening in [O, C) (MGC [07:20, 12:30),\n  MHG [07:10, 12:00)): H / L = max high / min low over the present bars, C_d = close of the bar at\n  C-1 (MGC 12:29, MHG 11:59). (O_d, the O bar's open, enters no condition and is not read; the O\n  bar must exist.)\n- Complete day (Family H): the O and C-1 bars exist, no bar of CT date d carries early_halt_ct,\n  and all bars in [O, C) carry one instrument_id. It is finalised when a bar of a later trade date\n  arrives, so day d's own bar never enters day d's condition.\n- d-1 = the most recent COMPLETE daily bar of an earlier trade date; incomplete days are dropped\n  (E.3-L-09). None yet (warm-up, the window's start): no trade.\n- On the bar at O of CT date d (that exact bar, S0.6): no trade if it carries early_halt_ct\n  (E.3-L-09, E.3-L-11); instrument guard: d-1's instrument_id must be the O bar's; Range = H - L\n  of d-1 in ticks must be > 0; CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2\n  sells (non-strict), else no trade. The cuts are compared exactly in integers (E.3-L-19). Market\n  intent on the O bar (MGC 07:20, fills at the 07:21 open; MHG 07:10, fills at 07:11).\n- Exit: market intent on the first present bar at or after C-2 (MGC 12:28, fills nominally at\n  12:29; MHG 11:58, fills at 11:59), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's\n  forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that trade\n  date.\nOne traded leg, q_c contracts (MGC 1, MHG 2).",
+   "trigger_event": "on the O bar (07:20 CT) of trade date d: CLV of the most recent complete prior daily bar (bars [O, C), close of the 12:29 bar) >= 0.8 buys, <= 0.2 sells",
+   "decision_time_ct": "07:20 (the O bar of d, which carries the early-halt and instrument guards; the signal itself uses d-1's bars through 12:29)",
+   "side_rule": "- On the bar at O of CT date d (that exact bar, S0.6): no trade if it carries early_halt_ct (E.3-L-09, E.3-L-11); instrument guard: d-1's instrument_id must be the O bar's; Range = H - L of d-1 in ticks must be > 0; CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade. The cuts are compared exactly in integers (E.3-L-19). Market intent on the O bar (MGC 07:20, fills at the 07:21 open; MHG 07:10, fills at 07:11).",
+   "side_kind": "other: side fixed by the prior complete day's close location (CLV >= 0.8 buy, <= 0.2 sell), not by a trigger-day move",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "- Exit: market intent on the first present bar at or after C-2 (MGC 12:28, fills nominally at 12:29; MHG 11:58, fills at 11:59), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that trade date.",
+   "expected_events_per_year": "trade dates whose prior complete day closes in its top or bottom 20% of range. Counts: E.4b 101 trips in 295 dates (E.4_RETURN.md:396); E.22 489 trips in 1174 days (E.22_RETURN.md:304)",
+   "inputs_needed": [
+    {
+     "input": "frozen D6 day-session clock O_X/C_X (MGC 07:20/12:30, MHG 07:10/12:00), read by _port_common.leg_facts via screening.stage_e_frozen.load_frozen_tables().day_session_ct",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e2a_vehicle_sizes.json (contracts.O_X/C_X; screening/stage_e_frozen.py:225-237)",
+     "stated_range": "not date-indexed (fixed clock); GC and HG rows carry the same O_X/C_X"
+    },
+    {
+     "input": "metals group calendar EC-CAL (trade dates, early_halt_ct, closures, engine F; roll blackout = data.group_session.roll_blackout over the store's splices)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "data/calendars/metals.py",
+     "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+    },
+    {
+     "input": "metals 2010-2019 group calendar (hist2010; products GC, MGC, SI, SIL, HG, MHG)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "data/calendars/hist2010/metals.json",
+     "stated_range": "coverage first 2010-06-01, last 2019-05-31 (counts: 2323 trade dates, 73 early halts, 0 unsourced)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4b",
+     "window_dates": "research 2025-04-01..2026-06-17, 295 trade dates on both roots (record window_dates)",
+     "purpose": "screen",
+     "source": "reports/E.4b_RETURN.md:12-16 (tier table); reports/E.4_RETURN.md:392-402; reports/stage_e4b_k5_screen/"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "research window 2025-04-01..2026-06-17 (power simulation only; K5 stopped before its list, R-D-1, confirmation window never read)",
+     "purpose": "power",
+     "source": "reports/stage_e5_k5_start_power.md:18-29; reports/E.5_RETURN.md:24, 283-293, 396-399"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "ML route v2 Gate 0, training window 2019-05..2024-02 (n_dates 1067-1068), MGC rows on GC bars, MHG rows on HG bars",
+     "purpose": "other",
+     "source": "reports/E.12_RETURN.md:9, 19; reports/stage_e12_gate0.md; ML-route feature cp3_clv (K1..K7 CP3 ports pooled; reports/stage_e11_signal_coverage.md:42), not the frozen member run"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "Part C search features on the step2 search stores, S_X 2019-05-06 (GC)..2024-02-29; the ext2010 backward stores never read (search FAIL, no backward read)",
+     "purpose": "other",
+     "source": "reports/E.20_RETURN.md:16-24, 475, 508, 559; reports/stage_e20_product_summary.md (F6 KEPT list, lines 41-45, 74-75); ML-route feature cp3_clv on GC rows (pooled CP3 port), not the frozen member run"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (E.5 method power re-run under v13; matched screening records)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md:281-284; reports/stage_e22_power_k5/"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "W_cf 2019-05-06..2024-02-29, 1174 days after roll-blackout exclusions; MGC on GC bars (price_path {'MGC': 'GC'}, U8 via V39)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md:278, 296-313; reports/stage_e22_confirm_k5/ (K5_K5-cp3-01_MGC_confirmation.json, coverage 0.9983, 489 trips)"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4b: Tier B; screen fail, 101 trips, mean +8.4945, t 0.793; \"would pass the screen (t 1.25) without its two XFA liquidations\" (E.4b_RETURN.md:121-122)",
+    "E.5: \"not run (K5 stopped, R-D-1) | supply 0, n_b 62, inconclusive by design\" (E.5_RETURN.md:287)",
+    "E.22: \"| 5 | K5-cp3-01 MGC | B | null | 1174 | 489 | -5.1667 | -1.5998 |\" (E.22_RETURN.md:304); cluster K5 \"no statement\""
+   ],
+   "settlement_note": "GC settlement 12:30 CT (window 12:29:00-12:30:00), 2010-06-07..2024-02-29, grade primary (reports/stage_e16_settlement.json products.GC.settle; MGC itself is not listed, GC is its price path in E.22). Decision bar 07:20: before settlement; exit bar 12:28: before settlement.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K5-cp3-01 MHG",
+   "cluster_or_stage": "K5 (Stage E.4b)",
+   "member_id": "K5-cp3-01",
+   "module": "strategy/members/k5/cp3.py",
+   "freeze_file": "reports/stage_e_k5_member_freeze.json",
+   "traded_root": "MHG",
+   "vehicle": "MHG",
+   "w_ext_root": null,
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the metals rows (the clock comes from the frozen tables: gold MGC O 07:20,\nC 12:30; copper MHG O 07:10, C 12:00):\n- Daily bar of trade date d, from its bars on CT date d opening in [O, C) (MGC [07:20, 12:30),\n  MHG [07:10, 12:00)): H / L = max high / min low over the present bars, C_d = close of the bar at\n  C-1 (MGC 12:29, MHG 11:59). (O_d, the O bar's open, enters no condition and is not read; the O\n  bar must exist.)\n- Complete day (Family H): the O and C-1 bars exist, no bar of CT date d carries early_halt_ct,\n  and all bars in [O, C) carry one instrument_id. It is finalised when a bar of a later trade date\n  arrives, so day d's own bar never enters day d's condition.\n- d-1 = the most recent COMPLETE daily bar of an earlier trade date; incomplete days are dropped\n  (E.3-L-09). None yet (warm-up, the window's start): no trade.\n- On the bar at O of CT date d (that exact bar, S0.6): no trade if it carries early_halt_ct\n  (E.3-L-09, E.3-L-11); instrument guard: d-1's instrument_id must be the O bar's; Range = H - L\n  of d-1 in ticks must be > 0; CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2\n  sells (non-strict), else no trade. The cuts are compared exactly in integers (E.3-L-19). Market\n  intent on the O bar (MGC 07:20, fills at the 07:21 open; MHG 07:10, fills at 07:11).\n- Exit: market intent on the first present bar at or after C-2 (MGC 12:28, fills nominally at\n  12:29; MHG 11:58, fills at 11:59), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's\n  forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that trade\n  date.\nOne traded leg, q_c contracts (MGC 1, MHG 2).",
+   "trigger_event": "on the O bar (07:10 CT) of trade date d: CLV of the most recent complete prior daily bar (bars [O, C), close of the 11:59 bar) >= 0.8 buys, <= 0.2 sells",
+   "decision_time_ct": "07:10 (the O bar of d, which carries the early-halt and instrument guards; the signal itself uses d-1's bars through 11:59)",
+   "side_rule": "- On the bar at O of CT date d (that exact bar, S0.6): no trade if it carries early_halt_ct (E.3-L-09, E.3-L-11); instrument guard: d-1's instrument_id must be the O bar's; Range = H - L of d-1 in ticks must be > 0; CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade. The cuts are compared exactly in integers (E.3-L-19). Market intent on the O bar (MGC 07:20, fills at the 07:21 open; MHG 07:10, fills at 07:11).",
+   "side_kind": "other: side fixed by the prior complete day's close location (CLV >= 0.8 buy, <= 0.2 sell), not by a trigger-day move",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "- Exit: market intent on the first present bar at or after C-2 (MGC 12:28, fills nominally at 12:29; MHG 11:58, fills at 11:59), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that trade date.",
+   "expected_events_per_year": "trade dates whose prior complete day closes in its top or bottom 20% of range. Counts: E.4b 126 trips in 295 dates (E.4_RETURN.md:397); E.22 none (no series)",
+   "inputs_needed": [
+    {
+     "input": "frozen D6 day-session clock O_X/C_X (MGC 07:20/12:30, MHG 07:10/12:00), read by _port_common.leg_facts via screening.stage_e_frozen.load_frozen_tables().day_session_ct",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e2a_vehicle_sizes.json (contracts.O_X/C_X; screening/stage_e_frozen.py:225-237)",
+     "stated_range": "not date-indexed (fixed clock); GC and HG rows carry the same O_X/C_X"
+    },
+    {
+     "input": "metals group calendar EC-CAL (trade dates, early_halt_ct, closures, engine F; roll blackout = data.group_session.roll_blackout over the store's splices)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "data/calendars/metals.py",
+     "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+    },
+    {
+     "input": "metals 2010-2019 group calendar (hist2010; products GC, MGC, SI, SIL, HG, MHG)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "data/calendars/hist2010/metals.json",
+     "stated_range": "coverage first 2010-06-01, last 2019-05-31 (counts: 2323 trade dates, 73 early halts, 0 unsourced)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4b",
+     "window_dates": "research 2025-04-01..2026-06-17, 295 trade dates on both roots (record window_dates)",
+     "purpose": "screen",
+     "source": "reports/E.4b_RETURN.md:12-16 (tier table); reports/E.4_RETURN.md:392-402; reports/stage_e4b_k5_screen/"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "research window 2025-04-01..2026-06-17 (power simulation only; K5 stopped before its list, R-D-1, confirmation window never read)",
+     "purpose": "power",
+     "source": "reports/stage_e5_k5_start_power.md:18-29; reports/E.5_RETURN.md:24, 283-293, 396-399"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "ML route v2 Gate 0, training window 2019-05..2024-02 (n_dates 1067-1068), MGC rows on GC bars, MHG rows on HG bars",
+     "purpose": "other",
+     "source": "reports/E.12_RETURN.md:9, 19; reports/stage_e12_gate0.md; ML-route feature cp3_clv (pooled CP3 port; MHG rows on HG bars), not the frozen member run"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (E.5 method power re-run under v13; matched screening records)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md:281-284; reports/stage_e22_power_k5/"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "W_cf 2022-06-01..2024-02-29 (MHG S_X), 425 days; MHG bars",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md:278, 296-313; reports/stage_e22_confirm_k5/ (K5_K5-cp3-01_MHG_confirmation.json: excluded_before_screening, coverage 0.7735; no series)"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4b: Tier B; screen fail, 126 trips, mean +3.2468, t 0.695 (E.4_RETURN.md:397)",
+    "E.5: \"not run (K5 stopped, R-D-1) | supply 425, n_b 52, power sufficient\" (E.5_RETURN.md:288)",
+    "E.22: \"| 6 | K5-cp3-01 MHG | B | inconclusive |\" (E.22_RETURN.md:305); \"blocking: K5-cp3-01 MHG (inconclusive: record status 'excluded_before_screening': no series)\" (E.22_RETURN.md:312)"
+   ],
+   "settlement_note": "HG settlement 12:00 CT (window 11:59:00-12:00:00), rows 2010-06-07..2017-09-25 and 2017-09-26..2024-02-29 (reports/stage_e16_settlement.json products.HG.settle; MHG itself is not listed). Decision bar 07:10: before settlement; exit bar 11:58: before settlement.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K5-preauc-01 MGC",
+   "cluster_or_stage": "K5 (Stage E.4b)",
+   "member_id": "K5-preauc-01",
+   "module": "strategy/members/k5/preauc.py",
+   "freeze_file": "reports/stage_e_k5_member_freeze.json",
+   "traded_root": "MGC",
+   "vehicle": "MGC",
+   "w_ext_root": "GC",
+   "signal_legs": [],
+   "definition_verbatim": "MGC only (q_c 1; silver has no vehicle, platinum is out). On every scheduled gold AM auction day of\n_releases.GOLD_AM_AUCTIONS (section 11, K5-L-03: a PM-only no-auction day keeps its AM auction),\nwith T = the table's CT instant of the 10:30 London start (C10, K5-L-02: 04:30, or 05:30 in\n5-hour weeks):\n- entry: SELL, unconditional (K5-L-10), market intent on the bar at T - 31 (normally 03:59),\n  filling at the T - 30 open (04:00); a missing entry bar: no trade that date (S0.6);\n- exit: market intent on the bar at T - 2 (normally 04:28), filling at the T - 1 open (04:29); a\n  missing exit bar: the first later present bar (S0.7). Hold 29 minutes;\n- no entry when the entry bar carries early_halt_ct (S0.8). The only bar read at or before the\n  entry is the entry bar, so C4's instrument guard holds by construction (S0.9). No return is\n  computed, so no percent-return guard applies (S0.14).\nA date not in the table is not traded.",
+   "trigger_event": "every scheduled gold AM auction day of GOLD_AM_AUCTIONS (10:30 London = T, 04:30 or 05:30 CT): unconditional sell at T-30",
+   "decision_time_ct": "03:59 (or 04:59 in 5-hour weeks): the entry bar T-31 is the only bar read; fill at the T-30 open",
+   "side_rule": "- entry: SELL, unconditional (K5-L-10), market intent on the bar at T - 31 (normally 03:59), filling at the T - 30 open (04:00); a missing entry bar: no trade that date (S0.6);",
+   "side_kind": "calendar",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "- exit: market intent on the bar at T - 2 (normally 04:28), filling at the T - 1 open (04:29); a missing exit bar: the first later present bar (S0.7). Hold 29 minutes;",
+   "expected_events_per_year": "every London AM auction day (weekdays less England-and-Wales bank holidays): table 1802 days 2019-05-01..2026-06-19. Counts: E.4b 280 trips in 295 dates (E.4_RETURN.md:398); E.22 1115 trips (E.22_RETURN.md:306)",
+   "inputs_needed": [
+    {
+     "input": "frozen D6 day-session clock O_X/C_X (MGC 07:20/12:30, MHG 07:10/12:00), read by _port_common.leg_facts via screening.stage_e_frozen.load_frozen_tables().day_session_ct",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e2a_vehicle_sizes.json (contracts.O_X/C_X; screening/stage_e_frozen.py:225-237)",
+     "stated_range": "not date-indexed (fixed clock); GC and HG rows carry the same O_X/C_X"
+    },
+    {
+     "input": "GOLD_AM_AUCTIONS (LBMA gold AM auction days and CT instant T, 04:30 or 05:30 CT) with NO_AUCTION_DAYS",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k5/_releases.py (generated from reports/stage_e2b_release_calendar.json + reports/stage_e4b_release_check.json)",
+     "stated_range": "TABLE_RANGE = (2019-05-01, 2026-06-19); 1802 AM days (124 at 05:30 CT). W_ext: not found; reports/stage_e20_product_summary.md:61 \"no gold fix calendar for 2010-2019 on disk (GC reader)\"; grep of data/calendars/hist2010/, reports/stage_e14_cal_releases.json (NGS, WPSR, FOMC only) and reports/stage_e2b_release_calendar.json (coverage 2019-05-01..2026-06-21, no LBMA rows) found none. E.4b_RETURN.md:185-186: its 2019-2024 no-auction days need the K5-L-01 re-check if it reaches Tier A"
+    },
+    {
+     "input": "metals group calendar EC-CAL (trade dates, early_halt_ct, closures, engine F; roll blackout = data.group_session.roll_blackout over the store's splices)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "data/calendars/metals.py",
+     "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+    },
+    {
+     "input": "metals 2010-2019 group calendar (hist2010; products GC, MGC, SI, SIL, HG, MHG)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "data/calendars/hist2010/metals.json",
+     "stated_range": "coverage first 2010-06-01, last 2019-05-31 (counts: 2323 trade dates, 73 early halts, 0 unsourced)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4b",
+     "window_dates": "research 2025-04-01..2026-06-17, 295 trade dates on both roots (record window_dates)",
+     "purpose": "screen",
+     "source": "reports/E.4b_RETURN.md:12-16 (tier table); reports/E.4_RETURN.md:392-402; reports/stage_e4b_k5_screen/"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "research window 2025-04-01..2026-06-17 (power simulation only; K5 stopped before its list, R-D-1, confirmation window never read)",
+     "purpose": "power",
+     "source": "reports/stage_e5_k5_start_power.md:18-29; reports/E.5_RETURN.md:24, 283-293, 396-399"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "ML route v2 Gate 0, training window 2019-05..2024-02 (n_dates 1067-1068), MGC rows on GC bars, MHG rows on HG bars",
+     "purpose": "other",
+     "source": "reports/E.12_RETURN.md:9, 19; reports/stage_e12_gate0.md; ML-route feature k5_preauc_msince (minutes since the AM auction instant), not the frozen member run"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (E.5 method power re-run under v13; matched screening records)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md:281-284; reports/stage_e22_power_k5/"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "W_cf 2019-05-06..2024-02-29, 1174 days after roll-blackout exclusions; MGC on GC bars (price_path {'MGC': 'GC'}, U8 via V39)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md:278, 296-313; reports/stage_e22_confirm_k5/ (K5_K5-preauc-01_MGC_confirmation.json, coverage 0.9998, 1115 trips)"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4b: Tier B; screen fail, 280 trips, mean +1.3052, t 0.358 (E.4_RETURN.md:398)",
+    "E.5: \"not run (K5 stopped, R-D-1) | supply 0, n_b 6, inconclusive by design\" (E.5_RETURN.md:289)",
+    "E.20: k5_preauc_msince DROPPED by F6, \"no gold fix calendar for 2010-2019 on disk (GC reader)\" (stage_e20_product_summary.md:61)",
+    "E.22: \"| 7 | K5-preauc-01 MGC | B | null | 1174 | 1115 | -4.0368 | -3.0145 |\" (E.22_RETURN.md:306); cluster K5 \"no statement\""
+   ],
+   "settlement_note": "GC settlement 12:30 CT (window 12:29:00-12:30:00), 2010-06-07..2024-02-29, grade primary (reports/stage_e16_settlement.json products.GC.settle; MGC itself is not listed, GC is its price path in E.22). Entry 03:59/04:59 and exit bar T-2 (04:28/05:28): before settlement.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K5-pmfix-01 MGC",
+   "cluster_or_stage": "K5 (Stage E.4b)",
+   "member_id": "K5-pmfix-01",
+   "module": "strategy/members/k5/pmfix.py",
+   "freeze_file": "reports/stage_e_k5_member_freeze.json",
+   "traded_root": "MGC",
+   "vehicle": "MGC",
+   "w_ext_root": "GC",
+   "signal_legs": [],
+   "definition_verbatim": "MGC only (q_c 1). On every scheduled gold PM auction day of _releases.GOLD_PM_AUCTIONS (section 11,\nK5-L-03: the 14 PM-only no-auction days are not in it), with T_P = the table's CT instant of the\n15:00 London start (C10, K5-L-02: 09:00, or 10:00 in 5-hour weeks):\n- signal: s = ticks(close of the bar at T_P + 1) - ticks(close of the bar at T_P - 1); both bars\n  present with one instrument_id (S0.9; the T_P + 1 bar is the entry decision bar); s = 0: no\n  trade;\n- entry: s > 0 BUY, s < 0 SELL, market intent on the bar at T_P + 1, filling at the T_P + 2 open;\n  a missing T_P + 1 bar: no trade (S0.6);\n- exit: market intent on the bar at T_P + 11, filling at the T_P + 12 open; a missing exit bar:\n  the first later present bar (S0.7). Hold 10 minutes (K5-L-09);\n- no entry when the entry bar carries early_halt_ct (S0.8). No percent return (S0.14).\nA date not in the table is not traded. The rule is _event_common.SignedMoveEvent's.",
+   "trigger_event": "every scheduled gold PM auction day of GOLD_PM_AUCTIONS (15:00 London = T_P, 09:00 or 10:00 CT): sign of close(T_P+1) - close(T_P-1); zero: no trade",
+   "decision_time_ct": "09:01 (or 10:01 in 5-hour weeks): the T_P+1 bar; fill at the T_P+2 open",
+   "side_rule": "- entry: s > 0 BUY, s < 0 SELL, market intent on the bar at T_P + 1, filling at the T_P + 2 open; a missing T_P + 1 bar: no trade (S0.6);",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "- exit: market intent on the bar at T_P + 11, filling at the T_P + 12 open; a missing exit bar: the first later present bar (S0.7). Hold 10 minutes (K5-L-09);",
+   "expected_events_per_year": "every London PM auction day with a nonzero move: table 1788 days 2019-05-01..2026-06-19. Counts: E.4b 278 trips (E.4_RETURN.md:399); E.22 1080 trips in the record (trips file n_trips; executed by --all, \"present and not used\", E.22_RETURN.md:606)",
+   "inputs_needed": [
+    {
+     "input": "frozen D6 day-session clock O_X/C_X (MGC 07:20/12:30, MHG 07:10/12:00), read by _port_common.leg_facts via screening.stage_e_frozen.load_frozen_tables().day_session_ct",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e2a_vehicle_sizes.json (contracts.O_X/C_X; screening/stage_e_frozen.py:225-237)",
+     "stated_range": "not date-indexed (fixed clock); GC and HG rows carry the same O_X/C_X"
+    },
+    {
+     "input": "GOLD_PM_AUCTIONS (LBMA gold PM auction days and CT instant T_P, 09:00 or 10:00 CT), less the 14 PM no-auction days",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k5/_releases.py (generated from reports/stage_e2b_release_calendar.json + reports/stage_e4b_release_check.json)",
+     "stated_range": "TABLE_RANGE = (2019-05-01, 2026-06-19); 1788 PM days, 14 no-auction rows. W_ext: not found; reports/stage_e20_product_summary.md:61 \"no gold fix calendar for 2010-2019 on disk (GC reader)\"; grep of data/calendars/hist2010/, reports/stage_e14_cal_releases.json (NGS, WPSR, FOMC only) and reports/stage_e2b_release_calendar.json (coverage 2019-05-01..2026-06-21, no LBMA rows) found none. E.4b_RETURN.md:185-186: its 2019-2024 no-auction days need the K5-L-01 re-check if it reaches Tier A"
+    },
+    {
+     "input": "metals group calendar EC-CAL (trade dates, early_halt_ct, closures, engine F; roll blackout = data.group_session.roll_blackout over the store's splices)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "data/calendars/metals.py",
+     "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+    },
+    {
+     "input": "metals 2010-2019 group calendar (hist2010; products GC, MGC, SI, SIL, HG, MHG)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "data/calendars/hist2010/metals.json",
+     "stated_range": "coverage first 2010-06-01, last 2019-05-31 (counts: 2323 trade dates, 73 early halts, 0 unsourced)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4b",
+     "window_dates": "research 2025-04-01..2026-06-17, 295 trade dates on both roots (record window_dates)",
+     "purpose": "screen",
+     "source": "reports/E.4b_RETURN.md:12-16 (tier table); reports/E.4_RETURN.md:392-402; reports/stage_e4b_k5_screen/"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "research window 2025-04-01..2026-06-17 (power simulation only; K5 stopped before its list, R-D-1, confirmation window never read)",
+     "purpose": "power",
+     "source": "reports/stage_e5_k5_start_power.md:18-29; reports/E.5_RETURN.md:24, 283-293, 396-399"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "ML route v2 Gate 0, training window 2019-05..2024-02 (n_dates 1067-1068), MGC rows on GC bars, MHG rows on HG bars",
+     "purpose": "other",
+     "source": "reports/E.12_RETURN.md:9, 19; reports/stage_e12_gate0.md; ML-route feature k5_pmfix_move (close(T_P+1) - close(T_P-1)), not the frozen member run"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (E.5 method power re-run under v13; matched screening records)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md:281-284; reports/stage_e22_power_k5/"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "W_cf 2019-05-06..2024-02-29, 1174 days after roll-blackout exclusions; MGC on GC bars (price_path {'MGC': 'GC'}, U8 via V39)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md:278, 296-313; reports/stage_e22_confirm_k5/ (K5_K5-pmfix-01_MGC_confirmation.json, status run, label mean_holding_below_10min, 1080 trips, not used in the verdict)"
+    }
+   ],
+   "tier": "n/a",
+   "verdicts": [
+    "E.4b: \"pmfix MGC (mean hold 9.964 min: screened, t -2.194)\" excluded (OC-H) (E.4b_RETURN.md:15); \"excluded only because one liquidation at its 09:02 entry bar made a 0.0-minute trip\" (E.4b_RETURN.md:121-125)",
+    "E.5: \"excluded | not run (K5 stopped, R-D-1) | supply 0, n_b 11, inconclusive by design\" (E.5_RETURN.md:290)",
+    "E.20: k5_pmfix_move DROPPED by F6, \"no gold fix calendar for 2010-2019 on disk (GC reader)\" (stage_e20_product_summary.md:61)",
+    "E.22: \"| 8 | K5-pmfix-01 MGC | excluded | not run |\" (E.22_RETURN.md:307)"
+   ],
+   "settlement_note": "GC settlement 12:30 CT (window 12:29:00-12:30:00), 2010-06-07..2024-02-29, grade primary (reports/stage_e16_settlement.json products.GC.settle; MGC itself is not listed, GC is its price path in E.22). Decision 09:01/10:01 and exit bar T_P+11 (09:11/10:11): before settlement.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K5-fomc-01 MGC",
+   "cluster_or_stage": "K5 (Stage E.4b)",
+   "member_id": "K5-fomc-01",
+   "module": "strategy/members/k5/fomc.py",
+   "freeze_file": "reports/stage_e_k5_member_freeze.json",
+   "traded_root": "MGC",
+   "vehicle": "MGC",
+   "w_ext_root": "GC",
+   "signal_legs": [],
+   "definition_verbatim": "MGC only (q_c 1). On every date of _releases.FOMC_STATEMENT_DATES (the frozen calendar's FOMC rows\nat 13:00 CT, E.3-L-15):\n- signal: s = ticks(close of the bar at 13:04) - ticks(close of the bar at 12:59); both bars\n  present with one instrument_id (S0.9; the 13:04 bar is the entry decision bar); s = 0: no\n  trade;\n- entry: s > 0 BUY, s < 0 SELL, market intent on the bar at 13:04, filling at the 13:05 open; a\n  missing 13:04 bar: no trade (S0.6);\n- exit: market intent on the bar at 13:14, filling at the 13:15 open; a missing exit bar: the\n  first later present bar (S0.7). Hold 10 minutes (K5-L-09);\n- no entry when the entry bar carries early_halt_ct (S0.8). No percent return (S0.14).\nA date not in the table is not traded. The rule is _event_common.SignedMoveEvent's.",
+   "trigger_event": "every FOMC statement date of FOMC_STATEMENT_DATES (13:00 CT): sign of close(13:04) - close(12:59); zero: no trade",
+   "decision_time_ct": "13:04 (the entry decision bar); fill at the 13:05 open",
+   "side_rule": "- entry: s > 0 BUY, s < 0 SELL, market intent on the bar at 13:04, filling at the 13:05 open; a missing 13:04 bar: no trade (S0.6);",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "- exit: market intent on the bar at 13:14, filling at the 13:15 open; a missing exit bar: the first later present bar (S0.7). Hold 10 minutes (K5-L-09);",
+   "expected_events_per_year": "8 scheduled FOMC statements a year (57 dates 2019-05..2026-06). Counts: E.4b 8 trips (10 FOMC dates in the window, 2 roll blackouts untraded; E.4b_RETURN.md:13, 78, 153-154); E.22 34 trips (E.22_RETURN.md:290, 308)",
+   "inputs_needed": [
+    {
+     "input": "frozen D6 day-session clock O_X/C_X (MGC 07:20/12:30, MHG 07:10/12:00), read by _port_common.leg_facts via screening.stage_e_frozen.load_frozen_tables().day_session_ct",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e2a_vehicle_sizes.json (contracts.O_X/C_X; screening/stage_e_frozen.py:225-237)",
+     "stated_range": "not date-indexed (fixed clock); GC and HG rows carry the same O_X/C_X"
+    },
+    {
+     "input": "FOMC_STATEMENT_DATES (FOMC statement rows at 13:00 CT)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k5/_releases.py (from reports/stage_e2b_release_calendar.json FOMC rows)",
+     "stated_range": "TABLE_RANGE = (2019-05-01, 2026-06-19); 57 dates, 2019-05-01..2026-06-17"
+    },
+    {
+     "input": "2010-2019 FOMC statement calendar (E.14)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "reports/stage_e14_cal_releases.json (release FOMC)",
+     "stated_range": "coverage 2010-06-01..2019-05-31; 72 FOMC rows 2010-06-23..2019-05-01 (14 time:inferred, 58 time:official). Instants in CT (computed from instant_utc): 50 at 13:00 CT (2013-03-20..2019-05-01), 14 at 13:15, 4 at 11:30, 3 at 11:35, 1 at 11:20. The frozen member reads only its own literal table, which starts 2019-05-01; stage_e20_product_summary.md:67-76 (the Kept-with-recorded-partial-row-loss paragraph) notes the frozen 13:00 CT filter matches 2010-2019 statements only from 2013-03-20"
+    },
+    {
+     "input": "metals group calendar EC-CAL (trade dates, early_halt_ct, closures, engine F; roll blackout = data.group_session.roll_blackout over the store's splices)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "data/calendars/metals.py",
+     "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+    },
+    {
+     "input": "metals 2010-2019 group calendar (hist2010; products GC, MGC, SI, SIL, HG, MHG)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "data/calendars/hist2010/metals.json",
+     "stated_range": "coverage first 2010-06-01, last 2019-05-31 (counts: 2323 trade dates, 73 early halts, 0 unsourced)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4b",
+     "window_dates": "research 2025-04-01..2026-06-17, 295 trade dates on both roots (record window_dates)",
+     "purpose": "screen",
+     "source": "reports/E.4b_RETURN.md:12-16 (tier table); reports/E.4_RETURN.md:392-402; reports/stage_e4b_k5_screen/"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "research window 2025-04-01..2026-06-17 (power simulation only; K5 stopped before its list, R-D-1, confirmation window never read)",
+     "purpose": "power",
+     "source": "reports/stage_e5_k5_start_power.md:18-29; reports/E.5_RETURN.md:24, 283-293, 396-399"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (E.5 method power re-run under v13; matched screening records)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md:281-284; reports/stage_e22_power_k5/"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "W_cf 2019-05-06..2024-02-29, 1174 days after roll-blackout exclusions; MGC on GC bars (price_path {'MGC': 'GC'}, U8 via V39)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md:278, 296-313; reports/stage_e22_confirm_k5/ (K5_K5-fomc-01_MGC_confirmation.json, coverage 0.9957, 34 trips; Tier A, Holm K = 5)"
+    }
+   ],
+   "tier": "A",
+   "verdicts": [
+    "E.4b: \"| A | K5-fomc-01 MGC | 8 | +2.3498 | 1.846 |\" (E.4b_RETURN.md:13)",
+    "E.5: \"| K5 | none: stopped before its list (R-D-1) | K5-fomc-01 MGC | not run | ... | inconclusive by design: supply 0 |\" (E.5_RETURN.md:24)",
+    "E.11: excluded from the v2 signal library, \"known after the last decision time\" (E.11_RETURN.md:221)",
+    "E.22: \"K5-fomc-01 MGC (on GC bars, U8): NULL, no edge. UCB95 +0.09 against eps 71 ticks; Holm p 0.894.\" (E.22_RETURN.md:12); \"| K5 | no statement | K5-fomc-01 MGC | null | -0.3129 | +0.0930 | +71 | 34 | 0.8938 (not rejected) | -1.253 | 5.43e-12 | +0.043 | no edge (first failing: holm) |\" (E.22_RETURN.md:290)"
+   ],
+   "settlement_note": "GC settlement 12:30 CT (window 12:29:00-12:30:00), 2010-06-07..2024-02-29, grade primary (reports/stage_e16_settlement.json products.GC.settle; MGC itself is not listed, GC is its price path in E.22). Decision 13:04 CT: AFTER the 12:30 CT GC settlement.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K5-ovr-01 MGC",
+   "cluster_or_stage": "K5 (Stage E.4b)",
+   "member_id": "K5-ovr-01",
+   "module": "strategy/members/k5/ovr.py",
+   "freeze_file": "reports/stage_e_k5_member_freeze.json",
+   "traded_root": "MGC",
+   "vehicle": "MGC",
+   "w_ext_root": "GC",
+   "signal_legs": [],
+   "definition_verbatim": "Rule (every clock time CT, bars of trade date d on CT date d; S0.4):\n- Decision times t = O + 60k for k = 1, 2, ... while t <= C, from the frozen O and C: MGC 08:20,\n  09:20, 10:20, 11:20, 12:20 (five); MHG 08:10, 09:10, 10:10, 11:10 (four).\n- Signal r(t) = (close of the bar at t-1 - open of the bar at t-60) / open of the bar at t-60, as\n  the Python float (tc - to) / to of integer vendor ticks (K4-L-05). Both bars must be present\n  with one instrument_id (the per-decision-time guard, S0.9) and to > 0 (C10), else no trade at t.\n- Reference dates: the 20 most recent METALS_FULL_SESSIONS dates strictly before d (EC-CAL: a\n  roll-blackout date counts, an early-halt date is not in the table; K5-L-05, K4-L-08).\n- Reference values: r(tau) at the same decision clock times on those dates, each counted only\n  when its two bars are present with one instrument_id and its open is > 0. A reference date\n  without bars keeps its slot and contributes fewer values (K4-L-08). Fewer than 80% of the\n  possible values (MGC 80 of 100, MHG 64 of 80; K5-L-06): no trade at t.\n- Warm-up: no trade while any reference date precedes the trade date of the first bar this\n  member received in the run (K4-L-09).\n- Cuts: P10, P90 = numpy.percentile(values, [10, 90], method=\"linear\") on the floats.\n- Entry: r(t) <= P10 buys, r(t) >= P90 sells; both at once (P10 = P90 = r) is no trade\n  (K4-L-10); otherwise no trade. Market intent on the bar at t-1 (that exact bar, S0.6), only\n  when flat with no pending order (so positions never overlap), filling at the open of t.\n- Exit: market intent on the first present bar at or after t+58 (fills nominally at t+59),\n  resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are\n  the backstops: after an engine-forced exit the member sends no exit of its own, cannot re-enter\n  at that decision time (its entry bar has passed), and later decision times proceed as usual.\n- Early halts: a decision bar carrying early_halt_ct means no trade at that t (S0.8), so an\n  early-halt trade date is not traded at any t.\nOne traded leg, q_c contracts (MGC 1, MHG 2). No stop, no filter, no size rule beyond the spec.",
+   "trigger_event": "at each decision time t (08:20, 09:20, 10:20, 11:20, 12:20 CT): the trailing 60-minute return r(t) at or below P10 (buy) or at or above P90 (sell) of the same-clock values over the 20 prior full sessions; flat only",
+   "decision_time_ct": "t-1 for each t: 08:19, 09:19, 10:19, 11:19, 12:19 CT (last 12:19); fill at the open of t",
+   "side_rule": "- Entry: r(t) <= P10 buys, r(t) >= P90 sells; both at once (P10 = P90 = r) is no trade (K4-L-10); otherwise no trade. Market intent on the bar at t-1 (that exact bar, S0.6), only when flat with no pending order (so positions never overlap), filling at the open of t.",
+   "side_kind": "fade",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "- Exit: market intent on the first present bar at or after t+58 (fills nominally at t+59), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops: after an engine-forced exit the member sends no exit of its own, cannot re-enter at that decision time (its entry bar has passed), and later decision times proceed as usual.",
+   "expected_events_per_year": "up to 5 decision times per trade date, entries only in the 10% tails and only when flat. Counts: E.4b 289 trips in 295 dates (E.4_RETURN.md:401); E.22 1221 trips in 1174 days (E.22_RETURN.md:309)",
+   "inputs_needed": [
+    {
+     "input": "frozen D6 day-session clock O_X/C_X (MGC 07:20/12:30, MHG 07:10/12:00), read by _port_common.leg_facts via screening.stage_e_frozen.load_frozen_tables().day_session_ct",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e2a_vehicle_sizes.json (contracts.O_X/C_X; screening/stage_e_frozen.py:225-237)",
+     "stated_range": "not date-indexed (fixed clock); GC and HG rows carry the same O_X/C_X"
+    },
+    {
+     "input": "METALS_FULL_SESSIONS (20 reference dates: metals trade dates with no early halt)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k5/_calendar.py (generated from data/calendars/metals.py)",
+     "stated_range": "2019-05-01..2026-06-19, 1784 dates. W_ext: no literal table on disk; stage_e20_product_summary.md:74-75 says k5_ovr_*'s \"full-session tables derive from the 2010-2019 group calendars\" (data/calendars/hist2010/metals.json)"
+    },
+    {
+     "input": "metals group calendar EC-CAL (trade dates, early_halt_ct, closures, engine F; roll blackout = data.group_session.roll_blackout over the store's splices)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "data/calendars/metals.py",
+     "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+    },
+    {
+     "input": "metals 2010-2019 group calendar (hist2010; products GC, MGC, SI, SIL, HG, MHG)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "data/calendars/hist2010/metals.json",
+     "stated_range": "coverage first 2010-06-01, last 2019-05-31 (counts: 2323 trade dates, 73 early halts, 0 unsourced)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4b",
+     "window_dates": "research 2025-04-01..2026-06-17, 295 trade dates on both roots (record window_dates)",
+     "purpose": "screen",
+     "source": "reports/E.4b_RETURN.md:12-16 (tier table); reports/E.4_RETURN.md:392-402; reports/stage_e4b_k5_screen/"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "research window 2025-04-01..2026-06-17 (power simulation only; K5 stopped before its list, R-D-1, confirmation window never read)",
+     "purpose": "power",
+     "source": "reports/stage_e5_k5_start_power.md:18-29; reports/E.5_RETURN.md:24, 283-293, 396-399"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "ML route v2 Gate 0, training window 2019-05..2024-02 (n_dates 1067-1068), MGC rows on GC bars, MHG rows on HG bars",
+     "purpose": "other",
+     "source": "reports/E.12_RETURN.md:9, 19; reports/stage_e12_gate0.md; ML-route feature k5_ovr_ret, k5_ovr_pct, not the frozen member run"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "Part C search features on the step2 search stores, S_X 2019-05-06 (GC)..2024-02-29; the ext2010 backward stores never read (search FAIL, no backward read)",
+     "purpose": "other",
+     "source": "reports/E.20_RETURN.md:16-24, 475, 508, 559; reports/stage_e20_product_summary.md (F6 KEPT list, lines 41-45, 74-75); ML-route feature k5_ovr_ret, k5_ovr_pct on GC rows (KEPT by F6), not the frozen member run"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (E.5 method power re-run under v13; matched screening records)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md:281-284; reports/stage_e22_power_k5/"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "W_cf 2019-05-06..2024-02-29, 1174 days after roll-blackout exclusions; MGC on GC bars (price_path {'MGC': 'GC'}, U8 via V39)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md:278, 296-313; reports/stage_e22_confirm_k5/ (K5_K5-ovr-01_MGC_confirmation.json, coverage 0.9979, 1221 trips)"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4b: Tier B; screen fail, 289 trips, mean -3.5608, t -0.330 (E.4_RETURN.md:401)",
+    "E.5: \"not run (K5 stopped, R-D-1) | supply 0, n_b 29, inconclusive by design\" (E.5_RETURN.md:292)",
+    "E.22: \"| 10 | K5-ovr-01 MGC | B | null | 1174 | 1221 | -5.5728 | -2.8922 |\" (E.22_RETURN.md:309); cluster K5 \"no statement\""
+   ],
+   "settlement_note": "GC settlement 12:30 CT (window 12:29:00-12:30:00), 2010-06-07..2024-02-29, grade primary (reports/stage_e16_settlement.json products.GC.settle; MGC itself is not listed, GC is its price path in E.22). All decision bars (last 12:19) before settlement; the exit at t+58 for the last t (13:18) is after it.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K5-ovr-01 MHG",
+   "cluster_or_stage": "K5 (Stage E.4b)",
+   "member_id": "K5-ovr-01",
+   "module": "strategy/members/k5/ovr.py",
+   "freeze_file": "reports/stage_e_k5_member_freeze.json",
+   "traded_root": "MHG",
+   "vehicle": "MHG",
+   "w_ext_root": null,
+   "signal_legs": [],
+   "definition_verbatim": "Rule (every clock time CT, bars of trade date d on CT date d; S0.4):\n- Decision times t = O + 60k for k = 1, 2, ... while t <= C, from the frozen O and C: MGC 08:20,\n  09:20, 10:20, 11:20, 12:20 (five); MHG 08:10, 09:10, 10:10, 11:10 (four).\n- Signal r(t) = (close of the bar at t-1 - open of the bar at t-60) / open of the bar at t-60, as\n  the Python float (tc - to) / to of integer vendor ticks (K4-L-05). Both bars must be present\n  with one instrument_id (the per-decision-time guard, S0.9) and to > 0 (C10), else no trade at t.\n- Reference dates: the 20 most recent METALS_FULL_SESSIONS dates strictly before d (EC-CAL: a\n  roll-blackout date counts, an early-halt date is not in the table; K5-L-05, K4-L-08).\n- Reference values: r(tau) at the same decision clock times on those dates, each counted only\n  when its two bars are present with one instrument_id and its open is > 0. A reference date\n  without bars keeps its slot and contributes fewer values (K4-L-08). Fewer than 80% of the\n  possible values (MGC 80 of 100, MHG 64 of 80; K5-L-06): no trade at t.\n- Warm-up: no trade while any reference date precedes the trade date of the first bar this\n  member received in the run (K4-L-09).\n- Cuts: P10, P90 = numpy.percentile(values, [10, 90], method=\"linear\") on the floats.\n- Entry: r(t) <= P10 buys, r(t) >= P90 sells; both at once (P10 = P90 = r) is no trade\n  (K4-L-10); otherwise no trade. Market intent on the bar at t-1 (that exact bar, S0.6), only\n  when flat with no pending order (so positions never overlap), filling at the open of t.\n- Exit: market intent on the first present bar at or after t+58 (fills nominally at t+59),\n  resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are\n  the backstops: after an engine-forced exit the member sends no exit of its own, cannot re-enter\n  at that decision time (its entry bar has passed), and later decision times proceed as usual.\n- Early halts: a decision bar carrying early_halt_ct means no trade at that t (S0.8), so an\n  early-halt trade date is not traded at any t.\nOne traded leg, q_c contracts (MGC 1, MHG 2). No stop, no filter, no size rule beyond the spec.",
+   "trigger_event": "at each decision time t (08:10, 09:10, 10:10, 11:10 CT): the trailing 60-minute return r(t) at or below P10 (buy) or at or above P90 (sell) of the same-clock values over the 20 prior full sessions; flat only",
+   "decision_time_ct": "t-1 for each t: 08:09, 09:09, 10:09, 11:09 CT (last 11:09); fill at the open of t",
+   "side_rule": "- Entry: r(t) <= P10 buys, r(t) >= P90 sells; both at once (P10 = P90 = r) is no trade (K4-L-10); otherwise no trade. Market intent on the bar at t-1 (that exact bar, S0.6), only when flat with no pending order (so positions never overlap), filling at the open of t.",
+   "side_kind": "fade",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "- Exit: market intent on the first present bar at or after t+58 (fills nominally at t+59), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops: after an engine-forced exit the member sends no exit of its own, cannot re-enter at that decision time (its entry bar has passed), and later decision times proceed as usual.",
+   "expected_events_per_year": "up to 4 decision times per trade date, entries only in the 10% tails and only when flat. Counts: E.4b 190 trips in 295 dates (E.4_RETURN.md:402); E.22 none (no series)",
+   "inputs_needed": [
+    {
+     "input": "frozen D6 day-session clock O_X/C_X (MGC 07:20/12:30, MHG 07:10/12:00), read by _port_common.leg_facts via screening.stage_e_frozen.load_frozen_tables().day_session_ct",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e2a_vehicle_sizes.json (contracts.O_X/C_X; screening/stage_e_frozen.py:225-237)",
+     "stated_range": "not date-indexed (fixed clock); GC and HG rows carry the same O_X/C_X"
+    },
+    {
+     "input": "METALS_FULL_SESSIONS (20 reference dates: metals trade dates with no early halt)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k5/_calendar.py (generated from data/calendars/metals.py)",
+     "stated_range": "2019-05-01..2026-06-19, 1784 dates. W_ext: no literal table on disk; stage_e20_product_summary.md:74-75 says k5_ovr_*'s \"full-session tables derive from the 2010-2019 group calendars\" (data/calendars/hist2010/metals.json)"
+    },
+    {
+     "input": "metals group calendar EC-CAL (trade dates, early_halt_ct, closures, engine F; roll blackout = data.group_session.roll_blackout over the store's splices)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "data/calendars/metals.py",
+     "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+    },
+    {
+     "input": "metals 2010-2019 group calendar (hist2010; products GC, MGC, SI, SIL, HG, MHG)",
+     "covers_w_ext": true,
+     "covers_w_cf": false,
+     "path": "data/calendars/hist2010/metals.json",
+     "stated_range": "coverage first 2010-06-01, last 2019-05-31 (counts: 2323 trade dates, 73 early halts, 0 unsourced)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4b",
+     "window_dates": "research 2025-04-01..2026-06-17, 295 trade dates on both roots (record window_dates)",
+     "purpose": "screen",
+     "source": "reports/E.4b_RETURN.md:12-16 (tier table); reports/E.4_RETURN.md:392-402; reports/stage_e4b_k5_screen/"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "research window 2025-04-01..2026-06-17 (power simulation only; K5 stopped before its list, R-D-1, confirmation window never read)",
+     "purpose": "power",
+     "source": "reports/stage_e5_k5_start_power.md:18-29; reports/E.5_RETURN.md:24, 283-293, 396-399"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "ML route v2 Gate 0, training window 2019-05..2024-02 (n_dates 1067-1068), MGC rows on GC bars, MHG rows on HG bars",
+     "purpose": "other",
+     "source": "reports/E.12_RETURN.md:9, 19; reports/stage_e12_gate0.md; ML-route feature k5_ovr_ret, k5_ovr_pct (MHG rows on HG bars), not the frozen member run"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (E.5 method power re-run under v13; matched screening records)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md:281-284; reports/stage_e22_power_k5/"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "W_cf 2022-06-01..2024-02-29 (MHG S_X), 425 days; MHG bars",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md:278, 296-313; reports/stage_e22_confirm_k5/ (K5_K5-ovr-01_MHG_confirmation.json: excluded_before_screening, coverage 0.7688; no series)"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4b: Tier B; screen fail, 190 trips, mean -3.3977, t -1.201 (E.4_RETURN.md:402)",
+    "E.5: \"not run (K5 stopped, R-D-1) | supply 425, n_b 18, power sufficient\" (E.5_RETURN.md:293)",
+    "E.22: \"| 11 | K5-ovr-01 MHG | B | inconclusive |\" (E.22_RETURN.md:310); blocking, \"record status 'excluded_before_screening': no series\" (E.22_RETURN.md:312)"
+   ],
+   "settlement_note": "HG settlement 12:00 CT (window 11:59:00-12:00:00), rows 2010-06-07..2017-09-25 and 2017-09-26..2024-02-29 (reports/stage_e16_settlement.json products.HG.settle; MHG itself is not listed). All decision bars (last 11:09) before settlement; the exit at t+58 for the last t (12:08) is after it.",
+   "exclusion": null
+  }
+ ],
+ "excluded": [],
+ "notes": [
+  "All 11 frozen K5 trials have a row; none falls in the brief's exclusion list (no ML model member, no search configuration, no multi-day rule, no combination book). The OC-H exclusions (cp1 MHG, cp2 MHG coverage; pmfix MGC mean hold) are screening tier outcomes, recorded under tier/verdicts, not brief exclusions.",
+  "W_ext: MGC maps to GC (ext2010 store data/processed_hist/ext2010/GC/ohlcv-1m_GC_v_0_2010-06-07_2019-04-30_ext2010.parquet per reports/stage_e17_run_manifest.json stores.GC; first trade date 2010-06-07 from the file name, not opened). HG is not one of the 17 roots and has no manifest entry: MHG rows have no W_ext data.",
+  "Program N: E.4b added 9 screened K5 trials (cp1 MHG and cp2 MHG never screened; pmfix screened then excluded, counts) (E.4_RETURN.md:440-442).",
+  "C1 (E.13-E.17 ML model, NG rows) lists k5_ovr_pct, k5_ovr_ret, k5_pmfix_move, k5_preauc_msince among its feature names (reports/stage_e14_c1_model.json); C1 stopped at guard C10 in E.17 with no statistic (E.17_RETURN.md:7-10). Not entered as a read of the K5 triggers (ML model, NG rows).",
+  "MGC confirmation used GC bars as MGC's price path with MGC's costs and tick (R-E22-A4, E.22_RETURN.md:627; verifier note E.22_RETURN.md:606)."
+ ],
+ "sources_read": [
+  "docs/prompts: none; reports/stage_e23_briefs/brief_inventory.md (full)",
+  "reports/stage_e_k5_member_freeze.json (full, 4690 bytes)",
+  "strategy/members/k5/cp1.py (full), cp2.py (full), cp3.py (lines 1-60), fomc.py (1-45), pmfix.py (1-45), preauc.py (1-50), ovr.py (1-70)",
+  "strategy/members/k5/_releases.py (lines 1-28, 1279-1292; top-level names by grep)",
+  "strategy/members/k5/_calendar.py (lines 1-23)",
+  "strategy/members/k5/_port_common.py (lines 1-37, 60-82)",
+  "screening/stage_e_frozen.py (lines 218-242, grep of table paths)",
+  "reports/stage_e2a_vehicle_sizes.json (contracts O_X/C_X for MGC, MHG, GC, HG only)",
+  "reports/stage_e22_briefs/partA_facts_K5_K3.md (lines 1-87, 140-150)",
+  "reports/E.4b_RETURN.md (lines 10-17; others via partA_facts quotes)",
+  "reports/E.4_RETURN.md (grep K5: 392-402, 437-445)",
+  "reports/E.5_RETURN.md (grep K5-: 24, 283-293, 332, 397)",
+  "reports/E.22_RETURN.md (grep K5; lines 10-16, 268-300)",
+  "reports/E.1, E.2a, E.2b, E.6-E.21 _RETURN.md (grep K5 only)",
+  "reports/E.11_RETURN.md (lines 205-225); reports/E.12_RETURN.md (grep Gate 0 / window); reports/E.20_RETURN.md (lines 8-24, grep windows); reports/E.17_RETURN.md (lines 1-25)",
+  "reports/stage_e12_gate0.md (header lines 1-14, grep k5_)",
+  "reports/stage_e20_product_summary.md (lines 30-80, 125-146)",
+  "reports/stage_e11_signal_coverage.md (grep cp1_ret/cp2_brk/cp3_clv)",
+  "ml_route_v2/signals/k5.py (lines 1-40)",
+  "reports/stage_e22_confirm_k5/*_confirmation.json (fields window, status, coverage, labels, price_path, bars.path only); K5_K5-pmfix-01_MGC_confirmation_trips.json (n_trips only)",
+  "reports/stage_e14_cal_releases.json (coverage, counts, FOMC rows' instant_utc/date only)",
+  "reports/stage_e14_c1_model.json (k5_* names only)",
+  "reports/stage_e2b_release_calendar.json (coverage; release names and date ranges only)",
+  "data/calendars/hist2010/metals.json (coverage, products, counts only)",
+  "data/calendars/metals.py (grep CALENDAR_COVERAGE)",
+  "reports/stage_e16_settlement.json (window; products GC and HG settle rows)",
+  "reports/stage_e17_run_manifest.json (stores.GC only)",
+  "base_rules/common.py (lines 85-110), base_rules/constants.py (SETTLEMENT_PATH), data/group_session.py (grep roll_blackout)",
+  "docs/STAGES.md (grep K5)"
+ ],
+ "not_finished": [
+  "progress.md K5 lines were not read individually (docs/STAGES.md and the returns were used); no stage beyond those listed was found by grep of the returns.",
+  "The roll-blackout input for W_ext (GC splices on the ext2010 store) was not checked: it is derived from bars, which this brief forbids opening."
+ ]
+}

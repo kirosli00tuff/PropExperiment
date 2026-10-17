@@ -1,0 +1,975 @@
+{
+ "assignment": "K1",
+ "rows": [
+  {
+   "trigger_id": "K1-cp1-01 MNQ",
+   "cluster_or_stage": "K1 (Stage E.7)",
+   "member_id": "K1-cp1-01",
+   "module": "strategy.members.k1.cp1 (strategy/members/k1/cp1.py, factory make_mnq)",
+   "freeze_file": "reports/stage_e_k1_member_freeze.json (cluster K1, sha256 cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2, commit 9113abd)",
+   "traded_root": "MNQ",
+   "vehicle": "MNQ q_c 1",
+   "w_ext_root": "NQ",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the equity index row (O 08:30, C 15:00, F 15:08; the clock comes from the\nfrozen tables, the same on all three roots):\n- Signal s = sign(close of the bar at O+29 = 08:59 minus open of the trade date's first bar), in\n  vendor ticks. The first bar is the bar opening 17:00 CT on the CT calendar date before d that\n  carries trade_date d (C3, E.3-L-05): Sunday 17:00 for a Monday, and the holiday's 17:00 reopen\n  for the trade date after an exchange holiday (an early-halt holiday such as Memorial Day is its\n  own trade date; the equity calendar books nothing forward). If that bar is missing there is no\n  trade.\n- Both signal bars must be present and carry one instrument_id, else no trade (D6; E.3-L-06).\n  Zero signal: no trade.\n- Entry: market intent on the bar at C-31 = 14:29 of CT date d (fills at the 14:30 open), buy if\n  s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).\n- Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills\n  nominally at the 14:59 open), resent while refused (S0.7, E.3-L-22). The engine's forced\n  flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more\n  that trade date.\n- Early halts are not tested here (a port follows D6: the engine's F governs, C line 104). No\n  release instant is read (none falls in 14:30-14:59, C lines 266-267).\nOne traded leg, q_c contracts (MNQ 1, M2K 3, MYM 3). No stop, no filter, no size rule beyond the\nspec.",
+   "trigger_event": "every equity trade date: s = sign(close of the 08:59 bar - open of the trade date's first bar, the 17:00 CT bar of CT date d-1), nonzero, both bars present with one instrument_id",
+   "decision_time_ct": "08:59 (signal bar; last bar the decision reads); entry intent on the 14:29 bar, fill at the 14:30 open",
+   "side_rule": "buy if s > 0, sell if s < 0",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills nominally at the 14:59 open), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every equity trade date with nonzero signal (about 250 a year); E.7 research window counts: MNQ 284, M2K 285, MYM 286 trips in 299 dates",
+   "inputs_needed": [
+    {
+     "input": "price bars of the traded vehicle MNQ (price path NQ in E.12 / v13 'MNQ -> NQ' declaration, reports/E.22_RETURN.md line 703)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/processed_hist/ext2010/NQ/ohlcv-1m_NQ_v_0_2010-06-07_2019-04-30_ext2010.parquet (manifest only; not opened); W_cf: data/processed_step2/NQ/ohlcv-1m_NQ_v_0_2019-05-06_2024-02-29_step2.parquet (manifest only; not opened); no MNQ step2 store (E.7: a K1 confirmation 'would need MNQ, M2K and MYM step 2')",
+     "stated_range": "W_ext: ext2010 NQ file 2010-06-07..2019-04-30; reports/stage_e16_windows.json NQ start_month 2010-07; W_cf: NQ S_X 2019-05-06..2024-02-29 (reports/stage_e12_phase1_bars.json)"
+    },
+    {
+     "input": "equity group calendar (trade dates, exchange holidays, early halts, engine F; roll blackouts)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/equity.py with data/cme_calendar.py; W_ext: data/calendars/hist2010/equity.json (products ES, MES, NQ, MNQ, RTY, M2K, YM, MYM)",
+     "stated_range": "equity.py docstring '2019-05-01..2026-06-19' (CALENDAR_COVERAGE 2019-01-01..2026-12-31); hist2010/equity.json coverage first 2010-06-01, last 2019-05-31, 0 unsourced"
+    },
+    {
+     "input": "engine flatten F (rules.sessions TOPSTEP_HOLIDAYS / TOPSTEP_EARLY_CLOSE_LEAD; 'O 08:30, C 15:00, F 15:08' on regular dates)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "rules/sessions.py; for 2010-2018 no on-disk table: C1 and E.20 derive Rule H-1 rows in memory with c1_replication/tables.py h1_rows (reports/stage_e20_briefs/backward_swap_table.md row S3: '95 Rule H-1 rows before 2019-05-01')",
+     "stated_range": "rules/sessions.py docstring: derived rows 'cover trade dates 2019-05-01..2023-12-31', schedule rows 2024-2026"
+    },
+    {
+     "input": "release instants read by the ENGINE, not the member (FOMC and ISM_SERVICES for the D9.5a fill guard, NFP, CPI for D9.12, event-window cost); E.7: 'No member reads a release (FOMC 10, NFP 14, ISM_SERVICES 15 rows per root are harness inputs)'",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (FOMC, NFP, CPI, ISM_SERVICES, ...); W_ext: reports/stage_e14_cal_releases.json holds FOMC (with NGS, WPSR) only",
+     "stated_range": "e2b calendar coverage 2019-05-01..2026-06-21; e14 calendar coverage 2010-06-01..2019-05-31 for FOMC, NGS, WPSR; no 2010-2019 NFP, CPI or ISM Services calendar (reports/stage_e20_product_summary.md: 'no ISM Services release calendar for 2010-2019'; 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not NFP, CPI, PPI, GDP, ISM, ...')"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.7",
+     "window_dates": "research window 2025-04-01..2026-06-12, 299 trade dates (316 less 15 roll-blackout dates and 2 UR-1 dates)",
+     "purpose": "screen",
+     "source": "reports/E.7_RETURN.md section 2, Task 5 (screen table); reports/stage_e7_k1_screen/<trial>_research.json"
+    },
+    {
+     "stage": "E.7",
+     "window_dates": null,
+     "purpose": "power",
+     "source": "reports/E.7_RETURN.md Task 5: 'Power `not_run` (StartRuleMissing) on every record' (record field power = not_run)"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "W_cf training window S_X 2019-05-06..2024-02-29 (price path NQ)",
+     "purpose": "other",
+     "source": "ML route v2 Gate 0 (reports/stage_e12_gate0.md Family A rows gate0A_cp1_ret_h60/h120/hF pooled over vehicles; Family B gate0B_MNQ_h60/h120/hF; feature definitions docs/STAGE_E_ML_V2_DESIGN.md V2.3, reports/stage_e11_signal_coverage.md lines 43-44). The member's decision variable entered as a feature at the model's decision times; not a test of the member's own entry/exit."
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "W_cf search window 2019-05-06..2024-02-29 (step2 NQ store); backward W_ext read NOT run",
+     "purpose": "other",
+     "source": "reports/stage_e20_plan.md sections 1-2 (K1 vehicles MNQ (NQ), M2K (RTY)) and reports/stage_e20_product_summary.md KEPT list (cp1_ret); reports/E.20_RETURN.md section 1: 'Search screen: FAIL' and 'A failed screen ends Part C: no freeze, no backward read, E20-B1 not run'. Feature in a pooled ML search, not a test of the member."
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.7: Tier 'B'; screen record passes False (mean +4.4725 net ticks/contract/day, daily t +0.333, 284 trips; reports/E.7_RETURN.md Task 5 table); 'Tier A is empty, so K1 has no Holm family and no edge candidate.' (Task 7)",
+    "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_MNQ_h60/h120/hF decision 'FAIL'",
+    "E.20 ML search: 'Search screen: FAIL.' (reports/E.20_RETURN.md section 1)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.md: NQ, YM settlement 15:15 CT 2010-06-07..2020-10-25 (period 15:14:30-15:15:00), 15:00 CT 2020-10-26..2024-02-29 (14:59:30-15:00:00); the frozen C 15:00 'disagrees' before 2020-10-26. The decision time and the latest exit fill (14:59 open) precede 15:00, so they precede the settlement in both regimes.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K1-cp1-01 M2K",
+   "cluster_or_stage": "K1 (Stage E.7)",
+   "member_id": "K1-cp1-01",
+   "module": "strategy.members.k1.cp1 (strategy/members/k1/cp1.py, factory make_m2k)",
+   "freeze_file": "reports/stage_e_k1_member_freeze.json (cluster K1, sha256 cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2, commit 9113abd)",
+   "traded_root": "M2K",
+   "vehicle": "M2K q_c 3",
+   "w_ext_root": "RTY",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the equity index row (O 08:30, C 15:00, F 15:08; the clock comes from the\nfrozen tables, the same on all three roots):\n- Signal s = sign(close of the bar at O+29 = 08:59 minus open of the trade date's first bar), in\n  vendor ticks. The first bar is the bar opening 17:00 CT on the CT calendar date before d that\n  carries trade_date d (C3, E.3-L-05): Sunday 17:00 for a Monday, and the holiday's 17:00 reopen\n  for the trade date after an exchange holiday (an early-halt holiday such as Memorial Day is its\n  own trade date; the equity calendar books nothing forward). If that bar is missing there is no\n  trade.\n- Both signal bars must be present and carry one instrument_id, else no trade (D6; E.3-L-06).\n  Zero signal: no trade.\n- Entry: market intent on the bar at C-31 = 14:29 of CT date d (fills at the 14:30 open), buy if\n  s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).\n- Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills\n  nominally at the 14:59 open), resent while refused (S0.7, E.3-L-22). The engine's forced\n  flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more\n  that trade date.\n- Early halts are not tested here (a port follows D6: the engine's F governs, C line 104). No\n  release instant is read (none falls in 14:30-14:59, C lines 266-267).\nOne traded leg, q_c contracts (MNQ 1, M2K 3, MYM 3). No stop, no filter, no size rule beyond the\nspec.",
+   "trigger_event": "every equity trade date: s = sign(close of the 08:59 bar - open of the trade date's first bar, the 17:00 CT bar of CT date d-1), nonzero, both bars present with one instrument_id",
+   "decision_time_ct": "08:59 (signal bar; last bar the decision reads); entry intent on the 14:29 bar, fill at the 14:30 open",
+   "side_rule": "buy if s > 0, sell if s < 0",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills nominally at the 14:59 open), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every equity trade date with nonzero signal (about 250 a year); E.7 research window counts: MNQ 284, M2K 285, MYM 286 trips in 299 dates",
+   "inputs_needed": [
+    {
+     "input": "price bars of the traded vehicle M2K (price path RTY in E.12 / v13 'MNQ -> NQ' declaration, reports/E.22_RETURN.md line 703)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/processed_hist/ext2010h/RTY/ohlcv-1m_RTY_v_0_2010-07-01_2019-04-30_ext2010h.parquet (manifest only; not opened); W_cf: data/processed_step2/RTY/ohlcv-1m_RTY_v_0_2019-05-06_2024-02-29_step2.parquet (manifest only; not opened); no M2K step2 store (E.7: a K1 confirmation 'would need MNQ, M2K and MYM step 2')",
+     "stated_range": "W_ext: file named 2010-07-01..2019-04-30, but reports/stage_e16_windows.json RTY start_month 2017-06 and reports/stage_e16_settlement.md 'RTY's first CME trade date is 2017-07-10'; W_cf: RTY S_X 2019-05-06..2024-02-29 (reports/stage_e12_phase1_bars.json)"
+    },
+    {
+     "input": "equity group calendar (trade dates, exchange holidays, early halts, engine F; roll blackouts)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/equity.py with data/cme_calendar.py; W_ext: data/calendars/hist2010/equity.json (products ES, MES, NQ, MNQ, RTY, M2K, YM, MYM)",
+     "stated_range": "equity.py docstring '2019-05-01..2026-06-19' (CALENDAR_COVERAGE 2019-01-01..2026-12-31); hist2010/equity.json coverage first 2010-06-01, last 2019-05-31, 0 unsourced"
+    },
+    {
+     "input": "engine flatten F (rules.sessions TOPSTEP_HOLIDAYS / TOPSTEP_EARLY_CLOSE_LEAD; 'O 08:30, C 15:00, F 15:08' on regular dates)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "rules/sessions.py; for 2010-2018 no on-disk table: C1 and E.20 derive Rule H-1 rows in memory with c1_replication/tables.py h1_rows (reports/stage_e20_briefs/backward_swap_table.md row S3: '95 Rule H-1 rows before 2019-05-01')",
+     "stated_range": "rules/sessions.py docstring: derived rows 'cover trade dates 2019-05-01..2023-12-31', schedule rows 2024-2026"
+    },
+    {
+     "input": "release instants read by the ENGINE, not the member (FOMC and ISM_SERVICES for the D9.5a fill guard, NFP, CPI for D9.12, event-window cost); E.7: 'No member reads a release (FOMC 10, NFP 14, ISM_SERVICES 15 rows per root are harness inputs)'",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (FOMC, NFP, CPI, ISM_SERVICES, ...); W_ext: reports/stage_e14_cal_releases.json holds FOMC (with NGS, WPSR) only",
+     "stated_range": "e2b calendar coverage 2019-05-01..2026-06-21; e14 calendar coverage 2010-06-01..2019-05-31 for FOMC, NGS, WPSR; no 2010-2019 NFP, CPI or ISM Services calendar (reports/stage_e20_product_summary.md: 'no ISM Services release calendar for 2010-2019'; 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not NFP, CPI, PPI, GDP, ISM, ...')"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.7",
+     "window_dates": "research window 2025-04-01..2026-06-12, 299 trade dates (316 less 15 roll-blackout dates and 2 UR-1 dates)",
+     "purpose": "screen",
+     "source": "reports/E.7_RETURN.md section 2, Task 5 (screen table); reports/stage_e7_k1_screen/<trial>_research.json"
+    },
+    {
+     "stage": "E.7",
+     "window_dates": null,
+     "purpose": "power",
+     "source": "reports/E.7_RETURN.md Task 5: 'Power `not_run` (StartRuleMissing) on every record' (record field power = not_run)"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "W_cf training window S_X 2019-05-06..2024-02-29 (price path RTY)",
+     "purpose": "other",
+     "source": "ML route v2 Gate 0 (reports/stage_e12_gate0.md Family A rows gate0A_cp1_ret_h60/h120/hF pooled over vehicles; Family B gate0B_M2K_h60/h120/hF; feature definitions docs/STAGE_E_ML_V2_DESIGN.md V2.3, reports/stage_e11_signal_coverage.md lines 43-44). The member's decision variable entered as a feature at the model's decision times; not a test of the member's own entry/exit."
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "W_cf search window 2019-05-06..2024-02-29 (step2 RTY store); backward W_ext read NOT run",
+     "purpose": "other",
+     "source": "reports/stage_e20_plan.md sections 1-2 (K1 vehicles MNQ (NQ), M2K (RTY)) and reports/stage_e20_product_summary.md KEPT list (cp1_ret); reports/E.20_RETURN.md section 1: 'Search screen: FAIL' and 'A failed screen ends Part C: no freeze, no backward read, E20-B1 not run'. Feature in a pooled ML search, not a test of the member."
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.7: Tier 'B'; screen record passes False (mean -2.9538 net ticks/contract/day, daily t -0.975, 285 trips; reports/E.7_RETURN.md Task 5 table); 'Tier A is empty, so K1 has no Holm family and no edge candidate.' (Task 7)",
+    "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_M2K_h60/h120/hF decision 'FAIL'",
+    "E.20 ML search: 'Search screen: FAIL.' (reports/E.20_RETURN.md section 1)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.md: RTY not listed on CME before 2017-07-10; settlement 15:15 CT 2017-07-10..2020-10-25, 15:00 CT 2020-10-26..2024-02-29. The decision time and the latest exit fill (14:59 open) precede 15:00, so they precede the settlement in both regimes.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K1-cp1-01 MYM",
+   "cluster_or_stage": "K1 (Stage E.7)",
+   "member_id": "K1-cp1-01",
+   "module": "strategy.members.k1.cp1 (strategy/members/k1/cp1.py, factory make_mym)",
+   "freeze_file": "reports/stage_e_k1_member_freeze.json (cluster K1, sha256 cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2, commit 9113abd)",
+   "traded_root": "MYM",
+   "vehicle": "MYM q_c 3",
+   "w_ext_root": null,
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the equity index row (O 08:30, C 15:00, F 15:08; the clock comes from the\nfrozen tables, the same on all three roots):\n- Signal s = sign(close of the bar at O+29 = 08:59 minus open of the trade date's first bar), in\n  vendor ticks. The first bar is the bar opening 17:00 CT on the CT calendar date before d that\n  carries trade_date d (C3, E.3-L-05): Sunday 17:00 for a Monday, and the holiday's 17:00 reopen\n  for the trade date after an exchange holiday (an early-halt holiday such as Memorial Day is its\n  own trade date; the equity calendar books nothing forward). If that bar is missing there is no\n  trade.\n- Both signal bars must be present and carry one instrument_id, else no trade (D6; E.3-L-06).\n  Zero signal: no trade.\n- Entry: market intent on the bar at C-31 = 14:29 of CT date d (fills at the 14:30 open), buy if\n  s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).\n- Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills\n  nominally at the 14:59 open), resent while refused (S0.7, E.3-L-22). The engine's forced\n  flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more\n  that trade date.\n- Early halts are not tested here (a port follows D6: the engine's F governs, C line 104). No\n  release instant is read (none falls in 14:30-14:59, C lines 266-267).\nOne traded leg, q_c contracts (MNQ 1, M2K 3, MYM 3). No stop, no filter, no size rule beyond the\nspec.",
+   "trigger_event": "every equity trade date: s = sign(close of the 08:59 bar - open of the trade date's first bar, the 17:00 CT bar of CT date d-1), nonzero, both bars present with one instrument_id",
+   "decision_time_ct": "08:59 (signal bar; last bar the decision reads); entry intent on the 14:29 bar, fill at the 14:30 open",
+   "side_rule": "buy if s > 0, sell if s < 0",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills nominally at the 14:59 open), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every equity trade date with nonzero signal (about 250 a year); E.7 research window counts: MNQ 284, M2K 285, MYM 286 trips in 299 dates",
+   "inputs_needed": [
+    {
+     "input": "price bars of the traded vehicle MYM (price path YM in E.12 / v13 'MNQ -> NQ' declaration, reports/E.22_RETURN.md line 703)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_ext: none: YM/MYM has no ext2010 entry (reports/stage_e17_run_manifest.json YM ext2010 null); W_cf: data/processed_step2/YM/ohlcv-1m_YM_v_0_2019-05-06_2024-02-29_step2.parquet (manifest only; not opened); no MYM step2 store (E.7: a K1 confirmation 'would need MNQ, M2K and MYM step 2')",
+     "stated_range": "W_ext: none; W_cf: YM S_X 2019-05-06..2024-02-29 (reports/stage_e12_phase1_bars.json)"
+    },
+    {
+     "input": "equity group calendar (trade dates, exchange holidays, early halts, engine F; roll blackouts)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/equity.py with data/cme_calendar.py; W_ext: data/calendars/hist2010/equity.json (products ES, MES, NQ, MNQ, RTY, M2K, YM, MYM)",
+     "stated_range": "equity.py docstring '2019-05-01..2026-06-19' (CALENDAR_COVERAGE 2019-01-01..2026-12-31); hist2010/equity.json coverage first 2010-06-01, last 2019-05-31, 0 unsourced"
+    },
+    {
+     "input": "engine flatten F (rules.sessions TOPSTEP_HOLIDAYS / TOPSTEP_EARLY_CLOSE_LEAD; 'O 08:30, C 15:00, F 15:08' on regular dates)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "rules/sessions.py; for 2010-2018 no on-disk table: C1 and E.20 derive Rule H-1 rows in memory with c1_replication/tables.py h1_rows (reports/stage_e20_briefs/backward_swap_table.md row S3: '95 Rule H-1 rows before 2019-05-01')",
+     "stated_range": "rules/sessions.py docstring: derived rows 'cover trade dates 2019-05-01..2023-12-31', schedule rows 2024-2026"
+    },
+    {
+     "input": "release instants read by the ENGINE, not the member (FOMC and ISM_SERVICES for the D9.5a fill guard, NFP, CPI for D9.12, event-window cost); E.7: 'No member reads a release (FOMC 10, NFP 14, ISM_SERVICES 15 rows per root are harness inputs)'",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (FOMC, NFP, CPI, ISM_SERVICES, ...); W_ext: reports/stage_e14_cal_releases.json holds FOMC (with NGS, WPSR) only",
+     "stated_range": "e2b calendar coverage 2019-05-01..2026-06-21; e14 calendar coverage 2010-06-01..2019-05-31 for FOMC, NGS, WPSR; no 2010-2019 NFP, CPI or ISM Services calendar (reports/stage_e20_product_summary.md: 'no ISM Services release calendar for 2010-2019'; 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not NFP, CPI, PPI, GDP, ISM, ...')"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.7",
+     "window_dates": "research window 2025-04-01..2026-06-12, 299 trade dates (316 less 15 roll-blackout dates and 2 UR-1 dates)",
+     "purpose": "screen",
+     "source": "reports/E.7_RETURN.md section 2, Task 5 (screen table); reports/stage_e7_k1_screen/<trial>_research.json"
+    },
+    {
+     "stage": "E.7",
+     "window_dates": null,
+     "purpose": "power",
+     "source": "reports/E.7_RETURN.md Task 5: 'Power `not_run` (StartRuleMissing) on every record' (record field power = not_run)"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "W_cf training window S_X 2019-05-06..2024-02-29 (price path YM)",
+     "purpose": "other",
+     "source": "ML route v2 Gate 0 (reports/stage_e12_gate0.md Family A rows gate0A_cp1_ret_h60/h120/hF pooled over vehicles; Family B gate0B_MYM_h60/h120/hF; feature definitions docs/STAGE_E_ML_V2_DESIGN.md V2.3, reports/stage_e11_signal_coverage.md lines 43-44). The member's decision variable entered as a feature at the model's decision times; not a test of the member's own entry/exit."
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.7: Tier 'B'; screen record passes False (mean -8.2648 net ticks/contract/day, daily t -1.822, 286 trips; reports/E.7_RETURN.md Task 5 table); 'Tier A is empty, so K1 has no Holm family and no edge candidate.' (Task 7)",
+    "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_MYM_h60/h120/hF decision 'FAIL'"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.md: NQ, YM settlement 15:15 CT 2010-06-07..2020-10-25, 15:00 CT 2020-10-26..2024-02-29 (MYM itself not listed there). The decision time and the latest exit fill (14:59 open) precede 15:00, so they precede the settlement in both regimes.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K1-cp2-01 MNQ",
+   "cluster_or_stage": "K1 (Stage E.7)",
+   "member_id": "K1-cp2-01",
+   "module": "strategy.members.k1.cp2 (strategy/members/k1/cp2.py, factory make_mnq)",
+   "freeze_file": "reports/stage_e_k1_member_freeze.json (cluster K1, sha256 cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2, commit 9113abd)",
+   "traded_root": "MNQ",
+   "vehicle": "MNQ q_c 1",
+   "w_ext_root": "NQ",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the equity index row (O 08:30, C 15:00, F 15:08; the clock comes from the\nfrozen tables, the same on all three roots). Only bars of CT date d are read (K7-L-01 adopted):\nthe evening bars of trade date d (CT date d-1, from 17:00) never enter the range or trigger.\n- Opening range: OR_high = max high, OR_low = min low of the present bars opening in\n  [O, O+15) = [08:30, 08:45) of CT date d. No range bar: no trade (E.3-L-08). No minimum bar\n  count and no instrument guard (D6 and B-H1 have none).\n- Buffer: 4 vendor ticks of the traded vehicle (K4-L-06): MNQ 4 x 0.25 = 1.00, M2K 4 x 0.10 =\n  0.40, MYM 4 x 1.00 = 4 index points. It equals the catalog's 4 ticks of MNQ, RTY and MYM (C lines\n  312-318; M2K's tick is RTY's). Compared in integer vendor ticks (S0.10).\n- Eligible bars: those opening in [O+15, C) = [08:45, 15:00) of CT date d; no entry from 15:00 on.\n- Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells;\n  a market intent on that bar. The first qualifying bar uses the trade date's one entry, whatever\n  the engine does with the intent (E.3-L-08).\n- Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the\n  present bars seen while the position is non-zero, from the bar after the entry decision bar; on\n  the 75th, a market intent closing the position (fills at the next open), resent while refused\n  (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2 (E.3-L-07).\n  After an engine-forced exit (F, D9.7) the member sends nothing more that trade date.\n- Early halts are not tested here (a port: the engine's F and entry skip govern, C line 104). No\n  release instant is read (the engine's D9.5a guard moves a fill in [13:00, 13:02) on an FOMC day\n  and in [09:00, 09:02) on an ISM Services day, C lines 343-345).\nOne traded leg, q_c contracts (MNQ 1, M2K 3, MYM 3).",
+   "trigger_event": "first bar opening in [08:45, 15:00) of CT date d whose close >= OR_high + 4 vendor ticks (buy) or <= OR_low - 4 ticks (sell); OR = [08:30, 08:45) bars",
+   "decision_time_ct": "variable: the close of the first qualifying bar in [08:45, 15:00); latest possible decision bar 14:59",
+   "side_rule": "the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2 (E.3-L-07). After an engine-forced exit (F, D9.7) the member sends nothing more that trade date.",
+   "expected_events_per_year": "every equity trade date with a breakout beyond the 15-minute range (at most one entry a day); E.7 research window counts: MNQ 296, M2K 297, MYM 295 trips in 299 dates",
+   "inputs_needed": [
+    {
+     "input": "price bars of the traded vehicle MNQ (price path NQ in E.12 / v13 'MNQ -> NQ' declaration, reports/E.22_RETURN.md line 703)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/processed_hist/ext2010/NQ/ohlcv-1m_NQ_v_0_2010-06-07_2019-04-30_ext2010.parquet (manifest only; not opened); W_cf: data/processed_step2/NQ/ohlcv-1m_NQ_v_0_2019-05-06_2024-02-29_step2.parquet (manifest only; not opened); no MNQ step2 store (E.7: a K1 confirmation 'would need MNQ, M2K and MYM step 2')",
+     "stated_range": "W_ext: ext2010 NQ file 2010-06-07..2019-04-30; reports/stage_e16_windows.json NQ start_month 2010-07; W_cf: NQ S_X 2019-05-06..2024-02-29 (reports/stage_e12_phase1_bars.json)"
+    },
+    {
+     "input": "equity group calendar (trade dates, exchange holidays, early halts, engine F; roll blackouts)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/equity.py with data/cme_calendar.py; W_ext: data/calendars/hist2010/equity.json (products ES, MES, NQ, MNQ, RTY, M2K, YM, MYM)",
+     "stated_range": "equity.py docstring '2019-05-01..2026-06-19' (CALENDAR_COVERAGE 2019-01-01..2026-12-31); hist2010/equity.json coverage first 2010-06-01, last 2019-05-31, 0 unsourced"
+    },
+    {
+     "input": "engine flatten F (rules.sessions TOPSTEP_HOLIDAYS / TOPSTEP_EARLY_CLOSE_LEAD; 'O 08:30, C 15:00, F 15:08' on regular dates)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "rules/sessions.py; for 2010-2018 no on-disk table: C1 and E.20 derive Rule H-1 rows in memory with c1_replication/tables.py h1_rows (reports/stage_e20_briefs/backward_swap_table.md row S3: '95 Rule H-1 rows before 2019-05-01')",
+     "stated_range": "rules/sessions.py docstring: derived rows 'cover trade dates 2019-05-01..2023-12-31', schedule rows 2024-2026"
+    },
+    {
+     "input": "release instants read by the ENGINE, not the member (FOMC and ISM_SERVICES for the D9.5a fill guard, NFP, CPI for D9.12, event-window cost); E.7: 'No member reads a release (FOMC 10, NFP 14, ISM_SERVICES 15 rows per root are harness inputs)'",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (FOMC, NFP, CPI, ISM_SERVICES, ...); W_ext: reports/stage_e14_cal_releases.json holds FOMC (with NGS, WPSR) only",
+     "stated_range": "e2b calendar coverage 2019-05-01..2026-06-21; e14 calendar coverage 2010-06-01..2019-05-31 for FOMC, NGS, WPSR; no 2010-2019 NFP, CPI or ISM Services calendar (reports/stage_e20_product_summary.md: 'no ISM Services release calendar for 2010-2019'; 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not NFP, CPI, PPI, GDP, ISM, ...')"
+    },
+    {
+     "input": "vendor tick size of the traded vehicle (4-tick buffer); label 'tick history not source-verified' (E.7, C7)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": "unknown",
+     "path": "rules.products (date-independent); reports/E.7_RETURN.md section 1 label and section 6 (R-T3-2)",
+     "stated_range": "not stated by date; E.7: 'the tick-history confirmation (C7) owed before any K1 confirmation bar is read'"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.7",
+     "window_dates": "research window 2025-04-01..2026-06-12, 299 trade dates (316 less 15 roll-blackout dates and 2 UR-1 dates)",
+     "purpose": "screen",
+     "source": "reports/E.7_RETURN.md section 2, Task 5 (screen table); reports/stage_e7_k1_screen/<trial>_research.json"
+    },
+    {
+     "stage": "E.7",
+     "window_dates": null,
+     "purpose": "power",
+     "source": "reports/E.7_RETURN.md Task 5: 'Power `not_run` (StartRuleMissing) on every record' (record field power = not_run)"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "W_cf training window S_X 2019-05-06..2024-02-29 (price path NQ)",
+     "purpose": "other",
+     "source": "ML route v2 Gate 0 (reports/stage_e12_gate0.md Family A rows gate0A_cp2_range / gate0A_cp2_brk h60/h120/hF pooled over vehicles; Family B gate0B_MNQ_h60/h120/hF; feature definitions docs/STAGE_E_ML_V2_DESIGN.md V2.3, reports/stage_e11_signal_coverage.md lines 43-44). The member's decision variable entered as a feature at the model's decision times; not a test of the member's own entry/exit."
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "W_cf search window 2019-05-06..2024-02-29 (step2 NQ store); backward W_ext read NOT run",
+     "purpose": "other",
+     "source": "reports/stage_e20_plan.md sections 1-2 (K1 vehicles MNQ (NQ), M2K (RTY)) and reports/stage_e20_product_summary.md KEPT list (cp2_range, cp2_brk); reports/E.20_RETURN.md section 1: 'Search screen: FAIL' and 'A failed screen ends Part C: no freeze, no backward read, E20-B1 not run'. Feature in a pooled ML search, not a test of the member."
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.7: Tier 'B'; screen record passes False (mean -8.4855 net ticks/contract/day, daily t -0.293, 296 trips; reports/E.7_RETURN.md Task 5 table); 'Tier A is empty, so K1 has no Holm family and no edge candidate.' (Task 7)",
+    "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_MNQ_h60/h120/hF decision 'FAIL'",
+    "E.20 ML search: 'Search screen: FAIL.' (reports/E.20_RETURN.md section 1)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.md: NQ, YM settlement 15:15 CT 2010-06-07..2020-10-25 (period 15:14:30-15:15:00), 15:00 CT 2020-10-26..2024-02-29 (14:59:30-15:00:00); the frozen C 15:00 'disagrees' before 2020-10-26. cp2's entry decision can be as late as the 14:59 bar (close 15:00, fill at the 15:00 open) and its exit is 75 bars after entry or the engine F 15:08, so a cp2 position can be open through the 15:00 settlement (2020-10-26 on) but is flat by 15:08, before the 15:15 settlement of the earlier regime.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K1-cp2-01 M2K",
+   "cluster_or_stage": "K1 (Stage E.7)",
+   "member_id": "K1-cp2-01",
+   "module": "strategy.members.k1.cp2 (strategy/members/k1/cp2.py, factory make_m2k)",
+   "freeze_file": "reports/stage_e_k1_member_freeze.json (cluster K1, sha256 cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2, commit 9113abd)",
+   "traded_root": "M2K",
+   "vehicle": "M2K q_c 3",
+   "w_ext_root": "RTY",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the equity index row (O 08:30, C 15:00, F 15:08; the clock comes from the\nfrozen tables, the same on all three roots). Only bars of CT date d are read (K7-L-01 adopted):\nthe evening bars of trade date d (CT date d-1, from 17:00) never enter the range or trigger.\n- Opening range: OR_high = max high, OR_low = min low of the present bars opening in\n  [O, O+15) = [08:30, 08:45) of CT date d. No range bar: no trade (E.3-L-08). No minimum bar\n  count and no instrument guard (D6 and B-H1 have none).\n- Buffer: 4 vendor ticks of the traded vehicle (K4-L-06): MNQ 4 x 0.25 = 1.00, M2K 4 x 0.10 =\n  0.40, MYM 4 x 1.00 = 4 index points. It equals the catalog's 4 ticks of MNQ, RTY and MYM (C lines\n  312-318; M2K's tick is RTY's). Compared in integer vendor ticks (S0.10).\n- Eligible bars: those opening in [O+15, C) = [08:45, 15:00) of CT date d; no entry from 15:00 on.\n- Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells;\n  a market intent on that bar. The first qualifying bar uses the trade date's one entry, whatever\n  the engine does with the intent (E.3-L-08).\n- Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the\n  present bars seen while the position is non-zero, from the bar after the entry decision bar; on\n  the 75th, a market intent closing the position (fills at the next open), resent while refused\n  (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2 (E.3-L-07).\n  After an engine-forced exit (F, D9.7) the member sends nothing more that trade date.\n- Early halts are not tested here (a port: the engine's F and entry skip govern, C line 104). No\n  release instant is read (the engine's D9.5a guard moves a fill in [13:00, 13:02) on an FOMC day\n  and in [09:00, 09:02) on an ISM Services day, C lines 343-345).\nOne traded leg, q_c contracts (MNQ 1, M2K 3, MYM 3).",
+   "trigger_event": "first bar opening in [08:45, 15:00) of CT date d whose close >= OR_high + 4 vendor ticks (buy) or <= OR_low - 4 ticks (sell); OR = [08:30, 08:45) bars",
+   "decision_time_ct": "variable: the close of the first qualifying bar in [08:45, 15:00); latest possible decision bar 14:59",
+   "side_rule": "the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2 (E.3-L-07). After an engine-forced exit (F, D9.7) the member sends nothing more that trade date.",
+   "expected_events_per_year": "every equity trade date with a breakout beyond the 15-minute range (at most one entry a day); E.7 research window counts: MNQ 296, M2K 297, MYM 295 trips in 299 dates",
+   "inputs_needed": [
+    {
+     "input": "price bars of the traded vehicle M2K (price path RTY in E.12 / v13 'MNQ -> NQ' declaration, reports/E.22_RETURN.md line 703)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/processed_hist/ext2010h/RTY/ohlcv-1m_RTY_v_0_2010-07-01_2019-04-30_ext2010h.parquet (manifest only; not opened); W_cf: data/processed_step2/RTY/ohlcv-1m_RTY_v_0_2019-05-06_2024-02-29_step2.parquet (manifest only; not opened); no M2K step2 store (E.7: a K1 confirmation 'would need MNQ, M2K and MYM step 2')",
+     "stated_range": "W_ext: file named 2010-07-01..2019-04-30, but reports/stage_e16_windows.json RTY start_month 2017-06 and reports/stage_e16_settlement.md 'RTY's first CME trade date is 2017-07-10'; W_cf: RTY S_X 2019-05-06..2024-02-29 (reports/stage_e12_phase1_bars.json)"
+    },
+    {
+     "input": "equity group calendar (trade dates, exchange holidays, early halts, engine F; roll blackouts)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/equity.py with data/cme_calendar.py; W_ext: data/calendars/hist2010/equity.json (products ES, MES, NQ, MNQ, RTY, M2K, YM, MYM)",
+     "stated_range": "equity.py docstring '2019-05-01..2026-06-19' (CALENDAR_COVERAGE 2019-01-01..2026-12-31); hist2010/equity.json coverage first 2010-06-01, last 2019-05-31, 0 unsourced"
+    },
+    {
+     "input": "engine flatten F (rules.sessions TOPSTEP_HOLIDAYS / TOPSTEP_EARLY_CLOSE_LEAD; 'O 08:30, C 15:00, F 15:08' on regular dates)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "rules/sessions.py; for 2010-2018 no on-disk table: C1 and E.20 derive Rule H-1 rows in memory with c1_replication/tables.py h1_rows (reports/stage_e20_briefs/backward_swap_table.md row S3: '95 Rule H-1 rows before 2019-05-01')",
+     "stated_range": "rules/sessions.py docstring: derived rows 'cover trade dates 2019-05-01..2023-12-31', schedule rows 2024-2026"
+    },
+    {
+     "input": "release instants read by the ENGINE, not the member (FOMC and ISM_SERVICES for the D9.5a fill guard, NFP, CPI for D9.12, event-window cost); E.7: 'No member reads a release (FOMC 10, NFP 14, ISM_SERVICES 15 rows per root are harness inputs)'",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (FOMC, NFP, CPI, ISM_SERVICES, ...); W_ext: reports/stage_e14_cal_releases.json holds FOMC (with NGS, WPSR) only",
+     "stated_range": "e2b calendar coverage 2019-05-01..2026-06-21; e14 calendar coverage 2010-06-01..2019-05-31 for FOMC, NGS, WPSR; no 2010-2019 NFP, CPI or ISM Services calendar (reports/stage_e20_product_summary.md: 'no ISM Services release calendar for 2010-2019'; 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not NFP, CPI, PPI, GDP, ISM, ...')"
+    },
+    {
+     "input": "vendor tick size of the traded vehicle (4-tick buffer); label 'tick history not source-verified' (E.7, C7)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": "unknown",
+     "path": "rules.products (date-independent); reports/E.7_RETURN.md section 1 label and section 6 (R-T3-2)",
+     "stated_range": "not stated by date; E.7: 'the tick-history confirmation (C7) owed before any K1 confirmation bar is read'"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.7",
+     "window_dates": "research window 2025-04-01..2026-06-12, 299 trade dates (316 less 15 roll-blackout dates and 2 UR-1 dates)",
+     "purpose": "screen",
+     "source": "reports/E.7_RETURN.md section 2, Task 5 (screen table); reports/stage_e7_k1_screen/<trial>_research.json"
+    },
+    {
+     "stage": "E.7",
+     "window_dates": null,
+     "purpose": "power",
+     "source": "reports/E.7_RETURN.md Task 5: 'Power `not_run` (StartRuleMissing) on every record' (record field power = not_run)"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "W_cf training window S_X 2019-05-06..2024-02-29 (price path RTY)",
+     "purpose": "other",
+     "source": "ML route v2 Gate 0 (reports/stage_e12_gate0.md Family A rows gate0A_cp2_range / gate0A_cp2_brk h60/h120/hF pooled over vehicles; Family B gate0B_M2K_h60/h120/hF; feature definitions docs/STAGE_E_ML_V2_DESIGN.md V2.3, reports/stage_e11_signal_coverage.md lines 43-44). The member's decision variable entered as a feature at the model's decision times; not a test of the member's own entry/exit."
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "W_cf search window 2019-05-06..2024-02-29 (step2 RTY store); backward W_ext read NOT run",
+     "purpose": "other",
+     "source": "reports/stage_e20_plan.md sections 1-2 (K1 vehicles MNQ (NQ), M2K (RTY)) and reports/stage_e20_product_summary.md KEPT list (cp2_range, cp2_brk); reports/E.20_RETURN.md section 1: 'Search screen: FAIL' and 'A failed screen ends Part C: no freeze, no backward read, E20-B1 not run'. Feature in a pooled ML search, not a test of the member."
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.7: Tier 'B'; screen record passes False (mean +2.8543 net ticks/contract/day, daily t +0.366, 297 trips; reports/E.7_RETURN.md Task 5 table); 'Tier A is empty, so K1 has no Holm family and no edge candidate.' (Task 7)",
+    "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_M2K_h60/h120/hF decision 'FAIL'",
+    "E.20 ML search: 'Search screen: FAIL.' (reports/E.20_RETURN.md section 1)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.md: RTY not listed on CME before 2017-07-10; settlement 15:15 CT 2017-07-10..2020-10-25, 15:00 CT 2020-10-26..2024-02-29. cp2's entry decision can be as late as the 14:59 bar (close 15:00, fill at the 15:00 open) and its exit is 75 bars after entry or the engine F 15:08, so a cp2 position can be open through the 15:00 settlement (2020-10-26 on) but is flat by 15:08, before the 15:15 settlement of the earlier regime.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K1-cp2-01 MYM",
+   "cluster_or_stage": "K1 (Stage E.7)",
+   "member_id": "K1-cp2-01",
+   "module": "strategy.members.k1.cp2 (strategy/members/k1/cp2.py, factory make_mym)",
+   "freeze_file": "reports/stage_e_k1_member_freeze.json (cluster K1, sha256 cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2, commit 9113abd)",
+   "traded_root": "MYM",
+   "vehicle": "MYM q_c 3",
+   "w_ext_root": null,
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the equity index row (O 08:30, C 15:00, F 15:08; the clock comes from the\nfrozen tables, the same on all three roots). Only bars of CT date d are read (K7-L-01 adopted):\nthe evening bars of trade date d (CT date d-1, from 17:00) never enter the range or trigger.\n- Opening range: OR_high = max high, OR_low = min low of the present bars opening in\n  [O, O+15) = [08:30, 08:45) of CT date d. No range bar: no trade (E.3-L-08). No minimum bar\n  count and no instrument guard (D6 and B-H1 have none).\n- Buffer: 4 vendor ticks of the traded vehicle (K4-L-06): MNQ 4 x 0.25 = 1.00, M2K 4 x 0.10 =\n  0.40, MYM 4 x 1.00 = 4 index points. It equals the catalog's 4 ticks of MNQ, RTY and MYM (C lines\n  312-318; M2K's tick is RTY's). Compared in integer vendor ticks (S0.10).\n- Eligible bars: those opening in [O+15, C) = [08:45, 15:00) of CT date d; no entry from 15:00 on.\n- Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells;\n  a market intent on that bar. The first qualifying bar uses the trade date's one entry, whatever\n  the engine does with the intent (E.3-L-08).\n- Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the\n  present bars seen while the position is non-zero, from the bar after the entry decision bar; on\n  the 75th, a market intent closing the position (fills at the next open), resent while refused\n  (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2 (E.3-L-07).\n  After an engine-forced exit (F, D9.7) the member sends nothing more that trade date.\n- Early halts are not tested here (a port: the engine's F and entry skip govern, C line 104). No\n  release instant is read (the engine's D9.5a guard moves a fill in [13:00, 13:02) on an FOMC day\n  and in [09:00, 09:02) on an ISM Services day, C lines 343-345).\nOne traded leg, q_c contracts (MNQ 1, M2K 3, MYM 3).",
+   "trigger_event": "first bar opening in [08:45, 15:00) of CT date d whose close >= OR_high + 4 vendor ticks (buy) or <= OR_low - 4 ticks (sell); OR = [08:30, 08:45) bars",
+   "decision_time_ct": "variable: the close of the first qualifying bar in [08:45, 15:00); latest possible decision bar 14:59",
+   "side_rule": "the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells",
+   "side_kind": "momentum",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2 (E.3-L-07). After an engine-forced exit (F, D9.7) the member sends nothing more that trade date.",
+   "expected_events_per_year": "every equity trade date with a breakout beyond the 15-minute range (at most one entry a day); E.7 research window counts: MNQ 296, M2K 297, MYM 295 trips in 299 dates",
+   "inputs_needed": [
+    {
+     "input": "price bars of the traded vehicle MYM (price path YM in E.12 / v13 'MNQ -> NQ' declaration, reports/E.22_RETURN.md line 703)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_ext: none: YM/MYM has no ext2010 entry (reports/stage_e17_run_manifest.json YM ext2010 null); W_cf: data/processed_step2/YM/ohlcv-1m_YM_v_0_2019-05-06_2024-02-29_step2.parquet (manifest only; not opened); no MYM step2 store (E.7: a K1 confirmation 'would need MNQ, M2K and MYM step 2')",
+     "stated_range": "W_ext: none; W_cf: YM S_X 2019-05-06..2024-02-29 (reports/stage_e12_phase1_bars.json)"
+    },
+    {
+     "input": "equity group calendar (trade dates, exchange holidays, early halts, engine F; roll blackouts)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/equity.py with data/cme_calendar.py; W_ext: data/calendars/hist2010/equity.json (products ES, MES, NQ, MNQ, RTY, M2K, YM, MYM)",
+     "stated_range": "equity.py docstring '2019-05-01..2026-06-19' (CALENDAR_COVERAGE 2019-01-01..2026-12-31); hist2010/equity.json coverage first 2010-06-01, last 2019-05-31, 0 unsourced"
+    },
+    {
+     "input": "engine flatten F (rules.sessions TOPSTEP_HOLIDAYS / TOPSTEP_EARLY_CLOSE_LEAD; 'O 08:30, C 15:00, F 15:08' on regular dates)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "rules/sessions.py; for 2010-2018 no on-disk table: C1 and E.20 derive Rule H-1 rows in memory with c1_replication/tables.py h1_rows (reports/stage_e20_briefs/backward_swap_table.md row S3: '95 Rule H-1 rows before 2019-05-01')",
+     "stated_range": "rules/sessions.py docstring: derived rows 'cover trade dates 2019-05-01..2023-12-31', schedule rows 2024-2026"
+    },
+    {
+     "input": "release instants read by the ENGINE, not the member (FOMC and ISM_SERVICES for the D9.5a fill guard, NFP, CPI for D9.12, event-window cost); E.7: 'No member reads a release (FOMC 10, NFP 14, ISM_SERVICES 15 rows per root are harness inputs)'",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (FOMC, NFP, CPI, ISM_SERVICES, ...); W_ext: reports/stage_e14_cal_releases.json holds FOMC (with NGS, WPSR) only",
+     "stated_range": "e2b calendar coverage 2019-05-01..2026-06-21; e14 calendar coverage 2010-06-01..2019-05-31 for FOMC, NGS, WPSR; no 2010-2019 NFP, CPI or ISM Services calendar (reports/stage_e20_product_summary.md: 'no ISM Services release calendar for 2010-2019'; 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not NFP, CPI, PPI, GDP, ISM, ...')"
+    },
+    {
+     "input": "vendor tick size of the traded vehicle (4-tick buffer); label 'tick history not source-verified' (E.7, C7)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": "unknown",
+     "path": "rules.products (date-independent); reports/E.7_RETURN.md section 1 label and section 6 (R-T3-2)",
+     "stated_range": "not stated by date; E.7: 'the tick-history confirmation (C7) owed before any K1 confirmation bar is read'"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.7",
+     "window_dates": "research window 2025-04-01..2026-06-12, 299 trade dates (316 less 15 roll-blackout dates and 2 UR-1 dates)",
+     "purpose": "screen",
+     "source": "reports/E.7_RETURN.md section 2, Task 5 (screen table); reports/stage_e7_k1_screen/<trial>_research.json"
+    },
+    {
+     "stage": "E.7",
+     "window_dates": null,
+     "purpose": "power",
+     "source": "reports/E.7_RETURN.md Task 5: 'Power `not_run` (StartRuleMissing) on every record' (record field power = not_run)"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "W_cf training window S_X 2019-05-06..2024-02-29 (price path YM)",
+     "purpose": "other",
+     "source": "ML route v2 Gate 0 (reports/stage_e12_gate0.md Family A rows gate0A_cp2_range / gate0A_cp2_brk h60/h120/hF pooled over vehicles; Family B gate0B_MYM_h60/h120/hF; feature definitions docs/STAGE_E_ML_V2_DESIGN.md V2.3, reports/stage_e11_signal_coverage.md lines 43-44). The member's decision variable entered as a feature at the model's decision times; not a test of the member's own entry/exit."
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.7: Tier 'B'; screen record passes False (mean -10.7871 net ticks/contract/day, daily t -1.071, 295 trips; reports/E.7_RETURN.md Task 5 table); 'Tier A is empty, so K1 has no Holm family and no edge candidate.' (Task 7)",
+    "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_MYM_h60/h120/hF decision 'FAIL'"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.md: NQ, YM settlement 15:15 CT 2010-06-07..2020-10-25, 15:00 CT 2020-10-26..2024-02-29 (MYM itself not listed there). cp2's entry decision can be as late as the 14:59 bar (close 15:00, fill at the 15:00 open) and its exit is 75 bars after entry or the engine F 15:08, so a cp2 position can be open through the 15:00 settlement (2020-10-26 on) but is flat by 15:08, before the 15:15 settlement of the earlier regime.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K1-cp3-01 MNQ",
+   "cluster_or_stage": "K1 (Stage E.7)",
+   "member_id": "K1-cp3-01",
+   "module": "strategy.members.k1.cp3 (strategy/members/k1/cp3.py, factory make_mnq)",
+   "freeze_file": "reports/stage_e_k1_member_freeze.json (cluster K1, sha256 cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2, commit 9113abd)",
+   "traded_root": "MNQ",
+   "vehicle": "MNQ q_c 1",
+   "w_ext_root": "NQ",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the equity index row (O 08:30, C 15:00, F 15:08; the clock comes from the\nfrozen tables, the same on all three roots). Only bars of CT date d are read (K7-L-01 adopted):\nthe evening bars of trade date d (CT date d-1, from 17:00) are never part of a daily bar. After an\nearly-halt holiday those evening bars carry the holiday's early_halt_ct label (the label is the\nbar's CT calendar date's); they are not read, so the trade date after the holiday is not a halt.\n- Daily bar of trade date d, from its bars on CT date d opening in [O, C) = [08:30, 15:00):\n  H / L = max high / min low over the present bars, C_d = close of the bar at C-1 = 14:59.\n  (O_d, the 08:30 open, enters no condition and is not read; the 08:30 bar must exist.)\n- Complete day (Family H): the 08:30 and 14:59 bars exist, no bar of CT date d carries\n  early_halt_ct, and all bars in [08:30, 15:00) carry one instrument_id. It is finalised when a\n  bar of a later trade date arrives, so day d's own bar never enters day d's condition.\n- d-1 = the most recent COMPLETE daily bar of an earlier trade date; incomplete days are dropped\n  (E.3-L-09). An early-halt holiday (Memorial Day, 12:00 CT) is an equity trade date and is\n  incomplete, so the Tuesday after it reads the Friday before. A full closure (Good Friday\n  2025-04-18) is no trade date and has no bars. None yet (warm-up, the window's start): no trade.\n- On the bar at O = 08:30 of CT date d (that exact bar, S0.6): no trade if it carries\n  early_halt_ct (E.3-L-09, E.3-L-11); instrument guard: d-1's instrument_id must be the 08:30\n  bar's; Range = H - L of d-1 in ticks must be > 0; CLV = (C - L) / (H - L) in ticks,\n  CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade. The cuts are compared exactly in\n  integers (S0.10, K4-L-05). Market intent on the 08:30 bar (fills at the 08:31 open).\n- Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills\n  nominally at the 14:59 open), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's\n  forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.\n- No release instant is read (C lines 394-395): the position holds through FOMC and ISM Services.\nOne traded leg, q_c contracts (MNQ 1, M2K 3, MYM 3).",
+   "trigger_event": "on the 08:30 bar of CT date d: prior COMPLETE day's CLV = (C - L)/(H - L) of its [08:30, 15:00) bars >= 0.8 (buy) or <= 0.2 (sell); Range > 0; no early_halt_ct on the 08:30 bar; instrument guard",
+   "decision_time_ct": "08:30 (entry intent on the 08:30 bar at its close, fill at the 08:31 open; the condition reads only d-1's daily bar, closed at 14:59 on d-1)",
+   "side_rule": "CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade",
+   "side_kind": "other: side from the PRIOR complete day's close location in its range (continuation of d-1's close location), not a trigger-day move",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills nominally at the 14:59 open), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.",
+   "expected_events_per_year": "equity trade dates after a complete day with CLV >= 0.8 or <= 0.2; E.7 research window counts: MNQ 118, M2K 140, MYM 131 trips in 299 dates",
+   "inputs_needed": [
+    {
+     "input": "price bars of the traded vehicle MNQ (price path NQ in E.12 / v13 'MNQ -> NQ' declaration, reports/E.22_RETURN.md line 703)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/processed_hist/ext2010/NQ/ohlcv-1m_NQ_v_0_2010-06-07_2019-04-30_ext2010.parquet (manifest only; not opened); W_cf: data/processed_step2/NQ/ohlcv-1m_NQ_v_0_2019-05-06_2024-02-29_step2.parquet (manifest only; not opened); no MNQ step2 store (E.7: a K1 confirmation 'would need MNQ, M2K and MYM step 2')",
+     "stated_range": "W_ext: ext2010 NQ file 2010-06-07..2019-04-30; reports/stage_e16_windows.json NQ start_month 2010-07; W_cf: NQ S_X 2019-05-06..2024-02-29 (reports/stage_e12_phase1_bars.json)"
+    },
+    {
+     "input": "equity group calendar (trade dates, exchange holidays, early halts, engine F; roll blackouts)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/equity.py with data/cme_calendar.py; W_ext: data/calendars/hist2010/equity.json (products ES, MES, NQ, MNQ, RTY, M2K, YM, MYM)",
+     "stated_range": "equity.py docstring '2019-05-01..2026-06-19' (CALENDAR_COVERAGE 2019-01-01..2026-12-31); hist2010/equity.json coverage first 2010-06-01, last 2019-05-31, 0 unsourced"
+    },
+    {
+     "input": "engine flatten F (rules.sessions TOPSTEP_HOLIDAYS / TOPSTEP_EARLY_CLOSE_LEAD; 'O 08:30, C 15:00, F 15:08' on regular dates)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "rules/sessions.py; for 2010-2018 no on-disk table: C1 and E.20 derive Rule H-1 rows in memory with c1_replication/tables.py h1_rows (reports/stage_e20_briefs/backward_swap_table.md row S3: '95 Rule H-1 rows before 2019-05-01')",
+     "stated_range": "rules/sessions.py docstring: derived rows 'cover trade dates 2019-05-01..2023-12-31', schedule rows 2024-2026"
+    },
+    {
+     "input": "release instants read by the ENGINE, not the member (FOMC and ISM_SERVICES for the D9.5a fill guard, NFP, CPI for D9.12, event-window cost); E.7: 'No member reads a release (FOMC 10, NFP 14, ISM_SERVICES 15 rows per root are harness inputs)'",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (FOMC, NFP, CPI, ISM_SERVICES, ...); W_ext: reports/stage_e14_cal_releases.json holds FOMC (with NGS, WPSR) only",
+     "stated_range": "e2b calendar coverage 2019-05-01..2026-06-21; e14 calendar coverage 2010-06-01..2019-05-31 for FOMC, NGS, WPSR; no 2010-2019 NFP, CPI or ISM Services calendar (reports/stage_e20_product_summary.md: 'no ISM Services release calendar for 2010-2019'; 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not NFP, CPI, PPI, GDP, ISM, ...')"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.7",
+     "window_dates": "research window 2025-04-01..2026-06-12, 299 trade dates (316 less 15 roll-blackout dates and 2 UR-1 dates)",
+     "purpose": "screen",
+     "source": "reports/E.7_RETURN.md section 2, Task 5 (screen table); reports/stage_e7_k1_screen/<trial>_research.json"
+    },
+    {
+     "stage": "E.7",
+     "window_dates": null,
+     "purpose": "power",
+     "source": "reports/E.7_RETURN.md Task 5: 'Power `not_run` (StartRuleMissing) on every record' (record field power = not_run)"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "W_cf training window S_X 2019-05-06..2024-02-29 (price path NQ)",
+     "purpose": "other",
+     "source": "ML route v2 Gate 0 (reports/stage_e12_gate0.md Family A rows gate0A_cp3_clv_h60/h120/hF pooled over vehicles; Family B gate0B_MNQ_h60/h120/hF; feature definitions docs/STAGE_E_ML_V2_DESIGN.md V2.3, reports/stage_e11_signal_coverage.md lines 43-44). The member's decision variable entered as a feature at the model's decision times; not a test of the member's own entry/exit."
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "W_cf search window 2019-05-06..2024-02-29 (step2 NQ store); backward W_ext read NOT run",
+     "purpose": "other",
+     "source": "reports/stage_e20_plan.md sections 1-2 (K1 vehicles MNQ (NQ), M2K (RTY)) and reports/stage_e20_product_summary.md KEPT list (cp3_clv); reports/E.20_RETURN.md section 1: 'Search screen: FAIL' and 'A failed screen ends Part C: no freeze, no backward read, E20-B1 not run'. Feature in a pooled ML search, not a test of the member."
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.7: Tier 'B'; screen record passes False (mean +10.3082 net ticks/contract/day, daily t +0.285, 118 trips; reports/E.7_RETURN.md Task 5 table); 'Tier A is empty, so K1 has no Holm family and no edge candidate.' (Task 7)",
+    "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_MNQ_h60/h120/hF decision 'FAIL'",
+    "E.20 ML search: 'Search screen: FAIL.' (reports/E.20_RETURN.md section 1)",
+    "E.7: 'K1-cp3-01 MNQ's Tier B rests on four MLL-liquidated days (flagged)' (section 1); 'The lead's reading: the tier stands.' (Task 7)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.md: NQ, YM settlement 15:15 CT 2010-06-07..2020-10-25 (period 15:14:30-15:15:00), 15:00 CT 2020-10-26..2024-02-29 (14:59:30-15:00:00); the frozen C 15:00 'disagrees' before 2020-10-26. The decision time and the latest exit fill (14:59 open) precede 15:00, so they precede the settlement in both regimes.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K1-cp3-01 M2K",
+   "cluster_or_stage": "K1 (Stage E.7)",
+   "member_id": "K1-cp3-01",
+   "module": "strategy.members.k1.cp3 (strategy/members/k1/cp3.py, factory make_m2k)",
+   "freeze_file": "reports/stage_e_k1_member_freeze.json (cluster K1, sha256 cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2, commit 9113abd)",
+   "traded_root": "M2K",
+   "vehicle": "M2K q_c 3",
+   "w_ext_root": "RTY",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the equity index row (O 08:30, C 15:00, F 15:08; the clock comes from the\nfrozen tables, the same on all three roots). Only bars of CT date d are read (K7-L-01 adopted):\nthe evening bars of trade date d (CT date d-1, from 17:00) are never part of a daily bar. After an\nearly-halt holiday those evening bars carry the holiday's early_halt_ct label (the label is the\nbar's CT calendar date's); they are not read, so the trade date after the holiday is not a halt.\n- Daily bar of trade date d, from its bars on CT date d opening in [O, C) = [08:30, 15:00):\n  H / L = max high / min low over the present bars, C_d = close of the bar at C-1 = 14:59.\n  (O_d, the 08:30 open, enters no condition and is not read; the 08:30 bar must exist.)\n- Complete day (Family H): the 08:30 and 14:59 bars exist, no bar of CT date d carries\n  early_halt_ct, and all bars in [08:30, 15:00) carry one instrument_id. It is finalised when a\n  bar of a later trade date arrives, so day d's own bar never enters day d's condition.\n- d-1 = the most recent COMPLETE daily bar of an earlier trade date; incomplete days are dropped\n  (E.3-L-09). An early-halt holiday (Memorial Day, 12:00 CT) is an equity trade date and is\n  incomplete, so the Tuesday after it reads the Friday before. A full closure (Good Friday\n  2025-04-18) is no trade date and has no bars. None yet (warm-up, the window's start): no trade.\n- On the bar at O = 08:30 of CT date d (that exact bar, S0.6): no trade if it carries\n  early_halt_ct (E.3-L-09, E.3-L-11); instrument guard: d-1's instrument_id must be the 08:30\n  bar's; Range = H - L of d-1 in ticks must be > 0; CLV = (C - L) / (H - L) in ticks,\n  CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade. The cuts are compared exactly in\n  integers (S0.10, K4-L-05). Market intent on the 08:30 bar (fills at the 08:31 open).\n- Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills\n  nominally at the 14:59 open), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's\n  forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.\n- No release instant is read (C lines 394-395): the position holds through FOMC and ISM Services.\nOne traded leg, q_c contracts (MNQ 1, M2K 3, MYM 3).",
+   "trigger_event": "on the 08:30 bar of CT date d: prior COMPLETE day's CLV = (C - L)/(H - L) of its [08:30, 15:00) bars >= 0.8 (buy) or <= 0.2 (sell); Range > 0; no early_halt_ct on the 08:30 bar; instrument guard",
+   "decision_time_ct": "08:30 (entry intent on the 08:30 bar at its close, fill at the 08:31 open; the condition reads only d-1's daily bar, closed at 14:59 on d-1)",
+   "side_rule": "CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade",
+   "side_kind": "other: side from the PRIOR complete day's close location in its range (continuation of d-1's close location), not a trigger-day move",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills nominally at the 14:59 open), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.",
+   "expected_events_per_year": "equity trade dates after a complete day with CLV >= 0.8 or <= 0.2; E.7 research window counts: MNQ 118, M2K 140, MYM 131 trips in 299 dates",
+   "inputs_needed": [
+    {
+     "input": "price bars of the traded vehicle M2K (price path RTY in E.12 / v13 'MNQ -> NQ' declaration, reports/E.22_RETURN.md line 703)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/processed_hist/ext2010h/RTY/ohlcv-1m_RTY_v_0_2010-07-01_2019-04-30_ext2010h.parquet (manifest only; not opened); W_cf: data/processed_step2/RTY/ohlcv-1m_RTY_v_0_2019-05-06_2024-02-29_step2.parquet (manifest only; not opened); no M2K step2 store (E.7: a K1 confirmation 'would need MNQ, M2K and MYM step 2')",
+     "stated_range": "W_ext: file named 2010-07-01..2019-04-30, but reports/stage_e16_windows.json RTY start_month 2017-06 and reports/stage_e16_settlement.md 'RTY's first CME trade date is 2017-07-10'; W_cf: RTY S_X 2019-05-06..2024-02-29 (reports/stage_e12_phase1_bars.json)"
+    },
+    {
+     "input": "equity group calendar (trade dates, exchange holidays, early halts, engine F; roll blackouts)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/equity.py with data/cme_calendar.py; W_ext: data/calendars/hist2010/equity.json (products ES, MES, NQ, MNQ, RTY, M2K, YM, MYM)",
+     "stated_range": "equity.py docstring '2019-05-01..2026-06-19' (CALENDAR_COVERAGE 2019-01-01..2026-12-31); hist2010/equity.json coverage first 2010-06-01, last 2019-05-31, 0 unsourced"
+    },
+    {
+     "input": "engine flatten F (rules.sessions TOPSTEP_HOLIDAYS / TOPSTEP_EARLY_CLOSE_LEAD; 'O 08:30, C 15:00, F 15:08' on regular dates)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "rules/sessions.py; for 2010-2018 no on-disk table: C1 and E.20 derive Rule H-1 rows in memory with c1_replication/tables.py h1_rows (reports/stage_e20_briefs/backward_swap_table.md row S3: '95 Rule H-1 rows before 2019-05-01')",
+     "stated_range": "rules/sessions.py docstring: derived rows 'cover trade dates 2019-05-01..2023-12-31', schedule rows 2024-2026"
+    },
+    {
+     "input": "release instants read by the ENGINE, not the member (FOMC and ISM_SERVICES for the D9.5a fill guard, NFP, CPI for D9.12, event-window cost); E.7: 'No member reads a release (FOMC 10, NFP 14, ISM_SERVICES 15 rows per root are harness inputs)'",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (FOMC, NFP, CPI, ISM_SERVICES, ...); W_ext: reports/stage_e14_cal_releases.json holds FOMC (with NGS, WPSR) only",
+     "stated_range": "e2b calendar coverage 2019-05-01..2026-06-21; e14 calendar coverage 2010-06-01..2019-05-31 for FOMC, NGS, WPSR; no 2010-2019 NFP, CPI or ISM Services calendar (reports/stage_e20_product_summary.md: 'no ISM Services release calendar for 2010-2019'; 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not NFP, CPI, PPI, GDP, ISM, ...')"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.7",
+     "window_dates": "research window 2025-04-01..2026-06-12, 299 trade dates (316 less 15 roll-blackout dates and 2 UR-1 dates)",
+     "purpose": "screen",
+     "source": "reports/E.7_RETURN.md section 2, Task 5 (screen table); reports/stage_e7_k1_screen/<trial>_research.json"
+    },
+    {
+     "stage": "E.7",
+     "window_dates": null,
+     "purpose": "power",
+     "source": "reports/E.7_RETURN.md Task 5: 'Power `not_run` (StartRuleMissing) on every record' (record field power = not_run)"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "W_cf training window S_X 2019-05-06..2024-02-29 (price path RTY)",
+     "purpose": "other",
+     "source": "ML route v2 Gate 0 (reports/stage_e12_gate0.md Family A rows gate0A_cp3_clv_h60/h120/hF pooled over vehicles; Family B gate0B_M2K_h60/h120/hF; feature definitions docs/STAGE_E_ML_V2_DESIGN.md V2.3, reports/stage_e11_signal_coverage.md lines 43-44). The member's decision variable entered as a feature at the model's decision times; not a test of the member's own entry/exit."
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "W_cf search window 2019-05-06..2024-02-29 (step2 RTY store); backward W_ext read NOT run",
+     "purpose": "other",
+     "source": "reports/stage_e20_plan.md sections 1-2 (K1 vehicles MNQ (NQ), M2K (RTY)) and reports/stage_e20_product_summary.md KEPT list (cp3_clv); reports/E.20_RETURN.md section 1: 'Search screen: FAIL' and 'A failed screen ends Part C: no freeze, no backward read, E20-B1 not run'. Feature in a pooled ML search, not a test of the member."
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.7: Tier 'B'; screen record passes False (mean -14.1300 net ticks/contract/day, daily t -1.287, 140 trips; reports/E.7_RETURN.md Task 5 table); 'Tier A is empty, so K1 has no Holm family and no edge candidate.' (Task 7)",
+    "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_M2K_h60/h120/hF decision 'FAIL'",
+    "E.20 ML search: 'Search screen: FAIL.' (reports/E.20_RETURN.md section 1)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.md: RTY not listed on CME before 2017-07-10; settlement 15:15 CT 2017-07-10..2020-10-25, 15:00 CT 2020-10-26..2024-02-29. The decision time and the latest exit fill (14:59 open) precede 15:00, so they precede the settlement in both regimes.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K1-cp3-01 MYM",
+   "cluster_or_stage": "K1 (Stage E.7)",
+   "member_id": "K1-cp3-01",
+   "module": "strategy.members.k1.cp3 (strategy/members/k1/cp3.py, factory make_mym)",
+   "freeze_file": "reports/stage_e_k1_member_freeze.json (cluster K1, sha256 cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2, commit 9113abd)",
+   "traded_root": "MYM",
+   "vehicle": "MYM q_c 3",
+   "w_ext_root": null,
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the equity index row (O 08:30, C 15:00, F 15:08; the clock comes from the\nfrozen tables, the same on all three roots). Only bars of CT date d are read (K7-L-01 adopted):\nthe evening bars of trade date d (CT date d-1, from 17:00) are never part of a daily bar. After an\nearly-halt holiday those evening bars carry the holiday's early_halt_ct label (the label is the\nbar's CT calendar date's); they are not read, so the trade date after the holiday is not a halt.\n- Daily bar of trade date d, from its bars on CT date d opening in [O, C) = [08:30, 15:00):\n  H / L = max high / min low over the present bars, C_d = close of the bar at C-1 = 14:59.\n  (O_d, the 08:30 open, enters no condition and is not read; the 08:30 bar must exist.)\n- Complete day (Family H): the 08:30 and 14:59 bars exist, no bar of CT date d carries\n  early_halt_ct, and all bars in [08:30, 15:00) carry one instrument_id. It is finalised when a\n  bar of a later trade date arrives, so day d's own bar never enters day d's condition.\n- d-1 = the most recent COMPLETE daily bar of an earlier trade date; incomplete days are dropped\n  (E.3-L-09). An early-halt holiday (Memorial Day, 12:00 CT) is an equity trade date and is\n  incomplete, so the Tuesday after it reads the Friday before. A full closure (Good Friday\n  2025-04-18) is no trade date and has no bars. None yet (warm-up, the window's start): no trade.\n- On the bar at O = 08:30 of CT date d (that exact bar, S0.6): no trade if it carries\n  early_halt_ct (E.3-L-09, E.3-L-11); instrument guard: d-1's instrument_id must be the 08:30\n  bar's; Range = H - L of d-1 in ticks must be > 0; CLV = (C - L) / (H - L) in ticks,\n  CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade. The cuts are compared exactly in\n  integers (S0.10, K4-L-05). Market intent on the 08:30 bar (fills at the 08:31 open).\n- Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills\n  nominally at the 14:59 open), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's\n  forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.\n- No release instant is read (C lines 394-395): the position holds through FOMC and ISM Services.\nOne traded leg, q_c contracts (MNQ 1, M2K 3, MYM 3).",
+   "trigger_event": "on the 08:30 bar of CT date d: prior COMPLETE day's CLV = (C - L)/(H - L) of its [08:30, 15:00) bars >= 0.8 (buy) or <= 0.2 (sell); Range > 0; no early_halt_ct on the 08:30 bar; instrument guard",
+   "decision_time_ct": "08:30 (entry intent on the 08:30 bar at its close, fill at the 08:31 open; the condition reads only d-1's daily bar, closed at 14:59 on d-1)",
+   "side_rule": "CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade",
+   "side_kind": "other: side from the PRIOR complete day's close location in its range (continuation of d-1's close location), not a trigger-day move",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills nominally at the 14:59 open), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.",
+   "expected_events_per_year": "equity trade dates after a complete day with CLV >= 0.8 or <= 0.2; E.7 research window counts: MNQ 118, M2K 140, MYM 131 trips in 299 dates",
+   "inputs_needed": [
+    {
+     "input": "price bars of the traded vehicle MYM (price path YM in E.12 / v13 'MNQ -> NQ' declaration, reports/E.22_RETURN.md line 703)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_ext: none: YM/MYM has no ext2010 entry (reports/stage_e17_run_manifest.json YM ext2010 null); W_cf: data/processed_step2/YM/ohlcv-1m_YM_v_0_2019-05-06_2024-02-29_step2.parquet (manifest only; not opened); no MYM step2 store (E.7: a K1 confirmation 'would need MNQ, M2K and MYM step 2')",
+     "stated_range": "W_ext: none; W_cf: YM S_X 2019-05-06..2024-02-29 (reports/stage_e12_phase1_bars.json)"
+    },
+    {
+     "input": "equity group calendar (trade dates, exchange holidays, early halts, engine F; roll blackouts)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/equity.py with data/cme_calendar.py; W_ext: data/calendars/hist2010/equity.json (products ES, MES, NQ, MNQ, RTY, M2K, YM, MYM)",
+     "stated_range": "equity.py docstring '2019-05-01..2026-06-19' (CALENDAR_COVERAGE 2019-01-01..2026-12-31); hist2010/equity.json coverage first 2010-06-01, last 2019-05-31, 0 unsourced"
+    },
+    {
+     "input": "engine flatten F (rules.sessions TOPSTEP_HOLIDAYS / TOPSTEP_EARLY_CLOSE_LEAD; 'O 08:30, C 15:00, F 15:08' on regular dates)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "rules/sessions.py; for 2010-2018 no on-disk table: C1 and E.20 derive Rule H-1 rows in memory with c1_replication/tables.py h1_rows (reports/stage_e20_briefs/backward_swap_table.md row S3: '95 Rule H-1 rows before 2019-05-01')",
+     "stated_range": "rules/sessions.py docstring: derived rows 'cover trade dates 2019-05-01..2023-12-31', schedule rows 2024-2026"
+    },
+    {
+     "input": "release instants read by the ENGINE, not the member (FOMC and ISM_SERVICES for the D9.5a fill guard, NFP, CPI for D9.12, event-window cost); E.7: 'No member reads a release (FOMC 10, NFP 14, ISM_SERVICES 15 rows per root are harness inputs)'",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (FOMC, NFP, CPI, ISM_SERVICES, ...); W_ext: reports/stage_e14_cal_releases.json holds FOMC (with NGS, WPSR) only",
+     "stated_range": "e2b calendar coverage 2019-05-01..2026-06-21; e14 calendar coverage 2010-06-01..2019-05-31 for FOMC, NGS, WPSR; no 2010-2019 NFP, CPI or ISM Services calendar (reports/stage_e20_product_summary.md: 'no ISM Services release calendar for 2010-2019'; 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not NFP, CPI, PPI, GDP, ISM, ...')"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.7",
+     "window_dates": "research window 2025-04-01..2026-06-12, 299 trade dates (316 less 15 roll-blackout dates and 2 UR-1 dates)",
+     "purpose": "screen",
+     "source": "reports/E.7_RETURN.md section 2, Task 5 (screen table); reports/stage_e7_k1_screen/<trial>_research.json"
+    },
+    {
+     "stage": "E.7",
+     "window_dates": null,
+     "purpose": "power",
+     "source": "reports/E.7_RETURN.md Task 5: 'Power `not_run` (StartRuleMissing) on every record' (record field power = not_run)"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "W_cf training window S_X 2019-05-06..2024-02-29 (price path YM)",
+     "purpose": "other",
+     "source": "ML route v2 Gate 0 (reports/stage_e12_gate0.md Family A rows gate0A_cp3_clv_h60/h120/hF pooled over vehicles; Family B gate0B_MYM_h60/h120/hF; feature definitions docs/STAGE_E_ML_V2_DESIGN.md V2.3, reports/stage_e11_signal_coverage.md lines 43-44). The member's decision variable entered as a feature at the model's decision times; not a test of the member's own entry/exit."
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.7: Tier 'B'; screen record passes False (mean -16.1497 net ticks/contract/day, daily t -1.218, 131 trips; reports/E.7_RETURN.md Task 5 table); 'Tier A is empty, so K1 has no Holm family and no edge candidate.' (Task 7)",
+    "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_MYM_h60/h120/hF decision 'FAIL'"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.md: NQ, YM settlement 15:15 CT 2010-06-07..2020-10-25, 15:00 CT 2020-10-26..2024-02-29 (MYM itself not listed there). The decision time and the latest exit fill (14:59 open) precede 15:00, so they precede the settlement in both regimes.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K1-vxnband-01 MNQ",
+   "cluster_or_stage": "K1 (Stage E.7)",
+   "member_id": "K1-vxnband-01",
+   "module": "strategy.members.k1.vxnband (strategy/members/k1/vxnband.py, factory make_mnq)",
+   "freeze_file": "reports/stage_e_k1_member_freeze.json (cluster K1, sha256 cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2, commit 9113abd)",
+   "traded_root": "MNQ",
+   "vehicle": "MNQ q_c 1",
+   "w_ext_root": "NQ",
+   "signal_legs": [],
+   "definition_verbatim": "Rule (every clock time CT; the bars of trade date d on CT date d, S0.4):\n- Dates: d in EQUITY_FULL_SESSIONS (no early halt, engine F 15:08; S0.8, K1-L-10). Other trade\n  dates are not traded; their bars still build daily closes. Roll blackouts are the engine's.\n- C_prev (K1-L-03): the close of the 14:59 bar of the most recent COMPLETE trade date before d.\n  Complete (Family H, as CP3): the 08:30 and 14:59 bars exist, no bar of CT date d carries\n  early_halt_ct, and every bar in [08:30, 15:00) carries one instrument_id; a date is finalised\n  when a bar of a later trade date arrives. No complete earlier date yet: no trade.\n- Instrument guard: C_prev's instrument_id equals that of d's 08:30 bar, else no trade on d; d's\n  08:30 bar missing: no trade on d.\n- V (K1-L-01, K1-L-02): VXN_CLOSE of the calendar date of the EQUITY_TRADE_DATES entry\n  immediately before d (never d's own close), read on d's 08:30 bar (at its close, 08:31 CT) and\n  never before; no row: no trade on d.\n- Regime: V < 20 (strict) or V >= 30 (non-strict), exact Decimal compares; else no trade on d.\n- Band (K1-L-04): sell iff 1600 x (close_t - C_prev) > C_prev x V, buy iff 1600 x (close_t -\n  C_prev) < -(C_prev x V), strict; prices in integer vendor ticks, V as its exact integer ratio.\n- Scan: the bars of CT date d opening in [08:30, 14:29), in order. A minute of [08:30, t] with no\n  bar, or a scan bar whose instrument_id differs from the 08:30 bar's, seen before the first\n  breach, ends the day's search. The first breach on either side uses the day's one entry, even\n  if the engine refuses it: market intent q_c on that bar (fills at the next open).\n- Exit (K1-L-05): market intent on the first present bar of CT date d opening at or after the\n  entry-intent bar + 30 minutes, while the position is non-zero and nothing is pending; resent\n  while refused (S0.7). The latest entry-intent bar is 14:28, so the latest exit intent bar is\n  14:58 (fill 14:59). The engine's flatten at F is the backstop; after an engine closure the\n  member sends nothing more that date.\nOne traded leg, q_c contracts (MNQ 1). No release instant is read.",
+   "trigger_event": "EQUITY_FULL_SESSIONS date with V (VXN close of the prior equity trade date) < 20 or >= 30, and a bar in [08:30, 14:29) whose close breaches C_prev x (1 +/- V/1600); first breach only",
+   "decision_time_ct": "variable: the close of the first breach bar in [08:30, 14:29); latest possible entry-intent bar 14:28 (V itself read on the 08:30 bar, at 08:31)",
+   "side_rule": "sell iff 1600 x (close_t - C_prev) > C_prev x V, buy iff 1600 x (close_t - C_prev) < -(C_prev x V), strict",
+   "side_kind": "fade",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "Exit (K1-L-05): market intent on the first present bar of CT date d opening at or after the entry-intent bar + 30 minutes, while the position is non-zero and nothing is pending; resent while refused (S0.7). The latest entry-intent bar is 14:28, so the latest exit intent bar is 14:58 (fill 14:59). The engine's flatten at F is the backstop; after an engine closure the member sends nothing more that date.",
+   "expected_events_per_year": "full-session dates in the VXN regime with a band breach (at most one a day); E.7 research window: '97 of 287 full-session window dates had V in regime ... 25 traded (13 at V >= 30, 12 at V < 20)'",
+   "inputs_needed": [
+    {
+     "input": "price bars of the traded vehicle MNQ (price path NQ in E.12 / v13 'MNQ -> NQ' declaration, reports/E.22_RETURN.md line 703)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/processed_hist/ext2010/NQ/ohlcv-1m_NQ_v_0_2010-06-07_2019-04-30_ext2010.parquet (manifest only; not opened); W_cf: data/processed_step2/NQ/ohlcv-1m_NQ_v_0_2019-05-06_2024-02-29_step2.parquet (manifest only; not opened); no MNQ step2 store (E.7: a K1 confirmation 'would need MNQ, M2K and MYM step 2')",
+     "stated_range": "W_ext: ext2010 NQ file 2010-06-07..2019-04-30; reports/stage_e16_windows.json NQ start_month 2010-07; W_cf: NQ S_X 2019-05-06..2024-02-29 (reports/stage_e12_phase1_bars.json)"
+    },
+    {
+     "input": "equity group calendar (trade dates, exchange holidays, early halts, engine F; roll blackouts)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/equity.py with data/cme_calendar.py; W_ext: data/calendars/hist2010/equity.json (products ES, MES, NQ, MNQ, RTY, M2K, YM, MYM)",
+     "stated_range": "equity.py docstring '2019-05-01..2026-06-19' (CALENDAR_COVERAGE 2019-01-01..2026-12-31); hist2010/equity.json coverage first 2010-06-01, last 2019-05-31, 0 unsourced"
+    },
+    {
+     "input": "engine flatten F (rules.sessions TOPSTEP_HOLIDAYS / TOPSTEP_EARLY_CLOSE_LEAD; 'O 08:30, C 15:00, F 15:08' on regular dates)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "rules/sessions.py; for 2010-2018 no on-disk table: C1 and E.20 derive Rule H-1 rows in memory with c1_replication/tables.py h1_rows (reports/stage_e20_briefs/backward_swap_table.md row S3: '95 Rule H-1 rows before 2019-05-01')",
+     "stated_range": "rules/sessions.py docstring: derived rows 'cover trade dates 2019-05-01..2023-12-31', schedule rows 2024-2026"
+    },
+    {
+     "input": "release instants read by the ENGINE, not the member (FOMC and ISM_SERVICES for the D9.5a fill guard, NFP, CPI for D9.12, event-window cost); E.7: 'No member reads a release (FOMC 10, NFP 14, ISM_SERVICES 15 rows per root are harness inputs)'",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (FOMC, NFP, CPI, ISM_SERVICES, ...); W_ext: reports/stage_e14_cal_releases.json holds FOMC (with NGS, WPSR) only",
+     "stated_range": "e2b calendar coverage 2019-05-01..2026-06-21; e14 calendar coverage 2010-06-01..2019-05-31 for FOMC, NGS, WPSR; no 2010-2019 NFP, CPI or ISM Services calendar (reports/stage_e20_product_summary.md: 'no ISM Services release calendar for 2010-2019'; 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not NFP, CPI, PPI, GDP, ISM, ...')"
+    },
+    {
+     "input": "VXN daily close (Cboe VXN_History.csv), V = close of the EQUITY_TRADE_DATES entry before d",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k1/_vxn.py (literal, from data/vendor/index_history/vxn/VXN_History.csv; raw file not opened, its own first date is not stated in any doc read)",
+     "stated_range": "VXN_RANGE = (\"2019-04-30\", \"2026-06-19\"), 1,794 rows = 1,797 less DROPPED_VXN {2021-04-02, 2021-12-24, 2024-02-01} (W_cf dates 2021-04-05 and 2024-02-02 have no V); reports/stage_e20_product_summary.md: 'the VXN literal table does not cover 2010-2019 (NQ reader)'"
+    },
+    {
+     "input": "EQUITY_TRADE_DATES and EQUITY_FULL_SESSIONS literal tables (entry dates; 'trade date d-1')",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k1/_calendar.py (generator reports/stage_e7_briefs/gen_k1_tables.py); W_ext: no on-disk table found; E.20 derived it in memory from hist2010/equity.json (reports/stage_e20_briefs/backward_swap_table.md row S4: '2247 dates 2010-06-01..2019-05-31 ... Overlap: 22 = 22 dates, equal', verdict NEEDS-DERIVATION)",
+     "stated_range": "TABLE_RANGE = (\"2019-05-01\", \"2026-06-19\"); EQUITY_TRADE_DATES 1,846, EQUITY_FULL_SESSIONS 1,779 (E.7 return Task 2)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.7",
+     "window_dates": "research window 2025-04-01..2026-06-12, 299 trade dates (316 less 15 roll-blackout dates and 2 UR-1 dates)",
+     "purpose": "screen",
+     "source": "reports/E.7_RETURN.md section 2, Task 5 (screen table); reports/stage_e7_k1_screen/<trial>_research.json"
+    },
+    {
+     "stage": "E.7",
+     "window_dates": null,
+     "purpose": "power",
+     "source": "reports/E.7_RETURN.md Task 5: 'Power `not_run` (StartRuleMissing) on every record' (record field power = not_run)"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "W_cf training window S_X 2019-05-06..2024-02-29 (price path NQ)",
+     "purpose": "other",
+     "source": "ML route v2 Gate 0 (reports/stage_e12_gate0.md Family A rows gate0A_k1_vxn_regime / gate0A_k1_vxn_band h60/h120/hF pooled over vehicles; Family B gate0B_MNQ_h60/h120/hF; feature definitions docs/STAGE_E_ML_V2_DESIGN.md V2.3, reports/stage_e11_signal_coverage.md lines 43-44). The member's decision variable entered as a feature at the model's decision times; not a test of the member's own entry/exit."
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.7: Tier 'B'; screen record passes False (mean -11.5237 net ticks/contract/day, daily t -0.775, 25 trips; reports/E.7_RETURN.md Task 5 table); 'Tier A is empty, so K1 has no Holm family and no edge candidate.' (Task 7)",
+    "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_MNQ_h60/h120/hF decision 'FAIL'"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.md: NQ, YM settlement 15:15 CT 2010-06-07..2020-10-25 (period 15:14:30-15:15:00), 15:00 CT 2020-10-26..2024-02-29 (14:59:30-15:00:00); the frozen C 15:00 'disagrees' before 2020-10-26. The decision time and the latest exit fill (14:59 open) precede 15:00, so they precede the settlement in both regimes.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K1-vwap-01 MNQ",
+   "cluster_or_stage": "K1 (Stage E.7)",
+   "member_id": "K1-vwap-01",
+   "module": "strategy.members.k1.vwap (strategy/members/k1/vwap.py, factory make_mnq)",
+   "freeze_file": "reports/stage_e_k1_member_freeze.json (cluster K1, sha256 cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2, commit 9113abd)",
+   "traded_root": "MNQ",
+   "vehicle": "MNQ q_c 1",
+   "w_ext_root": "NQ",
+   "signal_legs": [],
+   "definition_verbatim": "Rule (every clock time CT; the bars of trade date d on CT date d, S0.4):\n- Dates: d in EQUITY_FULL_SESSIONS (S0.8, K1-L-10); other trade dates are not traded.\n- VWAP (K1-L-06): over the present bars b of CT date d opening from 08:30 through bar t,\n  sum((H_b + L_b + C_b) x vol_b) and sum(vol_b), prices in integer vendor ticks; known at t's\n  close. Sign: s_t = sign(3 x C_t x sum(vol) - sum((H + L + C) x vol)) when nonzero, else\n  s_(t-1) (0 before the first sign of the day). sum(vol) = 0: no action on that bar and s is\n  not updated.\n- Rule window: every bar t opening in [08:30, 14:57), while no order is pending on the leg:\n  - flat, s_t != 0, fewer than 20 entry intents today: a market intent of q_c in direction s_t;\n  - position opposite to s_t (s_t != 0) and the minimum hold met: an exit intent closing the\n    position, then, if fewer than 20 entry intents today, an entry intent of q_c in direction\n    s_t, both on bar t (both fill at the next open; never one 2 q_c order, S0.3);\n  - otherwise nothing.\n- Minimum hold (K1-L-09): a position first seen at the call of bar k (it filled at k's open) is\n  exited or reversed only by an intent on a bar opening at or after k + 1 minute.\n- Entry cap (K1-L-08): entry intents sent on d, reversal legs included, counted when sent (a\n  refused one counts), at most 20; after the 20th, the next opposite signal with the hold met\n  exits to flat.\n- Missing bar (K1-L-07): from the first bar after a minute of [08:30, t] with no bar (by clock),\n  no new entry (flat entries and reversal legs) for the rest of d; an open position keeps the\n  rule's exits. A missing 08:30 bar is a gap at the start: no trade on d.\n- Instrument change (K1-L-07, C lines 558-559): reference = d's 08:30 bar's instrument_id; from\n  the first bar with another id, no new entry for the rest of d, and an open position gets an\n  exit intent (on that bar; resent while refused, S0.7).\n- Final exit: a market intent on the first present bar at or after C-2 = 14:58 (fills at the\n  14:59 open), resent while refused; no rule intent from the 14:57 bar on.\n- A position the engine closes leaves the account flat; the rule applies as written at later\n  bars (K1-L-09, K7-L-07).\nOne traded leg, q_c contracts (MNQ 1). No release instant is read.",
+   "trigger_event": "every bar t in [08:30, 14:57) of an EQUITY_FULL_SESSIONS date: s_t = sign(close_t vs session VWAP from 08:30); flat -> enter s_t; opposite position with 1-minute hold met -> exit and reverse; at most 20 entry intents a day",
+   "decision_time_ct": "variable: every bar opening in [08:30, 14:57); latest rule-intent bar 14:56",
+   "side_rule": "flat, s_t != 0, fewer than 20 entry intents today: a market intent of q_c in direction s_t; position opposite to s_t (s_t != 0) and the minimum hold met: an exit intent closing the position, then, if fewer than 20 entry intents today, an entry intent of q_c in direction s_t",
+   "side_kind": "other: stop-and-reverse; side = sign of the bar close against the running session VWAP (3 x C_t x sum(vol) - sum((H + L + C) x vol)), not a single trigger-day move",
+   "intraday_hold": true,
+   "exit_rule_verbatim": "Final exit: a market intent on the first present bar at or after C-2 = 14:58 (fills at the 14:59 open), resent while refused; no rule intent from the 14:57 bar on. (Reversal exits as in the rule window; instrument-change exit per K1-L-07.)",
+   "expected_events_per_year": "every EQUITY_FULL_SESSIONS date, up to 20 entries a day; E.7 research window: 3,502 trips, 'vwap traded 286 dates, about 12 trips a day, 61 dates at the cap of 20'",
+   "inputs_needed": [
+    {
+     "input": "price bars of the traded vehicle MNQ (price path NQ in E.12 / v13 'MNQ -> NQ' declaration, reports/E.22_RETURN.md line 703)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/processed_hist/ext2010/NQ/ohlcv-1m_NQ_v_0_2010-06-07_2019-04-30_ext2010.parquet (manifest only; not opened); W_cf: data/processed_step2/NQ/ohlcv-1m_NQ_v_0_2019-05-06_2024-02-29_step2.parquet (manifest only; not opened); no MNQ step2 store (E.7: a K1 confirmation 'would need MNQ, M2K and MYM step 2')",
+     "stated_range": "W_ext: ext2010 NQ file 2010-06-07..2019-04-30; reports/stage_e16_windows.json NQ start_month 2010-07; W_cf: NQ S_X 2019-05-06..2024-02-29 (reports/stage_e12_phase1_bars.json)"
+    },
+    {
+     "input": "equity group calendar (trade dates, exchange holidays, early halts, engine F; roll blackouts)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/equity.py with data/cme_calendar.py; W_ext: data/calendars/hist2010/equity.json (products ES, MES, NQ, MNQ, RTY, M2K, YM, MYM)",
+     "stated_range": "equity.py docstring '2019-05-01..2026-06-19' (CALENDAR_COVERAGE 2019-01-01..2026-12-31); hist2010/equity.json coverage first 2010-06-01, last 2019-05-31, 0 unsourced"
+    },
+    {
+     "input": "engine flatten F (rules.sessions TOPSTEP_HOLIDAYS / TOPSTEP_EARLY_CLOSE_LEAD; 'O 08:30, C 15:00, F 15:08' on regular dates)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "rules/sessions.py; for 2010-2018 no on-disk table: C1 and E.20 derive Rule H-1 rows in memory with c1_replication/tables.py h1_rows (reports/stage_e20_briefs/backward_swap_table.md row S3: '95 Rule H-1 rows before 2019-05-01')",
+     "stated_range": "rules/sessions.py docstring: derived rows 'cover trade dates 2019-05-01..2023-12-31', schedule rows 2024-2026"
+    },
+    {
+     "input": "release instants read by the ENGINE, not the member (FOMC and ISM_SERVICES for the D9.5a fill guard, NFP, CPI for D9.12, event-window cost); E.7: 'No member reads a release (FOMC 10, NFP 14, ISM_SERVICES 15 rows per root are harness inputs)'",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (FOMC, NFP, CPI, ISM_SERVICES, ...); W_ext: reports/stage_e14_cal_releases.json holds FOMC (with NGS, WPSR) only",
+     "stated_range": "e2b calendar coverage 2019-05-01..2026-06-21; e14 calendar coverage 2010-06-01..2019-05-31 for FOMC, NGS, WPSR; no 2010-2019 NFP, CPI or ISM Services calendar (reports/stage_e20_product_summary.md: 'no ISM Services release calendar for 2010-2019'; 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not NFP, CPI, PPI, GDP, ISM, ...')"
+    },
+    {
+     "input": "EQUITY_TRADE_DATES and EQUITY_FULL_SESSIONS literal tables (entry dates; 'trade date d-1')",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k1/_calendar.py (generator reports/stage_e7_briefs/gen_k1_tables.py); W_ext: no on-disk table found; E.20 derived it in memory from hist2010/equity.json (reports/stage_e20_briefs/backward_swap_table.md row S4: '2247 dates 2010-06-01..2019-05-31 ... Overlap: 22 = 22 dates, equal', verdict NEEDS-DERIVATION)",
+     "stated_range": "TABLE_RANGE = (\"2019-05-01\", \"2026-06-19\"); EQUITY_TRADE_DATES 1,846, EQUITY_FULL_SESSIONS 1,779 (E.7 return Task 2)"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.7",
+     "window_dates": "research window 2025-04-01..2026-06-12, 299 trade dates (316 less 15 roll-blackout dates and 2 UR-1 dates)",
+     "purpose": "screen",
+     "source": "reports/E.7_RETURN.md section 2, Task 5 (screen table); reports/stage_e7_k1_screen/<trial>_research.json"
+    },
+    {
+     "stage": "E.7",
+     "window_dates": null,
+     "purpose": "power",
+     "source": "reports/E.7_RETURN.md Task 5: 'Power `not_run` (StartRuleMissing) on every record' (record field power = not_run)"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "W_cf training window S_X 2019-05-06..2024-02-29 (price path NQ)",
+     "purpose": "other",
+     "source": "ML route v2 Gate 0 (reports/stage_e12_gate0.md Family A rows gate0A_k1_vwap_dist_h60/h120/hF pooled over vehicles; Family B gate0B_MNQ_h60/h120/hF; feature definitions docs/STAGE_E_ML_V2_DESIGN.md V2.3, reports/stage_e11_signal_coverage.md lines 43-44). The member's decision variable entered as a feature at the model's decision times; not a test of the member's own entry/exit."
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "W_cf search window 2019-05-06..2024-02-29 (step2 NQ store); backward W_ext read NOT run",
+     "purpose": "other",
+     "source": "reports/stage_e20_plan.md sections 1-2 (K1 vehicles MNQ (NQ), M2K (RTY)) and reports/stage_e20_product_summary.md KEPT list (k1_vwap_dist); reports/E.20_RETURN.md section 1: 'Search screen: FAIL' and 'A failed screen ends Part C: no freeze, no backward read, E20-B1 not run'. Feature in a pooled ML search, not a test of the member."
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.7: Tier 'B'; screen record passes False (mean -56.3758 net ticks/contract/day, daily t -1.115, 3502 trips; reports/E.7_RETURN.md Task 5 table); 'Tier A is empty, so K1 has no Holm family and no edge candidate.' (Task 7)",
+    "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_MNQ_h60/h120/hF decision 'FAIL'",
+    "E.20 ML search: 'Search screen: FAIL.' (reports/E.20_RETURN.md section 1)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.md: NQ, YM settlement 15:15 CT 2010-06-07..2020-10-25 (period 15:14:30-15:15:00), 15:00 CT 2020-10-26..2024-02-29 (14:59:30-15:00:00); the frozen C 15:00 'disagrees' before 2020-10-26. The decision time and the latest exit fill (14:59 open) precede 15:00, so they precede the settlement in both regimes.",
+   "exclusion": null
+  }
+ ],
+ "excluded": [
+  {
+   "id": "K1-ml-01",
+   "reason": "ML model member; excluded in the E.0 catalog (no code, not in the freeze); reports/stage_e11_briefs/member_inventory.md line 413, reports/E.7_RETURN.md K1-L-01 ('KF1 is K1-ml-01's feature row (excluded, U6)')"
+  },
+  {
+   "id": "K1-predrift-01",
+   "reason": "excluded by E.0 with 0 trials (not frozen, no module); progress.md line 2488 'K1-predrift-01 excluded (MES's E family re-run on the Dow)'; reports/E.10_RETURN.md line 143"
+  },
+  {
+   "id": "K1 cluster book (reports/stage_e7_k1_screen/K1_research_cluster.json)",
+   "reason": "a cluster summary of the 11 trials, not itself a trigger"
+  }
+ ],
+ "sources_read": [
+  "reports/stage_e23_briefs/brief_inventory.md (whole)",
+  "reports/stage_e_k1_member_freeze.json (cluster, created_utc, members, files)",
+  "strategy/members/k1/cp1.py, cp2.py, cp3.py, vxnband.py, vwap.py, _event_common.py, _port_common.py (module docstrings)",
+  "strategy/members/k1/_vxn.py (docstring, VXN_RANGE line 25, dropped-rows comment lines 27-42); strategy/members/k1/_calendar.py (docstring, TABLE_RANGE line 33, REGULAR_F_CT line 35)",
+  "reports/E.7_RETURN.md lines 1-30, 170-245 (Tasks 1b-7, screen table), K1 grep lines (sections 5-6)",
+  "reports/stage_e7_k1_screen/K1_K1-*_research.json (screen scalar fields and power status only)",
+  "reports/E.*_RETURN.md grep for K1 (E.1, E.2a, E.2b, E.6, E.8-E.22: only freeze checks except E.2a labels, E.12 ranking, E.20 universe, E.22 line 703)",
+  "reports/stage_e7_STATE.md, reports/stage_e0_STATE.md (grep K1); progress.md (grep K1); docs/STAGES.md lines 105-107",
+  "reports/E.11_RETURN.md lines 1-30; docs/STAGE_E_ML_V2_DESIGN.md lines 117, 145-147, 435-470",
+  "reports/stage_e11_briefs/member_inventory.md (grep K1); reports/stage_e11_signal_coverage.md lines 43-44, 152, 194",
+  "reports/E.12_RETURN.md lines 1-12, 470-486; reports/stage_e12_gate0.md (headers, gate0A k1/cp rows, gate0B MNQ/M2K/MYM rows); reports/stage_e12_phase1_bars.json (NQ, RTY, YM scalar fields)",
+  "reports/E.14_RETURN.md lines 1-25; reports/stage_e14_c1_model.json lines 20-34 (k1 applicability 0); reports/stage_e18_c1b_result.json lines 115-126; reports/E.18_RETURN.md lines 1-25",
+  "reports/E.20_RETURN.md lines 1-25, grep; reports/stage_e20_plan.md lines 15-45, 330-360; reports/stage_e20_product_summary.md lines 42-125",
+  "reports/stage_e20_briefs/backward_swap_table.md lines 25-36, 51 (rows S1-S7)",
+  "data/calendars/hist2010/equity.json (coverage, products, counts only); data/calendars/equity.py (docstring grep)",
+  "reports/stage_e14_cal_releases.json and reports/stage_e2b_release_calendar.json (top-level coverage fields only)",
+  "data/vendor/index_history/vxn/manifest.jsonl (fields, no data rows); reports/stage_e7_member_specs.md (headings, VXN range lines)",
+  "reports/stage_e17_run_manifest.json (NQ, RTY, YM entries); reports/stage_e16_windows.json (NQ, RTY entries); reports/stage_e16_settlement.md (equity rows lines 32-37, 57-104)",
+  "multiday/constants.py and reports/stage_e21_briefs/lead_spec.md (grep equity/settle); rules/sessions.py (docstring grep); c1_replication/tables.py h1_rows signature"
+ ],
+ "not_finished": [],
+ "notes": [
+  "E.14 (C1), E.17 (C1 run, stopped) and E.18 (C1b) list k1_vwap_dist, k1_vxn_regime and k1_vxn_band in the frozen feature list, but they apply on 0 NG rows (reports/stage_e14_c1_model.json, reports/stage_e18_c1b_result.json C10 'applicable' 0); the cp1/cp2/cp3 features there are NG's own ports (K4), so no K1 trigger was read in those stages.",
+  "No K1 trial was ever confirmed or read on W_ext as a member: E.7 lists the confirmation as needing MNQ, M2K, MYM step 2 (not bought); E.20's backward read was not run.",
+  "W_cf data exist for NQ, RTY and YM (E.12 phase-1 step2 stores, S_X 2019-05-06); W_ext data exist for NQ (2010-06-07 store, window 2010-07) and RTY (window 2017-06, CME listing 2017-07-10); none for YM/MYM.",
+  "E.12 and E.20 reads are ML feature reads at the model's own decision times and horizons (h60, h120, hF), not the members' entries and exits."
+ ]
+}

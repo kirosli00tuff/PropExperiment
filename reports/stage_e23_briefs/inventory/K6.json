@@ -1,0 +1,2599 @@
+{
+ "assignment": "K6",
+ "rows": [
+  {
+   "trigger_id": "K6-cp1-01 ZC",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp1-01",
+   "module": "strategy.members.k6.cp1 (factory make_zc)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZC",
+   "vehicle": "ZC (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZC",
+   "w_ext_note": "2010-06-07..2019-04-30 (ext2010 store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "every trade date: sign of (close of the 08:59 bar minus open of the trade date's first bar) is nonzero",
+   "decision_time_ct": "12:44",
+   "decision_time_note": "entry intent on the C-31 bar (grains 12:44, livestock 12:29); the signal itself uses bars from the trade date's first bar (grains: 19:00 CT evening bar of the prior calendar day; livestock: 08:30) through the 08:59 bar",
+   "side_rule": "Signal s = sign(close of the bar at O+29 = 08:59 minus open of the trade date's first bar), in vendor ticks. buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the trade date's move from its first bar's open to the 08:59 close",
+   "intraday_hold": true,
+   "hold_note": "fill 12:45 to exit fill nominally 13:14 (about 29 minutes)",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every trade date with nonzero signal (both signal bars present, one instrument_id); counts reported: E.8 research-window trips 265 over 276 dates; E.22 W_cf trips 1060 over 1130 dates",
+   "inputs_needed": [
+    {
+     "input": "ZC 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZC",
+     "stated_range": "W_ext: 2010-06-07..2019-04-30 (ext2010 store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 276 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 265, days 276, mean -1.3932 net ticks/day, daily t -6.013"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1130, trips 1060, theta_hat -1.5630, UCB95 -1.2071, p_upper +1.0000"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp1_ret over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 1)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 1)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 12:44 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp1-01 ZW",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp1-01",
+   "module": "strategy.members.k6.cp1 (factory make_zw)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZW",
+   "vehicle": "ZW (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": null,
+   "w_ext_note": "no W_ext store: reports/stage_e17_run_manifest.json stores.ZW.ext2010 = null",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "every trade date: sign of (close of the 08:59 bar minus open of the trade date's first bar) is nonzero",
+   "decision_time_ct": "12:44",
+   "decision_time_note": "entry intent on the C-31 bar (grains 12:44, livestock 12:29); the signal itself uses bars from the trade date's first bar (grains: 19:00 CT evening bar of the prior calendar day; livestock: 08:30) through the 08:59 bar",
+   "side_rule": "Signal s = sign(close of the bar at O+29 = 08:59 minus open of the trade date's first bar), in vendor ticks. buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the trade date's move from its first bar's open to the 08:59 close",
+   "intraday_hold": true,
+   "hold_note": "fill 12:45 to exit fill nominally 13:14 (about 29 minutes)",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every trade date with nonzero signal (both signal bars present, one instrument_id); counts reported: E.8 research-window trips 269 over 283 dates; E.22 W_cf trips 1075 over 1129 dates",
+   "inputs_needed": [
+    {
+     "input": "ZW 1-minute bars (own traded root)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZW",
+     "stated_range": "W_ext: no W_ext store: reports/stage_e17_run_manifest.json stores.ZW.ext2010 = null; W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 283 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 269, days 283, mean -1.3931 net ticks/day, daily t -4.334"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1129, trips 1075, theta_hat -1.1743, UCB95 -0.6529, p_upper +0.9998"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 2)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 2)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 12:44 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp1-01 ZS",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp1-01",
+   "module": "strategy.members.k6.cp1 (factory make_zs)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZS",
+   "vehicle": "ZS (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZS",
+   "w_ext_note": "2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "every trade date: sign of (close of the 08:59 bar minus open of the trade date's first bar) is nonzero",
+   "decision_time_ct": "12:44",
+   "decision_time_note": "entry intent on the C-31 bar (grains 12:44, livestock 12:29); the signal itself uses bars from the trade date's first bar (grains: 19:00 CT evening bar of the prior calendar day; livestock: 08:30) through the 08:59 bar",
+   "side_rule": "Signal s = sign(close of the bar at O+29 = 08:59 minus open of the trade date's first bar), in vendor ticks. buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the trade date's move from its first bar's open to the 08:59 close",
+   "intraday_hold": true,
+   "hold_note": "fill 12:45 to exit fill nominally 13:14 (about 29 minutes)",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every trade date with nonzero signal (both signal bars present, one instrument_id); counts reported: E.8 research-window trips 280 over 285 dates; E.22 W_cf trips 1109 over 1136 dates",
+   "inputs_needed": [
+    {
+     "input": "ZS 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZS",
+     "stated_range": "W_ext: 2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 285 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 280, days 285, mean -2.5301 net ticks/day, daily t -5.756"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1136, trips 1109, theta_hat -1.7015, UCB95 -1.1732, p_upper +1.0000"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp1_ret over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 3)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 3)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 12:44 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp1-01 ZM",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp1-01",
+   "module": "strategy.members.k6.cp1 (factory make_zm)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZM",
+   "vehicle": "ZM (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": null,
+   "w_ext_note": "no W_ext store: reports/stage_e17_run_manifest.json stores.ZM.ext2010 = null",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "every trade date: sign of (close of the 08:59 bar minus open of the trade date's first bar) is nonzero",
+   "decision_time_ct": "12:44",
+   "decision_time_note": "entry intent on the C-31 bar (grains 12:44, livestock 12:29); the signal itself uses bars from the trade date's first bar (grains: 19:00 CT evening bar of the prior calendar day; livestock: 08:30) through the 08:59 bar",
+   "side_rule": "Signal s = sign(close of the bar at O+29 = 08:59 minus open of the trade date's first bar), in vendor ticks. buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the trade date's move from its first bar's open to the 08:59 close",
+   "intraday_hold": true,
+   "hold_note": "fill 12:45 to exit fill nominally 13:14 (about 29 minutes)",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every trade date with nonzero signal (both signal bars present, one instrument_id); counts reported: E.8 research-window trips 270 over 278 dates; E.22 W_cf trips 1075 over 1106 dates",
+   "inputs_needed": [
+    {
+     "input": "ZM 1-minute bars (own traded root)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZM",
+     "stated_range": "W_ext: no W_ext store: reports/stage_e17_run_manifest.json stores.ZM.ext2010 = null; W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 278 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 270, days 278, mean -1.4134 net ticks/day, daily t -3.820"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1106, trips 1075, theta_hat -1.2097, UCB95 -0.6902, p_upper +0.9999"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 4)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 4)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 12:44 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp1-01 ZL",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp1-01",
+   "module": "strategy.members.k6.cp1 (factory make_zl)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZL",
+   "vehicle": "ZL (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZL",
+   "w_ext_note": "2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "every trade date: sign of (close of the 08:59 bar minus open of the trade date's first bar) is nonzero",
+   "decision_time_ct": "12:44",
+   "decision_time_note": "entry intent on the C-31 bar (grains 12:44, livestock 12:29); the signal itself uses bars from the trade date's first bar (grains: 19:00 CT evening bar of the prior calendar day; livestock: 08:30) through the 08:59 bar",
+   "side_rule": "Signal s = sign(close of the bar at O+29 = 08:59 minus open of the trade date's first bar), in vendor ticks. buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the trade date's move from its first bar's open to the 08:59 close",
+   "intraday_hold": true,
+   "hold_note": "fill 12:45 to exit fill nominally 13:14 (about 29 minutes)",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every trade date with nonzero signal (both signal bars present, one instrument_id); counts reported: E.8 research-window trips 271 over 287 dates; E.22 W_cf trips 1076 over 1129 dates",
+   "inputs_needed": [
+    {
+     "input": "ZL 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZL",
+     "stated_range": "W_ext: 2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 287 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 271, days 287, mean -1.1361 net ticks/day, daily t -1.235"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1129, trips 1076, theta_hat -2.4878, UCB95 -1.6296, p_upper +1.0000"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp1_ret over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 5)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 5)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 12:44 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp1-01 HE",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp1-01",
+   "module": "strategy.members.k6.cp1 (factory make_he)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "HE",
+   "vehicle": "HE (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "HE",
+   "w_ext_note": "store 2010-07-01..2019-04-30 (ext2010h); reports/stage_e16_windows.json HE window_start_on_or_after 2017-07-01 (start_month 2017-07; E.20 plan line 48 'HE 2017-07-01')",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "every trade date: sign of (close of the 08:59 bar minus open of the trade date's first bar) is nonzero",
+   "decision_time_ct": "12:29",
+   "decision_time_note": "entry intent on the C-31 bar (grains 12:44, livestock 12:29); the signal itself uses bars from the trade date's first bar (grains: 19:00 CT evening bar of the prior calendar day; livestock: 08:30) through the 08:59 bar",
+   "side_rule": "Signal s = sign(close of the bar at O+29 = 08:59 minus open of the trade date's first bar), in vendor ticks. buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the trade date's move from its first bar's open to the 08:59 close",
+   "intraday_hold": true,
+   "hold_note": "fill 12:30 to exit fill 12:59 (about 29 minutes)",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every trade date with nonzero signal (both signal bars present, one instrument_id); counts reported: E.8 research-window trips 255 over 273 dates; E.22 W_cf trips 833 over 1104 dates",
+   "inputs_needed": [
+    {
+     "input": "HE 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.HE",
+     "stated_range": "W_ext: store 2010-07-01..2019-04-30 (ext2010h); reports/stage_e16_windows.json HE window_start_on_or_after 2017-07-01 (start_month 2017-07; E.20 plan line 48 'HE 2017-07-01'); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "livestock group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/livestock.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/livestock.json",
+     "stated_range": "data/calendars/hist2010/livestock.json coverage 2010-06-01..2019-05-31 (25 unsourced trade dates, 1.1%)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 273 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 255, days 273, mean -1.7366 net ticks/day, daily t -3.717"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1104, trips 833, theta_hat -1.0354, UCB95 -0.4729, p_upper +0.9986"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp1_ret over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 6)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 6)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for HE LE): 13:00 CT 2010-06-07..2014-12-14 (primary, basis inferred, window null: pit-based); 13:00 CT window 12:59:30-13:00:00 2014-12-15..2024-02-29 (primary, direct). rules/price_limits.py SETTLEMENT_WINDOW_CT livestock [12:59:30, 13:00:00) CT; strategy/members/k6/_limits.py SETTLEMENT_WINDOW_LIVESTOCK. decision_time_ct 12:29 is before the 13:00 CT settlement on every period",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp1-01 LE",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp1-01",
+   "module": "strategy.members.k6.cp1 (factory make_le)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "LE",
+   "vehicle": "LE (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "LE",
+   "w_ext_note": "store 2010-07-01..2019-04-30 (ext2010h); E.21 R-S3 (multiday/constants.py LE_FIRST; reports/stage_e21_briefs/lead_spec.md section 0): 2010-06-07..2014-12-14 excluded, first mark date on or after 2014-12-15",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "every trade date: sign of (close of the 08:59 bar minus open of the trade date's first bar) is nonzero",
+   "decision_time_ct": "12:29",
+   "decision_time_note": "entry intent on the C-31 bar (grains 12:44, livestock 12:29); the signal itself uses bars from the trade date's first bar (grains: 19:00 CT evening bar of the prior calendar day; livestock: 08:30) through the 08:59 bar",
+   "side_rule": "Signal s = sign(close of the bar at O+29 = 08:59 minus open of the trade date's first bar), in vendor ticks. buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04).",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the trade date's move from its first bar's open to the 08:59 close",
+   "intraday_hold": true,
+   "hold_note": "fill 12:30 to exit fill 12:59 (about 29 minutes)",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date.",
+   "expected_events_per_year": "every trade date with nonzero signal (both signal bars present, one instrument_id); counts reported: E.8 research-window trips 197 over 266 dates; E.22 W_cf trips 915 over 1109 dates",
+   "inputs_needed": [
+    {
+     "input": "LE 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.LE",
+     "stated_range": "W_ext: store 2010-07-01..2019-04-30 (ext2010h); E.21 R-S3 (multiday/constants.py LE_FIRST; reports/stage_e21_briefs/lead_spec.md section 0): 2010-06-07..2014-12-14 excluded, first mark date on or after 2014-12-15; W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "livestock group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/livestock.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/livestock.json",
+     "stated_range": "data/calendars/hist2010/livestock.json coverage 2010-06-01..2019-05-31 (25 unsourced trade dates, 1.1%)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 266 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 197, days 266, mean -1.6911 net ticks/day, daily t -1.699"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1109, trips 915, theta_hat -2.0954, UCB95 -1.6102, p_upper +1.0000"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp1_ret over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 7)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 7)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for HE LE): 13:00 CT 2010-06-07..2014-12-14 (primary, basis inferred, window null: pit-based); 13:00 CT window 12:59:30-13:00:00 2014-12-15..2024-02-29 (primary, direct). rules/price_limits.py SETTLEMENT_WINDOW_CT livestock [12:59:30, 13:00:00) CT; strategy/members/k6/_limits.py SETTLEMENT_WINDOW_LIVESTOCK. decision_time_ct 12:29 is before the 13:00 CT settlement on every period",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp2-01 ZC",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp2-01",
+   "module": "strategy.members.k6.cp2 (factory make_zc)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZC",
+   "vehicle": "ZC (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZC",
+   "w_ext_note": "2010-06-07..2019-04-30 (ext2010 store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "first bar in [08:45, C) of CT date d whose close is >= OR_high + 4 ticks or <= OR_low - 4 ticks, OR = [08:30, 08:45)",
+   "decision_time_ct": "variable 08:45..13:14",
+   "decision_time_note": "the decision bar is the first qualifying eligible bar (opening in [O+15, C)); fills at the next open",
+   "side_rule": "Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells (non-strict); a market intent on that bar.",
+   "side_kind": "momentum",
+   "side_note": "side = direction of the trigger-day breakout of the 08:30-08:45 opening range",
+   "intraday_hold": true,
+   "hold_note": "75 bars after the entry decision bar, or F (13:18) if earlier",
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2.",
+   "expected_events_per_year": "every trade date with a qualifying breakout bar (at most one entry per trade date); counts reported: E.8 research-window trips 247 over 276 dates; E.22 W_cf trips 1008 over 1130 dates",
+   "inputs_needed": [
+    {
+     "input": "ZC 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZC",
+     "stated_range": "W_ext: 2010-06-07..2019-04-30 (ext2010 store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 276 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 247, days 276, mean -1.2369 net ticks/day, daily t -2.414"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1130, trips 1008, theta_hat -1.6711, UCB95 -1.0677, p_upper +1.0000"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp2_range, cp2_brk over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 8)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 8)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct variable 08:45..13:14 is before the 13:15 CT settlement on every period (13:14 is the last possible cp2 grain decision bar); grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp2-01 ZW",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp2-01",
+   "module": "strategy.members.k6.cp2 (factory make_zw)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZW",
+   "vehicle": "ZW (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": null,
+   "w_ext_note": "no W_ext store: reports/stage_e17_run_manifest.json stores.ZW.ext2010 = null",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "first bar in [08:45, C) of CT date d whose close is >= OR_high + 4 ticks or <= OR_low - 4 ticks, OR = [08:30, 08:45)",
+   "decision_time_ct": "variable 08:45..13:14",
+   "decision_time_note": "the decision bar is the first qualifying eligible bar (opening in [O+15, C)); fills at the next open",
+   "side_rule": "Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells (non-strict); a market intent on that bar.",
+   "side_kind": "momentum",
+   "side_note": "side = direction of the trigger-day breakout of the 08:30-08:45 opening range",
+   "intraday_hold": true,
+   "hold_note": "75 bars after the entry decision bar, or F (13:18) if earlier",
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2.",
+   "expected_events_per_year": "every trade date with a qualifying breakout bar (at most one entry per trade date); counts reported: E.8 research-window trips 265 over 283 dates; E.22 W_cf trips 1070 over 1129 dates",
+   "inputs_needed": [
+    {
+     "input": "ZW 1-minute bars (own traded root)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZW",
+     "stated_range": "W_ext: no W_ext store: reports/stage_e17_run_manifest.json stores.ZW.ext2010 = null; W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 283 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 265, days 283, mean -1.5501 net ticks/day, daily t -2.014"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1129, trips 1070, theta_hat -0.8385, UCB95 +0.3623, p_upper +0.8807"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 9)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 9)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct variable 08:45..13:14 is before the 13:15 CT settlement on every period (13:14 is the last possible cp2 grain decision bar); grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp2-01 ZS",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp2-01",
+   "module": "strategy.members.k6.cp2 (factory make_zs)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZS",
+   "vehicle": "ZS (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZS",
+   "w_ext_note": "2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "first bar in [08:45, C) of CT date d whose close is >= OR_high + 4 ticks or <= OR_low - 4 ticks, OR = [08:30, 08:45)",
+   "decision_time_ct": "variable 08:45..13:14",
+   "decision_time_note": "the decision bar is the first qualifying eligible bar (opening in [O+15, C)); fills at the next open",
+   "side_rule": "Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells (non-strict); a market intent on that bar.",
+   "side_kind": "momentum",
+   "side_note": "side = direction of the trigger-day breakout of the 08:30-08:45 opening range",
+   "intraday_hold": true,
+   "hold_note": "75 bars after the entry decision bar, or F (13:18) if earlier",
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2.",
+   "expected_events_per_year": "every trade date with a qualifying breakout bar (at most one entry per trade date); counts reported: E.8 research-window trips 272 over 285 dates; E.22 W_cf trips 1077 over 1136 dates",
+   "inputs_needed": [
+    {
+     "input": "ZS 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZS",
+     "stated_range": "W_ext: 2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 285 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 272, days 285, mean -1.9418 net ticks/day, daily t -1.803"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1136, trips 1077, theta_hat -1.7164, UCB95 -0.4434, p_upper +0.9845"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp2_range, cp2_brk over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 10)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 10)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct variable 08:45..13:14 is before the 13:15 CT settlement on every period (13:14 is the last possible cp2 grain decision bar); grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp2-01 ZM",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp2-01",
+   "module": "strategy.members.k6.cp2 (factory make_zm)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZM",
+   "vehicle": "ZM (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": null,
+   "w_ext_note": "no W_ext store: reports/stage_e17_run_manifest.json stores.ZM.ext2010 = null",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "first bar in [08:45, C) of CT date d whose close is >= OR_high + 4 ticks or <= OR_low - 4 ticks, OR = [08:30, 08:45)",
+   "decision_time_ct": "variable 08:45..13:14",
+   "decision_time_note": "the decision bar is the first qualifying eligible bar (opening in [O+15, C)); fills at the next open",
+   "side_rule": "Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells (non-strict); a market intent on that bar.",
+   "side_kind": "momentum",
+   "side_note": "side = direction of the trigger-day breakout of the 08:30-08:45 opening range",
+   "intraday_hold": true,
+   "hold_note": "75 bars after the entry decision bar, or F (13:18) if earlier",
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2.",
+   "expected_events_per_year": "every trade date with a qualifying breakout bar (at most one entry per trade date); counts reported: E.8 research-window trips 262 over 278 dates; E.22 W_cf trips 1033 over 1106 dates",
+   "inputs_needed": [
+    {
+     "input": "ZM 1-minute bars (own traded root)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZM",
+     "stated_range": "W_ext: no W_ext store: reports/stage_e17_run_manifest.json stores.ZM.ext2010 = null; W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 278 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 262, days 278, mean -3.2959 net ticks/day, daily t -3.458"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1106, trips 1033, theta_hat -1.3235, UCB95 -0.1204, p_upper +0.9666"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 11)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 11)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct variable 08:45..13:14 is before the 13:15 CT settlement on every period (13:14 is the last possible cp2 grain decision bar); grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp2-01 ZL",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp2-01",
+   "module": "strategy.members.k6.cp2 (factory make_zl)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZL",
+   "vehicle": "ZL (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZL",
+   "w_ext_note": "2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "first bar in [08:45, C) of CT date d whose close is >= OR_high + 4 ticks or <= OR_low - 4 ticks, OR = [08:30, 08:45)",
+   "decision_time_ct": "variable 08:45..13:14",
+   "decision_time_note": "the decision bar is the first qualifying eligible bar (opening in [O+15, C)); fills at the next open",
+   "side_rule": "Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells (non-strict); a market intent on that bar.",
+   "side_kind": "momentum",
+   "side_note": "side = direction of the trigger-day breakout of the 08:30-08:45 opening range",
+   "intraday_hold": true,
+   "hold_note": "75 bars after the entry decision bar, or F (13:18) if earlier",
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2.",
+   "expected_events_per_year": "every trade date with a qualifying breakout bar (at most one entry per trade date); counts reported: E.8 research-window trips 276 over 287 dates; E.22 W_cf trips 1081 over 1129 dates",
+   "inputs_needed": [
+    {
+     "input": "ZL 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZL",
+     "stated_range": "W_ext: 2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 287 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 276, days 287, mean -0.5481 net ticks/day, daily t -0.262"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1129, trips 1081, theta_hat -2.0867, UCB95 -0.1249, p_upper +0.9531"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp2_range, cp2_brk over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 12)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 12)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct variable 08:45..13:14 is before the 13:15 CT settlement on every period (13:14 is the last possible cp2 grain decision bar); grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp2-01 HE",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp2-01",
+   "module": "strategy.members.k6.cp2 (factory make_he)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "HE",
+   "vehicle": "HE (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "HE",
+   "w_ext_note": "store 2010-07-01..2019-04-30 (ext2010h); reports/stage_e16_windows.json HE window_start_on_or_after 2017-07-01 (start_month 2017-07; E.20 plan line 48 'HE 2017-07-01')",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "first bar in [08:45, C) of CT date d whose close is >= OR_high + 4 ticks or <= OR_low - 4 ticks, OR = [08:30, 08:45)",
+   "decision_time_ct": "variable 08:45..12:59",
+   "decision_time_note": "the decision bar is the first qualifying eligible bar (opening in [O+15, C)); fills at the next open",
+   "side_rule": "Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells (non-strict); a market intent on that bar.",
+   "side_kind": "momentum",
+   "side_note": "side = direction of the trigger-day breakout of the 08:30-08:45 opening range",
+   "intraday_hold": true,
+   "hold_note": "75 bars after the entry decision bar, or F (13:03) if earlier",
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2.",
+   "expected_events_per_year": "every trade date with a qualifying breakout bar (at most one entry per trade date); counts reported: E.8 research-window trips 249 over 273 dates; E.22 W_cf trips 906 over 1104 dates",
+   "inputs_needed": [
+    {
+     "input": "HE 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.HE",
+     "stated_range": "W_ext: store 2010-07-01..2019-04-30 (ext2010h); reports/stage_e16_windows.json HE window_start_on_or_after 2017-07-01 (start_month 2017-07; E.20 plan line 48 'HE 2017-07-01'); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "livestock group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/livestock.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/livestock.json",
+     "stated_range": "data/calendars/hist2010/livestock.json coverage 2010-06-01..2019-05-31 (25 unsourced trade dates, 1.1%)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 273 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 249, days 273, mean -3.6279 net ticks/day, daily t -3.046"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1104, trips 906, theta_hat -1.0058, UCB95 +0.3860, p_upper +0.8747"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp2_range, cp2_brk over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 13)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 13)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for HE LE): 13:00 CT 2010-06-07..2014-12-14 (primary, basis inferred, window null: pit-based); 13:00 CT window 12:59:30-13:00:00 2014-12-15..2024-02-29 (primary, direct). rules/price_limits.py SETTLEMENT_WINDOW_CT livestock [12:59:30, 13:00:00) CT; strategy/members/k6/_limits.py SETTLEMENT_WINDOW_LIVESTOCK. decision_time_ct variable 08:45..12:59 is before the 13:00 CT settlement on every period (12:59 is the last possible cp2 livestock decision bar, inside the 12:59:30-13:00 window's minute)",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp2-01 LE",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp2-01",
+   "module": "strategy.members.k6.cp2 (factory make_le)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "LE",
+   "vehicle": "LE (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "LE",
+   "w_ext_note": "store 2010-07-01..2019-04-30 (ext2010h); E.21 R-S3 (multiday/constants.py LE_FIRST; reports/stage_e21_briefs/lead_spec.md section 0): 2010-06-07..2014-12-14 excluded, first mark date on or after 2014-12-15",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "first bar in [08:45, C) of CT date d whose close is >= OR_high + 4 ticks or <= OR_low - 4 ticks, OR = [08:30, 08:45)",
+   "decision_time_ct": "variable 08:45..12:59",
+   "decision_time_note": "the decision bar is the first qualifying eligible bar (opening in [O+15, C)); fills at the next open",
+   "side_rule": "Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells (non-strict); a market intent on that bar.",
+   "side_kind": "momentum",
+   "side_note": "side = direction of the trigger-day breakout of the 08:30-08:45 opening range",
+   "intraday_hold": true,
+   "hold_note": "75 bars after the entry decision bar, or F (13:03) if earlier",
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2.",
+   "expected_events_per_year": "every trade date with a qualifying breakout bar (at most one entry per trade date); counts reported: E.8 research-window trips 232 over 266 dates; E.22 W_cf trips 973 over 1109 dates",
+   "inputs_needed": [
+    {
+     "input": "LE 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.LE",
+     "stated_range": "W_ext: store 2010-07-01..2019-04-30 (ext2010h); E.21 R-S3 (multiday/constants.py LE_FIRST; reports/stage_e21_briefs/lead_spec.md section 0): 2010-06-07..2014-12-14 excluded, first mark date on or after 2014-12-15; W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "livestock group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/livestock.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/livestock.json",
+     "stated_range": "data/calendars/hist2010/livestock.json coverage 2010-06-01..2019-05-31 (25 unsourced trade dates, 1.1%)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 266 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 232, days 266, mean -4.2907 net ticks/day, daily t -1.707"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1109, trips 973, theta_hat -2.9227, UCB95 -1.8320, p_upper +1.0000"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp2_range, cp2_brk over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 14)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 14)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for HE LE): 13:00 CT 2010-06-07..2014-12-14 (primary, basis inferred, window null: pit-based); 13:00 CT window 12:59:30-13:00:00 2014-12-15..2024-02-29 (primary, direct). rules/price_limits.py SETTLEMENT_WINDOW_CT livestock [12:59:30, 13:00:00) CT; strategy/members/k6/_limits.py SETTLEMENT_WINDOW_LIVESTOCK. decision_time_ct variable 08:45..12:59 is before the 13:00 CT settlement on every period (12:59 is the last possible cp2 livestock decision bar, inside the 12:59:30-13:00 window's minute)",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp3-01 ZC",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp3-01",
+   "module": "strategy.members.k6.cp3 (factory make_zc)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZC",
+   "vehicle": "ZC (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZC",
+   "w_ext_note": "2010-06-07..2019-04-30 (ext2010 store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "on the 08:30 bar of d: CLV of the last complete prior daily bar [O, C) is >= 0.8 or <= 0.2",
+   "decision_time_ct": "08:30",
+   "decision_time_note": "decision on the 08:30 bar (fills at the 08:31 open); the condition reads d-1's complete daily bar",
+   "side_rule": "CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade.",
+   "side_kind": "other",
+   "side_note": "side set by the prior complete trade date's close location in its range (close near the high buys, near the low sells): continuation of d-1's location, not a trigger-day move on d",
+   "intraday_hold": true,
+   "hold_note": "fill 08:31 to exit fill nominally 13:14",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.",
+   "expected_events_per_year": "trade dates whose prior complete daily bar has CLV >= 0.8 or <= 0.2; counts reported: E.8 research-window trips 135 over 276 dates; E.22 W_cf trips 501 over 1130 dates",
+   "inputs_needed": [
+    {
+     "input": "ZC 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZC",
+     "stated_range": "W_ext: 2010-06-07..2019-04-30 (ext2010 store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 276 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 135, days 276, mean -0.6851 net ticks/day, daily t -1.123"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1130, trips 501, theta_hat -1.1126, UCB95 -0.2403, p_upper +0.9810"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp3_clv over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 15)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 15)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 08:30 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp3-01 ZW",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp3-01",
+   "module": "strategy.members.k6.cp3 (factory make_zw)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZW",
+   "vehicle": "ZW (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": null,
+   "w_ext_note": "no W_ext store: reports/stage_e17_run_manifest.json stores.ZW.ext2010 = null",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "on the 08:30 bar of d: CLV of the last complete prior daily bar [O, C) is >= 0.8 or <= 0.2",
+   "decision_time_ct": "08:30",
+   "decision_time_note": "decision on the 08:30 bar (fills at the 08:31 open); the condition reads d-1's complete daily bar",
+   "side_rule": "CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade.",
+   "side_kind": "other",
+   "side_note": "side set by the prior complete trade date's close location in its range (close near the high buys, near the low sells): continuation of d-1's location, not a trigger-day move on d",
+   "intraday_hold": true,
+   "hold_note": "fill 08:31 to exit fill nominally 13:14",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.",
+   "expected_events_per_year": "trade dates whose prior complete daily bar has CLV >= 0.8 or <= 0.2; counts reported: E.8 research-window trips 131 over 283 dates; E.22 W_cf trips 472 over 1129 dates",
+   "inputs_needed": [
+    {
+     "input": "ZW 1-minute bars (own traded root)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZW",
+     "stated_range": "W_ext: no W_ext store: reports/stage_e17_run_manifest.json stores.ZW.ext2010 = null; W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 283 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 131, days 283, mean -0.0791 net ticks/day, daily t -0.084"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1129, trips 472, theta_hat -1.5916, UCB95 -0.0890, p_upper +0.9643"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 16)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 16)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 08:30 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp3-01 ZS",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp3-01",
+   "module": "strategy.members.k6.cp3 (factory make_zs)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZS",
+   "vehicle": "ZS (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZS",
+   "w_ext_note": "2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "on the 08:30 bar of d: CLV of the last complete prior daily bar [O, C) is >= 0.8 or <= 0.2",
+   "decision_time_ct": "08:30",
+   "decision_time_note": "decision on the 08:30 bar (fills at the 08:31 open); the condition reads d-1's complete daily bar",
+   "side_rule": "CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade.",
+   "side_kind": "other",
+   "side_note": "side set by the prior complete trade date's close location in its range (close near the high buys, near the low sells): continuation of d-1's location, not a trigger-day move on d",
+   "intraday_hold": true,
+   "hold_note": "fill 08:31 to exit fill nominally 13:14",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.",
+   "expected_events_per_year": "trade dates whose prior complete daily bar has CLV >= 0.8 or <= 0.2; counts reported: E.8 research-window trips 136 over 285 dates; E.22 W_cf trips 511 over 1136 dates",
+   "inputs_needed": [
+    {
+     "input": "ZS 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZS",
+     "stated_range": "W_ext: 2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 285 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 136, days 285, mean -0.5618 net ticks/day, daily t -0.475"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1136, trips 511, theta_hat -1.9350, UCB95 -0.3332, p_upper +0.9770"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp3_clv over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 17)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 17)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 08:30 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp3-01 ZM",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp3-01",
+   "module": "strategy.members.k6.cp3 (factory make_zm)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZM",
+   "vehicle": "ZM (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": null,
+   "w_ext_note": "no W_ext store: reports/stage_e17_run_manifest.json stores.ZM.ext2010 = null",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "on the 08:30 bar of d: CLV of the last complete prior daily bar [O, C) is >= 0.8 or <= 0.2",
+   "decision_time_ct": "08:30",
+   "decision_time_note": "decision on the 08:30 bar (fills at the 08:31 open); the condition reads d-1's complete daily bar",
+   "side_rule": "CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade.",
+   "side_kind": "other",
+   "side_note": "side set by the prior complete trade date's close location in its range (close near the high buys, near the low sells): continuation of d-1's location, not a trigger-day move on d",
+   "intraday_hold": true,
+   "hold_note": "fill 08:31 to exit fill nominally 13:14",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.",
+   "expected_events_per_year": "trade dates whose prior complete daily bar has CLV >= 0.8 or <= 0.2; counts reported: E.8 research-window trips 119 over 278 dates; E.22 W_cf trips 515 over 1106 dates",
+   "inputs_needed": [
+    {
+     "input": "ZM 1-minute bars (own traded root)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZM",
+     "stated_range": "W_ext: no W_ext store: reports/stage_e17_run_manifest.json stores.ZM.ext2010 = null; W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 278 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 119, days 278, mean +0.4725 net ticks/day, daily t 0.495"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1106, trips 515, theta_hat -1.4151, UCB95 +0.0896, p_upper +0.9452"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 18)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 18)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 08:30 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp3-01 ZL",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp3-01",
+   "module": "strategy.members.k6.cp3 (factory make_zl)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZL",
+   "vehicle": "ZL (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZL",
+   "w_ext_note": "2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "on the 08:30 bar of d: CLV of the last complete prior daily bar [O, C) is >= 0.8 or <= 0.2",
+   "decision_time_ct": "08:30",
+   "decision_time_note": "decision on the 08:30 bar (fills at the 08:31 open); the condition reads d-1's complete daily bar",
+   "side_rule": "CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade.",
+   "side_kind": "other",
+   "side_note": "side set by the prior complete trade date's close location in its range (close near the high buys, near the low sells): continuation of d-1's location, not a trigger-day move on d",
+   "intraday_hold": true,
+   "hold_note": "fill 08:31 to exit fill nominally 13:14",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.",
+   "expected_events_per_year": "trade dates whose prior complete daily bar has CLV >= 0.8 or <= 0.2; counts reported: E.8 research-window trips 143 over 287 dates; E.22 W_cf trips 482 over 1129 dates",
+   "inputs_needed": [
+    {
+     "input": "ZL 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZL",
+     "stated_range": "W_ext: 2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 287 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 143, days 287, mean -1.9353 net ticks/day, daily t -0.723"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1129, trips 482, theta_hat -1.1039, UCB95 +1.3205, p_upper +0.7683"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp3_clv over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 19)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 19)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 08:30 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp3-01 HE",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp3-01",
+   "module": "strategy.members.k6.cp3 (factory make_he)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "HE",
+   "vehicle": "HE (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "HE",
+   "w_ext_note": "store 2010-07-01..2019-04-30 (ext2010h); reports/stage_e16_windows.json HE window_start_on_or_after 2017-07-01 (start_month 2017-07; E.20 plan line 48 'HE 2017-07-01')",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "on the 08:30 bar of d: CLV of the last complete prior daily bar [O, C) is >= 0.8 or <= 0.2",
+   "decision_time_ct": "08:30",
+   "decision_time_note": "decision on the 08:30 bar (fills at the 08:31 open); the condition reads d-1's complete daily bar",
+   "side_rule": "CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade.",
+   "side_kind": "other",
+   "side_note": "side set by the prior complete trade date's close location in its range (close near the high buys, near the low sells): continuation of d-1's location, not a trigger-day move on d",
+   "intraday_hold": true,
+   "hold_note": "fill 08:31 to exit fill 12:59",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.",
+   "expected_events_per_year": "trade dates whose prior complete daily bar has CLV >= 0.8 or <= 0.2; counts reported: E.8 research-window trips 115 over 273 dates; E.22 W_cf trips 480 over 1104 dates",
+   "inputs_needed": [
+    {
+     "input": "HE 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.HE",
+     "stated_range": "W_ext: store 2010-07-01..2019-04-30 (ext2010h); reports/stage_e16_windows.json HE window_start_on_or_after 2017-07-01 (start_month 2017-07; E.20 plan line 48 'HE 2017-07-01'); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "livestock group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/livestock.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/livestock.json",
+     "stated_range": "data/calendars/hist2010/livestock.json coverage 2010-06-01..2019-05-31 (25 unsourced trade dates, 1.1%)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 273 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 115, days 273, mean -2.4697 net ticks/day, daily t -1.590"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1104, trips 480, theta_hat -1.6296, UCB95 +0.1612, p_upper +0.9268"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp3_clv over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 20)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 20)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for HE LE): 13:00 CT 2010-06-07..2014-12-14 (primary, basis inferred, window null: pit-based); 13:00 CT window 12:59:30-13:00:00 2014-12-15..2024-02-29 (primary, direct). rules/price_limits.py SETTLEMENT_WINDOW_CT livestock [12:59:30, 13:00:00) CT; strategy/members/k6/_limits.py SETTLEMENT_WINDOW_LIVESTOCK. decision_time_ct 08:30 is before the 13:00 CT settlement on every period",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-cp3-01 LE",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-cp3-01",
+   "module": "strategy.members.k6.cp3 (factory make_le)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "LE",
+   "vehicle": "LE (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "LE",
+   "w_ext_note": "store 2010-07-01..2019-04-30 (ext2010h); E.21 R-S3 (multiday/constants.py LE_FIRST; reports/stage_e21_briefs/lead_spec.md section 0): 2010-06-07..2014-12-14 excluded, first mark date on or after 2014-12-15",
+   "signal_legs": [],
+   "definition_verbatim": "",
+   "trigger_event": "on the 08:30 bar of d: CLV of the last complete prior daily bar [O, C) is >= 0.8 or <= 0.2",
+   "decision_time_ct": "08:30",
+   "decision_time_note": "decision on the 08:30 bar (fills at the 08:31 open); the condition reads d-1's complete daily bar",
+   "side_rule": "CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade.",
+   "side_kind": "other",
+   "side_note": "side set by the prior complete trade date's close location in its range (close near the high buys, near the low sells): continuation of d-1's location, not a trigger-day move on d",
+   "intraday_hold": true,
+   "hold_note": "fill 08:31 to exit fill 12:59",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar of CT date d at or after C-2 (grains 13:13, fills nominally 13:14; livestock 12:58, fills 12:59), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date.",
+   "expected_events_per_year": "trade dates whose prior complete daily bar has CLV >= 0.8 or <= 0.2; counts reported: E.8 research-window trips 112 over 266 dates; E.22 W_cf trips 487 over 1109 dates",
+   "inputs_needed": [
+    {
+     "input": "LE 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.LE",
+     "stated_range": "W_ext: store 2010-07-01..2019-04-30 (ext2010h); E.21 R-S3 (multiday/constants.py LE_FIRST; reports/stage_e21_briefs/lead_spec.md section 0): 2010-06-07..2014-12-14 excluded, first mark date on or after 2014-12-15; W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "livestock group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/livestock.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/livestock.json",
+     "stated_range": "data/calendars/hist2010/livestock.json coverage 2010-06-01..2019-05-31 (25 unsourced trade dates, 1.1%)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 266 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 112, days 266, mean +1.5336 net ticks/day, daily t 0.568"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1109, trips 487, theta_hat -1.8153, UCB95 -0.5006, p_upper +0.9875"
+    },
+    {
+     "stage": "E.12 / E.17 C1 / E.18 C1b / E.20 search",
+     "window_dates": "E.12 Gate 0 and E.20 search: 2019-05-06..2024-02-29; C1/C1b: 2010-06-07..2019-04-30 (ZC only of K6's roots)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json (signals cp1_ret, cp2_brk, cp2_range, cp3_clv, family A, root null); reports/stage_e14_c1_result.json guards.C10.hF.applicable (cp* 4538 rows, pooled over 6 roots); reports/stage_e20_plan.md KEPT list",
+     "counts": "pooled CP-port ML feature(s) cp3_clv over all clusters' ports (21 CP ports pooled into 4, reports/E.11_RETURN.md); not this member's own trades"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 21)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 21)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for HE LE): 13:00 CT 2010-06-07..2014-12-14 (primary, basis inferred, window null: pit-based); 13:00 CT window 12:59:30-13:00:00 2014-12-15..2024-02-29 (primary, direct). rules/price_limits.py SETTLEMENT_WINDOW_CT livestock [12:59:30, 13:00:00) CT; strategy/members/k6/_limits.py SETTLEMENT_WINDOW_LIVESTOCK. decision_time_ct 08:30 is before the 13:00 CT settlement on every period",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-crushgap-01 ZS",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-crushgap-01",
+   "module": "strategy.members.k6.crushgap (factory make_zs)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZS",
+   "vehicle": "ZS (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZS",
+   "w_ext_note": "2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest)",
+   "signal_legs": [
+    "ZM",
+    "ZL"
+   ],
+   "definition_verbatim": "Rule (grains clock from the frozen tables: O 08:30, C 13:15, F 13:18 on all three legs): - GPM = 0.022 x P_ZM + 11 x P_ZL - P_ZS in USD per bushel (C lines 425-434), with P_ZM in USD per short ton, P_ZL in USD per pound and P_ZS in USD per bushel, each the vendor price divided by the product's vendor_price_factor (ZM 1, ZL 100, ZS 100). Computed exactly in integer units of 0.0001 USD/bu (K6-L-03): a leg's units per vendor tick are weight x vendor_tick / vendor_price_factor / 0.0001, derived here from rules.products and the weights (ZM 22, ZL 11, ZS -25), and must be integers; the 0.02 USD/bu filter is 200 units. - d-1 = the EC-CAL grain trade date before d (previous_trade_date(GRAIN_TRADE_DATES, d); K6-L-04), not the most recent complete date. GPM_close(d-1) from the closes of the three legs' bars at C-1 = 13:14 of CT date d-1; GPM_open(d) from the opens of the three legs' bars at O = 08:30 of CT date d. G(d) = GPM_open(d) - GPM_close(d-1). - Guard, per leg (K6-L-05): its 13:14 bar of d-1 and its 08:30 bar of d exist and carry the same instrument_id; otherwise no trade on d. An early-halt d-1 (2025-11-28, 2025-12-24) has no 13:14 bars, so the next trade date is not traded. Contract months may differ across legs. - d must be in GRAIN_FULL_SESSIONS (S0.8, K6-L-10); otherwise no trade. - Entry: G <= -0.02 USD/bu sells ZS; G >= +0.02 buys ZS (non-strict); otherwise no trade. Market intent on the 08:30 ZS bar of CT date d (that exact bar, S0.6), filling at the 08:31 open. Never an intent on ZM or ZL. - Exit: market intent on the first ZS bar of CT date d at or after C-2 = 13:13 (fills nominally at the 13:14 open), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that trade date. - The engine refuses an open when any of the three legs lacks the bar at that minute (D11.5) and on a roll-blackout date of any leg (D4); the member does not repeat either test. One traded leg, q_c contracts of ZS (1).",
+   "trigger_event": "G(d) = GPM_open(d) - GPM_close(d-1) <= -0.02 or >= +0.02 USD/bu, GPM = 0.022 P_ZM + 11 P_ZL - P_ZS, on d in GRAIN_FULL_SESSIONS",
+   "decision_time_ct": "08:30",
+   "decision_time_note": "reads the three legs' 08:30 opens of d and 13:14 closes of the prior EC-CAL grain trade date; entry on the 08:30 ZS bar, fill 08:31",
+   "side_rule": "Entry: G <= -0.02 USD/bu sells ZS; G >= +0.02 buys ZS (non-strict); otherwise no trade.",
+   "side_kind": "other",
+   "side_note": "side = sign of the overnight change in the crush margin GPM (margin down sells ZS, up buys ZS); since ZS enters GPM with weight -1, a ZS-led margin fall means selling after ZS rose relative to ZM and ZL. The move is a three-leg spread, not ZS's own price",
+   "intraday_hold": true,
+   "hold_note": "fill 08:31 to exit fill nominally 13:14",
+   "exit_rule_verbatim": "Exit: market intent on the first ZS bar of CT date d at or after C-2 = 13:13 (fills nominally at the 13:14 open), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that trade date.",
+   "expected_events_per_year": "grain full-session dates with |G| >= 0.02 USD/bu (all three legs' bars present with matching instrument_id); counts reported: E.8 research-window trips 137 over 264 dates; E.22 W_cf trips 516 over 1028 dates",
+   "inputs_needed": [
+    {
+     "input": "ZS 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZS",
+     "stated_range": "W_ext: 2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "ZM 1-minute bars (signal leg)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZM",
+     "stated_range": "W_ext: stores.ZM.ext2010 = null (no W_ext data); W_cf: step2 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "ZL 1-minute bars (signal leg)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZL",
+     "stated_range": "W_ext: ext2010h 2010-07-01..2019-04-30; W_cf: step2 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "K6 frozen calendar table(s) GRAIN_TRADE_DATES, GRAIN_FULL_SESSIONS (strategy/members/k6/_calendar.py)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k6/_calendar.py",
+     "stated_range": "TABLE_RANGE 2019-05-01..2026-06-19 (generated literal; a 2010-2019 equivalent would come from data/calendars/hist2010/*.json, which exists, but no such K6 table is on disk)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 264 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 137, days 264, mean -3.4807 net ticks/day, daily t -2.708"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1028, trips 516, theta_hat -2.5773, UCB95 -0.6257, p_upper +0.9822"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05-06..2024-02 training window (1,068 dates in the K6 Family A tests)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json tests gate0A_k6_crushgap_gap_{h60,h120,hF}; reports/E.12_RETURN.md 'Task 6'",
+     "counts": "ML route v2 Gate 0 Family A pooled signal test of feature k6_crushgap_gap (not the member): all three NOT REJECTED; Gate 0 verdict FAIL"
+    },
+    {
+     "stage": "E.17 (C1) and E.18 (C1b)",
+     "window_dates": "2010-06-07..2019-04-30 (W_ext; world roots NG NQ ZN 6E GC ZC)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_result.json and reports/stage_e18_c1b_result.json guards.C10.{h60,hF}.applicable",
+     "counts": "ML model feature k6_crushgap_gap: 0 applicable rows at h60 and hF (no K6 event read on W_ext)"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 22)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 22)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 08:30 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-limitcont-01 HE",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-limitcont-01",
+   "module": "strategy.members.k6.limitcont (factory make_he)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "HE",
+   "vehicle": "HE (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "HE",
+   "w_ext_note": "store 2010-07-01..2019-04-30 (ext2010h); reports/stage_e16_windows.json HE window_start_on_or_after 2017-07-01 (start_month 2017-07; E.20 plan line 48 'HE 2017-07-01')",
+   "signal_legs": [],
+   "definition_verbatim": "HE and LE (q_c 1 each). On trade date d in LIVESTOCK_FULL_SESSIONS (S0.8, K6-L-10): - c = the instrument_id of d's 08:30 bar (O); the 08:30 bar must exist (K6-L-09); - d-1, d-2, d-3 = the three LIVESTOCK_TRADE_DATES before d (K6-L-07, K6-L-09); - S(c, x) = D9.7's settlement proxy of trade date x, computed exactly as the engine computes it (rules.price_limits.settlement_proxy over settlement_window_ct(root, x), fed as screening/stage_e_rules.py feeds it; K6-L-06): the window is SETTLEMENT_WINDOW_LIVESTOCK, [12:59:30, 13:00:00) CT, or on an early-halt date the window of the same length ending at the halt (LIVESTOCK_EARLY_HALT_CT, when the halt is at or before the regular end); S = the volume-weighted close of x's bars opening in [window start floored to its minute, window end) with volume > 0; with none, the close of x's last bar opening before the window end (fallback R-P2); no such bar: S undefined. Every bar S uses must carry c (K6-L-09); - L(x) = the initial limit in force on x from LIMIT_PERIODS, in vendor ticks (amount x vendor_price_factor / vendor_tick, an integer; K6-L-07); - event: S(c, d-1) - S(c, d-2) = +L(d-1) ticks (BUY) or -L(d-1) ticks (SELL), exactly (K6-L-08), and S(c, d-2) - S(c, d-3) is neither +L(d-2) nor -L(d-2) ticks (d-1's limit was the initial one, K6-L-07); any S undefined, or d-1 or d-2 in DROPPED_LIMIT_DATES[root] (R-1b-2): no trade; - entry: market intent on the bar at 08:44 (fills at the 08:45 open); the 08:44 bar must exist and carry c (S0.6, S0.9); - exit: market intent on the first bar at or after C - 2 = 12:58 (fills at the 12:59 open), or earlier by the engine's D9.7 forced exit (S0.7). The member keeps, from every trade date whose bars it sees (every bar of its leg, in order), what the proxy needs; a date it has not seen gives no trade. The engine's D9.7 entry guard, forced exit and locked-market rule, the roll blackout and F are the engine's.",
+   "trigger_event": "d-1's D9.7 settlement proxy moved exactly +L or -L ticks (the initial limit) from d-2, and d-2 was not itself a limit close; d in LIVESTOCK_FULL_SESSIONS",
+   "decision_time_ct": "08:44",
+   "decision_time_note": "entry on the 08:44 bar (fills 08:45); the event reads settlement proxies of d-1, d-2, d-3 and the 08:30 bar's instrument_id of d",
+   "side_rule": "event: S(c, d-1) - S(c, d-2) = +L(d-1) ticks (BUY) or -L(d-1) ticks (SELL), exactly (K6-L-08)",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the limit move into d-1's settlement (the event day is d-1; the trade is on d)",
+   "intraday_hold": true,
+   "hold_note": "fill 08:45 to exit fill 12:59, or earlier by D9.7 forced exit",
+   "exit_rule_verbatim": "exit: market intent on the first bar at or after C - 2 = 12:58 (fills at the 12:59 open), or earlier by the engine's D9.7 forced exit (S0.7).",
+   "expected_events_per_year": "rare: trade dates after an initial-limit settlement move; counts reported: E.8 research-window trips 1 over 273 dates; E.22 W_cf trips 10 over 1104 dates",
+   "inputs_needed": [
+    {
+     "input": "HE 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.HE",
+     "stated_range": "W_ext: store 2010-07-01..2019-04-30 (ext2010h); reports/stage_e16_windows.json HE window_start_on_or_after 2017-07-01 (start_month 2017-07; E.20 plan line 48 'HE 2017-07-01'); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "HE/LE initial daily price limits (LIMIT_PERIODS) and DROPPED_LIMIT_DATES",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k6/_limits.py (from rules/price_limits.py LIMITS)",
+     "stated_range": "LIMIT_RANGE 2019-05-01..2026-06-19; rules/price_limits.py TABLE_WINDOW 2019-05-01..2026-06-19; base_rules/limits.py docstring 'the table starts 2019-05-01'; E.20 plan line 131 dropped k6_limitcont_dir '(limit table starts 2019-05)'. No 2010-2019 limit table found (looked: base_rules/, multiday/, rules/price_limits.py, reports/stage_e16_*)"
+    },
+    {
+     "input": "D9.7 settlement-proxy window (livestock [12:59:30, 13:00:00) CT; early-halt variant)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/price_limits.py SETTLEMENT_WINDOW_CT / settlement_window_ct; _limits.py SETTLEMENT_WINDOW_LIVESTOCK; _calendar.py LIVESTOCK_EARLY_HALT_CT (2019-05-01..2026-06-19)",
+     "stated_range": "window constant; reports/stage_e16_settlement.json: the 12:59:30-13:00:00 window applies 2014-12-15 on; 2010-06-07..2014-12-14 settlement pit-based, 13:00 inferred, window null. LIVESTOCK_EARLY_HALT_CT covers 2019-05..2026-06 only"
+    },
+    {
+     "input": "K6 frozen calendar table(s) LIVESTOCK_TRADE_DATES, LIVESTOCK_FULL_SESSIONS, LIVESTOCK_EARLY_HALT_CT (strategy/members/k6/_calendar.py)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k6/_calendar.py",
+     "stated_range": "TABLE_RANGE 2019-05-01..2026-06-19 (generated literal; a 2010-2019 equivalent would come from data/calendars/hist2010/*.json, which exists, but no such K6 table is on disk)"
+    },
+    {
+     "input": "livestock group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/livestock.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/livestock.json",
+     "stated_range": "data/calendars/hist2010/livestock.json coverage 2010-06-01..2019-05-31 (25 unsourced trade dates, 1.1%)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 273 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 1, days 273, mean +0.1869 net ticks/day, daily t 1.002"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1104, trips 10, theta_hat +0.0495, UCB95 +0.3869, p_upper +0.4088"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05-06..2024-02 training window (1,068 dates in the K6 Family A tests)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json tests gate0A_k6_limitcont_dir_{h60,h120,hF}; reports/E.12_RETURN.md 'Task 6'",
+     "counts": "ML route v2 Gate 0 Family A pooled signal test of feature k6_limitcont_dir (not the member): all three NOT REJECTED; Gate 0 verdict FAIL"
+    },
+    {
+     "stage": "E.17 (C1) and E.18 (C1b)",
+     "window_dates": "2010-06-07..2019-04-30 (W_ext; world roots NG NQ ZN 6E GC ZC)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_result.json and reports/stage_e18_c1b_result.json guards.C10.{h60,hF}.applicable",
+     "counts": "ML model feature k6_limitcont_dir: 0 applicable rows at h60 and hF (no K6 event read on W_ext)"
+    }
+   ],
+   "tier": "A",
+   "verdicts": [
+    "E.8 screen: Tier A (reports/E.8_RETURN.md Task 5 table row 23)",
+    "E.22 confirmation: Tier A, status 'null by inactivity' (reports/E.22_RETURN.md 3.2 K6 table row 23)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for HE LE): 13:00 CT 2010-06-07..2014-12-14 (primary, basis inferred, window null: pit-based); 13:00 CT window 12:59:30-13:00:00 2014-12-15..2024-02-29 (primary, direct). rules/price_limits.py SETTLEMENT_WINDOW_CT livestock [12:59:30, 13:00:00) CT; strategy/members/k6/_limits.py SETTLEMENT_WINDOW_LIVESTOCK. decision_time_ct 08:44 is before the 13:00 CT settlement on every period; limitcont reads d-1's settlement proxy, so its decision on d is after d-1's settlement",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-limitcont-01 LE",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-limitcont-01",
+   "module": "strategy.members.k6.limitcont (factory make_le)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "LE",
+   "vehicle": "LE (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "LE",
+   "w_ext_note": "store 2010-07-01..2019-04-30 (ext2010h); E.21 R-S3 (multiday/constants.py LE_FIRST; reports/stage_e21_briefs/lead_spec.md section 0): 2010-06-07..2014-12-14 excluded, first mark date on or after 2014-12-15",
+   "signal_legs": [],
+   "definition_verbatim": "HE and LE (q_c 1 each). On trade date d in LIVESTOCK_FULL_SESSIONS (S0.8, K6-L-10): - c = the instrument_id of d's 08:30 bar (O); the 08:30 bar must exist (K6-L-09); - d-1, d-2, d-3 = the three LIVESTOCK_TRADE_DATES before d (K6-L-07, K6-L-09); - S(c, x) = D9.7's settlement proxy of trade date x, computed exactly as the engine computes it (rules.price_limits.settlement_proxy over settlement_window_ct(root, x), fed as screening/stage_e_rules.py feeds it; K6-L-06): the window is SETTLEMENT_WINDOW_LIVESTOCK, [12:59:30, 13:00:00) CT, or on an early-halt date the window of the same length ending at the halt (LIVESTOCK_EARLY_HALT_CT, when the halt is at or before the regular end); S = the volume-weighted close of x's bars opening in [window start floored to its minute, window end) with volume > 0; with none, the close of x's last bar opening before the window end (fallback R-P2); no such bar: S undefined. Every bar S uses must carry c (K6-L-09); - L(x) = the initial limit in force on x from LIMIT_PERIODS, in vendor ticks (amount x vendor_price_factor / vendor_tick, an integer; K6-L-07); - event: S(c, d-1) - S(c, d-2) = +L(d-1) ticks (BUY) or -L(d-1) ticks (SELL), exactly (K6-L-08), and S(c, d-2) - S(c, d-3) is neither +L(d-2) nor -L(d-2) ticks (d-1's limit was the initial one, K6-L-07); any S undefined, or d-1 or d-2 in DROPPED_LIMIT_DATES[root] (R-1b-2): no trade; - entry: market intent on the bar at 08:44 (fills at the 08:45 open); the 08:44 bar must exist and carry c (S0.6, S0.9); - exit: market intent on the first bar at or after C - 2 = 12:58 (fills at the 12:59 open), or earlier by the engine's D9.7 forced exit (S0.7). The member keeps, from every trade date whose bars it sees (every bar of its leg, in order), what the proxy needs; a date it has not seen gives no trade. The engine's D9.7 entry guard, forced exit and locked-market rule, the roll blackout and F are the engine's.",
+   "trigger_event": "d-1's D9.7 settlement proxy moved exactly +L or -L ticks (the initial limit) from d-2, and d-2 was not itself a limit close; d in LIVESTOCK_FULL_SESSIONS",
+   "decision_time_ct": "08:44",
+   "decision_time_note": "entry on the 08:44 bar (fills 08:45); the event reads settlement proxies of d-1, d-2, d-3 and the 08:30 bar's instrument_id of d",
+   "side_rule": "event: S(c, d-1) - S(c, d-2) = +L(d-1) ticks (BUY) or -L(d-1) ticks (SELL), exactly (K6-L-08)",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the limit move into d-1's settlement (the event day is d-1; the trade is on d)",
+   "intraday_hold": true,
+   "hold_note": "fill 08:45 to exit fill 12:59, or earlier by D9.7 forced exit",
+   "exit_rule_verbatim": "exit: market intent on the first bar at or after C - 2 = 12:58 (fills at the 12:59 open), or earlier by the engine's D9.7 forced exit (S0.7).",
+   "expected_events_per_year": "rare: trade dates after an initial-limit settlement move; counts reported: E.8 research-window trips 0 over 266 dates; E.22 W_cf trips 0 over 1109 dates",
+   "inputs_needed": [
+    {
+     "input": "LE 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.LE",
+     "stated_range": "W_ext: store 2010-07-01..2019-04-30 (ext2010h); E.21 R-S3 (multiday/constants.py LE_FIRST; reports/stage_e21_briefs/lead_spec.md section 0): 2010-06-07..2014-12-14 excluded, first mark date on or after 2014-12-15; W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "HE/LE initial daily price limits (LIMIT_PERIODS) and DROPPED_LIMIT_DATES",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k6/_limits.py (from rules/price_limits.py LIMITS)",
+     "stated_range": "LIMIT_RANGE 2019-05-01..2026-06-19; rules/price_limits.py TABLE_WINDOW 2019-05-01..2026-06-19; base_rules/limits.py docstring 'the table starts 2019-05-01'; E.20 plan line 131 dropped k6_limitcont_dir '(limit table starts 2019-05)'. No 2010-2019 limit table found (looked: base_rules/, multiday/, rules/price_limits.py, reports/stage_e16_*)"
+    },
+    {
+     "input": "D9.7 settlement-proxy window (livestock [12:59:30, 13:00:00) CT; early-halt variant)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/price_limits.py SETTLEMENT_WINDOW_CT / settlement_window_ct; _limits.py SETTLEMENT_WINDOW_LIVESTOCK; _calendar.py LIVESTOCK_EARLY_HALT_CT (2019-05-01..2026-06-19)",
+     "stated_range": "window constant; reports/stage_e16_settlement.json: the 12:59:30-13:00:00 window applies 2014-12-15 on; 2010-06-07..2014-12-14 settlement pit-based, 13:00 inferred, window null. LIVESTOCK_EARLY_HALT_CT covers 2019-05..2026-06 only"
+    },
+    {
+     "input": "K6 frozen calendar table(s) LIVESTOCK_TRADE_DATES, LIVESTOCK_FULL_SESSIONS, LIVESTOCK_EARLY_HALT_CT (strategy/members/k6/_calendar.py)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k6/_calendar.py",
+     "stated_range": "TABLE_RANGE 2019-05-01..2026-06-19 (generated literal; a 2010-2019 equivalent would come from data/calendars/hist2010/*.json, which exists, but no such K6 table is on disk)"
+    },
+    {
+     "input": "livestock group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/livestock.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/livestock.json",
+     "stated_range": "data/calendars/hist2010/livestock.json coverage 2010-06-01..2019-05-31 (25 unsourced trade dates, 1.1%)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 266 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 0, days 266, mean +0.0000 net ticks/day, daily t undefined"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1109, trips 0, theta_hat +0.0000, UCB95 +0.0000, p_upper +1.0000"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05-06..2024-02 training window (1,068 dates in the K6 Family A tests)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json tests gate0A_k6_limitcont_dir_{h60,h120,hF}; reports/E.12_RETURN.md 'Task 6'",
+     "counts": "ML route v2 Gate 0 Family A pooled signal test of feature k6_limitcont_dir (not the member): all three NOT REJECTED; Gate 0 verdict FAIL"
+    },
+    {
+     "stage": "E.17 (C1) and E.18 (C1b)",
+     "window_dates": "2010-06-07..2019-04-30 (W_ext; world roots NG NQ ZN 6E GC ZC)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_result.json and reports/stage_e18_c1b_result.json guards.C10.{h60,hF}.applicable",
+     "counts": "ML model feature k6_limitcont_dir: 0 applicable rows at h60 and hF (no K6 event read on W_ext)"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 24)",
+    "E.22 confirmation: Tier B, status 'inconclusive' (reports/E.22_RETURN.md 3.2 K6 table row 24)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for HE LE): 13:00 CT 2010-06-07..2014-12-14 (primary, basis inferred, window null: pit-based); 13:00 CT window 12:59:30-13:00:00 2014-12-15..2024-02-29 (primary, direct). rules/price_limits.py SETTLEMENT_WINDOW_CT livestock [12:59:30, 13:00:00) CT; strategy/members/k6/_limits.py SETTLEMENT_WINDOW_LIVESTOCK. decision_time_ct 08:44 is before the 13:00 CT settlement on every period; limitcont reads d-1's settlement proxy, so its decision on d is after d-1's settlement",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-wasdepre-01 ZC",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-wasdepre-01",
+   "module": "strategy.members.k6.wasdepre (factory make_zc)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZC",
+   "vehicle": "ZC (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZC",
+   "w_ext_note": "2010-06-07..2019-04-30 (ext2010 store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "ZC and ZS (q_c 1 each). On trade date d with is_wasde_date(d) (EC-WASDE after C9a's drop rule, K6-L-11) and d in GRAIN_FULL_SESSIONS (S0.8, K6-L-10); T = 11:00 CT is fixed: - signal: Dr = close of the bar at 10:29 minus open of the bar at 08:30, in integer vendor ticks; both bars present and carrying one instrument_id (S0.9); Dr = 0: no trade; - entry: market intent on the bar at 10:29 (fills at the 10:30 open) in the direction of sign(Dr) (S0.6: the 10:29 bar is the entry bar; missing, no trade); - exit: market intent on the bar at 11:14 (fills at the 11:15 open); if the 11:14 bar is missing, on the first later bar (K6-L-12, S0.7). No fill can land in [11:00, 11:02) by construction; the event-window cost of the 11:15 exit, the fill guard, D9.7 and F are the engine's.",
+   "trigger_event": "WASDE date (is_wasde_date) in GRAIN_FULL_SESSIONS with Dr = close(10:29) - open(08:30) nonzero",
+   "decision_time_ct": "10:29",
+   "decision_time_note": "entry on the 10:29 bar, fill 10:30; release at 11:00 CT",
+   "side_rule": "entry: market intent on the bar at 10:29 (fills at the 10:30 open) in the direction of sign(Dr)",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the 08:30-10:29 pre-release drift on the WASDE date",
+   "intraday_hold": true,
+   "hold_note": "fill 10:30 to exit fill 11:15 (45 minutes, through the 11:00 CT release)",
+   "exit_rule_verbatim": "exit: market intent on the bar at 11:14 (fills at the 11:15 open); if the 11:14 bar is missing, on the first later bar (K6-L-12, S0.7).",
+   "expected_events_per_year": "WASDE dates: 12 a year (frozen table 2020-2024: 12 each); counts reported: E.8 research-window trips 12 over 276 dates; E.22 W_cf trips 55 over 1130 dates",
+   "inputs_needed": [
+    {
+     "input": "ZC 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZC",
+     "stated_range": "W_ext: 2010-06-07..2019-04-30 (ext2010 store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "WASDE release dates (EC-WASDE, 12:00 ET; T = 11:00 CT fixed)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k6/_wasde.py (from reports/stage_e2b_release_calendar.json)",
+     "stated_range": "WASDE_RANGE 2019-05-01..2026-06-19 (85 dates: 2019 8, 2020-2024 12 each, 2025 11, 2026 6); release calendar coverage 2019-05-01..2026-06-21. Not found for 2010-2019: 0 WASDE hits in reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31: NGS, WPSR, FOMC only) and in data/calendars/hist2010/*.json; reports/stage_e20_briefs/shared/grains_class_notes.md line 109 'no WASDE, Crop Production, Crop Progress or Grain Stocks calendar exists on disk'; E.20 plan line 132 dropped k6_wasdepre_drift '(WASDE calendar)'"
+    },
+    {
+     "input": "K6 frozen calendar table(s) GRAIN_FULL_SESSIONS (strategy/members/k6/_calendar.py)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k6/_calendar.py",
+     "stated_range": "TABLE_RANGE 2019-05-01..2026-06-19 (generated literal; a 2010-2019 equivalent would come from data/calendars/hist2010/*.json, which exists, but no such K6 table is on disk)"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 276 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 12, days 276, mean -0.4729 net ticks/day, daily t -1.315"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1130, trips 55, theta_hat -0.2534, UCB95 +0.0387, p_upper +0.9264"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05-06..2024-02 training window (1,068 dates in the K6 Family A tests)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json tests gate0A_k6_wasdepre_drift_{h60,h120,hF}; reports/E.12_RETURN.md 'Task 6'",
+     "counts": "ML route v2 Gate 0 Family A pooled signal test of feature k6_wasdepre_drift (not the member): all three NOT REJECTED; Gate 0 verdict FAIL"
+    },
+    {
+     "stage": "E.17 (C1) and E.18 (C1b)",
+     "window_dates": "2010-06-07..2019-04-30 (W_ext; world roots NG NQ ZN 6E GC ZC)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_result.json and reports/stage_e18_c1b_result.json guards.C10.{h60,hF}.applicable",
+     "counts": "ML model feature k6_wasdepre_drift: 0 applicable rows at h60 and hF (no K6 event read on W_ext)"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 25)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 25)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 10:29 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-wasdepre-01 ZS",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-wasdepre-01",
+   "module": "strategy.members.k6.wasdepre (factory make_zs)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZS",
+   "vehicle": "ZS (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZS",
+   "w_ext_note": "2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "ZC and ZS (q_c 1 each). On trade date d with is_wasde_date(d) (EC-WASDE after C9a's drop rule, K6-L-11) and d in GRAIN_FULL_SESSIONS (S0.8, K6-L-10); T = 11:00 CT is fixed: - signal: Dr = close of the bar at 10:29 minus open of the bar at 08:30, in integer vendor ticks; both bars present and carrying one instrument_id (S0.9); Dr = 0: no trade; - entry: market intent on the bar at 10:29 (fills at the 10:30 open) in the direction of sign(Dr) (S0.6: the 10:29 bar is the entry bar; missing, no trade); - exit: market intent on the bar at 11:14 (fills at the 11:15 open); if the 11:14 bar is missing, on the first later bar (K6-L-12, S0.7). No fill can land in [11:00, 11:02) by construction; the event-window cost of the 11:15 exit, the fill guard, D9.7 and F are the engine's.",
+   "trigger_event": "WASDE date (is_wasde_date) in GRAIN_FULL_SESSIONS with Dr = close(10:29) - open(08:30) nonzero",
+   "decision_time_ct": "10:29",
+   "decision_time_note": "entry on the 10:29 bar, fill 10:30; release at 11:00 CT",
+   "side_rule": "entry: market intent on the bar at 10:29 (fills at the 10:30 open) in the direction of sign(Dr)",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the 08:30-10:29 pre-release drift on the WASDE date",
+   "intraday_hold": true,
+   "hold_note": "fill 10:30 to exit fill 11:15 (45 minutes, through the 11:00 CT release)",
+   "exit_rule_verbatim": "exit: market intent on the bar at 11:14 (fills at the 11:15 open); if the 11:14 bar is missing, on the first later bar (K6-L-12, S0.7).",
+   "expected_events_per_year": "WASDE dates: 12 a year (frozen table 2020-2024: 12 each); counts reported: E.8 research-window trips 13 over 285 dates; E.22 W_cf trips 57 over 1136 dates",
+   "inputs_needed": [
+    {
+     "input": "ZS 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZS",
+     "stated_range": "W_ext: 2010-07-01..2019-04-30 (ext2010h store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "WASDE release dates (EC-WASDE, 12:00 ET; T = 11:00 CT fixed)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k6/_wasde.py (from reports/stage_e2b_release_calendar.json)",
+     "stated_range": "WASDE_RANGE 2019-05-01..2026-06-19 (85 dates: 2019 8, 2020-2024 12 each, 2025 11, 2026 6); release calendar coverage 2019-05-01..2026-06-21. Not found for 2010-2019: 0 WASDE hits in reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31: NGS, WPSR, FOMC only) and in data/calendars/hist2010/*.json; reports/stage_e20_briefs/shared/grains_class_notes.md line 109 'no WASDE, Crop Production, Crop Progress or Grain Stocks calendar exists on disk'; E.20 plan line 132 dropped k6_wasdepre_drift '(WASDE calendar)'"
+    },
+    {
+     "input": "K6 frozen calendar table(s) GRAIN_FULL_SESSIONS (strategy/members/k6/_calendar.py)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k6/_calendar.py",
+     "stated_range": "TABLE_RANGE 2019-05-01..2026-06-19 (generated literal; a 2010-2019 equivalent would come from data/calendars/hist2010/*.json, which exists, but no such K6 table is on disk)"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 285 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 13, days 285, mean -0.7410 net ticks/day, daily t -1.288"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1136, trips 57, theta_hat -0.4458, UCB95 +0.1724, p_upper +0.8782"
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05-06..2024-02 training window (1,068 dates in the K6 Family A tests)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.json tests gate0A_k6_wasdepre_drift_{h60,h120,hF}; reports/E.12_RETURN.md 'Task 6'",
+     "counts": "ML route v2 Gate 0 Family A pooled signal test of feature k6_wasdepre_drift (not the member): all three NOT REJECTED; Gate 0 verdict FAIL"
+    },
+    {
+     "stage": "E.17 (C1) and E.18 (C1b)",
+     "window_dates": "2010-06-07..2019-04-30 (W_ext; world roots NG NQ ZN 6E GC ZC)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_result.json and reports/stage_e18_c1b_result.json guards.C10.{h60,hF}.applicable",
+     "counts": "ML model feature k6_wasdepre_drift: 0 applicable rows at h60 and hF (no K6 event read on W_ext)"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 26)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 26)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 10:29 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K6-wasdepost-01 ZC",
+   "cluster_or_stage": "K6 (frozen Stage E.8, cluster freeze sha256 a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604)",
+   "member_id": "K6-wasdepost-01",
+   "module": "strategy.members.k6.wasdepost (factory make_zc)",
+   "freeze_file": "reports/stage_e_k6_member_freeze.json",
+   "traded_root": "ZC",
+   "vehicle": "ZC (q_c 1; full-size, the freeze leg root)",
+   "w_ext_root": "ZC",
+   "w_ext_note": "2010-06-07..2019-04-30 (ext2010 store name in the E.17 manifest)",
+   "signal_legs": [],
+   "definition_verbatim": "ZC only (q_c 1). On trade date d with is_wasde_date(d) (EC-WASDE after C9a's drop rule, K6-L-11) and d in GRAIN_FULL_SESSIONS (S0.8, K6-L-10); T = 11:00 CT is fixed: - signal: R = close of the bar at 11:14 minus close of the bar at 10:59, in integer vendor ticks; both bars present and carrying one instrument_id (S0.9); R = 0: no trade; - entry: market intent on the bar at 11:14 (fills at the 11:15 open) in the direction of sign(R) (S0.6: the 11:14 bar is the entry bar; missing, no trade); - exit: market intent on the first bar at or after 13:13 (fills at the 13:14 open; S0.7). The event-window cost of the 11:15 entry, the fill guard, D9.7's entry guard and forced exit and F are the engine's.",
+   "trigger_event": "WASDE date (is_wasde_date) in GRAIN_FULL_SESSIONS with R = close(11:14) - close(10:59) nonzero",
+   "decision_time_ct": "11:14",
+   "decision_time_note": "entry on the 11:14 bar, fill 11:15; the move spans the 11:00 CT release",
+   "side_rule": "entry: market intent on the bar at 11:14 (fills at the 11:15 open) in the direction of sign(R)",
+   "side_kind": "momentum",
+   "side_note": "side = sign of the 10:59-11:14 release-window move",
+   "intraday_hold": true,
+   "hold_note": "fill 11:15 to exit fill 13:14",
+   "exit_rule_verbatim": "exit: market intent on the first bar at or after 13:13 (fills at the 13:14 open; S0.7).",
+   "expected_events_per_year": "WASDE dates: 12 a year (frozen table 2020-2024: 12 each); counts reported: E.8 research-window trips 13 over 276 dates; E.22 W_cf trips 54 over 1130 dates",
+   "inputs_needed": [
+    {
+     "input": "ZC 1-minute bars (own traded root)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "reports/stage_e17_run_manifest.json stores.ZC",
+     "stated_range": "W_ext: 2010-06-07..2019-04-30 (ext2010 store name in the E.17 manifest); W_cf: step2 store 2019-05-06..2024-02-29"
+    },
+    {
+     "input": "WASDE release dates (EC-WASDE, 12:00 ET; T = 11:00 CT fixed)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k6/_wasde.py (from reports/stage_e2b_release_calendar.json)",
+     "stated_range": "WASDE_RANGE 2019-05-01..2026-06-19 (85 dates: 2019 8, 2020-2024 12 each, 2025 11, 2026 6); release calendar coverage 2019-05-01..2026-06-21. Not found for 2010-2019: 0 WASDE hits in reports/stage_e14_cal_releases.json (2010-06-01..2019-05-31: NGS, WPSR, FOMC only) and in data/calendars/hist2010/*.json; reports/stage_e20_briefs/shared/grains_class_notes.md line 109 'no WASDE, Crop Production, Crop Progress or Grain Stocks calendar exists on disk'; E.20 plan line 132 dropped k6_wasdepre_drift '(WASDE calendar)'"
+    },
+    {
+     "input": "K6 frozen calendar table(s) GRAIN_FULL_SESSIONS (strategy/members/k6/_calendar.py)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "strategy/members/k6/_calendar.py",
+     "stated_range": "TABLE_RANGE 2019-05-01..2026-06-19 (generated literal; a 2010-2019 equivalent would come from data/calendars/hist2010/*.json, which exists, but no such K6 table is on disk)"
+    },
+    {
+     "input": "frozen day-session clock O, C (and engine F) per root: grains O 08:30 C 13:15 F 13:18; livestock O 08:30 C 13:00 F 13:03",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "screening/stage_e_frozen.py load_frozen_tables (E.2a tables; reports/stage_e2a_vehicle_sizes.json per reports/stage_e_start_rule_K6.json day_session); _calendar.py GRAIN_REGULAR_F_CT / LIVESTOCK_REGULAR_F_CT",
+     "stated_range": "undated constants. Fact for W_ext: data/calendars/hist2010/grains.json sessions give the grain day session 09:30-13:15 (2010-06-01..2012-05-18), one segment 17:00-14:00 (2012-05-21..2013-04-05), 08:30-13:15 (2013-04-08..2015-07-03), 08:30-13:20 (2015-07-06..2019-05-31); livestock.json: 09:05-13:00 (2010-06-01..2014-10-24, secondary), 08:00-13:00 (2014-10-27..2016-02-26), 08:30-13:00 (from 2016-02-29)"
+    },
+    {
+     "input": "grains group trade calendar (trade dates, full closures, early halts, late opens) as the engine/bars carry it",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: data/calendars/grains.py (CALENDAR_COVERAGE 2019-05-01..2026-06-19); W_ext: data/calendars/hist2010/grains.json",
+     "stated_range": "data/calendars/hist2010/grains.json coverage 2010-06-01..2019-05-31 (0 unsourced)"
+    },
+    {
+     "input": "vendor tick and vendor_price_factor (rules.products)",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "rules/products.py",
+     "stated_range": "undated constants; E.8 label for cp2: 'tick history not source-verified for the research window' (K6-L-16 item 13(a))"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.8",
+     "window_dates": "research window from 2025-04-01 (to 2026-06-19); 276 dates for this trial",
+     "purpose": "screen",
+     "source": "reports/E.8_RETURN.md section 'Task 5' table (lines 213-241) and Tiers paragraph",
+     "counts": "trips 13, days 276, mean -0.1777 net ticks/day, daily t -0.748"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "research window (power re-run, E.5's method, under W1 and v13)",
+     "purpose": "power",
+     "source": "reports/E.22_RETURN.md section 3.1 'Power re-runs'; reports/stage_e22_STATE.md rows A3c, A3e; reports/stage_e22_power_k6/",
+     "counts": "replay matched the screening records (K6 54/55; the one difference the cluster record's power-undefined list)"
+    },
+    {
+     "stage": "E.22",
+     "window_dates": "2019-05-06..2024-02-29 (S_X 2019-05-06, reports/stage_e22_k6_confirmation_list.json confirmation_window)",
+     "purpose": "confirmation",
+     "source": "reports/E.22_RETURN.md section 3.2 '#### K6' table (lines 365-398); verdict file reports/stage_e22_k6_verdict.json",
+     "counts": "days 1130, trips 54, theta_hat -0.0691, UCB95 +0.1482, p_upper +0.7068"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.8 screen: Tier B (reports/E.8_RETURN.md Task 5 table row 27)",
+    "E.22 confirmation: Tier B, status 'null' (reports/E.22_RETURN.md 3.2 K6 table row 27)",
+    "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+   ],
+   "settlement_note": "reports/stage_e16_settlement.json products.<root>.settle (identical for ZC ZW ZS ZM ZL): 13:15 CT 2010-06-07..2012-06-24; 14:00 CT 2012-06-25..2013-04-07; 13:15 CT 2013-04-08..2015-07-05; 13:15 CT window 13:14:00-13:15:00 2015-07-06..2024-02-29 (all grade primary, basis direct). base_rules/constants.py PRIOR_SETTLE_CT grains 13:15. decision_time_ct 11:14 is before the 13:15 CT settlement on every period; grain settlement was 14:00 CT on 2012-06-25..2013-04-07",
+   "exclusion": null
+  }
+ ],
+ "excluded": [
+  {
+   "id": "K6-ml-01",
+   "reason": "ML model member: superseded by the Stage E ML route (user decision 2026-09-24, U6); never frozen as a K6 member",
+   "source": "reports/stage_e0_catalog_K6.md lines 4, 832-834"
+  },
+  {
+   "id": "K6-ovr-01",
+   "reason": "not frozen: excluded by the lead at E.0 (01:52 PDT, question 6), 0 trials; not in reports/stage_e_k6_member_freeze.json",
+   "source": "reports/stage_e0_catalog_K6.md lines 6, 745-747"
+  },
+  {
+   "id": "K6 catalog excluded list X-01..X-09 and later (K6-crush3-01, K6-crushavg-01, K6-surprise-01, K6-stocksrev-01, K6-relmin-01, K6-cpfade-01, K6-lvrpt-01, K6-expsales-01, ...)",
+   "reason": "catalog candidates excluded before freezing; never members, 0 trials",
+   "source": "reports/stage_e0_catalog_K6.md section 2 (line 912 on)"
+  },
+  {
+   "id": "ML-route features k6_crushgap_gap, k6_limitcont_dir, k6_wasdepre_drift (E.12 Gate 0, E.17 C1, E.18 C1b, E.20 search)",
+   "reason": "ML models and E.20 search configurations, not triggers; listed only as reads under the member rows' stages_read",
+   "source": "ml_route_v2/signals/k6.py docstring; reports/stage_e12_gate0.json; reports/stage_e14_c1_result.json; reports/stage_e20_plan.md lines 128-146"
+  }
+ ],
+ "sources_read": [
+  "reports/stage_e23_briefs/brief_inventory.md (whole)",
+  "reports/stage_e_k6_member_freeze.json (cluster, created_utc, members, files, members_dir)",
+  "strategy/members/k6/{cp1,cp2,cp3,crushgap,limitcont,wasdepre,wasdepost,_wasde,_limits,_calendar,_event_common,_port_common}.py (module docstrings; imports)",
+  "strategy/members/k6/_wasde.py lines 21-60 (WASDE_RANGE, dates per year)",
+  "strategy/members/k6/_limits.py lines 26-75 (LIMIT_RANGE, LIMIT_PERIODS, SETTLEMENT_WINDOW_LIVESTOCK)",
+  "strategy/members/k6/_calendar.py lines 41-46 (TABLE_RANGE, regular F)",
+  "reports/E.8_RETURN.md lines 1-30, 200-282 (verdict summary, Task 5 screen table, labels, tiers)",
+  "reports/E.22_RETURN.md lines 1-20, 276-300, 360-410 (Part A, K6 confirmation table, verdict); grep K6 over the whole file",
+  "reports/stage_e22_STATE.md (grep K6: rows A1a, A3c, A3e, R7, R9)",
+  "reports/stage_e_start_rule_K6.json (top-level fields)",
+  "reports/stage_e22_k6_confirmation_list.json (top-level fields, start_dates, confirmation_window)",
+  "reports/E.{1,2a,2b,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21}_RETURN.md (grep K6; E.11 lines 205-235; E.12 lines 523-560; E.17, E.18 headers; E.20 lines 1-25, 475-485)",
+  "progress.md and docs/STAGES.md (grep K6)",
+  "reports/stage_e12_gate0.json (tests with signal k6_* and cp*; verdict)",
+  "reports/stage_e14_c1_result.json, reports/stage_e18_c1b_result.json (inputs.window, inputs.calendar_inputs, world.roots keys, guards.C10 applicable, panel_counts cp*)",
+  "reports/stage_e14_c1_model.json (signals, feature_cols k6)",
+  "ml_route_v2/signals/k6.py (docstring)",
+  "reports/stage_e11_signal_coverage.md (grep k6)",
+  "reports/stage_e16_overlap.md (grep K6/WASDE)",
+  "reports/stage_e20_plan.md lines 20-30, 40-52, 108-146",
+  "reports/stage_e20_briefs/shared/macro_calendars.md lines 50-64; reports/stage_e20_briefs/shared/grains_class_notes.md lines 104-118",
+  "reports/stage_e17_run_manifest.json (stores for ZC ZS ZL HE LE ZW ZM: path strings only)",
+  "reports/stage_e16_windows.json (products ZC ZS ZL HE LE)",
+  "reports/stage_e16_settlement.json (products settle periods for the 7 roots)",
+  "reports/stage_e21_briefs/lead_spec.md lines 10-35; multiday/constants.py lines 15-45",
+  "base_rules/constants.py lines 95-112; base_rules/limits.py docstring",
+  "rules/price_limits.py (grep TABLE_WINDOW, SETTLEMENT_WINDOW_CT lines 726-772)",
+  "data/calendars/hist2010/grains.json, livestock.json (coverage, products, counts, sessions); reports/stage_e16_calendars/ (listing, hist2010_livestock.json coverage)",
+  "reports/stage_e14_cal_releases.json (keys, coverage; WASDE count 0); reports/stage_e2b_release_calendar.json (coverage, WASDE rows 85)",
+  "data/calendars/grains.py line 183 (CALENDAR_COVERAGE); data/calendars/livestock.py header",
+  "screening/stage_e_frozen.py lines 242-262",
+  "reports/stage_e0_catalog_K6.md (grep: excluded entries, member headings)"
+ ],
+ "not_finished": []
+}

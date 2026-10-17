@@ -1,0 +1,422 @@
+{
+  "assignment": "K7",
+  "rows": [
+    {
+      "trigger_id": "K7-cp1-01 MBT",
+      "cluster_or_stage": "K7 (Stage E.6)",
+      "member_id": "K7-cp1-01",
+      "module": "strategy/members/k7/cp1.py",
+      "freeze_file": "reports/stage_e_k7_member_freeze.json",
+      "traded_root": "MBT",
+      "vehicle": "MBT, q_c 1",
+      "w_ext_root": null,
+      "signal_legs": [],
+      "definition_verbatim": [
+        "Signal s = sign(close of the bar at O+29 = 08:59 minus open of the trade date's first bar), in vendor ticks. The first bar is the bar opening 17:00 CT on the CT calendar date before d that carries trade_date d (E.3-L-05, K7-L-01): Sunday 17:00 for a Monday in both regimes (from 2026-06-01 the weekend bars before it also carry Monday's trade date and are not read), and the Monday 17:00 bar for the trade date after a booked-forward Monday (the Sunday 17:00 bar of that trade date is not read). If that bar is missing there is no trade.",
+        "Both signal bars must be present and carry one instrument_id, else no trade (D6; E.3-L-06). Zero signal: no trade.",
+        "Entry: market intent on the bar at C-31 = 14:29 of CT date d (fills at the 14:30 open), buy if s > 0, sell if s < 0; that exact bar only (S0.6, E.3-L-04)."
+      ],
+      "trigger_event": "every trade date with nonzero signal s = sign(close of the 08:59 bar minus open of the trade date's first bar, the 17:00 CT bar of the previous CT date)",
+      "decision_time_ct": "08:59 (signal bar; last bar the decision reads); entry intent on the 14:29 bar, fill at the 14:30 open",
+      "side_rule": "buy if s > 0, sell if s < 0",
+      "side_kind": "momentum",
+      "intraday_hold": "yes: 14:30 fill to 14:59 open (about 29 min)",
+      "exit_rule_verbatim": [
+        "Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills nominally at the 14:59 open), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, the member sends nothing more that trade date."
+      ],
+      "expected_events_per_year": "every trade date with nonzero signal; E.6 research screen: 261 trips over 265 trade dates (2025-04-01..2026-06-17)",
+      "inputs_needed": [
+        {
+          "input": "crypto group calendar (EC-CAL; trade-date booking, early halts, engine F)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "data/calendars/crypto.py",
+          "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+        },
+        {
+          "input": "frozen tables day_session_ct (O 08:30, C 15:00) and engine F 15:08 (rules.sessions); no CRYPTO_FULL_SESSIONS filter in the port (the engine's F governs)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "data/calendars/crypto.py; rules/sessions.py",
+          "stated_range": "crypto calendar coverage 2019-05-01..2026-06-19"
+        }
+      ],
+      "stages_read": [
+        {
+          "stage": "E.6",
+          "window_dates": "research 2025-04-01..2026-06-17, 265 trade dates after 42 roll-blackout dates and 1 UR-1 date",
+          "purpose": "screen",
+          "source": "reports/E.6_RETURN.md, Task 5 (screen table) and Task 6; reports/stage_e6_k7_screen/"
+        },
+        {
+          "stage": "E.12",
+          "window_dates": "W_cf MBT path S_X 2024-01-02..2024-02-29 (41 dates)",
+          "purpose": "other",
+          "source": "reports/E.12_RETURN.md lines 18-21 and 536: ML route v2 Gate 0 panel used the pooled port signals (cp1_ret / cp2_range, cp2_brk / cp3_clv, reports/stage_e11_signal_coverage.md lines 13-16, 40-42) on all vehicles; 'MBT has no Gate 0 row (D4 start 2024-01-02, all 41 dates lost to warm-up)'. Not a test of this member."
+        }
+      ],
+      "verdicts": [
+        "E.6: screen 'fail', Tier 'B' (mean -7.4610 ticks, daily t -1.790, coverage 0.9985; reports/E.6_RETURN.md Task 5 table row 1)"
+      ],
+      "settlement_note": "data/calendars/crypto.py _D6_NOTE: 'C 15:00 CT matches CME's daily settlement period for Bitcoin futures, 14:59:00-15:00:00 CT, from which MBT's settlement is copied'. Decision bar 08:59 and entry fill 14:30 are before the 14:59-15:00 settlement period; the exit fills at the 14:59 open.",
+      "exclusion": null,
+      "bars_note": "MBT bars themselves: no W_ext data (MBT is not one of the 17 ext2010 roots; MBT listed 2021-05-03, E.18_RETURN item 7); W_cf store bought in E.12 (2021-04..2024-02 chunks, 'MBT 35'), D4 S_X MBT 2024-01-02 (E.12_RETURN Task 6 line 536; E.22_RETURN line 281), so W_cf for MBT = 2024-01-02..2024-02-29 (41 dates)",
+      "confirmation_note": "No confirmation or null-side run of any K7 trial in any later return (grep of reports/E.7..E.22_RETURN.md for K7 member ids finds only freeze-OK lines; E.6_RETURN Task 7 lists it as an open question)."
+    },
+    {
+      "trigger_id": "K7-cp2-01 MBT",
+      "cluster_or_stage": "K7 (Stage E.6)",
+      "member_id": "K7-cp2-01",
+      "module": "strategy/members/k7/cp2.py",
+      "freeze_file": "reports/stage_e_k7_member_freeze.json",
+      "traded_root": "MBT",
+      "vehicle": "MBT, q_c 1",
+      "w_ext_root": null,
+      "signal_legs": [],
+      "definition_verbatim": [
+        "Opening range: OR_high = max high, OR_low = min low of the present bars opening in [O, O+15) = [08:30, 08:45) of CT date d. No range bar: no trade (E.3-L-08). No minimum bar count and no instrument guard (D6 and B-H1 have none).",
+        "Buffer: 4 vendor ticks of the vehicle, 4 x 5.00 = 20.00 USD per bitcoin (K4-L-06; MBT is the exposure's only contract). Compared in integer vendor ticks (S0.10).",
+        "Eligible bars: those opening in [O+15, C) = [08:45, 15:00) of CT date d; no entry from 15:00 on.",
+        "Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells; a market intent on that bar. The first qualifying bar uses the trade date's one entry, whatever the engine does with the intent (E.3-L-08)."
+      ],
+      "trigger_event": "first bar opening in [08:45, 15:00) of CT date d whose close breaks the 08:30-08:45 opening range by 4 ticks",
+      "decision_time_ct": "variable: the first qualifying bar in [08:45, 14:59]; latest possible 14:59 (E.6 Task 6: entries observed 08:46-13:00)",
+      "side_rule": "the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells",
+      "side_kind": "momentum",
+      "intraday_hold": "yes: 75 bars after the fill, or engine F 15:08 if earlier",
+      "exit_rule_verbatim": [
+        "Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2 (E.3-L-07). After an engine-forced exit (F, D9.7) the member sends nothing more that trade date."
+      ],
+      "expected_events_per_year": "at most one per trade date, on dates with a breakout; E.6 research screen: 263 trips over 265 trade dates",
+      "inputs_needed": [
+        {
+          "input": "crypto group calendar and frozen tables day_session_ct (O 08:30, C 15:00), engine F 15:08",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "data/calendars/crypto.py",
+          "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+        }
+      ],
+      "stages_read": [
+        {
+          "stage": "E.6",
+          "window_dates": "research 2025-04-01..2026-06-17, 265 trade dates after 42 roll-blackout dates and 1 UR-1 date",
+          "purpose": "screen",
+          "source": "reports/E.6_RETURN.md, Task 5 (screen table) and Task 6; reports/stage_e6_k7_screen/"
+        },
+        {
+          "stage": "E.12",
+          "window_dates": "W_cf MBT path S_X 2024-01-02..2024-02-29 (41 dates)",
+          "purpose": "other",
+          "source": "reports/E.12_RETURN.md lines 18-21 and 536: ML route v2 Gate 0 panel used the pooled port signals (cp1_ret / cp2_range, cp2_brk / cp3_clv, reports/stage_e11_signal_coverage.md lines 13-16, 40-42) on all vehicles; 'MBT has no Gate 0 row (D4 start 2024-01-02, all 41 dates lost to warm-up)'. Not a test of this member."
+        }
+      ],
+      "verdicts": [
+        "E.6: screen 'fail', Tier 'B' (mean -14.3785 ticks, daily t -1.350, coverage 0.9969, 1 MLL liquidation; reports/E.6_RETURN.md Task 5 row 2)"
+      ],
+      "settlement_note": "data/calendars/crypto.py _D6_NOTE: 'C 15:00 CT matches CME's daily settlement period for Bitcoin futures, 14:59:00-15:00:00 CT, from which MBT's settlement is copied'. Decision bars range up to 14:59, which is the settlement-period minute itself, so a decision is not always before settlement; exits can run to engine F 15:08 (after settlement).",
+      "exclusion": null,
+      "bars_note": "MBT bars themselves: no W_ext data (MBT is not one of the 17 ext2010 roots; MBT listed 2021-05-03, E.18_RETURN item 7); W_cf store bought in E.12 (2021-04..2024-02 chunks, 'MBT 35'), D4 S_X MBT 2024-01-02 (E.12_RETURN Task 6 line 536; E.22_RETURN line 281), so W_cf for MBT = 2024-01-02..2024-02-29 (41 dates)",
+      "confirmation_note": "No confirmation or null-side run of any K7 trial in any later return (grep of reports/E.7..E.22_RETURN.md for K7 member ids finds only freeze-OK lines; E.6_RETURN Task 7 lists it as an open question)."
+    },
+    {
+      "trigger_id": "K7-cp3-01 MBT",
+      "cluster_or_stage": "K7 (Stage E.6)",
+      "member_id": "K7-cp3-01",
+      "module": "strategy/members/k7/cp3.py",
+      "freeze_file": "reports/stage_e_k7_member_freeze.json",
+      "traded_root": "MBT",
+      "vehicle": "MBT, q_c 1",
+      "w_ext_root": null,
+      "signal_legs": [],
+      "definition_verbatim": [
+        "Daily bar of trade date d, from its bars on CT date d opening in [O, C) = [08:30, 15:00): H / L = max high / min low over the present bars, C_d = close of the bar at C-1 = 14:59. (O_d, the 08:30 open, enters no condition and is not read; the 08:30 bar must exist.)",
+        "Complete day (Family H): the 08:30 and 14:59 bars exist, no bar of CT date d carries early_halt_ct, and all bars in [08:30, 15:00) carry one instrument_id. It is finalised when a bar of a later trade date arrives, so day d's own bar never enters day d's condition.",
+        "d-1 = the most recent COMPLETE daily bar of an earlier trade date; incomplete days are dropped (E.3-L-09). For a Monday it is Friday's bar in both regimes; after a booked-forward Monday it is the Friday before (the holiday is not a trade date and its session is never a daily bar). None yet (warm-up, the window's start): no trade.",
+        "On the bar at O = 08:30 of CT date d (that exact bar, S0.6): no trade if it carries early_halt_ct (E.3-L-09, E.3-L-11); instrument guard: d-1's instrument_id must be the 08:30 bar's; Range = H - L of d-1 in ticks must be > 0; CLV = (C - L) / (H - L) in ticks, CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade. The cuts are compared exactly in integers (E.3-L-19). Market intent on the 08:30 bar (fills at the 08:31 open)."
+      ],
+      "trigger_event": "trade date whose previous complete daily bar (08:30-15:00 CT) has CLV >= 0.8 or <= 0.2",
+      "decision_time_ct": "08:30 (the 08:30 bar of CT date d; the signal itself is d-1's 08:30-14:59 daily bar), fill at the 08:31 open",
+      "side_rule": "CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade.",
+      "side_kind": "other: side = sign of the prior day's close location within its range (CLV >= 0.8 long, <= 0.2 short), i.e. continuation of the prior-day close location; not a trigger-day move",
+      "intraday_hold": "yes: 08:31 fill to 14:59 open",
+      "exit_rule_verbatim": [
+        "Exit: market intent on the first present bar of CT date d at or after C-2 = 14:58 (fills nominally at the 14:59 open), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are the backstops; after either, nothing more that date."
+      ],
+      "expected_events_per_year": "trade dates with prior-day CLV in the tails; E.6 research screen: 101 trips over 265 trade dates",
+      "inputs_needed": [
+        {
+          "input": "crypto group calendar (early_halt_ct flags carried on bars; frozen day_session_ct O 08:30, C 15:00; engine F 15:08)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "data/calendars/crypto.py",
+          "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+        }
+      ],
+      "stages_read": [
+        {
+          "stage": "E.6",
+          "window_dates": "research 2025-04-01..2026-06-17, 265 trade dates after 42 roll-blackout dates and 1 UR-1 date",
+          "purpose": "screen",
+          "source": "reports/E.6_RETURN.md, Task 5 (screen table) and Task 6; reports/stage_e6_k7_screen/"
+        },
+        {
+          "stage": "E.12",
+          "window_dates": "W_cf MBT path S_X 2024-01-02..2024-02-29 (41 dates)",
+          "purpose": "other",
+          "source": "reports/E.12_RETURN.md lines 18-21 and 536: ML route v2 Gate 0 panel used the pooled port signals (cp1_ret / cp2_range, cp2_brk / cp3_clv, reports/stage_e11_signal_coverage.md lines 13-16, 40-42) on all vehicles; 'MBT has no Gate 0 row (D4 start 2024-01-02, all 41 dates lost to warm-up)'. Not a test of this member."
+        }
+      ],
+      "verdicts": [
+        "E.6: screen 'fail', Tier 'B' (mean -3.1197 ticks, daily t -0.259, coverage 0.9969; reports/E.6_RETURN.md Task 5 row 3)"
+      ],
+      "settlement_note": "data/calendars/crypto.py _D6_NOTE: 'C 15:00 CT matches CME's daily settlement period for Bitcoin futures, 14:59:00-15:00:00 CT, from which MBT's settlement is copied'. Decision at 08:30 is before settlement; the signal day d-1's close C_d is the 14:59 bar, the settlement minute.",
+      "exclusion": null,
+      "bars_note": "MBT bars themselves: no W_ext data (MBT is not one of the 17 ext2010 roots; MBT listed 2021-05-03, E.18_RETURN item 7); W_cf store bought in E.12 (2021-04..2024-02 chunks, 'MBT 35'), D4 S_X MBT 2024-01-02 (E.12_RETURN Task 6 line 536; E.22_RETURN line 281), so W_cf for MBT = 2024-01-02..2024-02-29 (41 dates)",
+      "confirmation_note": "No confirmation or null-side run of any K7 trial in any later return (grep of reports/E.7..E.22_RETURN.md for K7 member ids finds only freeze-OK lines; E.6_RETURN Task 7 lists it as an open question)."
+    },
+    {
+      "trigger_id": "K7-expiry-01 MBT",
+      "cluster_or_stage": "K7 (Stage E.6)",
+      "member_id": "K7-expiry-01",
+      "module": "strategy/members/k7/expiry.py",
+      "freeze_file": "reports/stage_e_k7_member_freeze.json",
+      "traded_root": "MBT",
+      "vehicle": "MBT, q_c 1",
+      "w_ext_root": null,
+      "signal_legs": [],
+      "definition_verbatim": [
+        "Event set: each MBTX date d (strategy.members.k7._calendar, after lead ruling R-1b-1) that is in CRYPTO_FULL_SESSIONS and not in VENDOR_DEGRADED (S0.8).",
+        "T_exp(d) from the MBTX table: 16:00 Europe/London in CT (10:00, or 11:00 in the UK/US clock mismatch weeks).",
+        "Entry: market intent BUY of q_c on the bar at T_exp - 301 min (04:59 or 05:59), filling at the open of the bar at T_exp - 300 min; that exact bar (S0.6): if it is missing, no trade. Long only. At most one entry per trade date, only when flat with nothing pending. The rule reads no signal, so the entry bar alone meets the instrument guard (S0.9)."
+      ],
+      "trigger_event": "each MBT last trading day (MBTX date) in CRYPTO_FULL_SESSIONS and not VENDOR_DEGRADED",
+      "decision_time_ct": "04:59 or 05:59 (the T_exp - 301 min bar; no signal read), fill at 05:00 or 06:00",
+      "side_rule": "Long only.",
+      "side_kind": "calendar",
+      "intraday_hold": "yes: T_exp - 300 min fill to T_exp - 1 min (about 5 h)",
+      "exit_rule_verbatim": [
+        "Exit: market intent closing the position on the bar at T_exp - 2 min (09:58 or 10:58), filling at T_exp - 1 min; if that bar is missing, on the first later present bar; resent while refused (S0.7, E.3-L-22). The engine's F is the backstop; after an engine-forced exit the member does nothing more that trade date."
+      ],
+      "expected_events_per_year": "12 MBTX dates a year (monthly last trading day); E.6 research screen: 0 trips (12 member-eligible MBTX dates, all roll-blackout dates; 5 refused BUY intents; E.6_RETURN Task 6 item 4)",
+      "inputs_needed": [
+        {
+          "input": "MBTX table (MBT last trading days and T_exp = 16:00 Europe/London in CT)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "strategy/members/k7/_calendar.py",
+          "stated_range": "MBTX_MONTHS 2021-05..2026-06; less 2021-12-30 and 2025-12-24 (R-1b-1); rows before the research window are the rule's output, unchecked (E.6_RETURN Task 7: 'all but 2021-12-30 unchecked')"
+        },
+        {
+          "input": "CRYPTO_FULL_SESSIONS (EC-CAL crypto trade dates without early halt and with regular engine F 15:08 CT)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "strategy/members/k7/_calendar.py",
+          "stated_range": "coverage 2019-05-01..2026-06-19 (_calendar.py docstring; EC_CAL_COVERAGE)"
+        },
+        {
+          "input": "VENDOR_DEGRADED (crypto trade dates whose ISO date is a degraded Databento GLBX.MDP3 UTC date)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "strategy/members/k7/_calendar.py",
+          "stated_range": "same range as CRYPTO_FULL_SESSIONS, 2019-05-01..2026-06-19"
+        },
+        {
+          "input": "England-and-Wales bank holidays (used at generation of MBTX)",
+          "covers_w_ext": "unknown",
+          "covers_w_cf": "unknown",
+          "path": "reports/stage_e4c_release_check.json (ec_ew)",
+          "stated_range": null
+        }
+      ],
+      "stages_read": [
+        {
+          "stage": "E.6",
+          "window_dates": "research 2025-04-01..2026-06-17, 265 trade dates after 42 roll-blackout dates and 1 UR-1 date",
+          "purpose": "screen",
+          "source": "reports/E.6_RETURN.md, Task 5 (screen table) and Task 6; reports/stage_e6_k7_screen/; not traded: every MBTX date a roll-blackout date (K7-L-05)"
+        },
+        {
+          "stage": "E.12",
+          "window_dates": "W_cf MBT path S_X 2024-01-02..2024-02-29 (41 dates)",
+          "purpose": "other",
+          "source": "reports/stage_e11_signal_coverage.md lines 66-68 (k7_expiry_mto, k7_expiry_msince on MBT); reports/E.12_RETURN.md lines 18-21: 'MBT has no Gate 0 row (D4 start 2024-01-02, all 41 dates lost to warm-up)'. Not a test of this member."
+        }
+      ],
+      "verdicts": [
+        "E.6: screen 'fail', Tier 'B', 'none (calendar partly unverified; not traded)', 0 trips, t 'undefined' (reports/E.6_RETURN.md Task 5 row 4)"
+      ],
+      "settlement_note": "data/calendars/crypto.py _D6_NOTE: 'C 15:00 CT matches CME's daily settlement period for Bitcoin futures, 14:59:00-15:00:00 CT, from which MBT's settlement is copied'. Decision 04:59/05:59 CT is before the 14:59-15:00 daily settlement; the event is the BRR final settlement at T_exp (16:00 London = 10:00 or 11:00 CT).",
+      "exclusion": null,
+      "bars_note": "MBT bars themselves: no W_ext data (MBT is not one of the 17 ext2010 roots; MBT listed 2021-05-03, E.18_RETURN item 7); W_cf store bought in E.12 (2021-04..2024-02 chunks, 'MBT 35'), D4 S_X MBT 2024-01-02 (E.12_RETURN Task 6 line 536; E.22_RETURN line 281), so W_cf for MBT = 2024-01-02..2024-02-29 (41 dates)",
+      "confirmation_note": "No confirmation or null-side run of any K7 trial in any later return (grep of reports/E.7..E.22_RETURN.md for K7 member ids finds only freeze-OK lines; E.6_RETURN Task 7 lists it as an open question)."
+    },
+    {
+      "trigger_id": "K7-rev2h-01 MBT",
+      "cluster_or_stage": "K7 (Stage E.6)",
+      "member_id": "K7-rev2h-01",
+      "module": "strategy/members/k7/rev2h.py",
+      "freeze_file": "reports/stage_e_k7_member_freeze.json",
+      "traded_root": "MBT",
+      "vehicle": "MBT, q_c 1",
+      "w_ext_root": null,
+      "signal_legs": [],
+      "definition_verbatim": [
+        "Dates: every trade date d in CRYPTO_FULL_SESSIONS and not in VENDOR_DEGRADED (S0.8).",
+        "Blocks from the anchor O = 08:30 (frozen day_session_ct): B1 = [08:30, 10:30), B2 = [10:30, 12:30), B3 = [12:30, 14:30).",
+        "Decision 10:30: r1 = close of the 10:29 bar - open of the 08:30 bar, in ticks; target1 = -sign(r1) x q; 0 if r1 = 0, if the 08:30 or 10:29 bar is missing, or if the 08:30 and 10:29 bars carry different instrument_ids. Decision 12:30: the same with the 10:30 and 12:29 bars.",
+        "Orders at each decision, decided at the close of the bar at decision - 1 min with the account's position then: hold if the target equals the position (the position is always 0 or +-q, so equal signs); otherwise, if a position is open, a flatten intent on that bar (fills at the decision-time open; if the bar is missing, on the first later present bar, with target 0, K7-L-08); then, if the target is nonzero, an entry intent on the decision-time bar (10:30 or 12:30, fills one minute later), sent only if the account is then flat, that bar exists and it carries the signal bars' instrument_id (S0.6, S0.9, K7-L-06)."
+      ],
+      "trigger_event": "every full, non-degraded trade date: decisions at 10:30 (block 08:30-10:29) and 12:30 (block 10:30-12:29) with nonzero block return",
+      "decision_time_ct": "10:29 and 12:29 (signal bars), entries on the 10:30 / 12:30 bars, fills one minute later",
+      "side_rule": "target1 = -sign(r1) x q",
+      "side_kind": "fade",
+      "intraday_hold": "yes: up to 14:29 bar (final exit fills at 14:30 open)",
+      "exit_rule_verbatim": [
+        "Final exit: market intent on the 14:29 bar, filling at the 14:30 open; if missing, the first later present bar (S0.7).",
+        "A position the engine closes before 12:30 leaves the account flat, and the 12:30 decision applies as written (K7-L-07). At most 2 entries a trade date."
+      ],
+      "expected_events_per_year": "every trade date with nonzero block return, at most 2 entries a date; E.6 research screen: 384 trips on 259 eligible dates (125 with two trips)",
+      "inputs_needed": [
+        {
+          "input": "CRYPTO_FULL_SESSIONS (EC-CAL crypto trade dates without early halt and with regular engine F 15:08 CT)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "strategy/members/k7/_calendar.py",
+          "stated_range": "coverage 2019-05-01..2026-06-19 (_calendar.py docstring; EC_CAL_COVERAGE)"
+        },
+        {
+          "input": "VENDOR_DEGRADED (crypto trade dates whose ISO date is a degraded Databento GLBX.MDP3 UTC date)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "strategy/members/k7/_calendar.py",
+          "stated_range": "same range as CRYPTO_FULL_SESSIONS, 2019-05-01..2026-06-19"
+        },
+        {
+          "input": "crypto group calendar (EC-CAL; trade-date booking, early halts, engine F)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "data/calendars/crypto.py",
+          "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+        }
+      ],
+      "stages_read": [
+        {
+          "stage": "E.6",
+          "window_dates": "research 2025-04-01..2026-06-17, 265 trade dates after 42 roll-blackout dates and 1 UR-1 date",
+          "purpose": "screen",
+          "source": "reports/E.6_RETURN.md, Task 5 (screen table) and Task 6; reports/stage_e6_k7_screen/"
+        },
+        {
+          "stage": "E.12",
+          "window_dates": "W_cf MBT path S_X 2024-01-02..2024-02-29 (41 dates)",
+          "purpose": "other",
+          "source": "reports/stage_e11_signal_coverage.md lines 66-68 (k7_rev2h_ret on MBT); reports/E.12_RETURN.md lines 18-21: 'MBT has no Gate 0 row (D4 start 2024-01-02, all 41 dates lost to warm-up)'. Not a test of this member."
+        }
+      ],
+      "verdicts": [
+        "E.6: screen 'fail', Tier 'B' (mean -28.9198 ticks, daily t -2.285, coverage 0.9967, 2 MLL liquidations; reports/E.6_RETURN.md Task 5 row 5)"
+      ],
+      "settlement_note": "data/calendars/crypto.py _D6_NOTE: 'C 15:00 CT matches CME's daily settlement period for Bitcoin futures, 14:59:00-15:00:00 CT, from which MBT's settlement is copied'. Both decisions (10:29, 12:29) and the 14:30 exit are before settlement.",
+      "exclusion": null,
+      "bars_note": "MBT bars themselves: no W_ext data (MBT is not one of the 17 ext2010 roots; MBT listed 2021-05-03, E.18_RETURN item 7); W_cf store bought in E.12 (2021-04..2024-02 chunks, 'MBT 35'), D4 S_X MBT 2024-01-02 (E.12_RETURN Task 6 line 536; E.22_RETURN line 281), so W_cf for MBT = 2024-01-02..2024-02-29 (41 dates)",
+      "confirmation_note": "No confirmation or null-side run of any K7 trial in any later return (grep of reports/E.7..E.22_RETURN.md for K7 member ids finds only freeze-OK lines; E.6_RETURN Task 7 lists it as an open question)."
+    },
+    {
+      "trigger_id": "K7-montrend-01 MBT",
+      "cluster_or_stage": "K7 (Stage E.6)",
+      "member_id": "K7-montrend-01",
+      "module": "strategy/members/k7/montrend.py",
+      "freeze_file": "reports/stage_e_k7_member_freeze.json",
+      "traded_root": "MBT",
+      "vehicle": "MBT, q_c 1",
+      "w_ext_root": null,
+      "signal_legs": [],
+      "definition_verbatim": [
+        "Dates: trade dates d that are Mondays, in CRYPTO_FULL_SESSIONS and not in VENDOR_DEGRADED (S0.8). A booked-forward Monday is not a trade date (its bars carry Tuesday's trade date) and does not trade.",
+        "Bars read: only bars with trade_date d opening at or after Sunday (CT date d-1) 17:00 and at or before Monday (CT date d) 13:59, each identified by CT date and clock. Weekend bars that carry Monday's trade date (from 2026-06-01) are never read.",
+        "20 decision times t: Sunday 18:00, 19:00, ..., 23:00; Monday 00:00, 01:00, ..., 13:00.",
+        "Signal: s_t = sign(close of the bar at t - 1 min - open of the bar at t - 60 min), in ticks; 0 if either bar is missing or they carry different instrument_ids.",
+        "Flatten: at the close of the bar at t - 1 min, if a position is open and its sign differs from s_t (s_t = 0 included), a flatten intent on that bar (fills at the open of t); if that bar is missing, on the first later present bar, with s_t = 0. Hold if the signs are equal.",
+        "Entry: on the bar at t, if s_t is nonzero, the account is flat (no position, no pending order) and the bar at t exists and carries the signal bars' instrument_id, an entry intent of q in direction s_t (fills at t + 1 min) (S0.6, S0.9, K7-L-06)."
+      ],
+      "trigger_event": "Monday trade dates (full, non-degraded): 20 hourly decisions Sunday 18:00..Monday 13:00 CT on the prior hour's sign",
+      "decision_time_ct": "hourly t - 1 min bars: Sunday 17:59 .. Monday 12:59 (entries on the t bar, fill t + 1 min); latest 12:59 Monday",
+      "side_rule": "an entry intent of q in direction s_t (fills at t + 1 min); s_t = sign(close of the bar at t - 1 min - open of the bar at t - 60 min)",
+      "side_kind": "momentum",
+      "intraday_hold": "yes, within the Monday trade date (Sunday 18:01 CT at the earliest, final exit at Monday 14:00 open); spans CT calendar dates Sunday-Monday",
+      "exit_rule_verbatim": [
+        "Final exit: market intent on Monday's 13:59 bar, filling at the 14:00 open; if missing, the first later present bar (S0.7).",
+        "A position the engine closes leaves the account flat; later decisions apply as written (K7-L-07). At most 20 entries a trade date."
+      ],
+      "expected_events_per_year": "about 50 Mondays a year, at most 20 entries each; E.6 research screen: 466 trips on 44 eligible Mondays (932 fills, at most 15 entries a day)",
+      "inputs_needed": [
+        {
+          "input": "CRYPTO_FULL_SESSIONS (EC-CAL crypto trade dates without early halt and with regular engine F 15:08 CT)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "strategy/members/k7/_calendar.py",
+          "stated_range": "coverage 2019-05-01..2026-06-19 (_calendar.py docstring; EC_CAL_COVERAGE)"
+        },
+        {
+          "input": "VENDOR_DEGRADED (crypto trade dates whose ISO date is a degraded Databento GLBX.MDP3 UTC date)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "strategy/members/k7/_calendar.py",
+          "stated_range": "same range as CRYPTO_FULL_SESSIONS, 2019-05-01..2026-06-19"
+        },
+        {
+          "input": "crypto group calendar (EC-CAL; trade-date booking, early halts, engine F)",
+          "covers_w_ext": false,
+          "covers_w_cf": true,
+          "path": "data/calendars/crypto.py",
+          "stated_range": "CALENDAR_COVERAGE = (2019-05-01, 2026-06-19)"
+        }
+      ],
+      "stages_read": [
+        {
+          "stage": "E.6",
+          "window_dates": "research 2025-04-01..2026-06-17, 265 trade dates after 42 roll-blackout dates and 1 UR-1 date",
+          "purpose": "screen",
+          "source": "reports/E.6_RETURN.md, Task 5 (screen table) and Task 6; reports/stage_e6_k7_screen/"
+        },
+        {
+          "stage": "E.12",
+          "window_dates": "W_cf MBT path S_X 2024-01-02..2024-02-29 (41 dates)",
+          "purpose": "other",
+          "source": "reports/stage_e11_signal_coverage.md lines 66-68 (k7_montrend_ret on MBT); reports/E.12_RETURN.md lines 18-21: 'MBT has no Gate 0 row (D4 start 2024-01-02, all 41 dates lost to warm-up)'. Not a test of this member."
+        }
+      ],
+      "verdicts": [
+        "E.6: screen 'fail', Tier 'B' (mean -4.7260 ticks, daily t -0.441, coverage 0.9596; reports/E.6_RETURN.md Task 5 row 6)"
+      ],
+      "settlement_note": "data/calendars/crypto.py _D6_NOTE: 'C 15:00 CT matches CME's daily settlement period for Bitcoin futures, 14:59:00-15:00:00 CT, from which MBT's settlement is copied'. Every decision (latest Monday 12:59) and the 14:00 final exit are before Monday's settlement; the Sunday-evening decisions fall after the prior trade date's settlement.",
+      "exclusion": null,
+      "bars_note": "MBT bars themselves: no W_ext data (MBT is not one of the 17 ext2010 roots; MBT listed 2021-05-03, E.18_RETURN item 7); W_cf store bought in E.12 (2021-04..2024-02 chunks, 'MBT 35'), D4 S_X MBT 2024-01-02 (E.12_RETURN Task 6 line 536; E.22_RETURN line 281), so W_cf for MBT = 2024-01-02..2024-02-29 (41 dates)",
+      "confirmation_note": "No confirmation or null-side run of any K7 trial in any later return (grep of reports/E.7..E.22_RETURN.md for K7 member ids finds only freeze-OK lines; E.6_RETURN Task 7 lists it as an open question)."
+    }
+  ],
+  "excluded": [],
+  "sources_read": [
+    "docs/prompts/STAGE_E.23.md not read (worker reads the brief only); reports/stage_e23_briefs/brief_inventory.md (all 71 lines)",
+    "reports/stage_e_k7_member_freeze.json (whole file, 3,244 bytes: 6 members, legs, modules)",
+    "strategy/members/k7/cp1.py, cp2.py, cp3.py, expiry.py, rev2h.py, montrend.py (module docstrings, via ast)",
+    "strategy/members/k7/_event_common.py, _port_common.py, _calendar.py (module docstrings; _calendar.py literal ranges EC_CAL_COVERAGE, MBTX_MONTHS)",
+    "data/calendars/crypto.py (lines 1-23 grep, 91-92, 201, 336-348 _D6_NOTE settlement period)",
+    "reports/E.6_RETURN.md (grep K7; lines 180-250: Task 5 screen table, Task 6 recomputation, Task 7 reading)",
+    "reports/E.7..E.22_RETURN.md, E.1, E.2a, E.2b (grep K7 / MBT / k7_ lines only)",
+    "reports/E.12_RETURN.md lines 18-24, 530-540 (MBT S_X 2024-01-02, no Gate 0 row)",
+    "reports/E.18_RETURN.md lines 413-417 (MBT listing 2021-05-03)",
+    "reports/E.22_RETURN.md lines 18, 281 (MBT S_X 2024-01-02)",
+    "reports/stage_e11_signal_coverage.md lines 1-20, 40-42, 66-68 (K7 signals in ML route v2)",
+    "reports/stage_e16_overlap.md line 77; reports/stage_e10_design_target.md lines 64, 161-166 (grep K7)",
+    "progress.md and docs/STAGES.md (grep K7)",
+    "reports/stage_e21_briefs/lead_spec.md, multiday/constants.py, base_rules/common.py (grep settle / MBT / crypto: no MBT settlement time there)",
+    "file lists: grep -l for K7 member ids under reports/ and docs/"
+  ],
+  "not_finished": [
+    "Rows of MBTX and VENDOR_DEGRADED for the W_cf window (2024-01-02..2024-02-29) were not enumerated (tables are non-literal date tuples; ranges taken from the docstrings).",
+    "England-and-Wales bank-holiday range in reports/stage_e4c_release_check.json (ec_ew) not checked; marked unknown.",
+    "reports/stage_e6_member_specs.md and reports/stage_e6_STATE.md were not read section by section (the frozen module docstrings were used as the rule text, as the brief directs)."
+  ]
+}

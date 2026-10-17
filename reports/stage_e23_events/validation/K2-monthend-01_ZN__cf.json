@@ -1,0 +1,139 @@
+{
+ "schema": "stage_e23_events_validation/1",
+ "trigger_id": "K2-monthend-01 ZN",
+ "window": "W_cf",
+ "identical": true,
+ "same_d0_and_side": true,
+ "adapter": {
+  "n": 77,
+  "first": "2019-05-06",
+  "last": "2024-02-29",
+  "bounds_source": "W_cf: 2019-05-06 (no start rule lists the store root)",
+  "counts": {
+   "coverage_expected_minutes:ZN": 547149,
+   "coverage_present_minutes:ZN": 545657,
+   "entries": 77,
+   "entry_intent_accepted": 77,
+   "entry_intent_refused:engine_not_a_window_date": 33,
+   "table_date:entered": 77,
+   "table_date:outside_member_window (roll blackout)": 39,
+   "table_dates_in_window_range": 116,
+   "window_dates_not_table_dates": 1111,
+   "window_excluded:not_every_leg_trades": 0,
+   "window_excluded:roll_blackout_any_leg": 60,
+   "window_trade_dates": 1188
+  }
+ },
+ "harness": {
+  "n": 77,
+  "how": "harness load_confirmation_leg from 2019-05-06 (no start rule), E.17 sha256",
+  "counts": {
+   "entry_intent_refused:engine_not_a_window_date": 33,
+   "entry_intent_accepted": 77,
+   "entries": 77
+  },
+  "window_dates": 1188,
+  "first": "2019-05-06",
+  "last": "2024-02-26",
+  "coverage": {
+   "ZN": [
+    545657,
+    547149,
+    true
+   ]
+  }
+ },
+ "frames_equal": {
+  "ZN": {
+   "rows_equal": true,
+   "rows": 1619405,
+   "columns_equal": {
+    "ts_event": true,
+    "open": true,
+    "high": true,
+    "low": true,
+    "close": true,
+    "volume": true,
+    "instrument_id": true,
+    "raw_symbol": true,
+    "trade_date": true,
+    "in_flatten_window": true,
+    "in_no_new_positions_window": true,
+    "early_halt_ct": true,
+    "in_scheduled_closure": true,
+    "is_roll_session": true,
+    "gap_before_minutes": true,
+    "vendor_degraded_day": true
+   },
+   "trade_dates_equal": true,
+   "blackout_equal": false
+  }
+ },
+ "differences": [],
+ "inputs": {
+  "harness_freeze": {
+   "path": "reports/stage_e2b_harness_freeze.json",
+   "sha256": "dd2bcc6025144e0debd19be1ca8d43c983872a27c9258895ef55ee3c138609e4"
+  },
+  "run_manifest": {
+   "path": "reports/stage_e17_run_manifest.json",
+   "sha256": "256a5410c03065a746d229c2cddbc85240de8fe57db2e8fe77467c1483ffa74d"
+  },
+  "cluster_freeze": {
+   "path": "reports/stage_e_k2_member_freeze.json",
+   "sha256": "8815a775e74996419b57751b1104ffa07cd4b3450eb18a9a92c6cbbd5615b7c5"
+  },
+  "member_module": {
+   "path": "strategy/members/k2/monthend.py",
+   "sha256": "ca801d5a85be2e6854d280fbd2506b6e89cdf2ec523baf27792c8f7cf855561d"
+  },
+  "store:ZN": {
+   "path": "data/processed_step2/ZN/ohlcv-1m_ZN_v_0_2019-05-06_2024-02-29_step2.parquet",
+   "sha256": "d708f5e3284cc08f1ebfb7a2c1a97645d72fb6689284a5081a5090c49d10a4ee"
+  },
+  "store_checked:ZN:ext2010": {
+   "path": "data/processed_hist/ext2010/ZN/ohlcv-1m_ZN_v_0_2010-06-07_2019-04-30_ext2010.parquet",
+   "sha256": "e3a048b54e78617aaed957f74b4d3b5e1fd87c248a60576388139b167643c371"
+  },
+  "store_checked:ZN:step2": {
+   "path": "data/processed_step2/ZN/ohlcv-1m_ZN_v_0_2019-05-06_2024-02-29_step2.parquet",
+   "sha256": "d708f5e3284cc08f1ebfb7a2c1a97645d72fb6689284a5081a5090c49d10a4ee"
+  },
+  "release_calendar": {
+   "path": "reports/stage_e2b_release_calendar.json",
+   "sha256": "839f2437bedbeb7b3423d7058a9955a0d4ccd1aebc4b01c62be624ab11d7bcb8"
+  },
+  "calendar:ZN:0": {
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/data/calendars/rates.py",
+   "sha256": "449c152977d21dc84721871d970960845bc3e21e603361f5d59e71841ef4df23"
+  },
+  "calendar:ZN:1": {
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/data/calendars/__init__.py",
+   "sha256": "a13255d8f91a806aa8c056ce2a4014d9eedfbbd969ec4e467ad8d6a295a7b86a"
+  },
+  "code:trigger_hold/events.py": {
+   "path": "trigger_hold/events.py",
+   "sha256": "4a06090c698bc8454a50f810999ac512b0b09f448a675cd65045b5a3a9916a8f"
+  },
+  "code:trigger_hold/events_bars.py": {
+   "path": "trigger_hold/events_bars.py",
+   "sha256": "ccc697b1eaf8cf7ec182472c702d51595a5c9a2f1a8adae9391e60e9e4c52684"
+  },
+  "code:trigger_hold/events_context.py": {
+   "path": "trigger_hold/events_context.py",
+   "sha256": "9fd58d1c0be0a5ed982b3e2d39c87fa84c3b282dffe0502cc2aeffb77978a7cb"
+  },
+  "code:trigger_hold/events_members.py": {
+   "path": "trigger_hold/events_members.py",
+   "sha256": "73acf85077ca0e2c011eed8297a23ad0c866bf28ac3b0429fd00d7938861d8eb"
+  },
+  "code:trigger_hold/events_tables.py": {
+   "path": "trigger_hold/events_tables.py",
+   "sha256": "1e59a5a2fd508005c9f4c0ef33972e0f502023e02cedb68a045c5f8506829ba8"
+  },
+  "code:trigger_hold/types.py": {
+   "path": "trigger_hold/types.py",
+   "sha256": "5d4d40129499a240ca5ce95cbb480d11965b132dce90b7b710275aafddd9f548"
+  }
+ }
+}

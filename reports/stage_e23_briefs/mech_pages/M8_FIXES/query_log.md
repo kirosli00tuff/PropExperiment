@@ -1,0 +1,17 @@
+# M8_FIXES query log
+
+| time (PDT) | tool | query | results kept |
+|---|---|---|---|
+| 2026-10-17 02:16:35 to 02:18:28 -07:00 | grep (local) | WM/Reuters, london fix, 4pm fix, Melvin, gold fix, LBMA, Tokyo fix, gotobi, ECB fix over saved briefs and docs | KMW2024, MP2013, EV2018, CH2014, AFGO2017, BGK2018 (abstract) reused from reports/stage_e20_briefs/pages/ |
+| 2026-10-17 02:18:28 to 02:18:48 -07:00 | WebSearch | gotobi anomaly yen Tokyo fixing daily returns USD/JPY paper | arXiv 2301.13204 (Bessho, Sugimoto, Suzuki 2023) kept; TradingView scripts dropped (not research) |
+| 2026-10-17 02:18:28 to 02:18:48 -07:00 | WebSearch | month-end currency returns rebalancing dollar turn of the month exchange rate days after fix | none kept (bank flow notes and news only; no post-fix multi-day evidence) |
+| 2026-10-17 02:18:48 to 02:19:12 -07:00 | WebSearch | Ito Yamada "Puzzles in the Tokyo fixing in the forex market" order imbalances biased pricing | NBER w22820 (Ito and Yamada 2017 JIE) kept |
+| 2026-10-17 02:18:48 to 02:19:12 -07:00 | WebSearch | turn-of-the-month effect foreign exchange returns US dollar academic paper | none kept for fetch: Kumar 2015 (INR pairs, abstract only), Villarreal-Samaniego 2024 (paywalled, abstract only) noted as abstract only |
+| 2026-10-17 02:19:12 to 2026-10-17T02:19:50-07:00 | WebSearch | LBMA gold auction AM PM fix returns subsequent days gold price anomaly London fix overnight return | Blose, Gondhalekar and Kort 2018 (J Econ Finance; abstract already saved by E.20 at reports/stage_e20_briefs/pages/GC/repec_blose_etal_2018.html); LBMA Alchemist 73 (industry, not fetched); Goldmoney (advocacy, dropped) |
+| 2026-10-17 02:19:12 to 2026-10-17T02:19:50-07:00 | WebSearch | Camanho Hau Rey global portfolio rebalancing and exchange rates equity returns currency depreciation monthly | CEPR DP15617 (Camanho, Hau, Rey 2022 RFS) kept |
+| 2026-10-17 02:20:00 to 2026-10-17T02:20:49-07:00 | WebSearch | Froot Ramadorai currency returns intrinsic value institutional investor flows transitory persistent horizon | Froot and Ramadorai 2005 JF (johnhcochrane.com copy) kept |
+| 2026-10-17 02:20:00 to 2026-10-17T02:20:49-07:00 | WebSearch | Evans O'Neill Rime Saakvitne "Fixing the fix" WMR five-minute window price impact | Marsh, Panagiotou, Payne (Norges Bank draft) kept; FCA OP 46 noted (intraday only, not fetched) |
+| 2026-10-17 02:20:52 to 2026-10-17T02:21:43-07:00 | WebSearch | London gold fixing price discovery returns "next day" OR "following days" gold futures after fix study Lucey | none new (Caminschi and Heaney 2014 already saved by E.20; O'Connor and Lucey 2025 is 1919-1968, out of sample; FXStreet secondhand, dropped) |
+| 2026-10-17 02:20:52 to 2026-10-17T02:21:43-07:00 | WebSearch | intraday dollar seasonality FX fixing "close-to-close" returns not predictable multi-day reversal currency fix flows | none new (Krohn, Mueller, Whelan already saved by E.20; FXEmpire, Substack practitioner, dropped) |
+| 2026-10-17 02:21:43 to 2026-10-17T02:22:04-07:00 | WebSearch | gotobi days yen depreciation daily exchange rate effect Japanese importers settlement 5th 10th day of month study | none new (news and TradingView only; no daily or multi-day academic study) |
+| 2026-10-17 02:21:43 to 2026-10-17T02:22:04-07:00 | WebSearch | gold futures overnight positive daytime negative returns Blose Gondhalekar Kort London fix pattern | none new for 5-20 days (Bell 2019 MPRA, Donati-Jung CBS thesis: intraday or between-fix only, not fetched) |

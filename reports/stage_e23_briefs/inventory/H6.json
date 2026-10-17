@@ -1,0 +1,182 @@
+{
+  "assignment": "H6",
+  "written_local": "2026-10-17 02:19 PDT (date command)",
+  "worker": "InventoryReaderH6-OpusHigh",
+  "rows": [
+    {
+      "trigger_id": "E20H6-T1",
+      "cluster_or_stage": "E.20 Part B (H6)",
+      "member_id": "E20H6-T1 (prompt name E20-H6-T1; registration r004-E20H6, label E20H6)",
+      "module": "h6_rod/signal.py (compute_facts, T1 schedule); clock h6_rod/clock.py; literals h6_rod/constants.py",
+      "freeze_file": "reports/stage_e20_h6_freeze.json (sha256 22e606f0b74532e267a4155d93e295702ff86f6e8f4143236882f3c2f230e795; commit 498fd05 'E.20 H6 freeze')",
+      "traded_root": "NQ (price path)",
+      "vehicle": "MNQ, one lot (tick 0.25 index points, $0.50)",
+      "w_ext_root": "NQ",
+      "signal_legs": [],
+      "definition_verbatim": [
+        "C: the equity group's close on that trade date: 15:00 CT on a normal day; the early close on a shortened day (the frozen equity calendar's early-halt time).",
+        "P(C-30): the close of the bar ending at C-30 (the bar opening at C-31; 14:29 on a normal day).",
+        "P(prior C): the close of the bar ending at the previous equity trade date's C (the bar opening at that date's C-1; 14:59 on a normal day, the early close minus 1 minute on a shortened day).",
+        "r_ROD = P(C-30) / P(prior C) - 1.",
+        "Eligible date: a trade date of the window on which both bars exist and carry one instrument_id, and r_ROD != 0. A date failing any condition has no trade, is not eligible, and is counted by reason (\"missing_signal_bar\", \"missing_prior_bar\", \"instrument_change\", \"zero_signal\").",
+        "T1: every eligible date."
+      ],
+      "trigger_event": "every eligible equity trade date (r_ROD nonzero, both bars present, one instrument_id); fires at the close of the bar opening C-31 (14:29 CT on a normal day)",
+      "decision_time_ct": "14:30 CT on a normal day (close of the bar opening 14:29 = C-30); on a shortened day C-30 of the early close. Inputs: that bar and the previous trade date's bar opening C-1 (14:59 CT normal)",
+      "side_rule": "Entry: market intent on the bar ending at C-30, in sign(r_ROD) (buy if r_ROD > 0, sell if < 0), one MNQ, filling at the next bar's open (C-30).",
+      "side_kind": "momentum",
+      "side_kind_note": "r_ROD spans the previous trade date's C (15:00 CT) to today's C-30, i.e. the overnight session plus the day session to 14:30 CT",
+      "intraday_hold": "entry fill at the open of the bar at C-30 (14:30 CT normal) to the exit fill at the open of the bar after the first present bar at or after C-2 (about 14:59 CT normal); about 29 minutes; flatten backstop F 15:08 CT normal",
+      "exit_rule_verbatim": "Exit: market intent on the first present bar at or after C-2 (opening at or after C-2; 14:58 on a normal day), filling at the next bar's open. The engine's forced flatten at F (15:08 CT on a normal day) and its D9.7 price-limit exit are backstops.",
+      "shortened_day_rule_verbatim": "the frozen engine's F on an early-close date is the early close minus Topstep's lead, 30 minutes for 2019-2025 (rules/sessions.py TOPSTEP_EARLY_CLOSE_LEAD, Rule H-1 derived rows for 2019-2023), so F = C-30, the entry fill time. The engine therefore refuses every shortened-day entry (engine_flatten_window)",
+      "expected_events_per_year": "every eligible equity trade date (about 252 a year less roll-date instrument changes). Reported counts: verdict window 2020-06-01..2024-02-29: 971 trade dates, 956 eligible (15 instrument_change), 893 trades (refused: 33 engine_flatten_window, 30 engine_roll_blackout). Per year T1 trades: 2020-06..12 139, 2021 239, 2022 238, 2023 236, 2024-01..02 41. Overlap 2019-05-06..2020-05-29: 277 trade dates, 272 eligible, 254 trades (reports/stage_e20_H6_result.json eligibility, tests.T1.entry_outcomes, overlap.T1; reports/E.20_RETURN.md Part B)",
+      "inputs_needed": [
+        {"input": "NQ 1-minute bars (price path; own root only)", "covers_w_ext": true, "covers_w_cf": true, "path": "W_ext: data/processed_hist/ext2010/NQ/ohlcv-1m_NQ_v_0_2010-06-07_2019-04-30_ext2010.parquet (reports/stage_e17_run_manifest.json stores.NQ.ext2010, sha256 d4cf098a...); W_cf: data/processed_step2/NQ/ohlcv-1m_NQ_v_0_2019-05-06_2024-02-29_step2.parquet (sha256 08fae13f...)", "stated_range": "ext2010 2010-06-07..2019-04-30 (manifest file name); reports/stage_e16_windows.json products.NQ start_month 2010-07, window_start_on_or_after 2010-07-01; step2 2019-05-06..2024-02-29"},
+        {"input": "equity group calendar (C, early-halt times, trade dates, previous trade date)", "covers_w_ext": true, "covers_w_cf": true, "path": "W_ext: data/calendars/hist2010/equity.json (schema e14_hist_calendar/1, products ES MES NQ MNQ RTY M2K YM MYM); W_cf: data/calendars/equity.py (pinned in the H6 freeze)", "stated_range": "hist2010 coverage 2010-06-01..2019-05-31 (78 early halts, 2325 trade dates); equity.py STAGE_WINDOW 2019-05-01..2026-06-19"},
+        {"input": "Topstep early-close lead (sets engine F = C-30 on shortened days; engine backstop, not the trigger)", "covers_w_ext": false, "covers_w_cf": true, "path": "rules/sessions.py TOPSTEP_EARLY_CLOSE_LEAD", "stated_range": "keyed by year 2019..2026 only (30 min 2019-2025, 15 min 2026); Rule H-1 derived rows 2019-05-01..2023-12-31; no 2010-2018 key"},
+        {"input": "D8 release calendar (event-window cost buckets, D9.5a fill guard, D9.12 CPI window; engine input, not the trigger)", "covers_w_ext": false, "covers_w_cf": true, "path": "W_cf: reports/stage_e2b_release_calendar.json (pinned in the H6 freeze); W_ext: base_rules/constants.py RELEASE_HIST_PATH = reports/stage_e14_cal_releases.json", "stated_range": "e2b coverage 2019-05-01..2026-06-21; e14_cal_releases coverage 2010-06-01..2019-05-31 holds FOMC 72, NGS 470, WPSR 470 rows only (no CPI rows found there); EC-AUC Treasury auctions 2010-01-01..2019-06-30 in reports/stage_e16_calendars/ec_auc_2010_2019.json (reports/stage_e16_calendars.md)"},
+        {"input": "price-limit table (D9.7 exit backstop and locked-fill test; engine input)", "covers_w_ext": false, "covers_w_cf": true, "path": "rules/price_limits.py (via base_rules/limits.py)", "stated_range": "table starts 2019-05-01 (base_rules/limits.py docstring); before it 'no lock can be shown'"},
+        {"input": "roll splices and roll-blackout dates (instrument_change and engine roll-blackout refusal)", "covers_w_ext": true, "covers_w_cf": true, "path": "derived per store by data.stage_e_bars.splices_and_blackout (base_rules/store.py line 16; h6 result load.roll_blackout_dates)", "stated_range": "derived from each store's own dates (no separate table)"}
+      ],
+      "stages_read": [
+        {"stage": "E.20 (H6 registered test, run once)", "window_dates": "2020-06-01..2024-02-29 (lead-in 2020-05-29, no entry)", "purpose": "confirmation", "purpose_note": "single registered one-shot test against a fixed pass bar (prereg section 5); the rule was taken from Baltussen et al. 2021, not selected on data", "source": "reports/stage_e20_prereg_H6.md sections 2, 5; reports/E.20_RETURN.md section 1 and Part B; reports/stage_e20_H6_result.json windows.verdict"},
+        {"stage": "E.20 (H6 descriptive overlap)", "window_dates": "2019-05-06..2020-05-29", "purpose": "other", "purpose_note": "descriptive only, never in the verdict (prereg section 2); results are on disk: T1 254 trades, Sharpe 1.11", "source": "reports/stage_e20_prereg_H6.md section 2; reports/E.20_RETURN.md Part B 'Overlap with the paper's sample'"},
+        {"stage": "E.20 Part C search (r005-E20S; excluded ML search, a related feature, not this rule)", "window_dates": "2019-05-06..2024-02-29 (17 step2 roots incl. NQ)", "purpose": "other", "purpose_note": "features rod_ret(t) = P(t)/P(prior C) - 1 and rod_absratio(t) (60-date median) at t4 = 14:08 CT equity, inside nested CPCV; screen FAIL", "source": "reports/stage_e20_plan.md lines 36-43, 81-97, 162-171; reports/E.20_RETURN.md Part C"}
+      ],
+      "w_ext_read_by_this_rule": "none found: E.20 return section 7 item 2 says the 2010-2019 stores 'stay owned and unread by any model (E20-B1 never registered)'; the H6 guard (prereg section 9) raises on any path under data/processed_hist/",
+      "tier": "n/a",
+      "verdicts": ["FAIL (E.20_RETURN.md section 1: 'T1 (every eligible date): FAIL. 893 trades; mean gross 1.25 ticks (0.38 bp), net -2.83 ticks (-0.39 bp) against a 4.08-tick round trip; t_B -0.53, one-sided p 0.70; net Sharpe -0.27.')", "'No Holm rejection (m = 3, 0.025). Fable reproduced every number independently.' (E.20_RETURN.md section 1)", "VerdictVerifier-FableXHigh: VERIFIED WITH NOTES (E.20_RETURN.md review table)"],
+      "settlement_note": "NQ daily settlement (reports/stage_e16_settlement.json products.NQ.settle, all grade primary): 15:15 CT 2010-06-07..2020-10-25 (window 15:14:30-15:15:00), 15:00 CT from 2020-10-26 (window 14:59:30-15:00:00). decision_time_ct 14:30 is before settlement in both eras; the exit fill (about 14:59) is before settlement; P(prior C) is the 15:00 CT bar close, which is before the 15:15 settlement in 2010-06..2020-10-25 and at the settlement minute from 2020-10-26. Group day close 15:00 CT both eras (settlement table day_close_calendar).",
+      "exclusion": null
+    },
+    {
+      "trigger_id": "E20H6-T2",
+      "cluster_or_stage": "E.20 Part B (H6)",
+      "member_id": "E20H6-T2 (prompt name E20-H6-T2; registration r004-E20H6, label E20H6)",
+      "module": "h6_rod/signal.py (compute_facts, T2 schedule); clock h6_rod/clock.py; literals h6_rod/constants.py (T2_WARMUP_TRADE_DATES 60, T2_LOOKBACK_ELIGIBLE 60)",
+      "freeze_file": "reports/stage_e20_h6_freeze.json (sha256 22e606f0b74532e267a4155d93e295702ff86f6e8f4143236882f3c2f230e795; commit 498fd05)",
+      "traded_root": "NQ (price path)",
+      "vehicle": "MNQ, one lot",
+      "w_ext_root": "NQ",
+      "signal_legs": [],
+      "definition_verbatim": [
+        "C, P(C-30), P(prior C), r_ROD and Eligible date exactly as in E20H6-T1 (prereg section 3).",
+        "T2: eligible dates where |r_ROD| exceeds the median of |r_ROD| over the previous 60 eligible trade dates (Rosa, J. Futures Markets 2022, the threshold form).",
+        "T2's threshold for date d: the median of |r_ROD| over the 60 most recent eligible dates before d (within the ranges of section 2); d is a T2 date iff |r_ROD(d)| > that median (strictly).",
+        "T2 warm-up: the 60 equity trade dates before 2020-06-01 (their r_ROD values may feed T2's median for verdict dates; nothing else). For a verdict date d, T2's threshold uses only eligible dates in [the 60th trade date before 2020-06-01, d). If fewer than 60 eligible dates lie there, d has no T2 threshold and no T2 trade (counted \"t2_warmup\")."
+      ],
+      "trigger_event": "eligible date with |r_ROD| strictly above the median |r_ROD| of the 60 most recent eligible dates before it",
+      "decision_time_ct": "14:30 CT on a normal day (close of the bar opening 14:29); C-30 of the early close on a shortened day; plus 60 prior eligible dates' r_ROD",
+      "side_rule": "Entry: market intent on the bar ending at C-30, in sign(r_ROD) (buy if r_ROD > 0, sell if < 0), one MNQ, filling at the next bar's open (C-30).",
+      "side_kind": "momentum",
+      "side_kind_note": "same signal as T1, filtered by magnitude",
+      "intraday_hold": "C-30 open fill to the fill after the first bar at or after C-2 (about 29 minutes); F 15:08 CT backstop",
+      "exit_rule_verbatim": "Exit: market intent on the first present bar at or after C-2 (opening at or after C-2; 14:58 on a normal day), filling at the next bar's open. The engine's forced flatten at F (15:08 CT on a normal day) and its D9.7 price-limit exit are backstops.",
+      "expected_events_per_year": "about half of eligible dates by construction (above a trailing median). Reported counts: verdict window 471 scheduled (484 t2_not_above_median, 1 t2_warmup, 15 instrument_change), 446 trades (4 engine_flatten_window, 21 engine_roll_blackout refused); overlap 104 trades (reports/stage_e20_H6_result.json tests.T2, overlap.T2)",
+      "inputs_needed": [
+        {"input": "NQ 1-minute bars (own root only)", "covers_w_ext": true, "covers_w_cf": true, "path": "as E20H6-T1", "stated_range": "ext2010 2010-06-07..2019-04-30 (E.16 window from 2010-07-01); step2 2019-05-06..2024-02-29"},
+        {"input": "equity group calendar", "covers_w_ext": true, "covers_w_cf": true, "path": "data/calendars/hist2010/equity.json; data/calendars/equity.py", "stated_range": "2010-06-01..2019-05-31; 2019-05-01..2026-06-19"},
+        {"input": "Topstep early-close lead (engine backstop)", "covers_w_ext": false, "covers_w_cf": true, "path": "rules/sessions.py TOPSTEP_EARLY_CLOSE_LEAD", "stated_range": "years 2019..2026 only"},
+        {"input": "D8 release calendar (engine input)", "covers_w_ext": false, "covers_w_cf": true, "path": "reports/stage_e2b_release_calendar.json; W_ext reports/stage_e14_cal_releases.json", "stated_range": "2019-05-01..2026-06-21; 2010-06-01..2019-05-31 FOMC/NGS/WPSR only (no CPI found)"},
+        {"input": "price-limit table (engine input)", "covers_w_ext": false, "covers_w_cf": true, "path": "rules/price_limits.py", "stated_range": "from 2019-05-01"},
+        {"input": "roll splices and blackout dates", "covers_w_ext": true, "covers_w_cf": true, "path": "data.stage_e_bars.splices_and_blackout (derived per store)", "stated_range": "derived"}
+      ],
+      "stages_read": [
+        {"stage": "E.20 (H6 registered test, run once)", "window_dates": "2020-06-01..2024-02-29; warm-up r_ROD values only from 2020-03-06 (t2_lookback_first)", "purpose": "confirmation", "purpose_note": "single registered one-shot test against a fixed pass bar", "source": "reports/stage_e20_prereg_H6.md sections 2, 3, 5; reports/stage_e20_H6_result.json windows.verdict.t2_lookback_first; reports/E.20_RETURN.md Part B"},
+        {"stage": "E.20 (H6 descriptive overlap)", "window_dates": "2019-05-06..2020-05-29 (threshold from eligible dates since 2019-05-06 only)", "purpose": "other", "purpose_note": "descriptive only, never in the verdict: T2 104 trades, Sharpe 0.64", "source": "reports/stage_e20_prereg_H6.md section 2; reports/E.20_RETURN.md Part B"},
+        {"stage": "E.20 Part C search (excluded ML search; related feature rod_absratio, not this rule)", "window_dates": "2019-05-06..2024-02-29", "purpose": "other", "purpose_note": "rod_absratio(t) = |rod_ret(t)| / median(|rod_ret|) over the previous 60 trade dates, at t4 14:08 CT equity; screen FAIL", "source": "reports/stage_e20_plan.md lines 168-171; reports/E.20_RETURN.md Part C"}
+      ],
+      "w_ext_read_by_this_rule": "none found (E.20_RETURN.md section 7 item 2; H6 guard prereg section 9)",
+      "tier": "n/a",
+      "verdicts": ["FAIL (E.20_RETURN.md section 1: 'T2 (|r_ROD| above its 60-date median): FAIL. 446 trades; gross -3.27 ticks (-0.35 bp), net -7.35 (-1.11 bp); t_B -0.95, p 0.83; Sharpe -0.48.')", "No Holm rejection (m = 3, 0.025); VERIFIED WITH NOTES"],
+      "settlement_note": "as E20H6-T1: NQ settlement 15:15 CT to 2020-10-25, 15:00 CT from 2020-10-26 (reports/stage_e16_settlement.json); decision 14:30 CT is before it.",
+      "exclusion": null
+    },
+    {
+      "trigger_id": "E20H6-T3",
+      "cluster_or_stage": "E.20 Part B (H6)",
+      "member_id": "E20H6-T3 (prompt name E20-H6-T3; registration r004-E20H6, label E20H6)",
+      "module": "h6_rod/signal.py (T3 schedule); h6_rod/gex.py (GEX CSV load); h6_rod/constants.py (GEX_CSV_REL, GEX_CSV_SHA256)",
+      "freeze_file": "reports/stage_e20_h6_freeze.json (sha256 22e606f0b74532e267a4155d93e295702ff86f6e8f4143236882f3c2f230e795; pins gex_sha256 51bef9ea...)",
+      "traded_root": "NQ (price path)",
+      "vehicle": "MNQ, one lot",
+      "w_ext_root": "NQ",
+      "signal_legs": ["SqueezeMetrics GEX (S&P 500 options gamma exposure, dollars; previous trade date's row)"],
+      "definition_verbatim": [
+        "C, P(C-30), P(prior C), r_ROD and Eligible date exactly as in E20H6-T1 (prereg section 3).",
+        "T3: eligible dates whose previous trade date's GEX is negative (Baltussen et al.: momentum present when NGE is negative).",
+        "T3 (if registered): d is a T3 date iff the GEX value in the row dated the previous equity trade date of d is negative (strictly). A previous trade date with no GEX row gives no T3 trade (counted \"gex_missing\"). The row for date x is published after the cash close of x (E.14's timing record: Last-Modified 16:57 CT on the row's date), before d's entry. The day after a futures-only holiday session (Memorial Day, Labor Day, MLK Day, Presidents' Day, Juneteenth, Independence Day, Thanksgiving, Good Friday) has no GEX row for its previous trade date, so it is \"gex_missing\""
+      ],
+      "trigger_event": "eligible date whose previous equity trade date's GEX row is strictly negative",
+      "decision_time_ct": "14:30 CT on a normal day (close of the bar opening 14:29); GEX row of the previous trade date, published about 16:57 CT that date",
+      "side_rule": "Entry: market intent on the bar ending at C-30, in sign(r_ROD) (buy if r_ROD > 0, sell if < 0), one MNQ, filling at the next bar's open (C-30).",
+      "side_kind": "momentum",
+      "side_kind_note": "same signal as T1, conditioned on prior-day negative GEX",
+      "intraday_hold": "C-30 open fill to the fill after the first bar at or after C-2 (about 29 minutes); F 15:08 CT backstop",
+      "exit_rule_verbatim": "Exit: market intent on the first present bar at or after C-2 (opening at or after C-2; 14:58 on a normal day), filling at the next bar's open. The engine's forced flatten at F (15:08 CT on a normal day) and its D9.7 price-limit exit are backstops.",
+      "expected_events_per_year": "days after a negative-GEX day. Reported counts: 148 GEX < 0 rows dated 2020-05-29..2024-02-28 (944 rows) and 42 dated 2019-05-03..2020-05-28 (prereg section 6); verdict 144 scheduled (27 gex_missing, 785 gex_not_negative, 15 instrument_change), 134 trades (4 engine_flatten_window, 6 engine_roll_blackout); overlap 39 trades (reports/stage_e20_H6_result.json tests.T3, overlap.T3)",
+      "inputs_needed": [
+        {"input": "NQ 1-minute bars (own root only)", "covers_w_ext": true, "covers_w_cf": true, "path": "as E20H6-T1", "stated_range": "ext2010 2010-06-07..2019-04-30 (E.16 window from 2010-07-01); step2 2019-05-06..2024-02-29"},
+        {"input": "SqueezeMetrics GEX daily CSV", "covers_w_ext": false, "covers_w_cf": true, "path": "reports/stage_e14_briefs/gex/DIX.csv (sha256 51bef9ea5ee13af2f72b14f4198de57eeb865a36c1d3e244a3f64b3603e9ce62; out of git, DO_NOT_COMMIT.txt)", "stated_range": "2011-05-02..2026-10-02, 3,880 rows (prereg section 7): covers W_ext only from 2011-05-02, not 2010-06..2011-04 (partial); data/calendars/hist2010/equity.json lists a 2011-05-03..2019-04-30 window (2064 trade dates). Terms: cleared 'for one registered test' by ProductReader-NQ-OpusHigh, product_NQ.md section 4c: 'Using a file the page offers, once, for one registered test is not systematic retrieval' (prereg section 7); no ruling found for a further test"},
+        {"input": "equity group calendar", "covers_w_ext": true, "covers_w_cf": true, "path": "data/calendars/hist2010/equity.json; data/calendars/equity.py", "stated_range": "2010-06-01..2019-05-31; 2019-05-01..2026-06-19"},
+        {"input": "Topstep early-close lead (engine backstop)", "covers_w_ext": false, "covers_w_cf": true, "path": "rules/sessions.py TOPSTEP_EARLY_CLOSE_LEAD", "stated_range": "years 2019..2026 only"},
+        {"input": "D8 release calendar (engine input)", "covers_w_ext": false, "covers_w_cf": true, "path": "reports/stage_e2b_release_calendar.json; W_ext reports/stage_e14_cal_releases.json", "stated_range": "2019-05-01..2026-06-21; 2010-06-01..2019-05-31 FOMC/NGS/WPSR only (no CPI found)"},
+        {"input": "price-limit table (engine input)", "covers_w_ext": false, "covers_w_cf": true, "path": "rules/price_limits.py", "stated_range": "from 2019-05-01"},
+        {"input": "roll splices and blackout dates", "covers_w_ext": true, "covers_w_cf": true, "path": "data.stage_e_bars.splices_and_blackout (derived per store)", "stated_range": "derived"}
+      ],
+      "stages_read": [
+        {"stage": "E.20 (H6 registered test, run once)", "window_dates": "2020-06-01..2024-02-29 (GEX rows 2020-05-29..2024-02-28)", "purpose": "confirmation", "purpose_note": "single registered one-shot test against a fixed pass bar", "source": "reports/stage_e20_prereg_H6.md sections 3, 5, 7; reports/E.20_RETURN.md Part B"},
+        {"stage": "E.20 (H6 pre-freeze GEX sign count; no price read)", "window_dates": "GEX rows 2019-05-03..2024-02-28", "purpose": "power", "purpose_note": "lead counted GEX < 0 rows (148 in 2020-05-29..2024-02-28; 42 in 2019-05-03..2020-05-28) at 10:56:48 PDT 2026-10-11, before any NQ bar was read", "source": "reports/stage_e20_prereg_H6.md section 6"},
+        {"stage": "E.20 (H6 descriptive overlap)", "window_dates": "2019-05-06..2020-05-29", "purpose": "other", "purpose_note": "descriptive only, never in the verdict: T3 39 trades, Sharpe 1.13", "source": "reports/stage_e20_prereg_H6.md section 2; reports/E.20_RETURN.md Part B"},
+        {"stage": "E.14 (GEX CSV fetched for C1)", "window_dates": "file 2011-05-02..2026-10-02 (fetched 2026-10-05T07:43:01Z)", "purpose": "other", "purpose_note": "source of the GEX copy; E.14's use of GEX values is outside this assignment (CDE: E.14 C1, excluded as ML)", "source": "reports/stage_e20_prereg_H6.md section 7"}
+      ],
+      "w_ext_read_by_this_rule": "none found (E.20_RETURN.md section 7 item 2; H6 guard prereg section 9)",
+      "tier": "n/a",
+      "verdicts": ["FAIL (E.20_RETURN.md section 1: 'T3 (previous day's GEX negative; ran, the source cleared under its terms): FAIL. 134 trades; gross -3.52 ticks (-0.52 bp), net -7.60 (-1.33 bp); t_B -0.38, p 0.65; Sharpe -0.19.')", "No Holm rejection (m = 3, 0.025); VERIFIED WITH NOTES"],
+      "settlement_note": "as E20H6-T1: NQ settlement 15:15 CT to 2020-10-25, 15:00 CT from 2020-10-26 (reports/stage_e16_settlement.json); decision 14:30 CT is before it; the GEX row used is the previous date's, published about 16:57 CT that date.",
+      "exclusion": null
+    }
+  ],
+  "excluded": [],
+  "notes_for_lead": [
+    "Name collision: 'H6' also labels the D.1d/D.1f MES class-C7 trial 'H6 prior-close location follow-through' (progress.md lines 1671, 2231) and CP3's source; that is a different rule and belongs to the CDE assignment, not this one.",
+    "Close relative not in this assignment: E16-H1 (settlement-window momentum, the CP1 port with 'the rest-of-day return instead of the first half hour', reports/E.16_RETURN.md line 224) pooled over 27 markets incl. NQ on 2010-2024 windows, FAIL in E.17 (reports/E.17_RETURN.md line 13). It is CDE's (E.16 H1..H5).",
+    "Exclusion list check: H6 is a frozen plain rule (not ML, not an E.20 search configuration, not H2/H3). Its trigger needs only NQ bars and the equity calendar (owned on both windows); T3 additionally needs GEX, which starts 2011-05-02 (no W_ext coverage for 2010-06..2011-04) and whose terms ruling covers one registered test. Whether that makes T3 'data not owned for both windows' is the lead's call; no exclusion is entered here.",
+    "Engine-only inputs (Topstep early-close lead, CPI rows, price-limit table) have no 2010-2018 coverage in the paths checked; they are backstops of the frozen intraday engine, not part of the trigger definition.",
+    "E.21 and E.22 do not read H6 (grep of reports/E.21_RETURN.md, reports/E.22_RETURN.md, stage_e21/e22 STATE for E20H6, r_ROD, rest-of-day, C-30: only registry lines and the E.20 H6 freeze no longer verifying under harness v13, E.22_RETURN.md lines 236-238)."
+  ],
+  "sources_read": [
+    "reports/stage_e23_briefs/brief_inventory.md (full)",
+    "reports/stage_e20_prereg_H6.md (full, 206 lines)",
+    "reports/stage_e20_h6_freeze.json (created_pdt, pins, files list paths and sha256 prefixes)",
+    "reports/E.20_RETURN.md lines 1-22, 270-320, 550-575; grep for H6",
+    "reports/stage_e20_H6_result.json (fields eligibility, windows, verdicts, release_calendar, gex_load, tests.T*.scheduled_entries/schedule_exclusions/entry_outcomes.counts/n_trades, overlap.T*)",
+    "h6_rod/signal.py lines 1-60 (docstring, DateFacts)",
+    "h6_rod/constants.py (full, 113 lines)",
+    "reports/stage_e20_plan.md lines 36-46, 81-97, 160-172 (grep rod_ret, t4, window)",
+    "reports/stage_e20_dry_check_step6.md lines 1-25",
+    "reports/stage_e20_STATE.md (grep H6)",
+    "reports/stage_e21_STATE.md, reports/stage_e22_STATE.md, reports/E.21_RETURN.md, reports/E.22_RETURN.md (grep E20H6|H6|r_ROD|rest-of-day|C-30)",
+    "docs/STAGES.md lines 170-172, docs/DECISIONS.md lines 635-678, progress.md (grep H6)",
+    "docs/prompts/STAGE_E.23.md lines 30-70",
+    "reports/stage_e16_settlement.json (window, products.NQ settle/day_open/day_close_calendar/change_dates)",
+    "reports/stage_e17_run_manifest.json (stores.NQ)",
+    "reports/stage_e16_windows.json (products.NQ)",
+    "data/calendars/hist2010/equity.json (coverage, products, counts)",
+    "data/calendars/equity.py (grep for range; STAGE_WINDOW line 80)",
+    "reports/stage_e2b_release_calendar.json (coverage, known_gaps)",
+    "reports/stage_e14_cal_releases.json (coverage, release counts, date min/max)",
+    "reports/stage_e16_calendars.md lines 1-45",
+    "reports/stage_e21_briefs/lead_spec.md lines 10-35",
+    "base_rules/constants.py lines 95-117 (settlement, release paths)",
+    "base_rules/limits.py lines 1-12; base_rules/intraday.py lines 1-15; base_rules/common.py lines 70-80; base_rules/store.py line 16 (grep)",
+    "rules/sessions.py lines 36-38, 210-216, 315-321 (TOPSTEP_EARLY_CLOSE_LEAD)",
+    "rules/price_limits.py (grep: first period 2019-05-01)",
+    "multiday/constants.py (grep: ROOTS, T3_ROOTS)",
+    "reports/E.16_RETURN.md lines 218-232; reports/E.17_RETURN.md (grep H1)"
+  ],
+  "not_finished": [
+    "h6_rod/clock.py, h6_rod/gex.py and the rest of h6_rod/signal.py were not read line by line; the rule text is taken from the frozen prereg and the module docstrings, and counts from the result file.",
+    "reports/stage_e20_review_h6.md, reports/stage_e20_review.md and reports/stage_e20_briefs/product_NQ.md were not opened; the GEX terms ruling is quoted from prereg section 7."
+  ]
+}

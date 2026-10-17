@@ -1,0 +1,1406 @@
+{
+ "assignment": "K4",
+ "rows": [
+  {
+   "trigger_id": "K4-cp1-01 MCL",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-cp1-01",
+   "module": "strategy/members/k4/cp1.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "MCL",
+   "vehicle": "MCL (q_c 4)",
+   "w_ext_root": "CL",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the energy row (O 08:00, C 13:30; the clock comes from the frozen tables):\n- Signal s = sign(close of the bar at O+29 = 08:29 minus open of the trade date's first bar), in\n  vendor ticks. The first bar is the Globex open: the bar opening 17:00 CT on the calendar day\n  before d, carrying trade_date d (E.3-L-05). If that bar is missing there is no trade.\n- Both signal bars must be present and carry one instrument_id, else no trade (D6; E.3-L-06).\n  Zero signal: no trade.\n- Entry: market intent on the bar at C-31 = 12:59 (fills at the 13:00 open), buy if s > 0, sell\n  if s < 0; that exact bar only (S0.6, E.3-L-04).\n- Exit: market intent on the first present bar at or after C-2 = 13:28 (fills nominally at the\n  13:29 open), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its\n  D9.7 exit are the backstops; after either, the member sends nothing more that trade date.\n- Early halts are not tested here (a port follows D6: the engine's F governs, C line 85).\n- Release instants are not read: on FOMC days the engine's D9.5a guard moves the 13:00 fill.\nOne traded leg, q_c contracts (MCL 4, NG 1). No stop, no filter, no size rule beyond the spec.",
+   "trigger_event": "every trade date: sign of (close of 08:29 bar - open of the 17:00 CT Globex-open first bar); zero signal no trade",
+   "decision_time_ct": "12:59 (entry bar; signal fixed at 08:29)",
+   "side_rule": "Entry: market intent on the bar at C-31 = 12:59 (fills at the 13:00 open), buy if s > 0, sell if s < 0",
+   "side_kind": "momentum",
+   "side_kind_note": "side = sign of the trade date's move from the Globex open (prior calendar day 17:00 CT) to 08:29 close",
+   "intraday_hold": "13:00 to 13:29 CT, same trade date",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar at or after C-2 = 13:28 (fills nominally at the 13:29 open), resent while refused (S0.7, E.3-L-22).",
+   "expected_events_per_year": "every trade date with nonzero signal and both signal bars present (about 250 a year); counts reported: E.4 research 258 trips; E.5 confirmation 563 closed trips over 586 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    },
+    {
+     "input": "engine release calendar API_WSB rows (release_products maps API_WSB to CL, MCL; not NG)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (API_WSB 372 rows 2019-05-07..2026-06-16); W_ext: not found (stage_e14_cal_releases.json holds FOMC, NGS, WPSR only; reports/stage_e20_product_summary.md: 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not ... API')",
+     "stated_range": "2019-05-01..2026-06-21 only"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 258, mean +0.7996 ticks, daily t 0.347"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2021-07-12..2024-02-29 (S_MCL 2021-07-12)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 586, closed trips 563"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; MCL rows on CL bars)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_cp1_ret_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) cp1_ret (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (S_X 2019-05-06; 17 roots incl. CL, NG); backward 2010-2019 stores not read (no backward test)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md KEPT list; reports/E.20_RETURN.md summary ('Search screen: FAIL')",
+     "counts": "ML search features cp1_ret kept"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4 screen: fail, Tier B (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: source-overlap (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)",
+    "E.20 search screen: FAIL (reports/E.20_RETURN.md)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: before 13:30 (12:59); the hold 13:00-13:29 ends inside the 13:28-13:30 settlement window.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K4-cp1-01 NG",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-cp1-01",
+   "module": "strategy/members/k4/cp1.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "NG",
+   "vehicle": "NG (q_c 1)",
+   "w_ext_root": "NG",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the energy row (O 08:00, C 13:30; the clock comes from the frozen tables):\n- Signal s = sign(close of the bar at O+29 = 08:29 minus open of the trade date's first bar), in\n  vendor ticks. The first bar is the Globex open: the bar opening 17:00 CT on the calendar day\n  before d, carrying trade_date d (E.3-L-05). If that bar is missing there is no trade.\n- Both signal bars must be present and carry one instrument_id, else no trade (D6; E.3-L-06).\n  Zero signal: no trade.\n- Entry: market intent on the bar at C-31 = 12:59 (fills at the 13:00 open), buy if s > 0, sell\n  if s < 0; that exact bar only (S0.6, E.3-L-04).\n- Exit: market intent on the first present bar at or after C-2 = 13:28 (fills nominally at the\n  13:29 open), resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its\n  D9.7 exit are the backstops; after either, the member sends nothing more that trade date.\n- Early halts are not tested here (a port follows D6: the engine's F governs, C line 85).\n- Release instants are not read: on FOMC days the engine's D9.5a guard moves the 13:00 fill.\nOne traded leg, q_c contracts (MCL 4, NG 1). No stop, no filter, no size rule beyond the spec.",
+   "trigger_event": "every trade date: sign of (close of 08:29 bar - open of the 17:00 CT Globex-open first bar); zero signal no trade",
+   "decision_time_ct": "12:59 (entry bar; signal fixed at 08:29)",
+   "side_rule": "Entry: market intent on the bar at C-31 = 12:59 (fills at the 13:00 open), buy if s > 0, sell if s < 0",
+   "side_kind": "momentum",
+   "side_kind_note": "side = sign of the trade date's move from the Globex open (prior calendar day 17:00 CT) to 08:29 close",
+   "intraday_hold": "13:00 to 13:29 CT, same trade date",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar at or after C-2 = 13:28 (fills nominally at the 13:29 open), resent while refused (S0.7, E.3-L-22).",
+   "expected_events_per_year": "every trade date with nonzero signal and both signal bars present (about 250 a year); counts reported: E.4 research 257 trips; E.5 confirmation 1024 closed trips over 1070 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 257, mean -1.3700 ticks, daily t -1.011"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2019-05-06..2024-02-29 (S_NG 2019-05-06)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 1070, closed trips 1024"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; NG rows)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_cp1_ret_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) cp1_ret (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.17",
+     "window_dates": "NG 2010-07..2019-04 (ext2010 store 2010-06-07..2019-04-30)",
+     "purpose": "other",
+     "source": "reports/E.17_RETURN.md summary (C1 STOPPED at C10); reports/E.18_RETURN.md section 6 item 3 ('C1's stopped run (C10 counts) ... read these six stores')",
+     "counts": "C1 (NG ML replication) features cp1_ret on NG rows; stopped at guard C10, no T1/T2 statistic"
+    },
+    {
+     "stage": "E.18",
+     "window_dates": "NG 2010-07..2019-04 (W_ext)",
+     "purpose": "other",
+     "source": "reports/E.18_RETURN.md Step 5 (C10: 'every non-exempt feature live in E.12 applies')",
+     "counts": "C1b ML replication on NG; T1 814 trades / T2 627; FAIL"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (S_X 2019-05-06; 17 roots incl. CL, NG); backward 2010-2019 stores not read (no backward test)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md KEPT list; reports/E.20_RETURN.md summary ('Search screen: FAIL')",
+     "counts": "ML search features cp1_ret kept"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4 screen: fail, Tier B (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: source-overlap (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)",
+    "E.17 C1: STOPPED (C10) (reports/E.17_RETURN.md)",
+    "E.18 C1b-T1, C1b-T2: FAIL (reports/E.18_RETURN.md)",
+    "E.20 search screen: FAIL (reports/E.20_RETURN.md)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: before 13:30 (12:59); the hold 13:00-13:29 ends inside the 13:28-13:30 settlement window.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K4-cp2-01 MCL",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-cp2-01",
+   "module": "strategy/members/k4/cp2.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "MCL",
+   "vehicle": "MCL (q_c 4)",
+   "w_ext_root": "CL",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the energy row (O 08:00, C 13:30; the clock comes from the frozen tables):\n- Opening range: OR_high = max high, OR_low = min low of the present bars opening in\n  [O, O+15) = [08:00, 08:15) of CT date d. No range bar: no trade (E.3-L-08). No minimum bar\n  count and no instrument guard (D6 and B-H1 have none).\n- Buffer: 4 vendor ticks of the vehicle (MCL 4 x 0.01 = 0.04, NG 4 x 0.001 = 0.004), equal to\n  R-07's 4 ticks of the most active contract (K4-L-06). Compared in integer vendor ticks (S0.10).\n- Eligible bars: those opening in [O+15, C) = [08:15, 13:30) of CT date d; no entry from 13:30 on.\n- Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells;\n  a market intent on that bar. The first qualifying bar uses the trade date's one entry, whatever\n  the engine does with the intent (E.3-L-08).\n- Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the\n  present bars seen while the position is non-zero, from the bar after the entry decision bar; on\n  the 75th, a market intent closing the position (fills at the next open), resent while refused\n  (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2: the\n  template's C-2 exit is not part of CP2 (E.3-L-07). After an engine-forced exit (F, D9.7) the\n  member sends nothing more that trade date.\n- Early halts are not tested here (a port: the engine's F and entry skip govern, C line 85).\nOne traded leg, q_c contracts (MCL 4, NG 1).",
+   "trigger_event": "first bar opening in [08:15, 13:30) whose close >= OR_high + 4 ticks or <= OR_low - 4 ticks (OR = [08:00, 08:15))",
+   "decision_time_ct": "variable: the qualifying bar, 08:15..13:29",
+   "side_rule": "Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells; a market intent on that bar.",
+   "side_kind": "momentum",
+   "side_kind_note": "breakout direction of the trade-date price relative to the 08:00-08:15 range",
+   "intraday_hold": "75 present bars after the entry decision bar, or F (15:08 CT) if earlier",
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier.",
+   "expected_events_per_year": "at most one per trade date, on dates with a breakout (most trade dates); counts reported: E.4 research 269 trips; E.5 confirmation 585 closed trips over 586 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    },
+    {
+     "input": "engine release calendar API_WSB rows (release_products maps API_WSB to CL, MCL; not NG)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (API_WSB 372 rows 2019-05-07..2026-06-16); W_ext: not found (stage_e14_cal_releases.json holds FOMC, NGS, WPSR only; reports/stage_e20_product_summary.md: 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not ... API')",
+     "stated_range": "2019-05-01..2026-06-21 only"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 269, mean -7.5264 ticks, daily t -1.649"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2021-07-12..2024-02-29 (S_MCL 2021-07-12)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 586, closed trips 585"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; MCL rows on CL bars)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_cp2_range/cp2_brk_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) cp2_range, cp2_brk (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (S_X 2019-05-06; 17 roots incl. CL, NG); backward 2010-2019 stores not read (no backward test)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md KEPT list; reports/E.20_RETURN.md summary ('Search screen: FAIL')",
+     "counts": "ML search features cp2_range, cp2_brk kept"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4 screen: fail, Tier B (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: source-overlap (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)",
+    "E.20 search screen: FAIL (reports/E.20_RETURN.md)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: decision before 13:30 (latest 13:29); the 75-minute hold can run past the 13:30 settlement up to F 15:08.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K4-cp2-01 NG",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-cp2-01",
+   "module": "strategy/members/k4/cp2.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "NG",
+   "vehicle": "NG (q_c 1)",
+   "w_ext_root": "NG",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the energy row (O 08:00, C 13:30; the clock comes from the frozen tables):\n- Opening range: OR_high = max high, OR_low = min low of the present bars opening in\n  [O, O+15) = [08:00, 08:15) of CT date d. No range bar: no trade (E.3-L-08). No minimum bar\n  count and no instrument guard (D6 and B-H1 have none).\n- Buffer: 4 vendor ticks of the vehicle (MCL 4 x 0.01 = 0.04, NG 4 x 0.001 = 0.004), equal to\n  R-07's 4 ticks of the most active contract (K4-L-06). Compared in integer vendor ticks (S0.10).\n- Eligible bars: those opening in [O+15, C) = [08:15, 13:30) of CT date d; no entry from 13:30 on.\n- Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells;\n  a market intent on that bar. The first qualifying bar uses the trade date's one entry, whatever\n  the engine does with the intent (E.3-L-08).\n- Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the\n  present bars seen while the position is non-zero, from the bar after the entry decision bar; on\n  the 75th, a market intent closing the position (fills at the next open), resent while refused\n  (E.3-L-22). Or the engine's forced flatten at F if earlier. There is NO exit at C-2: the\n  template's C-2 exit is not part of CP2 (E.3-L-07). After an engine-forced exit (F, D9.7) the\n  member sends nothing more that trade date.\n- Early halts are not tested here (a port: the engine's F and entry skip govern, C line 85).\nOne traded leg, q_c contracts (MCL 4, NG 1).",
+   "trigger_event": "first bar opening in [08:15, 13:30) whose close >= OR_high + 4 ticks or <= OR_low - 4 ticks (OR = [08:00, 08:15))",
+   "decision_time_ct": "variable: the qualifying bar, 08:15..13:29",
+   "side_rule": "Entry: the first eligible bar whose close >= OR_high + 4 ticks buys, <= OR_low - 4 ticks sells; a market intent on that bar.",
+   "side_kind": "momentum",
+   "side_kind_note": "breakout direction of the trade-date price relative to the 08:00-08:15 range",
+   "intraday_hold": "75 present bars after the entry decision bar, or F (15:08 CT) if earlier",
+   "exit_rule_verbatim": "Exit: 75 minutes after the fill, counted as the MES module counts it (B-H1; E.3-L-07): the present bars seen while the position is non-zero, from the bar after the entry decision bar; on the 75th, a market intent closing the position (fills at the next open), resent while refused (E.3-L-22). Or the engine's forced flatten at F if earlier.",
+   "expected_events_per_year": "at most one per trade date, on dates with a breakout (most trade dates); counts reported: E.4 research 268 trips; E.5 confirmation 1061 closed trips over 1070 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 268, mean -2.4909 ticks, daily t -0.976"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2019-05-06..2024-02-29 (S_NG 2019-05-06)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 1070, closed trips 1061"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; NG rows)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_cp2_range/cp2_brk_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) cp2_range, cp2_brk (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.17",
+     "window_dates": "NG 2010-07..2019-04 (ext2010 store 2010-06-07..2019-04-30)",
+     "purpose": "other",
+     "source": "reports/E.17_RETURN.md summary (C1 STOPPED at C10); reports/E.18_RETURN.md section 6 item 3 ('C1's stopped run (C10 counts) ... read these six stores')",
+     "counts": "C1 (NG ML replication) features cp2_range, cp2_brk on NG rows; stopped at guard C10, no T1/T2 statistic"
+    },
+    {
+     "stage": "E.18",
+     "window_dates": "NG 2010-07..2019-04 (W_ext)",
+     "purpose": "other",
+     "source": "reports/E.18_RETURN.md Step 5 (C10: 'every non-exempt feature live in E.12 applies')",
+     "counts": "C1b ML replication on NG; T1 814 trades / T2 627; FAIL"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (S_X 2019-05-06; 17 roots incl. CL, NG); backward 2010-2019 stores not read (no backward test)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md KEPT list; reports/E.20_RETURN.md summary ('Search screen: FAIL')",
+     "counts": "ML search features cp2_range, cp2_brk kept"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4 screen: fail, Tier B (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: source-overlap (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)",
+    "E.17 C1: STOPPED (C10) (reports/E.17_RETURN.md)",
+    "E.18 C1b-T1, C1b-T2: FAIL (reports/E.18_RETURN.md)",
+    "E.20 search screen: FAIL (reports/E.20_RETURN.md)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: decision before 13:30 (latest 13:29); the 75-minute hold can run past the 13:30 settlement up to F 15:08.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K4-cp3-01 MCL",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-cp3-01",
+   "module": "strategy/members/k4/cp3.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "MCL",
+   "vehicle": "MCL (q_c 4)",
+   "w_ext_root": "CL",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the energy row (O 08:00, C 13:30; the clock comes from the frozen tables):\n- Daily bar of trade date d, from its bars on CT date d opening in [O, C) = [08:00, 13:30):\n  H / L = max high / min low over the present bars, C_d = close of the bar at C-1 = 13:29.\n  (O_d, the 08:00 open, enters no condition and is not read; the 08:00 bar must exist.)\n- Complete day (Family H): the 08:00 and 13:29 bars exist, no bar of CT date d carries\n  early_halt_ct, and all bars in [08:00, 13:30) carry one instrument_id. It is finalised when a\n  bar of a later trade date arrives, so day d's own bar never enters day d's condition.\n- d-1 = the most recent COMPLETE daily bar of an earlier trade date; incomplete days are dropped\n  (E.3-L-09). None yet (warm-up, the window's start): no trade.\n- On the bar at O = 08:00 of CT date d (that exact bar, S0.6): no trade if it carries\n  early_halt_ct (E.3-L-09, E.3-L-11); instrument guard: d-1's instrument_id must be the 08:00\n  bar's; Range = H - L of d-1 in ticks must be > 0; CLV = (C - L) / (H - L) in ticks,\n  CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade. The cuts are compared exactly in\n  integers (E.3-L-19). Market intent on the 08:00 bar (fills at the 08:01 open).\n- Exit: market intent on the first present bar at or after C-2 = 13:28 (fills nominally at the\n  13:29 open), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F\n  and its D9.7 exit are the backstops; after either, nothing more that trade date.\nOne traded leg, q_c contracts (MCL 4, NG 1).",
+   "trigger_event": "every trade date whose prior complete day's CLV >= 0.8 or <= 0.2",
+   "decision_time_ct": "08:00 (entry bar; uses d-1's complete daily bar)",
+   "side_rule": "CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade.",
+   "side_kind": "other",
+   "side_kind_note": "side = location of the prior complete day's 13:29 close in its 08:00-13:30 range (high: buy, low: sell); not the sign of a move",
+   "intraday_hold": "08:01 to 13:29 CT",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar at or after C-2 = 13:28 (fills nominally at the 13:29 open), resent while refused (S0.7, E.3-L-10, E.3-L-22).",
+   "expected_events_per_year": "trade dates with prior-day CLV in the top or bottom 20% of the range; counts reported: E.4 research 105 trips; E.5 confirmation 280 closed trips over 586 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    },
+    {
+     "input": "engine release calendar API_WSB rows (release_products maps API_WSB to CL, MCL; not NG)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (API_WSB 372 rows 2019-05-07..2026-06-16); W_ext: not found (stage_e14_cal_releases.json holds FOMC, NGS, WPSR only; reports/stage_e20_product_summary.md: 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not ... API')",
+     "stated_range": "2019-05-01..2026-06-21 only"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 105, mean -0.6230 ticks, daily t -0.130"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2021-07-12..2024-02-29 (S_MCL 2021-07-12)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 586, closed trips 280"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; MCL rows on CL bars)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_cp3_clv_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) cp3_clv (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (S_X 2019-05-06; 17 roots incl. CL, NG); backward 2010-2019 stores not read (no backward test)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md KEPT list; reports/E.20_RETURN.md summary ('Search screen: FAIL')",
+     "counts": "ML search features cp3_clv kept"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4 screen: fail, Tier B (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: source-overlap (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)",
+    "E.20 search screen: FAIL (reports/E.20_RETURN.md)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: before 13:30 (08:00); exit fill 13:29 inside the settlement window.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K4-cp3-01 NG",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-cp3-01",
+   "module": "strategy/members/k4/cp3.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "NG",
+   "vehicle": "NG (q_c 1)",
+   "w_ext_root": "NG",
+   "signal_legs": [],
+   "definition_verbatim": "Rule, instantiated with the energy row (O 08:00, C 13:30; the clock comes from the frozen tables):\n- Daily bar of trade date d, from its bars on CT date d opening in [O, C) = [08:00, 13:30):\n  H / L = max high / min low over the present bars, C_d = close of the bar at C-1 = 13:29.\n  (O_d, the 08:00 open, enters no condition and is not read; the 08:00 bar must exist.)\n- Complete day (Family H): the 08:00 and 13:29 bars exist, no bar of CT date d carries\n  early_halt_ct, and all bars in [08:00, 13:30) carry one instrument_id. It is finalised when a\n  bar of a later trade date arrives, so day d's own bar never enters day d's condition.\n- d-1 = the most recent COMPLETE daily bar of an earlier trade date; incomplete days are dropped\n  (E.3-L-09). None yet (warm-up, the window's start): no trade.\n- On the bar at O = 08:00 of CT date d (that exact bar, S0.6): no trade if it carries\n  early_halt_ct (E.3-L-09, E.3-L-11); instrument guard: d-1's instrument_id must be the 08:00\n  bar's; Range = H - L of d-1 in ticks must be > 0; CLV = (C - L) / (H - L) in ticks,\n  CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade. The cuts are compared exactly in\n  integers (E.3-L-19). Market intent on the 08:00 bar (fills at the 08:01 open).\n- Exit: market intent on the first present bar at or after C-2 = 13:28 (fills nominally at the\n  13:29 open), resent while refused (S0.7, E.3-L-10, E.3-L-22). The engine's forced flatten at F\n  and its D9.7 exit are the backstops; after either, nothing more that trade date.\nOne traded leg, q_c contracts (MCL 4, NG 1).",
+   "trigger_event": "every trade date whose prior complete day's CLV >= 0.8 or <= 0.2",
+   "decision_time_ct": "08:00 (entry bar; uses d-1's complete daily bar)",
+   "side_rule": "CLV >= 0.8 buys, CLV <= 0.2 sells (non-strict), else no trade.",
+   "side_kind": "other",
+   "side_kind_note": "side = location of the prior complete day's 13:29 close in its 08:00-13:30 range (high: buy, low: sell); not the sign of a move",
+   "intraday_hold": "08:01 to 13:29 CT",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar at or after C-2 = 13:28 (fills nominally at the 13:29 open), resent while refused (S0.7, E.3-L-10, E.3-L-22).",
+   "expected_events_per_year": "trade dates with prior-day CLV in the top or bottom 20% of the range; counts reported: E.4 research 114 trips; E.5 confirmation 455 closed trips over 1070 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 114, mean -4.4076 ticks, daily t -1.126"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2019-05-06..2024-02-29 (S_NG 2019-05-06)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 1070, closed trips 455"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; NG rows)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_cp3_clv_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) cp3_clv (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.17",
+     "window_dates": "NG 2010-07..2019-04 (ext2010 store 2010-06-07..2019-04-30)",
+     "purpose": "other",
+     "source": "reports/E.17_RETURN.md summary (C1 STOPPED at C10); reports/E.18_RETURN.md section 6 item 3 ('C1's stopped run (C10 counts) ... read these six stores')",
+     "counts": "C1 (NG ML replication) features cp3_clv on NG rows; stopped at guard C10, no T1/T2 statistic"
+    },
+    {
+     "stage": "E.18",
+     "window_dates": "NG 2010-07..2019-04 (W_ext)",
+     "purpose": "other",
+     "source": "reports/E.18_RETURN.md Step 5 (C10: 'every non-exempt feature live in E.12 applies')",
+     "counts": "C1b ML replication on NG; T1 814 trades / T2 627; FAIL"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (S_X 2019-05-06; 17 roots incl. CL, NG); backward 2010-2019 stores not read (no backward test)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md KEPT list; reports/E.20_RETURN.md summary ('Search screen: FAIL')",
+     "counts": "ML search features cp3_clv kept"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4 screen: fail, Tier B (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: source-overlap (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)",
+    "E.17 C1: STOPPED (C10) (reports/E.17_RETURN.md)",
+    "E.18 C1b-T1, C1b-T2: FAIL (reports/E.18_RETURN.md)",
+    "E.20 search screen: FAIL (reports/E.20_RETURN.md)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: before 13:30 (08:00); exit fill 13:29 inside the settlement window.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K4-ngpre-01 NG",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-ngpre-01",
+   "module": "strategy/members/k4/ngpre.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "NG",
+   "vehicle": "NG (q_c 1)",
+   "w_ext_root": "NG",
+   "signal_legs": [],
+   "definition_verbatim": "NG only (q_c 1). On every EC-NGS release date of _releases.NGS (every calendar NGS row less\nsection 11's drops, K4-L-03), with T = the release instant in CT (K4-L-02: 09:30 for 10:30 ET,\nThursday standard or Friday exception; 11:00 for 12:00 ET, Wednesday or Monday exception):\n- entry: SELL, market intent on the bar at T - 91 (standard 07:59), filling at the T - 90 open\n  (08:00); a missing entry bar: no trade that date (S0.6);\n- exit: market intent on the bar at T + 29 (standard 09:59), filling at the T + 30 open (10:00);\n  a missing exit bar: the first later present bar (S0.7);\n- no entry when the entry bar carries early_halt_ct (S0.8). The only bar read at or before the\n  entry is the entry bar, so C4's instrument guard holds by construction (S0.9). No return is\n  computed, so C10 does not apply.\nA date not in the table is not traded.",
+   "trigger_event": "every EC-NGS storage release date in _releases.NGS",
+   "decision_time_ct": "T - 91 (07:59 for a 09:30 CT release; 09:29 for an 11:00 CT release)",
+   "side_rule": "entry: SELL, market intent on the bar at T - 91 (standard 07:59), filling at the T - 90 open (08:00)",
+   "side_kind": "calendar",
+   "side_kind_note": "always short",
+   "intraday_hold": "T-90 to T+30 (standard 08:00 to 10:00 CT)",
+   "exit_rule_verbatim": "exit: market intent on the bar at T + 29 (standard 09:59), filling at the T + 30 open (10:00); a missing exit bar: the first later present bar (S0.7)",
+   "expected_events_per_year": "weekly NGS releases (about 52 a year); counts reported: E.4 research 50 trips; E.5 confirmation 198 closed trips over 1070 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    },
+    {
+     "input": "NGS (EIA weekly storage) release table",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: strategy/members/k4/_releases.py NGS (less DROPPED_NGS, DROPPED_NGS_CONFIRMATION); W_ext: reports/stage_e14_cal_releases.json release NGS (no frozen-module table or C9 drop check built for 2010-2019)",
+     "stated_range": "_releases.NGS 367 rows, calendar 2019-05-01..2026-06-21, confirmation-window drops checked 2019-05-06..2024-02-29 (E.5: 252 releases, 5 dropped); E.14 NGS 470 rows 2010-06-01..2019-05-31, all evidence official"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 50, mean +3.2277 ticks, daily t 1.814"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2019-05-06..2024-02-29 (S_NG 2019-05-06)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 1070, closed trips 198"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; NG rows)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_k4_ngpre_mto/k4_ngpre_msince_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) k4_ngpre_mto, k4_ngpre_msince (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.17",
+     "window_dates": "NG 2010-07..2019-04 (ext2010 store 2010-06-07..2019-04-30)",
+     "purpose": "other",
+     "source": "reports/E.17_RETURN.md summary (C1 STOPPED at C10); reports/E.18_RETURN.md section 6 item 3 ('C1's stopped run (C10 counts) ... read these six stores')",
+     "counts": "C1 (NG ML replication) features k4_ngpre_mto, k4_ngpre_msince on NG rows; stopped at guard C10, no T1/T2 statistic"
+    },
+    {
+     "stage": "E.18",
+     "window_dates": "NG 2010-07..2019-04 (W_ext)",
+     "purpose": "other",
+     "source": "reports/E.18_RETURN.md Step 5 (C10: 'every non-exempt feature live in E.12 applies')",
+     "counts": "C1b ML replication on NG; T1 814 trades / T2 627; FAIL"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (S_X 2019-05-06; 17 roots incl. CL, NG); backward 2010-2019 stores not read (no backward test)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md KEPT list; reports/E.20_RETURN.md summary ('Search screen: FAIL')",
+     "counts": "ML search features k4_ngpre_mto, k4_ngpre_msince kept"
+    }
+   ],
+   "tier": "A",
+   "verdicts": [
+    "E.4 screen: pass, Tier A (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: calendar partly unverified (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.5 Holm (K = 9): 'p 0.5375, no'; chain 'no edge' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)",
+    "E.17 C1: STOPPED (C10) (reports/E.17_RETURN.md)",
+    "E.18 C1b-T1, C1b-T2: FAIL (reports/E.18_RETURN.md)",
+    "E.20 search screen: FAIL (reports/E.20_RETURN.md)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: before 13:30.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K4-apipre-01 MCL",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-apipre-01",
+   "module": "strategy/members/k4/apipre.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "MCL",
+   "vehicle": "MCL (q_c 4)",
+   "w_ext_root": "CL",
+   "signal_legs": [],
+   "definition_verbatim": "MCL only (q_c 4). Event set (K4-L-04): the Wednesdays W of the standard WPSR rows of\n_releases.WPSR (a Wednesday at 10:30 ET, not an exception; section 11's drops already out) whose\nTuesday W-1 is in _calendar.ENERGY_FULL_SESSIONS (K4-L-13: a Tuesday outside that table is not a\nfull session), whose Monday W-2 is not in _releases.FEDERAL_MONDAY_HOLIDAYS, and that are not in\n_releases.API_DROPPED_WEEKS. The API bulletin and the calendar's API rows are never read.\n- signal: R_API = ticks(close of the 15:39 bar) - ticks(close of the 15:24 bar), both on CT date\n  W-1 (the Tuesday's trade date, after F and the 13:30 settlement); R_API = 0: no trade;\n- guard (S0.9): the 15:24 and 15:39 bars of W-1 and the 07:29 bar of W present and carrying one\n  instrument_id, else no trade;\n- entry: market intent on the bar at 07:29 of W, side sign(R_API), filling at the 07:30 open;\n  no entry when that bar is missing (S0.6) or carries early_halt_ct (S0.8);\n- exit: market intent on the bar at 09:28 of W, filling at the 09:29 open, before the 09:30\n  release; a missing exit bar: the first later present bar (S0.7).\nThe Tuesday's two closes are the only state carried across a trade-date change; they are used\nonly on the trade date that follows that Tuesday on the calendar (W = W-1 + 1 day).",
+   "trigger_event": "standard WPSR Wednesdays W (Tuesday a full session, Monday not a federal holiday, not in API_DROPPED_WEEKS) with R_API != 0",
+   "decision_time_ct": "07:29 of W (entry bar; signal from W-1's 15:24 and 15:39 closes)",
+   "side_rule": "entry: market intent on the bar at 07:29 of W, side sign(R_API), filling at the 07:30 open",
+   "side_kind": "momentum",
+   "side_kind_note": "side = sign of the prior trade date W-1's 15:24-to-15:39 CT move (after W-1's settlement and F), not a move on the entry date",
+   "intraday_hold": "07:30 to 09:29 CT on W",
+   "exit_rule_verbatim": "exit: market intent on the bar at 09:28 of W, filling at the 09:29 open, before the 09:30 release; a missing exit bar: the first later present bar (S0.7).",
+   "expected_events_per_year": "standard WPSR Wednesdays passing the filters (up to about 50 a year); counts reported: E.4 research 46 trips; E.5 confirmation 93 closed trips over 586 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    },
+    {
+     "input": "WPSR release table (standard rows, Wednesday 10:30 ET)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: strategy/members/k4/_releases.py WPSR (generated from reports/stage_e2b_release_calendar.json); W_ext: reports/stage_e14_cal_releases.json release WPSR (no frozen-module table built for 2010-2019)",
+     "stated_range": "_releases.WPSR 2019-05-01..2026-06-17 (369 rows, 317 standard); E.14 WPSR 470 rows 2010-06-01..2019-05-31, 'time:unverified' 1 (WPSR-2012-11-01)"
+    },
+    {
+     "input": "ENERGY_FULL_SESSIONS (energy trade dates without early halt)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: strategy/members/k4/_calendar.py ENERGY_FULL_SESSIONS; W_ext: reports/stage_e14_cal_energy_full_sessions.json (derived from reports/stage_e14_cal_energy.json, same rule text)",
+     "stated_range": "_calendar.py 2019-05-01..2026-06-19; E.14 file range 2010-06-01..2019-05-31, count 2250"
+    },
+    {
+     "input": "FEDERAL_MONDAY_HOLIDAYS",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: strategy/members/k4/_releases.py FEDERAL_MONDAY_HOLIDAYS (OPM, Task 1b); W_ext: not found (looked in data/calendars/hist2010/, reports/stage_e14_cal_*.json, reports/stage_e16_calendars/, grep for FEDERAL_MONDAY across repo: only the 2019-2026 table)",
+     "stated_range": "2019-05-01..2026-06-19 (46 dates)"
+    },
+    {
+     "input": "API_DROPPED_WEEKS",
+     "covers_w_ext": "unknown",
+     "covers_w_cf": true,
+     "path": "W_cf: strategy/members/k4/_releases.py API_DROPPED_WEEKS (empty, K4-L-04); W_ext: none; reports/stage_e20_product_summary.md: 'its API dropped-weeks table is undetermined for 2010-2019 (no 2010-2019 API calendar; CL reader)'",
+     "stated_range": "2019-05..2026-06 (empty table)"
+    },
+    {
+     "input": "engine release calendar API_WSB rows (release_products maps API_WSB to CL, MCL; not NG)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (API_WSB 372 rows 2019-05-07..2026-06-16); W_ext: not found (stage_e14_cal_releases.json holds FOMC, NGS, WPSR only; reports/stage_e20_product_summary.md: 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not ... API')",
+     "stated_range": "2019-05-01..2026-06-21 only"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 46, mean -1.2124 ticks, daily t -0.592"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2021-07-12..2024-02-29 (S_MCL 2021-07-12)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 586, closed trips 93"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; MCL rows on CL bars)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_k4_apipre_ret_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) k4_apipre_ret (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (17 roots)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md DROPPED table",
+     "counts": "not read: k4_apipre_ret DROPPED: 'its API dropped-weeks table is undetermined for 2010-2019 (no 2010-2019 API calendar; CL reader)'"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4 screen: fail, Tier B (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: source-overlap (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: before 13:30 on W (07:29); the signal bars 15:24/15:39 of W-1 are after W-1's 13:30 settlement.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K4-eiafade-01 MCL",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-eiafade-01",
+   "module": "strategy/members/k4/eiafade.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "MCL",
+   "vehicle": "MCL (q_c 4)",
+   "w_ext_root": "CL",
+   "signal_legs": [],
+   "definition_verbatim": "MCL only (q_c 4). Event set (K4-L-03): every row of _releases.WPSR (section 11's drops already\nout) whose T_W + 15 <= 13:13 CT, T_W = the release instant in CT (K4-L-02); that keeps the 09:30,\n10:00, 11:00 and 12:00 CT slots and leaves out the 16:00 CT row.\n- signal: t0 = ticks(close of the bar at T_W - 1), t14 = ticks(close of the bar at T_W + 14);\n  M = (t14 - t0) / t0 needs t0 > 0 (C10), else no trade;\n- guard (S0.9): the T_W - 1 and T_W + 14 bars present and carrying one instrument_id;\n- entry (K4-L-05, exact integers): BUY if 200 x (t14 - t0) <= -t0 (M <= -0.005), SELL if\n  200 x (t14 - t0) >= t0 (M >= +0.005), else no trade; market intent on the bar at T_W + 14,\n  filling at the T_W + 15 open; no entry when that bar is missing (S0.6) or carries\n  early_halt_ct (S0.8);\n- exit: market intent on the first present bar at or after 13:28 (C - 2), filling nominally at\n  the 13:29 open (S0.7).\nA date not in the table is not traded.",
+   "trigger_event": "WPSR release rows with T_W + 15 <= 13:13 CT and |M| >= 0.005 (M = 14-minute post-release move)",
+   "decision_time_ct": "T_W + 14 (09:44 for the 09:30 slot; up to 12:14 for the 12:00 slot)",
+   "side_rule": "entry (K4-L-05, exact integers): BUY if 200 x (t14 - t0) <= -t0 (M <= -0.005), SELL if 200 x (t14 - t0) >= t0 (M >= +0.005), else no trade",
+   "side_kind": "fade",
+   "side_kind_note": "side = minus the sign of the T_W-1 to T_W+14 move, when |M| >= 0.5%",
+   "intraday_hold": "T_W + 15 to 13:29 CT",
+   "exit_rule_verbatim": "exit: market intent on the first present bar at or after 13:28 (C - 2), filling nominally at the 13:29 open (S0.7).",
+   "expected_events_per_year": "weekly WPSR rows whose 14-minute move is at least 0.5% in size (a minority of the ~52 a year); counts reported: E.4 research 12 trips; E.5 confirmation 55 closed trips over 586 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    },
+    {
+     "input": "WPSR release table (all rows with T_W + 15 <= 13:13 CT)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: strategy/members/k4/_releases.py WPSR (generated from reports/stage_e2b_release_calendar.json); W_ext: reports/stage_e14_cal_releases.json release WPSR (no frozen-module table built for 2010-2019)",
+     "stated_range": "_releases.WPSR 2019-05-01..2026-06-17 (369 rows, 317 standard); E.14 WPSR 470 rows 2010-06-01..2019-05-31, 'time:unverified' 1 (WPSR-2012-11-01)"
+    },
+    {
+     "input": "engine release calendar API_WSB rows (release_products maps API_WSB to CL, MCL; not NG)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (API_WSB 372 rows 2019-05-07..2026-06-16); W_ext: not found (stage_e14_cal_releases.json holds FOMC, NGS, WPSR only; reports/stage_e20_product_summary.md: 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not ... API')",
+     "stated_range": "2019-05-01..2026-06-21 only"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 12, mean +0.2701 ticks, daily t 0.226"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2021-07-12..2024-02-29 (S_MCL 2021-07-12)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 586, closed trips 55"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; MCL rows on CL bars)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_k4_eiafade_move_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) k4_eiafade_move (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (S_X 2019-05-06; 17 roots incl. CL, NG); backward 2010-2019 stores not read (no backward test)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md KEPT list; reports/E.20_RETURN.md summary ('Search screen: FAIL')",
+     "counts": "ML search features k4_eiafade_move kept"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4 screen: fail, Tier B (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: source-overlap (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)",
+    "E.20 search screen: FAIL (reports/E.20_RETURN.md)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: before 13:30.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K4-eiamom-01 MCL",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-eiamom-01",
+   "module": "strategy/members/k4/eiamom.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "MCL",
+   "vehicle": "MCL (q_c 4)",
+   "w_ext_root": "CL",
+   "signal_legs": [],
+   "definition_verbatim": "MCL only (q_c 4). Event set: the standard WPSR rows of _releases.WPSR (a Wednesday at 10:30 ET,\nT_W = 09:30 CT; section 11's drops already out) whose date is not in _releases.NYSE_NOT_FULL\n(EC-NYSE full closures and early closes); an early-halt date (EC-CAL) is not traded (S0.8).\n- signal: r3 = ticks(close of the bar at 09:59) - ticks(close of the bar at 09:29); r3 = 0: no\n  trade;\n- guard (S0.9): the 09:29, 09:59 and 14:29 bars present and carrying one instrument_id;\n- entry: market intent on the bar at 14:29, side sign(r3), filling at the 14:30 open; no entry\n  when that bar is missing (S0.6) or carries early_halt_ct (S0.8);\n- exit: market intent on the first present bar at or after 14:58, filling nominally at the 14:59\n  open (S0.7), 9 minutes before F.\nNo return is computed, so C10 does not apply. A date not in the table is not traded.",
+   "trigger_event": "standard WPSR Wednesdays not in NYSE_NOT_FULL, r3 != 0",
+   "decision_time_ct": "14:29 (entry bar; signal from the 09:29 and 09:59 closes)",
+   "side_rule": "entry: market intent on the bar at 14:29, side sign(r3), filling at the 14:30 open",
+   "side_kind": "momentum",
+   "side_kind_note": "side = sign of the trigger day's 09:29-to-09:59 release half-hour move",
+   "intraday_hold": "14:30 to 14:59 CT",
+   "exit_rule_verbatim": "exit: market intent on the first present bar at or after 14:58, filling nominally at the 14:59 open (S0.7), 9 minutes before F.",
+   "expected_events_per_year": "standard WPSR Wednesdays on NYSE full days (about 48-50 a year); counts reported: E.4 research 48 trips; E.5 confirmation 100 closed trips over 586 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    },
+    {
+     "input": "WPSR release table (standard rows)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: strategy/members/k4/_releases.py WPSR (generated from reports/stage_e2b_release_calendar.json); W_ext: reports/stage_e14_cal_releases.json release WPSR (no frozen-module table built for 2010-2019)",
+     "stated_range": "_releases.WPSR 2019-05-01..2026-06-17 (369 rows, 317 standard); E.14 WPSR 470 rows 2010-06-01..2019-05-31, 'time:unverified' 1 (WPSR-2012-11-01)"
+    },
+    {
+     "input": "NYSE_NOT_FULL (NYSE full closures and early closes)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: strategy/members/k4/_releases.py NYSE_NOT_FULL (Task 1b); W_ext: not found; reports/stage_e20_product_summary.md: 'needs the NYSE-not-full-session table, which has no 2010-2019 file and is not derivable from the CME calendars'",
+     "stated_range": "2019-05-01..2026-06-19 (84 dates)"
+    },
+    {
+     "input": "engine release calendar API_WSB rows (release_products maps API_WSB to CL, MCL; not NG)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (API_WSB 372 rows 2019-05-07..2026-06-16); W_ext: not found (stage_e14_cal_releases.json holds FOMC, NGS, WPSR only; reports/stage_e20_product_summary.md: 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not ... API')",
+     "stated_range": "2019-05-01..2026-06-21 only"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 48, mean -0.5351 ticks, daily t -1.155"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2021-07-12..2024-02-29 (S_MCL 2021-07-12)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 586, closed trips 100"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; MCL rows on CL bars)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_k4_eiamom_r3_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) k4_eiamom_r3 (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (17 roots)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md DROPPED table",
+     "counts": "not read: k4_eiamom_r3 DROPPED: 'needs the NYSE-not-full-session table, which has no 2010-2019 file and is not derivable from the CME calendars (CL reader)'"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4 screen: fail, Tier B (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: source-overlap (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: AFTER the 13:30 settlement (14:29 decision, 14:30-14:59 hold).",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K4-ovr-01 MCL",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-ovr-01",
+   "module": "strategy/members/k4/ovr.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "MCL",
+   "vehicle": "MCL (q_c 4)",
+   "w_ext_root": "CL",
+   "signal_legs": [],
+   "definition_verbatim": "Rule (every clock time CT, bars of trade date d on CT date d; S0.4):\n- Decision times t in {09:00, 10:00, 11:00, 12:00, 13:00}.\n- Signal r(t) = (close of the bar at t-1 - open of the bar at t-60) / open of the bar at t-60, as\n  the Python float (tc - to) / to of integer vendor ticks (K4-L-05). Both bars must be present\n  with one instrument_id (the per-decision-time guard, S0.9) and to > 0 (C10), else no trade at t.\n- Reference dates: the 20 most recent ENERGY_FULL_SESSIONS dates strictly before d (EC-CAL: a\n  roll-blackout date counts, an early-halt date is not in the table; K4-L-08).\n- Reference values: r(tau) at the same five clock times on those dates, each counted only when\n  its two bars are present with one instrument_id and its open is > 0. A reference date without\n  bars keeps its slot and contributes fewer values (K4-L-08). Fewer than 80 values: no trade at t.\n- Warm-up: no trade while any reference date precedes the trade date of the first bar this\n  member received in the run (K4-L-09).\n- Cuts: P10, P90 = numpy.percentile(values, [10, 90], method=\"linear\") on the floats.\n- Entry: r(t) <= P10 buys, r(t) >= P90 sells; both at once (P10 = P90 = r) is no trade\n  (K4-L-10); otherwise no trade. Market intent on the bar at t-1 (that exact bar, S0.6), only\n  when flat with no pending order (so positions never overlap), filling at the open of t.\n- Exit: market intent on the first present bar at or after t+58 (fills nominally at t+59),\n  resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are\n  the backstops: after an engine-forced exit the member sends no exit of its own, cannot re-enter\n  at that decision time (its entry bar has passed), and later decision times proceed as usual.\n- Early halts: a decision bar carrying early_halt_ct means no trade at that t (S0.8), so an\n  early-halt trade date is not traded at any t.\nOne traded leg, q_c contracts (MCL 4, NG 1). No stop, no filter, no size rule beyond the spec.",
+   "trigger_event": "each decision time t in {09:00, 10:00, 11:00, 12:00, 13:00} where r(t) <= P10 or >= P90 of the 20-day reference values",
+   "decision_time_ct": "t-1: 08:59, 09:59, 10:59, 11:59, 12:59",
+   "side_rule": "Entry: r(t) <= P10 buys, r(t) >= P90 sells; both at once (P10 = P90 = r) is no trade (K4-L-10); otherwise no trade.",
+   "side_kind": "fade",
+   "side_kind_note": "side = minus the sign of an extreme prior-hour move (bottom decile buys, top decile sells)",
+   "intraday_hold": "t to t+59 (latest 13:00-13:59)",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar at or after t+58 (fills nominally at t+59), resent while refused (S0.7, E.3-L-22).",
+   "expected_events_per_year": "up to 5 per trade date, non-overlapping; about 20% of decision times by construction; counts reported: E.4 research 275 trips; E.5 confirmation 587 closed trips over 586 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    },
+    {
+     "input": "ENERGY_FULL_SESSIONS (energy trade dates without early halt)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: strategy/members/k4/_calendar.py ENERGY_FULL_SESSIONS; W_ext: reports/stage_e14_cal_energy_full_sessions.json (derived from reports/stage_e14_cal_energy.json, same rule text)",
+     "stated_range": "_calendar.py 2019-05-01..2026-06-19; E.14 file range 2010-06-01..2019-05-31, count 2250"
+    },
+    {
+     "input": "engine release calendar API_WSB rows (release_products maps API_WSB to CL, MCL; not NG)",
+     "covers_w_ext": false,
+     "covers_w_cf": true,
+     "path": "W_cf: reports/stage_e2b_release_calendar.json (API_WSB 372 rows 2019-05-07..2026-06-16); W_ext: not found (stage_e14_cal_releases.json holds FOMC, NGS, WPSR only; reports/stage_e20_product_summary.md: 'the 2010-2019 release calendars hold FOMC (and NG storage, WPSR) but not ... API')",
+     "stated_range": "2019-05-01..2026-06-21 only"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 275, mean -1.8383 ticks, daily t -0.500"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2021-07-12..2024-02-29 (S_MCL 2021-07-12)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 586, closed trips 587"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; MCL rows on CL bars)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_k4_ovr_ret/k4_ovr_pct_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) k4_ovr_ret, k4_ovr_pct (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (S_X 2019-05-06; 17 roots incl. CL, NG); backward 2010-2019 stores not read (no backward test)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md KEPT list; reports/E.20_RETURN.md summary ('Search screen: FAIL')",
+     "counts": "ML search features k4_ovr_ret, k4_ovr_pct kept"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4 screen: fail, Tier B (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: source-overlap (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)",
+    "E.20 search screen: FAIL (reports/E.20_RETURN.md)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: decisions before 13:30; the 13:00 entry's hold to 13:59 crosses the 13:30 settlement.",
+   "exclusion": null
+  },
+  {
+   "trigger_id": "K4-ovr-01 NG",
+   "cluster_or_stage": "K4 (Stage E.4 screen, E.5 confirmation)",
+   "member_id": "K4-ovr-01",
+   "module": "strategy/members/k4/ovr.py",
+   "freeze_file": "reports/stage_e_k4_member_freeze.json",
+   "traded_root": "NG",
+   "vehicle": "NG (q_c 1)",
+   "w_ext_root": "NG",
+   "signal_legs": [],
+   "definition_verbatim": "Rule (every clock time CT, bars of trade date d on CT date d; S0.4):\n- Decision times t in {09:00, 10:00, 11:00, 12:00, 13:00}.\n- Signal r(t) = (close of the bar at t-1 - open of the bar at t-60) / open of the bar at t-60, as\n  the Python float (tc - to) / to of integer vendor ticks (K4-L-05). Both bars must be present\n  with one instrument_id (the per-decision-time guard, S0.9) and to > 0 (C10), else no trade at t.\n- Reference dates: the 20 most recent ENERGY_FULL_SESSIONS dates strictly before d (EC-CAL: a\n  roll-blackout date counts, an early-halt date is not in the table; K4-L-08).\n- Reference values: r(tau) at the same five clock times on those dates, each counted only when\n  its two bars are present with one instrument_id and its open is > 0. A reference date without\n  bars keeps its slot and contributes fewer values (K4-L-08). Fewer than 80 values: no trade at t.\n- Warm-up: no trade while any reference date precedes the trade date of the first bar this\n  member received in the run (K4-L-09).\n- Cuts: P10, P90 = numpy.percentile(values, [10, 90], method=\"linear\") on the floats.\n- Entry: r(t) <= P10 buys, r(t) >= P90 sells; both at once (P10 = P90 = r) is no trade\n  (K4-L-10); otherwise no trade. Market intent on the bar at t-1 (that exact bar, S0.6), only\n  when flat with no pending order (so positions never overlap), filling at the open of t.\n- Exit: market intent on the first present bar at or after t+58 (fills nominally at t+59),\n  resent while refused (S0.7, E.3-L-22). The engine's forced flatten at F and its D9.7 exit are\n  the backstops: after an engine-forced exit the member sends no exit of its own, cannot re-enter\n  at that decision time (its entry bar has passed), and later decision times proceed as usual.\n- Early halts: a decision bar carrying early_halt_ct means no trade at that t (S0.8), so an\n  early-halt trade date is not traded at any t.\nOne traded leg, q_c contracts (MCL 4, NG 1). No stop, no filter, no size rule beyond the spec.",
+   "trigger_event": "each decision time t in {09:00, 10:00, 11:00, 12:00, 13:00} where r(t) <= P10 or >= P90 of the 20-day reference values",
+   "decision_time_ct": "t-1: 08:59, 09:59, 10:59, 11:59, 12:59",
+   "side_rule": "Entry: r(t) <= P10 buys, r(t) >= P90 sells; both at once (P10 = P90 = r) is no trade (K4-L-10); otherwise no trade.",
+   "side_kind": "fade",
+   "side_kind_note": "side = minus the sign of an extreme prior-hour move (bottom decile buys, top decile sells)",
+   "intraday_hold": "t to t+59 (latest 13:00-13:59)",
+   "exit_rule_verbatim": "Exit: market intent on the first present bar at or after t+58 (fills nominally at t+59), resent while refused (S0.7, E.3-L-22).",
+   "expected_events_per_year": "up to 5 per trade date, non-overlapping; about 20% of decision times by construction; counts reported: E.4 research 252 trips; E.5 confirmation 1091 closed trips over 1070 days",
+   "inputs_needed": [
+    {
+     "input": "energy session/early-halt calendar (engine F, early_halt_ct, D6 O/C row 08:00/13:30)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: data/calendars/hist2010/energy.json; W_cf: data/calendars/energy.py (EC-CAL)",
+     "stated_range": "hist2010/energy.json coverage 2010-06-01..2019-05-31 (stage_e16_settlement.json day_open note: 'hist2010/energy.json marks O UNVERIFIED for 2015-09-21..2019-05-31'); EC-CAL 2019-05-01..2026-06-19 (k4/_calendar.py docstring)"
+    },
+    {
+     "input": "engine release calendar for D8 event cost and D9.5a fill guard: FOMC, WPSR, NGS rows",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_ext: reports/stage_e14_cal_releases.json (releases FOMC, NGS, WPSR only); W_cf: reports/stage_e2b_release_calendar.json",
+     "stated_range": "E.14 coverage 2010-06-01..2019-05-31 (NGS 470, WPSR 470 with 1 time unverified, FOMC 72); E.2b coverage 2019-05-01..2026-06-21"
+    },
+    {
+     "input": "ENERGY_FULL_SESSIONS (energy trade dates without early halt)",
+     "covers_w_ext": true,
+     "covers_w_cf": true,
+     "path": "W_cf: strategy/members/k4/_calendar.py ENERGY_FULL_SESSIONS; W_ext: reports/stage_e14_cal_energy_full_sessions.json (derived from reports/stage_e14_cal_energy.json, same rule text)",
+     "stated_range": "_calendar.py 2019-05-01..2026-06-19; E.14 file range 2010-06-01..2019-05-31, count 2250"
+    }
+   ],
+   "stages_read": [
+    {
+     "stage": "E.4",
+     "window_dates": "2025-04-01..2026-06-19 (research window; 270 MCL / 269 NG trade dates after roll blackouts and UR-1)",
+     "purpose": "screen",
+     "source": "reports/E.4_RETURN.md, Task 5 'The screen per trial' table",
+     "counts": "trips 252, mean -1.9921 ticks, daily t -1.024"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2025-04-01..2026-06-19 (research-window re-runs under v5/v6 for the replay and the D4 power check)",
+     "purpose": "power",
+     "source": "reports/E.5_RETURN.md Task C1 start rules / 'all 12 K4 trials sufficient'; reports/stage_e5_STATE.md rows A3 replay, C2 power",
+     "counts": null
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "2019-05-06..2024-02-29 (S_NG 2019-05-06)",
+     "purpose": "confirmation",
+     "source": "reports/E.5_RETURN.md Task C5 verdict table (run once 19:15:54-19:22:07)",
+     "counts": "days 1070, closed trips 1091"
+    },
+    {
+     "stage": "E.5",
+     "window_dates": "MCL 2021-07-12, NG 2019-05-06, to 2024-02-29",
+     "purpose": "null statement",
+     "source": "reports/E.5_RETURN.md 'The K4 null statement'",
+     "counts": null
+    },
+    {
+     "stage": "E.12",
+     "window_dates": "2019-05..2024-02 (phase-1 training window; NG rows)",
+     "purpose": "other",
+     "source": "reports/stage_e12_gate0.md family A rows gate0A_k4_ovr_ret/k4_ovr_pct_h60/h120/hF; ml_route_v2/signals/k4.py",
+     "counts": "ML v2 Gate 0 family A test of the member-signal feature(s) k4_ovr_ret, k4_ovr_pct (pooled over products); all 'no'"
+    },
+    {
+     "stage": "E.14",
+     "window_dates": "2019-05..2024-02 (E.12 state; no new bars)",
+     "purpose": "other",
+     "source": "reports/stage_e14_c1_model.md section 3 (M1: ridge on E.12's whole training panel, 81 pairs pooled, 150 features)",
+     "counts": "C1 M1 refit on the E.12 panel; features include the E.12-live member features"
+    },
+    {
+     "stage": "E.17",
+     "window_dates": "NG 2010-07..2019-04 (ext2010 store 2010-06-07..2019-04-30)",
+     "purpose": "other",
+     "source": "reports/E.17_RETURN.md summary (C1 STOPPED at C10); reports/E.18_RETURN.md section 6 item 3 ('C1's stopped run (C10 counts) ... read these six stores')",
+     "counts": "C1 (NG ML replication) features k4_ovr_ret, k4_ovr_pct on NG rows; stopped at guard C10, no T1/T2 statistic"
+    },
+    {
+     "stage": "E.18",
+     "window_dates": "NG 2010-07..2019-04 (W_ext)",
+     "purpose": "other",
+     "source": "reports/E.18_RETURN.md Step 5 (C10: 'every non-exempt feature live in E.12 applies')",
+     "counts": "C1b ML replication on NG; T1 814 trades / T2 627; FAIL"
+    },
+    {
+     "stage": "E.20",
+     "window_dates": "2019-05..2024-02 (S_X 2019-05-06; 17 roots incl. CL, NG); backward 2010-2019 stores not read (no backward test)",
+     "purpose": "other",
+     "source": "reports/stage_e20_product_summary.md KEPT list; reports/E.20_RETURN.md summary ('Search screen: FAIL')",
+     "counts": "ML search features k4_ovr_ret, k4_ovr_pct kept"
+    }
+   ],
+   "tier": "B",
+   "verdicts": [
+    "E.4 screen: fail, Tier B (reports/E.4_RETURN.md Task 5 table)",
+    "E.5 null verdict: null; labels: source-overlap (reports/E.5_RETURN.md Task C5 table)",
+    "E.5 K4 statement: 'null' (reports/E.5_RETURN.md summary table)",
+    "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)",
+    "E.17 C1: STOPPED (C10) (reports/E.17_RETURN.md)",
+    "E.18 C1b-T1, C1b-T2: FAIL (reports/E.18_RETURN.md)",
+    "E.20 search screen: FAIL (reports/E.20_RETURN.md)"
+   ],
+   "settlement_note": "CL and NG settle at 13:30 CT (settlement window 13:28:00-13:30:00 CT), 2010-06-07..2024-02-29, both eras graded primary: reports/stage_e16_settlement.json products.CL.settle / products.NG.settle (MCL: the repo states CL's; no separate MCL row). Decision vs settlement: decisions before 13:30; the 13:00 entry's hold to 13:59 crosses the 13:30 settlement.",
+   "exclusion": null
+  }
+ ],
+ "excluded": [],
+ "notes": [
+  "K4 freeze lists 12 members (8 rules); every one is a single-leg intraday trigger; no ML model member, no combination book in K4.",
+  "MCL rows' W_ext equivalent is CL (ext2010h store 2010-07-01..2019-04-30); NG's is NG (ext2010 store 2010-06-07..2019-04-30); both step2 stores 2019-05-06..2024-02-29 (reports/stage_e17_run_manifest.json stores.CL/NG).",
+  "ENERGY_FULL_SESSIONS, the frozen K4 tables (WPSR, NGS, FEDERAL_MONDAY_HOLIDAYS, NYSE_NOT_FULL, API_DROPPED_WEEKS) cover 2019-05..2026-06 only; a W_ext run needs 2010-2019 equivalents built: E.14 calendars give WPSR/NGS/FOMC and energy full sessions; federal Monday holidays, NYSE not-full days, API weeks and API_WSB release rows were not found for 2010-2019.",
+  "E.9 return 7(d): K4's frozen tables keep 2024-07-03 (outside W_ext and W_cf)."
+ ],
+ "sources_read": [
+  "reports/stage_e23_briefs/brief_inventory.md (whole)",
+  "reports/stage_e_k4_member_freeze.json (members, members_dir)",
+  "strategy/members/k4/{cp1,cp2,cp3,ngpre,apipre,eiafade,eiamom,ovr}.py (module docstrings)",
+  "strategy/members/k4/_releases.py (docstring, window constants, drop lists)",
+  "strategy/members/k4/_calendar.py (docstring)",
+  "reports/E.4_RETURN.md (K4 lines; Task 5 screen table; Task 7)",
+  "reports/E.5_RETURN.md (summary table; Tasks C1, C5; null statement)",
+  "reports/stage_e5_STATE.md (K4 rows)",
+  "reports/stage_e4_member_specs.md (section headings; F 15:08 line 19, 28)",
+  "reports/E.{1,2a,2b,4b,4c,6,7,8,9,11..22}_RETURN.md (grep K4/k4_ lines)",
+  "docs/STAGES.md (E.4-E.20 entries)",
+  "reports/E.9_RETURN.md 7(d)",
+  "reports/E.12_RETURN.md (summary; ranking rows)",
+  "reports/stage_e12_gate0.md (gate0A_ cp*/k4_* rows)",
+  "docs/STAGE_E_ML_V2_DESIGN.md V2.2b",
+  "ml_route_v2/signals/k4.py (docstring)",
+  "reports/stage_e14_c1_model.md (sections 1-3)",
+  "reports/E.14_RETURN.md Task 5",
+  "reports/E.17_RETURN.md (summary, Part 1/2 lines)",
+  "reports/E.18_RETURN.md (Steps 3-5, section 6)",
+  "reports/E.20_RETURN.md (section 6 item 3, summary)",
+  "reports/stage_e20_product_summary.md (KEPT/DROPPED, feature table)",
+  "reports/stage_e14_cal_releases.json (schema, coverage, counts, release names)",
+  "reports/stage_e14_cal_energy_full_sessions.json (rule, range, count)",
+  "data/calendars/hist2010/energy.json (coverage, counts)",
+  "reports/stage_e2b_release_calendar.json (coverage, release_products, per-release date ranges)",
+  "reports/stage_e16_settlement.json (window; products.CL/NG settle, day_open)",
+  "base_rules/constants.py (SETTLEMENT_PATH)",
+  "reports/stage_e17_run_manifest.json (stores.CL, stores.NG paths only)"
+ ],
+ "not_finished": []
+}

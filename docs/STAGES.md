@@ -187,6 +187,14 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     the Carver micro trend book designed on 12 micros (simple rounding loses <= 0.07 Sharpe from $25K up; the published
     greedy loses more), forward/ paper runner, E22-F1 frozen (2a2bdd8) and registered at $25K; N 532 -> 533. Nothing
     bought; no data fetched.
+  - Stage E.23 — The program's frozen intraday triggers at 5- and 20-trading-day holds, entered at the trigger day's
+    settlement, measured as alpha over the same root's E.21 T1/T2 daily returns (NW lags h). 208 triggers inventoried,
+    11 mechanism memos; 4 shortlisted and 5 trigger-holds registered (freeze 24dcf4dd..., r008-E23, N 533 -> 538):
+    K2-monthend-01 long ZF/ZN/ZB at 5 days, E20H6-T1 reversal on NQ at 5 and 20 days. Run 2026-10-17 (see
+    reports/E.23_RETURN.md): discovery on 2011-07-27..2019-04-30 read once, no survivor (alpha t 0.55/0.38/0.10/
+    -1.61/-0.71; Holm smallest p 0.31; the month-end gain is the bonds' drift); confirmation on 2019-05..2024-02
+    inconclusive by design (power 0.18) and not computed; all five null; Fable verified every figure. Nothing bought;
+    no data fetched.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

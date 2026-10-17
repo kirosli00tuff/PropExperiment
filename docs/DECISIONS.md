@@ -742,3 +742,20 @@
   trigger was screened on, confirmation once on owned data that never
   selected it; owned data only, no purchase; two five-hour usage windows
   from about 02:00 PDT on 2026-10-17, no outcome read after 10:30 PDT.
+- 2026-10-17 (user, planning chat): V41. After E.23 (commit ef2902d,
+  pushed; 5 trigger-holds registered, N 533 -> 538; discovery on W_ext
+  2011-07..2019-04 read once, largest alpha t 0.55, Holm smallest p
+  0.31, no survivor; confirmation read nothing; VerdictVerifier VERIFIED
+  WITH NOTES). "The program's intraday triggers at multi-day holds" is
+  closed as a direction; no variant (other roots, other holds, the
+  opposite H6 direction) is tested on these windows. W_cf
+  (2019-05..2024-02, trigger-conditional multi-day outcomes unread) and
+  holdout-2 are kept for a hypothesis with a stronger prior; at a true
+  net Sharpe of 0.5 no owned window gives a confirmation power above
+  about 0.25. No data is bought for this line. The user approves the
+  multi-day loader fix (E.23 VerdictVerifier NOTE-2, NOTE-5): stores are
+  loaded only up to the read window's last bar, so no read holds later
+  bars in memory, and multi-day books write per-unit and per-fill files
+  as E.21 did; the change touches base_rules/context.py or multiday/,
+  no frozen member, and is built, Fable-reviewed and tested in its own
+  stage before the next multi-day read.

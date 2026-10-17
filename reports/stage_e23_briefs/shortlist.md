@@ -62,11 +62,11 @@ the market on 91-94% of days, but their side follows the trigger, so they remain
 
 | Id (registry) | Trigger (frozen) | Root (price path, vehicle) | m | Hold | Mechanism (memo) | Expected events per year |
 |---|---|---|---|---|---|---|
-| E23-MEZF-h5 | K2-monthend-01 ZF | ZF (ZF) | +1 (same side: long) | 5 | month-end Treasury index-extension demand (M7: HS19 Table 8, ERSV20) | 24 (N-1 and N), 12 non-overlapping |
-| E23-MEZN-h5 | K2-monthend-01 ZN | ZN (ZN) | +1 | 5 | same | same |
-| E23-MEZB-h5 | K2-monthend-01 ZB | ZB (ZB) | +1 | 5 | same | same |
-| E23-H6NQ-h5 | E20H6-T1 | NQ (NQ bars, MNQ costs) | -1 (reversal of sign(r_ROD)) | 5 | hedging price pressure reverses; post-2000 index anti-autocorrelation (M4: BDLM2021 Table 11, BvD2019) | about 240 |
-| E23-H6NQ-h20 | E20H6-T1 | NQ | -1 | 20 | same; 20-day evidence disputed (M4) | about 240 |
+| E23-MEZFh5 | K2-monthend-01 ZF | ZF (ZF) | +1 (same side: long) | 5 | month-end Treasury index-extension demand (M7: HS19 Table 8, ERSV20) | 24 (N-1 and N), 12 non-overlapping |
+| E23-MEZNh5 | K2-monthend-01 ZN | ZN (ZN) | +1 | 5 | same | same |
+| E23-MEZBh5 | K2-monthend-01 ZB | ZB (ZB) | +1 | 5 | same | same |
+| E23-H6NQh5 | E20H6-T1 | NQ (NQ bars, MNQ costs) | -1 (reversal of sign(r_ROD)) | 5 | hedging price pressure reverses; post-2000 index anti-autocorrelation (M4: BDLM2021 Table 11, BvD2019) | about 240 |
+| E23-H6NQh20 | E20H6-T1 | NQ | -1 | 20 | same; 20-day evidence disputed (M4) | about 240 |
 
 Lead choices on the shortlist (Open choices in the return): K2-monthend-01's 20-day hold is not registered: with N-1 and N
 every month and a 20-trading-day hold the book is long on nearly every day (a buy-and-hold long, not a trigger test);

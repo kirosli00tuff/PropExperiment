@@ -6,17 +6,18 @@ Binding: docs/prompts/STAGE_E.23.md (governs), then reports/stage_e23_briefs/lea
 governs this file where they differ), then this file. Inputs: reports/stage_e23_briefs/shortlist.md (P1.1-P1.4).
 
 ## 1. What is registered
-Five trigger-holds, registry label E23; N 533 -> 538. Each is read once on its discovery window behind
+Five trigger-holds, registry label E23; N 533 -> 538. (Registry ids carry one hyphen, screening/trial_registry.py _ID; renamed
+from E23-MEZF-h5 etc. at 03:33 PDT when the registry refused the first form; no other change.) Each is read once on its discovery window behind
 reports/stage_e23_RUN_ONCE_discovery.json, under the freeze manifest reports/stage_e23_freeze.json and harness v13
 dd2bcc6025144e0debd19be1ca8d43c983872a27c9258895ef55ee3c138609e4.
 
 | Id | Trigger (frozen, unchanged) | Root (price path / cost vehicle) | Unit direction m | Hold h | Mechanism (memo) |
 |---|---|---|---|---|---|
-| E23-MEZF-h5 | K2-monthend-01 ZF (BUY at 07:20 CT on N-1 and N) | ZF / ZF | +1 (member's side: long) | 5 | month-end Treasury demand (M7) |
-| E23-MEZN-h5 | K2-monthend-01 ZN | ZN / ZN | +1 | 5 | same |
-| E23-MEZB-h5 | K2-monthend-01 ZB | ZB / ZB | +1 | 5 | same |
-| E23-H6NQ-h5 | E20H6-T1 (side sign(r_ROD) at 14:30 CT) | NQ / MNQ | -1 (reversal) | 5 | late-day price pressure reverses; post-2000 index anti-autocorrelation (M4) |
-| E23-H6NQ-h20 | E20H6-T1 | NQ / MNQ | -1 | 20 | same (20-day evidence disputed) |
+| E23-MEZFh5 | K2-monthend-01 ZF (BUY at 07:20 CT on N-1 and N) | ZF / ZF | +1 (member's side: long) | 5 | month-end Treasury demand (M7) |
+| E23-MEZNh5 | K2-monthend-01 ZN | ZN / ZN | +1 | 5 | same |
+| E23-MEZBh5 | K2-monthend-01 ZB | ZB / ZB | +1 | 5 | same |
+| E23-H6NQh5 | E20H6-T1 (side sign(r_ROD) at 14:30 CT) | NQ / MNQ | -1 (reversal) | 5 | late-day price pressure reverses; post-2000 index anti-autocorrelation (M4) |
+| E23-H6NQh20 | E20H6-T1 | NQ / MNQ | -1 | 20 | same (20-day evidence disputed) |
 
 Directions are fixed by the mechanism memo (reports/stage_e23_briefs/mech/M4_INTRADAY_MOM.md, M7_MONTHEND.md), never by
 data. One direction per trigger: for E20H6-T1 the memo's mechanism (late-day price pressure and index anti-autocorrelation)
@@ -109,16 +110,16 @@ bar existence only; no forward return or mark price read):
 
 | Trigger-hold | Window | Book dates (from first unit) | Events | Units | Non-overlapping | In market | E[t] at S 0.5 | power_gate (t >= 2.0) | power_holm1 (K 5) | Label |
 |---|---|---|---|---|---|---|---|---|---|---|
-| E23-MEZF-h5 | W_ext 2011-07-27..2019-04-30 | 1939 from 2011-07-28 | 137 | 131 | 71 | 0.21 | 1.387 | 0.270 | 0.174 | read (discovery) |
-| E23-MEZF-h5 | W_cf 2019-05-06..2024-02-29 | 1170 from 2019-06-27 | 79 | 77 | 39 | 0.20 | 1.077 | 0.178 | 0.106 | inconclusive by design |
-| E23-MEZN-h5 | W_ext 2011-07-27..2019-04-30 | 1939 from 2011-07-28 | 143 | 137 | 77 | 0.23 | 1.387 | 0.270 | 0.174 | read (discovery) |
-| E23-MEZN-h5 | W_cf 2019-05-06..2024-02-29 | 1170 from 2019-06-27 | 77 | 77 | 39 | 0.20 | 1.077 | 0.178 | 0.106 | inconclusive by design |
-| E23-MEZB-h5 | W_ext 2011-07-27..2019-04-30 | 1939 from 2011-07-28 | 142 | 136 | 76 | 0.23 | 1.387 | 0.270 | 0.174 | read (discovery) |
-| E23-MEZB-h5 | W_cf 2019-05-06..2024-02-29 | 1170 from 2019-06-27 | 79 | 77 | 39 | 0.20 | 1.077 | 0.178 | 0.106 | inconclusive by design |
-| E23-H6NQ-h5 | W_ext 2011-07-27..2019-04-30 | 1934 from 2011-07-27 | 1860 | 1727 | 374 | 0.91 | 1.385 | 0.269 | 0.173 | read (discovery) |
-| E23-H6NQ-h5 | W_cf 2019-05-06..2024-02-29 | 1204 from 2019-05-07 | 1147 | 1085 | 233 | 0.93 | 1.093 | 0.182 | 0.109 | inconclusive by design |
-| E23-H6NQ-h20 | W_ext 2011-07-27..2019-04-30 | 1934 from 2011-07-27 | 1860 | 1711 | 95 | 0.94 | 1.385 | 0.269 | 0.173 | read (discovery) |
-| E23-H6NQ-h20 | W_cf 2019-05-06..2024-02-29 | 1204 from 2019-05-07 | 1147 | 1070 | 59 | 0.95 | 1.093 | 0.182 | 0.109 | inconclusive by design |
+| E23-MEZFh5 | W_ext 2011-07-27..2019-04-30 | 1939 from 2011-07-28 | 137 | 131 | 71 | 0.21 | 1.387 | 0.270 | 0.174 | read (discovery) |
+| E23-MEZFh5 | W_cf 2019-05-06..2024-02-29 | 1170 from 2019-06-27 | 79 | 77 | 39 | 0.20 | 1.077 | 0.178 | 0.106 | inconclusive by design |
+| E23-MEZNh5 | W_ext 2011-07-27..2019-04-30 | 1939 from 2011-07-28 | 143 | 137 | 77 | 0.23 | 1.387 | 0.270 | 0.174 | read (discovery) |
+| E23-MEZNh5 | W_cf 2019-05-06..2024-02-29 | 1170 from 2019-06-27 | 77 | 77 | 39 | 0.20 | 1.077 | 0.178 | 0.106 | inconclusive by design |
+| E23-MEZBh5 | W_ext 2011-07-27..2019-04-30 | 1939 from 2011-07-28 | 142 | 136 | 76 | 0.23 | 1.387 | 0.270 | 0.174 | read (discovery) |
+| E23-MEZBh5 | W_cf 2019-05-06..2024-02-29 | 1170 from 2019-06-27 | 79 | 77 | 39 | 0.20 | 1.077 | 0.178 | 0.106 | inconclusive by design |
+| E23-H6NQh5 | W_ext 2011-07-27..2019-04-30 | 1934 from 2011-07-27 | 1860 | 1727 | 374 | 0.91 | 1.385 | 0.269 | 0.173 | read (discovery) |
+| E23-H6NQh5 | W_cf 2019-05-06..2024-02-29 | 1204 from 2019-05-07 | 1147 | 1085 | 233 | 0.93 | 1.093 | 0.182 | 0.109 | inconclusive by design |
+| E23-H6NQh20 | W_ext 2011-07-27..2019-04-30 | 1934 from 2011-07-27 | 1860 | 1711 | 95 | 0.94 | 1.385 | 0.269 | 0.173 | read (discovery) |
+| E23-H6NQh20 | W_cf 2019-05-06..2024-02-29 | 1204 from 2019-05-07 | 1147 | 1070 | 59 | 0.95 | 1.093 | 0.182 | 0.109 | inconclusive by design |
 
 Every W_cf row is inconclusive by design (power_gate 0.178-0.182 < 0.2), so the confirmation step reads nothing and
 every discovery survivor ends INCONCLUSIVE BY DESIGN. Every W_ext row is read (gate 0.269-0.270; at least 71

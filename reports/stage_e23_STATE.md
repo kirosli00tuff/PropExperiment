@@ -30,3 +30,4 @@ Run-once markers (planned): reports/stage_e23_RUN_ONCE_discovery.json, reports/s
 - 03:10 power: all W_ext rows read (gate 0.269-0.270); all W_cf rows inconclusive by design (0.178-0.182).
 - 03:25 RegReviewer APPROVE WITH FIXES (0 BLOCKING; SHOULD FIX R-01..R-03 applied to prereg/spec text; R-04, R-06 text added). Waiting for CodeReviewer before the freeze rebuild.
 - 03:32 fixes applied (review_rulings.md); freeze rebuilt e0d20d0fcac4c9861a2c90ff83190b806b1fe945bb36420dcefc1625ecb3c183; 94 tests; dry run of the real preconditions passed. Next: freeze commit, registration.
+- 03:33 registry refused the first id form (nothing written); ids renamed; power rerun; freeze rebuilt 24dcf4dd...; preconditions dry run passed.

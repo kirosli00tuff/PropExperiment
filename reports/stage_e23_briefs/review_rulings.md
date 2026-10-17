@@ -22,3 +22,4 @@ Both reviewed freeze 3fdd98d7...; every fix below went into the rebuilt freeze e
 Checks after the fixes: 94 trigger_hold tests pass; ruff clean; freeze rebuilt e0d20d0fcac4c9861a2c90ff83190b806b1fe945bb36420dcefc1625ecb3c183
 (20 inputs, 5 ids, verified); a dry run of the real discovery preconditions with registration stubbed in memory passed
 (freeze, config, power hashes, manifest, 8 store preflights; no marker, no output, registry unchanged).
+| registry ids | n/a | the registry refused E23-MEZF-h5 (one hyphen only, screening/trial_registry.py _ID); renamed E23-MEZFh5, E23-MEZNh5, E23-MEZBh5, E23-H6NQh5, E23-H6NQh20 at 03:33 PDT (config, prereg, shortlist); power rerun (identical rows), freeze rebuilt 24dcf4dd671dbada927f548b3aff7a58a89c8fa92a6d43ae498aa69cbb3df5a5, dry run passed | none |

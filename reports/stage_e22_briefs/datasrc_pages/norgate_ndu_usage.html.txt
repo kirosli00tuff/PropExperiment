@@ -1,0 +1,177 @@
+
+Norgate Data Updater Usage
+|  
+| 
+| 
+| 
+|  
+| HOME >
+ Norgate Data Updater > Usage > 
+| Key Links
+| - Accessibility
+- Pricing
+- Free Trial
+- Order Form
+- Downloads
+- My Account
+- Contact Us
+- Subscription & Licensing FAQ
+| 
+| Data Packages
+| - Stocks
+- Futures
+- Forex
+- Data Content Tables
+- Data FAQ
+| 
+| Norgate Data Updater
+| - Overview
+- Installation
+> Usage
+- Watchlist Library
+- Tools
+- Norgate Data Updater FAQ
+| 
+| AmiBroker Plugin
+| - Overview
+- Plugin Installation
+- Database Creation
+- Database Layout and Content
+- Usage
+- Known Issues
+- AmiBroker FAQ
+| 
+| Python Package
+| - Installation & Usage
+| 
+| Zipline Package
+| - Installation & Usage
+| 
+| RightEdge Plugin
+| - Overview
+- Plugin Installation
+- Plugin Configuration
+- Usage
+- RightEdge FAQ
+| 
+| Wealth-Lab Extension
+| - Overview
+- Extension Installation
+- Extension Configuration
+- Usage
+- Wealth-Lab FAQ
+| 
+| Notes
+| - Refunds Policy
+- Privacy Policy
+- Licensing Agreement
+- NDU Change Log
+- System Requirements
+- Alternative Market Glossary
+| 
+Norgate Data Updater Usage
+Update Mode
+Updates and external applications
+Triggering updates from a batchfile/powershell script
+Update Schedule
+Editions Report
+Unscheduled Updates
+Check the Last Edition Received
+Pause Updates
+Replace a database
+Database Cleanup
+Update Mode
+In default mode, NDU runs "in the background" to deliver updates automatically as soon as new data becomes available.
+It can also be set to allow manual updates only, or to provide an update at a scheduled time. The setting can be changed at
+"Settings > Update Mode". Regardless of the setting, updates can be performed at any time by clicking the "Check for Updates"
+button on the Update page.
+Updates and external applications
+Supported back-testing applications that are linked to the NDU database via a plugin (like AmiBroker)
+can be left open whilst an update is underway.
+However, a user may elect to disable automatic updates before a trade simulation is run.
+If an update occurs part-way through a simulation, then some prices used in the simulation will be up-to-date and some won't.
+If the same simulation is run once all the data is up-to-date, the results may be different.
+Triggering updates from a batchfile/powershell script
+A utility called "NDU.Trigger" is provided in the "Norgate Data Updater" folder, which can be used to open NDU, start an update
+and optionally close NDU according to command line parameters.
+Example usage within a batch file:
+"c:\Program Files\Norgate Data Updater\bin\NDU.Trigger.exe" UPDATE EXPORT CLOSE WAIT
+This statement opens NDU, checks for an update and processes it, runs any active export tasks, and then closes NDU.
+After NDU has closed, NDU.Trigger.exe exits.
+The available command line parameters are listed below:
+ Show
+ Hide
+UPDATE - opens NDU (if it isn't already open) and starts a data update.
+EXPORT - runs active export tasks after an update finishes.
+    EXPORT only works if UPDATE is also present.
+    EXPORT is not relevant unless export tasks have actually been created in Tools > Export Task Manager.
+CLOSE - closes NDU after other tasks have completed.
+DONOTSHOW - causes NDU to be minimized when triggered.
+AUTOMODE - changes the update mode to "Update Automatically".
+MANUALMODE - changes the update mode to "Update Manually".
+SCHEDULEDMODE - changes the update mode to "Update at a Specified Time".
+PAUSEFIVEMIN - pauses updates for 5 minutes.
+PAUSEUPDATES - pauses updates until unpaused with RESUMEUPDATES.
+RESUMEUPDATES - resumes updates.
+WAIT - causes NDU Trigger to wait until the operation is complete before it exits.
+    Without the WAIT parameter, NDU Trigger exits immediately.
+    WAIT only works with the following parameter combinations:
+    UPDATE CLOSE WAIT
+    UPDATE EXPORT CLOSE WAIT
+    UPDATE WAIT (this is used to leave NDU open after doing an update)
+Please note: If NDU is being scheduled to do updates via NDU.Trigger, then the Update Mode under
+"Settings" is best set to "Update Manually" so that update attempts can't clash.
+Update Schedule
+Updates for market groups like AU Stocks, CA Stocks, US Stocks and Futures are delivered in a series of Editions,
+starting with the "Initial" edition for a day and ending with the "Final".
+Some key edition times are -
+| US Equities
+| Market Close Edition
+| 5.00 pm New York time
+| CA Equities
+| Market Close Edition
+| 5.10 pm Toronto time
+| AU Equities
+| Market Close Edition
+| 4.30 pm Sydney time
+| Futures
+| Final Edition
+| 8.40 pm New York time
+| Forex
+| Initial Edition
+| 6.00 pm New York time
+A detailed Update Schedule is provided in NDU at "Information > Schedule".
+The Schedule is subscription-specific and displays dates & times according to the user's local clock.
+It shows a 24-hour schedule with the starting point being the current time. The Schedule can be filtered by
+"Database" to isolate particular times. For instance, a US Stocks subscriber can isolate the times for US Equities,
+US Indices or World Indices.
+The times shown in the Schedule are indicative. This is because data from our upstream sources doesn't necessarily
+arrive in a regular manner. Data for US Stocks for Friday tends to arrive later than for other days.
+The schedule for AU Stocks includes times for "progressive snapshots", which are published 20 minutes after the hour
+starting at 11.20 am Sydney time. These snapshots are "progressive" in the sense of being "cumulative".
+The 1500 snapshot, for instance, does not show data for the last hour - instead, it shows OHLC for the entire day up until 3.00 p.m.
+This snapshot data is provided to us by the ASX and is not available for US Stocks.
+Editions Report
+The Editions Report can be accessed via a hyperlink on the NDU Update page.
+If the Final Edition for a trading day has not yet been published, the Report will show information about the last edition
+published and the next edition due.
+If the Final Edition for a trading day has already been published, the Report will only show information about the next edition
+due, which will be the Initial Edition for the next trading day.
+If an edition is running late, the Report will indicate it accordingly.
+If an edition is running significantly late (typically due to a problem at the upstream source), the Report will show it as being
+"Delayed".
+Unscheduled Updates
+In addition to delivering regular price (and volume) updates for securities, NDU provides information about securities.
+This information can change at any time and be published at any time.
+Similarly, corrections may be published at any time.
+Check the Last Edition Received
+To identify the Last Edition received for any particular database, click on the Database tab.
+Pause Updates
+To temporarily pause updates for a particular database, click on the Database tab, tick the database in question
+and click the Pause/Unpause button.
+Replace a database
+To replace an existing database, click on the Database tab, select the database and then click "Download".
+Download serves to replace a database that has been marked as "Corrupt". But it can also be used to download/replace
+databases marked as "Missing", "Out of Date" or "Halted".
+Database Cleanup
+To remove old databases that are no longer being updated (and reclaim disk space) click on the Database tab and then click "Cleanup". This will remove all databases where the State is "No Subscription".

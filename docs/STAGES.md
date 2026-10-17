@@ -178,6 +178,15 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     FAIL (Holm 0.025); T1 net Sharpe 0.50 [-0.06, 1.05], t 1.78, p 0.042 and T2 0.44, both above the 0.3 bar but
     underpowered; T3 0.15, T4 0.12; Fable verified every number; PropEd automation not granted publicly; no
     purchase; N 528 -> 532.
+  - Stage E.22 — Loose ends and the micro book. Part A: the five unconfirmed Tier A members confirmed once each on
+    S_X..2024-02-29 under harness v13 (e40ca85: GC bars as MGC's price path by U8, MES leg, not-run trials, Holm K = 5,
+    run-once marker), lists Fable-reviewed and committed (ccd7fa7). Run 2026-10-16 (paused 02:43-18:26; see
+    reports/E.22_RETURN.md): K5-fomc-01 MGC null, K3-ldnrev-01 6E null, K6-limitcont-01 HE null by inactivity,
+    K8-flight-01 HEOD null, K8-wkndbtc-01 inconclusive by design (not run); no Holm rejection, no edge; K8 statement null,
+    K3/K5/K6 no statement (thin-product coverage at confirmation; LE zero trips); Fable recomputed every figure. Part B:
+    the Carver micro trend book designed on 12 micros (simple rounding loses <= 0.07 Sharpe from $25K up; the published
+    greedy loses more), forward/ paper runner, E22-F1 frozen (2a2bdd8) and registered at $25K; N 532 -> 533. Nothing
+    bought; no data fetched.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

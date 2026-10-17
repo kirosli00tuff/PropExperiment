@@ -1,0 +1,1426 @@
+
+<html>
+<head>
+<meta name="robots" content="noindex">
+<title>Order Unfair Advantage - Select Packages</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link rel="stylesheet" href="/jqueryui/jquery-ui.min.css">
+<script src="/jqueryui/jquery-ui.min.js"></script>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/general.css" />
+<link rel="stylesheet" href="/css/BSProgressTracker.css" />
+
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+
+	function ApplyCoupon()
+	{
+
+		$.getJSON("OrderUA", "ApplyCoupon=" + $("#Coupon").val(), function(data) {	
+			$("#CouponErrorDiv").hide();
+			$("#CouponSuccessDiv").hide();
+			if(data["MDiscount"]==0 && data["YDiscount"]==0)
+			{
+				$("#CouponErrorMsg").text("The coupon code '" + $("#Coupon").val() + "' is invalid.");
+				$("#CouponErrorDiv").show();
+			}
+			else
+			{
+				$("#HiddenCoupon").val($("#Coupon").val());
+				if(data["MDiscount"]!=0 && data["YDiscount"]!=0)
+					$("#CouponSuccessMsg").text("The coupon code '" + $("#Coupon").val() + "' has been applied for " + (data["MDiscount"]*100) + "% off monthly and yearly packages.");
+				else if(data["MDiscount"]==0 && data["YDiscount"]!=0) 
+					$("#CouponSuccessMsg").text("The coupon code '" + $("#Coupon").val() + "' has been applied for " + (data["YDiscount"]*100) + "% off yearly packages.");
+				else 
+					$("#CouponSuccessMsg").text("The coupon code '" + $("#Coupon").val() + "' has been applied for " + (data["MDiscount"]*100) + "% off monthly packages.");
+				$("#CouponSuccessDiv").show();
+			}
+			
+		});
+
+	}
+
+    function ResetExtraHistorySelects(IsMonthly)
+	{
+		MaxYears = 10;
+		if(IsMonthly)
+		{
+			MaxYears = 15;
+		}
+
+		let USDollar = new Intl.NumberFormat('en-US', {
+
+			style: 'currency',
+			currency: 'USD',
+		});
+	
+
+
+
+EHCost = 10;
+$('#SILVERPkgY_1').empty();
+$('#SILVERPkgY_1').append('<option value="0" selected>None</option>');
+for( i=1; i<=MaxYears; i++ ) {
+iEHCost = EHCost * i;
+$('#SILVERPkgY_1').append('<option value=' + i + '>' + i + ' Years (' + USDollar.format(iEHCost) + ')</option>');
+}
+
+
+EHCost = 20;
+$('#SILVERPkgY_2').empty();
+$('#SILVERPkgY_2').append('<option value="0" selected>None</option>');
+for( i=1; i<=MaxYears; i++ ) {
+iEHCost = EHCost * i;
+$('#SILVERPkgY_2').append('<option value=' + i + '>' + i + ' Years (' + USDollar.format(iEHCost) + ')</option>');
+}
+
+
+EHCost = 25;
+$('#SILVERPkgY_3').empty();
+$('#SILVERPkgY_3').append('<option value="0" selected>None</option>');
+for( i=1; i<=MaxYears; i++ ) {
+iEHCost = EHCost * i;
+$('#SILVERPkgY_3').append('<option value=' + i + '>' + i + ' Years (' + USDollar.format(iEHCost) + ')</option>');
+}
+
+
+EHCost = 30;
+$('#SILVERPkgY_4').empty();
+$('#SILVERPkgY_4').append('<option value="0" selected>None</option>');
+for( i=1; i<=MaxYears; i++ ) {
+iEHCost = EHCost * i;
+$('#SILVERPkgY_4').append('<option value=' + i + '>' + i + ' Years (' + USDollar.format(iEHCost) + ')</option>');
+}
+
+
+EHCost = 10;
+$('#SILVERPkgY_5').empty();
+$('#SILVERPkgY_5').append('<option value="0" selected>None</option>');
+for( i=1; i<=MaxYears; i++ ) {
+iEHCost = EHCost * i;
+$('#SILVERPkgY_5').append('<option value=' + i + '>' + i + ' Years (' + USDollar.format(iEHCost) + ')</option>');
+}
+
+	}
+
+	function ClearCheckboxes()
+	{
+                    $("#SILVERPkg_1").prop( "checked", false );
+$("#SILVERPkgY_1").prop('selectedIndex', 0);
+$("#SILVERPkgY_1").prop("disabled", true);
+$("#SILVERPkg_2").prop( "checked", false );
+$("#SILVERPkgY_2").prop('selectedIndex', 0);
+$("#SILVERPkgY_2").prop("disabled", true);
+$("#SILVERPkg_3").prop( "checked", false );
+$("#SILVERPkgY_3").prop('selectedIndex', 0);
+$("#SILVERPkgY_3").prop("disabled", true);
+$("#SILVERPkg_4").prop( "checked", false );
+$("#SILVERPkgY_4").prop('selectedIndex', 0);
+$("#SILVERPkgY_4").prop("disabled", true);
+$("#SILVERPkg_5").prop( "checked", false );
+$("#SILVERPkgY_5").prop('selectedIndex', 0);
+$("#SILVERPkgY_5").prop("disabled", true);
+$("#SILVERPkg_6").prop( "checked", false );
+$("#SILVERPkg_7").prop( "checked", false );
+$("#SILVERPkg_8").prop( "checked", false );
+$("#SILVERPkg_9").prop( "checked", false );
+$("#GOLDPkg_10").prop( "checked", false );
+$("#GOLDPkgY_10").prop('selectedIndex', 0);
+$("#GOLDPkgY_10").prop("disabled", true);
+$("#GOLDPkg_11").prop( "checked", false );
+$("#GOLDPkgY_11").prop('selectedIndex', 0);
+$("#GOLDPkgY_11").prop("disabled", true);
+$("#GOLDPkg_12").prop( "checked", false );
+$("#GOLDPkgY_12").prop('selectedIndex', 0);
+$("#GOLDPkgY_12").prop("disabled", true);
+$("#GOLDPkg_13").prop( "checked", false );
+$("#ADDONSPkg_14").prop( "checked", false );
+$("#ADDONSPkg_15").prop( "checked", false );
+$("#DWPkg_16").prop( "checked", false );
+$("#DWPkgY_16").prop('selectedIndex', 0);
+$("#DWPkgY_16").prop("disabled", true);
+$("#DWPkg_17").prop( "checked", false );
+$("#DWPkgY_17").prop('selectedIndex', 0);
+$("#DWPkgY_17").prop("disabled", true);
+$("#DWPkg_18").prop( "checked", false );
+$("#DWPkgY_18").prop('selectedIndex', 0);
+$("#DWPkgY_18").prop("disabled", true);
+$("#DWPkg_19").prop( "checked", false );
+$("#DWPkgY_19").prop('selectedIndex', 0);
+$("#DWPkgY_19").prop("disabled", true);
+$("#DWPkg_20").prop( "checked", false );
+$("#DWPkgY_20").prop('selectedIndex', 0);
+$("#DWPkgY_20").prop("disabled", true);
+
+	}
+
+    function ChangePackageType() {
+
+	ClearCheckboxes();
+	switch($("#SubType").val()) {
+	  case "Trial":
+		$("#TrialDiv").show();
+		$("#SilverDiv").hide();
+		$("#GoldDiv").hide();
+		$("#CorrRow").hide();
+		$("#SILVERPkg_9" ).prop( "checked", false );
+		$("#OADiv").hide();
+		$("#HistoryOnlyDiv").hide();
+		break;
+	  case "Monthly":
+		$("#TrialDiv").hide();
+		$("#SilverDiv").show();
+		$("#GoldDiv").hide();
+		$("#HistoryOnlyDiv").hide();
+		$("#CorrRow").hide();
+		$( "#SILVERPkg_9" ).prop( "checked", false );
+		$("#OADiv").show();
+		$("#SRateColTitle").text("Monthly access rate");
+		$("#GRateColTitle").text("Monthly access rate");
+		$("#OARateColTitle").text("Monthly access rate");
+
+$("#SILVERRate_1").text("$47.50");
+$("#SILVERRate_2").text("$79.50");
+$("#SILVERRate_3").text("$40.50");
+$("#SILVERRate_4").text("$35.50");
+$("#SILVERRate_5").text("$25.00");
+$("#SILVERRate_6").text("$74.50");
+$("#SILVERRate_7").text("$73.00");
+$("#SILVERRate_8").text("$24.00");
+$("#ADDONSRate_14").text("$25.00");
+$("#ADDONSRate_15").text("$6.50");
+$("#DWRate_19").text("$0.00");
+$("#DWRate_20").text("$0.00");
+
+			ResetExtraHistorySelects(true);
+		break;
+
+	  case "Yearly":
+		$("#TrialDiv").hide();
+		$("#SilverDiv").show();
+		$("#GoldDiv").show();
+		$("#HistoryOnlyDiv").hide();
+		$("#CorrRow").show();
+		$("#OADiv").show();
+		$("#SRateColTitle").text("Yearly access rate");
+		$("#GRateColTitle").text("Yearly access rate");
+		$("#OARateColTitle").text("Yearly access rate");
+		ResetExtraHistorySelects(false);
+
+$("#SILVERRate_1").text("$398.00");
+$("#SILVERRate_2").text("$689.00");
+$("#SILVERRate_3").text("$359.00");
+$("#SILVERRate_4").text("$300.00");
+$("#SILVERRate_5").text("$195.00");
+$("#SILVERRate_6").text("$714.00");
+$("#SILVERRate_7").text("$619.00");
+$("#SILVERRate_8").text("$169.00");
+$("#SILVERRate_9").text("$99.00");
+$("#GOLDRate_10").text("$639.00");
+$("#GOLDRate_11").text("$899.00");
+$("#GOLDRate_12").text("$749.00");
+$("#GOLDRate_13").text("$1,889.00");
+$("#ADDONSRate_14").text("$300.00");
+$("#ADDONSRate_15").text("$78.00");
+$("#DWRate_16").text("$419.00");
+$("#DWRate_17").text("$649.00");
+$("#DWRate_18").text("$899.00");
+$("#DWRate_19").text("$299.00");
+$("#DWRate_20").text("$299.00");
+
+
+
+		break;
+
+	  case "HistoryOnly":
+		$("#TrialDiv").hide();
+		$("#SilverDiv").hide();
+		$("#GoldDiv").hide();
+		$("#CorrRow").hide();
+		$("#SILVERPkg_9" ).prop( "checked", false );
+		$("#OADiv").hide();
+		$("#HistoryOnlyDiv").show();
+		break;
+	}
+}
+
+$(function(){
+	$("#CouponErrorDiv").hide();
+	$("#CouponSuccessDiv").hide();
+	$( "#CouponButton" ).on( "click", ApplyCoupon);
+
+	$("#ADDONSPkg_15").change(function() {
+
+		switch($("#SubType").val()) {
+			case "Monthly":
+				if(!$("#SILVERPkg_2").prop("checked") )
+				{
+					$("#ADDONSPkg_15").prop("checked",false);
+					$('#LMEModal').modal('show');
+				}
+			break;
+			case "Yearly":
+				if(!$("#SILVERPkg_2").prop("checked") && !$("#GOLDPkg_11").prop("checked") )
+				{
+					$("#ADDONSPkg_15").prop("checked",false);
+					$('#LMEModal').modal('show');
+				}
+			break;
+		}
+	});
+	$("#ADDONSPkg_14").change(function() {
+
+		switch($("#SubType").val()) {
+			case "Monthly":
+				if(!$("#SILVERPkg_2").prop("checked") && !$("#SILVERPkg_1").prop("checked") )
+				{
+					$("#ADDONSPkg_14").prop("checked",false);
+					$('#PCModal').modal('show');
+				}
+			break;
+			case "Yearly":
+				if(!$("#SILVERPkg_2").prop("checked") && !$("#GOLDPkg_11").prop("checked") && !$("#SILVERPkg_1").prop("checked") && !$("#GOLDPkg_10").prop("checked") )
+				{
+					$("#ADDONSPkg_14").prop("checked",false);
+					$('#PCModal').modal('show');
+				}
+			break;
+		}
+	});
+
+	$("#SubType").change(ChangePackageType);
+
+
+	$("#SILVERPkg_1").change(function() {
+if(this.checked) { $( "#SILVERPkgY_1" ).prop( "disabled", false );} else {$( "#SILVERPkgY_1" ).prop( "disabled", true ); $( "#SILVERPkgY_1" ).prop('selectedIndex', 0); }
+
+if(this.checked) { 
+	$( "#SILVERPkg_2" ).prop( "checked", false );
+	$( "#SILVERPkgY_2" ).prop( "disabled", true );
+	$( "#SILVERPkgY_2" ).prop('selectedIndex', 0);
+
+} 
+
+});
+
+	$("#SILVERPkg_2").change(function() {
+if(this.checked) { $( "#SILVERPkgY_2" ).prop( "disabled", false );} else {$( "#SILVERPkgY_2" ).prop( "disabled", true ); $( "#SILVERPkgY_2" ).prop('selectedIndex', 0); }
+
+
+
+if(this.checked) { 
+	$( "#SILVERPkg_1" ).prop( "checked", false );
+	$( "#SILVERPkgY_1" ).prop( "disabled", true );
+	$( "#SILVERPkgY_1" ).prop('selectedIndex', 0);
+
+} 
+
+});
+
+	$("#SILVERPkg_3").change(function() {
+if(this.checked) { $( "#SILVERPkgY_3" ).prop( "disabled", false );} else {$( "#SILVERPkgY_3" ).prop( "disabled", true ); $( "#SILVERPkgY_3" ).prop('selectedIndex', 0); }
+
+
+});
+
+	$("#SILVERPkg_4").change(function() {
+if(this.checked) { $( "#SILVERPkgY_4" ).prop( "disabled", false );} else {$( "#SILVERPkgY_4" ).prop( "disabled", true ); $( "#SILVERPkgY_4" ).prop('selectedIndex', 0); }
+
+
+});
+
+	$("#SILVERPkg_5").change(function() {
+if(this.checked) { $( "#SILVERPkgY_5" ).prop( "disabled", false );} else {$( "#SILVERPkgY_5" ).prop( "disabled", true ); $( "#SILVERPkgY_5" ).prop('selectedIndex', 0); }
+
+
+});
+
+	$("#GOLDPkg_10").change(function() {
+if(this.checked) { $( "#GOLDPkgY_10" ).prop( "disabled", false );} else {$( "#GOLDPkgY_10" ).prop( "disabled", true ); $( "#GOLDPkgY_10" ).prop('selectedIndex', 0); }
+
+if(this.checked) { 
+	$( "#GOLDPkg_11" ).prop( "checked", false );
+	$( "#GOLDPkgY_11" ).prop( "disabled", true );
+	$( "#GOLDPkgY_11" ).prop('selectedIndex', 0);
+
+}
+
+
+});
+
+	$("#GOLDPkg_11").change(function() {
+if(this.checked) { $( "#GOLDPkgY_11" ).prop( "disabled", false );} else {$( "#GOLDPkgY_11" ).prop( "disabled", true ); $( "#GOLDPkgY_11" ).prop('selectedIndex', 0); }
+
+if(this.checked) { 
+	$( "#GOLDPkg_10" ).prop( "checked", false );
+	$( "#GOLDPkgY_10" ).prop( "disabled", true );
+	$( "#GOLDPkgY_10" ).prop('selectedIndex', 0);
+
+} 
+
+
+});
+
+	$("#GOLDPkg_12").change(function() {
+if(this.checked) { $( "#GOLDPkgY_12" ).prop( "disabled", false );} else {$( "#GOLDPkgY_12" ).prop( "disabled", true ); $( "#GOLDPkgY_12" ).prop('selectedIndex', 0); }
+
+
+});
+
+
+}); // end jquery
+
+$(window).bind("pageshow",function(){
+
+	ChangePackageType();
+
+		if ($("#SILVERPkg_3").prop("checked"))
+		{
+			$( "#SILVERPkgY_3" ).prop( "disabled", false );
+		}
+		else
+		{
+			$( "#SILVERPkgY_3" ).prop( "disabled", true );
+		}
+
+		if ($("#SILVERPkg_4").prop("checked"))
+		{
+			$( "#SILVERPkgY_4" ).prop( "disabled", false );
+		}
+		else
+		{
+			$( "#SILVERPkgY_4" ).prop( "disabled", true );
+		}
+
+		if ($("#SILVERPkg_5").prop("checked"))
+		{
+			$( "#SILVERPkgY_5" ).prop( "disabled", false );
+		}
+		else
+		{
+			$( "#SILVERPkgY_5" ).prop( "disabled", true );
+		}
+
+		if ($("#GOLDPkg_12").prop("checked"))
+		{
+			$( "#GOLDPkgY_12" ).prop( "disabled", false );
+		}
+		else
+		{
+			$( "#GOLDPkgY_12" ).prop( "disabled", true );
+		}
+
+
+
+	}); // end window bind
+
+</script>
+
+</head>
+<body>
+
+
+<!-- Modal -->
+<div class="modal fade" id="LMEModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Error</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      You must first select a world futures package before adding the LME package.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="PCModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Error</h1>
+        <button type = "button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        You must first select a futures package before adding the Put/Call package.
+      </div>
+      <div class="modal-footer">
+        <button type = "button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div style="background: url(/images/top_bar.png); height: 30px;">
+    <div style="display: block;width:1180px; margin: 0 auto; color:white; font-size:12px; padding-top:5px" >
+<a class="whitelink" href="https://www.csidata.com/" >&lt; Return to CSI Website</a></div>
+</div>
+
+
+
+<div>
+	<div style="display: block;width:1180px; margin: 0 auto;">
+
+		<div style="display:inline-block"><a href="https://www.csidata.com/" >
+          <img src="/images/logo.png" alt="Commodity Systems Inc." border="0" style="float:left; clear:both; "></a>
+		</div>
+        <div style="clear:both"></div>
+
+
+
+
+ <h5 class="card-title mb-2 mt-4">Unfair Advantage Order Form</h5>
+<p>Please disable any ad blockers as they may cause issues during the order process. This form is for new clients only. Start exploring world markets! Orders are filled by the next business day. A software download link and your login information will be sent to you via email. UA is not recommended for use on a MAC, it is Windows software. If you choose to use UA on a MAC OS we cannot guarantee support. Delisted stocks are no longer offered via the UA application. They are a premium service only available by contacting info@csidata.com. Please call 800-274-4727 or 561-392-8663 or email info@csidata.com with any questions or concerns.</p>
+<div class="card card-timeline px-2 border-none  mb-3"><ul class="bs-progress-tracker">
+<li class="step active"> <div><i class="material-icons">check_circle</i></div> Choose Data Packages </li>
+<li class="step"> <div><i class="material-icons">looks_two</i></div> Review </li>
+<li class="step"> <div><i class="material-icons">looks_3</i></div> Licensing Agreement </li>
+<li class="step"> <div><i class="material-icons">looks_4</i></div> Billing Information </li>
+<li class="step"> <div><i class="material-icons">looks_5</i></div> Confirmation </li>
+</ul></div>
+
+
+<form method="post" action="OrderUA" name="myform">
+<input type="hidden" id="HiddenCoupon" name="HiddenCoupon" value=""/>
+<input type="hidden" name="PageNum" value="1"/>
+<div class="input-group input-group-lg mb-3">
+  <span class="input-group-text" style="background-color: #0b5ed7; color: #fff;">Choose Subscription Type <i class="material-icons">arrow_right</span></i>
+  <select class="form-select" id="SubType" name="SubType">
+    <option value="Trial">$20 Trial</option>
+    <option value="Yearly" selected>Yearly (Silver or Gold Package)</option>
+    <option value="Monthly">Monthly (Silver Package)</option>
+    <option value="HistoryOnly">History Only</option>
+  </select>
+</div>
+
+
+<div class="card mb-4" id="TrialDiv"><div class="card-body">
+ <h5>
+	$20 Trial
+  </h5>
+    <p class="card-text">Explore CSI's Unfair Advantage software for 21 days. You have access to any 5 US Futures within the CME and any 10 US Stocks within the Nasdaq with 18 months of history included for 21 day access. Export to most charting and trading software. Data formats include CSI, MS, ASCII or Excel. When your trial has expired you then have the option to subscribe to one of the many subscription packages offered by CSI. Trial will expire 21 days from date processed.</p>
+</div></div>
+
+<div class="card mb-4" id="SilverDiv"><div class="card-body">
+ <h5>
+	Silver Packages
+  </h5>
+  
+
+    <p class="card-text">For monthly subscriptions: Access to 5 years of historical data is provided for each selected category, except the $20 Trial which has 18 months. For yearly subscriptions: Access to 10 years of historical data is provided for each selected category. Each month of daily updates extends the accessible history by one additional month beyond your history's initial start date. Each of our offerings for Personal and Private Use customers includes a very liberal cap on the maximum number of markets that may be processed through Unfair Advantage's portfolios on any given day. These limits are well beyond the expected use of this product by individual investors and analysts. For auditing purposes, a "market" is defined as a specific commodity or other similar tradable offered by an individual exchange, such as LME tin or CBT gold. These limits do not prevent you from exploring any of the markets involved in your update categories, as long as the cumulative daily total doesn't exceed the stated caps. When early access is used (before 6:30 p.m.), charting is limited to 250 series. After 6:30 p.m., charting is unlimited. *Silver Stock packages are limited to 7,500 stocks/mutual funds/indices when bought separately or combined.</p>
+
+
+<table class="table border ">
+
+<thead>
+<tr>
+<th scope="col" class="col-3">Package</th>
+<th scope="col">Description</th>
+<th scope="col">Add Extra History for a one time fee</th>
+<th scope="col">One time licensing fee</th>
+<th scope="col" id="SRateColTitle"></th>
+</tr></thead>
+<tbody  class="table-group-divider">
+
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="1" id="SILVERPkg_1" name="SILVERPkg_1">
+  <label class="form-check-label" for="SILVERPkg_1">
+    North American Futures
+  </label>
+</div>
+</th>
+
+<td>
+This category includes active <a href="https://apps.csidata.com/FactsheetListing.aspx?naf=1">futures</a> and cash markets in the U.S. and Canada, <a href="http://apps.csidata.com/factsheets.php?type=commodity&format=htmltable&exchangeid=FOREX">FOREX markets</a>, plus many fundamental and econometric series such as interest rates, housing starts and COT data. This subscription allows you to view any of the 700+ series supplied, with a daily cumulative maximum of 49 markets processed through your UA portfolio. Put/Call Ratios and Totals may be added for $25/month. Inactive futures not included.
+</td>
+
+<td>
+		<select class="form-select w-auto" id="SILVERPkgY_1" name="SILVERPkgY_1"></select>
+</td>
+
+<td>
+$60.00
+</td>
+
+<td id="SILVERRate_1">
+</td>
+
+</tr>
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="2" id="SILVERPkg_2" name="SILVERPkg_2">
+  <label class="form-check-label" for="SILVERPkg_2">
+    World Futures
+  </label>
+</div>
+</th>
+
+<td>
+This <a href="https://apps.csidata.com/FactsheetListing.aspx?wf=1">world futures</a> package includes everything in the North American category as well as South American, European, Asian, Australian and other world exchanges. This subscription allows you to view any of the nearly 1000+ futures supplied, with a daily cumulative maximum of 69 markets processed through your UA portfolio. LME access may be added to the World Futures package for $6/month (the mandatory exchange fee). Put/Call Ratios and Totals may be added for $25/month. Inactive futures not included.
+</td>
+
+<td>
+		<select class="form-select w-auto" id="SILVERPkgY_2" name="SILVERPkgY_2"></select>
+</td>
+
+<td>
+$120.00
+</td>
+
+<td id="SILVERRate_2">
+</td>
+
+</tr>
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="3" id="SILVERPkg_3" name="SILVERPkg_3">
+  <label class="form-check-label" for="SILVERPkg_3">
+    U.S. Stocks and Indices
+  </label>
+</div>
+</th>
+
+<td>
+This is an enormous database of all U.S. stocks and indices including <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=AMEX&isactive=1">AMEX</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=NASDAQ&isactive=1">Nasdaq, OTC,</a> <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=NYSE&isactive=1">NYSE</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=INDEX&isactive=1">domestic indices</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&isetf=1&isus=1">ETFs</a>, and CEFs. Your subscription allows you to view any of the 18,000+ equities supplied with a daily cumulative maximum of 7,500 stocks and indices processed through your UA portfolio.
+</td>
+
+<td>
+		<select class="form-select w-auto" id="SILVERPkgY_3" name="SILVERPkgY_3"></select>
+</td>
+
+<td>
+$50.00
+</td>
+
+<td id="SILVERRate_3">
+</td>
+
+</tr>
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="4" id="SILVERPkg_4" name="SILVERPkg_4">
+  <label class="form-check-label" for="SILVERPkg_4">
+    Non-U.S. Stocks and Indices
+  </label>
+</div>
+</th>
+
+<td>
+This is a collection of mainly London and Toronto stocks and indices including <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=LSE&isactive=1">LSE</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=TSX&isactive=1">TSX</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=TSXV&isactive=1">TSXV</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=FINDEX&isactive=1">foreign indices</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&isetf=1&isnonus=1">ETFs</a>, and CEFs. Your subscription allows you to view any of the 10,000+ stocks and indices supplied, with a daily cumulative maximum of 7,500 stocks and indices processed through your UA portfolio.
+</td>
+
+<td>
+		<select class="form-select w-auto" id="SILVERPkgY_4" name="SILVERPkgY_4"></select>
+</td>
+
+<td>
+$60.00
+</td>
+
+<td id="SILVERRate_4">
+</td>
+
+</tr>
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="5" id="SILVERPkg_5" name="SILVERPkg_5">
+  <label class="form-check-label" for="SILVERPkg_5">
+    Mutual Funds
+  </label>
+</div>
+</th>
+
+<td>
+This category holds an amazing repository of over 24,000 <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=MUTUAL&isactive=1">mutual funds</a>. It is subject to a daily cumulative maximum of 7,500 funds processed through your UA portfolio . When combined with any stock package, the daily cumulative maximum is 7,500 stocks, funds, and/or indices.
+</td>
+
+<td>
+		<select class="form-select w-auto" id="SILVERPkgY_5" name="SILVERPkgY_5"></select>
+</td>
+
+<td>
+$40.00
+</td>
+
+<td id="SILVERRate_5">
+</td>
+
+</tr>
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="6" id="SILVERPkg_6" name="SILVERPkg_6">
+  <label class="form-check-label" for="SILVERPkg_6">
+    U.S. and Foreign Stocks, Indices, & Mutual Funds
+  </label>
+</div>
+</th>
+
+<td>
+This is an enormous database of U.S. and Non-U.S. stocks including <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=AMEX&isactive=1">AMEX</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=NASDAQ&isactive=1">Nasdaq, OTC</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=NYSE&isactive=1">NYSE</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=INDEX&isactive=1">domestic indices</a>,  <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=LSE&isactive=1">LSE</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=TSX&isactive=1">TSX</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=TSXV&isactive=1">TSXV</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=FINDEX&isactive=1">foreign indices</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=MUTUAL&isactive=1">mutual funds</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&isetf=1">ETFs</a>, and CEFs. Your subscription allows you to view any of the 52,000+ stocks & indices, and 24,000+ mutual funds. The Non-U.S. are a collection of mainly London and Toronto stocks and indices. There is a daily cumulative maximum of 7,500 stocks, indices, and funds processed through your UA portfolio.
+</td>
+
+<td>
+		
+</td>
+
+<td>
+$120.00
+</td>
+
+<td id="SILVERRate_6">
+</td>
+
+</tr>
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="7" id="SILVERPkg_7" name="SILVERPkg_7">
+  <label class="form-check-label" for="SILVERPkg_7">
+    World Options
+  </label>
+</div>
+</th>
+
+<td>
+This category provides futures options and stock index options from the U.S. and other world markets. This subscription allows you to view any of the options series supplied, with a daily cumulative maximum of 15 markets processed through your UA portfolio. Due to the large volume of data, historical series are limited to one year.
+</td>
+
+<td>
+		
+</td>
+
+<td>
+$175.00
+</td>
+
+<td id="SILVERRate_7">
+</td>
+
+</tr>
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="8" id="SILVERPkg_8" name="SILVERPkg_8">
+  <label class="form-check-label" for="SILVERPkg_8">
+    Budget Market Mix
+  </label>
+</div>
+</th>
+
+<td>
+The Budget Market Mix includes all contracts of 5 futures, 5 stocks, and 5 mutual funds/ETFs. Yearly subscriptions get 1 year of history and monthly subscriptions get 6 months of history. Customizable plans are available which allow 15 total markets, call for details. Cannot purchase additional history. Inactive futures not included.
+</td>
+
+<td>
+		
+</td>
+
+<td>
+$30.00
+</td>
+
+<td id="SILVERRate_8">
+</td>
+
+</tr>
+
+<tr id="CorrRow">
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="9" id="SILVERPkg_9" name="SILVERPkg_9">
+  <label class="form-check-label" for="SILVERPkg_9">
+    Correlation Studies
+  </label>
+</div>
+</th>
+
+<td>
+Access 2 to 40-year Correlation Studies that pair by coefficient any stock or future with all other stocks & futures on the CSI website (250 million pairs).
+</td>
+
+<td>
+		
+</td>
+
+<td>
+
+</td>
+
+<td id="SILVERRate_9">
+</td>
+
+</tr>
+
+</tbody></table>
+
+</div></div>
+
+
+
+<div class="card mb-4" id="GoldDiv"><div class="card-body">
+ <h5>
+	Gold Packages
+  </h5>
+  
+
+    <p class="card-text">Gold packages offer 30 years history for futures and stocks, and 5 years for options. They can only be ordered as a yearly subscription.</p>
+
+<table class="table border table-warning ">
+
+<thead>
+<tr>
+<th scope="col" class="col-3">Package</th>
+<th scope="col">Description</th>
+<th scope="col">Add Extra History for a one time fee</th>
+<th scope="col">One time licensing fee</th>
+<th scope="col" id="GRateColTitle"></th>
+</tr></thead>
+<tbody class="table-group-divider">
+
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="10" id="GOLDPkg_10" name="GOLDPkg_10">
+  <label class="form-check-label" for="GOLDPkg_10">
+    North American Futures
+  </label>
+</div>
+
+</th>
+
+<td>
+This category includes active <a href="https://apps.csidata.com/FactsheetListing.aspx?naf=1">futures</a> and cash markets in the U.S. and Canada, <a href="http://apps.csidata.com/factsheets.php?type=commodity&format=htmltable&exchangeid=FOREX">FOREX markets</a>, plus many fundamental and econometric series such as interest rates, housing starts and COT data. This subscription allows you to view any of the 700+ series supplied, with a daily cumulative maximum of 150 markets processed through your UA portfolio. 30 years history in our database is provided for these markets. Put/Call Ratios and Totals may be added for $25/month. Inactive futures not included.
+</td>
+
+<td>
+<select class="form-select w-auto" id="GOLDPkgY_10" name="GOLDPkgY_10"> <option value="0" selected>None</option><option value="1">1 Years ($15.00)</option><option value="2">2 Years ($30.00)</option><option value="3">3 Years ($45.00)</option><option value="4">4 Years ($60.00)</option><option value="5">5 Years ($75.00)</option><option value="6">6 Years ($90.00)</option><option value="7">7 Years ($105.00)</option><option value="8">8 Years ($120.00)</option><option value="9">9 Years ($135.00)</option><option value="10">10 Years ($150.00)</option></select>
+</td>
+
+<td>
+$120.00
+</td>
+
+<td  id="GOLDRate_10">
+</td>
+
+</tr>
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="11" id="GOLDPkg_11" name="GOLDPkg_11">
+  <label class="form-check-label" for="GOLDPkg_11">
+    World Futures
+  </label>
+</div>
+
+</th>
+
+<td>
+This <a href="https://apps.csidata.com/FactsheetListing.aspx?wf=1">world futures</a> package includes everything in the North American category as well as South American, European, Asian, Australian and other world exchanges. It allows you to view any of the nearly 1,000+ futures supplied, with a daily cumulative maximum of 150 markets processed through your UA portfolio. 30 years history in our database is provided for these markets. LME access may be added to the World Futures package for $6/month (the mandatory exchange fee). Put/Call Ratios and Totals may be added for $25/month. Inactive futures not included.
+</td>
+
+<td>
+<select class="form-select w-auto" id="GOLDPkgY_11" name="GOLDPkgY_11"> <option value="0" selected>None</option><option value="1">1 Years ($30.00)</option><option value="2">2 Years ($60.00)</option><option value="3">3 Years ($90.00)</option><option value="4">4 Years ($120.00)</option><option value="5">5 Years ($150.00)</option><option value="6">6 Years ($180.00)</option><option value="7">7 Years ($210.00)</option><option value="8">8 Years ($240.00)</option><option value="9">9 Years ($270.00)</option><option value="10">10 Years ($300.00)</option></select>
+</td>
+
+<td>
+$200.00
+</td>
+
+<td  id="GOLDRate_11">
+</td>
+
+</tr>
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="12" id="GOLDPkg_12" name="GOLDPkg_12">
+  <label class="form-check-label" for="GOLDPkg_12">
+    U.S. and Foreign Stocks, Indices, & Mutual Funds
+  </label>
+</div>
+
+</th>
+
+<td>
+This is an enormous database of U.S. and Non-U.S. stocks including <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=AMEX&isactive=1">AMEX</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=NASDAQ&isactive=1">Nasdaq, OTC</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=NYSE&isactive=1">NYSE</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=INDEX&isactive=1">domestic indices</a>,  <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=LSE&isactive=1">LSE</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=TSX&isactive=1">TSX</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=TSXV&isactive=1">TSXV</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=FINDEX&isactive=1">foreign indices</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&exchangeid=MUTUAL&isactive=1">mutual funds</a>, <a href="http://apps.csidata.com/factsheets.php?type=stock&format=html&isetf=1">ETFs</a>, and CEFs.  Your subscription allows you to view any of the 52,000+ stocks & indices, and 24,000+ mutual funds. The Non-U.S. are a collection of mainly London and Toronto stocks and indices. There is a daily cumulative maximum of 10,000 stocks, indices, and funds processed through your UA portfolio.
+</td>
+
+<td>
+<select class="form-select w-auto" id="GOLDPkgY_12" name="GOLDPkgY_12"> <option value="0" selected>None</option><option value="1">1 Years ($50.00)</option><option value="2">2 Years ($100.00)</option><option value="3">3 Years ($150.00)</option><option value="4">4 Years ($200.00)</option><option value="5">5 Years ($250.00)</option><option value="6">6 Years ($300.00)</option><option value="7">7 Years ($350.00)</option><option value="8">8 Years ($400.00)</option><option value="9">9 Years ($450.00)</option><option value="10">10 Years ($500.00)</option></select>
+</td>
+
+<td>
+$200.00
+</td>
+
+<td  id="GOLDRate_12">
+</td>
+
+</tr>
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="13" id="GOLDPkg_13" name="GOLDPkg_13">
+  <label class="form-check-label" for="GOLDPkg_13">
+    World Options
+  </label>
+</div>
+
+</th>
+
+<td>
+This category provides futures options and stock index options from the U.S. and other world markets. This subscription allows you to view any of the options series supplied with 5 year history included on 30 Options.
+</td>
+
+<td>
+
+</td>
+
+<td>
+$400.00
+</td>
+
+<td  id="GOLDRate_13">
+</td>
+
+</tr>
+
+</tbody></table>
+
+
+</div></div>
+
+
+
+<div class="card mb-4" id="OADiv"><div class="card-body">
+ <h5>
+	Optional Add-ons
+  </h5>
+  
+
+    <p class="card-text">These extended services are available to yearly or monthly subscriptions.</p>
+
+<table class="table border  ">
+
+<thead>
+<tr>
+<th scope="col" class="col-3">Package</th>
+<th scope="col">Description</th>
+<th scope="col" id="OARateColTitle"></th>
+</tr></thead>
+<tbody class="table-group-divider">
+
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="14" id="ADDONSPkg_14" name="ADDONSPkg_14">
+  <label class="form-check-label" for="ADDONSPkg_14">
+    Put/Call Ratios and Totals
+  </label>
+</div>
+
+</th>
+
+<td>
+This data set helps users gauge market sentiment on all optionable futures markets.
+</td>
+
+
+<td  id="ADDONSRate_14">
+</td>
+
+</tr>
+
+<tr>
+
+<th>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="15" id="ADDONSPkg_15" name="ADDONSPkg_15">
+  <label class="form-check-label" for="ADDONSPkg_15">
+    LME Access
+  </label>
+</div>
+
+</th>
+
+<td>
+This gives access to all active LME (London Metal Exchange) markets. It is to cover the mandatory exchange fee that LME charges.
+</td>
+
+
+<td  id="ADDONSRate_15">
+</td>
+
+</tr>
+
+</tbody></table>
+
+
+</div></div>
+
+
+
+
+<div class="card mb-4" id="HistoryOnlyDiv"><div class="card-body">
+ <h5>
+	History Only
+  </h5>
+
+<ul>
+<li>Does not include daily updates.</li>
+<li><a href="http://www.csidata.com/?page_id=851">Clean</a> end-of-day data with open, high, low, close and volume (and open interest for futures). Also included is the market total volume and OI</li>
+<li><A href="http://www.csidata.com/?page_id=797">Continuous contracts</a> available for futures (Back Adjusted, Back Adjusted proportionately, Nearest Future, Perpetual weighted by Time or Open Interest, Gann)</li>
+<li>The option to have the data either adjusted or non adjusted for splits/dividends and capital gains.</li>
+<li>Export Options of CSI, MS or ASCII formats for compatibility with many 3rd party programs</li>
+<li><a href="http://www.csidata.com/?page_id=797">Advanced charting</a> with technical analysis</li>
+<li>One month FREE updates included</li>
+<li><a href="https://apps.csidata.com/FactsheetListing">View market listings</a></li>
+<li>History only orders are non refundable</strong></li>
+<li>To download or view historical data you must install the Unfair Advantage application.</li>
+<li>History data must be exported within the 1 month free update period.  Note that after the 1 month you no longer have access to the Unfair Advantage (UA) or the data within it.</li>
+<li>To learn how to download then install the Unfair advantage application follow the instructions here: <a href="http://www.csidata.com/?page_id=55">How to download then install the Unfair Advantage Application</a></li>
+<li>To learn how to download your history data from Unfair Advantage please click here:</strong><a href="http://www.csidata.com/?p=1285">How to extract data with the Unfair Advantage History version? </a></li>
+<li>The pricing below only applies to history that is exported using our Unfair Advantage Software</li>
+<li>Inactive stocks and futures are not included with this package</li>
+<li>Full History options are available. For more information and pricing please contact CSI's Commercial Sale Specialist Nassrin Berns at nassrin@csidata.com or get more information by calling (800) 274-4727.</li>
+</ul>
+
+<div class="container mt-4">
+  <div class="row row-cols-1 row-cols-md-4 g-4">
+    
+<div class="col">
+					<div class="card h-100">
+					<div class="card-body">
+        <h5 class="card-title">North American Futures</h5>
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NAF" id="HOPkg_NAF_0" value="-1" checked>
+  <label class="form-check-label" for="UsageIndCheck">
+    None
+  </label>
+</div>
+		
+		
+		
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NAF" id="HOPkg_NAF_5" value="1" >
+  <label class="form-check-label" for="HOPkg_NAF_5">
+    5 Years - $200.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NAF" id="HOPkg_NAF_10" value="2" >
+  <label class="form-check-label" for="HOPkg_NAF_10">
+    10 Years - $300.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NAF" id="HOPkg_NAF_20" value="3" >
+  <label class="form-check-label" for="HOPkg_NAF_20">
+    20 Years - $450.00
+  </label>
+</div>
+
+
+</div></div></div><div class="col">
+					<div class="card h-100">
+					<div class="card-body">
+        <h5 class="card-title">World Futures</h5>
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_WF" id="HOPkg_WF_0" value="-1" checked>
+  <label class="form-check-label" for="UsageIndCheck">
+    None
+  </label>
+</div>
+		
+		
+		
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_WF" id="HOPkg_WF_5" value="4" >
+  <label class="form-check-label" for="HOPkg_WF_5">
+    5 Years - $250.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_WF" id="HOPkg_WF_10" value="5" >
+  <label class="form-check-label" for="HOPkg_WF_10">
+    10 Years - $350.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_WF" id="HOPkg_WF_20" value="6" >
+  <label class="form-check-label" for="HOPkg_WF_20">
+    20 Years - $500.00
+  </label>
+</div>
+
+
+</div></div></div><div class="col">
+					<div class="card h-100">
+					<div class="card-body">
+        <h5 class="card-title">NYSE Stocks</h5>
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NYSE" id="HOPkg_NYSE_0" value="-1" checked>
+  <label class="form-check-label" for="UsageIndCheck">
+    None
+  </label>
+</div>
+		
+		
+		
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NYSE" id="HOPkg_NYSE_5" value="7" >
+  <label class="form-check-label" for="HOPkg_NYSE_5">
+    5 Years - $150.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NYSE" id="HOPkg_NYSE_10" value="8" >
+  <label class="form-check-label" for="HOPkg_NYSE_10">
+    10 Years - $250.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NYSE" id="HOPkg_NYSE_20" value="9" >
+  <label class="form-check-label" for="HOPkg_NYSE_20">
+    20 Years - $400.00
+  </label>
+</div>
+
+
+</div></div></div><div class="col">
+					<div class="card h-100">
+					<div class="card-body">
+        <h5 class="card-title">NASDAQ Stocks</h5>
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NASDAQ" id="HOPkg_NASDAQ_0" value="-1" checked>
+  <label class="form-check-label" for="UsageIndCheck">
+    None
+  </label>
+</div>
+		
+		
+		
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NASDAQ" id="HOPkg_NASDAQ_5" value="10" >
+  <label class="form-check-label" for="HOPkg_NASDAQ_5">
+    5 Years - $200.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NASDAQ" id="HOPkg_NASDAQ_10" value="11" >
+  <label class="form-check-label" for="HOPkg_NASDAQ_10">
+    10 Years - $300.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_NASDAQ" id="HOPkg_NASDAQ_20" value="12" >
+  <label class="form-check-label" for="HOPkg_NASDAQ_20">
+    20 Years - $400.00
+  </label>
+</div>
+
+
+</div></div></div><div class="col">
+					<div class="card h-100">
+					<div class="card-body">
+        <h5 class="card-title">LSE Stocks</h5>
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_LSE" id="HOPkg_LSE_0" value="-1" checked>
+  <label class="form-check-label" for="UsageIndCheck">
+    None
+  </label>
+</div>
+		
+		
+		
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_LSE" id="HOPkg_LSE_5" value="13" >
+  <label class="form-check-label" for="HOPkg_LSE_5">
+    5 Years - $150.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_LSE" id="HOPkg_LSE_10" value="14" >
+  <label class="form-check-label" for="HOPkg_LSE_10">
+    10 Years - $250.00
+  </label>
+</div>
+
+
+</div></div></div><div class="col">
+					<div class="card h-100">
+					<div class="card-body">
+        <h5 class="card-title">Canadian Stocks</h5>
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_CANADA" id="HOPkg_CANADA_0" value="-1" checked>
+  <label class="form-check-label" for="UsageIndCheck">
+    None
+  </label>
+</div>
+		
+		
+		
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_CANADA" id="HOPkg_CANADA_5" value="15" >
+  <label class="form-check-label" for="HOPkg_CANADA_5">
+    5 Years - $100.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_CANADA" id="HOPkg_CANADA_10" value="16" >
+  <label class="form-check-label" for="HOPkg_CANADA_10">
+    10 Years - $150.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_CANADA" id="HOPkg_CANADA_20" value="17" >
+  <label class="form-check-label" for="HOPkg_CANADA_20">
+    20 Years - $250.00
+  </label>
+</div>
+
+
+</div></div></div><div class="col">
+					<div class="card h-100">
+					<div class="card-body">
+        <h5 class="card-title">Mutual Funds</h5>
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_MUTUAL" id="HOPkg_MUTUAL_0" value="-1" checked>
+  <label class="form-check-label" for="UsageIndCheck">
+    None
+  </label>
+</div>
+		
+		
+		
+		
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_MUTUAL" id="HOPkg_MUTUAL_5" value="18" >
+  <label class="form-check-label" for="HOPkg_MUTUAL_5">
+    5 Years - $100.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_MUTUAL" id="HOPkg_MUTUAL_10" value="19" >
+  <label class="form-check-label" for="HOPkg_MUTUAL_10">
+    10 Years - $200.00
+  </label>
+</div>
+
+
+
+		<div class="form-check">
+  <input class="form-check-input" type="radio" name="HOPkg_MUTUAL" id="HOPkg_MUTUAL_20" value="20" >
+  <label class="form-check-label" for="HOPkg_MUTUAL_20">
+    20 Years - $300.00
+  </label>
+</div>
+
+
+</div></div></div>
+</div></div> <!-- end row,container -->
+
+</div></div> <!-- end historyonly card -->
+
+
+
+
+
+
+
+
+
+<div class="card">
+ <div class="card-header">
+	Required Questions
+  </div>
+  <div class="card-body">
+
+<div class="mb-3">
+<div>How will the product be used?</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="Usage" id="UsageIndCheck" value="UsageIndCheck">
+  <label class="form-check-label" for="UsageIndCheck">
+    Individual
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="Usage" id="UsageComCheck" value="UsageComCheck">
+  <label class="form-check-label" for="UsageComCheck">
+    Commercial
+  </label>
+</div>
+</div> <!-- end usage div -->
+
+<div class="mb-3">
+    <label for="HDYH" class="form-label mb-1">How did you hear of CSI?</label>
+    <input type="text" class="form-control" id="HDYH" name="HDYH" maxlength="100" value="" >
+</div>
+
+<div class="mb-3">
+    <label for="ThirdP" class="form-label mb-1">What 3rd party software are you using?</label>
+    <input type="text" class="form-control" id="ThirdP" name="ThirdP" maxlength="100" value="" >
+</div>
+
+<div class="mb-3">
+    <label for="Coupon" class="form-label mb-1">Coupon code: (one per order)</label>
+    <input type="text" class="form-control" id="Coupon" name="Coupon" maxlength="30" value="" >
+	<button type="button" class="btn btn-secondary mt-1" id="CouponButton">Apply coupon</button>
+	<div class="alert alert-danger mt-3 mb-3" role="alert" id="CouponErrorDiv"><i class="material-icons align-text-bottom me-2">error</i> <span id="CouponErrorMsg"></span></div>
+	<div class="alert alert-success mt-3 mb-3" role="alert" id="CouponSuccessDiv"><i class="material-icons align-text-bottom me-2">check</i> <span id="CouponSuccessMsg"></span></div>
+</div>
+
+</div><!-- end card body -->
+</div><!--end card-->
+
+
+
+<div class="container">
+        <div class="row">
+            <div class="col-md-12 text-end">
+		<input id="submitbutton" type="submit" value="Continue" class="btn btn-primary w-25 mt-4" >
+</div></div></div>
+
+
+
+</form>
+
+
+<div style="clear:both"></div>
+
+<br/><br/>
+<div id="footer">
+   <div class="left">Copyright &copy;2026.</div>
+</div>
+
+<div id="sub-footer">
+<div class="left">
+Commodity Systems Inc (CSI)<br/>
+7999 N Federal Hwy<br/>
+Suite 201<br/>
+Boca Raton, FL 33487<br/>
+<a href="https://www.csidata.com">csidata.com</a>
+
+   </div>
+   <div class="right">
+      Live Support (8:30AM-9:00PM ET Mon-Fri)<br />
+      Toll Free Phone: (800) 274-4727<br />
+      Phone: (561) 392-8663<br />
+      Fax: (561) 392-7761<br />
+      <a href="https://www.csidata.com/?page_id=21">Email Support/Sales</a>
+   </div>
+<div style="clear:both"></div>
+</div>
+
+<!-- /Footer -->
+</div></div>
+<br><br>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body></html>

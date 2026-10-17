@@ -1,0 +1,3544 @@
+<!DOCTYPE html>
+<html class='v2' dir='ltr' lang='en-GB'>
+<head>
+<link href='https://www.blogger.com/static/v1/widgets/2872013778-css_bundle_v2.css' rel='stylesheet' type='text/css'/>
+<meta content='width=1100' name='viewport'/>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+<meta content='blogger' name='generator'/>
+<link href='https://qoppac.blogspot.com/favicon.ico' rel='icon' type='image/x-icon'/>
+<link href='https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html' rel='canonical'/>
+<link rel="alternate" type="application/atom+xml" title="This Blog is Systematic - Atom" href="https://qoppac.blogspot.com/feeds/posts/default" />
+<link rel="alternate" type="application/rss+xml" title="This Blog is Systematic - RSS" href="https://qoppac.blogspot.com/feeds/posts/default?alt=rss" />
+<link rel="service.post" type="application/atom+xml" title="This Blog is Systematic - Atom" href="https://www.blogger.com/feeds/261139923818144971/posts/default" />
+
+<link rel="alternate" type="application/atom+xml" title="This Blog is Systematic - Atom" href="https://qoppac.blogspot.com/feeds/2830169557258028344/comments/default" />
+<!--Can't find substitution for tag [blog.ieCssRetrofitLinks]-->
+<link href='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzWTVgXrRab1vDGHU7i6NA-Re6g44pdsjE1rzfHC9swSUA45DsxkjF41F6zlVGxZ75fRmM8LRJEYSzvq5Hwrz4oB4bW9ONoDCwOnsjLhZKegq2LgAzEYn_BmW55z_Lwfxo0Kwr0w_8qVzL/w640-h322/Figure_1.png' rel='image_src'/>
+<meta content='https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html' property='og:url'/>
+<meta content='Mr Greedy and the Tale of the Minimum Tracking Error Variance - Part two' property='og:title'/>
+<meta content='My last blog post  was about a new method for a daily dynamic optimisation of portfolios with limited capital, to allow them to trade large ...' property='og:description'/>
+<meta content='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzWTVgXrRab1vDGHU7i6NA-Re6g44pdsjE1rzfHC9swSUA45DsxkjF41F6zlVGxZ75fRmM8LRJEYSzvq5Hwrz4oB4bW9ONoDCwOnsjLhZKegq2LgAzEYn_BmW55z_Lwfxo0Kwr0w_8qVzL/w1200-h630-p-k-no-nu/Figure_1.png' property='og:image'/>
+<title>This Blog is Systematic: Mr Greedy and the Tale of the Minimum Tracking Error Variance - Part two</title>
+<style id='page-skin-1' type='text/css'><!--
+/*
+-----------------------------------------------
+Blogger Template Style
+Name:     Simple
+Designer: Blogger
+URL:      www.blogger.com
+----------------------------------------------- */
+/* Content
+----------------------------------------------- */
+body {
+font: normal normal 12px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+color: #222222;
+background: #66bbdd none repeat scroll top left;
+padding: 0 40px 40px 40px;
+}
+html body .region-inner {
+min-width: 0;
+max-width: 100%;
+width: auto;
+}
+h2 {
+font-size: 22px;
+}
+a:link {
+text-decoration:none;
+color: #2288bb;
+}
+a:visited {
+text-decoration:none;
+color: #888888;
+}
+a:hover {
+text-decoration:underline;
+color: #33aaff;
+}
+.body-fauxcolumn-outer .fauxcolumn-inner {
+background: transparent url(https://resources.blogblog.com/blogblog/data/1kt/simple/body_gradient_tile_light.png) repeat scroll top left;
+_background-image: none;
+}
+.body-fauxcolumn-outer .cap-top {
+position: absolute;
+z-index: 1;
+height: 400px;
+width: 100%;
+}
+.body-fauxcolumn-outer .cap-top .cap-left {
+width: 100%;
+background: transparent url(https://resources.blogblog.com/blogblog/data/1kt/simple/gradients_light.png) repeat-x scroll top left;
+_background-image: none;
+}
+.content-outer {
+-moz-box-shadow: 0 0 40px rgba(0, 0, 0, .15);
+-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .15);
+-goog-ms-box-shadow: 0 0 10px #333333;
+box-shadow: 0 0 40px rgba(0, 0, 0, .15);
+margin-bottom: 1px;
+}
+.content-inner {
+padding: 10px 10px;
+}
+.content-inner {
+background-color: #ffffff;
+}
+/* Header
+----------------------------------------------- */
+.header-outer {
+background: transparent none repeat-x scroll 0 -400px;
+_background-image: none;
+}
+.Header h1 {
+font: normal normal 60px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+color: #3399bb;
+text-shadow: -1px -1px 1px rgba(0, 0, 0, .2);
+}
+.Header h1 a {
+color: #3399bb;
+}
+.Header .description {
+font-size: 140%;
+color: #777777;
+}
+.header-inner .Header .titlewrapper {
+padding: 22px 30px;
+}
+.header-inner .Header .descriptionwrapper {
+padding: 0 30px;
+}
+/* Tabs
+----------------------------------------------- */
+.tabs-inner .section:first-child {
+border-top: 1px solid #eeeeee;
+}
+.tabs-inner .section:first-child ul {
+margin-top: -1px;
+border-top: 1px solid #eeeeee;
+border-left: 0 solid #eeeeee;
+border-right: 0 solid #eeeeee;
+}
+.tabs-inner .widget ul {
+background: #f5f5f5 url(https://resources.blogblog.com/blogblog/data/1kt/simple/gradients_light.png) repeat-x scroll 0 -800px;
+_background-image: none;
+border-bottom: 1px solid #eeeeee;
+margin-top: 0;
+margin-left: -30px;
+margin-right: -30px;
+}
+.tabs-inner .widget li a {
+display: inline-block;
+padding: .6em 1em;
+font: normal normal 14px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+color: #999999;
+border-left: 1px solid #ffffff;
+border-right: 1px solid #eeeeee;
+}
+.tabs-inner .widget li:first-child a {
+border-left: none;
+}
+.tabs-inner .widget li.selected a, .tabs-inner .widget li a:hover {
+color: #000000;
+background-color: #eeeeee;
+text-decoration: none;
+}
+/* Columns
+----------------------------------------------- */
+.main-outer {
+border-top: 0 solid #eeeeee;
+}
+.fauxcolumn-left-outer .fauxcolumn-inner {
+border-right: 1px solid #eeeeee;
+}
+.fauxcolumn-right-outer .fauxcolumn-inner {
+border-left: 1px solid #eeeeee;
+}
+/* Headings
+----------------------------------------------- */
+div.widget > h2,
+div.widget h2.title {
+margin: 0 0 1em 0;
+font: normal bold 11px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+color: #000000;
+}
+/* Widgets
+----------------------------------------------- */
+.widget .zippy {
+color: #999999;
+text-shadow: 2px 2px 1px rgba(0, 0, 0, .1);
+}
+.widget .popular-posts ul {
+list-style: none;
+}
+/* Posts
+----------------------------------------------- */
+h2.date-header {
+font: normal bold 11px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+}
+.date-header span {
+background-color: transparent;
+color: #222222;
+padding: inherit;
+letter-spacing: inherit;
+margin: inherit;
+}
+.main-inner {
+padding-top: 30px;
+padding-bottom: 30px;
+}
+.main-inner .column-center-inner {
+padding: 0 15px;
+}
+.main-inner .column-center-inner .section {
+margin: 0 15px;
+}
+.post {
+margin: 0 0 25px 0;
+}
+h3.post-title, .comments h4 {
+font: normal normal 22px Arial, Tahoma, Helvetica, FreeSans, sans-serif;
+margin: .75em 0 0;
+}
+.post-body {
+font-size: 110%;
+line-height: 1.4;
+position: relative;
+}
+.post-body img, .post-body .tr-caption-container, .Profile img, .Image img,
+.BlogList .item-thumbnail img {
+padding: 2px;
+background: #ffffff;
+border: 1px solid #eeeeee;
+-moz-box-shadow: 1px 1px 5px rgba(0, 0, 0, .1);
+-webkit-box-shadow: 1px 1px 5px rgba(0, 0, 0, .1);
+box-shadow: 1px 1px 5px rgba(0, 0, 0, .1);
+}
+.post-body img, .post-body .tr-caption-container {
+padding: 5px;
+}
+.post-body .tr-caption-container {
+color: #222222;
+}
+.post-body .tr-caption-container img {
+padding: 0;
+background: transparent;
+border: none;
+-moz-box-shadow: 0 0 0 rgba(0, 0, 0, .1);
+-webkit-box-shadow: 0 0 0 rgba(0, 0, 0, .1);
+box-shadow: 0 0 0 rgba(0, 0, 0, .1);
+}
+.post-header {
+margin: 0 0 1.5em;
+line-height: 1.6;
+font-size: 90%;
+}
+.post-footer {
+margin: 20px -2px 0;
+padding: 5px 10px;
+color: #666666;
+background-color: #f9f9f9;
+border-bottom: 1px solid #eeeeee;
+line-height: 1.6;
+font-size: 90%;
+}
+#comments .comment-author {
+padding-top: 1.5em;
+border-top: 1px solid #eeeeee;
+background-position: 0 1.5em;
+}
+#comments .comment-author:first-child {
+padding-top: 0;
+border-top: none;
+}
+.avatar-image-container {
+margin: .2em 0 0;
+}
+#comments .avatar-image-container img {
+border: 1px solid #eeeeee;
+}
+/* Comments
+----------------------------------------------- */
+.comments .comments-content .icon.blog-author {
+background-repeat: no-repeat;
+background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEgAACxIB0t1+/AAAAAd0SU1FB9sLFwMeCjjhcOMAAAD+SURBVDjLtZSvTgNBEIe/WRRnm3U8RC1neQdsm1zSBIU9VVF1FkUguQQsD9ITmD7ECZIJSE4OZo9stoVjC/zc7ky+zH9hXwVwDpTAWWLrgS3QAe8AZgaAJI5zYAmc8r0G4AHYHQKVwII8PZrZFsBFkeRCABYiMh9BRUhnSkPTNCtVXYXURi1FpBDgArj8QU1eVXUzfnjv7yP7kwu1mYrkWlU33vs1QNu2qU8pwN0UpKoqokjWwCztrMuBhEhmh8bD5UDqur75asbcX0BGUB9/HAMB+r32hznJgXy2v0sGLBcyAJ1EK3LFcbo1s91JeLwAbwGYu7TP/3ZGfnXYPgAVNngtqatUNgAAAABJRU5ErkJggg==);
+}
+.comments .comments-content .loadmore a {
+border-top: 1px solid #999999;
+border-bottom: 1px solid #999999;
+}
+.comments .comment-thread.inline-thread {
+background-color: #f9f9f9;
+}
+.comments .continue {
+border-top: 2px solid #999999;
+}
+/* Accents
+---------------------------------------------- */
+.section-columns td.columns-cell {
+border-left: 1px solid #eeeeee;
+}
+.blog-pager {
+background: transparent none no-repeat scroll top center;
+}
+.blog-pager-older-link, .home-link,
+.blog-pager-newer-link {
+background-color: #ffffff;
+padding: 5px;
+}
+.footer-outer {
+border-top: 0 dashed #bbbbbb;
+}
+/* Mobile
+----------------------------------------------- */
+body.mobile  {
+background-size: auto;
+}
+.mobile .body-fauxcolumn-outer {
+background: transparent none repeat scroll top left;
+}
+.mobile .body-fauxcolumn-outer .cap-top {
+background-size: 100% auto;
+}
+.mobile .content-outer {
+-webkit-box-shadow: 0 0 3px rgba(0, 0, 0, .15);
+box-shadow: 0 0 3px rgba(0, 0, 0, .15);
+}
+.mobile .tabs-inner .widget ul {
+margin-left: 0;
+margin-right: 0;
+}
+.mobile .post {
+margin: 0;
+}
+.mobile .main-inner .column-center-inner .section {
+margin: 0;
+}
+.mobile .date-header span {
+padding: 0.1em 10px;
+margin: 0 -10px;
+}
+.mobile h3.post-title {
+margin: 0;
+}
+.mobile .blog-pager {
+background: transparent none no-repeat scroll top center;
+}
+.mobile .footer-outer {
+border-top: none;
+}
+.mobile .main-inner, .mobile .footer-inner {
+background-color: #ffffff;
+}
+.mobile-index-contents {
+color: #222222;
+}
+.mobile-link-button {
+background-color: #2288bb;
+}
+.mobile-link-button a:link, .mobile-link-button a:visited {
+color: #ffffff;
+}
+.mobile .tabs-inner .section:first-child {
+border-top: none;
+}
+.mobile .tabs-inner .PageList .widget-content {
+background-color: #eeeeee;
+color: #000000;
+border-top: 1px solid #eeeeee;
+border-bottom: 1px solid #eeeeee;
+}
+.mobile .tabs-inner .PageList .widget-content .pagelist-arrow {
+border-left: 1px solid #eeeeee;
+}
+
+--></style>
+<style id='template-skin-1' type='text/css'><!--
+body {
+min-width: 960px;
+}
+.content-outer, .content-fauxcolumn-outer, .region-inner {
+min-width: 960px;
+max-width: 960px;
+_width: 960px;
+}
+.main-inner .columns {
+padding-left: 0px;
+padding-right: 310px;
+}
+.main-inner .fauxcolumn-center-outer {
+left: 0px;
+right: 310px;
+/* IE6 does not respect left and right together */
+_width: expression(this.parentNode.offsetWidth -
+parseInt("0px") -
+parseInt("310px") + 'px');
+}
+.main-inner .fauxcolumn-left-outer {
+width: 0px;
+}
+.main-inner .fauxcolumn-right-outer {
+width: 310px;
+}
+.main-inner .column-left-outer {
+width: 0px;
+right: 100%;
+margin-left: -0px;
+}
+.main-inner .column-right-outer {
+width: 310px;
+margin-right: -310px;
+}
+#layout {
+min-width: 0;
+}
+#layout .content-outer {
+min-width: 0;
+width: 800px;
+}
+#layout .region-inner {
+min-width: 0;
+width: auto;
+}
+body#layout div.add_widget {
+padding: 8px;
+}
+body#layout div.add_widget a {
+margin-left: 32px;
+}
+--></style>
+<link href='https://www.blogger.com/dyncss/261139923818144971/authorization.css?zx=23ca2a27-27ca-40c1-80e0-5c030dfd885d' media='none' onload='if(media!=&#39;all&#39;)media=&#39;all&#39;' rel='stylesheet'/><noscript><link href='https://www.blogger.com/dyncss/261139923818144971/authorization.css?zx=23ca2a27-27ca-40c1-80e0-5c030dfd885d' rel='stylesheet'/></noscript>
+<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
+<meta name='google-adsense-platform-domain' content='blogspot.com'/>
+
+<!-- data-ad-client=ca-pub-1788065157946270 -->
+
+</head>
+<body class='loading variant-pale'>
+<div class='navbar no-items section' id='navbar' name='Navbar'>
+</div>
+<div class='body-fauxcolumns'>
+<div class='fauxcolumn-outer body-fauxcolumn-outer'>
+<div class='cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left'>
+<div class='fauxborder-right'></div>
+<div class='fauxcolumn-inner'>
+</div>
+</div>
+<div class='cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+</div>
+<div class='content'>
+<div class='content-fauxcolumns'>
+<div class='fauxcolumn-outer content-fauxcolumn-outer'>
+<div class='cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left'>
+<div class='fauxborder-right'></div>
+<div class='fauxcolumn-inner'>
+</div>
+</div>
+<div class='cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+</div>
+<div class='content-outer'>
+<div class='content-cap-top cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left content-fauxborder-left'>
+<div class='fauxborder-right content-fauxborder-right'></div>
+<div class='content-inner'>
+<header>
+<div class='header-outer'>
+<div class='header-cap-top cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left header-fauxborder-left'>
+<div class='fauxborder-right header-fauxborder-right'></div>
+<div class='region-inner header-inner'>
+<div class='header section' id='header' name='Header'><div class='widget Header' data-version='1' id='Header1'>
+<div id='header-inner'>
+<div class='titlewrapper'>
+<h1 class='title'>
+<a href='https://qoppac.blogspot.com/'>
+This Blog is Systematic
+</a>
+</h1>
+</div>
+<div class='descriptionwrapper'>
+<p class='description'><span>Also hydromatic, automatic: 
+"It's Geeks Enlightening"
+Rob Carvers blog about quant trading, investing, and economics.
+</span></p>
+</div>
+</div>
+</div></div>
+</div>
+</div>
+<div class='header-cap-bottom cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+</header>
+<div class='tabs-outer'>
+<div class='tabs-cap-top cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left tabs-fauxborder-left'>
+<div class='fauxborder-right tabs-fauxborder-right'></div>
+<div class='region-inner tabs-inner'>
+<div class='tabs section' id='crosscol' name='Cross-column'><div class='widget PageList' data-version='1' id='PageList2'>
+<div class='widget-content'>
+<ul>
+<li>
+<a href='https://qoppac.blogspot.com/'>Home</a>
+</li>
+<li>
+<a href='https://qoppac.blogspot.com/p/personal-investment-start-here.html'>Systematic investment</a>
+</li>
+<li>
+<a href='https://qoppac.blogspot.com/p/systematic-trading-start-here.html'>Systematic trading</a>
+</li>
+<li>
+<a href='https://qoppac.blogspot.com/p/blog-page_7.html'>Misc other posts</a>
+</li>
+<li>
+<a href='https://qoppac.blogspot.com/p/code.html'>Code</a>
+</li>
+<li>
+<a href='https://qoppac.blogspot.com/p/books.html'>My Books</a>
+</li>
+<li>
+<a href='https://qoppac.blogspot.com/p/blog-page_13.html'>Talks and media</a>
+</li>
+<li>
+<a href='https://qoppac.blogspot.com/p/books-to-read.html'>Resources</a>
+</li>
+</ul>
+<div class='clear'></div>
+</div>
+</div></div>
+<div class='tabs no-items section' id='crosscol-overflow' name='Cross-Column 2'></div>
+</div>
+</div>
+<div class='tabs-cap-bottom cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+<div class='main-outer'>
+<div class='main-cap-top cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left main-fauxborder-left'>
+<div class='fauxborder-right main-fauxborder-right'></div>
+<div class='region-inner main-inner'>
+<div class='columns fauxcolumns'>
+<div class='fauxcolumn-outer fauxcolumn-center-outer'>
+<div class='cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left'>
+<div class='fauxborder-right'></div>
+<div class='fauxcolumn-inner'>
+</div>
+</div>
+<div class='cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+<div class='fauxcolumn-outer fauxcolumn-left-outer'>
+<div class='cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left'>
+<div class='fauxborder-right'></div>
+<div class='fauxcolumn-inner'>
+</div>
+</div>
+<div class='cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+<div class='fauxcolumn-outer fauxcolumn-right-outer'>
+<div class='cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left'>
+<div class='fauxborder-right'></div>
+<div class='fauxcolumn-inner'>
+</div>
+</div>
+<div class='cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+<!-- corrects IE6 width calculation -->
+<div class='columns-inner'>
+<div class='column-center-outer'>
+<div class='column-center-inner'>
+<div class='main section' id='main' name='Main'><div class='widget Blog' data-version='1' id='Blog1'>
+<div class='blog-posts hfeed'>
+
+          <div class="date-outer">
+        
+<h2 class='date-header'><span>Friday, 19 November 2021</span></h2>
+
+          <div class="date-posts">
+        
+<div class='post-outer'>
+<div class='post hentry uncustomized-post-template' itemprop='blogPost' itemscope='itemscope' itemtype='http://schema.org/BlogPosting'>
+<meta content='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzWTVgXrRab1vDGHU7i6NA-Re6g44pdsjE1rzfHC9swSUA45DsxkjF41F6zlVGxZ75fRmM8LRJEYSzvq5Hwrz4oB4bW9ONoDCwOnsjLhZKegq2LgAzEYn_BmW55z_Lwfxo0Kwr0w_8qVzL/w640-h322/Figure_1.png' itemprop='image_url'/>
+<meta content='261139923818144971' itemprop='blogId'/>
+<meta content='2830169557258028344' itemprop='postId'/>
+<a name='2830169557258028344'></a>
+<h3 class='post-title entry-title' itemprop='name'>
+Mr Greedy and the Tale of the Minimum Tracking Error Variance - Part two
+</h3>
+<div class='post-header'>
+<div class='post-header-line-1'></div>
+</div>
+<div class='post-body entry-content' id='post-body-2830169557258028344' itemprop='description articleBody'>
+<p>My <a href="https://qoppac.blogspot.com/2021/10/mr-greedy-and-tale-of-minimum-tracking.html">last blog post</a> was about a new method for a daily dynamic optimisation of portfolios with limited capital, to allow them to trade large numbers of instruments.&nbsp;</p><p>(Although I normally write my blog posts to be self contained, you'll definitely have to read the previous one for this to make any sense!)</p><p>Subsequent to writing that post I implemented the method, and quickly ran into some problems. Basically the dammn thing was trading too much. Fortunately there is a single parameter which controls trading speed in the model - the <i style="font-weight: bold;">shadow cost</i>. I turned up the shadow cost to a very high value and spent a few days investigating what had went wrong.</p><p>Broadly speaking, I found that:</p><p></p><ul style="text-align: left;"><li>My measure of turnover wasn't suitable for 'sparse' portfolios, i.e. portfolios where most instruments have a zero position at any given time</li><li>My measure of risk adjusted costs also wasn't suitable</li><li>The true turnover of the dynamic optimised portfolio was much higher than I'd realised</li><li>The true trading costs were thus also much higher</li><li>Thus the results in my previous post were misleading and wrong</li></ul><p></p><p>After discussing with Doug (the original source of this idea) I realised I'd been missing a step: <i style="font-weight: bold;">postion buffering</i>. This is something I did in my original static system to slow down my trading behaviour, but which was missing here.&nbsp;</p><p>In this post I explain:</p><p></p><ul style="text-align: left;"><li>Some other bad things I did</li><li>Why my approximations for trading costs and turnover were wrong, and how I fixed them</li><li>Why increasing the shadow cost doesn't help</li><li>Why position buffering is a good thing and how it works in the old 'static' system</li><li>How to create a position buffering method for dynamic optimisation</li><li>How I calibrated the position buffering and shadow cost for the dynamic model</li><li>How I used shrinkage to make the results more stable</li><li>A more appropriate benchmark</li><li>Some revised results using the new method, and more accurate statistics</li></ul><p></p><div><div>So there's a lot there, but this has been quite an extensive (and at times painful!) piece of research.</div><div><br /></div><div><br /></div><h2 style="text-align: left;">Some other bad things I did</h2><div><br /></div><div>As well as the stuff I've already mentioned I did some bad things when implementing the model to production. I was so excited about the concept, basically I rushed it. Here's a list of things I did:</div><div><br /></div><div><ul style="text-align: left;"><li>Not thinking more carefully about the interpretation of the shadow cost</li><li>Not using common code between sim and production (this didn't serious cause problems, but did make it harder to work out what was going ong)</li><li>Not paper trading for long enough</li></ul><div>I ought to know better, so this just goes to show that even supposedly experienced and smart people make mistakes...</div></div><div><br /></div><div><br /></div><div><br /></div><div><h2>My (bad) approximations for trading costs and turnover</h2></div><div><br /></div><div>I'm a big fan of using risk adjusted measures for trading costs and other things. Here's how I used to work out trading costs:</div><div><br /></div><div><ul style="text-align: left;"><li>Work out the current cost of trading</li><li>Divide that by current vol to calculate the cost in SR units</li><li>Calculate the turnover in contracts</li><li>Calculate the normalised turnover; dividing the historic turnover in contracts by the current average position, and the taking an average</li><li><b>The average position assumes we have a constant forecast of +10</b></li><li>Multiply the normalised turnover</li><li>I do a similar calculation for rolling costs, assuming I roll an average position worth of contracts N times a year (where N is the number of rolls each year)</li></ul><div>The big flaw in this, with respect to sparse positions, is the average position. Clearly our average position is going to be much smaller than we think, which means our turnover will look unnaturally low, and our costs unrealistically low.</div></div><div><br /></div><div>My <a href="https://github.com/robcarver17/pysystemtrade/blob/master/systems/accounts/pandl_calculators/pandl_cash_costs.py">modified procedure </a>is:</div><div><ul style="text-align: left;"><li>Work out the current cost of trading in actual $$$ terms</li><li>For each historic trade, multiply that by the number of contracts traded</li><li>For rolling costs, assume we roll a number of contracts equal to the number of contracts we held in the period before the roll (gives a more reliable figure)</li><li>Deflate these figures according to the difference in price volatility between then and now</li><li>So for example, if the vol of S&amp;P 500 is 20% with a price of 5000, that's a price vol of 1000</li><li>If that figure was 200 at some point in the past, then we'd divide the historic cost by 5</li></ul><div>This still risk adjusts costs, but in such a way that it will reflect sparse positions.</div></div><div><br /></div><div>(Incidentally, I still use the old SR based method to calculate the cost of a trading rule, for which we don't really know the exact number of contracts)</div><div><br /></div><div>We don't use turnover anymore, but it would still be nice to know what it is. It's hard to calculate a turnover per instrument with sparse positions, but we can meaningfully <a href="https://github.com/robcarver17/pysystemtrade/blob/master/systems/provided/dynamic_small_system_optimise/accounts_stage.py#L57">calculate the turnover for an entire system</a>. We do this by calculating the turnover in contracts at the portfolio level (after dynamic optimisation, or after buffering for the static system), divide each of these by the expected average position (assuming a forecast of +10, and accounting for instrument weights and IDM), and then add these up.&nbsp;</div><div><br /></div><div><br /></div><div><div><h2>Why shadow cost doesn't help - much</h2></div></div><div><br /></div><div>So when I first calculated this new measure of average turnover for the dynamic system, it was quite a bit higher than I expected.</div><div><br /></div><div>"No problem" I thought "I'll increase the shadow cost".</div><div><br /></div><div>Remember the shadow cost is a multiplier on the cost penalty applied to the dynamic optimisation. Increasing it ought to slow the system down.</div><div><br /></div><div>And it does... but not by as much as I'd hoped, and with a decreasing effect for higher shadow costs. Digging under the hood of the greedy algo, the reason for this is that the algo always <b>starts at zero</b>&nbsp;(in the absence of corner case constraints) and then starts changing position&nbsp;<b>with the sign of the optimal unrounded position</b>.&nbsp;</div><div><br /></div><div>So it will always end up with the same sign of position as the underlying optimal position. To put it another way, every time the underlying forecast changes sign, we'll definitely trade regardless of the size of the shadow cost. All the shadow cost will do is reduce trading in instruments where we haven't seen a sign change.</div><div><br /></div><div>No biggie, except for the uber-portfolio I was running in production with over 110 instruments. Let's say their average holding period is a conservative two months; so they change sign roughly every 42 business days. That means on any given day we'd see around three instruments changing sign, and trading. This imposes a lower limit on turnover, no matter how much you crank up the shadow cost.&nbsp;</div><div><br /></div><div>There isn't a lot you can do about this, except perhaps switch to a different optimisation method. I did look at this, but I really like the intuitive behaviour of the greedy algo.</div><div><br /></div><div>Another - smaller - effect is that the more instruments you have, the higher your IDM, the higher your turnover will be (as a rule of thumb, if you double your leverage on an individual instrument, you'll also double your turnover).</div><div><br /></div><div>So it's important to do any testing with a sufficiently large portfolio of instruments relative to capital.</div><div><br /></div><div><br /></div><div><h2>Position buffering in a static system</h2></div><div><br /></div><div>Anyway the solution, after discussion with <a href="https://twitter.com/DougHohner">Doug</a>, revolves around something in my old 'static' system that's missing from the new dynamic system: position buffering.&nbsp;</div><div><br /></div><div><i>Doug isn't doing exactly what I've decided to do, but the principal of applying a buffer was his idea so is due credit</i></div><div><br /></div><div>Position buffering works something like this; suppose we calculate an optimal (unrounded) position of long +2.3 contracts (2 contracts rounded). We then measure a buffer around this; which for the sake of argument we'll say is 2 contracts wide. So the position plus buffer will be (lower level) 1.3 contracts to (upper level) 3.3 contracts. Rounded that's +1 to +3 contracts.&nbsp;</div><div><br /></div><div>We then compare this to our current position. If that's between 1 and 3, we're good. We do nothing. However let's suppose our current position is +4 contracts. Then we'd sell... not 2 contracts bringing us back to the (rounded) optimal of +2, but instead a single contract to bring us to +3... <b>the edge of the buffer</b>.</div><div><br /></div><div>Buffering reduces our turnover without affecting our performance, as long as the buffer isn't too wide. Calibrating the exact width of the buffer is quite involved (it's related to the interplay of forecast speed and costs for a given instrument), so I've always used a simple 10% of <b>average position </b>(the position I'd get with an average forecast of +10).</div><div><br /></div><div><br /></div><h2 style="text-align: left;">Position buffering in a dynamic system</h2><div><br /></div><div>How do we impose a buffer on the dynamic system? We could try and set up the optimisation so it treats all positions within the buffer for each instrument as having the same utility... but that would be darned messy. And as we're not doing a grid search which tests every possible integer contract holding we wouldn't neccesarily use the buffer in a sensible way.</div><div><br /></div><div>Instead we need to do the buffering at a portfolio level. And we'll do the buffering on our utility function: the tracking error.</div><div><br /></div><div>So the basic idea is this: if the tracking error of the current portfolio is less than some buffer level, we'll stick with the current portfolio (='inside the buffer'). If it isn't, we'll trade in such a way to bring our tracking error down to the buffered level (='trading to the edge of the buffer').</div><div><br /></div><div>We actually do this as a three step process. <a href="https://github.com/robcarver17/pysystemtrade/blob/master/systems/provided/dynamic_small_system_optimise/optimisation.py#L102">In step one </a>we calculate the tracking error of the current portfolio, versus the portfolio with unrounded optimal positions (let's call this <b>tracking error /unrounded</b>). If this is less than the buffer, we stick with the current positions. No optimisation is needed. This step doesn't affect what happens next, except to speed things up by reducing the number of times we need to do a full blown optimisation.</div><div><br /></div><div>Step two: we do the optimisation, which gives a portfolio consisting of integer positions. <a href="https://github.com/robcarver17/pysystemtrade/blob/535043aa580ea20d955873fb6d6343ba67c589dc/systems/provided/dynamic_small_system_optimise/optimisation.py#L148">Step three</a>: we now calculate a second tracking error: the tracking error of the currently held portfolio versus the integer positions (<b>tracking error/rounded)</b>. By construction, this tracking error will be lower than tracking error/unrounded.&nbsp;</div><div><br /></div><div>We now calculate an adjustment factor, which is a function of tracking error/rounded (which I'm now going to rename <b><i>x</i></b>) and the buffer (<b>b)</b>:</div><div><br /></div><div>Adjustment factor = <b><i>max((x - b)/x, 0)</i></b></div><div><br /></div><div>We then multiply all our required trades (from current to integer optimised) by the adjustment factor. And then round them, obviously.</div><div><br /></div><div>So if the tracking error is less than the buffer, we don't trade. Otherwise we do a proportion of the required trade. The further away we are from the buffer, the more of the trade we'll do. For a very large x, we'd do almost all of our trade.</div><div><br /></div><div>Note that (ignoring the fact we need to round trades) doing this will bring our tracking error back to the edge of the buffer.</div><div><br /></div><div><br /></div><div><br /></div><div><h2>Calibrating buffer size and shadow cost</h2></div><div><div><br /></div><div>Note the buffer doesn't replace the shadow cost; it's in addition to it. The shadow cost is handy since it penalises the costs of trading according to the different costs of each instrument. Nevertheless, both methods will slow down our trading so we have to consider their joint effect.</div><div><br /></div></div><div>We could do this with an old school, in sample, grid search of parameters. Instead let's use some common sense.</div><div><br /></div><div>Firstly, with an average target risk of 25%, a 10% buffer around that means our dynamic buffer size should be around <b>1.25% </b>(not 2.5% as you might expect as this buffer is expressed differently).</div><div><br /></div><div>Now consider the shadow cost. In my prior post I said that a shadow cost of 10 'looked about right', but a few moments thought reveals it is not. Remember the utility function is <a href="https://github.com/robcarver17/pysystemtrade/blob/master/systems/provided/dynamic_small_system_optimise/optimisation.py#L176">tracking error</a> - costs. Tracking error is measured in units of annualised standard deviation. How much does a tracking error of 1% lose use in terms of expected return? Difficult to say, but let's make some assumptions:</div><div><br /></div><div><ul style="text-align: left;"><li>Sharpe Ratio 1.0</li><li>Target annual standard deviation 25%</li><li>Target annual return = 1.0 * 25% = 25%</li><li>Suppose we're running at half the risk we want, so our tracking error will be 12.5%</li><li>In this case we'll also be missing out on ~12.5% of annual return</li><li>If SR = 1, then tracking error is effectively in annualised return units</li></ul></div></div><div><div>Now bear in mind the utility function subtracts the cost from a given optimisation; which is probably a daily cost, we need to annualise this. So a<b> shadow cost of 250 </b>would annualise costs and put them in the same units as the tracking error.</div><div><br /></div><div>To recap then:</div><div><br /></div><div>- Shadow cost 250</div><div>- Buffer size 0.0125</div><div><br /></div><div><br /></div><h2 style="text-align: left;">Shrinkage and the mystery of the non semi-definite matrix</h2><div><br /></div><div>In the discussion 'below the line' of the previous post it was suggested that the turnover in the correlation matrix might be responsible for the additional costs. Basically, if the correlation estimate was to change enough it would cause the optimal portfolio to change a lot as well.</div><div><br /></div><div>It was suggested to try shrinking the correlation matrix, which would result in fewer correlation changes. But the correlation estimate is also quite slow so I didn't shrinkage would be worthwhile. However I then discovered another problem, which led me down quite the rabbit hole.&nbsp;</div><div><br /></div><div><div>Essentially, once I started examining the results of my optimisation more carefully, I realised that for large (100+ instrument) portfolios there were instances when my optimisation just broke as it couldn't evaluate the utility function. One cause was inputting costs of nan, and was easily fixed by making my cost deflation function more accurate. But I also got errors trying to find the standard deviation of the tracking error portfolio.&nbsp;</div><div><br /></div><div>So it turns out that pandas doesn't actually guarantee to produce positive semi-definite correlation matrices, which means that sometimes the tracking error of the portfolio can have a negative variance. I experimented with trying to find the nearest PSD matrix - it's very slow, too slow for backtesting though possibly worth a last line of defence. I tried tweaking the parameters of the exponential correlation; even tried going back to vanilla non exponential correlation estimates but still ended up with non PSD matrices.&nbsp;</div></div><div><br /></div><div>What eventually came to the rescue, just as I was about to give up, was shrinking the correlation matrix. For reasons that are too boring to go into here (but try <a href="http://eprints.ma.man.ac.uk/2470/1/covered/MIMS_ep2014_54.pdf">here</a>), shrinkage is a good way of fixing PSD issues. And shrinking the correlation matrix in this particular application isn't really a bad thing. It makes it less likely we'll put on weird positions, just because correlations are especially high or low.</div><div><br /></div><div>(If anyone has come across this problem with pandas, and has a solution, I'd like to hear it...)</div><div><br /></div><div><br /></div><h2 style="text-align: left;">How should we assess this change?</h2><div><br /></div><div>Yet another flaw in the previous post was an excessive reliance on looking at Sharpe Ratios to see if performance improved, comparing a plain 'rounded' with an optimised portfolio.&nbsp;</div><div><br /></div><div>However, there is an element of luck involved here. For example, if there was an instrument with a low contract size which still had positions even for a small unoptimised portfolio, and which had a higher SR than anything else, then the simple rounded portfolio would outperform the optimised portfolio.&nbsp;</div><div><br /></div><div>A better set of metrics would be:</div><div style="text-align: left;"><ul style="text-align: left;"><li>The correlation in returns between an unrounded and the rounded optimised portfolio</li><li>The level of costs paid in SR units</li><li>The total portfolio level turnover (see notes above)</li></ul></div><div>We'd want to check the SR wasn't completely massacred by the dynamic optimisation, but a slight fall in SR isn't a go/no go decision.</div><div><br /></div><div><br /></div><div><br /></div><div><h2>The static benchmark</h2></div><div><div>It could be argued that a better benchmark would not be the simple rounded static portfolio with say 100 instruments; but instead the 30 or so instrument static portfolio you'd actually be able to trade with say $500K in your account. Again, there is an element of luck here, depending on which set of 30 or so instruments you choose. But it would give a good indication of what sort of turnover we are aiming for, and whether we had the costs about right.</div><div><br /></div></div><div>So I reran the process described <a href="https://qoppac.blogspot.com/2021/06/static-optimisation-of-best-set-of.html">here</a>, and came up with the following list of static instruments for a $500K portfolio:</div><div><br /></div><div><pre style="background-color: white; color: #080808; font-family: &quot;JetBrains Mono&quot;, monospace;"><span style="font-size: x-small;">instrument_list = [<span style="color: teal; font-weight: bold;">'DOW'</span>, <span style="color: teal; font-weight: bold;">'MUMMY'</span>,<span style="color: teal; font-weight: bold;">'FTSECHINAA'</span>, <span style="color: teal; font-weight: bold;">'OAT'</span>,  <span style="color: teal; font-weight: bold;">'NIFTY'</span>, <span style="color: teal; font-weight: bold;">'KOSDAQ'</span>,<span style="color: teal; font-weight: bold;">'SP500_micro'</span>, <span style="color: teal; font-weight: bold;">'NIKKEI'</span>,<br />                   <span style="color: teal; font-weight: bold;">'BOBL'</span>, <span style="color: teal; font-weight: bold;">'KR10'</span>,<span style="color: teal; font-weight: bold;">'KR3'</span>,<span style="color: teal; font-weight: bold;">'EDOLLAR'</span>, <span style="color: teal; font-weight: bold;">'US10U'</span>,<span style="color: teal; font-weight: bold;">'US3'</span>,<br />                   <span style="color: teal; font-weight: bold;">'SOYOIL'</span>,</span> <span style="color: teal; font-size: small; font-weight: bold;">'WHEAT'</span><span style="font-size: small;">, </span><span style="font-size: x-small;"><span style="color: teal; font-weight: bold;">'LIVECOW'</span>, <span style="color: teal; font-weight: bold;">'LEANHOG'</span>,<br />                   <span style="color: teal; font-weight: bold;">'CNH'</span>, <span style="color: teal; font-weight: bold;">'YENEUR'</span>,<span style="color: teal; font-weight: bold;">'RUR'</span>,<span style="color: teal; font-weight: bold;">'BRE'</span>, <span style="color: teal; font-weight: bold;">'JPY'</span>,  <span style="color: teal; font-weight: bold;">'MXP'</span>, <span style="color: teal; font-weight: bold;">'NZD'</span>,<span style="color: teal; font-weight: bold;">'CHF'</span>,<br />                   <span style="color: teal; font-weight: bold;">'BITCOIN'</span>, <span style="color: teal; font-weight: bold;">'IRON'</span>,<span style="color: teal; font-weight: bold;">'SILVER'</span>, <span style="color: teal; font-weight: bold;">'GOLD_micro' </span>,<br />                    <span style="color: teal; font-weight: bold;">'CRUDE_W_mini'</span>, <span style="color: teal; font-weight: bold;">'GASOILINE'</span>,<span style="color: teal; font-weight: bold;">'GAS_US_mini'</span>,<br />                   <span style="color: teal; font-weight: bold;">'VIX'</span><br />                    ]</span></pre></div><div>Notice I've grouped these by asset class:</div><div><ul style="text-align: left;"><li>Equities</li><li>Bonds/STIR</li><li>Ags</li><li>Currencies</li><li>Metals</li><li>Energies</li><li>Vol</li></ul></div><div>The results are different from last time, as I've added more instruments to my data set, and also excluded some instruments which are too expensive / illiquid; having spent some time recently on putting together a systematic process for identifying those.</div><div><br /></div><div>For benchmarking purposes I allowed the instrument weights to be fitted in both dynamic and static cases, however both sets of portfolios have forecast weights that are fitted in sample for speed.</div><div><br /></div><div><br /></div><h2 style="text-align: left;">Results versus benchmark</h2><div><br /></div><div>First let's get a feel for the set of instruments we are playing with. We have 114 instruments in total, reflecting my constantly expanding universe, with data history that looks like this:</div><div class="separator" style="clear: both; text-align: center;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzWTVgXrRab1vDGHU7i6NA-Re6g44pdsjE1rzfHC9swSUA45DsxkjF41F6zlVGxZ75fRmM8LRJEYSzvq5Hwrz4oB4bW9ONoDCwOnsjLhZKegq2LgAzEYn_BmW55z_Lwfxo0Kwr0w_8qVzL/s1920/Figure_1.png" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="964" data-original-width="1920" height="322" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzWTVgXrRab1vDGHU7i6NA-Re6g44pdsjE1rzfHC9swSUA45DsxkjF41F6zlVGxZ75fRmM8LRJEYSzvq5Hwrz4oB4bW9ONoDCwOnsjLhZKegq2LgAzEYn_BmW55z_Lwfxo0Kwr0w_8qVzL/w640-h322/Figure_1.png" width="640" /></a></div><br /><div>For the 34 instruments in the benchmark portfolio, it's worth bearing in mind that prior to 2000 we have less than 15 instruments, and so the early part of the backtest might be worth a pinch or two of salt:</div><div><br /></div><div class="separator" style="clear: both; text-align: center;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEizTvQUiCtembWr4SwW5FsHa2144m3tP5dYtiC4BaPj0HSbr6bT4eZU3K29I-zyv61dW1ydgKc9QCuk1wWbWKof5Zw6IEp2j_uyoM1ihPo0wShNASbBtbslhlToxUZrY1y5uEYx0nS-Krkv/s1920/Figure_1.png" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="964" data-original-width="1920" height="322" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEizTvQUiCtembWr4SwW5FsHa2144m3tP5dYtiC4BaPj0HSbr6bT4eZU3K29I-zyv61dW1ydgKc9QCuk1wWbWKof5Zw6IEp2j_uyoM1ihPo0wShNASbBtbslhlToxUZrY1y5uEYx0nS-Krkv/w640-h322/Figure_1.png" width="640" /></a></div><br /><div><br /></div><div class="separator" style="clear: both; text-align: center;"><br /></div>Now in reality we can't hold 114 instruments at once, so in the dynamic optimised portfolio we end up holding around a quarter to a third of what's available on any given day:<br /><div class="separator" style="clear: both; text-align: center;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEihTjWAlaRzILWZp_yY1eJCnIl5IxMmqFyqUD-So8VnXsUghaIvjRmGWyFmO4PYw_Cyikv25FyokDavcsrgfQwf1Vo3_I7OIXGeRYBKB4ljJWzSfFfcqRMSqYz4v2Z55ParMwPZYM-RMmMr/s1920/Figure_1.png" style="margin-left: 1em; margin-right: 1em;"><br /><img border="0" data-original-height="964" data-original-width="1920" height="322" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEihTjWAlaRzILWZp_yY1eJCnIl5IxMmqFyqUD-So8VnXsUghaIvjRmGWyFmO4PYw_Cyikv25FyokDavcsrgfQwf1Vo3_I7OIXGeRYBKB4ljJWzSfFfcqRMSqYz4v2Z55ParMwPZYM-RMmMr/w640-h322/Figure_1.png" width="640" /></a></div><div><br /></div><div>Whilst in the benchmark portfolio we mostly hold positions in around 90-100% of what we can trade:</div><div class="separator" style="clear: both; text-align: center;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjaqwftDwYSYO3GRNTTa1F_UhwBTNPh5yf4eFc-AKJa3Tqw9ny8rFtEz5gZs4YnbyBIKlUFqhgzuG-QB5DZ83gtqZF5vziHla9T-ivUSFGfcdyoGffaNhBzl_Exwqtr3x7-KCm2NMQKSol8/s1920/Figure_1.png" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="964" data-original-width="1920" height="322" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjaqwftDwYSYO3GRNTTa1F_UhwBTNPh5yf4eFc-AKJa3Tqw9ny8rFtEz5gZs4YnbyBIKlUFqhgzuG-QB5DZ83gtqZF5vziHla9T-ivUSFGfcdyoGffaNhBzl_Exwqtr3x7-KCm2NMQKSol8/w640-h322/Figure_1.png" width="640" /></a></div><div><br /></div>Let's dig into the optimiser some more and make sure it's doing it's job. Here is the position series for the S&amp;P 500 micro. The blue line shows the position we'd have on without rounding. Naturally the green buffered position follows this quite closely. We actually end up with the orange line after optimisation; it follows along but at times clearly prefers to get it's risk from elsewhere. This is a cheap future so the turnover is relatively high:<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;"><tbody><tr><td style="text-align: center;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg6b6AWawCW0lZWRjJc2mM4W7EiNwQGulPJLKY4XcgzO2aAwnfubB1MAT9JocUEBlMdrmFJ_1quTroGlLRnv8jGDH-xE7wrokCiyeaNiE8f8rfV_bwkLKUdmZuY5SU_EnxACtFWmIzpztCc/s1920/Figure_1.png" style="margin-left: auto; margin-right: auto;"><img border="0" data-original-height="964" data-original-width="1920" height="322" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg6b6AWawCW0lZWRjJc2mM4W7EiNwQGulPJLKY4XcgzO2aAwnfubB1MAT9JocUEBlMdrmFJ_1quTroGlLRnv8jGDH-xE7wrokCiyeaNiE8f8rfV_bwkLKUdmZuY5SU_EnxACtFWmIzpztCc/w640-h322/Figure_1.png" width="640" /></a></td></tr><tr><td class="tr-caption" style="text-align: center;"></td></tr></tbody></table><div><br /></div><div><div>Another plot I used in the previous post was to see how closely the expected risk tracked between the unrouded and optimised portfolio. It's still a very close match:</div><div class="separator" style="clear: both; text-align: center;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEie5ZJ2NvA8NkHnhNIvra3e04mJAjhtoY00SIcJUWgNSz-7jUMI__Cp1_gSGTFAljlcX4rjn6k8YGPBcAgfNAgpnqom6KlXQOJveWt6RtK9FNlDjgx1qtHQJkY1GNhp_dBS6rm6dMrTuW4v/s1920/Figure_1.png" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="964" data-original-width="1920" height="322" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEie5ZJ2NvA8NkHnhNIvra3e04mJAjhtoY00SIcJUWgNSz-7jUMI__Cp1_gSGTFAljlcX4rjn6k8YGPBcAgfNAgpnqom6KlXQOJveWt6RtK9FNlDjgx1qtHQJkY1GNhp_dBS6rm6dMrTuW4v/w640-h322/Figure_1.png" width="640" /></a></div></div><div>Remember one of our key metrics was the return correlation between the unrounded and optimised portfolios. This comes in at a very unshabby <b>0.986</b>.</div><div><br /></div><div>Let's look at some summary statistics. The Sharpe Ratio of the optimised portfolio is 1.336 gross, <b>1.287</b> net. So that's a SR cost loss of ~5bp a year. In other words, we'd expect to lose 1/20 of our vol target (1/20 of 25% = 1.25%) in costs annually; the <b>actual average cost is 1.7% </b>a year. The portfolio level turnover is <b>51.1</b> times a year.&nbsp;</div><div><br /></div><div>In comparison the benchmark portfolio hits a Sharpe Ratio of gross 1.322, net 1.275, SR in costs again ~5bp. Actual average cost is slightly lower at 1.45% a year. Turnover is 37.5. I'll discuss those figures in more detail later.</div><div><br /></div><div>Incidentally, the (unachievable!) Sharpe Ratio of the unrounded portfolio with 114 instruments is 1.359. So we're only losing a few bp in SR when holding about a quarter to a third of the available instruments. You can see how close the account curves are here:</div><table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;"><tbody><tr><td style="text-align: center;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPbui3awwFSGwz5bBFi7HEuwIgT3D2GhlCknlaFDEHfyC_xxdkhw9-xhwcfADZCCaKWmutOr5B6kYVoakezXrxp77nb-wAFfXpnwKLArAMXB1BW6-WsXz91ZAsVhFywhk533JLRzYNBJJf/s1920/Figure_1.png" style="margin-left: auto; margin-right: auto;"><img border="0" data-original-height="964" data-original-width="1920" height="322" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPbui3awwFSGwz5bBFi7HEuwIgT3D2GhlCknlaFDEHfyC_xxdkhw9-xhwcfADZCCaKWmutOr5B6kYVoakezXrxp77nb-wAFfXpnwKLArAMXB1BW6-WsXz91ZAsVhFywhk533JLRzYNBJJf/w640-h322/Figure_1.png" width="640" /></a></td></tr><tr><td class="tr-caption" style="text-align: center;">Orange: Unrounded, Blue: Optimised</td></tr></tbody></table><br />Another way of visualising the costs: If I plot the costs with the sign flipped, and multiplied by 10, and then add on the net account curve; you can see how we are losing less than half&nbsp; (so less than 5%) of our gross performance. Also the compounded costs are steady and linear, indicating a nice consistency over time.</div><div><div><br /></div><div class="separator" style="clear: both; text-align: center;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPPbOsDIGdUf4kSJKnNEuk1VgjydqrImbx-Wq2U7dwS9Pgv7sGQjctBxk1fSpNxv1F1sgpq_F_EI-rdim_eTFee_0_ByRkZszTdxqsVwUDsMoLnj7v151RpdDf36DiDNe2nsdo999xJPmR/s1920/Figure_1.png" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="964" data-original-width="1920" height="322" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPPbOsDIGdUf4kSJKnNEuk1VgjydqrImbx-Wq2U7dwS9Pgv7sGQjctBxk1fSpNxv1F1sgpq_F_EI-rdim_eTFee_0_ByRkZszTdxqsVwUDsMoLnj7v151RpdDf36DiDNe2nsdo999xJPmR/w640-h322/Figure_1.png" width="640" /></a></div><div>Let's compare that to the benchmark:</div><div><br /></div><div class="separator" style="clear: both; text-align: center;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEif5CW0jOC1mvjY76QcOl0L1DrvBaRsB5r7sr9sCVCo99a_AvxdaKWVnY-AlGQ3LDpMmcBR1eG7_TLA9HBSxydr4wTgHnNPn8-cPXj2_QUacHFl55Ri8KG_h1IIK9E3U2Gq9VxLjdMvXHJW/s1920/Figure_1.png" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="964" data-original-width="1920" height="322" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEif5CW0jOC1mvjY76QcOl0L1DrvBaRsB5r7sr9sCVCo99a_AvxdaKWVnY-AlGQ3LDpMmcBR1eG7_TLA9HBSxydr4wTgHnNPn8-cPXj2_QUacHFl55Ri8KG_h1IIK9E3U2Gq9VxLjdMvXHJW/w640-h322/Figure_1.png" width="640" /></a></div><br /><div>Although the proportion of costs is slightly lower, you can see here that costs have increased over time. And in fact the annual costs over the last 15 years have been around 2%: higher than the 1.7% achieved by the dynamic system.&nbsp;</div><div><br /></div><div>So if we're comparing dynamic with static benchmark:</div><div><br /></div><div><ul style="text-align: left;"><li>In recent years it has lower costs</li><li>But probably higher turnover</li><li>The historic net Sharpe Ratio is effectively identical</li></ul></div></div><p>The turnover isn't a massive deal, as long as we have accurately estimated our trading costs: we'll do a few more trades, but on average they will be in cheaper markets.</p><p>However, to reiterate, the results of the static system are very much more a matter of luck in market selection particularly for the early backtest when it only has a few markets. Overall I'd still rather have the dynamic system - with the opportunity to catch market movements in over 100 markets and counting - than the static system where if I am missing a market that happens to move I will kick myself.</p><div><br /><div><h2>Summary</h2></div><div><span style="font-family: courier; font-size: large;">"<span style="background-color: white; color: #222222;">I've prodded and poked this methodology in backtesting, and I'm fairly confident it's working well and does what I expect it to." ....</span></span></div><div><span face="Arial, Tahoma, Helvetica, FreeSans, sans-serif" style="background-color: white; color: #222222; font-size: 13.2px;"><br /></span></div><div><span style="background-color: white; color: #222222;"><span style="font-family: inherit;">.... is something I wrote in my last post. And I was wrong! However, after a lot more prodding and poking, which has had the side effect of tightening up a lot of my backtesting framework and making me think a lot, I'm now much more confident. And indeed this system is now trading 'live'.</span></span></div><div><span face="Arial, Tahoma, Helvetica, FreeSans, sans-serif" style="background-color: white; color: #222222; font-size: 13.2px;"><br /></span></div><div>That was the seventh post on the best way to trade futures with a small account size, and - barring another unexpected problem - that's all folks!</div><div><span face="Arial, Tahoma, Helvetica, FreeSans, sans-serif" style="background-color: white; color: #222222; font-size: 13.2px;"><br /></span></div><div><span face="Arial, Tahoma, Helvetica, FreeSans, sans-serif" style="background-color: white; color: #222222; font-size: 13.2px;"><br /></span></div><div><span face="Arial, Tahoma, Helvetica, FreeSans, sans-serif" style="background-color: white; color: #222222; font-size: 13.2px;"><br /></span></div><div><span face="Arial, Tahoma, Helvetica, FreeSans, sans-serif" style="background-color: white; color: #222222; font-size: 13.2px;"><br /></span></div><div></div></div><p></p>
+<div style='clear: both;'></div>
+</div>
+<div class='post-footer'>
+<div class='post-footer-line post-footer-line-1'>
+<span class='post-author vcard'>
+Posted by
+<span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+<meta content='https://www.blogger.com/profile/10175885372013572770' itemprop='url'/>
+<a class='g-profile' href='https://www.blogger.com/profile/10175885372013572770' rel='author' title='author profile'>
+<span itemprop='name'>Rob Carver</span>
+</a>
+</span>
+</span>
+<span class='post-timestamp'>
+at
+<meta content='https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html' itemprop='url'/>
+<a class='timestamp-link' href='https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html' rel='bookmark' title='permanent link'><abbr class='published' itemprop='datePublished' title='2021-11-19T15:36:00Z'>15:36</abbr></a>
+</span>
+<span class='post-comment-link'>
+</span>
+<span class='post-icons'>
+<span class='item-control blog-admin pid-1947650446'>
+<a href='https://www.blogger.com/post-edit.g?blogID=261139923818144971&postID=2830169557258028344&from=pencil' title='Edit Post'>
+<img alt='' class='icon-action' height='18' src='https://resources.blogblog.com/img/icon18_edit_allbkg.gif' width='18'/>
+</a>
+</span>
+</span>
+<div class='post-share-buttons goog-inline-block'>
+<a class='goog-inline-block share-button sb-email' href='https://www.blogger.com/share-post/261139923818144971/2830169557258028344?https=true&target=email' target='_blank' title='Email This'><span class='share-button-link-text'>Email This</span></a><a class='goog-inline-block share-button sb-blog' href='https://www.blogger.com/share-post/261139923818144971/2830169557258028344?https=true&target=blog' onclick='window.open(this.href, "_blank", "height=270,width=475"); return false;' target='_blank' title='BlogThis!'><span class='share-button-link-text'>BlogThis!</span></a><a class='goog-inline-block share-button sb-twitter' href='https://www.blogger.com/share-post/261139923818144971/2830169557258028344?https=true&target=twitter' target='_blank' title='Share to X'><span class='share-button-link-text'>Share to X</span></a><a class='goog-inline-block share-button sb-facebook' href='https://www.blogger.com/share-post/261139923818144971/2830169557258028344?https=true&target=facebook' onclick='window.open(this.href, "_blank", "height=430,width=640"); return false;' target='_blank' title='Share to Facebook'><span class='share-button-link-text'>Share to Facebook</span></a><a class='goog-inline-block share-button sb-pinterest' href='https://www.blogger.com/share-post/261139923818144971/2830169557258028344?https=true&target=pinterest' target='_blank' title='Share to Pinterest'><span class='share-button-link-text'>Share to Pinterest</span></a>
+</div>
+</div>
+<div class='post-footer-line post-footer-line-2'>
+<span class='post-labels'>
+Labels:
+<a href='https://qoppac.blogspot.com/search/label/asset%20allocation' rel='tag'>asset allocation</a>,
+<a href='https://qoppac.blogspot.com/search/label/Portfolio%20optimization' rel='tag'>Portfolio optimization</a>,
+<a href='https://qoppac.blogspot.com/search/label/pysystemtrade' rel='tag'>pysystemtrade</a>,
+<a href='https://qoppac.blogspot.com/search/label/risk%20management' rel='tag'>risk management</a>
+</span>
+</div>
+<div class='post-footer-line post-footer-line-3'>
+<span class='post-location'>
+</span>
+</div>
+</div>
+</div>
+<div class='comments' id='comments'>
+<a name='comments'></a>
+<h4>15 comments:</h4>
+<div class='comments-content'>
+<script async='async' src='' type='text/javascript'></script>
+<script type='text/javascript'>
+    (function() {
+      var items = null;
+      var msgs = null;
+      var config = {};
+
+// <![CDATA[
+      var cursor = null;
+      if (items && items.length > 0) {
+        cursor = parseInt(items[items.length - 1].timestamp) + 1;
+      }
+
+      var bodyFromEntry = function(entry) {
+        var text = (entry &&
+                    ((entry.content && entry.content.$t) ||
+                     (entry.summary && entry.summary.$t))) ||
+            '';
+        if (entry && entry.gd$extendedProperty) {
+          for (var k in entry.gd$extendedProperty) {
+            if (entry.gd$extendedProperty[k].name == 'blogger.contentRemoved') {
+              return '<span class="deleted-comment">' + text + '</span>';
+            }
+          }
+        }
+        return text;
+      }
+
+      var parse = function(data) {
+        cursor = null;
+        var comments = [];
+        if (data && data.feed && data.feed.entry) {
+          for (var i = 0, entry; entry = data.feed.entry[i]; i++) {
+            var comment = {};
+            // comment ID, parsed out of the original id format
+            var id = /blog-(\d+).post-(\d+)/.exec(entry.id.$t);
+            comment.id = id ? id[2] : null;
+            comment.body = bodyFromEntry(entry);
+            comment.timestamp = Date.parse(entry.published.$t) + '';
+            if (entry.author && entry.author.constructor === Array) {
+              var auth = entry.author[0];
+              if (auth) {
+                comment.author = {
+                  name: (auth.name ? auth.name.$t : undefined),
+                  profileUrl: (auth.uri ? auth.uri.$t : undefined),
+                  avatarUrl: (auth.gd$image ? auth.gd$image.src : undefined)
+                };
+              }
+            }
+            if (entry.link) {
+              if (entry.link[2]) {
+                comment.link = comment.permalink = entry.link[2].href;
+              }
+              if (entry.link[3]) {
+                var pid = /.*comments\/default\/(\d+)\?.*/.exec(entry.link[3].href);
+                if (pid && pid[1]) {
+                  comment.parentId = pid[1];
+                }
+              }
+            }
+            comment.deleteclass = 'item-control blog-admin';
+            if (entry.gd$extendedProperty) {
+              for (var k in entry.gd$extendedProperty) {
+                if (entry.gd$extendedProperty[k].name == 'blogger.itemClass') {
+                  comment.deleteclass += ' ' + entry.gd$extendedProperty[k].value;
+                } else if (entry.gd$extendedProperty[k].name == 'blogger.displayTime') {
+                  comment.displayTime = entry.gd$extendedProperty[k].value;
+                }
+              }
+            }
+            comments.push(comment);
+          }
+        }
+        return comments;
+      };
+
+      var paginator = function(callback) {
+        if (hasMore()) {
+          var url = config.feed + '?alt=json&v=2&orderby=published&reverse=false&max-results=50';
+          if (cursor) {
+            url += '&published-min=' + new Date(cursor).toISOString();
+          }
+          window.bloggercomments = function(data) {
+            var parsed = parse(data);
+            cursor = parsed.length < 50 ? null
+                : parseInt(parsed[parsed.length - 1].timestamp) + 1
+            callback(parsed);
+            window.bloggercomments = null;
+          }
+          url += '&callback=bloggercomments';
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = url;
+          document.getElementsByTagName('head')[0].appendChild(script);
+        }
+      };
+      var hasMore = function() {
+        return !!cursor;
+      };
+      var getMeta = function(key, comment) {
+        if ('iswriter' == key) {
+          var matches = !!comment.author
+              && comment.author.name == config.authorName
+              && comment.author.profileUrl == config.authorUrl;
+          return matches ? 'true' : '';
+        } else if ('deletelink' == key) {
+          return config.baseUri + '/comment/delete/'
+               + config.blogId + '/' + comment.id;
+        } else if ('deleteclass' == key) {
+          return comment.deleteclass;
+        }
+        return '';
+      };
+
+      var replybox = null;
+      var replyUrlParts = null;
+      var replyParent = undefined;
+
+      var onReply = function(commentId, domId) {
+        if (replybox == null) {
+          // lazily cache replybox, and adjust to suit this style:
+          replybox = document.getElementById('comment-editor');
+          if (replybox != null) {
+            replybox.height = '250px';
+            replybox.style.display = 'block';
+            replyUrlParts = replybox.src.split('#');
+          }
+        }
+        if (replybox && (commentId !== replyParent)) {
+          replybox.src = '';
+          document.getElementById(domId).insertBefore(replybox, null);
+          replybox.src = replyUrlParts[0]
+              + (commentId ? '&parentID=' + commentId : '')
+              + '#' + replyUrlParts[1];
+          replyParent = commentId;
+        }
+      };
+
+      var hash = (window.location.hash || '#').substring(1);
+      var startThread, targetComment;
+      if (/^comment-form_/.test(hash)) {
+        startThread = hash.substring('comment-form_'.length);
+      } else if (/^c[0-9]+$/.test(hash)) {
+        targetComment = hash.substring(1);
+      }
+
+      // Configure commenting API:
+      var configJso = {
+        'maxDepth': config.maxThreadDepth
+      };
+      var provider = {
+        'id': config.postId,
+        'data': items,
+        'loadNext': paginator,
+        'hasMore': hasMore,
+        'getMeta': getMeta,
+        'onReply': onReply,
+        'rendered': true,
+        'initComment': targetComment,
+        'initReplyThread': startThread,
+        'config': configJso,
+        'messages': msgs
+      };
+
+      var render = function() {
+        if (window.goog && window.goog.comments) {
+          var holder = document.getElementById('comment-holder');
+          window.goog.comments.render(holder, provider);
+        }
+      };
+
+      // render now, or queue to render when library loads:
+      if (window.goog && window.goog.comments) {
+        render();
+      } else {
+        window.goog = window.goog || {};
+        window.goog.comments = window.goog.comments || {};
+        window.goog.comments.loadQueue = window.goog.comments.loadQueue || [];
+        window.goog.comments.loadQueue.push(render);
+      }
+    })();
+// ]]>
+  </script>
+<div id='comment-holder'>
+<div class="comment-thread toplevel-thread"><ol id="top-ra"><li class="comment" id="c4234880378407227689"><div class="avatar-image-container"><img src="//blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhb0xEBiy-9gpkzMLVO9ti1LZoYIrZ32k-lvLhVd-4jRzmLHHLMbbCrqY4F1gzSiMkSxem__22D1Es9lM4uq3KoRNrwhQMGCKtpBh5fBxLNgEkU8_YQownjyemQNlaCyVg/s45-c/1926.jpg" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/01915968544820295053" rel="nofollow">Marco</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1687956152680#c4234880378407227689">28 June 2023 at 13:42</a></span></div><p class="comment-content">I wonder why to adjust your trades to the edge of the buffer and not to the optimal position. If you stay on the edge all the time you increase the number of adjustements, am I wrong?</p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="4234880378407227689">Reply</a><span class="item-control blog-admin blog-admin pid-950212305"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/4234880378407227689">Delete</a></span></span></div><div class="comment-replies"><div id="c4234880378407227689-rt" class="comment-thread inline-thread"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c4234880378407227689-ra" class="thread-chrome thread-expanded"><div><li class="comment" id="c5748920638149767634"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/10175885372013572770" rel="nofollow">Rob Carver</a></cite><span class="icon user blog-author"></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1687964283165#c5748920638149767634">28 June 2023 at 15:58</a></span></div><p class="comment-content">Yup, you&#39;re wrong. Trading to the edge of the buffer is optimal because if you trade to the middle you are doing larger traders, and on average you trade more contracts even though you are doing slightly fewer trades. Here is a relatively non technical paper on the subject https://arxiv.org/pdf/1603.06558.pdf</p><span class="comment-actions secondary-text"><span class="item-control blog-admin blog-admin pid-1947650446"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/5748920638149767634">Delete</a></span></span></div><div class="comment-replies"><div id="c5748920638149767634-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c5748920638149767634-ra" class="thread-chrome thread-expanded"><div></div><div id="c5748920638149767634-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="5748920638149767634">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c5748920638149767634-ce"></div></li><li class="comment" id="c8469069870436959537"><div class="avatar-image-container"><img src="//blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhb0xEBiy-9gpkzMLVO9ti1LZoYIrZ32k-lvLhVd-4jRzmLHHLMbbCrqY4F1gzSiMkSxem__22D1Es9lM4uq3KoRNrwhQMGCKtpBh5fBxLNgEkU8_YQownjyemQNlaCyVg/s45-c/1926.jpg" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/01915968544820295053" rel="nofollow">Marco</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1688735512378#c8469069870436959537">7 July 2023 at 14:11</a></span></div><p class="comment-content">another question, what about instruments weights? considering that the dynamic portfolio will select only a subset of instruments, the total weight will not sum to 1. </p><span class="comment-actions secondary-text"><span class="item-control blog-admin blog-admin pid-950212305"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/8469069870436959537">Delete</a></span></span></div><div class="comment-replies"><div id="c8469069870436959537-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c8469069870436959537-ra" class="thread-chrome thread-expanded"><div></div><div id="c8469069870436959537-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="8469069870436959537">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c8469069870436959537-ce"></div></li><li class="comment" id="c3589300376810643740"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/10175885372013572770" rel="nofollow">Rob Carver</a></cite><span class="icon user blog-author"></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1688828719689#c3589300376810643740">8 July 2023 at 16:05</a></span></div><p class="comment-content">If I have 100 instrument position that produces std dev risk of 20%, and I end up with 1 dynamically optimised position that is 100x larger than the original portfolio,  is the effective total instrument weight on that position 1% or 100%?</p><span class="comment-actions secondary-text"><span class="item-control blog-admin blog-admin pid-1947650446"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/3589300376810643740">Delete</a></span></span></div><div class="comment-replies"><div id="c3589300376810643740-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c3589300376810643740-ra" class="thread-chrome thread-expanded"><div></div><div id="c3589300376810643740-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="3589300376810643740">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c3589300376810643740-ce"></div></li></div><div id="c4234880378407227689-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="4234880378407227689">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c4234880378407227689-ce"></div></li><li class="comment" id="c9058650808186459685"><div class="avatar-image-container"><img src="//blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhb0xEBiy-9gpkzMLVO9ti1LZoYIrZ32k-lvLhVd-4jRzmLHHLMbbCrqY4F1gzSiMkSxem__22D1Es9lM4uq3KoRNrwhQMGCKtpBh5fBxLNgEkU8_YQownjyemQNlaCyVg/s45-c/1926.jpg" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/01915968544820295053" rel="nofollow">Marco</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1687964917354#c9058650808186459685">28 June 2023 at 16:08</a></span></div><p class="comment-content">thanks, from the text in this article and the book chapter it was not clear to me the rationale of staying on th edge, but it is clear now.</p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="9058650808186459685">Reply</a><span class="item-control blog-admin blog-admin pid-950212305"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/9058650808186459685">Delete</a></span></span></div><div class="comment-replies"><div id="c9058650808186459685-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c9058650808186459685-ra" class="thread-chrome thread-expanded"><div></div><div id="c9058650808186459685-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="9058650808186459685">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c9058650808186459685-ce"></div></li><li class="comment" id="c7400175127060244449"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/14212230848439065151" rel="nofollow">Ong</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1717084347046#c7400175127060244449">30 May 2024 at 16:52</a></span></div><p class="comment-content">Hi Rob, what do you think of adding instruments that are very similar and highly correlated but not necessarily identical or interchangeable into a dynamic optimisation? For example if I have Arabica Coffee contracts from ICE/US, is there a benefit to adding Robusta Coffee contracts from ICE/London? Also, do you think that there is a benefit to adding futures that have daily data from multiple exchanges, for example if I have Gold futures daily data from COMEX, would there be a benefit from adding Gold futures from JPX, HKFE into the dynamic optimisation? Thanks in advance Rob! Love reading all your write-ups on your blog!</p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="7400175127060244449">Reply</a><span class="item-control blog-admin blog-admin pid-1588254055"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/7400175127060244449">Delete</a></span></span></div><div class="comment-replies"><div id="c7400175127060244449-rt" class="comment-thread inline-thread"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c7400175127060244449-ra" class="thread-chrome thread-expanded"><div><li class="comment" id="c3731622227835637235"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/10175885372013572770" rel="nofollow">Rob Carver</a></cite><span class="icon user blog-author"></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1717084548968#c3731622227835637235">30 May 2024 at 16:55</a></span></div><p class="comment-content">&quot; For example if I have Arabica Coffee contracts from ICE/US, is there a benefit to adding Robusta Coffee contracts from ICE/London?&quot; yes I do this. Unlike other optimisations, DO Is pretty robust to very high correlations since it isn&#39;t inverting the matrix.</p><span class="comment-actions secondary-text"><span class="item-control blog-admin blog-admin pid-1947650446"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/3731622227835637235">Delete</a></span></span></div><div class="comment-replies"><div id="c3731622227835637235-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c3731622227835637235-ra" class="thread-chrome thread-expanded"><div></div><div id="c3731622227835637235-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="3731622227835637235">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c3731622227835637235-ce"></div></li><li class="comment" id="c3059310898582789493"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/14212230848439065151" rel="nofollow">Ong</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1717109437557#c3059310898582789493">30 May 2024 at 23:50</a></span></div><p class="comment-content">Ahh I see. But do you think it would be worthwhile for me to have say for example both the China A50 contracts from SGX and HKFE in the DO? or should I just stick to the one that has the lowest trading cost?</p><span class="comment-actions secondary-text"><span class="item-control blog-admin blog-admin pid-1588254055"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/3059310898582789493">Delete</a></span></span></div><div class="comment-replies"><div id="c3059310898582789493-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c3059310898582789493-ra" class="thread-chrome thread-expanded"><div></div><div id="c3059310898582789493-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="3059310898582789493">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c3059310898582789493-ce"></div></li><li class="comment" id="c9016566466897095152"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/10175885372013572770" rel="nofollow">Rob Carver</a></cite><span class="icon user blog-author"></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1717146266822#c9016566466897095152">31 May 2024 at 10:04</a></span></div><p class="comment-content">No clearly if they are basically the same instrument there is no point. I would go for lowest cost that meets liquidity thresholds; as per my report https://github.com/robcarver17/reports/blob/master/Duplicate_markets_report</p><span class="comment-actions secondary-text"><span class="item-control blog-admin blog-admin pid-1947650446"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/9016566466897095152">Delete</a></span></span></div><div class="comment-replies"><div id="c9016566466897095152-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c9016566466897095152-ra" class="thread-chrome thread-expanded"><div></div><div id="c9016566466897095152-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="9016566466897095152">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c9016566466897095152-ce"></div></li></div><div id="c7400175127060244449-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="7400175127060244449">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c7400175127060244449-ce"></div></li><li class="comment" id="c6640263982989796637"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/07815695560953002699" rel="nofollow">A</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1718228162026#c6640263982989796637">12 June 2024 at 22:36</a></span></div><p class="comment-content">When backtesting rob_system for different notional account values, are the simulated stats system.accounts.optimised_portfolio().percent.stats() or simply system.accounts.portfolio().percent.stats() already accounts for the optimisedPositions? </p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="6640263982989796637">Reply</a><span class="item-control blog-admin blog-admin pid-1934301175"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/6640263982989796637">Delete</a></span></span></div><div class="comment-replies"><div id="c6640263982989796637-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c6640263982989796637-ra" class="thread-chrome thread-expanded"><div></div><div id="c6640263982989796637-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="6640263982989796637">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c6640263982989796637-ce"></div></li><li class="comment" id="c5896962875456977733"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/10175885372013572770" rel="nofollow">Rob Carver</a></cite><span class="icon user blog-author"></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1718259494529#c5896962875456977733">13 June 2024 at 07:18</a></span></div><p class="comment-content">optimised_portfolio() is after optimisation, portfolio() is before.... I would have thought was obvious</p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="5896962875456977733">Reply</a><span class="item-control blog-admin blog-admin pid-1947650446"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/5896962875456977733">Delete</a></span></span></div><div class="comment-replies"><div id="c5896962875456977733-rt" class="comment-thread inline-thread"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c5896962875456977733-ra" class="thread-chrome thread-expanded"><div><li class="comment" id="c7226104598944811010"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/07815695560953002699" rel="nofollow">A</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1719846261990#c7226104598944811010">1 July 2024 at 16:04</a></span></div><p class="comment-content">Not obvious to a dolt!<br><br>I thought because it was accessing the dynamic system functions to run, perhaps there was already a position optimisation.</p><span class="comment-actions secondary-text"><span class="item-control blog-admin blog-admin pid-1934301175"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/7226104598944811010">Delete</a></span></span></div><div class="comment-replies"><div id="c7226104598944811010-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c7226104598944811010-ra" class="thread-chrome thread-expanded"><div></div><div id="c7226104598944811010-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="7226104598944811010">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c7226104598944811010-ce"></div></li></div><div id="c5896962875456977733-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="5896962875456977733">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c5896962875456977733-ce"></div></li><li class="comment" id="c4720652827713044774"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/06494344044710091246" rel="nofollow">Moritz</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1730140363658#c4720652827713044774">28 October 2024 at 18:32</a></span></div><p class="comment-content">Hi Rob,<br>just re-read this post in connection with the DO section in the book. One problem of the algo stems from it always starting at zero. Though a little more complex, would it be useful to let the algo start at the current portfolio positions and loop through an incremental increase AND decrease of each instrument in the universe? </p><span class="comment-actions secondary-text"><a class="comment-reply" target="_self" data-comment-id="4720652827713044774">Reply</a><span class="item-control blog-admin blog-admin pid-742902659"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/4720652827713044774">Delete</a></span></span></div><div class="comment-replies"><div id="c4720652827713044774-rt" class="comment-thread inline-thread"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c4720652827713044774-ra" class="thread-chrome thread-expanded"><div><li class="comment" id="c9068193498602894308"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/10175885372013572770" rel="nofollow">Rob Carver</a></cite><span class="icon user blog-author"></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1730194343582#c9068193498602894308">29 October 2024 at 09:32</a></span></div><p class="comment-content">Other people have suggested this, one obvious disadvantage is you could end up stuck with the wrong sign position on an instrument for a while if expensive I would need to test</p><span class="comment-actions secondary-text"><span class="item-control blog-admin blog-admin pid-1947650446"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/9068193498602894308">Delete</a></span></span></div><div class="comment-replies"><div id="c9068193498602894308-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c9068193498602894308-ra" class="thread-chrome thread-expanded"><div></div><div id="c9068193498602894308-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="9068193498602894308">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c9068193498602894308-ce"></div></li><li class="comment" id="c2835535060466665812"><div class="avatar-image-container"><img src="//www.blogger.com/img/blogger_logo_round_35.png" alt=""/></div><div class="comment-block"><div class="comment-header"><cite class="user"><a href="https://www.blogger.com/profile/08211250815290264545" rel="nofollow">Ben</a></cite><span class="icon user "></span><span class="datetime secondary-text"><a rel="nofollow" href="https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html?showComment=1752578449189#c2835535060466665812">15 July 2025 at 12:20</a></span></div><p class="comment-content">Something I have been thinking about recently:<br>If you started the optimisation at the current positions it would be easy to introduce the notion of a trading cost budget, where the optimisation stops when the budget is exhausted.<br>The budget itself could be derived from the trading costs that trading the dense / full position portfolio would have created, since they should be reasonable given all the upfront work you are putting in with speed limits etc.<br><br>I&#39;d imagine doing the optimisation this way finishes quicker than starting from 0.<br>That might allow you to do multiple optimisation runs with slightly different starting points (i.e. forcing certain positional changes that the greedy optimisation might not do), to avoid getting stuck in local extrema. And then in the end you&#39;d choose the one with the best tracking error</p><span class="comment-actions secondary-text"><span class="item-control blog-admin blog-admin pid-1751751215"><a target="_self" href="https://www.blogger.com/comment/delete/261139923818144971/2835535060466665812">Delete</a></span></span></div><div class="comment-replies"><div id="c2835535060466665812-rt" class="comment-thread inline-thread hidden"><span class="thread-toggle thread-expanded"><span class="thread-arrow"></span><span class="thread-count"><a target="_self">Replies</a></span></span><ol id="c2835535060466665812-ra" class="thread-chrome thread-expanded"><div></div><div id="c2835535060466665812-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="2835535060466665812">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c2835535060466665812-ce"></div></li></div><div id="c4720652827713044774-continue" class="continue"><a class="comment-reply" target="_self" data-comment-id="4720652827713044774">Reply</a></div></ol></div></div><div class="comment-replybox-single" id="c4720652827713044774-ce"></div></li></ol><div id="top-continue" class="continue"><a class="comment-reply" target="_self">Add comment</a></div><div class="comment-replybox-thread" id="top-ce"></div><div class="loadmore hidden" data-post-id="2830169557258028344"><a target="_self">Load more...</a></div></div>
+</div>
+</div>
+<p class='comment-footer'>
+<div class='comment-form'>
+<a name='comment-form'></a>
+<p>Comments are moderated. So there will be a delay before they are published. Don&#39;t bother with spam, it wastes your time and mine.</p>
+<a href='https://www.blogger.com/comment/frame/261139923818144971?po=2830169557258028344&hl=en-GB&saa=85391&origin=https://qoppac.blogspot.com' id='comment-editor-src'></a>
+<iframe allowtransparency='true' class='blogger-iframe-colorize blogger-comment-from-post' frameborder='0' height='410px' id='comment-editor' name='comment-editor' src='' width='100%'></iframe>
+<script src='https://www.blogger.com/static/v1/jsbin/266969061-comment_from_post_iframe.js' type='text/javascript'></script>
+<script type='text/javascript'>
+      BLOG_CMT_createIframe('https://www.blogger.com/rpc_relay.html');
+    </script>
+</div>
+</p>
+<div id='backlinks-container'>
+<div id='Blog1_backlinks-container'>
+</div>
+</div>
+</div>
+</div>
+
+        </div></div>
+      
+</div>
+<div class='blog-pager' id='blog-pager'>
+<span id='blog-pager-newer-link'>
+<a class='blog-pager-newer-link' href='https://qoppac.blogspot.com/2021/12/my-trading-system.html' id='Blog1_blog-pager-newer-link' title='Newer Post'>Newer Post</a>
+</span>
+<span id='blog-pager-older-link'>
+<a class='blog-pager-older-link' href='https://qoppac.blogspot.com/2021/10/mr-greedy-and-tale-of-minimum-tracking.html' id='Blog1_blog-pager-older-link' title='Older Post'>Older Post</a>
+</span>
+<a class='home-link' href='https://qoppac.blogspot.com/'>Home</a>
+</div>
+<div class='clear'></div>
+<div class='post-feeds'>
+<div class='feed-links'>
+Subscribe to:
+<a class='feed-link' href='https://qoppac.blogspot.com/feeds/2830169557258028344/comments/default' target='_blank' type='application/atom+xml'>Post Comments (Atom)</a>
+</div>
+</div>
+</div></div>
+</div>
+</div>
+<div class='column-left-outer'>
+<div class='column-left-inner'>
+<aside>
+</aside>
+</div>
+</div>
+<div class='column-right-outer'>
+<div class='column-right-inner'>
+<aside>
+<div class='sidebar section' id='sidebar-right-1'><div class='widget LinkList' data-version='1' id='LinkList1'>
+<div class='widget-content'>
+<ul>
+<li><a href='http://systematicmoney.org'>My website: systematicmoney.org</a></li>
+<li><a href='https://twitter.com/investingidiocy'>twitter @investingidiocy</a></li>
+<li><a href='https://www.linkedin.com/in/robert-stuart-carver/'>linkedin/robert-stuart-carver</a></li>
+<li><a href='https://www.facebook.com/Robert.Carver.Author/'>facebook.com/Robert.Carver.Author</a></li>
+<li><a href='https://github.com/robcarver17/'>github.com/robcarver17</a></li>
+<li><a href='https://www.goodreads.com/author/show/14163231.Robert_Carver'>goodreads.com/Robert_Carver</a></li>
+</ul>
+<div class='clear'></div>
+</div>
+</div><div class='widget PageList' data-version='1' id='PageList1'>
+<div class='widget-content'>
+<ul>
+<li>
+<a href='https://qoppac.blogspot.com/p/about-me.html'>About me</a>
+</li>
+<li>
+<a href='https://qoppac.blogspot.com/p/contacting-me.html'>Contacting me</a>
+</li>
+<li>
+<a href='http://qoppac.blogspot.com/p/legal-disclaimer-please-dont-sue-me.html'>Legal Disclaimer (please don't sue me)</a>
+</li>
+<li>
+<a href='https://qoppac.blogspot.com/p/getting-rob-to-write-and-speak-for-you.html'>Getting Rob to write and speak for you</a>
+</li>
+</ul>
+<div class='clear'></div>
+</div>
+</div><div class='widget BlogArchive' data-version='1' id='BlogArchive1'>
+<h2>Blog Archive</h2>
+<div class='widget-content'>
+<div id='ArchiveList'>
+<div id='BlogArchive1_ArchiveList'>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2026/'>
+2026
+</a>
+<span class='post-count' dir='ltr'>(17)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2026/09/'>
+September
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2026/07/'>
+July
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2026/06/'>
+June
+</a>
+<span class='post-count' dir='ltr'>(9)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2026/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2026/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2026/02/'>
+February
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2026/01/'>
+January
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2025/'>
+2025
+</a>
+<span class='post-count' dir='ltr'>(12)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2025/11/'>
+November
+</a>
+<span class='post-count' dir='ltr'>(3)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2025/10/'>
+October
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2025/09/'>
+September
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2025/07/'>
+July
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2025/06/'>
+June
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2025/05/'>
+May
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2025/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2025/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2025/02/'>
+February
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2025/01/'>
+January
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2024/'>
+2024
+</a>
+<span class='post-count' dir='ltr'>(5)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2024/12/'>
+December
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2024/11/'>
+November
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2024/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2024/02/'>
+February
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2024/01/'>
+January
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2023/'>
+2023
+</a>
+<span class='post-count' dir='ltr'>(14)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2023/12/'>
+December
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2023/10/'>
+October
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2023/09/'>
+September
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2023/05/'>
+May
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2023/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2023/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2023/02/'>
+February
+</a>
+<span class='post-count' dir='ltr'>(5)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2023/01/'>
+January
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2022/'>
+2022
+</a>
+<span class='post-count' dir='ltr'>(9)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2022/11/'>
+November
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2022/09/'>
+September
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2022/06/'>
+June
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2022/05/'>
+May
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2022/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2022/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2022/02/'>
+February
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2022/01/'>
+January
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate expanded'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy toggle-open'>
+
+        &#9660;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/'>
+2021
+</a>
+<span class='post-count' dir='ltr'>(16)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/12/'>
+December
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate expanded'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy toggle-open'>
+
+        &#9660;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/11/'>
+November
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+<ul class='posts'>
+<li><a href='https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html'>Mr Greedy and the Tale of the Minimum Tracking Err...</a></li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/10/'>
+October
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/09/'>
+September
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/07/'>
+July
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/06/'>
+June
+</a>
+<span class='post-count' dir='ltr'>(3)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/05/'>
+May
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/02/'>
+February
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2021/01/'>
+January
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/'>
+2020
+</a>
+<span class='post-count' dir='ltr'>(12)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/12/'>
+December
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/11/'>
+November
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/10/'>
+October
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/09/'>
+September
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/07/'>
+July
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/06/'>
+June
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/05/'>
+May
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/02/'>
+February
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2020/01/'>
+January
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2019/'>
+2019
+</a>
+<span class='post-count' dir='ltr'>(9)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2019/12/'>
+December
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2019/11/'>
+November
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2019/10/'>
+October
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2019/09/'>
+September
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2019/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2019/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2019/02/'>
+February
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2018/'>
+2018
+</a>
+<span class='post-count' dir='ltr'>(10)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2018/12/'>
+December
+</a>
+<span class='post-count' dir='ltr'>(4)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2018/11/'>
+November
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2018/07/'>
+July
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2018/06/'>
+June
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2018/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2018/02/'>
+February
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2017/'>
+2017
+</a>
+<span class='post-count' dir='ltr'>(14)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2017/12/'>
+December
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2017/09/'>
+September
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2017/08/'>
+August
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2017/06/'>
+June
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2017/05/'>
+May
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2017/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2017/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(5)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2017/02/'>
+February
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2017/01/'>
+January
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2016/'>
+2016
+</a>
+<span class='post-count' dir='ltr'>(11)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2016/09/'>
+September
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2016/06/'>
+June
+</a>
+<span class='post-count' dir='ltr'>(3)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2016/05/'>
+May
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2016/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2016/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2016/01/'>
+January
+</a>
+<span class='post-count' dir='ltr'>(3)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/'>
+2015
+</a>
+<span class='post-count' dir='ltr'>(32)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/12/'>
+December
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/11/'>
+November
+</a>
+<span class='post-count' dir='ltr'>(5)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/10/'>
+October
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/09/'>
+September
+</a>
+<span class='post-count' dir='ltr'>(5)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/08/'>
+August
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/07/'>
+July
+</a>
+<span class='post-count' dir='ltr'>(7)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/06/'>
+June
+</a>
+<span class='post-count' dir='ltr'>(3)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/05/'>
+May
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(3)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/02/'>
+February
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2015/01/'>
+January
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2014/'>
+2014
+</a>
+<span class='post-count' dir='ltr'>(21)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2014/12/'>
+December
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2014/11/'>
+November
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2014/10/'>
+October
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2014/09/'>
+September
+</a>
+<span class='post-count' dir='ltr'>(3)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2014/08/'>
+August
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2014/06/'>
+June
+</a>
+<span class='post-count' dir='ltr'>(3)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2014/05/'>
+May
+</a>
+<span class='post-count' dir='ltr'>(4)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2014/04/'>
+April
+</a>
+<span class='post-count' dir='ltr'>(3)</span>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2014/03/'>
+March
+</a>
+<span class='post-count' dir='ltr'>(2)</span>
+</li>
+</ul>
+</li>
+</ul>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2013/'>
+2013
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+<ul class='hierarchy'>
+<li class='archivedate collapsed'>
+<a class='toggle' href='javascript:void(0)'>
+<span class='zippy'>
+
+        &#9658;&#160;
+      
+</span>
+</a>
+<a class='post-count-link' href='https://qoppac.blogspot.com/2013/12/'>
+December
+</a>
+<span class='post-count' dir='ltr'>(1)</span>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class='clear'></div>
+</div>
+</div><div class='widget BlogSearch' data-version='1' id='BlogSearch1'>
+<h2 class='title'>Search This Blog</h2>
+<div class='widget-content'>
+<div id='BlogSearch1_form'>
+<form action='https://qoppac.blogspot.com/search' class='gsc-search-box' target='_top'>
+<table cellpadding='0' cellspacing='0' class='gsc-search-box'>
+<tbody>
+<tr>
+<td class='gsc-input'>
+<input autocomplete='off' class='gsc-input' name='q' size='10' title='search' type='text' value=''/>
+</td>
+<td class='gsc-search-button'>
+<input class='gsc-search-button' title='search' type='submit' value='Search'/>
+</td>
+</tr>
+</tbody>
+</table>
+</form>
+</div>
+</div>
+<div class='clear'></div>
+</div><div class='widget PopularPosts' data-version='1' id='PopularPosts1'>
+<h2>Popular Posts</h2>
+<div class='widget-content popular-posts'>
+<ul>
+<li>
+<div class='item-content'>
+<div class='item-title'><a href='https://qoppac.blogspot.com/2017/03/interactive-brokers-native-python-api.html'>Interactive brokers native python API</a></div>
+<div class='item-snippet'> Until quite recently interactive brokers didn&#39;t offer a python API for their automated trading software.   Instead you had to put up wi...</div>
+</div>
+<div style='clear: both;'></div>
+</li>
+<li>
+<div class='item-content'>
+<div class='item-thumbnail'>
+<a href='https://qoppac.blogspot.com/2016/05/a-simple-breakout-trading-rule.html' target='_blank'>
+<img alt='' border='0' src='https://lh3.googleusercontent.com/blogger_img_proxy/AEn0k_uE_qFldssev6lKWGtxgIdJAVlyqqVNn5vq2uyFHQDL7L-d-R-8Jzzc-QY5XtMcINtj0On-HGTweMGdCnF9A54W1qkgQmi0EvMSFLZSa2Zu_oVlUhMJnsD1Ibu2gjlFi7yydA=w72-h72-p-k-no-nu'/>
+</a>
+</div>
+<div class='item-title'><a href='https://qoppac.blogspot.com/2016/05/a-simple-breakout-trading-rule.html'>A simple breakout trading rule (pysystemtrade)</a></div>
+<div class='item-snippet'>B reakout . Not the classic home arcade game, seen here in Atari 2600 version, but what happens when a market price breaks out of a trading ...</div>
+</div>
+<div style='clear: both;'></div>
+</li>
+<li>
+<div class='item-content'>
+<div class='item-title'><a href='https://qoppac.blogspot.com/2017/03/historic-data-from-native-ib-pyhon-api.html'>Historic data from native IB python API</a></div>
+<div class='item-snippet'>This is the second in a series of posts on how to use the native python API for interactive brokers . This post is an update of the post I w...</div>
+</div>
+<div style='clear: both;'></div>
+</li>
+<li>
+<div class='item-content'>
+<div class='item-thumbnail'>
+<a href='https://qoppac.blogspot.com/2021/12/my-trading-system.html' target='_blank'>
+<img alt='' border='0' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEitEADpdN_0TSmIqCIC5dzSJFUodyQM_JXvxg0xUH4dyHdj078gtQixdtZNcYsyHgydeBgSFT2_qO5pdlQNohXQMbwebXFGYMDQ-6WqVmqqHxzW3An0kagFuXiS4jg8ClO5buVuBUVJdmR3/w72-h72-p-k-no-nu/5wbzcq.jpg'/>
+</a>
+</div>
+<div class='item-title'><a href='https://qoppac.blogspot.com/2021/12/my-trading-system.html'>My trading system</a></div>
+<div class='item-snippet'>I realise that I&#39;ve never actually sat down and described my fully automated futures trading system&#160;in all it&#39;s detail; despite havi...</div>
+</div>
+<div style='clear: both;'></div>
+</li>
+<li>
+<div class='item-content'>
+<div class='item-thumbnail'>
+<a href='https://qoppac.blogspot.com/2021/02/so-you-want-to-be-quantsystematic-trader.html' target='_blank'>
+<img alt='' border='0' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiB89O4ficlSHzrEPWQlL3Vn6Y-IHdxr8eUg1C1EltvgG1lxbudjMPykK91qGq6-zlSbldCHi7yrr7hjxYRNViMM_vX6X-XDWpZoT0SZCXeasNWQSdWPOf7gqv9u9XX1v7Fa_WeDUr3ixgg/w72-h72-p-k-no-nu/TRS-80_Color_Computer_1_front_right.jpg'/>
+</a>
+</div>
+<div class='item-title'><a href='https://qoppac.blogspot.com/2021/02/so-you-want-to-be-quantsystematic-trader.html'>So you want to be a quant/systematic trader?</a></div>
+<div class='item-snippet'>&#160;One of the upsides of having a (very, very minor) public profile is that you get a lot of people asking you for advice, which is flattering...</div>
+</div>
+<div style='clear: both;'></div>
+</li>
+<li>
+<div class='item-content'>
+<div class='item-thumbnail'>
+<a href='https://qoppac.blogspot.com/2017/06/some-more-trading-rules.html' target='_blank'>
+<img alt='' border='0' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgTfw1-PP6euPahz1slLWI4y2kCR7JzJ3gfXAnC6OgxFLLJP1vuMbpff34SyffaPYO2e-Lb3nhV5ullhImIcK3XzOzl8Ib2WLVzFP3role6UCvxBpkeGgNr6A4m62U8QIk9YuS2LXNTsJON/w72-h72-p-k-no-nu/figure_1-21.png'/>
+</a>
+</div>
+<div class='item-title'><a href='https://qoppac.blogspot.com/2017/06/some-more-trading-rules.html'>Some more trading rules</a></div>
+<div class='item-snippet'>It is a common misconception that the most important thing to have when you&#39;re trading, or investing, systematically is good trading rul...</div>
+</div>
+<div style='clear: both;'></div>
+</li>
+<li>
+<div class='item-content'>
+<div class='item-thumbnail'>
+<a href='https://qoppac.blogspot.com/2016/01/correlations-weights-multipliers.html' target='_blank'>
+<img alt='' border='0' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhH5ljKD_bTA1wmhRiRJGBHsSRoun7aA4hFTSZJSU0koHve5ab5pMEWxgnIJyOW7ycvg2BbON5yj5r6bmorr-DB38b8wlC1K7QfNW5PE5m-rF-FZZDIATh33QSn5w9jhf8Vw3vvt_h752pt/w72-h72-p-k-no-nu/figure_1.png'/>
+</a>
+</div>
+<div class='item-title'><a href='https://qoppac.blogspot.com/2016/01/correlations-weights-multipliers.html'>Correlations, Weights, Multipliers.... (pysystemtrade)</a></div>
+<div class='item-snippet'>This post serves three main purposes:   Firstly, I&#39;m going to explain the main features I&#39;ve just added to my python back-testing pa...</div>
+</div>
+<div style='clear: both;'></div>
+</li>
+<li>
+<div class='item-content'>
+<div class='item-title'><a href='https://qoppac.blogspot.com/2017/03/placing-orders-in-native-python-ib-api.html'>Placing orders in the native python IB API</a></div>
+<div class='item-snippet'>This the fourth in a series of posts on using the native python API for&#160; interactive brokers . You should read the&#160; first , second , and thi...</div>
+</div>
+<div style='clear: both;'></div>
+</li>
+<li>
+<div class='item-content'>
+<div class='item-thumbnail'>
+<a href='https://qoppac.blogspot.com/2018/12/the-relationship-between-atr-and.html' target='_blank'>
+<img alt='' border='0' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiODK5e2SBjc_X0paaZ6bJVnkVglsDEq3guQpL9rvhJuvepIO_WGAXZq2zUWDM0Aw8CGf09dTvSt2SetcFFz18tcDLeRGjxnKgSTsblmYJ1sBgBJ0H1ZlAHQgZwFFuSS9LXKb5lxo7I0I50/w72-h72-p-k-no-nu/Screenshot+from+2018-12-03+15-34-30.png'/>
+</a>
+</div>
+<div class='item-title'><a href='https://qoppac.blogspot.com/2018/12/the-relationship-between-atr-and.html'>The relationship between ATR and standard deviation</a></div>
+<div class='item-snippet'>Let&#39;s begin this post with a gross generalisation:   Professional traders tend to measure risk and target risk using standard deviation....</div>
+</div>
+<div style='clear: both;'></div>
+</li>
+<li>
+<div class='item-content'>
+<div class='item-thumbnail'>
+<a href='https://qoppac.blogspot.com/2023/04/advanced-futures-trading-strategies.html' target='_blank'>
+<img alt='' border='0' src='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg4uwB0-wkUpn1PesNqyw_e-2bdD6GLx60ek5t4hRZyDA-azmKeWbWtx4lBYRn2raSA92bWrjv3it6ZGE0w7D7VI2KI7DQ8lNnU6FJxAambnkdj301dOL6H6BPpjA2mCAWONXZX7s1q_SbfLRJXSCCpJJxt2msfOhwLsBNJXB8j-ZPSC-JEtYYcsbhwmA/w72-h72-p-k-no-nu/Screenshot%20from%202023-01-05%2009-30-45.png'/>
+</a>
+</div>
+<div class='item-title'><a href='https://qoppac.blogspot.com/2023/04/advanced-futures-trading-strategies.html'>Advanced Futures Trading Strategies</a></div>
+<div class='item-snippet'>&#160;Tommorrow marks the official release of my 4th book : Henceforth to be known as AFTS (I&#39;ve had authors copies since the 24th February, ...</div>
+</div>
+<div style='clear: both;'></div>
+</li>
+</ul>
+<div class='clear'></div>
+</div>
+</div><div class='widget Label' data-version='1' id='Label1'>
+<h2>Tags</h2>
+<div class='widget-content cloud-label-widget-content'>
+<span class='label-size label-size-5'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Portfolio%20optimization'>Portfolio optimization</a>
+<span class='label-count' dir='ltr'>(54)</span>
+</span>
+<span class='label-size label-size-5'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Systematic%20Trading'>Systematic Trading</a>
+<span class='label-count' dir='ltr'>(44)</span>
+</span>
+<span class='label-size label-size-5'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/pysystemtrade'>pysystemtrade</a>
+<span class='label-count' dir='ltr'>(36)</span>
+</span>
+<span class='label-size label-size-5'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Python'>Python</a>
+<span class='label-count' dir='ltr'>(33)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Uncertainty'>Uncertainty</a>
+<span class='label-count' dir='ltr'>(32)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Technology'>Technology</a>
+<span class='label-count' dir='ltr'>(28)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Trend%20following'>Trend following</a>
+<span class='label-count' dir='ltr'>(28)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Statistics'>Statistics</a>
+<span class='label-count' dir='ltr'>(26)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Systematic_Trading_Book'>Systematic_Trading_Book</a>
+<span class='label-count' dir='ltr'>(25)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Interactive%20Brokers'>Interactive Brokers</a>
+<span class='label-count' dir='ltr'>(22)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/risk%20management'>risk management</a>
+<span class='label-count' dir='ltr'>(22)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Sharpe%20ratio'>Sharpe ratio</a>
+<span class='label-count' dir='ltr'>(19)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/correlation'>correlation</a>
+<span class='label-count' dir='ltr'>(19)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/skew'>skew</a>
+<span class='label-count' dir='ltr'>(19)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Volatility'>Volatility</a>
+<span class='label-count' dir='ltr'>(17)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/diversification'>diversification</a>
+<span class='label-count' dir='ltr'>(17)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/asset%20allocation'>asset allocation</a>
+<span class='label-count' dir='ltr'>(16)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Kelly%20criterion'>Kelly criterion</a>
+<span class='label-count' dir='ltr'>(15)</span>
+</span>
+<span class='label-size label-size-4'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/costs'>costs</a>
+<span class='label-count' dir='ltr'>(13)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Advanced%20futures%20trading%20book'>Advanced futures trading book</a>
+<span class='label-count' dir='ltr'>(12)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Investment%20idiocy'>Investment idiocy</a>
+<span class='label-count' dir='ltr'>(12)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Random%20data'>Random data</a>
+<span class='label-count' dir='ltr'>(12)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/carry'>carry</a>
+<span class='label-count' dir='ltr'>(12)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/fitting'>fitting</a>
+<span class='label-count' dir='ltr'>(12)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/handcrafting'>handcrafting</a>
+<span class='label-count' dir='ltr'>(11)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/geometric%20returns'>geometric returns</a>
+<span class='label-count' dir='ltr'>(10)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/leverage'>leverage</a>
+<span class='label-count' dir='ltr'>(10)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/prediction'>prediction</a>
+<span class='label-count' dir='ltr'>(10)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Smart_Portfolios_Book'>Smart_Portfolios_Book</a>
+<span class='label-count' dir='ltr'>(9)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Systems%20building'>Systems building</a>
+<span class='label-count' dir='ltr'>(9)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/momentum'>momentum</a>
+<span class='label-count' dir='ltr'>(9)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Behavioural%20finance'>Behavioural finance</a>
+<span class='label-count' dir='ltr'>(8)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Equities'>Equities</a>
+<span class='label-count' dir='ltr'>(8)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Execution'>Execution</a>
+<span class='label-count' dir='ltr'>(8)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/forecasts'>forecasts</a>
+<span class='label-count' dir='ltr'>(8)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Hedge%20funds'>Hedge funds</a>
+<span class='label-count' dir='ltr'>(7)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/High%20frequency%20trading'>High frequency trading</a>
+<span class='label-count' dir='ltr'>(7)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/implicit%20fitting'>implicit fitting</a>
+<span class='label-count' dir='ltr'>(7)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/small%20accounts'>small accounts</a>
+<span class='label-count' dir='ltr'>(7)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Conditional%20distributions'>Conditional distributions</a>
+<span class='label-count' dir='ltr'>(6)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/ETF'>ETF</a>
+<span class='label-count' dir='ltr'>(6)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/kurtosis'>kurtosis</a>
+<span class='label-count' dir='ltr'>(6)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/vol%20targeting'>vol targeting</a>
+<span class='label-count' dir='ltr'>(6)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/CAGR'>CAGR</a>
+<span class='label-count' dir='ltr'>(5)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Finance%20industry%20economics'>Finance industry economics</a>
+<span class='label-count' dir='ltr'>(5)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/LOBO'>LOBO</a>
+<span class='label-count' dir='ltr'>(5)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Novice%20investors'>Novice investors</a>
+<span class='label-count' dir='ltr'>(5)</span>
+</span>
+<span class='label-size label-size-3'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/leveraged%20trading%20book'>leveraged trading book</a>
+<span class='label-count' dir='ltr'>(5)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/CAPM'>CAPM</a>
+<span class='label-count' dir='ltr'>(4)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Compound%20interest'>Compound interest</a>
+<span class='label-count' dir='ltr'>(4)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Equity%20risk%20premium'>Equity risk premium</a>
+<span class='label-count' dir='ltr'>(4)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/banks'>banks</a>
+<span class='label-count' dir='ltr'>(4)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/bitcoin'>bitcoin</a>
+<span class='label-count' dir='ltr'>(4)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/drawdown'>drawdown</a>
+<span class='label-count' dir='ltr'>(4)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/grid%20search'>grid search</a>
+<span class='label-count' dir='ltr'>(4)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/sqllite'>sqllite</a>
+<span class='label-count' dir='ltr'>(4)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Factor%20models'>Factor models</a>
+<span class='label-count' dir='ltr'>(3)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Git'>Git</a>
+<span class='label-count' dir='ltr'>(3)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Politics'>Politics</a>
+<span class='label-count' dir='ltr'>(3)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/futures'>futures</a>
+<span class='label-count' dir='ltr'>(3)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/housing%20associations'>housing associations</a>
+<span class='label-count' dir='ltr'>(3)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/regression'>regression</a>
+<span class='label-count' dir='ltr'>(3)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/trading%20speed'>trading speed</a>
+<span class='label-count' dir='ltr'>(3)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/CTA'>CTA</a>
+<span class='label-count' dir='ltr'>(2)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Capital%20correction'>Capital correction</a>
+<span class='label-count' dir='ltr'>(2)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Financial%20industry%20pay'>Financial industry pay</a>
+<span class='label-count' dir='ltr'>(2)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/PCA'>PCA</a>
+<span class='label-count' dir='ltr'>(2)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/books'>books</a>
+<span class='label-count' dir='ltr'>(2)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/clustering'>clustering</a>
+<span class='label-count' dir='ltr'>(2)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/mean%20reversion'>mean reversion</a>
+<span class='label-count' dir='ltr'>(2)</span>
+</span>
+<span class='label-size label-size-2'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/stop%20loss'>stop loss</a>
+<span class='label-count' dir='ltr'>(2)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/ATR'>ATR</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Art%20and%20Science%20of%20Trading%20book'>Art and Science of Trading book</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Commodities'>Commodities</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Docker'>Docker</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/ESG'>ESG</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Partial%20Correlations'>Partial Correlations</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Performance'>Performance</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/QuantCon'>QuantCon</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/Quantitative%20Easing'>Quantitative Easing</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/VIX'>VIX</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/auto%20correlation'>auto correlation</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/brexit'>brexit</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/explicit%20fitting'>explicit fitting</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/ib_inysnc'>ib_inysnc</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/jobs'>jobs</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/libor'>libor</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/liquidity'>liquidity</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/pooling'>pooling</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/resources'>resources</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/shrinkage'>shrinkage</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<span class='label-size label-size-1'>
+<a dir='ltr' href='https://qoppac.blogspot.com/search/label/tacit%20fitting'>tacit fitting</a>
+<span class='label-count' dir='ltr'>(1)</span>
+</span>
+<div class='clear'></div>
+</div>
+</div><div class='widget Image' data-version='1' id='Image1'>
+<h2>Quantocracy - featured blog</h2>
+<div class='widget-content'>
+<a href='https://quantocracy.com/'>
+<img alt='Quantocracy - featured blog' height='51' id='Image1_img' src='https://static.wixstatic.com/media/b903b0_d063031df19b4f61b65a5cb0eee4f3f4~mv2.png/v1/fill/w_213,h_51,al_c,usm_0.66_1.00_0.01/b903b0_d063031df19b4f61b65a5cb0eee4f3f4~mv2.png' width='213'/>
+</a>
+<br/>
+</div>
+<div class='clear'></div>
+</div><div class='widget HTML' data-version='1' id='HTML1'>
+<h2 class='title'>Top 60 UK investment blogs</h2>
+<div class='widget-content'>
+<a href="https://blog.feedspot.com/uk_investment_blogs/" title="UK Investment blogs"><img src="https://blog.feedspot.com/wp-content/uploads/2017/11/uk_investment_216px.png?x59787" /></a>
+</div>
+<div class='clear'></div>
+</div><div class='widget Stats' data-version='1' id='Stats1'>
+<h2>Total Pageviews</h2>
+<div class='widget-content'>
+<div id='Stats1_content' style='display: none;'>
+<script src='https://www.gstatic.com/charts/loader.js' type='text/javascript'></script>
+<span id='Stats1_sparklinespan' style='display:inline-block; width:75px; height:30px'></span>
+<span class='counter-wrapper text-counter-wrapper' id='Stats1_totalCount'>
+</span>
+<div class='clear'></div>
+</div>
+</div>
+</div></div>
+</aside>
+</div>
+</div>
+</div>
+<div style='clear: both'></div>
+<!-- columns -->
+</div>
+<!-- main -->
+</div>
+</div>
+<div class='main-cap-bottom cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+<footer>
+<div class='footer-outer'>
+<div class='footer-cap-top cap-top'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+<div class='fauxborder-left footer-fauxborder-left'>
+<div class='fauxborder-right footer-fauxborder-right'></div>
+<div class='region-inner footer-inner'>
+<div class='foot no-items section' id='footer-1'></div>
+<table border='0' cellpadding='0' cellspacing='0' class='section-columns columns-2'>
+<tbody>
+<tr>
+<td class='first columns-cell'>
+<div class='foot section' id='footer-2-1'><div class='widget ContactForm' data-version='1' id='ContactForm1'>
+<h2 class='title'>Contact Me (Spam will be politely ignored)</h2>
+<div class='contact-form-widget'>
+<div class='form'>
+<form name='contact-form'>
+<p></p>
+Name
+<br/>
+<input class='contact-form-name' id='ContactForm1_contact-form-name' name='name' size='30' type='text' value=''/>
+<p></p>
+Email
+<span style='font-weight: bolder;'>*</span>
+<br/>
+<input class='contact-form-email' id='ContactForm1_contact-form-email' name='email' size='30' type='text' value=''/>
+<p></p>
+Message
+<span style='font-weight: bolder;'>*</span>
+<br/>
+<textarea class='contact-form-email-message' cols='25' id='ContactForm1_contact-form-email-message' name='email-message' rows='5'></textarea>
+<p></p>
+<input class='contact-form-button contact-form-button-submit' id='ContactForm1_contact-form-submit' type='button' value='Send'/>
+<p></p>
+<div style='text-align: center; max-width: 222px; width: 100%'>
+<p class='contact-form-error-message' id='ContactForm1_contact-form-error-message'></p>
+<p class='contact-form-success-message' id='ContactForm1_contact-form-success-message'></p>
+</div>
+</form>
+</div>
+</div>
+<div class='clear'></div>
+</div></div>
+</td>
+<td class='columns-cell'>
+<div class='foot section' id='footer-2-2'><div class='widget Subscribe' data-version='1' id='Subscribe1'>
+<div style='white-space:nowrap'>
+<h2 class='title'>Subscribe To</h2>
+<div class='widget-content'>
+<div class='subscribe-wrapper subscribe-type-POST'>
+<div class='subscribe expanded subscribe-type-POST' id='SW_READER_LIST_Subscribe1POST' style='display:none;'>
+<div class='top'>
+<span class='inner' onclick='return(_SW_toggleReaderList(event, "Subscribe1POST"));'>
+<img class='subscribe-dropdown-arrow' src='https://resources.blogblog.com/img/widgets/arrow_dropdown.gif'/>
+<img align='absmiddle' alt='' border='0' class='feed-icon' src='https://resources.blogblog.com/img/icon_feed12.png'/>
+Posts
+</span>
+<div class='feed-reader-links'>
+<a class='feed-reader-link' href='https://www.netvibes.com/subscribe.php?url=https%3A%2F%2Fqoppac.blogspot.com%2Ffeeds%2Fposts%2Fdefault' target='_blank'>
+<img src='https://resources.blogblog.com/img/widgets/subscribe-netvibes.png'/>
+</a>
+<a class='feed-reader-link' href='https://add.my.yahoo.com/content?url=https%3A%2F%2Fqoppac.blogspot.com%2Ffeeds%2Fposts%2Fdefault' target='_blank'>
+<img src='https://resources.blogblog.com/img/widgets/subscribe-yahoo.png'/>
+</a>
+<a class='feed-reader-link' href='https://qoppac.blogspot.com/feeds/posts/default' target='_blank'>
+<img align='absmiddle' class='feed-icon' src='https://resources.blogblog.com/img/icon_feed12.png'/>
+                  Atom
+                </a>
+</div>
+</div>
+<div class='bottom'></div>
+</div>
+<div class='subscribe' id='SW_READER_LIST_CLOSED_Subscribe1POST' onclick='return(_SW_toggleReaderList(event, "Subscribe1POST"));'>
+<div class='top'>
+<span class='inner'>
+<img class='subscribe-dropdown-arrow' src='https://resources.blogblog.com/img/widgets/arrow_dropdown.gif'/>
+<span onclick='return(_SW_toggleReaderList(event, "Subscribe1POST"));'>
+<img align='absmiddle' alt='' border='0' class='feed-icon' src='https://resources.blogblog.com/img/icon_feed12.png'/>
+Posts
+</span>
+</span>
+</div>
+<div class='bottom'></div>
+</div>
+</div>
+<div class='subscribe-wrapper subscribe-type-PER_POST'>
+<div class='subscribe expanded subscribe-type-PER_POST' id='SW_READER_LIST_Subscribe1PER_POST' style='display:none;'>
+<div class='top'>
+<span class='inner' onclick='return(_SW_toggleReaderList(event, "Subscribe1PER_POST"));'>
+<img class='subscribe-dropdown-arrow' src='https://resources.blogblog.com/img/widgets/arrow_dropdown.gif'/>
+<img align='absmiddle' alt='' border='0' class='feed-icon' src='https://resources.blogblog.com/img/icon_feed12.png'/>
+Comments
+</span>
+<div class='feed-reader-links'>
+<a class='feed-reader-link' href='https://www.netvibes.com/subscribe.php?url=https%3A%2F%2Fqoppac.blogspot.com%2Ffeeds%2F2830169557258028344%2Fcomments%2Fdefault' target='_blank'>
+<img src='https://resources.blogblog.com/img/widgets/subscribe-netvibes.png'/>
+</a>
+<a class='feed-reader-link' href='https://add.my.yahoo.com/content?url=https%3A%2F%2Fqoppac.blogspot.com%2Ffeeds%2F2830169557258028344%2Fcomments%2Fdefault' target='_blank'>
+<img src='https://resources.blogblog.com/img/widgets/subscribe-yahoo.png'/>
+</a>
+<a class='feed-reader-link' href='https://qoppac.blogspot.com/feeds/2830169557258028344/comments/default' target='_blank'>
+<img align='absmiddle' class='feed-icon' src='https://resources.blogblog.com/img/icon_feed12.png'/>
+                  Atom
+                </a>
+</div>
+</div>
+<div class='bottom'></div>
+</div>
+<div class='subscribe' id='SW_READER_LIST_CLOSED_Subscribe1PER_POST' onclick='return(_SW_toggleReaderList(event, "Subscribe1PER_POST"));'>
+<div class='top'>
+<span class='inner'>
+<img class='subscribe-dropdown-arrow' src='https://resources.blogblog.com/img/widgets/arrow_dropdown.gif'/>
+<span onclick='return(_SW_toggleReaderList(event, "Subscribe1PER_POST"));'>
+<img align='absmiddle' alt='' border='0' class='feed-icon' src='https://resources.blogblog.com/img/icon_feed12.png'/>
+Comments
+</span>
+</span>
+</div>
+<div class='bottom'></div>
+</div>
+</div>
+<div style='clear:both'></div>
+</div>
+</div>
+<div class='clear'></div>
+</div></div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- outside of the include in order to lock Attribution widget -->
+<div class='foot section' id='footer-3' name='Footer'><div class='widget Attribution' data-version='1' id='Attribution1'>
+<div class='widget-content' style='text-align: center;'>
+Simple theme. Powered by <a href='https://www.blogger.com' target='_blank'>Blogger</a>.
+</div>
+<div class='clear'></div>
+</div></div>
+</div>
+</div>
+<div class='footer-cap-bottom cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+</footer>
+<!-- content -->
+</div>
+</div>
+<div class='content-cap-bottom cap-bottom'>
+<div class='cap-left'></div>
+<div class='cap-right'></div>
+</div>
+</div>
+</div>
+<script type='text/javascript'>
+    window.setTimeout(function() {
+        document.body.className = document.body.className.replace('loading', '');
+      }, 10);
+  </script>
+
+<script type="text/javascript" src="https://www.blogger.com/static/v1/widgets/950101909-widgets.js"></script>
+<script type='text/javascript'>
+window['__wavt'] = 'AKZvMzucgYsacrCHlmp2_ymMibNa:1792137606625';_WidgetManager._Init('//www.blogger.com/rearrange?blogID\x3d261139923818144971','//qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html','261139923818144971');
+_WidgetManager._SetDataContext([{'name': 'blog', 'data': {'blogId': '261139923818144971', 'title': 'This Blog is Systematic', 'url': 'https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html', 'canonicalUrl': 'https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html', 'homepageUrl': 'https://qoppac.blogspot.com/', 'searchUrl': 'https://qoppac.blogspot.com/search', 'canonicalHomepageUrl': 'https://qoppac.blogspot.com/', 'blogspotFaviconUrl': 'https://qoppac.blogspot.com/favicon.ico', 'bloggerUrl': 'https://www.blogger.com', 'hasCustomDomain': false, 'httpsEnabled': true, 'enabledCommentProfileImages': true, 'gPlusViewType': 'FILTERED_POSTMOD', 'adultContent': false, 'analyticsAccountNumber': '', 'encoding': 'UTF-8', 'locale': 'en-GB', 'localeUnderscoreDelimited': 'en_gb', 'languageDirection': 'ltr', 'isPrivate': false, 'isMobile': false, 'isMobileRequest': false, 'mobileClass': '', 'isPrivateBlog': false, 'isDynamicViewsAvailable': true, 'feedLinks': '\x3clink rel\x3d\x22alternate\x22 type\x3d\x22application/atom+xml\x22 title\x3d\x22This Blog is Systematic - Atom\x22 href\x3d\x22https://qoppac.blogspot.com/feeds/posts/default\x22 /\x3e\n\x3clink rel\x3d\x22alternate\x22 type\x3d\x22application/rss+xml\x22 title\x3d\x22This Blog is Systematic - RSS\x22 href\x3d\x22https://qoppac.blogspot.com/feeds/posts/default?alt\x3drss\x22 /\x3e\n\x3clink rel\x3d\x22service.post\x22 type\x3d\x22application/atom+xml\x22 title\x3d\x22This Blog is Systematic - Atom\x22 href\x3d\x22https://www.blogger.com/feeds/261139923818144971/posts/default\x22 /\x3e\n\n\x3clink rel\x3d\x22alternate\x22 type\x3d\x22application/atom+xml\x22 title\x3d\x22This Blog is Systematic - Atom\x22 href\x3d\x22https://qoppac.blogspot.com/feeds/2830169557258028344/comments/default\x22 /\x3e\n', 'meTag': '', 'adsenseClientId': 'ca-pub-1788065157946270', 'adsenseHostId': 'ca-host-pub-1556223355139109', 'adsenseHasAds': false, 'adsenseAutoAds': false, 'boqCommentIframeForm': true, 'loginRedirectParam': '', 'isGoogleEverywhereLinkTooltipEnabled': true, 'view': '', 'dynamicViewsCommentsSrc': '//www.blogblog.com/dynamicviews/4224c15c4e7c9321/js/comments.js', 'dynamicViewsScriptSrc': '//www.blogblog.com/dynamicviews/ab5d071a9f9b11cc', 'plusOneApiSrc': 'https://apis.google.com/js/platform.js', 'disableGComments': true, 'interstitialAccepted': false, 'sharing': {'platforms': [{'name': 'Get link', 'key': 'link', 'shareMessage': 'Get link', 'target': ''}, {'name': 'Facebook', 'key': 'facebook', 'shareMessage': 'Share to Facebook', 'target': 'facebook'}, {'name': 'BlogThis!', 'key': 'blogThis', 'shareMessage': 'BlogThis!', 'target': 'blog'}, {'name': 'X', 'key': 'twitter', 'shareMessage': 'Share to X', 'target': 'twitter'}, {'name': 'Pinterest', 'key': 'pinterest', 'shareMessage': 'Share to Pinterest', 'target': 'pinterest'}, {'name': 'Email', 'key': 'email', 'shareMessage': 'Email', 'target': 'email'}], 'disableGooglePlus': true, 'googlePlusShareButtonWidth': 0, 'googlePlusBootstrap': '\x3cscript type\x3d\x22text/javascript\x22\x3ewindow.___gcfg \x3d {\x27lang\x27: \x27en_GB\x27};\x3c/script\x3e'}, 'hasCustomJumpLinkMessage': false, 'jumpLinkMessage': 'Read more', 'pageType': 'item', 'postId': '2830169557258028344', 'postImageThumbnailUrl': 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzWTVgXrRab1vDGHU7i6NA-Re6g44pdsjE1rzfHC9swSUA45DsxkjF41F6zlVGxZ75fRmM8LRJEYSzvq5Hwrz4oB4bW9ONoDCwOnsjLhZKegq2LgAzEYn_BmW55z_Lwfxo0Kwr0w_8qVzL/s72-w640-c-h322/Figure_1.png', 'postImageUrl': 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzWTVgXrRab1vDGHU7i6NA-Re6g44pdsjE1rzfHC9swSUA45DsxkjF41F6zlVGxZ75fRmM8LRJEYSzvq5Hwrz4oB4bW9ONoDCwOnsjLhZKegq2LgAzEYn_BmW55z_Lwfxo0Kwr0w_8qVzL/w640-h322/Figure_1.png', 'pageName': 'Mr Greedy and the Tale of the Minimum Tracking Error Variance - Part two', 'pageTitle': 'This Blog is Systematic: Mr Greedy and the Tale of the Minimum Tracking Error Variance - Part two'}}, {'name': 'features', 'data': {}}, {'name': 'messages', 'data': {'edit': 'Edit', 'linkCopiedToClipboard': 'Link copied to clipboard', 'ok': 'Ok', 'postLink': 'Post link'}}, {'name': 'template', 'data': {'name': 'Simple', 'localizedName': 'Simple', 'isResponsive': false, 'isAlternateRendering': false, 'isCustom': false, 'variant': 'pale', 'variantId': 'pale'}}, {'name': 'view', 'data': {'classic': {'name': 'classic', 'url': '?view\x3dclassic'}, 'flipcard': {'name': 'flipcard', 'url': '?view\x3dflipcard'}, 'magazine': {'name': 'magazine', 'url': '?view\x3dmagazine'}, 'mosaic': {'name': 'mosaic', 'url': '?view\x3dmosaic'}, 'sidebar': {'name': 'sidebar', 'url': '?view\x3dsidebar'}, 'snapshot': {'name': 'snapshot', 'url': '?view\x3dsnapshot'}, 'timeslide': {'name': 'timeslide', 'url': '?view\x3dtimeslide'}, 'isMobile': false, 'title': 'Mr Greedy and the Tale of the Minimum Tracking Error Variance - Part two', 'description': 'My last blog post  was about a new method for a daily dynamic optimisation of portfolios with limited capital, to allow them to trade large ...', 'featuredImage': 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzWTVgXrRab1vDGHU7i6NA-Re6g44pdsjE1rzfHC9swSUA45DsxkjF41F6zlVGxZ75fRmM8LRJEYSzvq5Hwrz4oB4bW9ONoDCwOnsjLhZKegq2LgAzEYn_BmW55z_Lwfxo0Kwr0w_8qVzL/w640-h322/Figure_1.png', 'url': 'https://qoppac.blogspot.com/2021/11/mr-greedy-and-tale-of-minimum-tracking.html', 'type': 'item', 'isSingleItem': true, 'isMultipleItems': false, 'isError': false, 'isPage': false, 'isPost': true, 'isHomepage': false, 'isArchive': false, 'isLabelSearch': false, 'postId': 2830169557258028344}}]);
+_WidgetManager._RegisterWidget('_HeaderView', new _WidgetInfo('Header1', 'header', document.getElementById('Header1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_PageListView', new _WidgetInfo('PageList2', 'crosscol', document.getElementById('PageList2'), {'title': '', 'links': [{'isCurrentPage': false, 'href': 'https://qoppac.blogspot.com/', 'title': 'Home'}, {'isCurrentPage': false, 'href': 'https://qoppac.blogspot.com/p/personal-investment-start-here.html', 'id': '7466928675701646619', 'title': 'Systematic investment'}, {'isCurrentPage': false, 'href': 'https://qoppac.blogspot.com/p/systematic-trading-start-here.html', 'id': '4497996633259934168', 'title': 'Systematic trading'}, {'isCurrentPage': false, 'href': 'https://qoppac.blogspot.com/p/blog-page_7.html', 'id': '8347404368064167966', 'title': 'Misc other posts'}, {'isCurrentPage': false, 'href': 'https://qoppac.blogspot.com/p/code.html', 'id': '7518760355750133572', 'title': 'Code'}, {'isCurrentPage': false, 'href': 'https://qoppac.blogspot.com/p/books.html', 'id': '132635508302914250', 'title': 'My Books'}, {'isCurrentPage': false, 'href': 'https://qoppac.blogspot.com/p/blog-page_13.html', 'id': '7076232012660297084', 'title': 'Talks and media'}, {'isCurrentPage': false, 'href': 'https://qoppac.blogspot.com/p/books-to-read.html', 'id': '6772366966428020232', 'title': 'Resources'}], 'mobile': false, 'showPlaceholder': true, 'hasCurrentPage': false}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_BlogView', new _WidgetInfo('Blog1', 'main', document.getElementById('Blog1'), {'cmtInteractionsEnabled': false, 'lightboxEnabled': true, 'lightboxModuleUrl': 'https://www.blogger.com/static/v1/jsbin/512815428-lbx__en_gb.js', 'lightboxCssUrl': 'https://www.blogger.com/static/v1/v-css/828616780-lightbox_bundle.css'}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_LinkListView', new _WidgetInfo('LinkList1', 'sidebar-right-1', document.getElementById('LinkList1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_PageListView', new _WidgetInfo('PageList1', 'sidebar-right-1', document.getElementById('PageList1'), {'title': '', 'links': [{'isCurrentPage': false, 'href': 'https://qoppac.blogspot.com/p/about-me.html', 'id': '279649394269500675', 'title': 'About me'}, {'isCurrentPage': false, 'href': 'https://qoppac.blogspot.com/p/contacting-me.html', 'id': '2604104702829350508', 'title': 'Contacting me'}, {'isCurrentPage': false, 'href': 'http://qoppac.blogspot.com/p/legal-disclaimer-please-dont-sue-me.html', 'title': 'Legal Disclaimer (please don\x27t sue me)'}, {'isCurrentPage': false, 'href': 'https://qoppac.blogspot.com/p/getting-rob-to-write-and-speak-for-you.html', 'id': '1750208460125356649', 'title': 'Getting Rob to write and speak for you'}], 'mobile': false, 'showPlaceholder': true, 'hasCurrentPage': false}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_BlogArchiveView', new _WidgetInfo('BlogArchive1', 'sidebar-right-1', document.getElementById('BlogArchive1'), {'languageDirection': 'ltr', 'loadingMessage': 'Loading\x26hellip;'}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_BlogSearchView', new _WidgetInfo('BlogSearch1', 'sidebar-right-1', document.getElementById('BlogSearch1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_PopularPostsView', new _WidgetInfo('PopularPosts1', 'sidebar-right-1', document.getElementById('PopularPosts1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_LabelView', new _WidgetInfo('Label1', 'sidebar-right-1', document.getElementById('Label1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_ImageView', new _WidgetInfo('Image1', 'sidebar-right-1', document.getElementById('Image1'), {'resize': false}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_HTMLView', new _WidgetInfo('HTML1', 'sidebar-right-1', document.getElementById('HTML1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_StatsView', new _WidgetInfo('Stats1', 'sidebar-right-1', document.getElementById('Stats1'), {'title': 'Total Pageviews', 'showGraphicalCounter': false, 'showAnimatedCounter': false, 'showSparkline': true, 'statsUrl': '//qoppac.blogspot.com/b/stats?style\x3dBLACK_TRANSPARENT\x26timeRange\x3dALL_TIME\x26token\x3dANakCkuQJwMdl50soPFsP6MGKXWy4b0CMQAU6OUmigXU7OvosuvTBHCE1A0VZd6Ef5FFDfK8tCa9favtPZ2iFA'}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_ContactFormView', new _WidgetInfo('ContactForm1', 'footer-2-1', document.getElementById('ContactForm1'), {'contactFormMessageSendingMsg': 'Sending...', 'contactFormMessageSentMsg': 'Your message has been sent.', 'contactFormMessageNotSentMsg': 'Message could not be sent. Please try again later.', 'contactFormInvalidEmailMsg': 'A valid email address is required.', 'contactFormEmptyMessageMsg': 'Message field cannot be empty.', 'title': 'Contact Me (Spam will be politely ignored)', 'blogId': '261139923818144971', 'contactFormNameMsg': 'Name', 'contactFormEmailMsg': 'Email', 'contactFormMessageMsg': 'Message', 'contactFormSendMsg': 'Send', 'contactFormToken': 'AKZvMzumOEFziYfNCoc178E-zJ9E:1792137607047', 'submitUrl': 'https://www.blogger.com/contact-form'}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_SubscribeView', new _WidgetInfo('Subscribe1', 'footer-2-2', document.getElementById('Subscribe1'), {}, 'displayModeFull'));
+_WidgetManager._RegisterWidget('_AttributionView', new _WidgetInfo('Attribution1', 'footer-3', document.getElementById('Attribution1'), {}, 'displayModeFull'));
+</script>
+</body>
+</html>

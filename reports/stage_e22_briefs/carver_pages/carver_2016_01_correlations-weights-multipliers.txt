@@ -1,0 +1,432 @@
+
+This post serves three main purposes:
+
+Firstly, I'm going to explain the main features I've just added to my python back-testing package pysystemtrade; namely the ability to estimate parameters that were fixed before: forecast and instrument weights; plus forecast and instrument diversification multipliers.
+
+(See here for a full list of what's in version 0.2.1)
+
+Secondly I'll be illustrating how we'd go about calibrating a trading system (such as the one in chapter 15 of my book); actually estimating some forecast weights and instrument weights in practice. I know that some readers have struggled with understanding this (which is of course entirely my fault).
+
+Thirdly there are some useful bits of general advice that will interest everyone who cares about practical portfolio optimisation (including both non users of pysystemtrade, and non readers of the book alike). In particular I'll talk about how to deal with missing markets, the best way to estimate portfolio statistics, pooling information across markets, and generally continue my discussion about using different methods for optimising (see here, and also here).
+
+If you want to, you can follow along with the code, here.
+
+Key
+
+This is python:
+
+system.forecastScaleCap.get_scaled_forecast("EDOLLAR", "carry").plot()
+
+This is python output:
+
+hello world
+
+This is an extract from a pysystemtrade YAML configuration file:
+
+forecast_weight_estimate:
+
+   date_method: expanding ## other options: in_sample, rolling
+   rollyears: 20
+
+   frequency: "W" ## other options: D, M, Y
+
+Forecast weights
+
+A quick recap
+
+The story so far; we have some trading rules (three variations of the EWMAC trend following rule, and a carry rule); which we're running over six instruments (Eurodollar, US 10 year bond futures, Eurostoxx, MXP USD fx, Corn, and European equity vol; V2X). 
+
+We've scaled these (as discussed in my previous post) so they have the correct scaling. So both these things are on the same scale:
+
+system.forecastScaleCap.get_scaled_forecast("EDOLLAR", "carry").plot()
+
+Rolldown on STIR usually positive. Notice the interest rate cycle.
+
+system.forecastScaleCap.get_scaled_forecast("V2X", "ewmac64_256").plot()
+
+Notice how we moved from 'risk on' to 'risk off' in early 2015
+
+Notice the massive difference in available data - I'll come back to this problem later.
+
+However having multiple forecasts isn't much good; we need to combine them (chapter 8). So we need some forecast weights. This is a portfolio optimisation problem. To be precise we want the best portfolio built out of things like these: 
+
+Account curves for trading rule variations, US 10 year bond future. All pretty good....
+
+There are some issues here then which we need to address.
+
+An alternative which has been suggested to me is to optimise the moving average rules seperately; and then as a second stage optimise the moving average group and the carry rule. This is similar in spirit to the handcrafted method I cover in my book. Whilst it's a valid approach it's not one I cover here, nor is it implemented in my code.
+
+In or out of sample?
+
+Personally I'm a big fan of expanding windows (see chapter 3, and also here)
+
+nevertheless feel free to try different options by changing the configuration file elements shown here.
+
+forecast_weight_estimate:
+
+   date_method: expanding ## other options: in_sample, rolling
+   rollyears: 20
+
+   frequency: "W" ## other options: D, M, Y
+
+Also the default is to use weekly returns for optimisation. This has two advantages; firstly it's faster. Secondly correlations of daily returns tend to be unrealistically low (because for example of different market closes when working across instruments).
+
+Choose your weapon: Shrinkage, bootstrapping or one-shot?
+
+In my last couple of posts on this subject I discussed which methods one should for optimisation (see here, and also here, and also chapter four). 
+
+I won't reiterate the discussion here in detail, but I'll explain how to configure each option.
+
+Boostrapping
+This is my favourite weapon, but it's a little ..... slow.
+
+forecast_weight_estimate:
+
+    method: bootstrap
+   monte_runs: 100
+   bootstrap_length: 50
+   equalise_means: True
+   equalise_vols: True
+
+We expect our trading rule p&l to have the same standard deviation of returns, so we shouldn't need to equalise vols; it's a moot point whether we do or not. Equalising means will generally make things more robust. With more bootstrap runs, and perhaps a longer length, you'll get more stable weights.
+
+Shrinkage
+
+I'm not massively keen on shrinkage (see here, and also here) but it is much quicker than bootstrapping. So a good work flow might be to play around with a model using shrinkage estimation, and then for your final run use bootstrapping. It's for this reason that the pre-baked system defaults to using shrinkage. As the defaults below show I recommend shrinking the mean much more than the correlation.
+
+forecast_weight_estimate:
+
+    method: shrinkage 
+   shrinkage_SR: 0.90
+   shrinkage_corr: 0.50   equalise_vols: True
+
+Single period
+
+Don't do it. If you must do it then I suggest equalising the means, so the result isn't completely crazy.
+
+forecast_weight_estimate:
+
+    method: one_period
+   equalise_means: True
+   equalise_vols: True
+
+To pool or not to pool... that is a very good question
+
+One question we should address is, do we need different forecast weights for different instruments, or can we pool our data and estimate them together? Or to put it another way does Corn behave sufficiently like Eurodollar to justify giving them the same blend of trading rules, and hence the same forecast
+
+weights?
+
+forecast_weight_estimate:
+
+   pool_instruments: True ##
+
+One very significant factor in making this decision is actually costs. However I haven't yet included the code to calculate the effect of these. For the time being then we'll ignore this; though it does have a significant effect. Because of the choice of three slower EWMAC rule variations this omission isn't as serious as it would be with faster trading rules.
+
+If you use a stupid method like one-shot then you probably will get quite different weights. However more sensible methods will account better for the noise in each instruments' estimate.
+
+With only six instruments, and without costs, there isn't really 
+enough information to determine whether pooling is a good thing or not. 
+My strong prior is to assume that it is. Just for fun here are some estimates without pooling.
+
+system.config.forecast_weight_estimate["pool_instruments"]=False
+system.config.instrument_weight_estimate["method"]="bootstrap" 
+system.config.instrument_weight_estimate["equalise_means"]=False
+system.config.instrument_weight_estimate["monte_runs"]=200
+system.config.instrument_weight_estimate["bootstrap_length"]=104
+
+system=futures_system(config=system.config)
+
+system.combForecast.get_forecast_weights("CORN").plot()
+title("CORN")
+show()
+
+Forecast weights for corn, no pooling
+
+system.combForecast.get_forecast_weights("EDOLLAR").plot()
+title("EDOLLAR")
+show()
+
+Forecast weights for eurodollar, no pooling
+
+Note: Only instruments that share the same set of trading rule variations will see their results pooled.
+
+Estimating statistics
+
+There are also configuration options for the statistical estimates used in the optimisation; so for example should we use exponential weighted estimates? (this makes no sense for bootstrapping, but for other methods is a reasonable thing to do). Is there a minimum number of data points before we're happy with our estimate? Should we floor correlations at zero (short answer - yes).
+
+forecast_weight_estimate:
+
+   correlation_estimate:
+     func: syscore.correlations.correlation_single_period
+     using_exponent: False
+     ew_lookback: 500
+     min_periods: 20      
+     floor_at_zero: True
+
+   mean_estimate:
+     func: syscore.algos.mean_estimator
+     using_exponent: False
+     ew_lookback: 500
+     min_periods: 20      
+
+   vol_estimate:
+     func: syscore.algos.vol_estimator
+     using_exponent: False
+     ew_lookback: 500
+     min_periods: 20      
+
+Checking my intuition
+
+Here's what we get when we actually run everything with some sensible parameters:
+
+system=futures_system()
+system.config.forecast_weight_estimate["pool_instruments"]=True
+system.config.forecast_weight_estimate["method"]="bootstrap"  
+system.config.forecast_weight_estimate["equalise_means"]=False
+system.config.forecast_weight_estimate["monte_runs"]=200
+system.config.forecast_weight_estimate["bootstrap_length"]=104
+
+system=futures_system(config=system.config)
+
+system.combForecast.get_raw_forecast_weights("CORN").plot()
+title("CORN")
+show()
+
+Raw forecast weights pooled across instruments. Bumpy ride.
+
+ Although I've plotted these for corn, they will be the same across all instruments. Almost half the weight goes in carry; makes sense since this is relatively uncorrelated (half is what my simple optimisation method - handcrafting - would put in). Hardly any (about 10%) goes into the medium speed trend following rule; it is highly correlated with the other two rules. Out of the remaining variations the faster one gets a higher weight; this is the law of active management at play I guess.
+
+Smooth operator - how not to incur costs changing weights
+
+Notice how jagged the lines above are. That's because I'm estimating weights annually. This is kind of silly; I don't really have tons more information after 12 months; the forecast weights are estimates - which is a posh way of saying they are guesses. There's no point incurring trading costs when we update these with another year of data.
+
+The solution is to apply a smooth:  
+
+forecast_weight_estimate:
+
+   ewma_span: 125
+   cleaning: True
+
+Now if we plot forecast_weights, rather than the raw version, we get this:
+
+system.combForecast.get_forecast_weights("CORN").plot()
+title("CORN")
+show()
+
+Smoothed forecast weights (pooled across all instruments)
+
+There's still some movement; but any turnover from changing these parameters will be swamped by the trading the rest of the system is doing.
+
+Forecast diversification multiplier
+
+Now we have some weights we need to estimate the forecast diversification multiplier; so that our portfolio of forecasts has the right scale (an average absolute value of 10 is my own preference).
+
+Correlations
+
+First we need to get some correlations. The more correlated the forecasts are, the lower the multiplier will be. As you can see from the config options we again have the option of pooling our correlation estimates.
+
+forecast_correlation_estimate:
+   pool_instruments: True 
+
+   func: syscore.correlations.CorrelationEstimator ## function to use for estimation. This handles both pooled and non pooled data
+   frequency: "W"   # frequency to downsample to before estimating correlations
+   date_method: "expanding" # what kind of window to use in backtest
+   using_exponent: True  # use an exponentially weighted correlation, or all the values equally
+   ew_lookback: 250 ## lookback when using exponential weighting
+   min_periods: 20  # min_periods, used for both exponential, and non exponential weighting
+
+Smoothing, again
+
+We estimate correlations, and weights, annually. Thus as with weightings it's prudent to apply a smooth to the multiplier. I also floor negative correlations to avoid getting very large values for the multiplier.
+
+forecast_div_mult_estimate:
+
+   ewma_span: 125   ## smooth to apply 
+   floor_at_zero: True ## floor negative correlations
+
+system.combForecast.get_forecast_diversification_multiplier("EDOLLAR").plot()
+show()
+
+system.combForecast.get_forecast_diversification_multiplier("V2X").plot()
+show()
+
+Forecast Div. Multiplier for Eurodollar futures
+
+Notice that when we don't have sufficient data to calculate correlations, or weights, the FDM comes out with a value of 1.0. I'll discuss this more below in "dealing with incomplete data".
+
+From subsystem to system
+
+We've now got a 
+combined forecast for each instrument - the weighted sum of trading rule
+ forecasts, multiplied by the FDM. It will look very much like this:
+
+system.combForecast.get_combined_forecast("EUROSTX").plot()
+show()
+
+Combined forecast for Eurostoxx. Note the average absolute forecast is around 10. Clearly a choppy year for stocks.
+
+Using chapters 9 and 10 we can now scale this into a subsystem position. A subsystem is my terminology for a system that trades just one instrument. Essentially we pretend we're using our entire capital for just this one thing.
+
+Going pretty quickly through the calculations (since you're eithier familar with them, or you just don't care):
+
+system.positionSize.get_price_volatility("EUROSTX").plot()
+show()
+
+Eurostoxx instrument value volatility. A bit less than 1% a day in 2014, a little more exciting recently.
+
+system.positionSize.get_block_value("EUROSTX").plot()
+show()
+
+Block value (value of 1% change in price) for Eurostoxx. 
+
+system.positionSize.get_instrument_currency_vol("EUROSTX").plot()
+show()
+
+Eurostoxx: Instrument currency value: Volatility in euros per day
+
+system.positionSize.get_instrument_value_vol("EUROSTX").plot()
+show()
+
+Eurostoxx instrument value volatility: volatility in base currency ($) per day, per contract
+
+system.positionSize.get_volatility_scalar("EUROSTX").plot()
+show()
+
+Eurostoxx vol scalar: Number of contracts we'd hold in a subsystem with a forecast of +10
+
+system.positionSize.get_subsystem_position("EUROSTX").plot()
+show()
+
+Eurostoxx subsystem position
+
+Instrument weights
+
+We're not actually trading subsystems; instead we're trading a portfolio of them. So we need to split our capital - for this we need instrument weights. Oh yes, it's another optimisation problem, with the assets in our portfolio being subsystems, one per instrument.
+
+import pandas as pd 
+
+instrument_codes=system.get_instrument_list()
+
+pandl_subsystems=[system.accounts.pandl_for_subsystem(code, percentage=True)
+        for code in instrument_codes]
+
+pandl=pd.concat(pandl_subsystems, axis=1)
+pandl.columns=instrument_codes
+
+pandl=pandl.cumsum().plot()
+show()
+
+Account curves for instrument subsystems
+
+Most of the issues we face are similar to those for forecast weights (except pooling. You don't have to worry about that anymore). But there are a couple more annoying wrinkles we need to consider.
+
+Missing in action: dealing with incomplete data
+
+As the previous plot illustrates we have a mismatch in available history for different instruments - loads for Eurodollar, Corn, US10; quite a lot for MXP, barely any for Eurostoxx and V2X.
+
+This could also be a problem for forecasts, at least in theory, and the code will deal with it in the same way. 
+
+Remember when testing out of sample I usually recalculate weights annually. Thus on the first day of each new 12 month period I face having one or more of these beasts in my portfolio:
+
+Assets which weren't in my fitting period, and aren't used this year
+
+Assets which weren't in my fitting period, but are used this year
+
+Assets which are in some of my fitting period, and are used this year
+
+Assets which are in all of the fitting period, and are used this year
+
+Option 1 is easy - we give them a zero weight.
+
+Option 4 is also easy; we use the data in the fitting period to estimate the relevant statistics.
+
+Option 2 is relatively easy - we give them an "downweighted average" weight. Let me explain. Let's say we have two assets already, each with 50% weight. If we were to add a further asset we'd allocate it an average weight of 33.3%, and split the rest between the existing assets. In practice I want to penalise new assets; so I only give them half their average weight. In this simple example I'd give the new asset half of 33.3%, or 16.66%. 
+
+We can turn off this behaviour, which I call cleaning. If we do we'd get zero weights for assets without enough data.
+
+instrument_weight_estimate:
+   cleaning: False 
+
+Option 3 depends on the method we're using. If we're using shrinkage or one period, then as long as there's enough data to exceed minimum periods (default 20 weeks) then we'll have an estimate. If we haven't got enough data, then it will be treated as a missing weight; and we'd use downweighted average weights (if cleaning is on), or give the absent instruments a zero weight (with cleaning off)
+
+For bootstrapping we check to see if the minimum period threshold is met on each bootstrap run. If it isn't then we use average weights when cleaning is on. The less data we have, the closer the weight will be to average. This has a nice Bayesian feel about it, don't you think? With cleaning off, less data will mean weights will be closer to zero. This is like an ultra conservative Bayesian.
+
+If you don't get this joke, there's no point in me trying to explain it (Source: www.lancaster.ac.uk)
+
+Let's plot them
+
+We're now in a position to optimise, and plot the weights:
+
+(By the way because of all the code we need to deal properly with missing weights on each run, this is kind of slow. But you shouldn't be refitting your system that often...) 
+
+system.config.instrument_weight_estimate["method"]="bootstrap" ## speed things up 
+system.config.instrument_weight_estimate["equalise_means"]=False
+system.config.instrument_weight_estimate["monte_runs"]=200
+system.config.instrument_weight_estimate["bootstrap_length"]=104
+
+system.portfolio.get_instrument_weights().plot()
+show()
+
+Optimised instrument weights
+
+These weights are a bit different from equal weights, in particular the better performance of US 10 year and Eurodollar is being rewarded somewhat. If you were uncomfortable with this you could turn equalise means on.
+
+Instrument diversification multiplier
+
+Missing in action, take two
+
+Missing instruments also affects estimates of correlations. You know, the correlations we need to estimate the diversification multiplier. So there's cleaning again:
+
+instrument_correlation_estimate:
+    cleaning: True
+
+I replace missing correlation estimates* with the average correlation, but I don't downweight it. If I downweighted the average correlation the diversification multiplier would be biased upwards - i.e. I'd have too much risk on. Bad thing. I could of course use an upweighted average; but I'm already penalising instruments without enough data by giving them lower weights.
+
+* where I need to, i.e. options two and three
+
+Let's plot it
+
+system.portfolio.get_instrument_diversification_multiplier().plot()
+show()
+
+Instrument diversification multiplier
+
+And finally...
+
+We can now work out the notional positions - allowing for subsystem positions, weighted by instrument weight, and multiplied by instrument diversification multiplier.
+
+system.portfolio.get_notional_position().plot("EUROSTX")
+show()
+
+Final position in Eurostoxx. The actual position will be a rounded version of this.
+
+End of post
+
+No quant post would be complete without an account curve and a Sharpe Ratio.
+
+And an equation. Bugger, I forgot to put an equation in.... but you got a Bayesian cartoon - surely that's enough?
+
+print(system.accounts.portfolio().stats())
+
+system.accounts.portfolio().cumsum().plot()
+
+show()
+
+Overall performance. Sharpe ratio is 0.53. Annualised standard deviation is 27.7% (target 25%)
+
+Stats: [[('min', '-0.3685'), ('max', '0.1475'), ('median', '0.0004598'), 
+
+('mean', '0.0005741'), ('std', '0.01732'), ('skew', '-1.564'), 
+
+('ann_daily_mean', '0.147'), ('ann_daily_std', '0.2771'), 
+
+('sharpe', '0.5304'), ('sortino', '0.6241'), ('avg_drawdown', '-0.2445'), ('time_in_drawdown', '0.9626'), ('calmar', '0.2417'), 
+
+('avg_return_to_drawdown', '0.6011'), ('avg_loss', '-0.011'), 
+
+('avg_gain', '0.01102'), ('gaintolossratio', '1.002'), 
+
+('profitfactor', '1.111'), ('hitrate', '0.5258')]
+
+This is a better output than the version with fixed weights and diversification multiplier that I've posted before; mainly because a variable multiplier leads to a more stable volatility profile over time, and thus a higher Sharpe Ratio.
+

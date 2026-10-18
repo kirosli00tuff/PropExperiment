@@ -759,3 +759,29 @@
   as E.21 did; the change touches base_rules/context.py or multiday/,
   no frozen member, and is built, Fable-reviewed and tested in its own
   stage before the next multi-day read.
+- 2026-10-18 (user, planning chat): V42. Forward-test venues. Alpaca has
+  no futures (staff, 2026-02), so E22-F1 cannot run there. The user
+  accepts IB Gateway: E22-F1 runs on IBKR paper as its daily price
+  source (delayed paper data is enough for a once-a-day book), with
+  optional IBKR paper orders as a shadow record; its registered verdict
+  stays the paper book of its freeze. If IBKR's daily close is not the
+  official settlement, the choice between a pre-clock amendment (a new
+  registration, N + 1) and a second settlement source returns to the
+  user. The user also approves a second forward test on Alpaca paper:
+  E22-F2, the same trend rule on US ETFs (fractional longs, no rounding
+  problem), a new registration (N 538 -> 539). Warm-up read approved
+  (user): E22-F1's first connection session reads daily prices of its
+  12 micros from 2024-03-01 to the start date; this spends holdout-2 for
+  MGC, MCL and MNG and the research window for the 12 micros, for
+  trend-type and multi-day hypotheses only. Intraday registered reads of
+  the research window stay possible. ETF prices were never sealed. Stage
+  E.24 builds the plumbing (V41 loader fix, IBKR and Alpaca adapters on
+  mocks, E22-F2 freeze and registration, warm-up declarations, user
+  checklist; no broker connection, no market data read). Stage E.25, in
+  parallel, is a research-only pass for a prop-compatible intraday edge
+  in sources the earlier passes did not cover (0DTE and dealer gamma,
+  order flow, news-driven moves, live audited records, prop firms'
+  outcome data, practitioner work, communities as pointers only); no
+  data read, N unchanged by E.25. No connector for Reddit, X or YouTube
+  exists in the registry; those sites are reached only through search
+  results and pages whose terms allow it.

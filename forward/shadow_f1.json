@@ -1,0 +1,23 @@
+{
+  "schema": "E22-F1-shadow-config/1",
+  "status": "OFF by default. The shadow route mirrors E22-F1's paper book in an IBKR PAPER account and records the broker's orders and fills in a separate shadow ledger; E22-F1's verdict stays the paper book of its freeze.",
+  "written_by": "IBKRCoder (Stage E.24, 2026-10-18); order_type and fill_wait_s docs revised by IBKRFixer (wave 3: S5, N5)",
+  "doc": {
+    "enabled": "false: forward.daily_f1 never connects for orders and never places one. true: after each day's runner step it places the changes between the record's target positions and the paper account's positions.",
+    "order_type": "MKT: market order when the driver runs (after the cutoff, so in the next trade date's electronic session; the CBOT grains MZC/MZS/MZL open only at 19:00 CT, so their orders placed at about 18:00 CT wait queued until then). LMT: limit at the record's settlement of that contract plus limit_offset_ticks ticks for a BUY, minus for a SELL, rounded to the tick; may not fill (the unfilled remainder is recorded, and the next day's diff is taken from actual positions).",
+    "limit_offset_ticks": "int >= 0, LMT only (ticks from forward/config_f1.json instruments.*.tick, in the runner's quote units).",
+    "time_in_force": "DAY or GTC.",
+    "fill_wait_s": "seconds to wait for fills before the shadow record is written. Later fills are recorded in the next record: as late_fills when reqExecutions still returns them (IB returns the current day's executions only; the exact day boundary is unverified), else as late_fills_unretained from reqCompletedOrders (filled quantity only, no price or commission); an order with no trace left is listed once in unresolved_orders, and a completed order with nothing more filled in closed_orders. Raise it above the time to 19:00 CT (e.g. 4000) to get the grains' fills with price and commission in the same record.",
+    "poll_s": "seconds between fill checks.",
+    "order_ref": "orderRef prefix of every shadow order (orderRef = prefix:YYYY-MM-DD); open orders with this prefix block a new run.",
+    "shadow_ledger": "path of the shadow ledger (required when enabled; refused if it is, or links to, the E22-F1 ledger)."
+  },
+  "enabled": false,
+  "order_type": "MKT",
+  "limit_offset_ticks": 0,
+  "time_in_force": "DAY",
+  "fill_wait_s": 60,
+  "poll_s": 1,
+  "order_ref": "E22F1-shadow",
+  "shadow_ledger": null
+}

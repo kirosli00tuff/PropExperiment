@@ -4472,3 +4472,21 @@ Delegation share: lead 58,158,846 (11.0%), workers 469,625,465 (89.0%). By model
 One line per worker spawn (agent file by effort: worker-medium, worker-high, worker-xhigh): the spawn rows of the
 table above and section 4. The lead's last messages after the count (assembly and commit) are not included.
 
+## 2026-10-18 — Stage E.24: forward plumbing; loader fix done, both adapters built, E22-F2 drafted but not frozen; N = 538
+
+- Prompt docs/prompts/STAGE_E.24.md; return reports/E.24_RETURN.md; STATE reports/stage_e24_STATE.md. Lead Opus 5.5
+  xhigh. Windows changed twice by planner messages (06:18, 11:16) after usage-limit pauses (about 02:00-06:10,
+  06:35-11:10, 12:15-15:59) and a reboot (10:49). The user asked at 15:59 to finish within a credit limit.
+- Part A: done. mdio/ (bounded loader, per-unit/per-fill files). No frozen file changed; E.23 replay exact; Fable
+  approved after 2 fixes; no harness v14.
+- Part B: IBKR adapter, shadow route and driver on mocks (97 tests). Fable BLOCK fixed; the recheck is pending.
+  IBKR's daily close is "Last traded price" and only "can be" the settlement: the decision goes to the user.
+- Part C: Alpaca adapter on raw bars plus corporate actions (123 tests). Fable's fixes applied; the recheck is
+  pending. E22-F2 text complete and revised for Fable's 2 BLOCKING and 8 SHOULD FIX. The code fixer was cut and the
+  recheck never ran, so E22-F2 is NOT frozen and NOT registered.
+- Part D: reports/stage_e24_warmup_declaration.md, reports/stage_e24_user_checklist.md.
+- Guardrails: holdout all_ok with 0 unlocks at start and end; harness v13 OK; REGISTRATION.md 0 bytes; spend ledger
+  unchanged; E22-F1's 30 frozen files OK; N 538. Start suite 7,728 passed with 1 known failure; end: forward and mdio
+  468 passed, 2 skipped (full end suite not re-run, at the user's instruction).
+- Session cost (cost.py, lead plus Agent subagents): 159,862,914 tokens. Opus 148,737,894; Fable 11,125,020; lead
+  30.8%. Workflow agents are reported separately (return section 8).

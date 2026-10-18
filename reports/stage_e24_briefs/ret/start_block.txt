@@ -1,0 +1,106 @@
+$ date
+Sun Oct 18 01:28:39 PDT 2026
+$ git status --short
+$ git log --oneline -3
+0023572 docs: Stage E.24 (forward plumbing) and E.25 (untapped sources) prompts, V42
+f36a33a docs: V41 (E.23 accepted, direction closed, loader fix approved)
+ef2902d Stage E.23 triggers at multi-day holds
+$ uv run python -m data.holdout status (keys)
+top all_ok True unlocks_logged 0 unlock_log_ok True
+holdout_2 all_ok True unlocks_logged 0 unlock_log_ok True
+MCL all_ok True unlocks_logged 0 unlock_log_ok True
+MGC all_ok True unlocks_logged 0 unlock_log_ok True
+MHG all_ok True unlocks_logged 0 unlock_log_ok True
+NG all_ok True unlocks_logged 0 unlock_log_ok True
+$ wc -c REGISTRATION.md
+0 REGISTRATION.md
+$ python3 reports/stage_e2b_briefs/check_frozen.py
+reports/stage_e1_freeze.json: manifest sha256 96166eb39b85d4fdcf132092978ee85393392de52c3857dc3f64ea7281454a7c files 32/32 match
+reports/stage_e2a_ml_freeze.json: manifest sha256 077a57e1c00554dd0745302b247673d45ee05b805ac4bfd876f8497f7bbb1ed2 files 4/4 match
+ALL_OK
+$ PYTHONPYCACHEPREFIX=<fresh> uv run python -m screening.harness_freeze verify --expected dd2bcc6025144e0debd19be1ca8d43c983872a27c9258895ef55ee3c138609e4
+preflight OK: dd2bcc6025144e0debd19be1ca8d43c983872a27c9258895ef55ee3c138609e4
+$ cluster freezes (load_cluster_freeze + verify_cluster_code)
+K1 cluster freeze OK cf48f514dcf26490fa79a4322f764af991ee2555f2147354f12a31621fbe7ce2 11 members
+K2 cluster freeze OK 8815a775e74996419b57751b1104ffa07cd4b3450eb18a9a92c6cbbd5615b7c5 44 members
+K3 cluster freeze OK c4fb5da41d69a6be54ea07d1ab35bd2b238d1fbeafaeb3008b886f8fc6888d95 30 members
+K4 cluster freeze OK 7abcde1705440e97efcf1ce255d979213eed9840f03a8383f2784a74f5f1534a 12 members
+K5 cluster freeze OK 1d0c974f18e884e1ad073d8f6f94d7bb70ee6f43971c7f23ccacab54103b3655 11 members
+K6 cluster freeze OK a6f8b497eee727688f3d0e9a3fc7af3abfe41c02f0354a55f5d918c01e61c604 27 members
+K7 cluster freeze OK 46cae3082ae17cfd2a0e731cba27f6cc5dd2bdb94bb757d7ae48c684a5449462 6 members
+K8 cluster freeze OK 99f5a6ce4f91fd63ae4a7dc91b5eb39ecbf8a7eac6f210b3472bf49eaf8463b7 4 members
+$ ledger
+36402 ledger/databento_spend.jsonl
+034a454b49f2d9c93f3ff8872a5fb322cd351de57a7d73842d08f5d07d94c700
+$ ledger total per account (SpendGate.account_spent_usd: external ledgers plus this repo's lines)
+acct-1: spent 118.390020 cap 120.00 headroom 1.609980
+acct-2: spent 353.455228 cap 355.38 headroom 1.924772
+$ v2 freeze manifest (ml_route_v2.phase1.freeze.verify_v2_freeze)
+v2 freeze OK: 91 files
+$ uv run python -m screening.trial_registry status
+N = 538 (9 lines)
+r001-C1: C1 ['C1-T1', 'C1-T2'] N 471 -> 473 at 2026-10-09T19:29:06-07:00
+r002-E16: E16 ['E16-H1', 'E16-H2', 'E16-H3', 'E16-H4', 'E16-H5'] N 473 -> 478 at 2026-10-10T00:30:15-07:00
+r003-C1b: C1b ['C1b-T1', 'C1b-T2'] N 478 -> 480 at 2026-10-10T12:17:48-07:00
+r004-E20H6: E20H6 ['E20H6-T1', 'E20H6-T2', 'E20H6-T3'] N 480 -> 483 at 2026-10-11T15:36:20-07:00
+r005-E20S: E20S ['E20S-01', 'E20S-02', 'E20S-03', 'E20S-04', 'E20S-05', 'E20S-06', 'E20S-07', 'E20S-08', 'E20S-09', 'E20S-10', 'E20S-11', 'E20S-12', 'E20S-13', 'E20S-14', 'E20S-15', 'E20S-16', 'E20S-17', 'E20S-18', 'E20S-19', 'E20S-20', 'E20S-21', 'E20S-22', 'E20S-23', 'E20S-24', 'E20S-25', 'E20S-26', 'E20S-27', 'E20S-28', 'E20S-29', 'E20S-30', 'E20S-31', 'E20S-32', 'E20S-33', 'E20S-34', 'E20S-35', 'E20S-36', 'E20S-37', 'E20S-38', 'E20S-39', 'E20S-40', 'E20S-41', 'E20S-42', 'E20S-43', 'E20S-44', 'E20S-45'] N 483 -> 528 at 2026-10-11T17:43:59-07:00
+r006-E21: E21 ['E21-T1', 'E21-T2', 'E21-T3', 'E21-T4'] N 528 -> 532 at 2026-10-14T04:12:12-07:00
+r007-E22: E22 ['E22-F1'] N 532 -> 533 at 2026-10-16T02:12:01-07:00
+r008-E23: E23 ['E23-MEZFh5', 'E23-MEZNh5', 'E23-MEZBh5', 'E23-H6NQh5', 'E23-H6NQh20'] N 533 -> 538 at 2026-10-17T03:33:45-07:00
+$ wc -l ledger/trial_registrations.jsonl; sha256sum
+9
+25c04088fed9b1a2bd14a79512bedc8ab9764611aa2abd95e2a29829542aa302
+$ E.14 C1 freeze (reports/stage_e14_prereg_C1.md; pinned afc5c10f628771afa3d1311192316ff3b4b681d7308d2b411fc655c15f821c0b): sha256, tracked, no diff vs HEAD, commits touching
+afc5c10f628771afa3d1311192316ff3b4b681d7308d2b411fc655c15f821c0b
+tracked
+no diff vs HEAD
+1680982 
+$ E.14 C1 freeze inputs list (reports/stage_e14_c1_freeze_inputs.json; pinned 3356d676...)
+list sha256 3356d67604245db99383215f1fb7f694d25a1beb71b0693a86faeb7243a5140e entries 43 mismatches ['reports/stage_e2b_harness_freeze.json']
+$ E.16 freeze: uv run python reports/stage_e16_briefs/freeze_manifest.py verify --expected 5274aa97f3359d7dcfaae15cb0590b6147d1624e6056ea396df08c6215209ad4
+changed: screening/stage_e_verdict.py
+changed: data/stage_e_bars.py
+exit 1
+$ git diff --quiet 8f388c8 -- base_rules tests/test_base_rules_*.py reports/stage_e16_prereg_*.md
+exit 0
+$ E.18 C1b freeze: uv run python reports/stage_e18_briefs/freeze_manifest.py verify --expected 5ed208a21c2556e84830aca6fb7b2dba08a3012713f62de6e7bd1c57fb702d03
+changed: reports/stage_e2b_harness_freeze.json
+pin mismatch: reports/stage_e2b_harness_freeze.json
+exit 1
+$ git diff --quiet b714751 -- c1_replication/c1b.py tests/test_c1b.py reports/stage_e18_prereg_C1b.md reports/stage_e18_freeze.json
+exit 0
+$ git diff --quiet HEAD -- ml_route_v2 rules sim screening data/holdout.py live ops
+exit 0
+$ E.20 store sha256 (17 roots; step2 search stores and the ext2010/ext2010h backward stores, hashed as bytes, never decoded) vs reports/stage_e17_run_manifest.json
+stores checked 34 mismatches []
+$ E.20 H6 freeze: PYTHONPATH=. uv run python reports/stage_e20_briefs/h6_freeze_manifest.py verify 22e606f0b74532e267a4155d93e295702ff86f6e8f4143236882f3c2f230e795
+manifest 22e606f0b74532e267a4155d93e295702ff86f6e8f4143236882f3c2f230e795 expected 22e606f0b74532e267a4155d93e295702ff86f6e8f4143236882f3c2f230e795 match True files 91 bad ['data/stage_e_bars.py']
+exit 1
+$ E.20 search freeze: uv run python -m pattern_search.freeze_manifest verify --sha256 94ee86b02d1cb644c9307be958b7791587d42c062996a6220dc901d4fe5a0f2f
+REFUSED (Refused): frozen file reports/stage_e2b_harness_freeze.json is missing or changed
+exit 2
+$ E.21 freeze: uv run python -m multiday.freeze_manifest verify --sha256 0bb899e56729d84075f43d72ae7e4207a026a955f1b39b39b490330a2e03bb1e
+freeze verified: 18 inputs
+exit 0
+$ E.22 confirmation list and E22-F1 registration (pinned 6f2fbf38... and 04ef33a6...)
+6f2fbf381c95ee57f05237102c97347c9fe3c343d99b6bc6e6f7e377b8a1a664  reports/stage_e22_confirmation_list.md
+tracked, no diff vs HEAD
+04ef33a6943004adcd50c542adf719c04ba362f7a7274a140a6293c168d8473b  reports/stage_e22_prereg_F1.md
+tracked, no diff vs HEAD
+$ E.23 freeze and registration (written during the stage)
+24dcf4dd671dbada927f548b3aff7a58a89c8fa92a6d43ae498aa69cbb3df5a5  reports/stage_e23_freeze.json
+tracked, no diff vs HEAD
+db34eac9fd8ef141f7d472a3c72e158ef4354a4ccda41084b828672cc48c0c5c  reports/stage_e23_prereg.md
+tracked, no diff vs HEAD
+$ E.23 freeze: uv run python -m trigger_hold.freeze_manifest verify --sha256 24dcf4dd671dbada927f548b3aff7a58a89c8fa92a6d43ae498aa69cbb3df5a5
+freeze verified: 20 inputs, 5 ids
+exit 0
+$ E22-F1 frozen file set: sha256sum -c reports/stage_e22_f1_files.sha256 (list pinned bb3bf3b3...)
+bb3bf3b3c6df28ac203905b53317b1835d447d6b2bba2ec88be929dd2a0fb8af
+all 30 files OK
+exit 0
+$ E.24 E22-F2 freeze and registration (written during the stage)
+reports/stage_e24_prereg_F2.md not yet written
+reports/stage_e24_f2_files.sha256 not yet written
+$ .env variable names (status only; values never read)
+(untracked lines omitted: 1272)

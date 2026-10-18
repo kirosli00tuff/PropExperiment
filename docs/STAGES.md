@@ -203,6 +203,13 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     research window (power 0.35 and 0.11-0.22 at published sizes; C1 not blind and weak after publication);
     Group A empty, Group B one weak candidate; re-dig supports nearly every closure, weakens V38's sentence; Fable
     review BLOCK, fixed, READY. Nothing read, bought or registered; N 538.
+  - Stage E.24 — Forward plumbing (V41, V42). Run 2026-10-18 (see reports/E.24_RETURN.md), three usage-limit pauses
+    and a reboot: the multi-day loader fix as a new package mdio/ (frozen files untouched; E.23 replay 79,207 values,
+    0 mismatches; Fable APPROVE after fixes); IBKR paper adapter for E22-F1 built on mocks (IBKR's daily close is the
+    last trade, only sometimes the settlement: nothing registered, the choice goes to the user); Alpaca paper adapter
+    on raw bars plus corporate actions; E22-F2 (E22-F1's rule on 11 US ETFs, P&L in excess of BIL) drafted and revised
+    for Fable's BLOCK, NOT frozen or registered (code fixes unverified, rechecks cut); warm-up declarations and the
+    user checklist written. No broker contacted, no market data read; N 538.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

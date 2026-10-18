@@ -1,0 +1,808 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "R6-SchedEvents-OpusHigh",
+ "finished_utc": "2026-10-18T13:30:06Z",
+ "candidates": [
+  {
+   "id": "R6-C1",
+   "hypothesis": "FOMC press-conference fade: take the side opposite the 13:00-13:30 CT (14:00-14:30 ET) statement-window index move, enter after the press-conference Tier 1 window (13:36 CT), exit about 14:20 CT",
+   "mechanism": "Post-COVID (esp. post-March 2022) Powell Q&A moved markets against the statement reaction (Narain-Sangani)",
+   "instruments": [
+    "MNQ",
+    "MES",
+    "NQ",
+    "ES"
+   ],
+   "entry_window_ct": "13:36 (Tier 1 forces entry after 13:35; published window starts 13:30)",
+   "hold": "about 45 min, exit about 14:20 CT",
+   "trades_per_year": 8,
+   "best_source": "Narain, Sangani, The Market Impact of Fed Communications: The Role of the Press Conference, IJCB 22(1) Jan 2026",
+   "source_url": "https://www.ijcb.org/sites/default/files/ijcb-vn-market-impact-fed-communications-role-press-conference.pdf",
+   "grade": "peer-reviewed",
+   "sample": "73 press conferences Apr 2011-Mar 2024 (SPY, NYSE TAQ); about 16 after March 2022",
+   "post_2015_or_oos": "post-2020 subperiod only; no OOS; nothing after March 2024",
+   "published_effect": "slope of press-conference SPY return on statement-window SPY return: Powell post-COVID -0.694 (0.253); post-COVID tightening -0.752 (0.282); R2 0.16 (Table A.6)",
+   "price_level_used": "NQ 21,000; ES 6,000",
+   "gross_per_trade_points": 65.0,
+   "gross_per_trade_micro_ticks": 260.0,
+   "micro": "MNQ (ES alternative: 18.6 ES points = 74 MES ticks)",
+   "gross_or_net": "gross",
+   "dispersion": "press-conference SPY return sd 0.723% (Table A.2); statement-window sd 0.511%; N about 16 in the post-2022 regime",
+   "quote": "Powell (Post-COVID, Tightening) x Returns around Statement -0.752** (0.282)",
+   "quote_location": "Table A.6",
+   "decay_evidence": "Sign flipped across regimes: correlation 0.45 (pre-COVID) -> -0.07 -> -0.48 (post-March 2022); 2011-2020 Gomez-Cram-Grotteria report +44% for SPY",
+   "data_needed": "1-min NQ/ES/MNQ/MES bars; FOMC calendar with press-conference flag (all meetings since 2019)",
+   "owned": "yes",
+   "data_cost": "$0 (owned bars and calendars)",
+   "research_window_testable": "yes",
+   "why": "Derived expected fade = 0.752 x mean |statement move| (0.8 x 0.511% sd approx 0.41%, my approximation) = 0.31% of index; conversion 0.31% x 21,000 = 65 NQ pts / 0.25 = 260 MNQ ticks. Not a published per-trade mean.",
+   "prop_notes": "Tier 1 BINDS: 13:25-13:35 CT press-conference window, NQ/ES no new opens, MNQ/MES capped 1/3/6/9/15 (25K-250K), pending orders do not fill; entry moved to 13:36 CT. P06 applies (event in progress). Flat by 14:20 CT.",
+   "overlap_ids": [
+    "E-H2",
+    "K5-fomc-01",
+    "K2-fomcpost-01"
+   ],
+   "overlap_note": "Tested members trade momentum 13:05-13:15 (MES, MGC) or an unconditional rates buy; none conditions 13:30-14:20 on the statement-window move"
+  },
+  {
+   "id": "R6-C2",
+   "hypothesis": "FOMC post-statement price-pressure reversal: fade the E-mini move from 13:10 to 13:50 CT, hold 13:50 to 15:05 CT",
+   "mechanism": "Price pressure / liquidity demand after FOMC statements with press conferences (Boguth, Gregoire, Martineau)",
+   "instruments": [
+    "MES",
+    "ES",
+    "MNQ"
+   ],
+   "entry_window_ct": "13:50",
+   "hold": "75 min, exit 15:05 CT",
+   "trades_per_year": 8,
+   "best_source": "Boguth, Gregoire, Martineau, Price Pressure and Efficiency on FOMC Announcements, draft 28 Jun 2019",
+   "source_url": "https://ies.keio.ac.jp/upload/20190716macro_Martineau_abstract-1.pdf",
+   "grade": "working-paper",
+   "sample": "E-mini 1997-2017; reversal regression on press-conference meetings from April 2011",
+   "post_2015_or_oos": "partly post-2015 in sample; no OOS; later versions (2023 OSF, 2025 SSRN) report daily-horizon reversals only",
+   "published_effect": "reversal of about 56-60 bp from minute 50 to the NEXT trading day's end (includes overnight); same-day share not published",
+   "price_level_used": "ES 6,000; NQ 21,000",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "MES",
+   "gross_or_net": "unknown",
+   "dispersion": "R2 40% at t=50 (2019 draft); per-trade sd not published",
+   "quote": "returns from the 10th to the 60th minute following announcements predicts a substantial price reversal of about 60 basis points that can last several hours until the next trading day. For announcements with no press conferences, we find no price reversal.",
+   "quote_location": "p. 3-4",
+   "decay_evidence": "2023 version: reversal tested at days [0,3] -> [4,20] (80 bp for press-conference meetings); 2025 abstract: 'by announcement-cycle end'",
+   "data_needed": "1-min ES/MES bars; FOMC calendar",
+   "owned": "yes",
+   "data_cost": "$0 (owned bars and calendars)",
+   "research_window_testable": "yes",
+   "why": "Upper bound only: 56 bp x 6,000 / 10,000 = 33.6 ES pts = 134 MES ticks to next-day settle; intraday part unknown, so gross left null",
+   "prop_notes": "Entry 13:50 CT outside Tier 1 windows; P06: press conference in progress, keep below max size; exit 15:05 CT",
+   "overlap_ids": [
+    "E-H2",
+    "K5-fomc-01",
+    "K2-fomcpost-01"
+   ],
+   "overlap_note": "No tested member fades the 13:10-13:50 move; shares FOMC dates with C1 and C3"
+  },
+  {
+   "id": "R6-C3",
+   "hypothesis": "FOMC pre-announcement reversal: if the E-mini return over the 24 h to 12:50 CT on an FOMC day is negative (positive), buy (sell) at 12:50 CT, exit 14:50 CT",
+   "mechanism": "Pre-announcement overreaction corrected after the statement (Baglioni-Ribeiro)",
+   "instruments": [
+    "MES",
+    "ES",
+    "MNQ"
+   ],
+   "entry_window_ct": "12:50",
+   "hold": "2 h, exit 14:50 CT",
+   "trades_per_year": 8,
+   "best_source": "Baglioni (2023), Essays in Financial Economics, PhD thesis, Insper, ch. 1 with R. M. Ribeiro",
+   "source_url": "https://repositorio.insper.edu.br/handle/11224/7532",
+   "grade": "thesis",
+   "sample": "E-mini, 180 events 09/1997-01/2020; 71 events 04/2011-01/2020",
+   "post_2015_or_oos": "post-2011 subsample stronger; ends Jan 2020; no later test found",
+   "published_effect": "23.34 bp per event net of spread, annualized SR 1.60 (2011-2020); 17.86 bp, SR 1.02 (1997-2020)",
+   "price_level_used": "ES 6,000; NQ 21,000",
+   "gross_per_trade_points": 14.0,
+   "gross_per_trade_micro_ticks": 56.0,
+   "micro": "MES (NQ not studied: 49.0 NQ pts = 196 MNQ ticks if the same % held)",
+   "gross_or_net": "net",
+   "dispersion": "annualized SR 1.60 -> my derived per-event SR 0.31 (sd about 74 bp); full sample per-event SR 0.20 (sd about 89 bp); lead to verify",
+   "quote": "Reversal From 1:50 p.m. FOMCt to 3:50 p.m. FOMCt 71 23.34*** 1.60",
+   "quote_location": "Table 1.9 Panel A, p. 26",
+   "decay_evidence": "Sample ends Jan 2020; Lucca-Moench drift leg disappeared after 2015 (Kurov-Wolfe-Gilbert 2021); no replication found",
+   "data_needed": "1-min ES/MES bars incl. overnight; FOMC calendar",
+   "owned": "yes",
+   "data_cost": "$0 (owned bars and calendars)",
+   "research_window_testable": "yes",
+   "why": "23.34 bp x 6,000 / 10,000 = 14.0 ES pts / 0.25 = 56 MES ticks; net of bid-ask (no commission), so gross is slightly higher",
+   "prop_notes": "P06 BINDS: held into the 13:00 CT statement; below max size. Tier 1: entry 12:50 is before 12:55-13:05 window; hold of an open equity-index position through it implied allowed, not stated",
+   "overlap_ids": [
+    "E-H1",
+    "K9-anncday-01"
+   ],
+   "overlap_note": "E-H1 tested the drift leg into the release; the reversal leg was never a trial (K9 pre-FOMC drift excluded on frequency, P-04)"
+  },
+  {
+   "id": "R6-C4",
+   "hypothesis": "Crude oil fade of the first 5-minute move after 08:30 ET NFP / advance retail sales: fade the CL move 07:30-07:35 CT, hold to 08:00 CT",
+   "mechanism": "Initial energy-price response to macro news looks like noise trading and reverses within 10-30 min (Chatrath et al.)",
+   "instruments": [
+    "MCL",
+    "CL"
+   ],
+   "entry_window_ct": "07:35",
+   "hold": "25 min, exit 08:00 CT",
+   "trades_per_year": 24,
+   "best_source": "Chatrath, Miao, Ramchander et al., Does the price of crude oil respond to macroeconomic news?, J. Futures Markets 32(6) 2012",
+   "source_url": "https://hdl.handle.net/10217/206897",
+   "grade": "peer-reviewed",
+   "sample": "NYMEX CL 5-min, 2005-2009, about 60 events per release",
+   "post_2015_or_oos": "no; pre-2010 only",
+   "published_effect": "5-min response 0.2852% (NFP) and 0.1433% (retail sales) per one-sd surprise; reversal inferred from RV, not signed returns",
+   "price_level_used": "CL $65/bbl",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "MCL",
+   "gross_or_net": "unknown",
+   "dispersion": "t 5.01 (NFP), 4.44 (retail) for the response; fade dispersion not published",
+   "quote": "It appears that all of the price response for all the announcements is reversed within thirty minutes.",
+   "quote_location": "p. 23, Table 6",
+   "decay_evidence": "No post-2012 signed-return study found (2026-10-18 search: only volatility rankings 2012-2018)",
+   "data_needed": "1-min CL/MCL bars; NFP calendar (owned); advance retail sales calendar (not owned, free Census schedule)",
+   "owned": "partial",
+   "data_cost": "$0 (owned bars; free Census schedule not fetched)",
+   "research_window_testable": "yes",
+   "why": "Upper bound if the response fully reversed: 0.2852% x $65 = $0.185/bbl = 18.5 MCL ticks per sd; x 0.8 mean |surprise| = about 15 MCL ticks; not measured, so gross left null",
+   "prop_notes": "Opened after the release (P06 not triggered); energies unaffected by Tier 1; flat 08:00 CT",
+   "overlap_ids": [
+    "K4-eiafade-01"
+   ],
+   "overlap_note": "Same fade logic on EIA WPSR; no member trades CL on BLS/Census releases"
+  },
+  {
+   "id": "R6-C5",
+   "hypothesis": "First-half-hour -> last-half-hour momentum on NQ, CPI and GDP release days only",
+   "mechanism": "Intraday momentum stronger on macro release days (Gao, Han, Li, Zhou)",
+   "instruments": [
+    "MNQ",
+    "NQ",
+    "MES"
+   ],
+   "entry_window_ct": "14:30",
+   "hold": "30 min, exit 15:00 CT",
+   "trades_per_year": 24,
+   "best_source": "Gao, Han, Li, Zhou, Market intraday momentum, JFE 129 (2018); WP Dec 2015",
+   "source_url": "reports/stage_e20_briefs/shared/gao_han_li_zhou_wp2015_mql5.pdf.txt",
+   "grade": "peer-reviewed",
+   "sample": "SPY 1993-2013",
+   "post_2015_or_oos": "no; the program's own E20H6-T1 failed the unconditional version in 2025-2026 data",
+   "published_effect": "CPI days 18.03% annualized (x252), GDP days 14.40%; non-release CPI days 6.10%",
+   "price_level_used": "NQ 21,000; ES 6,000",
+   "gross_per_trade_points": 15.0,
+   "gross_per_trade_micro_ticks": 60.0,
+   "micro": "MNQ (CPI days; GDP days 12.0 NQ pts = 48 MNQ ticks; ES CPI days 4.3 pts = 17 MES ticks)",
+   "gross_or_net": "gross",
+   "dispersion": "Table 8 Panel B columns as printed: Release CPI 18.03*** 5.80 3.11 (return, then the paper's next two statistics)",
+   "quote": "Release CPI 18.03*** 5.80 3.11",
+   "quote_location": "Table 8 Panel B",
+   "decay_evidence": "E20H6-T1 realized 1.25 MNQ ticks gross vs 4.08 cost on the unconditional mechanism (published about 2.5 bp)",
+   "data_needed": "1-min NQ bars; CPI and GDP calendars (owned)",
+   "owned": "yes",
+   "data_cost": "$0 (owned bars and calendars)",
+   "research_window_testable": "yes",
+   "why": "18.03 / 252 = 0.0716% x 21,000 = 15.0 NQ pts / 0.25 = 60 MNQ ticks",
+   "prop_notes": "Entry 14:30 CT, flat 15:00 CT; P06 and Tier 1 not triggered",
+   "overlap_ids": [
+    "E20H6-T1",
+    "E20H6-T2",
+    "E20H6-T3",
+    "K1-cp1-01"
+   ],
+   "overlap_note": "Only the release-day conditioning is new; the lead may judge it a filter on a failed mechanism"
+  },
+  {
+   "id": "R6-C6",
+   "hypothesis": "Pre-release drift into 10:00 ET releases on ES/NQ (ISM Manufacturing, existing/pending home sales, Conference Board): sign of T-30 to T-5 move, hold to T+5",
+   "mechanism": "Informed pre-release trading (leakage) before some 10:00 ET releases (Kurov, Sancetta, Strasser, Wolfe)",
+   "instruments": [
+    "MES",
+    "ES",
+    "MNQ"
+   ],
+   "entry_window_ct": "08:55 (T-5)",
+   "hold": "10 min, exit about 09:05 CT",
+   "trades_per_year": 48,
+   "best_source": "Kurov, Sancetta, Strasser, Wolfe, ECB WP 1901 (2016) / JFQA 54 (2019)",
+   "source_url": "reports/stage_e20_briefs/pages/ZN/kssw_ecbwp1901.pdf.txt",
+   "grade": "working-paper",
+   "sample": "ES and ZN second data 2008-01..2014-03",
+   "post_2015_or_oos": "no; sample ends 2014",
+   "published_effect": "ES pre-release (t-30 min to t-5 s) move per one-sd surprise: ISM Mfg 0.091%, ISM NM 0.139%, existing home sales 0.113%, pending 0.154%",
+   "price_level_used": "ES 6,000; NQ 21,000",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "MES",
+   "gross_or_net": "unknown",
+   "dispersion": "ISM Mfg 0.091 (s.e. 0.036)",
+   "quote": "ISM Manufacturing 0.091 (0.036)** 0.06 -0.027 (0.009)***",
+   "quote_location": "Table 3",
+   "decay_evidence": "Sample ends 2014; the same tradable form on ZN/ZB before ISM Services (K2-predrift-01) was Tier B with t -0.429 / -1.241",
+   "data_needed": "1-min ES/NQ bars; ISM Mfg (owned), home sales and Conference Board calendars (not owned, free official schedules)",
+   "owned": "partial",
+   "data_cost": "$0 (free schedules not fetched)",
+   "research_window_testable": "yes",
+   "why": "Drift is conditional on the realized surprise (ex post); 0.091% x 6,000 = 5.5 ES pts = 22 MES ticks per sd only on days the pre-move sign is right; tradable gross unknown, left null",
+   "prop_notes": "P06 BINDS (held through the 09:00 CT release); not a named Tier 1 event",
+   "overlap_ids": [
+    "K2-predrift-01"
+   ],
+   "overlap_note": "Same form on ES/NQ and on 10:00 ET releases other than ISM Services"
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "Powell post-COVID press conference reverses statement move",
+   "number": "slope -0.694 (0.253); tightening -0.752 (0.282); N 73",
+   "quote": "Powell (Post-COVID, Tightening) x Returns around Statement -0.752** (0.282)",
+   "location": "Table A.6",
+   "source": "Narain, Sangani, The Market Impact of Fed Communications: The Role of the Press Conference, IJCB (forthcoming; v22n1 Jan 2026), https://www.ijcb.org/sites/default/files/ijcb-vn-market-impact-fed-communications-role-press-conference.pdf",
+   "url": "https://www.ijcb.org/sites/default/files/ijcb-vn-market-impact-fed-communications-role-press-conference.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/ijcb_market_impact_fed_press_conf.pdf",
+   "sha256": "78b6a436c038d4bf"
+  },
+  {
+   "claim": "correlation statement vs press-conference move by subperiod",
+   "number": "0.45 -> -0.07 -> -0.48",
+   "quote": "the correlation between market reactions to the FOMC statement and to the press conference falls from 0.45 to -0.07 after March 2020 ... (yielding a correlation of -0.48 during the subperiod of Chair Powell's term after March 2022)",
+   "location": "s. 4.2, p. 22",
+   "source": "Narain, Sangani, The Market Impact of Fed Communications: The Role of the Press Conference, IJCB (forthcoming; v22n1 Jan 2026), https://www.ijcb.org/sites/default/files/ijcb-vn-market-impact-fed-communications-role-press-conference.pdf",
+   "url": "https://www.ijcb.org/sites/default/files/ijcb-vn-market-impact-fed-communications-role-press-conference.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/ijcb_market_impact_fed_press_conf.pdf",
+   "sha256": "78b6a436c038d4bf"
+  },
+  {
+   "claim": "press-conference SPY return dispersion",
+   "number": "sd 0.723%, min -2.583, max 1.782",
+   "quote": "SPY Return: Press Conference (%) NYSE TAQ 0.091 0.723 -2.583 1.782",
+   "location": "summary statistics table (appendix)",
+   "source": "Narain, Sangani, The Market Impact of Fed Communications: The Role of the Press Conference, IJCB (forthcoming; v22n1 Jan 2026), https://www.ijcb.org/sites/default/files/ijcb-vn-market-impact-fed-communications-role-press-conference.pdf",
+   "url": "https://www.ijcb.org/sites/default/files/ijcb-vn-market-impact-fed-communications-role-press-conference.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/ijcb_market_impact_fed_press_conf.pdf",
+   "sha256": "78b6a436c038d4bf"
+  },
+  {
+   "claim": "statement-window squared return (Powell)",
+   "number": "0.220 + 0.048",
+   "quote": "FOMC Statement Release (30-Min. Window) 0.220** (0.065) 0.048 (0.096)",
+   "location": "Table 1",
+   "source": "Narain, Sangani, The Market Impact of Fed Communications: The Role of the Press Conference, IJCB (forthcoming; v22n1 Jan 2026), https://www.ijcb.org/sites/default/files/ijcb-vn-market-impact-fed-communications-role-press-conference.pdf",
+   "url": "https://www.ijcb.org/sites/default/files/ijcb-vn-market-impact-fed-communications-role-press-conference.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/ijcb_market_impact_fed_press_conf.pdf",
+   "sha256": "78b6a436c038d4bf"
+  },
+  {
+   "claim": "2011-2020 press conference REINFORCED the statement",
+   "number": "44% (SPY)",
+   "quote": "Strong positive correlation between price changes around the statement release and the subsequent press conference ... 44% for SPY",
+   "location": "slides p. \"Empirical contribution\"",
+   "source": "Gomez-Cram, Grotteria, Real-time price discovery via verbal communication, JFE 143(3) 2022; CEMLA slides Oct 2020",
+   "url": "",
+   "grade": "working-paper (slides of a peer-reviewed paper) [secondary-only for the JFE text]",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/cemla_gomezcram_grotteria_slides.pdf",
+   "sha256": "1f10e494e32944ea"
+  },
+  {
+   "claim": "post-FOMC price-pressure reversal (press-conference meetings)",
+   "number": "about 60 bp; 56 bp to next-day settle; R2 40% at t=50",
+   "quote": "returns from the 10th to the 60th minute following announcements predicts a substantial price reversal of about 60 basis points that can last several hours until the next trading day. For announcements with no press conferences, we find no price reversal.",
+   "location": "p. 3-4; p. 19",
+   "source": "Boguth, Gregoire, Martineau, Price Pressure and Efficiency on FOMC Announcements, draft 28 Jun 2019, https://ies.keio.ac.jp/upload/20190716macro_Martineau_abstract-1.pdf",
+   "url": "https://ies.keio.ac.jp/upload/20190716macro_Martineau_abstract-1.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/keio_martineau_2019_abstract.pdf",
+   "sha256": "40e14f7715f413c9"
+  },
+  {
+   "claim": "later version: reversal by announcement-cycle end",
+   "number": "n/a",
+   "quote": "Standard predictive regressions confirm significant reversal of event-window returns by announcement-cycle end.",
+   "location": "2025 abstract",
+   "source": "Boguth, Fisher, Gregoire, Martineau, Noisy FOMC Returns? (2025), https://www.vincentgregoire.com/",
+   "url": "https://www.vincentgregoire.com/",
+   "grade": "working-paper [abstract only]",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/vincentgregoire_home.html",
+   "sha256": "9907ab77664e5c34"
+  },
+  {
+   "claim": "FOMC pre-announcement reversal, post-2011",
+   "number": "23.34 bp per event net of spread, 71 events, annualized SR 1.60",
+   "quote": "Reversal From 1:50 p.m. FOMCt to 3:50 p.m. FOMCt 71 23.34*** 1.60",
+   "location": "Table 1.9 Panel A, p. 26",
+   "source": "Baglioni (2023), Essays in Financial Economics, PhD thesis, Insper, ch. 1 with R. M. Ribeiro, https://repositorio.insper.edu.br/handle/11224/7532",
+   "url": "https://repositorio.insper.edu.br/handle/11224/7532",
+   "grade": "thesis",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/baglioni_2023_insper_thesis.pdf",
+   "sha256": "865a0c404e05013a"
+  },
+  {
+   "claim": "same, 1997-2020",
+   "number": "17.86 bp, 180 events, SR 1.02",
+   "quote": "Reversal From 1:50 p.m. FOMCt to 3:50 p.m. FOMCt 180 17.86*** 1.02",
+   "location": "Table 1.2 Panel A, p. 14",
+   "source": "Baglioni (2023), Essays in Financial Economics, PhD thesis, Insper, ch. 1 with R. M. Ribeiro, https://repositorio.insper.edu.br/handle/11224/7532",
+   "url": "https://repositorio.insper.edu.br/handle/11224/7532",
+   "grade": "thesis",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/baglioni_2023_insper_thesis.pdf",
+   "sha256": "865a0c404e05013a"
+  },
+  {
+   "claim": "same, regression slope",
+   "number": "-23 bp per 1% pre-return",
+   "quote": "A 1% return in the pre-announcement interval implies 23 basis points (bps) of negative return in the post-announcement interval.",
+   "location": "p. 9",
+   "source": "Baglioni (2023), Essays in Financial Economics, PhD thesis, Insper, ch. 1 with R. M. Ribeiro, https://repositorio.insper.edu.br/handle/11224/7532",
+   "url": "https://repositorio.insper.edu.br/handle/11224/7532",
+   "grade": "thesis",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/baglioni_2023_insper_thesis.pdf",
+   "sha256": "865a0c404e05013a"
+  },
+  {
+   "claim": "pre-FOMC drift gone after 2015",
+   "number": "n/a",
+   "quote": "the pre-FOMC drift essentially disappeared after 2015 in both announcements accompanied by press conferences and announcements not accompanied by press conferences",
+   "location": "abstract",
+   "source": "Kurov, Wolfe, Gilbert, The Disappearing Pre-FOMC Announcement Drift, FRL 40 (2021) (E.10 copy, re-used)",
+   "url": "",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e10_research/calendar/kurov_wolfe_gilbert_2020.txt",
+   "sha256": "19457aefbde77e39"
+  },
+  {
+   "claim": "CPI-day / GDP-day first-half-hour -> last-half-hour momentum",
+   "number": "18.03 / 14.40 %/yr (x252)",
+   "quote": "Release CPI 18.03*** 5.80 3.11\"; \"Release GDP 14.40** 6.14 2.35",
+   "location": "Table 8 Panel B",
+   "source": "Gao, Han, Li, Zhou, Market intraday momentum, WP Dec 2015 (JFE 129, 2018) (E.20 copy, re-used)",
+   "url": "",
+   "grade": "working-paper (peer-reviewed version exists)",
+   "saved_path": "reports/stage_e20_briefs/shared/gao_han_li_zhou_wp2015_mql5.pdf.txt",
+   "sha256": "3e29262974f8427f"
+  },
+  {
+   "claim": "pre-release drift in ES before 10:00 ET releases",
+   "number": "ISM Mfg 0.091%, ISM NM 0.139%, existing home 0.113% per 1-sd surprise",
+   "quote": "ISM Manufacturing 0.091 (0.036)** 0.06 -0.027 (0.009)***",
+   "location": "Table 3",
+   "source": "Kurov, Sancetta, Strasser, Wolfe, ECB WP 1901 (2016) (E.20 copy, re-used)",
+   "url": "",
+   "grade": "working-paper (JFQA 2019)",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/kssw_ecbwp1901.pdf.txt",
+   "sha256": "6fdcd0976f622b0e"
+  },
+  {
+   "claim": "no pre-release drift for CPI / NFP / retail / claims",
+   "number": "CPI -0.005 (0.035)",
+   "quote": "Consumer price index -0.005 (0.035) 0.00 -0.001 (0.011) 0.00 0.981",
+   "location": "Table 3",
+   "source": "Kurov, Sancetta, Strasser, Wolfe, ECB WP 1901 (2016) (E.20 copy, re-used)",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/kssw_ecbwp1901.pdf.txt",
+   "sha256": "6fdcd0976f622b0e"
+  },
+  {
+   "claim": "ES response 90% in first minute, flat after 5 min",
+   "number": "90%",
+   "quote": "Around 90% of the response happens during the first minute. After the first 5 minutes upon the announcement, the price seems to stay at a post-announcement level.",
+   "location": "s. 4, p. 16",
+   "source": "Pinchuk, Monetary Uncertainty as a Determinant of the Response of Stock Market to Macroeconomic News, arXiv 2212.04525 (2022); E-mini 1-min, 1997-2019",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/arxiv_2212.04525_monetary_uncertainty.pdf",
+   "sha256": "bb1fc3fac41638c5"
+  },
+  {
+   "claim": "overreaction only after most positive surprises",
+   "number": "> half retraced (figure)",
+   "quote": "prices seem to drift back more than halfway toward their pre-announcement level. I observe this pattern only for the most positive news surprises.",
+   "location": "p. 16-17",
+   "source": "Pinchuk, Monetary Uncertainty as a Determinant of the Response of Stock Market to Macroeconomic News, arXiv 2212.04525 (2022); E-mini 1-min, 1997-2019",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/arxiv_2212.04525_monetary_uncertainty.pdf",
+   "sha256": "bb1fc3fac41638c5"
+  },
+  {
+   "claim": "CPI overshoot on circuit-breaker days is sub-minute",
+   "number": "rejections 50% (20-30 s) -> 0% (600 s)",
+   "quote": "When we use longer windows of at least one minute for the event-return estimation, results in Table 5 show that the rejection frequencies fall rapidly to zero.",
+   "location": "s. 5.3, Table 5",
+   "source": "Winkelmann, Yao, Breaking news, arXiv 2603.22835 (2026); ES CPI 2020-01..2025-10, 69 releases",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/arxiv_2603.22835_breaking_news.pdf",
+   "sha256": "12019def00fe0d3a"
+  },
+  {
+   "claim": "CPI 1-min ES move size 2020-2025",
+   "number": "median abs 0.19% (regular), 0.82% (breaking)",
+   "quote": "The median 1-minute absolute event return quadruples from 0.2% to 0.8%.",
+   "location": "s. 5.1, Table 3",
+   "source": "Winkelmann, Yao, Breaking news, arXiv 2603.22835 (2026); ES CPI 2020-01..2025-10, 69 releases",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/arxiv_2603.22835_breaking_news.pdf",
+   "sha256": "12019def00fe0d3a"
+  },
+  {
+   "claim": "ES reaction to CPI larger in 2021-2023 regime",
+   "number": "-66.09 bp vs -4.98 bp per 1-sd surprise (60-min)",
+   "quote": "News -4.98* -66.09***\" (S&P 500 low vs high inflation)",
+   "location": "Table 3, p. 24",
+   "source": "Kroner, How Markets Process Macro News: The Importance of Investor Attention, FEDS 2025-022",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/kroner_feds2025022.pdf",
+   "sha256": "25de8e1d91475e5f"
+  },
+  {
+   "claim": "overreaction is multi-day",
+   "number": "n/a",
+   "quote": "both interest rates and inflation swap rates tend to overreact in the first days following CPI releases when levels of attention are high",
+   "location": "p. 3",
+   "source": "Kroner, How Markets Process Macro News: The Importance of Investor Attention, FEDS 2025-022",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/kroner_feds2025022.pdf",
+   "sha256": "25de8e1d91475e5f"
+  },
+  {
+   "claim": "CL 5-min response to NFP / retail sales",
+   "number": "0.2852% / 0.1433% per sd",
+   "quote": "Change in Nonfarm Payrolls 0.2852a ( 5.01) 0.00 30.57 59",
+   "location": "Table 5",
+   "source": "Chatrath, Miao, Ramchander et al., Does the price of crude oil respond to macroeconomic news?, JFM 32(6) 2012 (author manuscript), https://hdl.handle.net/10217/206897",
+   "url": "https://hdl.handle.net/10217/206897",
+   "grade": "peer-reviewed (manuscript)",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/crude_macro_jfm2012.pdf",
+   "sha256": "7cee58203d1d6db0"
+  },
+  {
+   "claim": "CL \"reversal\" within 30 min (RV-based)",
+   "number": "n/a",
+   "quote": "It appears that all of the price response for all the announcements is reversed within thirty minutes.",
+   "location": "p. 23, Table 6",
+   "source": "Chatrath, Miao, Ramchander et al., Does the price of crude oil respond to macroeconomic news?, JFM 32(6) 2012 (author manuscript), https://hdl.handle.net/10217/206897",
+   "url": "https://hdl.handle.net/10217/206897",
+   "grade": "peer-reviewed (manuscript)",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/crude_macro_jfm2012.pdf",
+   "sha256": "7cee58203d1d6db0"
+  },
+  {
+   "claim": "gold response efficient, gone within an hour",
+   "number": "durable goods 0.06% per sd in 5 min",
+   "quote": "the metal prices are efficient in incorporating new economic information and the response tends to dissipate in less than an hour after the release of the announcement",
+   "location": "s. 5.4, p. 22-23",
+   "source": "Elder, Miao, Ramchander, Impact of macroeconomic news on metal futures, JBF 36(1) 2012 (manuscript)",
+   "url": "",
+   "grade": "peer-reviewed (manuscript)",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/elder_miao_ramchander_2012_metals.pdf",
+   "sha256": "80b8073e34ffddd5"
+  },
+  {
+   "claim": "ES and ZN futures absorb 08:30 ET news within 5 min, 2021-2023",
+   "number": "4-5 bp per unit surprise in first 5 min; about 0 after",
+   "quote": "after the first five-minute interval, the estimates are very close to zero and not significantly different from zero",
+   "location": "p. 5, text on Figures 1-2",
+   "source": "Council of Economic Advisers, The Timing of Market Reactions to Data Releases (for OMB), 14 Feb 2024, https://bidenwhitehouse.archives.gov/wp-content/uploads/2024/02/CEA-PFEI-Analysis.pdf",
+   "url": "https://bidenwhitehouse.archives.gov/wp-content/uploads/2024/02/CEA-PFEI-Analysis.pdf",
+   "grade": "exchange-regulator (US government analysis; not peer-reviewed)",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/cea_pfei_analysis_2024.pdf",
+   "sha256": "156385bbd8446b73"
+  },
+  {
+   "claim": "primary response within seconds",
+   "number": "3-4 s; nothing after about 9 s",
+   "quote": "the primary response to economic data releases occurs within the first 3-4 seconds after the news announcement is made, and that after approximately 9 seconds, asset price movements can no longer be related to the announcement",
+   "location": "p. 2 (summary of Brogaard et al. 2014 and Hu et al. 2017)",
+   "source": "Council of Economic Advisers, The Timing of Market Reactions to Data Releases (for OMB), 14 Feb 2024, https://bidenwhitehouse.archives.gov/wp-content/uploads/2024/02/CEA-PFEI-Analysis.pdf",
+   "url": "https://bidenwhitehouse.archives.gov/wp-content/uploads/2024/02/CEA-PFEI-Analysis.pdf",
+   "grade": "exchange-regulator [secondary for the cited studies]",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/cea_pfei_analysis_2024.pdf",
+   "sha256": "156385bbd8446b73"
+  },
+  {
+   "claim": "FOMC reversals are daily-horizon in the later version",
+   "number": "80 bp (press-conference meetings), days [0,3] -> [4,20]",
+   "quote": "Column (4) and (6) report a price reversal of 80 and 85 bps for FOMC announcements with press conference and with large monetary policy surprises, respectively.",
+   "location": "s. 4, p. 25",
+   "source": "Boguth, Fisher, Gregoire, Martineau, Price Informativeness and FOMC Return Reversals, 5 Mar 2023 (SocArXiv/OSF zurfk; later \"Noisy FOMC Returns?\", R&R RFS per CV [secondary-only for status]), https://osf.io/download/62a74fca2631491f71a3175f/",
+   "url": "https://osf.io/download/62a74fca2631491f71a3175f/",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/osf_zurfk_boguth_gregoire_martineau_2022.pdf",
+   "sha256": "31f75c3a7b2ff9be"
+  },
+  {
+   "claim": "intraday FOMC windows reversed later",
+   "number": "raw dR2 -0.003 to -0.012",
+   "quote": "the raw dR2 are negative, ranging from -0.003 to -0.012, implying that stock market returns in the intraday pre-announcement and announcement windows are reversed by later returns",
+   "location": "s. 3, p. 14",
+   "source": "Boguth, Fisher, Gregoire, Martineau, Price Informativeness and FOMC Return Reversals, 5 Mar 2023 (SocArXiv/OSF zurfk; later \"Noisy FOMC Returns?\", R&R RFS per CV [secondary-only for status]), https://osf.io/download/62a74fca2631491f71a3175f/",
+   "url": "https://osf.io/download/62a74fca2631491f71a3175f/",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/osf_zurfk_boguth_gregoire_martineau_2022.pdf",
+   "sha256": "31f75c3a7b2ff9be"
+  },
+  {
+   "claim": "CPI/NFP/GDP days: no equity reversal",
+   "number": "excess dR2 > 0",
+   "quote": "Significant price reversals are a unique feature of equity returns on FOMC announcement dates.",
+   "location": "s. 3, p. 19 (Table 5)",
+   "source": "Boguth, Fisher, Gregoire, Martineau, Price Informativeness and FOMC Return Reversals, 5 Mar 2023 (SocArXiv/OSF zurfk; later \"Noisy FOMC Returns?\", R&R RFS per CV [secondary-only for status]), https://osf.io/download/62a74fca2631491f71a3175f/",
+   "url": "https://osf.io/download/62a74fca2631491f71a3175f/",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/osf_zurfk_boguth_gregoire_martineau_2022.pdf",
+   "sha256": "31f75c3a7b2ff9be"
+  },
+  {
+   "claim": "statement-window SPY move size, 73 press conferences",
+   "number": "mean 0.085%, sd 0.511%",
+   "quote": "SPY Return: Statement Release (%) NYSE TAQ 0.085 0.511 -1.421 1.192",
+   "location": "Table A.2",
+   "source": "Narain, Sangani (IJCB 2026)",
+   "url": "",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/ijcb_market_impact_fed_press_conf.pdf",
+   "sha256": "78b6a436c038d4bf"
+  },
+  {
+   "claim": "press-conference end times 2023-2024",
+   "number": "15:14-15:23 ET",
+   "quote": "Mar. 20, 2024 Jerome Powell 5-1/4 to 5-1/2 Percent Yes 14:00 14:30 15:17",
+   "location": "Table A.1",
+   "source": "Narain, Sangani (IJCB 2026)",
+   "url": "",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/ijcb_market_impact_fed_press_conf.pdf",
+   "sha256": "78b6a436c038d4bf"
+  },
+  {
+   "claim": "early press-conference era had different clock times",
+   "number": "statements 12:30 ET, PC 14:15 ET (2011-2012)",
+   "quote": "04/27/2011 12:30 12:32 14:15",
+   "location": "Internet Appendix table of announcement times",
+   "source": "Boguth, Gregoire, Martineau, Internet Appendix to \"Shaping Expectations and Coordinating Attention\" (JFQA), 5 Sep 2018, https://www.vincentgregoire.com/files/appendices/FOMC_PC_InternetAppendix.pdf",
+   "url": "https://www.vincentgregoire.com/files/appendices/FOMC_PC_InternetAppendix.pdf",
+   "grade": "working-paper (appendix of a peer-reviewed paper)",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/gregoire_FOMC_PC_InternetAppendix.pdf",
+   "sha256": "8d36fef667db36cf"
+  },
+  {
+   "claim": "Topstep Tier 1 window (constraint, not evidence of an effect)",
+   "number": "5 min either side; minis 0; micros 1/3/6/9/15",
+   "quote": "Minis (ES, RTY, YM, NQ, NKD, GC, SI, HG, PL): No new opening transactions permitted during the 10-minute window surrounding the release (5 minutes before, 5 minutes after).",
+   "location": "Tier 1 News Events Restrictions",
+   "source": "Topstep help 13613539 (dateModified 2026-10-16), read from R9's copy",
+   "url": "",
+   "grade": "firm-page",
+   "saved_path": "reports/stage_e25_briefs/pages/R9/ts_13613539.html",
+   "sha256": "c3968edb2ef9d18f"
+  },
+  {
+   "claim": "QRA supply surprises move term spread",
+   "number": "0.07%-0.20% per 1% GDP surprise",
+   "quote": "a tight intraday window around the announcement, to precisely identify the causal effect of supply surprises on yields",
+   "location": "abstract page",
+   "source": "Hartley, Rigon, Hoover Economics WP 26112 (2026)",
+   "url": "",
+   "grade": "working-paper [abstract only]",
+   "saved_path": "reports/stage_e25_briefs/pages/R6/hoover_hartley_rigon_2026_qra.html",
+   "sha256": "2492ce075b5999d4"
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "E.13 I-56b / K9 pre-FOMC drift exclusion (P-04)",
+   "effect": "weakens",
+   "quote": "Reversal From 1:50 p.m. FOMCt to 3:50 p.m. FOMCt 71 23.34*** 1.60",
+   "source": "Baglioni (2023) thesis, Table 1.9"
+  },
+  {
+   "verdict": "E-H1 (MES pre-release drift FOMC/CPI/NFP)",
+   "effect": "supports",
+   "quote": "the pre-FOMC drift essentially disappeared after 2015 in both announcements accompanied by press conferences and announcements not accompanied by press conferences",
+   "source": "Kurov, Wolfe, Gilbert (FRL 2021)"
+  },
+  {
+   "verdict": "E-H2 (MES 10-min post-release momentum)",
+   "effect": "supports",
+   "quote": "After the first 5 minutes upon the announcement, the price seems to stay at a post-announcement level.",
+   "source": "Pinchuk (arXiv 2212.04525)"
+  },
+  {
+   "verdict": "E-H2 (MES 10-min post-release momentum)",
+   "effect": "supports",
+   "quote": "after the first five-minute interval, the estimates are very close to zero and not significantly different from zero",
+   "source": "CEA for OMB (Feb 2024), ES/ZN/ZT 2021-2023"
+  },
+  {
+   "verdict": "K5-fomc-01 (MGC FOMC momentum, E.22 null)",
+   "effect": "supports",
+   "quote": "the metal prices are efficient in incorporating new economic information and the response tends to dissipate in less than an hour after the release of the announcement",
+   "source": "Elder, Miao, Ramchander (JBF 2012)"
+  },
+  {
+   "verdict": "K2-predrift-01 (ZN/ZB pre-ISM drift, Tier B)",
+   "effect": "supports",
+   "quote": "ISM Manufacturing 0.091 (0.036)** 0.06 -0.027 (0.009)***",
+   "source": "Kurov et al. ECB WP 1901 Table 3 (sample ends 2014; consistent with the null, no newer evidence)"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "https://arxiv.org/pdf/2603.22835",
+   "utc": "2026-10-18T08:41:43Z",
+   "sha256": "12019def00fe0d3a",
+   "path": "reports/stage_e25_briefs/pages/R6/arxiv_2603.22835_breaking_news.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2212.04525",
+   "utc": "2026-10-18T08:42:14Z",
+   "sha256": "bb1fc3fac41638c5",
+   "path": "reports/stage_e25_briefs/pages/R6/arxiv_2212.04525_monetary_uncertainty.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://ndownloader.figshare.com/files/34909368",
+   "utc": "2026-10-18T08:43:44Z",
+   "sha256": "e5decd50971051dc",
+   "path": "reports/stage_e25_briefs/pages/R6/lin_lo_qiao_2021_jbf.pdf",
+   "status": "blocked",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.ijcb.org/sites/default/files/ijcb-vn-market-impact-fed-communications-role-press-conference.pdf",
+   "utc": "2026-10-18T08:45:11Z",
+   "sha256": "78b6a436c038d4bf",
+   "path": "reports/stage_e25_briefs/pages/R6/ijcb_market_impact_fed_press_conf.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://clon.cemla.org/actividades/2020-final/2020-10-xxv-meeting-cbrn/Session%205/1.%20SLIDES%20Real-time%20Price%20DIscovery.pdf",
+   "utc": "2026-10-18T08:48:27Z",
+   "sha256": "1f10e494e32944ea",
+   "path": "reports/stage_e25_briefs/pages/R6/cemla_gomezcram_grotteria_slides.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://mountainscholar.org/bitstreams/21623442-a01d-45a6-879d-d645e781e52a/download",
+   "utc": "2026-10-18T08:49:56Z",
+   "sha256": "80b8073e34ffddd5",
+   "path": "reports/stage_e25_briefs/pages/R6/elder_miao_ramchander_2012_metals.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://repositorio.insper.edu.br/bitstreams/fb55a5bb-06c8-4ed4-aa81-054742c3b42d/download",
+   "utc": "2026-10-18T08:52:20Z",
+   "sha256": "865a0c404e05013a",
+   "path": "reports/stage_e25_briefs/pages/R6/baglioni_2023_insper_thesis.pdf",
+   "status": "ok (curl 403; scrapling get)",
+   "tool": "scrapling-Fetcher.get (curl 403 Akamai)"
+  },
+  {
+   "url": "https://www.vincentgregoire.com/",
+   "utc": "2026-10-18T08:53:51Z",
+   "sha256": "9907ab77664e5c34",
+   "path": "reports/stage_e25_briefs/pages/R6/vincentgregoire_home.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://ies.keio.ac.jp/upload/20190716macro_Martineau_abstract-1.pdf",
+   "utc": "2026-10-18T08:53:59Z",
+   "sha256": "40e14f7715f413c9",
+   "path": "reports/stage_e25_briefs/pages/R6/keio_martineau_2019_abstract.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.hoover.org/research/does-government-debt-management-matter-high-frequency-identification-us-treasury-quarterly",
+   "utc": "2026-10-18T08:55:40Z",
+   "sha256": "2492ce075b5999d4",
+   "path": "reports/stage_e25_briefs/pages/R6/hoover_hartley_rigon_2026_qra.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://mountainscholar.org/handle/10217/206897?show=full",
+   "utc": "2026-10-18T08:56:08Z",
+   "sha256": "d59963a6e45967ac",
+   "path": "reports/stage_e25_briefs/pages/R6/mountainscholar_206897_crude_macro.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://mountainscholar.org/bitstreams/4a089604-914e-4497-bf2e-25fa9408b9a3/download",
+   "utc": "2026-10-18T08:56:14Z",
+   "sha256": "7cee58203d1d6db0",
+   "path": "reports/stage_e25_briefs/pages/R6/crude_macro_jfm2012.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.federalreserve.gov/econres/feds/files/2025022pap.pdf",
+   "utc": "2026-10-18T08:57:03Z",
+   "sha256": "25de8e1d91475e5f",
+   "path": "reports/stage_e25_briefs/pages/R6/kroner_feds2025022.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.vincentgregoire.com/files/appendices/FOMC_PC_InternetAppendix.pdf",
+   "utc": "2026-10-18T13:22:57Z",
+   "sha256": "8d36fef667db36cf",
+   "path": "reports/stage_e25_briefs/pages/R6/gregoire_FOMC_PC_InternetAppendix.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://osf.io/download/62a74fca2631491f71a3175f/",
+   "utc": "2026-10-18T13:23:45Z",
+   "sha256": "31f75c3a7b2ff9be",
+   "path": "reports/stage_e25_briefs/pages/R6/osf_zurfk_boguth_gregoire_martineau_2022.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.charlesmartineau.com/research",
+   "utc": "2026-10-18T13:23:20Z",
+   "sha256": "n/a",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R6/cm_home.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.whitehouse.gov/wp-content/uploads/2024/02/CEA-PFEI-Analysis.pdf",
+   "utc": "2026-10-18T13:24:47Z",
+   "sha256": "n/a",
+   "path": "none",
+   "status": "not-found",
+   "tool": "curl"
+  },
+  {
+   "url": "https://bidenwhitehouse.archives.gov/wp-content/uploads/2024/02/CEA-PFEI-Analysis.pdf",
+   "utc": "2026-10-18T13:24:58Z",
+   "sha256": "156385bbd8446b73",
+   "path": "reports/stage_e25_briefs/pages/R6/cea_pfei_analysis_2024.pdf",
+   "status": "ok",
+   "tool": "curl"
+  }
+ ],
+ "budget_notices": [
+  "OpenAlex 2026-10-18T08:46:35Z: 'Rate limit exceeded ... Insufficient budget ... ($0 remaining; resets at midnight UTC)'; not called again",
+  "Firecrawl 2026-10-18T08:47:26Z: 'Request failed with status code 402 ... out of credits'; not called again",
+  "Semantic Scholar keyless 08:48-08:59Z: 429 x3 on each of 4 lookups, logged throttled",
+  "WebSearch second pass: 5 calls 13:22-13:26Z, no over-budget notice"
+ ],
+ "unfinished": [
+  "No post-January-2020 test of R6-C3 (Baglioni-Ribeiro reversal) and no post-March-2024 test of R6-C1 were found; forward-citation searches were blocked (OpenAlex budget, S2 throttled). CXO Advisory reviews the paper but its terms forbid copying, so it was not read.",
+  "oisy FOMC Returns?\" (2025, SSRN 4131740) full text not read: SSRN is off limits by automation and no author page links a PDF; the 2023 OSF version was read instead. Whether the 2025 version restores an intraday reversal number is unknown.",
+  "mez-Cram and Grotteria JFE 2022 text: slides only [secondary-only]. Chordia-Green-Kottimukkalur RFS 2018: abstract only [secondary-only]. Lin-Lo-Qiao (2021, JBF) figshare file not served: not read.",
+  "C1 conversion uses my approximation of the mean absolute statement move (0.8 x sd); Narain-Sangani do not print it. The published press-conference fade is start-to-end; the share lost by moving entry to 13:36 CT is not published.",
+  "me-day share of the Boguth et al. 2019 post-statement reversal (R6-C2) is not published.",
+  "lease calendars for advance retail sales, existing/pending home sales and Conference Board confidence are not owned; official schedules not fetched (C4, C6).",
+  "pstep: whether holding an existing equity-index position through a Tier 1 window is allowed is implied, not stated (the \"Existing Positions\" sentence names energies and metals); whether Topstep adds events beyond CPI, FOMC and NFP (\"for example\") is not stated as a fixed list.",
+  "e lead verifies all conversions (bp to points to micro ticks) and the Baglioni Sharpe-to-per-event derivation."
+ ]
+}

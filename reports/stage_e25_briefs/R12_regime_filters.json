@@ -1,0 +1,525 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "R12-RegimeFilters-OpusHigh",
+ "finished_utc": "2026-10-18T08:57:00Z",
+ "candidates": [
+  {
+   "id": "R12-C1",
+   "hypothesis": "Short MES (MNQ, MYM) at the RTH open on the monthly a.m.-settlement Friday (3rd Friday SOQ day); cover by about noon ET or at the close",
+   "mechanism": "3rd Friday Price Spike: prices pushed up overnight into the a.m. SOQ (dealer charm hedging or thin-overnight price pressure), then revert after settlement",
+   "instruments": [
+    "MES",
+    "MNQ",
+    "MYM"
+   ],
+   "entry_window_ct": "08:30",
+   "hold": "to about 11:00 CT (reverts by about noon ET) or 15:00 CT (published leg)",
+   "trades_per_year": 12,
+   "best_source": "Baltussen, Terstegge, Whelan, The Derivative Payoff Bias (Sept 2024 version, AEA 2025)",
+   "source_url": "https://www.aeaweb.org/conference/2025/program/paper/N7rsBN2N",
+   "grade": "working-paper",
+   "sample": "ES futures 2003-2021",
+   "post_2015_or_oos": "post-2015 in sample (to 2021); no OOS or post-publication test found",
+   "published_effect": "ES futures 3rd-Friday open-to-close mean -12.89 bp (index -16.42 bp)",
+   "price_level_used": "ES 6,000",
+   "gross_per_trade_points": 7.73,
+   "gross_per_trade_micro_ticks": 30.9,
+   "micro": "MES",
+   "gross_or_net": "gross",
+   "dispersion": "t -2.40, sd 80.45 bp per event, about 227 events (12 x 19 years)",
+   "quote": "Panel (b) Futures ... mean ... 14.30 -12.89 ... t-stat ... 3.54 -2.40 ... Std ... 60.53 80.45",
+   "quote_location": "Table II, Thclose-Fropen and Fropen-Frclose columns",
+   "decay_evidence": "none found after 2021; publicised Sept 2023 (press, pointer); a 2026 SSRN title on a regime shift in expiration dynamics 2016-2025 is unread [unverified]",
+   "data_needed": "1-min bars; monthly a.m.-settlement calendar (holiday shift rule unverified)",
+   "owned": "yes",
+   "data_cost": "none",
+   "research_window_testable": "partial",
+   "why": "about 15 events in 2025-04..2026-06, some in roll blackout; low power",
+   "prop_notes": "08:30-11:00/15:00 CT inside the Topstep day; not a scheduled-release trade unless a release coincides; automation allowed",
+   "overlap_ids": [
+    "E-H3",
+    "K7-expiry-01"
+   ],
+   "overlap_note": "E-H3 shorted 14:30-15:00 CT on quarterly witching; this is the open-to-noon window monthly; the paper finds no p.m. pattern"
+  },
+  {
+   "id": "R12-C2",
+   "hypothesis": "Long MES from the 17:00 CT Globex reopen on the 3rd Thursday to the 08:30 CT open on the 3rd Friday (Topstep-legal part of the overnight spike leg)",
+   "mechanism": "same as R12-C1 (pre-SOQ price pressure)",
+   "instruments": [
+    "MES",
+    "MNQ",
+    "MYM"
+   ],
+   "entry_window_ct": "17:00 Thu",
+   "hold": "to 08:30 CT Fri",
+   "trades_per_year": 12,
+   "best_source": "Baltussen, Terstegge, Whelan (2024)",
+   "source_url": "https://www.aeaweb.org/conference/2025/program/paper/N7rsBN2N",
+   "grade": "working-paper",
+   "sample": "ES futures 2003-2021",
+   "post_2015_or_oos": "as C1",
+   "published_effect": "ES futures Thursday close to Friday open +14.30 bp (index +18.24 bp, t 4.53); the share after 17:00 CT is not stated in the text",
+   "price_level_used": "ES 6,000",
+   "gross_per_trade_points": 8.58,
+   "gross_per_trade_micro_ticks": 34.3,
+   "micro": "MES",
+   "gross_or_net": "gross",
+   "dispersion": "t 3.54, sd 60.53 bp; upper bound because the published leg starts at the RTH close",
+   "quote": "a tent-shaped reversal pattern from the close of regular trading on 3rd Thursdays, which peaks exactly when the SOQ is calculated on 3rd Fridays and fully reverts afterward by about noon 3rd Friday",
+   "quote_location": "Introduction p. 2; Table II",
+   "decay_evidence": "as C1",
+   "data_needed": "1-min bars incl. ETH; calendar",
+   "owned": "yes",
+   "data_cost": "none",
+   "research_window_testable": "partial",
+   "why": "about 15 events",
+   "prop_notes": "overnight within one Topstep trading day (17:00-15:10 CT) is allowed; the 15:10-17:00 CT part of the published leg is not tradeable at Topstep",
+   "overlap_ids": [
+    "A-H1",
+    "E-H1"
+   ],
+   "overlap_note": "tested overnight holds were clock- or release-triggered, not settlement-triggered"
+  },
+  {
+   "id": "R12-C3",
+   "hypothesis": "First-30-min RTH return sign traded over the last 30 min (14:30-15:00 CT), only on days whose first-30-min 1-min realized volatility is in the top tercile (expanding-window cutoff)",
+   "mechanism": "intraday momentum (informed or late-informed trading) stronger on high-volatility days",
+   "instruments": [
+    "MES",
+    "MNQ"
+   ],
+   "entry_window_ct": "14:30",
+   "hold": "30 min",
+   "trades_per_year": 84,
+   "best_source": "Gao, Han, Li, Zhou, Market Intraday Momentum (WP Dec 2015; JFE 129(2) 2018)",
+   "source_url": "https://c.mql5.com/forextsd/forum/173/intraday_momentum_-_the_first_half-hour_return_predicts_the_last_half-hour_return.pdf",
+   "grade": "working-paper",
+   "sample": "SPY 1993-2013",
+   "post_2015_or_oos": "recursive OOS timing inside 1993-2013 but terciles sorted on the full sample; no post-2013 VIX/vol-conditioned replication found",
+   "published_effect": "eta(r1) 14.73% p.a. high tercile (x252) = 5.85 bp per trade; unconditional 6.67% p.a. = 2.65 bp; medium 4.75% = 1.89 bp; low 0.54% = 0.21 bp",
+   "price_level_used": "ES 6,000",
+   "gross_per_trade_points": 3.51,
+   "gross_per_trade_micro_ticks": 14.0,
+   "micro": "MES",
+   "gross_or_net": "gross",
+   "dispersion": "high tercile t 3.80, Sharpe 1.63, sd 9.06% p.a.; unconditional Sharpe 1.08; unconditional gross 6.4 MES ticks",
+   "quote": "The average return per annum (and its t-statistic) of the η(r1 ) strategy rises substantially from 0.54% (0.43) in the low volatility group, to 4.75% (2.27) in the medium volatility group, and then to 14.73% (3.80) in the high volatility group.",
+   "quote_location": "Section 3.1.2, Table 5 Panel A",
+   "decay_evidence": "Rosa 2022 abstract: predictability disappears out of sample; program E20H6 T1 gross 1.25 ticks on NQ (rest-of-day form)",
+   "data_needed": "1-min bars",
+   "owned": "yes",
+   "data_cost": "none",
+   "research_window_testable": "yes",
+   "why": "",
+   "prop_notes": "14:30-15:00 CT, flat before 15:10 CT",
+   "overlap_ids": [
+    "K1-cp1-01",
+    "E20H6-T1",
+    "E20H6-T2",
+    "gate0A_*",
+    "D-H1",
+    "RT6"
+   ],
+   "overlap_note": "same base as K1-cp1/E20H6; the new element is the first-30-min realized-vol tercile gate (Gate 0 had vol only as a separate linear feature)"
+  },
+  {
+   "id": "R12-C4",
+   "hypothesis": "First-30-min momentum into the last 30 min on FOMC announcement days only",
+   "mechanism": "information carry-over on news days",
+   "instruments": [
+    "MES",
+    "MNQ"
+   ],
+   "entry_window_ct": "14:30",
+   "hold": "30 min",
+   "trades_per_year": 8,
+   "best_source": "Gao et al. WP 2015 Table 8",
+   "source_url": "https://c.mql5.com/forextsd/forum/173/intraday_momentum_-_the_first_half-hour_return_predicts_the_last_half-hour_return.pdf",
+   "grade": "working-paper",
+   "sample": "SPY 1993-2013",
+   "post_2015_or_oos": "no",
+   "published_effect": "FOMC-day eta(r1) 20.04% p.a. (x252) = 7.95 bp per trade",
+   "price_level_used": "ES 6,000",
+   "gross_per_trade_points": 4.77,
+   "gross_per_trade_micro_ticks": 19.1,
+   "micro": "MES",
+   "gross_or_net": "gross",
+   "dispersion": "not extracted",
+   "quote": "The greatest economic gains are delivered on the release days of the FOMC minutes. The annualized average return reaches a high level of 20.04%. This is close to four times the level on days without FOMC news.",
+   "quote_location": "Section 4, Table 8 Panel B",
+   "decay_evidence": "Mesfin 2026: event-day trend on MNQ 2022-25 null (different rule)",
+   "data_needed": "1-min bars, FOMC calendar",
+   "owned": "yes",
+   "data_cost": "none",
+   "research_window_testable": "partial",
+   "why": "about 10 FOMC days in the window",
+   "prop_notes": "entry 90 min after the 13:00 CT release; P06 not binding",
+   "overlap_ids": [
+    "K9-anncday-01",
+    "E-H1",
+    "E-H2",
+    "K1-cp1-01"
+   ],
+   "overlap_note": "announcement days tested as drift or 5-min post-release momentum, not first-30-min momentum"
+  },
+  {
+   "id": "R12-C5",
+   "hypothesis": "MNQ London-session long after a clean GMM regime transition (Bearish Chop to Bullish Drift, no Extreme-Vol bar in the prior 2) on 15-min bars, 03:00-08:30 ET",
+   "mechanism": "regime-transition momentum (author's claim)",
+   "instruments": [
+    "MNQ"
+   ],
+   "entry_window_ct": "02:00-07:30",
+   "hold": "60 min or to 07:30 CT; 20-pt stop",
+   "trades_per_year": 80,
+   "best_source": "Mesfin, Structural Limits of OHLCV-Based Intraday Momentum Signals in MNQ Futures, arXiv 2605.04004 (May 2026)",
+   "source_url": "https://arxiv.org/pdf/2605.04004",
+   "grade": "working-paper",
+   "sample": "MNQ 5/15-min 2021-2025",
+   "post_2015_or_oos": "walk-forward OOS, GMM refit per fold",
+   "published_effect": "OOS mean net +4.09 MNQ points at 2.0-pt round-trip friction",
+   "price_level_used": "as published (points)",
+   "gross_per_trade_points": 6.09,
+   "gross_per_trade_micro_ticks": 24.4,
+   "micro": "MNQ",
+   "gross_or_net": "net",
+   "dispersion": "T 4.30, N 247, per-trade sd 14.97 pts (Sharpe 0.27), p 0.000025; static N 289 T 5.15 net +5.77",
+   "quote": "London Session Signal B (walk-forward OOS T = 4.30, mean net +4.09 points, N = 247, p = 0.000025)",
+   "quote_location": "Abstract; Table 11; Appendix A.2",
+   "decay_evidence": "Table 12: sign flip under a one-bar delay; idealized stop fills; single unreviewed author",
+   "data_needed": "1-min bars incl. ETH",
+   "owned": "yes",
+   "data_cost": "none",
+   "research_window_testable": "yes",
+   "why": "gross = published net + 2.0-pt friction",
+   "prop_notes": "night session inside the Topstep day; unattended automation; stop slippage",
+   "overlap_ids": [
+    "A-H1"
+   ],
+   "overlap_note": "same session as european-open drift but regime-triggered"
+  },
+  {
+   "id": "R12-C6",
+   "hypothesis": "MNQ RTH long on a pullback of 25 x ATR_ratio pts within 6 bars when the GMM regime is Active Flow, the rolling Markov P(1->2) > 0.15 and volume z > 0.5; exit at bar 13",
+   "mechanism": "regime-gated pullback (author's claim)",
+   "instruments": [
+    "MNQ"
+   ],
+   "entry_window_ct": "RTH",
+   "hold": "13 five-min bars",
+   "trades_per_year": 65,
+   "best_source": "Mesfin (2026) arXiv 2605.04004",
+   "source_url": "https://arxiv.org/pdf/2605.04004",
+   "grade": "working-paper",
+   "sample": "MNQ 2022-2025",
+   "post_2015_or_oos": "walk-forward OOS; W1 fold contaminated; ATR baseline fixed on the full in-sample",
+   "published_effect": "OOS mean net +11.82 MNQ points at 2.0-pt friction",
+   "price_level_used": "as published (points)",
+   "gross_per_trade_points": 13.82,
+   "gross_per_trade_micro_ticks": 55.3,
+   "micro": "MNQ",
+   "gross_or_net": "net",
+   "dispersion": "T 3.11, sd 53.8 pts, N 196",
+   "quote": "Walk-forward OOS T-statistic (net) 3.11 ... Walk-forward OOS mean net return +11.82 pts",
+   "quote_location": "Table 10",
+   "decay_evidence": "53+ combinations searched before locking; idealized stop fills; contaminated fold",
+   "data_needed": "1-min bars",
+   "owned": "yes",
+   "data_cost": "none",
+   "research_window_testable": "yes",
+   "why": "gross = net + 2.0-pt friction",
+   "prop_notes": "RTH, flat by 15:10 CT",
+   "overlap_ids": [
+    "C-H1",
+    "D-H1",
+    "D-H3"
+   ],
+   "overlap_note": "multi-feature regime gate plus pullback; not tested"
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "3FPS futures legs",
+   "number": "+14.30 / -12.89 bp",
+   "quote": "Panel (b) Futures mean ... 14.30 -12.89 ... t-stat ... 3.54 -2.40",
+   "location": "Table II",
+   "source": "Baltussen, Terstegge, Whelan 2024",
+   "url": "https://www.aeaweb.org/conference/2025/program/paper/N7rsBN2N",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R12/aea2025_derivative_payoff_bias.pdf",
+   "sha256": "b98e7372007c43295265ac704ec260541d885653ef6ec415cb74258d8f29adb3"
+  },
+  {
+   "claim": "3FPS two-leg trade after costs",
+   "number": "27.48 gross / 24.20 net bp",
+   "quote": "Panel (a): Excluding Trade Costs mean 27.48 0.10 t-stat 3.94 ... Panel (b): Including Trade Costs mean 24.20 -3.18 t-stat 3.47",
+   "location": "Table A.4",
+   "source": "Baltussen, Terstegge, Whelan 2024",
+   "url": "https://www.aeaweb.org/conference/2025/program/paper/N7rsBN2N",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R12/aea2025_derivative_payoff_bias.pdf",
+   "sha256": "b98e7372007c43295265ac704ec260541d885653ef6ec415cb74258d8f29adb3"
+  },
+  {
+   "claim": "No p.m.-settlement pattern",
+   "number": "none",
+   "quote": "Around the p.m. settlement window there is no corresponding pattern, highlighting the specialness of the a.m. settlement window.",
+   "location": "p. 3",
+   "source": "Baltussen, Terstegge, Whelan 2024",
+   "url": "https://www.aeaweb.org/conference/2025/program/paper/N7rsBN2N",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R12/aea2025_derivative_payoff_bias.pdf",
+   "sha256": "b98e7372007c43295265ac704ec260541d885653ef6ec415cb74258d8f29adb3"
+  },
+  {
+   "claim": "Intraday momentum by first-30-min volatility tercile",
+   "number": "0.54 / 4.75 / 14.73 % p.a.",
+   "quote": "rises substantially from 0.54% (0.43) in the low volatility group, to 4.75% (2.27) in the medium volatility group, and then to 14.73% (3.80) in the high volatility group",
+   "location": "Section 3.1.2, Table 5",
+   "source": "Gao, Han, Li, Zhou WP 2015 (JFE 2018)",
+   "url": "https://c.mql5.com/forextsd/forum/173/intraday_momentum_-_the_first_half-hour_return_predicts_the_last_half-hour_return.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/shared/gao_han_li_zhou_wp2015_mql5.pdf.txt",
+   "sha256": "see E.20 log"
+  },
+  {
+   "claim": "Gao annualization x252",
+   "number": "252",
+   "quote": "we still annualize the returns multiplying by a factor of 252 because we only trade once per day",
+   "location": "footnote 7",
+   "source": "Gao et al. WP 2015",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/shared/gao_han_li_zhou_wp2015_mql5.pdf.txt",
+   "sha256": "see E.20 log"
+  },
+  {
+   "claim": "Gao after costs post-2005",
+   "number": "7.96 gross / 6.52 net % p.a.",
+   "quote": "The average return of market timing using the first half-hour return is 6.52% after transaction costs compared with 7.96% before transaction costs.",
+   "location": "Section 5.2",
+   "source": "Gao et al. WP 2015",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/shared/gao_han_li_zhou_wp2015_mql5.pdf.txt",
+   "sha256": "see E.20 log"
+  },
+  {
+   "claim": "ORB volatility state is in-sample; GARCH no help",
+   "number": "n/a",
+   "quote": "We tried various ARCH and GARCH specifications to predict the volatility state, but without improving the results in any significant way.",
+   "location": "footnote 2 p. 17",
+   "source": "Lundström, Umeå Economic Studies 861 (rev. 2017)",
+   "url": "http://www.usbe.umu.se/digitalAssets/194/194520_ues861.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R12/lundstrom_ues861.pdf",
+   "sha256": "7c71f315bd897780eda0c35328eb1cb966974bc929df240b7fb85fd7d7bf631d"
+  },
+  {
+   "claim": "Overnight drift amplified by VIX",
+   "number": "2.6 / 6.1 / about 0 bp",
+   "quote": "With the VIX at its 90th percentile (30%) the return response is 6.1 basis points and with the VIX at its 10th percentile (12 %) there is close to zero effect.",
+   "location": "Section IV p. 24-25",
+   "source": "Boyarchenko, Larsen, Whelan, NY Fed SR 917 (RFS 2023)",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr917.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R12/nyfed_sr917_overnight_drift.pdf",
+   "sha256": "403276b2ea8227c14ccfb854014af1df6a425430e5f622599640d7c0c16e683a"
+  },
+  {
+   "claim": "Buy-the-dip overnight after costs",
+   "number": "6.07 gross / 4.04 net % p.a.",
+   "quote": "RSVt−1 close < 0 ... Mean ... 6.07 (a) Without Transaction Costs ... 4.04 (b) With Transaction Costs",
+   "location": "Table IX",
+   "source": "Boyarchenko, Larsen, Whelan SR 917",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr917.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R12/nyfed_sr917_overnight_drift.pdf",
+   "sha256": "403276b2ea8227c14ccfb854014af1df6a425430e5f622599640d7c0c16e683a"
+  },
+  {
+   "claim": "Overnight drift flat 2021-25",
+   "number": "about 0",
+   "quote": "The 2:00–3:00 window—previously responsible for more than 60 percent of the contract’s 5.9 percent annualized close-to-close return—is flat. The same pattern holds in the E-mini Nasdaq-100 (NQ) and E-mini Dow Jones (YM) contracts.",
+   "location": "post body",
+   "source": "Boyarchenko, Larsen, Whelan, Liberty Street Economics 2026-07-01",
+   "url": "https://libertystreeteconomics.newyorkfed.org/2026/07/the-disappearing-overnight-drift/",
+   "grade": "exchange-regulator",
+   "saved_path": "reports/stage_e25_briefs/pages/R12/lse_disappearing_overnight_drift.html",
+   "sha256": "3af27dbb6b8f3c97d3c4b3f86c3afdfd670263b1c6bca50f20a39f465549318e"
+  },
+  {
+   "claim": "MNQ OHLCV families below friction",
+   "number": "0.07-1.50 pts gross",
+   "quote": "Eleven signal families fail because their maximum gross return before friction is 0.07 to 1.50 points per trade, below the 2.0-point MNQ friction floor.",
+   "location": "Abstract",
+   "source": "Mesfin 2026 arXiv 2605.04004",
+   "url": "https://arxiv.org/pdf/2605.04004",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R12/arxiv_2605.04004.pdf",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80"
+  },
+  {
+   "claim": "VVG regime classifier fails",
+   "number": "T 1.46 best",
+   "quote": "Eight directional configurations were tested. None passed. Best result: T = 1.46, mean net +7.80 points, 127 OOS trades",
+   "location": "Abstract",
+   "source": "Mesfin 2026 arXiv 2605.11423",
+   "url": "https://arxiv.org/pdf/2605.11423",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R12/arxiv_2605.11423.pdf",
+   "sha256": "70501c60f354060a1ed23f209d82eb7a84482f4372620f0481e18afe894fbe6d"
+  },
+  {
+   "claim": "Opening-move reversals in index futures cut by costs",
+   "number": "n/a",
+   "quote": "the significance of intraday price reversals is sharply reduced when gross trading results are adjusted by a bid-ask proxy for transactions costs",
+   "location": "abstract (Montclair Pure page) [secondary-only]",
+   "source": "Grant, Wolf, Yu, JBF 29(5) 2005",
+   "url": "https://researchwith.montclair.edu/en/publications/intraday-price-reversals-in-the-us-stock-index-futures-market-a-1/",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R12/montclair_grant_wolf_yu_2005.html",
+   "sha256": "a29bfae4484ae1d5038f0e01637374845534b5974cacf9f9c01b1c474a544095"
+  },
+  {
+   "claim": "VIX filter does not help short trades (Beat the Market)",
+   "number": "p 0.91",
+   "quote": "we found no significant relationship between VIX and short trade profitability",
+   "location": "Appendix Q19",
+   "source": "Zarattini, Aziz, Barbon 2024 (R10 owns)",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/shared/zarattini_aziz_barbon_beat_the_market.pdf.txt",
+   "sha256": "see E.20 log"
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "D.1 A-H1 (european-open overnight drift) FAIL",
+   "effect": "supports",
+   "quote": "Five additional years of data later, that pattern appears to have faded: the 2:00–3:00 window that previously generated roughly 3.7 percent per annum has averaged close to zero since 2021.",
+   "source": "Boyarchenko, Larsen, Whelan, Liberty Street Economics 2026-07-01"
+  },
+  {
+   "verdict": "E20H6 T1-T3 FAIL; K1-cp1-01 Tier B",
+   "effect": "supports",
+   "quote": "Eleven signal families fail because their maximum gross return before friction is 0.07 to 1.50 points per trade, below the 2.0-point MNQ friction floor.",
+   "source": "Mesfin 2026 arXiv 2605.04004"
+  },
+  {
+   "verdict": "D-H1/RT6, Gate 0 g09_vol_state (vol-regime gates) FAIL",
+   "effect": "supports",
+   "quote": "We tried various ARCH and GARCH specifications to predict the volatility state, but without improving the results in any significant way.",
+   "source": "Lundström, Umeå Economic Studies 861"
+  },
+  {
+   "verdict": "D.1 E-H3 (quarterly witching last half hour) FAIL",
+   "effect": "supports",
+   "quote": "Around the p.m. settlement window there is no corresponding pattern, highlighting the specialness of the a.m. settlement window.",
+   "source": "Baltussen, Terstegge, Whelan 2024"
+  },
+  {
+   "verdict": "K1-cp2 opening-range family Tier B",
+   "effect": "supports",
+   "quote": "ORB long at bar+15 produces T = 0.88 on 447 OOS trades, mean net +2.82 points.",
+   "source": "Mesfin 2026 arXiv 2605.04004"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "https://arxiv.org/pdf/2605.04004",
+   "utc": "2026-10-18T08:41:44Z",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80",
+   "path": "reports/stage_e25_briefs/pages/R12/arxiv_2605.04004.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr917.pdf",
+   "utc": "2026-10-18T08:42:40Z",
+   "sha256": "403276b2ea8227c14ccfb854014af1df6a425430e5f622599640d7c0c16e683a",
+   "path": "reports/stage_e25_briefs/pages/R12/nyfed_sr917_overnight_drift.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://libertystreeteconomics.newyorkfed.org/2026/07/the-disappearing-overnight-drift/",
+   "utc": "2026-10-18T08:43:41Z",
+   "sha256": "3af27dbb6b8f3c97d3c4b3f86c3afdfd670263b1c6bca50f20a39f465549318e",
+   "path": "reports/stage_e25_briefs/pages/R12/lse_disappearing_overnight_drift.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://swopec.hhs.se/umnees/abs/umnees0861.htm (+0948, 0845)",
+   "utc": "2026-10-18T08:45:55Z",
+   "sha256": "",
+   "path": "reports/stage_e25_briefs/pages/R12/swopec_umnees0861.htm",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "http://www.usbe.umu.se/digitalAssets/194/194520_ues861.pdf",
+   "utc": "2026-10-18T08:46:23Z",
+   "sha256": "7c71f315bd897780eda0c35328eb1cb966974bc929df240b7fb85fd7d7bf631d",
+   "path": "reports/stage_e25_briefs/pages/R12/lundstrom_ues861.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2605.11423",
+   "utc": "2026-10-18T08:48:54Z",
+   "sha256": "70501c60f354060a1ed23f209d82eb7a84482f4372620f0481e18afe894fbe6d",
+   "path": "reports/stage_e25_briefs/pages/R12/arxiv_2605.11423.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.aeaweb.org/conference/2025/program/paper/N7rsBN2N",
+   "utc": "2026-10-18T08:49:35Z",
+   "sha256": "b98e7372007c43295265ac704ec260541d885653ef6ec415cb74258d8f29adb3",
+   "path": "reports/stage_e25_briefs/pages/R12/aea2025_derivative_payoff_bias.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/jbfina/v29y2005i5p1311-1327.html",
+   "utc": "2026-10-18T08:51:06Z",
+   "sha256": "4c4118c061c35b42496c84158b2c478e8ca7f1eb97824cae31bbc2c6a34fe2f7",
+   "path": "reports/stage_e25_briefs/pages/R12/ideas_grant_wolf_yu_2005.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://researchwith.montclair.edu/en/publications/intraday-price-reversals-in-the-us-stock-index-futures-market-a-1/",
+   "utc": "2026-10-18T08:51:12Z",
+   "sha256": "a29bfae4484ae1d5038f0e01637374845534b5974cacf9f9c01b1c474a544095",
+   "path": "reports/stage_e25_briefs/pages/R12/montclair_grant_wolf_yu_2005.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://api.semanticscholar.org/graph/v1/paper/search",
+   "utc": "2026-10-18T08:44Z/08:46Z/08:51Z",
+   "sha256": "",
+   "path": "",
+   "status": "throttled",
+   "tool": "curl"
+  }
+ ],
+ "budget_notices": [
+  "2026-10-18T08:44Z OpenAlex free daily budget exhausted (no API key in .env); no further OpenAlex calls",
+  "2026-10-18T08:44Z, 08:46Z, 08:51Z Semantic Scholar keyless 429 (throttled)",
+  "2026-10-18T08:41Z Firecrawl firecrawl_search 429; 2026-10-18T08:52Z Firecrawl 402 out of credits",
+  "WebSearch 8 of 45 used; no over-budget notice"
+ ],
+ "unfinished": [
+  "3FPS Nasdaq-100/Dow numbers and the after-17:00-CT share of the overnight leg not extracted; no post-2021 test found",
+  "Gao FOMC-day t-stat not extracted; numbers are from the 2015 WP, not the JFE 2018 version",
+  "forward citations of Gao 2018 and Baltussen-Terstegge-Whelan not searched (OpenAlex exhausted, S2 throttled)",
+  "SSRN-only titles unread [unverified]: Fetna 2026 ORB pre-registered 225-cell (10.2139/ssrn.7428398); Delgado 2026 Beat the Market revisited (10.2139/ssrn.7323419); Elms 2026 pinning to amplification 2016-2025 (10.2139/ssrn.6564078)",
+  "no study found on VIX/VIX3M, VIX9D or VIX1D filters for intraday ES/NQ trades (search gap, not proof of absence)",
+  "Grant, Wolf, Yu 2005: abstract only"
+ ]
+}

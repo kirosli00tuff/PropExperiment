@@ -1,0 +1,436 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "RD2-Redig-Rates-OpusHigh",
+ "finished_utc": "2026-10-18T08:59:42Z",
+ "candidates": [
+  {
+   "id": "RD2-C1",
+   "hypothesis": "Long long-dated Treasury futures during the New York session of the trading day before the Treasury's quarterly refunding Primary Release (pre-TRA day, usually a Friday); flat by 15:05 CT",
+   "mechanism": "resolution of fiscal/Treasury-market uncertainty before the quarterly refunding announcement (term-premium compression; authors' uncertainty-reduction channel)",
+   "instruments": [
+    "ZN",
+    "ZB",
+    "UB",
+    "ZF"
+   ],
+   "entry_window_ct": "06:30 CT (07:30 ET, NY open) or 17:00 CT session open of the pre-TRA trading day; exit <= 15:05 CT",
+   "hold": "about 8.5 h (one trading day)",
+   "trades_per_year": 4,
+   "best_source": "Wang, Zhao, Pre-Refunding Announcement Gains in U.S. Treasurys, draft July 16 2025 (first version March 18 2024), OSF preprint xucf8",
+   "source_url": "https://osf.io/xucf8/download",
+   "grade": "working-paper",
+   "sample": "CRSP daily Treasury returns 1991Q4-2023 (129 pre-TRA days); Tradeweb minute quotes 2006-2023 for intraday",
+   "post_2015_or_oos": "post-2002 subsample 10-year 15.48 bp (t 3.27, N 88) includes 2015-2023; no out-of-sample or post-2023 replication found; research window 2025-04..2026-06 (about 5 events) is post-publication",
+   "published_effect": "10-year cash Treasury +12.62 bp on pre-TRA days (daily close-to-close, sd 43.15, N 129, t 3.32); intraday: '10-year Treasury rising by over 10 bps' in the NY morning; 30-year +24.33 bp; 5-year +8.25 bp",
+   "price_level_used": "ZN 110 (1 tick = 1.42 bp); ZN price change = 0.69 x 10-year cash (E.20 assumption)",
+   "gross_per_trade_points": 0.0958,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "none (no micro 10-year note; 1 ZN = $15.625/tick). ZN ticks: 6.13 (daily mean), 4.86 (intraday >10 bp lower bound), 4.19 (non-ZLB 8.62 bp)",
+   "gross_or_net": "gross",
+   "dispersion": "per-event sd 43.15 bp (cash 10-year), about 21 ZN ticks; t 3.32; N 129; strategy Sharpe 4.50 (10-year, annualized, 4 trades/yr, gross)",
+   "quote": "A significant upward price movement in Treasurys begins early in the New York trading session on the day preceding the TRA (Day −1). Prices increase notably in the morning, with the 10-year Treasury rising by over 10 bps, and then continue to increase marginally for the remainder of New York trading hours.",
+   "quote_location": "Section 4.3, p. 19; Table 2 Panel A; Table 6",
+   "decay_evidence": "none reported; effect larger after 2002 (10-year 6.48 bp pre-2002 vs 15.48 post-2002); weak in downward-sloping curve (4.71, t 0.36, N 10), Q2 (-2.81), recessions (-2.18)",
+   "data_needed": "ZN/ZB/UB/ZF 1-minute bars (owned); TRA (Primary Release) dates from Treasury quarterly refunding press releases (public, free; not in owned calendars; paper's Table 1 lists 1991-2023)",
+   "owned": "partial",
+   "data_cost": "TRA dates free (home.treasury.gov press releases; terms not checked by RD2); bars owned",
+   "research_window_testable": "partial",
+   "why": "ZN is in the research window, but only about 5 pre-TRA days fall in 2025-04..2026-06; 2010-2024 owned bars give about 55 events",
+   "prop_notes": "flat by 15:05 CT; pre-TRA Fridays can be NFP Fridays or month-end days: P06 caps size into scheduled major releases; no micro, 1 ZN minimum; 4 trades a year cannot carry Topstep consistency rules alone",
+   "overlap_ids": [
+    "K2-monthend-01",
+    "E23-MEZNh5",
+    "E16-H3"
+   ],
+   "overlap_note": "no member uses TRA dates; partial date overlap with month-end members (paper controls EOM and effect survives); auction-cycle members trade the following week's auctions"
+  },
+  {
+   "id": "RD2-C2",
+   "hypothesis": "Long ZN from 19:00 ET on day -2 (Tokyo open, the evening before a scheduled FOMC meeting's first day) to 12:00 ET on day -1 (London close)",
+   "mechanism": "pre-FOMC risk-premium (term-premium) drift in long-term Treasuries realized during Asian and London hours, earlier than the equity pre-FOMC drift",
+   "instruments": [
+    "ZN"
+   ],
+   "entry_window_ct": "18:00 CT on day -2 (start of Topstep trading day for day -1); exit 11:00 CT day -1",
+   "hold": "17 h inside one Topstep trading day",
+   "trades_per_year": 8,
+   "best_source": "Pan, Peng, The Pre-FOMC Drift in Long-Term Treasury Bonds, SAIF draft June 2 2026 (first draft May 31 2023)",
+   "source_url": "https://en.saif.sjtu.edu.cn/junpan/FOMC_new.pdf (E.20 disk copy reports/stage_e20_briefs/pages/ZT/pan_peng_fomc_2026.pdf)",
+   "grade": "working-paper",
+   "sample": "10-year Treasury note futures intraday 2004-01..2025-06; daily zero-coupon yields 1994-09..2025-12, 250 scheduled FOMC announcements",
+   "post_2015_or_oos": "sample runs to 2025-06; no separate post-2015 intraday figure; excluding 2008-2009 daily 10-year yield -0.70 (t -2.29); no independent replication found",
+   "published_effect": "'The average 10-year Treasury return over this non-U.S. trading window is approximately 7.26 basis points, with a statistically significant t-statistic of 2.82'; rest of day -1 (12:00-17:00 ET) -2.05 bp (t -1.76); daily 10-year zero yield -0.79 bp (t -2.39)",
+   "price_level_used": "ZN 110 (1 tick = 1.42 bp)",
+   "gross_per_trade_points": 0.0799,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "none (1 ZN). ZN ticks: 5.11 if 7.26 bp is a ZN futures return (Figure 2 plots 10-year note futures); 3.53 if a cash 10-year return (x 0.69)",
+   "gross_or_net": "gross",
+   "dispersion": "t 2.82 over about 170 meetings (2004-2025, count not stated for the intraday sample); per-event sd not published",
+   "quote": "The average cumulative return on U.S. Treasury futures begins to rise at 19:00 ET on day -2, coinciding with the start of the Tokyo market, and peaks at 12:00 ET on day -1, aligning with the closing of the London market. The average 10-year Treasury return over this non-U.S. trading window is approximately 7.26 basis points, with a statistically significant t-statistic of 2.82.",
+   "quote_location": "Section 3.1, pp. 12-13; Figure 2",
+   "decay_evidence": "regime-dependent: authors link it to 'the post-2008 QE environment'; QE3 dummy positive (yield up) 0.84/1.92**; Lucca-Moench's 2pm-to-2pm window shows nothing; window chosen ex post from the figure",
+   "data_needed": "ZN 1-minute bars including the overnight session (owned, Globex ohlcv-1m); FOMC statement dates (owned)",
+   "owned": "yes",
+   "data_cost": "none (owned)",
+   "research_window_testable": "yes",
+   "why": "ZN and FOMC dates in the research window (about 10 meetings 2025-04..2026-06; partly inside the paper's sample to 2025-06)",
+   "prop_notes": "entry 18:00 CT is in the overnight session; exit 11:00 CT; flat well before 15:10 CT; day -1 can coincide with 07:30 CT releases (CPI etc.): P06; overnight liquidity and cost outside D8's day-session bucket [unverified]",
+   "overlap_ids": [
+    "K2-fomcpost-01",
+    "E-H1",
+    "K5-fomc-01",
+    "E-H2"
+   ],
+   "overlap_note": "tested FOMC members trade day 0 (statement day) on rates, MES or MGC; none holds rates on day -1"
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "Pre-TRA 10-year daily return",
+   "number": "12.62 bp, sd 43.15, N 129",
+   "quote": "10Y 129        12.62       43.15      -97.92     121.41     7,933      1.82",
+   "location": "Table 2 Panel A",
+   "source": "Wang, Zhao, Pre-Refunding Announcement Gains in U.S. Treasurys, draft July 16 2025 (first version March 18 2024), OSF preprint xucf8",
+   "url": "https://osf.io/xucf8/download",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD2/wang_zhao_2024_prerefunding.pdf",
+   "sha256": "3fc6bc4f466de4a2a49d11d4598b796a2761119499f2ba5abfdf6cf01476a855"
+  },
+  {
+   "claim": "Pre-TRA subsamples",
+   "number": "full 12.62 (t 3.32); post-2002 15.48 (t 3.27); non-ZLB 8.62 (t 2.19); downward-sloping 4.71 (t 0.36)",
+   "quote": "Post-2002                 88      0.57          [0.53]    9.97∗∗∗      [3.66]    15.48∗∗∗    [3.27]",
+   "location": "Table 6",
+   "source": "Wang, Zhao, Pre-Refunding Announcement Gains in U.S. Treasurys, draft July 16 2025 (first version March 18 2024), OSF preprint xucf8",
+   "url": "https://osf.io/xucf8/download",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD2/wang_zhao_2024_prerefunding.pdf",
+   "sha256": "3fc6bc4f466de4a2a49d11d4598b796a2761119499f2ba5abfdf6cf01476a855"
+  },
+  {
+   "claim": "Pre-TRA gain is intraday in NY morning",
+   "number": ">10 bp (10-year)",
+   "quote": "Prices increase notably in the morning, with the 10-year Treasury rising by over 10 bps",
+   "location": "Section 4.3, p. 19",
+   "source": "Wang, Zhao, Pre-Refunding Announcement Gains in U.S. Treasurys, draft July 16 2025 (first version March 18 2024), OSF preprint xucf8",
+   "url": "https://osf.io/xucf8/download",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD2/wang_zhao_2024_prerefunding.pdf",
+   "sha256": "3fc6bc4f466de4a2a49d11d4598b796a2761119499f2ba5abfdf6cf01476a855"
+  },
+  {
+   "claim": "Pre-FOMC Treasury drift overnight window",
+   "number": "7.26 bp, t 2.82; rest of day -2.05 bp (t -1.76)",
+   "quote": "The average 10-year Treasury return over this non-U.S. trading window is approximately 7.26 basis points, with a statistically significant t-statistic of 2.82.",
+   "location": "Section 3.1, pp. 12-13",
+   "source": "Pan, Peng, The Pre-FOMC Drift in Long-Term Treasury Bonds, SAIF draft June 2 2026 (first draft May 31 2023)",
+   "url": "https://en.saif.sjtu.edu.cn/junpan/FOMC_new.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/pages/ZT/pan_peng_fomc_2026.pdf",
+   "sha256": "06a73bf324594a0c01693c89c8b84e87724ad837f83607fd2ff3c4816f16326d"
+  },
+  {
+   "claim": "Auction cycle does not persist through 2024",
+   "number": "qualitative",
+   "quote": "the strong auction-cycle effects documented by Lou et al. (2013), whose sample ends in 2008, do not persist at the same magnitude when the sample is extended through 2024",
+   "location": "Section 4.1, pp. 20-21",
+   "source": "Fleming, Liu, Nguyen, Intraday Price Pressure and Order Flow Around U.S. Treasury Auctions, NY Fed Staff Report 1188 (2026)",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/nyfed_sr1188.pdf",
+   "sha256": "93f9b196946d3c41e9670052eb3d8d0fce30fb892f8f1553c1b469c05193095b"
+  },
+  {
+   "claim": "10-day auction window weakens after 2014",
+   "number": "qualitative",
+   "quote": "While yield pressure is significant over the full sample, the effect is most pronounced during 2007–2014 and weakens markedly in 2015–2024.",
+   "location": "footnote 14, p. 21",
+   "source": "Fleming, Liu, Nguyen, Intraday Price Pressure and Order Flow Around U.S. Treasury Auctions, NY Fed Staff Report 1188 (2026)",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/nyfed_sr1188.pdf",
+   "sha256": "93f9b196946d3c41e9670052eb3d8d0fce30fb892f8f1553c1b469c05193095b"
+  },
+  {
+   "claim": "5-year auction price pressure 2015-2024",
+   "number": "4.482 bp both legs (p<0.01)",
+   "quote": "S3: 2015-2024              0.887∗∗∗    1.216∗∗        4.482∗∗∗    2.509        5.165∗      14.224∗",
+   "location": "Table 3 Panel B, p. 48",
+   "source": "Fleming, Liu, Nguyen, Intraday Price Pressure and Order Flow Around U.S. Treasury Auctions, NY Fed Staff Report 1188 (2026)",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/nyfed_sr1188.pdf",
+   "sha256": "93f9b196946d3c41e9670052eb3d8d0fce30fb892f8f1553c1b469c05193095b"
+  },
+  {
+   "claim": "LYZ: short holds unprofitable after costs",
+   "number": "t <= 6 days unprofitable; Sharpe 0.84 at t = 10",
+   "quote": "In particular, for t ≤ 6, trading costs render the strategy unprofitable. For longer holding periods (t ≥ 7), the strategy is still profitable, with an annualized Sharpe ratio of 0.84 for t = 10.",
+   "location": "Section III, pp. 15-16",
+   "source": "Lou, Yan, Zhang (2013), Anticipated and Repeated Shocks in Liquid Markets, RFS 26(8) 1891-1912",
+   "url": "https://personal.lse.ac.uk/loud/Shocks.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/RD2/lou_yan_zhang_2013_shocks.pdf",
+   "sha256": "98ad8352790d1c628cc7941a088680dbfeb2aa7ea9283b883a8606f0fd6e011d"
+  },
+  {
+   "claim": "LYZ sample",
+   "number": "1980-01..2008-06",
+   "quote": "Our sample spans from January 1980 to June 2008",
+   "location": "Section II.B",
+   "source": "Lou, Yan, Zhang (2013), Anticipated and Repeated Shocks in Liquid Markets, RFS 26(8) 1891-1912",
+   "url": "https://personal.lse.ac.uk/loud/Shocks.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/RD2/lou_yan_zhang_2013_shocks.pdf",
+   "sha256": "98ad8352790d1c628cc7941a088680dbfeb2aa7ea9283b883a8606f0fd6e011d"
+  },
+  {
+   "claim": "Dealer auction compensation declined post-crisis",
+   "number": "qualitative",
+   "quote": "Surprisingly, compensation for taking on inventory risk at auctions has also declined. We show that the diminished post-auction price appreciation is related to the increasing participation of investment funds in the primary market in the post-crisis period.",
+   "location": "Introduction",
+   "source": "Fleming, Nguyen, Rosenberg, How do Treasury dealers manage their positions?, NY Fed SR 299 (rev. 2024); JFE 158 (2024)",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr299.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/RD2/nyfed_sr299_fleming_nguyen_rosenberg.pdf",
+   "sha256": "49511bc1e73d45af3973b4ed264093dc707517d5360a433dcd4620afac5b3ee6"
+  },
+  {
+   "claim": "Auctions move ZN futures in 15-min interval after auction",
+   "number": "direction only",
+   "quote": "Prices move higher, volatility increases and there is an upturn in trading volume in the interval immediately following an auction.",
+   "location": "abstract",
+   "source": "Smales, The effect of treasury auctions on 10-year Treasury note futures, Accounting & Finance 61(S1) 2021",
+   "url": "https://ideas.repec.org/a/bla/acctfi/v61y2021is1p1517-1555.html",
+   "grade": "peer-reviewed [secondary-only]",
+   "saved_path": "reports/stage_e25_briefs/pages/RD2/ideas_smales_2021_acfi.html",
+   "sha256": "8063b8a8fa43898d6c4f35a524478be1e804a76697ea2ab15ee530e299195fd1"
+  },
+  {
+   "claim": "Month-end Treasury effect in 2015-2019",
+   "number": "10-year zero last day 0.13*** (pct pts)",
+   "quote": "10-Year        0.13***       0.08   0.27*** 0.24**    0.28**",
+   "location": "subperiod table (2015-2019 block), p. 27",
+   "source": "Hartley, Schwarz (2019), Predictable End-of-Month Treasury Returns, Rodney L. White Center WP 17-19",
+   "url": "https://rodneywhitecenter.wharton.upenn.edu/wp-content/uploads/2019/12/17-19.Schwarz.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/pages/ZN/hartley_schwarz_2019.pdf",
+   "sha256": "56403762378f606f595dcce11afcf1f1eaccf8810237c58999f653a230a32809"
+  },
+  {
+   "claim": "Bond ROD momentum decayed; mechanism insignificant in bonds",
+   "number": "bonds slope 3.19 (1974-1999) vs 1.53 (2000-2020)",
+   "quote": "the bond market results remain positive but insignificantly so",
+   "location": "Section 4.2; Table 5",
+   "source": "Baltussen, Da, Lammers, Martens (2021), Hedging demand and market intraday momentum, JFE 142, 377-403",
+   "url": "https://doi.org/10.1016/j.jfineco.2021.04.029",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": ""
+  },
+  {
+   "claim": "Treasury auction underpricing is a dealer risk premium",
+   "number": "2000-2016",
+   "quote": "underpricing of U.S. Treasury securities is explained by risk premia that compensate dealers for bearing price risk",
+   "location": "abstract",
+   "source": "Herb, The treasury auction risk premium, JBF 170 (2025) 107316",
+   "url": "https://ideas.repec.org/a/eee/jbfina/v170y2025ics0378426624002309.html",
+   "grade": "peer-reviewed [secondary-only]",
+   "saved_path": "reports/stage_e25_briefs/pages/RD2/ideas_herb_2025_jbf.html",
+   "sha256": "3c892955e4c96cec6eaba46d28f220dd3c11d83dfe9c0755a5ff1cf9727d6ff8"
+  },
+  {
+   "claim": "Aalto thesis still restricted",
+   "number": "metadata.only",
+   "quote": "\"status\" : \"metadata.only\"",
+   "location": "API accessStatus",
+   "source": "Majorin (2025), Aalto MSc thesis",
+   "url": "https://aaltodoc.aalto.fi/server/api/core/items/1011f043-edd1-4cb2-9694-b1216d77561f/accessStatus",
+   "grade": "thesis [unverified]",
+   "saved_path": "reports/stage_e25_briefs/pages/RD2/aalto_thesis_accessstatus_2026-10-18.json",
+   "sha256": "c1e2559dd40aae2d6ed5a29fa6c17663f72f6804a4ea5be42537d0086d6214bd"
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "E16-H3 FAIL (E.17; closed V31)",
+   "effect": "supports",
+   "quote": "the strong auction-cycle effects documented by Lou et al. (2013), whose sample ends in 2008, do not persist at the same magnitude when the sample is extended through 2024",
+   "source": "Fleming, Liu, Nguyen, Intraday Price Pressure and Order Flow Around U.S. Treasury Auctions, NY Fed Staff Report 1188 (2026)"
+  },
+  {
+   "verdict": "E16-H3 FAIL (3- and 5-day holds)",
+   "effect": "supports",
+   "quote": "for t ≤ 6, trading costs render the strategy unprofitable",
+   "source": "Lou, Yan, Zhang (2013), Anticipated and Repeated Shocks in Liquid Markets, RFS 26(8) 1891-1912"
+  },
+  {
+   "verdict": "E16-H3 and K2-aucpre-01/K2-aucpost-01 (E.3)",
+   "effect": "supports",
+   "quote": "Surprisingly, compensation for taking on inventory risk at auctions has also declined. We show that the diminished post-auction price appreciation is related to the increasing participation of investment funds in the primary market in the post-crisis period.",
+   "source": "Fleming, Nguyen, Rosenberg, How do Treasury dealers manage their positions?, NY Fed SR 299 (rev. 2024); JFE 158 (2024)"
+  },
+  {
+   "verdict": "K2-aucpre-01/K2-aucpost-01 on ZN, ZB, ZT (E.3 Tier B)",
+   "effect": "supports",
+   "quote": "Formal F-tests confirm that yield pressure declines significantly after 2014 for the 3- and 10-year notes.",
+   "source": "Fleming, Liu, Nguyen, Intraday Price Pressure and Order Flow Around U.S. Treasury Auctions, NY Fed Staff Report 1188 (2026)"
+  },
+  {
+   "verdict": "K2-aucpre-01/K2-aucpost-01 on ZF (E.3 Tier B)",
+   "effect": "weakens",
+   "quote": "S3: 2015-2024 ... 4.482∗∗∗ (5-year price pressure, cash, both legs; about 3.4 ZF ticks per leg if split evenly vs ZF hurdle 1.97; E.3 saw about 15 five-year auctions, so its Tier B is weak evidence; already flagged by E.20 ZF reader)",
+   "source": "Fleming, Liu, Nguyen, Intraday Price Pressure and Order Flow Around U.S. Treasury Auctions, NY Fed Staff Report 1188 (2026)"
+  },
+  {
+   "verdict": "K2-cp1-01 and bond analogues of E20H6 (ROD momentum)",
+   "effect": "supports",
+   "quote": "the bond market results remain positive but insignificantly so",
+   "source": "Baltussen, Da, Lammers, Martens (2021), Hedging demand and market intraday momentum, JFE 142, 377-403"
+  },
+  {
+   "verdict": "K2-monthend-01 (E.3 Tier B) and E23-MEZNh5 NULL",
+   "effect": "weakens",
+   "quote": "2015-2019 ... 10-Year 0.13*** (last day of month, 10-year zero, close-to-close; intraday share unknown)",
+   "source": "Hartley, Schwarz (2019), Predictable End-of-Month Treasury Returns, Rodney L. White Center WP 17-19"
+  },
+  {
+   "verdict": "E16-H2 FAIL (month-end NQ/ZN pair)",
+   "effect": "supports",
+   "quote": "[secondary-only, search summary of abstract] calendar signal: bond returns up 'about 2 bps over the next trading day' per one-sd signal",
+   "source": "Harvey, Mazzoleni, Melone, NBER w33554 (2025)"
+  },
+  {
+   "verdict": "V38: no published post-2015 intraday effect on the 17 roots exceeds 1.5 x D8",
+   "effect": "weakens",
+   "quote": "Prices increase notably in the morning, with the 10-year Treasury rising by over 10 bps (pre-TRA day; post-2002 10-year 15.48 bp, t 3.27)",
+   "source": "Wang, Zhao, Pre-Refunding Announcement Gains in U.S. Treasurys, draft July 16 2025 (first version March 18 2024), OSF preprint xucf8"
+  },
+  {
+   "verdict": "V38 (same) and E.20 rates_class_notes R6/R7 'FOMC: no pre-drift'",
+   "effect": "weakens",
+   "quote": "contrary to the conclusion of Lucca and Moench (2015), we find positive and significant returns (i.e., negative yield changes) on long-term Treasury bonds before the FOMC announcement",
+   "source": "Pan, Peng, The Pre-FOMC Drift in Long-Term Treasury Bonds, SAIF draft June 2 2026 (first draft May 31 2023)"
+  },
+  {
+   "verdict": "E.20 ZT reader classification of pre-refunding paper ('long end, daily; out of scope')",
+   "effect": "overturns",
+   "quote": "we analyze intraday price dynamics using high-frequency data ... Prices increase notably in the morning, with the 10-year Treasury rising by over 10 bps",
+   "source": "Wang, Zhao, Pre-Refunding Announcement Gains in U.S. Treasurys, draft July 16 2025 (first version March 18 2024), OSF preprint xucf8"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "https://personal.lse.ac.uk/loud/Shocks.pdf",
+   "utc": "2026-10-18T08:44:20Z",
+   "sha256": "98ad8352790d1c628cc7941a088680dbfeb2aa7ea9283b883a8606f0fd6e011d",
+   "path": "reports/stage_e25_briefs/pages/RD2/lou_yan_zhang_2013_shocks.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://ideas.repec.org/a/bla/acctfi/v61y2021is1p1517-1555.html",
+   "utc": "2026-10-18T08:44:43Z",
+   "sha256": "8063b8a8fa43898d6c4f35a524478be1e804a76697ea2ab15ee530e299195fd1",
+   "path": "reports/stage_e25_briefs/pages/RD2/ideas_smales_2021_acfi.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/jbfina/v170y2025ics0378426624002309.html",
+   "utc": "2026-10-18T08:44:50Z",
+   "sha256": "3c892955e4c96cec6eaba46d28f220dd3c11d83dfe9c0755a5ff1cf9727d6ff8",
+   "path": "reports/stage_e25_briefs/pages/RD2/ideas_herb_2025_jbf.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://research-repository.uwa.edu.au/en/publications/05f664a3-3805-4637-ae3c-cb70b0412f65",
+   "utc": "2026-10-18T08:45:08Z",
+   "sha256": "299475e44d77b637a6e6ef41504e476d8c70b57dff87e134eae68c291bf17cc5",
+   "path": "reports/stage_e25_briefs/pages/RD2/uwa_smales_2021_landing.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://osf.io/xucf8/download",
+   "utc": "2026-10-18T08:45:47Z",
+   "sha256": "3fc6bc4f466de4a2a49d11d4598b796a2761119499f2ba5abfdf6cf01476a855",
+   "path": "reports/stage_e25_briefs/pages/RD2/wang_zhao_2024_prerefunding.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr1188_appendix.pdf",
+   "utc": "2026-10-18T08:47:39Z",
+   "sha256": "666647ed0c36d0e7c95326c988068cd4764099bd92345c342cb3b1dfc53d8298",
+   "path": "reports/stage_e25_briefs/pages/RD2/nyfed_sr1188_appendix.pdf",
+   "status": "ok (wrong URL, HTML not-found page, deleted)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.newyorkfed.org/research/staff_reports/sr1188.html",
+   "utc": "2026-10-18T08:47:51Z",
+   "sha256": "1d0daa6dc947414e028b261d73f8acacb5df156b0038ee58a4256c72dc318659",
+   "path": "reports/stage_e25_briefs/pages/RD2/nyfed_sr1188_landing.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://research.aalto.fi/en/publications/675214fe-ee5b-4cf6-b1a3-6e72f6ebaac5",
+   "utc": "2026-10-18T08:48:12Z",
+   "sha256": "4785cfcd6e13b4eb80fe0b1bc9fdc92dbe45e697d31ad74e0d8312e7e819801a",
+   "path": "reports/stage_e25_briefs/pages/RD2/aalto_etula_dashforcash_landing.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://research.aalto.fi/files/40965155/hhz054.pdf",
+   "utc": "2026-10-18T08:48:29Z",
+   "sha256": "a31c2a9856f962bc493f5ec0bcafe997a162521177d5ee87e117f058ecdc111e",
+   "path": "reports/stage_e25_briefs/pages/RD2/etula_etal_2020_dashforcash.pdf",
+   "status": "blocked (403)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://research.aalto.fi/files/40965155/hhz054.pdf",
+   "utc": "2026-10-18T08:48:41Z",
+   "sha256": "-",
+   "path": "(none kept)",
+   "status": "blocked (curl 403; scrapling get returned a 59-byte stub)",
+   "tool": "curl+scrapling-get"
+  },
+  {
+   "url": "https://aaltodoc.aalto.fi/server/api/core/items/1011f043-edd1-4cb2-9694-b1216d77561f/accessStatus",
+   "utc": "2026-10-18T08:49:58Z",
+   "sha256": "c1e2559dd40aae2d6ed5a29fa6c17663f72f6804a4ea5be42537d0086d6214bd",
+   "path": "reports/stage_e25_briefs/pages/RD2/aalto_thesis_accessstatus_2026-10-18.json",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr299.pdf",
+   "utc": "2026-10-18T08:55:44Z",
+   "sha256": "49511bc1e73d45af3973b4ed264093dc707517d5360a433dcd4620afac5b3ee6",
+   "path": "reports/stage_e25_briefs/pages/RD2/nyfed_sr299_fleming_nguyen_rosenberg.pdf",
+   "status": "ok",
+   "tool": "curl"
+  }
+ ],
+ "budget_notices": [
+  "2026-10-18T08:43:38Z Firecrawl firecrawl_search: 'Insufficient credits to perform this request' (3 calls); Firecrawl not used afterwards",
+  "2026-10-18T08:50:13Z OpenAlex HTTP 429, retry-after 54449 s, x-ratelimit-remaining-usd 0 (daily budget exhausted for the shared pool)",
+  "2026-10-18T08:53Z Semantic Scholar keyless 429 x3 after 60 s waits: throttled",
+  "WebSearch calls by RD2: 10 of 45"
+ ],
+ "unfinished": [
+  "forward citations of Pan-Peng, Wang-Zhao, SR 1188, Hartley-Schwarz after 08:50Z (OpenAlex budget, S2 throttled, Firecrawl no credits)",
+  "Smales 2021 A&F full text (SSRN only): abstract only",
+  "Herb 2025, Sigaux 2024, Amin-Tedongap 2023, Krohn-Vala 2025: abstracts/citations only",
+  "Etula et al. 2020 Dash for Cash: blocked (Cloudflare)",
+  "Harvey-Mazzoleni-Melone full text: EDHEC and NBER terms forbid; secondary-only",
+  "KSSW 2019, Lucca-Moench, Indriawan-Jiao-Tse, Zhang-Wang-Li, Safari-Schmidhuber, CFTC TN note, Robeco: not re-dug beyond E.20 notes",
+  "Pan-Peng 7.26 bp: futures vs cash return ambiguous; both conversions given",
+  "TRA dates 2025-2026 not fetched; Treasury press-release terms not checked"
+ ]
+}

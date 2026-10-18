@@ -1,0 +1,413 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "DF2-ThirdFriday-OpusHigh",
+ "finished_utc": "2026-10-18T18:24:37Z",
+ "candidates": [
+  {
+   "id": "DF2-C1",
+   "hypothesis": "Short at the 08:30 CT RTH open on the monthly a.m.-settlement day (3rd Friday, or preceding Thursday on holidays); cover at a fixed time (lead picks: path given for 09:00, 11:00, 15:00 CT)",
+   "mechanism": "Dealer delta drift into a.m. settlement forces equity buying overnight; SOQ prints high; price reverts after payoff is fixed",
+   "instruments": [
+    "MES",
+    "MNQ",
+    "MYM"
+   ],
+   "entry_window_ct": "08:30",
+   "hold": "30 min to 6.5 h (exit by 15:00 CT)",
+   "trades_per_year": 12,
+   "best_source": "Baltussen, Terstegge, Whelan, 'The Derivative Payoff Bias', January 2024 version (AFA program copy); path from Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)",
+   "source_url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "grade": "working-paper",
+   "sample": "ES futures 2003.2-2021.12 (Table II, about 225 events); path 2003-2023",
+   "post_2015_or_oos": "SPX/SOQ intraday short leg digitized from 2026 Fig 3: 17.6 bp/event 2015-2023, 14.8 bp 2022-2023; no post-2023 or OOS test found",
+   "published_effect": "ES Fro->Frc -12.89 bp (Table II); digitized 2026 Fig 1: open->09:00 CT -8.6 bp, ->11:00 CT -15.0 bp, ->15:00 CT -12.5 bp",
+   "price_level_used": "ES 6,000; NQ 22,000; YM 44,000",
+   "gross_per_trade_points": 7.73,
+   "gross_per_trade_micro_ticks": 30.9,
+   "micro": "MES",
+   "gross_or_net": "gross",
+   "dispersion": "t -2.40, sd 80.45 bp per event (48.3 ES pts), n about 225",
+   "quote": "Panel c : E-mini / mean 2.69 0.91 3.60 -2.09 -1.71 14.30 -12.89 ... t-stat 2.75 0.68 2.12 -0.60 -0.28 3.54 -2.40 / Std 67.47 92.25 117.16 51.96 90.33 60.53 80.45",
+   "quote_location": "2024 version Table II Panel c, p.42",
+   "decay_evidence": "Off-quarter intraday reversal only -6 bp on SOQ basis (2024 Table III text); reversal weakens toward the close (2026 p.9)",
+   "data_needed": "MES/MNQ/MYM 1-min bars on expiry days; a.m.-settlement calendar",
+   "owned": "yes",
+   "data_cost": "none (owned bars; calendar public from Cboe)",
+   "research_window_testable": "partial",
+   "why": "15 events in 2025-04-01..2026-06-19 (5 quarterly); power is low at per-event sd 80 bp",
+   "prop_notes": "Inside one Topstep trading day; flat before 15:10 CT; open slippage applies; no HFT",
+   "overlap_ids": [
+    "E-H3",
+    "D-H4",
+    "A-H4"
+   ],
+   "overlap_note": "E-H3 is a quarterly 14:30-15:00 CT short; A-H4/D-H4 are unconditional open/gap trades; none conditions on a.m.-settlement days at the open"
+  },
+  {
+   "id": "DF2-C2",
+   "hypothesis": "Long from the 17:00 CT Thursday reopen to the 08:30 CT Friday open (exit at or just before the open) on monthly a.m.-settlement days",
+   "mechanism": "Same as C1 (overnight dealer hedge buying into the SOQ)",
+   "instruments": [
+    "MES",
+    "MNQ",
+    "MYM"
+   ],
+   "entry_window_ct": "17:00 (Thursday)",
+   "hold": "about 15.5 h",
+   "trades_per_year": 12,
+   "best_source": "Baltussen, Terstegge, Whelan, 'The Derivative Payoff Bias', January 2024 version (AFA program copy); path from Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)",
+   "source_url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "grade": "working-paper",
+   "sample": "ES futures 2003.2-2021.12; path 2003-2023",
+   "post_2015_or_oos": "SPX/SOQ overnight leg digitized from 2026 Fig 3: 4.2 bp/event 2015-2023, 1.6 bp 2022-2023 (decaying)",
+   "published_effect": "ES Thc->Fro +14.30 bp (Table II; Thc is 15:00 CT); digitized 17:00 CT -> 09:30 ET point +12.75 bp (2026 Fig 1); NQ +13.7 bp, YM +11.2 bp (2024 Fig 6)",
+   "price_level_used": "ES 6,000; NQ 22,000; YM 44,000",
+   "gross_per_trade_points": 7.65,
+   "gross_per_trade_micro_ticks": 30.6,
+   "micro": "MES",
+   "gross_or_net": "gross",
+   "dispersion": "t 3.54, sd 60.53 bp per event (36.3 ES pts)",
+   "quote": "The average overnight cumulative return in the active futures contract is equal to 12 bps, which completely reverses by noon.",
+   "quote_location": "2026 version Section II.A p.9",
+   "decay_evidence": "Overnight leg 26.2 bp/event 2003-2014 vs 4.2 bp 2015-2023 (SPX basis, digitized); quarterly 15.5 vs non-quarterly 7.0 bp (2026 text)",
+   "data_needed": "MES/MNQ/MYM 1-min bars Thursday 17:00 CT to Friday 08:30 CT; calendar",
+   "owned": "yes",
+   "data_cost": "none",
+   "research_window_testable": "partial",
+   "why": "15 events; the 15:00-17:00 CT Thursday window carries no run-up (ES -0.6 bp), so the Topstep-feasible leg keeps all of the effect",
+   "prop_notes": "Enter after the 17:00 CT reopen, exit by 08:30 CT: one Topstep trading day; can be chained with C1",
+   "overlap_ids": [
+    "A-H1",
+    "A-H4",
+    "E-H1"
+   ],
+   "overlap_note": "A-H1/A-H4 are unconditional overnight holds; E-H1 is a macro-date overnight hold; none uses the a.m.-settlement calendar"
+  },
+  {
+   "id": "DF2-C3",
+   "hypothesis": "B1: resting sell limit placed before 08:30 CT on expiry days, filled only on a trade-through at or after the open (exit for C2 or entry for C1)",
+   "mechanism": "Price peaks in the opening interval and reverts; a passive sell captures the peak only when it trades through",
+   "instruments": [
+    "MES"
+   ],
+   "entry_window_ct": "08:25-08:35",
+   "hold": "as C1/C2",
+   "trades_per_year": 12,
+   "best_source": "Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)",
+   "source_url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "grade": "working-paper",
+   "sample": "none on fills",
+   "post_2015_or_oos": "none",
+   "published_effect": "no published fill or book evidence; average ES path falls 1.2 / 2.9 / 5.6 bp in the 5 / 10 / 15 min after the 09:30 ET point (digitized)",
+   "price_level_used": "ES 6,000",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "MES",
+   "gross_or_net": "unknown",
+   "dispersion": "none published",
+   "quote": "Overnight they are significant and positive (2.63, t-statistic = 3.59), whereas intraday they turn roughly six times more negative than on non-expiry days (-11.26, t-statistic = -5.38).",
+   "quote_location": "2026 version Section IV.A p.16 (E-mini signed volume)",
+   "decay_evidence": "none",
+   "data_needed": "MES tick or 1-s trades/quotes at the open to model trade-through fills",
+   "owned": "partial",
+   "data_cost": "not looked up",
+   "research_window_testable": "partial",
+   "why": "Fill model needs sub-minute data; no source on the book at the SOQ open",
+   "prop_notes": "Passive orders allowed; no HFT",
+   "overlap_ids": [
+    "C-H4"
+   ],
+   "overlap_note": "C-H4 is an unconditional passive-fill reversal; C3 adds the expiry calendar"
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "ES futures Thc->Fro / Fro->Frc",
+   "number": "+14.30 / -12.89 bp; t 3.54 / -2.40; sd 60.53 / 80.45",
+   "quote": "Panel c : E-mini / mean 2.69 0.91 3.60 -2.09 -1.71 14.30 -12.89 ... t-stat 2.75 0.68 2.12 -0.60 -0.28 3.54 -2.40 / Std 67.47 92.25 117.16 51.96 90.33 60.53 80.45 ; 'The sample period is 2003.2 to 2021.12.'",
+   "location": "Table II Panel c p.42",
+   "source": "Baltussen, Terstegge, Whelan, 'The Derivative Payoff Bias', January 2024 version (AFA program copy)",
+   "url": "afajof.org program copy (file afa_viewp_98196.pdf; exact URL not logged by first run)",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/afa_viewp_98196.pdf",
+   "sha256": "841d9c2e183e6f046eab49ed040636b392cd3c025d7021811d2dd8dfed6373f7"
+  },
+  {
+   "claim": "ES path 2003-2023",
+   "number": "12 bp overnight, reverts by noon",
+   "quote": "The average overnight cumulative return in the active futures contract is equal to 12 bps, which completely reverses by noon.",
+   "location": "Section II.A p.9",
+   "source": "Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)",
+   "url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/btw_third_friday_price_spike_2026.pdf",
+   "sha256": "0e4dd3c65b8060c5505af9cfb0326468d08af64f16798bf77675bcffcaa2222e"
+  },
+  {
+   "claim": "Digitized ES path 2026 Fig 1",
+   "number": "Thu 18:00 ET -0.57; 09:30 ET 12.18 peak; 10:00 3.61; 12:00 -2.77; 13:30 -4.79; 16:00 -0.27 bp",
+   "quote": "figure (no quote); caption 'Figure 1. The Third Friday Price Spike in S&P 500 E-mini Futures'",
+   "location": "PDF page index 40, paths 74/75",
+   "source": "Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)",
+   "url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/btw_third_friday_price_spike_2026.pdf",
+   "sha256": "0e4dd3c65b8060c5505af9cfb0326468d08af64f16798bf77675bcffcaa2222e"
+  },
+  {
+   "claim": "NQ and YM",
+   "number": "NQ 14 bp, YM 12 bp overnight; reversal of the same size by noon",
+   "quote": "The NDX (DJIA) displays a overnight return before the option expiry of 14 bps (12 bps), followed by a significant reversal of about the same size between expiry and noon on the 3rd Fridays",
+   "location": "Section E p.16; Figure 6 p.36",
+   "source": "Baltussen, Terstegge, Whelan, 'The Derivative Payoff Bias', January 2024 version (AFA program copy)",
+   "url": "afajof.org program copy (file afa_viewp_98196.pdf; exact URL not logged by first run)",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/afa_viewp_98196.pdf",
+   "sha256": "841d9c2e183e6f046eab49ed040636b392cd3c025d7021811d2dd8dfed6373f7"
+  },
+  {
+   "claim": "Digitized NQ/YM paths 2024 Fig 6",
+   "number": "NQ 18:00 ET 0.22, 09:30 13.90, 10:00 1.37, 12:00 -5.67, 16:00 -8.41; YM 0.47, 11.64, 5.06, 0.17, -1.72 bp",
+   "quote": "figure (no quote)",
+   "location": "PDF page index 36",
+   "source": "Baltussen, Terstegge, Whelan, 'The Derivative Payoff Bias', January 2024 version (AFA program copy)",
+   "url": "afajof.org program copy (file afa_viewp_98196.pdf; exact URL not logged by first run)",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/afa_viewp_98196.pdf",
+   "sha256": "841d9c2e183e6f046eab49ed040636b392cd3c025d7021811d2dd8dfed6373f7"
+  },
+  {
+   "claim": "Quarterly vs off-quarter (SOQ basis)",
+   "number": "+27/-37 vs +14/-6 bp",
+   "quote": "Effects are stronger on the quarterly triple-witch days, with a 3rd Thursday overnight return of on average 27 bps, reverting -37 bps intraday on the third Friday. Off-quarterly expiries still display a strong reversal pattern around the publication of the SOQ, equal to 14 bps overnight and -6 bps intraday.",
+   "location": "Section IV.B p.14-15",
+   "source": "Baltussen, Terstegge, Whelan, 'The Derivative Payoff Bias', January 2024 version (AFA program copy)",
+   "url": "afajof.org program copy (file afa_viewp_98196.pdf; exact URL not logged by first run)",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/afa_viewp_98196.pdf",
+   "sha256": "841d9c2e183e6f046eab49ed040636b392cd3c025d7021811d2dd8dfed6373f7"
+  },
+  {
+   "claim": "Quarterly vs non-quarterly overnight",
+   "number": "15.5 vs 7.0 bp",
+   "quote": "the spike is present in both groups, averaging 15.5 basis points on quarterly and 7.0 basis points on non-quarterly expirations.",
+   "location": "Section II.C p.10",
+   "source": "Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)",
+   "url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/btw_third_friday_price_spike_2026.pdf",
+   "sha256": "0e4dd3c65b8060c5505af9cfb0326468d08af64f16798bf77675bcffcaa2222e"
+  },
+  {
+   "claim": "SPX/SOQ 1992-2023",
+   "number": "+9.80 (t 3.04) / -15.10 (t -3.57), 371 expiries",
+   "quote": "mean 9.80 -15.10 1.30 2.47 8.50 -17.58 / t-stat (3.04) (-3.57) (1.66) (2.25) (2.41) (-3.50)",
+   "location": "Table I p.33",
+   "source": "Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)",
+   "url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/btw_third_friday_price_spike_2026.pdf",
+   "sha256": "0e4dd3c65b8060c5505af9cfb0326468d08af64f16798bf77675bcffcaa2222e"
+  },
+  {
+   "claim": "Post-2011 SPX/SOQ",
+   "number": "+10.07 (t 2.20) / -15.51 (t -2.34)",
+   "quote": "mean 10.07 -15.51 -13.14 -5.13 / t-stat (2.20) (-2.34) (-1.66) (-0.59)",
+   "location": "Table II p.34",
+   "source": "Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)",
+   "url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/btw_third_friday_price_spike_2026.pdf",
+   "sha256": "0e4dd3c65b8060c5505af9cfb0326468d08af64f16798bf77675bcffcaa2222e"
+  },
+  {
+   "claim": "Subperiod means digitized 2026 Fig 3",
+   "number": "overnight 26.2 (2003-14), 4.2 (2015-23), 1.6 (2022-23); intraday short 15.2, 17.6, 14.8 bp/event",
+   "quote": "figure (no quote); full-sample check 9.6/15.1 vs Table I 9.80/15.10",
+   "location": "PDF page index 41, paths 210-212",
+   "source": "Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)",
+   "url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/btw_third_friday_price_spike_2026.pdf",
+   "sha256": "0e4dd3c65b8060c5505af9cfb0326468d08af64f16798bf77675bcffcaa2222e"
+  },
+  {
+   "claim": "Holiday rule",
+   "number": "preceding business day",
+   "quote": "In cases where the 3rd Friday is not a trading day, expiration occurs on the immediately preceding business day, most commonly a Thursday.",
+   "location": "footnote 7 p.8",
+   "source": "Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)",
+   "url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/btw_third_friday_price_spike_2026.pdf",
+   "sha256": "0e4dd3c65b8060c5505af9cfb0326468d08af64f16798bf77675bcffcaa2222e"
+  },
+  {
+   "claim": "Dealer delta drift conditioning",
+   "number": "non-quarterly +17 vs -2 bp, diff 19 bp t 2.16",
+   "quote": "Overnight returns average 17 bps when DDD is negative, but turn negative at -2 bps when DDD is positive (Panel (b)).",
+   "location": "p.26",
+   "source": "Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)",
+   "url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/btw_third_friday_price_spike_2026.pdf",
+   "sha256": "0e4dd3c65b8060c5505af9cfb0326468d08af64f16798bf77675bcffcaa2222e"
+  },
+  {
+   "claim": "Expiring a.m. SPX options trade in GTH",
+   "number": "approved 2025-06-10",
+   "quote": "expiring A.M.-settled non-Volatility index options would trade through the end of the GTH trading session on the expiration date",
+   "location": "Release 34-103219 p.1",
+   "source": "SEC order SR-CBOE-2025-011",
+   "url": "https://www.sec.gov (34-103219.pdf; exact URL not logged by first run)",
+   "grade": "exchange-regulator",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/sec_34-103219.pdf",
+   "sha256": "953ba6629dbb081f3cc77ae9dbd8cca209ecfbb5dc98d3e7b40d61bc3d870883"
+  },
+  {
+   "claim": "A.M.-settled SPX dailies approved",
+   "number": "2026-06-12",
+   "quote": "Order Approving a Proposed Rule Change to Permit the Listing of A.M.-Settled Options on the S&P 500 Index that Expire on Any Monday, Tuesday, Wednesday, Thursday, or Friday (other than the Third Friday-of-the-Month or Days that Coincide with an End-of-Month Expiration)",
+   "location": "Release 34-105678 title",
+   "source": "SEC order SR-CBOE-2026-044",
+   "url": "https://public-inspection.federalregister.gov/2026-12157.pdf",
+   "grade": "exchange-regulator",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/fr_2026-12157.pdf",
+   "sha256": "366f424fdadeb5d3c245f406985e1e953914b2c92b17eaef1b2eaa5221c64280"
+  },
+  {
+   "claim": "Monthly expiries 2025-04-01..2026-06-19",
+   "number": "2025-04-17(Thu), 05-16, 06-20Q, 07-18, 08-15, 09-19Q, 10-17, 11-21, 12-19Q, 2026-01-16, 02-20, 03-20Q, 04-17, 05-15, 06-18(Thu,Q)",
+   "quote": "calendar vector marks: legend 'Equity, Equity Index, ETF & ETN Options Standard Expiration'; 'Exchange Holiday' on 2025-04-18 and 2026-06-19",
+   "location": "page 1 of each calendar",
+   "source": "Cboe Options Expiration Calendars 2025, 2026",
+   "url": "res-certification.cboe.com",
+   "grade": "exchange-regulator",
+   "saved_path": "reports/stage_e25_briefs/pages/DF2/cboe2025_options_calendar.pdf; cboe2026_options_calendar.pdf",
+   "sha256": "6bdc3ed80c411b20926e347f7b09bf69aae15328ff2b98a6228cd896dd1e250e; 421a0699055b99ebc2dea6da53666939bc0918882d1f615da5664582a52b3c9e"
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "RD4 / R12-C1 Table II numbers",
+   "effect": "supports",
+   "quote": "Panel c : E-mini / mean 2.69 0.91 3.60 -2.09 -1.71 14.30 -12.89 ... t-stat 2.75 0.68 2.12 -0.60 -0.28 3.54 -2.40 / Std 67.47 92.25 117.16 51.96 90.33 60.53 80.45",
+   "source": "Baltussen, Terstegge, Whelan, 'The Derivative Payoff Bias', January 2024 version (AFA program copy) (label is Panel c: E-mini in this version)"
+  },
+  {
+   "verdict": "R12-C1 'fully reverts by about noon'",
+   "effect": "supports",
+   "quote": "The average overnight cumulative return in the active futures contract is equal to 12 bps, which completely reverses by noon.",
+   "source": "Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS)"
+  },
+  {
+   "verdict": "E-H3 (quarterly witching short 14:30-15:00 CT)",
+   "effect": "supports",
+   "quote": "Toward the close, the reversal effect weakens and becomes insignificant, consistent with Figure 1.",
+   "source": "Baltussen, Terstegge, Whelan, 'The Third Friday Price Spike', August 2026 version (author page; R&R RFS) p.9: the effect sits at the open, not E-H3's window"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "julianterstegge.com home",
+   "utc": "2026-10-18T13:30Z (mtime)",
+   "sha256": "78548d9d7dcca73306e3f85e4a54bbedddc7e36bf272619b3b8616b1643e308f",
+   "path": "pages/DF2/julianterstegge_home.html",
+   "status": "ok",
+   "tool": "first DF2 run"
+  },
+  {
+   "url": "https://julianterstegge.com/assets/papers/third_friday_price_spike.pdf",
+   "utc": "2026-10-18T13:30Z (mtime)",
+   "sha256": "0e4dd3c65b8060c5505af9cfb0326468d08af64f16798bf77675bcffcaa2222e",
+   "path": "pages/DF2/btw_third_friday_price_spike_2026.pdf",
+   "status": "ok",
+   "tool": "first DF2 run"
+  },
+  {
+   "url": "afajof.org program copy (file afa_viewp_98196.pdf; exact URL not logged by first run)",
+   "utc": "2026-10-18T13:25Z (mtime)",
+   "sha256": "841d9c2e183e6f046eab49ed040636b392cd3c025d7021811d2dd8dfed6373f7",
+   "path": "pages/DF2/afa_viewp_98196.pdf",
+   "status": "ok",
+   "tool": "first DF2 run"
+  },
+  {
+   "url": "res-certification.cboe.com 2025/2026 options calendars",
+   "utc": "2026-10-18T13:27-13:28Z (mtime)",
+   "sha256": "6bdc3ed8...; 421a0699...",
+   "path": "pages/DF2/cboe202{5,6}_options_calendar.pdf",
+   "status": "ok",
+   "tool": "first DF2 run"
+  },
+  {
+   "url": "sec.gov 34-103219.pdf",
+   "utc": "2026-10-18T13:32Z (mtime)",
+   "sha256": "953ba6629dbb081f3cc77ae9dbd8cca209ecfbb5dc98d3e7b40d61bc3d870883",
+   "path": "pages/DF2/sec_34-103219.pdf",
+   "status": "ok",
+   "tool": "first DF2 run"
+  },
+  {
+   "url": "cboe.com notice 55365",
+   "utc": "2026-10-18T13:32Z (mtime)",
+   "sha256": "6ca1802bef128f8bcc2b679a15fdb1efce5b5f90268307820f5791abea34ecc6",
+   "path": "pages/DF2/cboe_notice_55365.html",
+   "status": "partial (JS-rendered body)",
+   "tool": "first DF2 run"
+  },
+  {
+   "url": "umich Terstegge CV",
+   "utc": "2026-10-18T13:29Z (mtime)",
+   "sha256": "3d05e8b470db1b0af24c57a0ee74ebcbb24d8a9f0f48ce4071e34ce660dad53c",
+   "path": "pages/DF2/terstegge_cv_umich.pdf",
+   "status": "ok",
+   "tool": "first DF2 run"
+  },
+  {
+   "url": "https://public-inspection.federalregister.gov/2026-12157.pdf",
+   "utc": "2026-10-18T18:19:57Z",
+   "sha256": "366f424fdadeb5d3c245f406985e1e953914b2c92b17eaef1b2eaa5221c64280",
+   "path": "pages/DF2/fr_2026-12157.pdf",
+   "status": "ok",
+   "tool": "WebFetch"
+  },
+  {
+   "url": "https://www.risk.net/investing/7957783/witching-day-price-spikes-point-to-options-market-manipulation-study",
+   "utc": "2026-10-18T18:21Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked (paywall)",
+   "tool": "WebFetch"
+  },
+  {
+   "url": "https://www.cboe.com/notices/content/?id=55365",
+   "utc": "2026-10-18T18:25Z",
+   "sha256": "",
+   "path": "",
+   "status": "partial (title only, JS-rendered)",
+   "tool": "WebFetch"
+  },
+  {
+   "url": "https://ww2.cboe.com/us/options",
+   "utc": "2026-10-18T18:25Z",
+   "sha256": "",
+   "path": "scratchpad only (not evidence)",
+   "status": "ok, no relevant text",
+   "tool": "scrapling extract get"
+  }
+ ],
+ "budget_notices": [
+  "none; WebSearch used 6 of 15; OpenAlex not called; Firecrawl not used"
+ ],
+ "unfinished": [
+  "Elms (2026) SSRN 6564078 unread (SSRN blocked, no open copy)",
+  "No post-2023 / 0DTE-era 3FPS evidence found",
+  "Cboe notice 55365 body unread (JS page; WebFetch 18:25Z returned title only); search summary says SPX GTH cutoff 09:25 ET with effective date 'to be determined' [unverified]",
+  "OA Tables A.3/A.4 (futures 2003-2023) not in saved copies",
+  "No evidence on ES book or fills at the 08:30 CT open (B1)",
+  "Vendor roll splice vs quarterly 3rd Fridays not checked (data boundary)",
+  "First-run fetch URLs/UTC not logged; times from file mtimes",
+  "Press with numbers (Bloomberg, Barron's) not fetched (paywalls)"
+ ]
+}

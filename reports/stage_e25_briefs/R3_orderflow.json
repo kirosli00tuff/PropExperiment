@@ -1,0 +1,554 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "R3-OrderFlow-OpusHigh",
+ "finished_utc": "2026-10-18T08:56:37Z",
+ "candidates": [
+  {
+   "id": "R3-C1",
+   "hypothesis": "Minute-scale order-flow state (multi-level OFI / book-flow modes from MBP-10, 1-5 min bins) predicts the sign of the next 1-5 minute MES/MNQ return; trade the sign only when the forecast exceeds a cost threshold",
+   "mechanism": "Liquidity-provider and liquidity-taker flows at the best levels lead the mid-price for a short time (order-flow persistence not fully absorbed); Euro Stoxx futures show a small but positive out-of-sample R2 at the minute scale",
+   "instruments": [
+    "MES",
+    "MNQ"
+   ],
+   "entry_window_ct": "08:30-15:00 CT (RTH), any minute",
+   "hold": "1-5 minutes (one bin of 20 significant price changes in the source)",
+   "trades_per_year": null,
+   "best_source": "Bouchaud group (2024) arXiv:2405.10654 (Euro Stoxx futures); horizon decay from Cont-Cucuringu-Zhang (2023)",
+   "source_url": "https://arxiv.org/pdf/2405.10654",
+   "grade": "working-paper",
+   "sample": "Euro Stoxx 50 futures, 545 days Sep 2016-Aug 2019 (no CME data in source)",
+   "post_2015_or_oos": "post-2015; out-of-sample R2 reported (train/test split)",
+   "published_effect": "out-of-sample R2 of next binned return 1.46% (VAR(1)) to 1.7% (VAR(8)); no per-trade P&L, no costs",
+   "price_level_used": "n/a (no per-trade figure published)",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "MES",
+   "gross_or_net": "unknown",
+   "dispersion": "R2 only; no t-stat or Sharpe for a trading rule",
+   "quote": "Note that the out-of-sample R2 score of the returns increases from 1.46 for p = 1 to 1.7 for p = 8.",
+   "quote_location": "Table 5 note, Sec. 4.2",
+   "decay_evidence": "CRS (2005): OIB predictability fell from 30 min (1996) to 5 min (2002); CCZ (2023): 1-min OS R2 negative on US stocks 2017-2019, PnL falls from 1 to 30 min; Takahashi (2025): ES OFI shocks die within 1 s",
+   "data_needed": "MBP-10 (or MBO) for MES/MNQ or ES/NQ, research window; at least trades+BBO (TBBO) for a reduced version",
+   "owned": "no",
+   "data_cost": "Databento pricing page: Standard $199/month includes only \"1 month of L2 and L3 history\"; Unlimited \"$4,500 license fees per month\" for \"16+ years in all schemas\"; usage-based $/GB (no CME $/GB printed). Program D.1e quote: MES mbp-10 RTH about $1.21/day, so roughly $360 for ~300 RTH days (linear scaling of a quote, not a quote)",
+   "research_window_testable": "partial",
+   "why": "Only published minute-scale futures OFI evidence found; R2 of 1.5% implies, for a sign rule, expected gross per trade of about rho*sigma*sqrt(2/pi) = 0.10 x the bin return sd (R3 arithmetic, assumes Gaussian returns; not a published figure). Whether 0.10 sigma of a 1-5 min MES/MNQ return clears 3.0 MES / 6.2 MNQ ticks is for the lead to compute from sigma.",
+   "prop_notes": "Intraday, flat well before 15:10 CT; trade count high (many per day) so commissions dominate; needs live L2 feed through the platform (TopstepX data entitlement not checked here); no HFT, so only the minute-scale version is admissible",
+   "overlap_ids": [
+    "D.1g C6 (passive queue model, closed, not run)"
+   ],
+   "overlap_note": "No order-book or order-flow member was ever screened; D.1 and K1 used 1-minute OHLCV only. R4 owns volume/delta features from trades/TBBO; this candidate needs book depth."
+  },
+  {
+   "id": "R3-C2",
+   "hypothesis": "Cross-asset lagged OFI (ES/NQ/ZN/CL best-level or integrated OFI) forecasts the next 1-minute MES/MNQ return; trade only when |forecast| exceeds the spread",
+   "mechanism": "Lagged cross-impact: order flow in related assets carries information absorbed with a short lag (Cont-Cucuringu-Zhang)",
+   "instruments": [
+    "MES",
+    "MNQ"
+   ],
+   "entry_window_ct": "08:30-15:00 CT",
+   "hold": "1 minute (to 30 min in the horizon plot)",
+   "trades_per_year": null,
+   "best_source": "Cont, Cucuringu, Zhang (2023), Quantitative Finance, arXiv:2112.13213",
+   "source_url": "https://arxiv.org/pdf/2112.13213",
+   "grade": "peer-reviewed",
+   "sample": "Top-100 S&P 500 Nasdaq stocks, LOBSTER ITCH, 2017-2019 (no futures)",
+   "post_2015_or_oos": "post-2015; rolling out-of-sample",
+   "published_effect": "annualized gross PnL 0.21 (own OFI) to 0.43 (cross OFI) at 1-min horizon, trading costs ignored; OS R2 negative (-0.10 to -0.37)",
+   "price_level_used": "n/a",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "MNQ",
+   "gross_or_net": "gross",
+   "dispersion": "sd of annualized PnL across years 0.12-0.19 (Table 11)",
+   "quote": "It is worth noting that in the following analysis, the strategy ignores trading costs, as this is not the focus of our paper.",
+   "quote_location": "Sec. 4.2, p. 26-27",
+   "decay_evidence": "Figure 10: PnL declines from 1 to 30 min, faster for cross-asset models",
+   "data_needed": "MBP-10 or MBP-1 for several CME roots, synchronized",
+   "owned": "no",
+   "data_cost": "as R3-C1 (MBP-1 is in Standard $199/month \"1 year of L1 history\"); usage-based beyond that",
+   "research_window_testable": "partial",
+   "why": "The only published 1-30 min horizon-decay curve for OFI forecasts; but it is on single stocks, uses a portfolio weight not a per-trade rule, and ignores costs, so it is weak support at best. Index futures already aggregate the cross-section, which the paper says is where cross-impact helps.",
+   "prop_notes": "As R3-C1",
+   "overlap_ids": [
+    "K8 (cross-market, daily/multi-hour legs)"
+   ],
+   "overlap_note": "K8 tested cross-market price legs on 1-min bars, not order flow; no OFI member exists."
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "OFI explains CONTEMPORANEOUS 10-second mid-price changes (not a forecast); trade imbalance explains half as much",
+   "number": "average R2 65% (OFI) vs 32% (trade imbalance); 50 S&P 500 stocks, April 2010 TAQ",
+   "quote": "We find that this aggregate variable explains mid-price changes over short time scales in a linear fashion, for a large sample of stocks, with an average R2 of 65%. ... the average R2 for order flow imbalance is 65% compared to 32% for the trade imbalance.",
+   "location": "Sec. 1.1 (p. 2-3) and Sec. 4.1 (Table 4 text)",
+   "source": "Cont, Kukanov, Stoikov (2014), J. Financial Econometrics 12(1); arXiv:1011.6402v3",
+   "url": "https://arxiv.org/pdf/1011.6402",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_1011.6402.pdf",
+   "sha256": "40d1d5f0baf7944a1b9f4c12d3644038e657acf4a3dfb500b2057c2269edd25f"
+  },
+  {
+   "claim": "CKS regressions are contemporaneous: OFI_k and the price change are measured over the same 10-s interval",
+   "number": "10-second intervals, 273 half-hour subsamples per stock, ~180 obs each",
+   "quote": "where Pk are the 10-second mid-price changes and OFIk are the contemporaneous order flow imbalances. These regressions were estimated using 273 half-hour subsamples",
+   "location": "Table 2 note",
+   "source": "Cont, Kukanov, Stoikov (2014)",
+   "url": "https://arxiv.org/pdf/1011.6402",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_1011.6402.pdf",
+   "sha256": "40d1d5f0baf7944a1b9f4c12d3644038e657acf4a3dfb500b2057c2269edd25f"
+  },
+  {
+   "claim": "Multi-level OFI improves CONTEMPORANEOUS fit with each extra level (6 Nasdaq stocks)",
+   "number": "out-of-sample fit improves with each level (contemporaneous)",
+   "quote": "we fit a simple, linear relationship between MLOFI and the contemporaneous change in mid-price. For all 6 stocks that we study, we find that the out-of-sample goodness-of-fit of the relationship improves with each additional price level that we include in the MLOFI vector.",
+   "location": "Abstract",
+   "source": "Xu, Gould, Howison (2019), arXiv:1907.06230 (multi-level OFI)",
+   "url": "https://arxiv.org/pdf/1907.06230",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_1907.06230.pdf",
+   "sha256": "a4da688fe33e8bf981e96e265b89cee3e42d0ae7efd187aa3f6cbd5c27359460"
+  },
+  {
+   "claim": "Integrated/cross-impact OFI: one-minute-ahead out-of-sample R2 is NEGATIVE for every model (own OFI, cross OFI, returns-only)",
+   "number": "OS R2 (percent units as printed): FPI[1] -0.37, FCI[1] -0.10, FPI^I -0.36, FCI^I -0.10, AR -0.36, CAR -0.10; top-100 S&P 500 Nasdaq stocks 2017-2019",
+   "quote": "Table 8: Out-of-sample performance for one-minute-ahead returns. ... OS R2 -0.37 -0.10 -0.36 -0.10 -0.36 -0.10",
+   "location": "Sec. 4.2, Table 8 (p. 23)",
+   "source": "Cont, Cucuringu, Zhang (2023), Quantitative Finance; arXiv:2112.13213",
+   "url": "https://arxiv.org/pdf/2112.13213",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_2112.13213.pdf",
+   "sha256": "8a8559063f7bbe93827407cddd21b41d5b7ba80870772f2800a835b77cee44c9"
+  },
+  {
+   "claim": "Forecast-implied 1-minute strategy is profitable only before costs; trading costs are ignored",
+   "number": "annualized PnL 0.21 (own best-level OFI) to 0.43 (cross-impact OFI); costs ignored; trades only when |forecast| > relative spread",
+   "quote": "Table 11: Economic performance of forecast-implied trading strategy. ... PnL 0.21 0.43 0.23 0.39 0.23 0.40 ... It is worth noting that in the following analysis, the strategy ignores trading costs, as this is not the focus of our paper.",
+   "location": "Sec. 4.2, Table 11 and text (p. 26-27); weight rule Eq. (18)",
+   "source": "Cont, Cucuringu, Zhang (2023)",
+   "url": "https://arxiv.org/pdf/2112.13213",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_2112.13213.pdf",
+   "sha256": "8a8559063f7bbe93827407cddd21b41d5b7ba80870772f2800a835b77cee44c9"
+  },
+  {
+   "claim": "Horizon-decay: OFI-based PnL plotted at 1, 3, 10, 30 min; cross-asset OFI PnL declines faster at longer horizons",
+   "number": "Figure 10, y-axis about 0.15-0.40 annualized, horizons 1-30 min (values only plotted; not tabulated)",
+   "quote": "superior forecasting ability arises from cross-asset terms at short horizons. However, the PnL of cross-asset models declines more quickly over longer horizons.",
+   "location": "Sec. 4.3, Figure 10 (p. 27)",
+   "source": "Cont, Cucuringu, Zhang (2023)",
+   "url": "https://arxiv.org/pdf/2112.13213",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_2112.13213.pdf",
+   "sha256": "8a8559063f7bbe93827407cddd21b41d5b7ba80870772f2800a835b77cee44c9"
+  },
+  {
+   "claim": "E-mini S&P 500 (ES) OFI at 1-second frequency: impulse responses die out within one second",
+   "number": "responses beyond one 1-s lag nearly negligible; 1,490 trading days 2008-01-02..2013-12-31; 37,029 SVAR estimations",
+   "quote": "most impacts dissipate quickly, with responses beyond one lag nearly negligible. This implies that market adjustments to order flow and return shocks occur within a second",
+   "location": "Sec. 5.3 (Impulse Responses), Figure 3; sample Sec. 2 line \"The sample covers 1,490 trading days from January 2, 2008 to December 31, 2013\"",
+   "source": "Takahashi (2025), arXiv:2508.06788 (Returns and Order Flow Imbalances: Intraday Dynamics and Macroeconomic News Effects)",
+   "url": "https://arxiv.org/pdf/2508.06788",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_2508.06788.pdf",
+   "sha256": "79bb14f8e7d8d859e971187825433511c6d0ce00f1ff267be24887a48bbb95b2"
+  },
+  {
+   "claim": "ES long-run price impact of an unexpected flow shock is a fraction of a basis point",
+   "number": "1,000-contract flow shock ~1.42 bp long run; one-sd flow shock ~0.48 bp",
+   "quote": "A one-unit flow shock, corresponding to an unexpected increase of about 1,000 contracts at the best bid or ask, raises prices by roughly 1.42 basis points in the long run. Using the mean flow volatility (0.34, about half the mean depth in Table 1), this translates into a price impact of 0.48 basis points",
+   "location": "Sec. 5.3, Table 4 text",
+   "source": "Takahashi (2025), arXiv:2508.06788",
+   "url": "https://arxiv.org/pdf/2508.06788",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_2508.06788.pdf",
+   "sha256": "79bb14f8e7d8d859e971187825433511c6d0ce00f1ff267be24887a48bbb95b2"
+  },
+  {
+   "claim": "ES level-II RNN price-flip prediction decays from next book event to 1 s; CME latency 100 us-1 ms assumed",
+   "number": "ESU6, August 2016; ROC decays with horizon (next event to 1 s)",
+   "quote": "We observe that the performance of the RNN decays as we increase the prediction horizon from the next book update event to 1s in the future. ... It is commonplace however for this latency to lie in the range of 100 micro-seconds to 1ms.",
+   "location": "Sec. 4, Figure 9 text (p. 16-17)",
+   "source": "Dixon (2018), Applied Mathematical Finance; arXiv:1707.05642 (Sequence classification of the LOB using RNNs)",
+   "url": "https://arxiv.org/pdf/1707.05642",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_1707.05642.pdf",
+   "sha256": "57d457d2f740a04c54286ed3595d2182964da763caf35682f3e5d83435991277"
+  },
+  {
+   "claim": "Deep OFI (115 Nasdaq stocks): effective forecast horizon about two average price changes",
+   "number": "~2 average price changes",
+   "quote": "Finally, we demonstrate that the effective horizon of stock specific forecasts is approximately two average price changes.",
+   "location": "Abstract (RePEc IDEAS record of the published article)",
+   "source": "Kolm, Turiel, Westray (2023), Mathematical Finance 33(4):1044-1081, doi:10.1111/mafi.12413",
+   "url": "https://ideas.repec.org/a/bla/mathfi/v33y2023i4p1044-1081.html",
+   "grade": "peer-reviewed [secondary-only]",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/repec_kolm2023.html",
+   "sha256": ""
+  },
+  {
+   "claim": "Queue imbalance predicts the NEXT mid-price move (one tick ahead), strongest for large-tick stocks",
+   "number": "binary classification improves 50-60% (large tick), 10-30% (small tick) vs null; 10 Nasdaq stocks",
+   "quote": "we find that our logistic regressions improve out-of-sample performance of binary classification by about 50-60% for large tick stocks and about 10-30% for small-tick stocks.",
+   "location": "Sec. 1 (Introduction, p. 3)",
+   "source": "Gould, Bonart (2016), Market Microstructure and Liquidity; arXiv:1512.03492",
+   "url": "https://arxiv.org/pdf/1512.03492",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_1512.03492.pdf",
+   "sha256": "a5051285adfe2d8a2d7f46a758486f357d556a46a964bc89b245de7e7a0bc338"
+  },
+  {
+   "claim": "High LOB forecasting power does not translate into actionable trades",
+   "number": "qualitative (15 Nasdaq stocks; horizons 10/50/100 LOB updates)",
+   "quote": "their high forecasting power does not necessarily correspond to actionable trading signals. We argue that traditional machine learning metrics fail to adequately assess the quality of forecasts in the Limit Order Book context.",
+   "location": "Abstract",
+   "source": "Briola, Bartolucci, Aste (2024/2025), arXiv:2403.09267 (Deep LOB forecasting: a microstructural guide)",
+   "url": "https://arxiv.org/pdf/2403.09267",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_2403.09267.pdf",
+   "sha256": "1642bd288da08a8bff5d53d3e94bc81dee8b7368a69ff7d310db66da3bd3f7d8"
+  },
+  {
+   "claim": "Value of imbalance signals is eroded by latency",
+   "number": "qualitative / numerical latency cost",
+   "quote": "we show how the added value of exploiting liquidity imbalance is eroded by latency: being able to predict future liquidity consuming flows is of less use if you do not have enough time to cancel and reinsert your limit orders.",
+   "location": "Abstract",
+   "source": "Lehalle, Mounjid (2017), Market Microstructure and Liquidity; arXiv:1610.00261v4",
+   "url": "https://arxiv.org/pdf/1610.00261",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_1610.00261.pdf",
+   "sha256": "47ab464777dcbf17f2c1d89309e493ffd6cd95adafdd9cfa732c4a8086edd72a"
+  },
+  {
+   "claim": "Agent-based simulation: OBI trader profit falls with latency",
+   "number": "qualitative (simulation, not market data)",
+   "quote": "latency is inversely related to profit for the OBI traders",
+   "location": "Abstract",
+   "source": "Byrd, Palaparthi, Hybinette, Balch (2020), arXiv:2006.08682",
+   "url": "https://arxiv.org/pdf/2006.08682",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_2006.08682.pdf",
+   "sha256": "6c2334457b6c46e10694e1432510fd8b223fa2b5567853fc7db4502e74187d39"
+  },
+  {
+   "claim": "Order-imbalance predictability horizon shrank over time: 30 min (1996) -> 10 min (1999) -> 5 min (2002)",
+   "number": "NYSE 150 largest stocks; OIB# adj. R2 (%) at 5/10/15/30/60 min: 1996 2.61/0.79/0.44/0.28/0.22; 1999 0.56/0.20/0.12/0.10/0.15; 2002 0.28/0.08/0.08/0.07/0.06",
+   "quote": "There is significance at up to thirty minutes during 1996, up to ten minutes in 1999, and up to five minutes in 2002 ... The obvious pattern in all regressions where OIB predicts returns is the declining predictive ability as the return interval lengthens. ... In no year does it take more than 30 minutes to eliminate the predictive content of OIB.",
+   "location": "Sec. 4 text (p. 11-12) and Table 2 (p. 26-27)",
+   "source": "Chordia, Roll, Subrahmanyam (2005), J. Financial Economics 76(2):271-292; UCLA working paper (June 22, 2004)",
+   "url": "https://escholarship.org/uc/item/8wb6140g.pdf",
+   "grade": "peer-reviewed (working-paper version read)",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/escholarship_crs2005_8wb6140g.pdf",
+   "sha256": "ef602b68caf977a3165c49b364d91ecc26a22c11ffb669e924137f928c098ce0"
+  },
+  {
+   "claim": "Euro Stoxx 50 FUTURES, minute scale: order-flow VAR predicts next binned return with small out-of-sample R2",
+   "number": "OOS R2 for return 1.46% (VAR(1)) to 1.7% (VAR(8)); past return alone 0.49%; bins = 20 significant price changes; 545 days Sep 2016-Aug 2019",
+   "quote": "Note that the out-of-sample R2 score of the returns increases from 1.46 for p = 1 to 1.7 for p = 8. ... The R2 score of 1.6% for return r is of particular interest. It is in particular significantly higher than the score of 0.49% obtained when predicting returns using the past return as the only feature.",
+   "location": "Sec. 4.1-4.2, Tables 3 and 5; data Sec. 2 (\"545 days of the futures contract on EuroStoxx from September 2016 to August 2019\"); binning Sec. 2.2 (\"binning consecutive significant price changes into groups of 20\")",
+   "source": "Bouchaud group: \"Microstructure Modes - Disentangling the Joint Dynamics of Prices & Order Flow\" (2024), arXiv:2405.10654",
+   "url": "https://arxiv.org/pdf/2405.10654",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/arxiv_2405.10654.pdf",
+   "sha256": "78c418db5dd4ee4ee70c9bc4780a99071442646d00f3560d50fdff95309036f0"
+  },
+  {
+   "claim": "VPIN (E-mini S&P 500, Jan 2008-Jul 2010) is a poor short-run volatility predictor; peaked after, not before, the flash crash",
+   "number": "qualitative; no incremental power after controls",
+   "quote": "our empirical investigation of VPIN documents that it is a poor predictor of short run volatility, that it did not reach an all-time high prior, but rather after, the flash crash, and that its predictive content is due primarily to a mechanical relation with the underlying trading intensity.",
+   "location": "Abstract",
+   "source": "Andersen, Bondarenko (2014), J. Financial Markets 17; CREATES RP 2011-50 (May 2013 version)",
+   "url": "https://repec.econ.au.dk/repec/creates/rp/11/rp11_50.pdf",
+   "grade": "peer-reviewed (working-paper version read)",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/creates_rp11_50.pdf",
+   "sha256": "1407e8ae80023259a71d9601358d7704fc37abadcd2b0769531276d91538f739"
+  },
+  {
+   "claim": "VPIN: no incremental predictive power for future volatility once current volume and volatility are controlled",
+   "number": "qualitative",
+   "quote": "Doing so, we find no evidence of incremental predictive power of VPIN for future volatility. Likewise, VPIN does not attain unusual extremes prior to the flash crash.",
+   "location": "Abstract",
+   "source": "Andersen, Bondarenko (2014b) \"Reflecting on the VPIN dispute\", J. Financial Markets; CREATES RP 2013-42",
+   "url": "https://repec.econ.au.dk/repec/creates/rp/13/rp13_42.pdf",
+   "grade": "peer-reviewed (working-paper version read)",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/creates_rp13_42.pdf",
+   "sha256": "447ac8ef22c404f6c449bd028181d2adad0e52d0e17567dcdbea313e233bb8f8"
+  },
+  {
+   "claim": "Vendor ES example: 10-level imbalance and top-of-book skew have R2 about 0.01 against a 500-trade markout (one RTH day, 2023-12-06, no costs)",
+   "number": "R2 ~ 0.01; one day of ES mbp-10",
+   "quote": "Both have some predictive value against short-term future returns; in a low signal-to-noise ratio environment like order book data, it’s common to see useful features like this with R² ≈ 0.01.",
+   "location": "blog body (features section); data request start=\"2023-12-06T14:30\" end=\"2023-12-06T20:30\" ES.n.0 mbp-10",
+   "source": "Databento blog \"Building high-frequency trading signals with sklearn\"",
+   "url": "https://databento.com/blog/hft-sklearn-python",
+   "grade": "vendor",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/databento_blog_hft-sklearn-python.html",
+   "sha256": ""
+  },
+  {
+   "claim": "Databento published plan prices for CME history: Standard $199/month (1 yr L1, 1 month L2/L3); Unlimited $4,500/month license fees (16+ yr all schemas); usage-based $/GB with no CME $/GB printed",
+   "number": "$199/mo; $1,750/mo; $4,500/mo; $125 signup credit buys e.g. \"1 product(ES) MBO 14 months, MBP-1 12 months, TBBO 15 months, Trades 16 months\"",
+   "quote": "### Standard ... $199 per month ... 1 year of L1 history / 1 month of L2 and L3 history / Pay as you go for more history ... ### Unlimited ... $4,500 license fees per month ... 16+ years in all schemas ... CME Globex MDP 3.0 / 1 product(ES) / MBO 14 months / MBP-1 12 months / TBBO 15 months / Trades 16 months",
+   "location": "pricing page, plan cards and \"Example ways to use your signup credits\" (excerpt file)",
+   "source": "Databento pricing page (fetched 2026-10-18)",
+   "url": "https://databento.com/pricing",
+   "grade": "vendor",
+   "saved_path": "reports/stage_e25_briefs/pages/R3/databento_pricing_excerpt.md",
+   "sha256": "820f65009b598a61f3ae92f86be2060b2cc7b8f296acc24a155619dbbf3492c4"
+  },
+  {
+   "claim": "Program-internal Databento quotes (Stage D.1e, 2026-09-22, quotes only): MES per-day cost of book data",
+   "number": "mean $/day over 5 days: mbo RTH $0.7836 (445.8 MiB), mbo full $1.0000, mbp-10 RTH $1.2088 (2.42 GiB), mbp-10 full $1.5286 (3.06 GiB)",
+   "quote": "| mbo/rth | 5 | $0.7836 | 445.8 MiB | ... | mbp-10/rth | 5 | $1.2088 | 2.42 GiB | ... | mbp-10/full | 5 | $1.5286 | 3.06 GiB |",
+   "location": "reports/stage_d1e_quotes.md, \"Means and linear scalings\" table (lines ~196-206)",
+   "source": "PropExperiment Stage D.1e quote run (not a published price)",
+   "url": "reports/stage_d1e_quotes.md",
+   "grade": "vendor (program quote log)",
+   "saved_path": "",
+   "sha256": ""
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "V39-V41 closed directions / E.12 and E.20 ML route FAIL on 1-min OHLCV",
+   "effect": "supports",
+   "quote": "Our results suggest that cross-impact terms do provide significant information content for intraday forecasting of future returns over a short horizon of up to several minutes, but their predictability decays quickly through time. (Cont, Cucuringu, Zhang 2023, Sec. 1.1)",
+   "source": "arXiv:2112.13213"
+  },
+  {
+   "verdict": "D.1g C6 passive-execution queue model (closed, not run)",
+   "effect": "supports",
+   "quote": "we show how the added value of exploiting liquidity imbalance is eroded by latency (Lehalle and Mounjid 2017, abstract); latency on CME \"in the range of 100 micro-seconds to 1ms\" (Dixon 2018, Sec. 4)",
+   "source": "arXiv:1610.00261; arXiv:1707.05642"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "https://arxiv.org/pdf/1011.6402",
+   "utc": "2026-10-18T08:44:03Z",
+   "sha256": "40d1d5f0baf7944a1b9f4c12d3644038e657acf4a3dfb500b2057c2269edd25f",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_1011.6402.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2112.13213",
+   "utc": "2026-10-18T08:44:20Z",
+   "sha256": "8a8559063f7bbe93827407cddd21b41d5b7ba80870772f2800a835b77cee44c9",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_2112.13213.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2508.06788",
+   "utc": "2026-10-18T08:44:37Z",
+   "sha256": "79bb14f8e7d8d859e971187825433511c6d0ce00f1ff267be24887a48bbb95b2",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_2508.06788.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/1707.05642",
+   "utc": "2026-10-18T08:44:54Z",
+   "sha256": "57d457d2f740a04c54286ed3595d2182964da763caf35682f3e5d83435991277",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_1707.05642.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/1907.06230",
+   "utc": "2026-10-18T08:45:11Z",
+   "sha256": "a4da688fe33e8bf981e96e265b89cee3e42d0ae7efd187aa3f6cbd5c27359460",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_1907.06230.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/1512.03492",
+   "utc": "2026-10-18T08:45:28Z",
+   "sha256": "a5051285adfe2d8a2d7f46a758486f357d556a46a964bc89b245de7e7a0bc338",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_1512.03492.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2403.09267",
+   "utc": "2026-10-18T08:45:45Z",
+   "sha256": "1642bd288da08a8bff5d53d3e94bc81dee8b7368a69ff7d310db66da3bd3f7d8",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_2403.09267.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2211.13777",
+   "utc": "2026-10-18T08:46:02Z",
+   "sha256": "18a96000fe280aba55a9cfc396cad21fecc8faf287d88dc464766fb1e3168d49",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_2211.13777.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/1610.00261",
+   "utc": "2026-10-18T08:46:18Z",
+   "sha256": "47ab464777dcbf17f2c1d89309e493ffd6cd95adafdd9cfa732c4a8086edd72a",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_1610.00261.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/1706.04163",
+   "utc": "2026-10-18T08:46:35Z",
+   "sha256": "e1143e710d1401b4837e41075bdb3f0090d69a8a08b9c0ca62b1333a42070fb6",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_1706.04163.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://databento.com/blog/hft-sklearn-python",
+   "utc": "2026-10-18T08:49:23Z",
+   "sha256": "61b4e26ff8659d8215e26182aed24716e5c38f9c2c8d26a452af8eb35c069274",
+   "path": "reports/stage_e25_briefs/pages/R3/databento_blog_hft-sklearn-python.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://ideas.repec.org/a/bla/mathfi/v33y2023i4p1044-1081.html",
+   "utc": "2026-10-18T08:49:57Z",
+   "sha256": "dad1d577f491c53da9292f573c424fcf34ecd659fb3c9984292375eb39d5b21f",
+   "path": "reports/stage_e25_briefs/pages/R3/repec_kolm2023.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://repec.econ.au.dk/repec/creates/rp/11/rp11_50.pdf",
+   "utc": "2026-10-18T08:50:30Z",
+   "sha256": "1407e8ae80023259a71d9601358d7704fc37abadcd2b0769531276d91538f739",
+   "path": "reports/stage_e25_briefs/pages/R3/creates_rp11_50.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://repec.econ.au.dk/repec/creates/rp/13/rp13_42.pdf",
+   "utc": "2026-10-18T08:50:39Z",
+   "sha256": "447ac8ef22c404f6c449bd028181d2adad0e52d0e17567dcdbea313e233bb8f8",
+   "path": "reports/stage_e25_briefs/pages/R3/creates_rp13_42.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2405.10654",
+   "utc": "2026-10-18T08:51:24Z",
+   "sha256": "78c418db5dd4ee4ee70c9bc4780a99071442646d00f3560d50fdff95309036f0",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_2405.10654.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2505.17388",
+   "utc": "2026-10-18T08:51:41Z",
+   "sha256": "a816e911616e859722eb561728ed2b5d3f27602080ea2e6a32ab485afff337f9",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_2505.17388.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://escholarship.org/uc/item/8wb6140g.pdf",
+   "utc": "2026-10-18T08:51:58Z",
+   "sha256": "ef602b68caf977a3165c49b364d91ecc26a22c11ffb669e924137f928c098ce0",
+   "path": "reports/stage_e25_briefs/pages/R3/escholarship_crs2005_8wb6140g.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2004.11953",
+   "utc": "2026-10-18T08:51:59Z",
+   "sha256": "2bb27ea7474d74b180b209ef9014c2ae5783a949f1a2ebd720d3cdf294f82008",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_2004.11953.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2006.08682",
+   "utc": "2026-10-18T08:53:04Z",
+   "sha256": "6c2334457b6c46e10694e1432510fd8b223fa2b5567853fc7db4502e74187d39",
+   "path": "reports/stage_e25_briefs/pages/R3/arxiv_2006.08682.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://databento.com/legal (Terms of Use)",
+   "utc": "2026-10-18T08:41:30Z",
+   "sha256": "",
+   "path": "reports/stage_e25_briefs/terms/databento.com_terms.md (excerpt)",
+   "status": "ok",
+   "tool": "firecrawl_scrape"
+  },
+  {
+   "url": "https://databento.com/pricing",
+   "utc": "2026-10-18T08:42:20Z",
+   "sha256": "820f65009b598a61f3ae92f86be2060b2cc7b8f296acc24a155619dbbf3492c4",
+   "path": "reports/stage_e25_briefs/pages/R3/databento_pricing_excerpt.md",
+   "status": "ok",
+   "tool": "firecrawl_scrape"
+  },
+  {
+   "url": "https://databento.com/datasets/GLBX.MDP3",
+   "utc": "2026-10-18T08:42:52Z",
+   "sha256": "",
+   "path": "reports/stage_e25_briefs/pages/R3/databento_GLBX.MDP3.html",
+   "status": "ok",
+   "tool": "curl (Firecrawl query returned empty)"
+  },
+  {
+   "url": "arxiv:1011.6402 passages",
+   "utc": "2026-10-18T08:43:00Z",
+   "sha256": "",
+   "path": "(tool result; PDF saved separately)",
+   "status": "ok",
+   "tool": "firecrawl_research_read_paper"
+  },
+  {
+   "url": "doi:10.1111/mafi.12413",
+   "utc": "2026-10-18T08:49:30Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked (404 in paper index)",
+   "tool": "firecrawl_research_read_paper"
+  },
+  {
+   "url": "https://api.openalex.org/works?search=...",
+   "utc": "2026-10-18T08:46:06Z",
+   "sha256": "",
+   "path": "",
+   "status": "throttled (429 IP daily budget used up)",
+   "tool": "urllib"
+  },
+  {
+   "url": "https://api.semanticscholar.org/graph/v1/paper/search",
+   "utc": "2026-10-18T08:48:00Z",
+   "sha256": "",
+   "path": "",
+   "status": "throttled (429 x3)",
+   "tool": "urllib"
+  }
+ ],
+ "budget_notices": [
+  "2026-10-18T08:43:5xZ Firecrawl agent hint: 'their Firecrawl credits are running low' (informational; continued).",
+  "2026-10-18T08:44:13Z Firecrawl search 'Rate limit exceeded. Consumed (req/min): 14' (shared per-minute limit); fell back to WebSearch.",
+  "2026-10-18T08:46:06Z OpenAlex 429: 'Insufficient budget. This request has no API key, so it counts against the free daily budget shared by everyone on your network's IP address ... resets at midnight UTC'. No OpenAlex key variable in .env. Not retried.",
+  "2026-10-18T08:48Z Semantic Scholar keyless: HTTP 429 three times with 60 s waits; logged throttled.",
+  "WebSearch: 7 calls used by R3 (cap 45); no over-budget notice."
+ ],
+ "unfinished": [
+  "Kolm, Turiel, Westray (2023) full text not read (SSRN blocked by rule; Wiley paywall; Firecrawl paper index 404): only the abstract via RePEc [secondary-only]; their horizon-by-horizon R2 table is not quoted.",
+  "Stoikov (2018) micro-price (Quantitative Finance; SSRN 2970694) not fetched: [unverified]; no number used.",
+  "Easley, Lopez de Prado, O'Hara VPIN papers and their 2014 rejoinder not fetched (paywalled/SSRN); only the critics' side is quoted, so the VPIN dispute is reported one-sided.",
+  "Takahashi (2018, Keio WP) claim that OFI is 'more informative several minutes away from' news seen only in a search summary: [unverified], not used.",
+  "No CME-futures study with a published per-trade gross at 1-30 min found; searches covered arXiv (Firecrawl paper index), WebSearch (7 calls) and author repositories. OpenAlex (IP daily budget used up) and Semantic Scholar (429 x3) were unavailable, so forward-citation sweeps of CKS 2014 and CCZ 2023 were NOT done.",
+  "Gould-Bonart, Lucchese et al. (arXiv:2211.13777), CSI 300 futures (arXiv:2505.17388) and 'From orders to prices' (arXiv:2004.11953, XETRA: '>75% direction accuracy below 10 minutes' in its abstract) downloaded but only skimmed; the XETRA claim is not used as evidence.",
+  "R3-C1 per-trade gross is not published; the 0.10-sigma figure is R3 arithmetic from R2 under a Gaussian assumption, for the lead to check."
+ ]
+}

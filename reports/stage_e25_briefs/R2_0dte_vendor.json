@@ -1,0 +1,1084 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "R2-0DTEVendor-OpusHigh",
+ "finished_utc": "2026-10-18T13:32:27Z",
+ "candidates": [
+  {
+   "id": "R2-C1",
+   "hypothesis": "Long ES/MES after SPX breaks below SpotGamma's daily Put Wall (vendor level); published 1-day forward return +14 bp (Call Wall breach -7 bp)",
+   "mechanism": "dealer long-put-gamma support level (vendor-defined); post-breach rebound",
+   "instruments": [
+    "MES",
+    "ES"
+   ],
+   "entry_window_ct": "as published: at/after breach, horizon 1 trading day (definition not stated); intraday variant unpublished",
+   "hold": "1 day as published (overnight)",
+   "trades_per_year": null,
+   "best_source": "SpotGamma Support, SpotGamma SPX Key Levels Statistics (data 2019-05-10 to 2024-05-28)",
+   "source_url": "https://support.spotgamma.com/hc/en-us/articles/31209900542867",
+   "grade": "vendor",
+   "sample": "SPX 2019-05-10..2024-05-28; n not published",
+   "post_2015_or_oos": "post-2015, in-sample, vendor",
+   "published_effect": "+14 bp average 1-day return after Put Wall breach; +7 bp 5-day; +39 bp 10-day",
+   "price_level_used": "SPX/ES 6,600 (at 4,000: 5.6 pt)",
+   "gross_per_trade_points": 9.24,
+   "gross_per_trade_micro_ticks": 37.0,
+   "micro": "MES",
+   "gross_or_net": "unknown",
+   "dispersion": "none published",
+   "quote": "Following a Put Wall breach, forward returns are noticeably positive: average 1-day return of 14bps, average 5-day return of 7bps, and average 10-day return of 39bps.",
+   "quote_location": "line 65 of saved page",
+   "decay_evidence": "none published; SpotGamma's own gamma-sign backtest underperforms (E8)",
+   "data_needed": "daily SpotGamma Put/Call Wall history",
+   "owned": "no",
+   "data_cost": "SpotGamma Alpha $299/mo (current levels); no history for sale found",
+   "research_window_testable": "no",
+   "why": "vendor statistic, no n/sd, overnight hold, data not owned",
+   "prop_notes": "overnight hold breaks flat-by-15:10 CT; intraday variant unsized; multi-day version falls in closed direction (V39-V41, E.23)",
+   "overlap_ids": [
+    "E-H3",
+    "C-H1",
+    "K1-vxnband-01",
+    "E23-H6NQh5"
+   ],
+   "overlap_note": "options-level-conditioned reversal at daily horizon; loosely the reversal family"
+  },
+  {
+   "id": "R2-C2",
+   "hypothesis": "Overlay on shortlist C1 (noise-area momentum): reduce/skip on high 5-day RSI days (RSI as dealer-gamma proxy; high RSI = more intraday mean reversion)",
+   "mechanism": "dealer gamma proxy (RSI) conditions intraday momentum profitability",
+   "instruments": [
+    "MNQ",
+    "MES"
+   ],
+   "entry_window_ct": "C1's windows; filter fixed at previous close",
+   "hold": "intraday (C1)",
+   "trades_per_year": null,
+   "best_source": "Zarattini, Aziz, Barbon, Beat the Market (WP, v2025-02-03), section 4.5",
+   "source_url": "https://alexandria.unisg.ch (E.20 shared copy; owner R10)",
+   "grade": "working-paper",
+   "sample": "SPY 2007-2024, in-sample",
+   "post_2015_or_oos": "no OOS for this regression",
+   "published_effect": "beta -3.25 (daily momentum-portfolio return in bp per RSI point), p 0.001",
+   "price_level_used": "n/a",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "MNQ/MES",
+   "gross_or_net": "gross",
+   "dispersion": "p-value 0.001 (no sd/t of a filtered rule)",
+   "quote": "we obtain a value of beta of -3.25 with a p-value of 0.001.",
+   "quote_location": "section 4.5, p. 23 (txt line 876)",
+   "decay_evidence": "none tested; E20H6-T3 (GEX filter on a related momentum rule) FAIL",
+   "data_needed": "1-min bars (daily closes for RSI)",
+   "owned": "yes",
+   "data_cost": "none",
+   "research_window_testable": "yes",
+   "why": "cheap, owned data, but in-sample regression slope, a proxy the authors call out of scope, and an extra trial on top of C1",
+   "prop_notes": "same as C1: intraday, flat by 15:00 CT, automatable",
+   "overlap_ids": [
+    "C1",
+    "R10-C1",
+    "C2",
+    "E20H6-T3"
+   ],
+   "overlap_note": "RSI proxy instead of SqueezeMetrics GEX; applies to noise-area rule, not last-half-hour rule"
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "Cboe: SPX 0DTE market-maker net gamma is small vs S&P futures liquidity",
+   "number": "$170mm to $670mm; 0.04% to 0.17% of daily S&P futures liquidity",
+   "quote": "\"On average, market maker positioning is fairly de minimis, with net gamma exposure ranging from $170mm to $670mm throughout the day. To put that number in context, S&P futures trade around $400bn a day, so we're talking about potential hedging flows that make up between 0.04% to 0.17% of the daily S&P futures liquidity.\"",
+   "location": "point 1 under the 30-min box plot (line 334 of saved md)",
+   "source": "Mandy Xu, Cboe, \"Volatility Insights: Much Ado About 0DTEs\", 2023-09-07/08, https://www.cboe.com/insights/posts/volatility-insights-evaluating-the-market-impact-of-spx-0-dte-options",
+   "url": "https://www.cboe.com/insights/posts/volatility-insights-evaluating-the-market-impact-of-spx-0-dte-options",
+   "grade": "exchange-regulator (exchange with commercial interest in 0DTE volume)",
+   "saved_path": "pages/R2/cboe_much_ado_0dte_2023.md (PDF copy pages/R2/sg_cboeqqq.pdf)",
+   "sha256": ""
+  },
+  {
+   "claim": "Cboe: net gamma at 3:30 pm and tails",
+   "number": "median +$173mm; IQR -$1.1bn to +$2.4bn; whiskers -$5bn to +$7.7bn = 1.3%-1.9% of futures notional",
+   "quote": "\"The median net gamma at 3:30pm is just +$173mm with the typical range from -$1.1bn to +$2.4bn (25th to 75th percentile readings). Even if we focus on the \"whiskers\" on the box plot, the range of -$5bn to +$7.7bn represents just 1.3% to 1.9% of the S&P futures daily notional volume.\"",
+   "location": "point 2 (line 336)",
+   "source": "same",
+   "url": "",
+   "grade": "exchange-regulator",
+   "saved_path": "same",
+   "sha256": ""
+  },
+  {
+   "claim": "Cboe: scope caveat (only SPX 0DTE, not other expiries, ES options or SPY)",
+   "number": "-",
+   "quote": "\"It's worth noting that this analysis is only for market maker positioning in SPX 0DTE options. Market makers may have offsetting positions in other expiries, or other equivalent products (e.g. E-mini or SPY 0DTE options).\"",
+   "location": "line 338",
+   "source": "same",
+   "url": "",
+   "grade": "exchange-regulator",
+   "saved_path": "same",
+   "sha256": ""
+  },
+  {
+   "claim": "Cboe: no rise in 1-min 2-sigma jumps, incl. last hour",
+   "number": "no uptick",
+   "quote": "\"there has been no uptick in intraday gap moves in the S&P over the past year, either during the trading day or in the last hour going into the close\"",
+   "location": "section \"Assessing S&P Intraday Volatility\" (line 353)",
+   "source": "same",
+   "url": "",
+   "grade": "exchange-regulator",
+   "saved_path": "same",
+   "sha256": ""
+  },
+  {
+   "claim": "Cboe: close-to-close vs intraday realized vol spread unchanged",
+   "number": "2.7 vol pts YTD = 10-year average",
+   "quote": "\"The YTD average spread of 2.7 vol pts is exactly the same as the 10-year average (Exhibit 5).\"",
+   "location": "line 351",
+   "source": "same",
+   "url": "",
+   "grade": "exchange-regulator",
+   "saved_path": "same",
+   "sha256": ""
+  },
+  {
+   "claim": "Cboe 2025: in April 2025 turmoil MM 0DTE gamma hedging at most 0.2% of S&P futures notional",
+   "number": "+$2.1B to -$390M (Apr 4), +$300M to +$770M (Apr 9); 0.2%",
+   "quote": "\"SPX futures traded over $850B on April 9th and over $940B on April 4th, so market marker gamma hedging activity in SPX 0DTE options represented, at best, just 0.2% of S&P futures notional volume.\"",
+   "location": "PDF p. 7-8, Exhibits 10-11 (txt lines 395-400)",
+   "source": "Cboe, \"0DTEs Decoded: Positioning, Trends and Market Impact\", 2025-05-02 (PDF via storage.pardot.com)",
+   "url": "",
+   "grade": "exchange-regulator",
+   "saved_path": "pages/R2/cboe_0dtes_decoded_2025.pdf (+ .txt)",
+   "sha256": ""
+  },
+  {
+   "claim": "Cboe 2025: retail share of SPX 0DTE",
+   "number": "50-60%; 57% -> 47% in early April 2025",
+   "quote": "\"We estimate that retail now makes up around 50-60% of SPX 0DTE trading.\"",
+   "location": "landing page bullet 1 (line 278)",
+   "source": "Cboe insights post 2025-05-02, https://www.cboe.com/insights/posts/0-dt-es-decoded-positioning-trends-and-market-impact",
+   "url": "https://www.cboe.com/insights/posts/0-dt-es-decoded-positioning-trends-and-market-impact",
+   "grade": "exchange-regulator",
+   "saved_path": "pages/R2/cboe_0dtes_decoded_2025.md",
+   "sha256": ""
+  },
+  {
+   "claim": "SpotGamma: gamma-sign SPX timing underperforms buy-and-hold; whipsaw; bull-market-only sample",
+   "number": "no numbers",
+   "quote": "\"You will underpeform the SPX if you only use \"market gamma\" as your buy/sell indicator.\" / \"We know from our own testing that you can get \"chewed up\" at times where the indicator flips back and forth between positive and negative.\" / \"All gamma data we've seen has been collected during a very large bull market.\"",
+   "location": "post body, bullets",
+   "source": "SpotGamma, \"SPX Long Gamma Backtest\", 2019-12-10, https://spotgamma.com/spx-long-gamma-backtest/",
+   "url": "https://spotgamma.com/spx-long-gamma-backtest/",
+   "grade": "vendor",
+   "saved_path": "pages/R2/sg_spx_long_gamma_backtest.md",
+   "sha256": ""
+  },
+  {
+   "claim": "SpotGamma \"Quarterly Report Card\" is a list of selected dated calls, no hit rate",
+   "number": "none",
+   "quote": "e.g. \"6/5 - Crowded Tech Positioning Breaks - SPX Falls More Than 4% From Its Highs\" (no denominator, no misses listed)",
+   "location": "page headings",
+   "source": "SpotGamma, https://spotgamma.com/spotgamma-quarterly-report-card/ (fetched 2026-10-18)",
+   "url": "https://spotgamma.com/spotgamma-quarterly-report-card/",
+   "grade": "vendor (marketing; selection bias)",
+   "saved_path": "pages/R2/sg_report_card.md",
+   "sha256": ""
+  },
+  {
+   "claim": "Cboe 2025: 0DTE share and size",
+   "number": "over 50% of SPX volume; over $1T notional daily; ADV 388k (Q1 2022) -> 1.98M (Q1 2025)",
+   "quote": "\"0DTE options now make up over 50% of the total SPX volume, with over $1T notional trading daily (Exhibit 2).\"",
+   "location": "PDF p. 1 (txt line 12)",
+   "source": "Cboe, 0DTEs Decoded, 2025-05-02",
+   "url": "",
+   "grade": "exchange-regulator",
+   "saved_path": "pages/R2/cboe_0dtes_decoded_2025.txt",
+   "sha256": ""
+  },
+  {
+   "claim": "Cboe 2025: 0DTE share falls in turmoil",
+   "number": "64% (Apr 1) -> 36% (Apr 7)",
+   "quote": "\"0DTE share of overall SPX option volume fell from a high of 64% on April 1st to a low of 36% on April 7th\"",
+   "location": "txt line 228",
+   "source": "same",
+   "url": "",
+   "grade": "exchange-regulator",
+   "saved_path": "same",
+   "sha256": ""
+  },
+  {
+   "claim": "Cboe 2025: risk format of 0DTE trades",
+   "number": "over 95% capped risk; naked short 4%",
+   "quote": "\"with over 95% of all 0DTE trades done in capped risk formats (i.e. either long options outright or short options through spreads). Naked short options, with the potential for massive losses, make up just 4% of SPX\"",
+   "location": "txt lines 332-333",
+   "source": "same",
+   "url": "",
+   "grade": "exchange-regulator",
+   "saved_path": "same",
+   "sha256": ""
+  },
+  {
+   "claim": "Cboe Sep 2026: 0DTE volume at record in the research window's tail",
+   "number": "SPX 0DTE record quarterly ADV 3.2M; monthly 3.4M",
+   "quote": "\"SPX zero-days-to-expiry (0DTE) options reached a record quarterly ADV of 3.2 million contracts and record monthly ADV of 3.4 million contracts.\"",
+   "location": "bullet (line 275)",
+   "source": "Cboe, \"Market Metrics That Matter: Derivatives September 2026 Volume Highlights\", 2026-10-12, https://www.cboe.com/insights/posts/market-metrics-that-matter-derivatives-september-2026-volume-highlights",
+   "url": "https://www.cboe.com/insights/posts/market-metrics-that-matter-derivatives-september-2026-volume-highlights",
+   "grade": "exchange-regulator",
+   "saved_path": "pages/R2/cboe_metrics_sep2026.md",
+   "sha256": ""
+  },
+  {
+   "claim": "Cboe 2026: RUT 0DTE share doubled; retail 60-65%",
+   "number": "13% -> 25%",
+   "quote": "\"The share of 0DTE options in RUT has almost doubled, from 13% to 25% (see Exhibit 2).\"",
+   "location": "PDF txt line 52",
+   "source": "Cboe, \"Small Caps, Big Momentum: The Rise of 0DTE Trading in Russell 2000 Index & ETF Options\", 2026-03-13",
+   "url": "",
+   "grade": "exchange-regulator",
+   "saved_path": "pages/R2/cboe_rut_0dte_2026.pdf (+ .txt)",
+   "sha256": ""
+  },
+  {
+   "claim": "JPM, BofA, Nomura (via ZeroHedge repost on SpotGamma): 0DTE era shows more intraday reversal; morning/afternoon same-direction share \"plummeted\"",
+   "number": "none (charts only)",
+   "quote": "\"So, instead of Kolanovic's 'Volmageddon', JPMorgan's quants have observed more intraday reversal behavior (which matches SpotGamma and BofA's findings).\" / \"the share of sessions during which US equities move in the same direction in morning and afternoon trading has plummeted.\"",
+   "location": "lines 94-96; dated 2023-05-16 (image stamp line 104)",
+   "source": "ZeroHedge (Tyler Durden) reposted by SpotGamma, https://spotgamma.com/volmageddon-no-jpm-bofa-say-0-dte-options-are-suppressing-intraday-vol/",
+   "url": "https://spotgamma.com/volmageddon-no-jpm-bofa-say-0-dte-options-are-suppressing-intraday-vol/",
+   "grade": "pointer [secondary-only] (bank notes not read; press repost on a vendor site)",
+   "saved_path": "pages/R2/sg_volmageddon_jpm_bofa.md",
+   "sha256": ""
+  },
+  {
+   "claim": "BofA (via press): 0DTE share and trade-side pattern",
+   "number": "40-45% of SPX volume (early 2023); 75% of single-leg auto-ex trades near bid/ask; ask-skew early, bid-skew late",
+   "quote": "\"half of all SPX 0DTE option trades are \"single-leg auto-execution\", a category for which (i) 75% of trades occur near the bid or the ask – more than for any other tenor, and (ii) volume is uniquely skewed towards the ask early in the day but towards the bid later in the day\"",
+   "location": "line 63",
+   "source": "ZeroHedge repost on SpotGamma, https://spotgamma.com/no-0dte-will-not-result-in-volmageddon-bofa-derivative-gurus-respond-to-kolanovic/ (2023-02)",
+   "url": "https://spotgamma.com/no-0dte-will-not-result-in-volmageddon-bofa-derivative-gurus-respond-to-kolanovic/",
+   "grade": "pointer [secondary-only]",
+   "saved_path": "pages/R2/sg_bofa_respond_kolanovic.md",
+   "sha256": ""
+  },
+  {
+   "claim": "JPM (via press): 0DTE unwind scenario, not a measurement",
+   "number": "5% drop in 5 min -> $30.5bn flow -> +20 pp further decline",
+   "quote": "\"The analysts expect such a scenario if the S&P 500 declined 5% in five minutes, triggering $30.5 billion in 0DTE option-related trading that would in turn add another 20 percentage points to the index's decline.\"",
+   "location": "line 74",
+   "source": "Benzinga, 2023-03, https://www.benzinga.com/analyst-ratings/analyst-color/23/03/31230564/jpmorgan-analysts-believe-these-options-could-turn-a-5-market-fall-into-a-deadly-di",
+   "url": "https://www.benzinga.com/analyst-ratings/analyst-color/23/03/31230564/jpmorgan-analysts-believe-these-options-could-turn-a-5-market-fall-into-a-deadly-di",
+   "grade": "pointer [secondary-only]",
+   "saved_path": "pages/R2/benzinga_jpm_0dte_2023.md",
+   "sha256": ""
+  },
+  {
+   "claim": "Nomura (via SpotGamma): 0DTE volume mostly MM risk positioning that \"nets out\"",
+   "number": "none",
+   "quote": "\"flow can exacerbate intraday moves, BUT much of the volume likely electronic market makers trading for risk positioning, creating noise that can 'net out'.\"",
+   "location": "line 36 (2023-01-24)",
+   "source": "SpotGamma, \"Nomura on 0DTE Options Volumes\", https://spotgamma.com/nomura-on-0dte-options-volumes/",
+   "url": "https://spotgamma.com/nomura-on-0dte-options-volumes/",
+   "grade": "pointer [secondary-only]",
+   "saved_path": "pages/R2/sg_nomura_0dte.md",
+   "sha256": ""
+  },
+  {
+   "claim": "SpotGamma key-level statistics (R2-C1 source)",
+   "number": "Put Wall breach: +14 bp 1-day, +7 bp 5-day, +39 bp 10-day; Call Wall breach: -7 bp 1-day",
+   "quote": "\"Following a Put Wall breach, forward returns are noticeably positive: average 1-day return of 14bps, average 5-day return of 7bps, and average 10-day return of 39bps.\" / \"Following a Call Wall breach, average forward returns are diminutive: -7bps for 1 day forward return, and 5bps for 5 day forward returns.\" / sample: \"based on data from 10 May 2019 - 28 May 2024\"",
+   "location": "lines 41, 54, 65",
+   "source": "SpotGamma Support, \"SpotGamma SPX Key Levels Statistics\", https://support.spotgamma.com/hc/en-us/articles/31209900542867",
+   "url": "https://support.spotgamma.com/hc/en-us/articles/31209900542867",
+   "grade": "vendor (no n, no dispersion, no costs, in-sample; vendor defines its own levels)",
+   "saved_path": "pages/R2/sg_support_key_levels.md",
+   "sha256": ""
+  },
+  {
+   "claim": "SpotGamma: Vol Trigger separates volatility, not direction",
+   "number": "5-day RV 13% above vs 18% below; 1-day sd 0.9% vs 1.3%",
+   "quote": "\"SPX Opens Above Volatility Trigger™",
+   "location": "13%\" / \"SPX closes above Vol Trigger",
+   "source": "0.9%",
+   "url": "",
+   "grade": "2.0%\" ; \"SPX closes below Vol Trigger",
+   "saved_path": "1.3%",
+   "sha256": ""
+  },
+  {
+   "claim": "SqueezeMetrics GEX white paper: GEX predicts variance, not direction",
+   "number": "top vs second GEX quartile 1-day sd 0.55% vs 0.85%",
+   "quote": "\"When instead we compare the highest and second-highest** quartiles of GEX to subsequent SPX variance, the 1-day standard deviations are 0.55% and 0.85%, respectively.\"",
+   "location": "p. 2 (txt lines 66-70); paper dated March 2016, revised December 2017",
+   "source": "SqueezeMetrics, \"Gamma Exposure (GEX)\" white paper, https://squeezemetrics.com/monitor/download/pdf/white_paper.pdf",
+   "url": "https://squeezemetrics.com/monitor/download/pdf/white_paper.pdf",
+   "grade": "vendor",
+   "saved_path": "pages/R2/sqm_gex_white_paper.pdf (+ .txt; DO_NOT_COMMIT)",
+   "sha256": ""
+  },
+  {
+   "claim": "SqueezeMetrics: DIX signal decayed since 2022 (decay evidence for a vendor signal)",
+   "number": "-",
+   "quote": "\"Ever since 2022, the S&P 500 Dark Index (DIX) has clearly lost a great deal of predictive power. It's become messy. Its signal is degraded.\"",
+   "location": "line 15",
+   "source": "SqueezeMetrics note, 2023-12-17, https://mailer.squeezemetrics.com/w/SIIFYZqc14gv41SmeSjRYw?_2023-12-17",
+   "url": "https://mailer.squeezemetrics.com/w/SIIFYZqc14gv41SmeSjRYw?_2023-12-17",
+   "grade": "vendor",
+   "saved_path": "pages/R2/sqm_note_2023-12-17_dix_power.md",
+   "sha256": ""
+  },
+  {
+   "claim": "Beat the Market: RSI as dealer-gamma proxy predicts momentum-strategy returns (R2-C2 source)",
+   "number": "beta -3.25 bp per RSI point, p 0.001",
+   "quote": "\"we obtain a value of beta of -3.25 with a p-value of 0.001. The results indicate that the slope coefficient of the regression is negative and significantly different from zero.\" / \"Although it is beyond the scope of this paper to provide a precise estimate of gamma imbalance, we hypothesize that utilizing a short-term Relative Strength Index (RSI) might allow us to gauge whether the market is near the bulk of call strikes or put strikes.\"",
+   "location": "section 4.5, p. 23 (txt lines 866-878)",
+   "source": "Zarattini, Aziz, Barbon, \"Beat the Market: An Effective Intraday Momentum Strategy for S&P500 ETF (SPY)\", WP, version 2025-02-03 (owned by R10; E.20 shared copy)",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/shared/zarattini_aziz_barbon_beat_the_market.pdf.txt (sha256 5bed406569325f0a...)",
+   "sha256": ""
+  },
+  {
+   "claim": "FlashAlpha: futures GEX backtests must use cash-index proxy; no backtest result published",
+   "number": "-",
+   "quote": "\"research the signal on `historical.flashalpha.com` using **SPY** (for ES) and **QQQ** (for NQ) since January 2017\" / \"Minute-resolution replay for cash-index and equity symbols goes back to 2017-01-03\"",
+   "location": "lines 349, 479",
+   "source": "FlashAlpha, \"Backtesting Futures Gamma (ES & NQ): Historical GEX Done Right\", 2026-06, https://flashalpha.com/articles/backtesting-futures-gamma-es-nq-historical-gex",
+   "url": "https://flashalpha.com/articles/backtesting-futures-gamma-es-nq-historical-gex",
+   "grade": "vendor",
+   "saved_path": "pages/R2/fa_backtesting_futures_gamma.md",
+   "sha256": ""
+  },
+  {
+   "claim": "SpotGamma 2026 0DTE guide: \"pin\"/\"pop\" afternoon regimes asserted, not tested",
+   "number": "0DTE about 63% of SPX volume Feb 2026",
+   "quote": "\"In February 2026, Cboe reported that **0DTE contracts approached 63% of total SPX volume**\" ; \"If the market has been range-bound all day and GEX is positive, the afternoon will likely see prices tighten further around the highest-gamma strike.\"",
+   "location": "lines 64, 216",
+   "source": "SpotGamma, \"0DTE Options Explained\", published 2026-06-10, https://spotgamma.com/0dte-options-explained/",
+   "url": "https://spotgamma.com/0dte-options-explained/",
+   "grade": "vendor (marketing)",
+   "saved_path": "pages/R2/sg_0dte_explained_2026.md",
+   "sha256": ""
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "E20H6-T3 (FAIL) and C2 (stopped)",
+   "effect": "supports",
+   "quote": "On average, market maker positioning is fairly de minimis, with net gamma exposure ranging from $170mm to $670mm throughout the day. ... between 0.04% to 0.17% of the daily S&P futures liquidity.",
+   "source": "Cboe, Much Ado About 0DTEs, 2023 (E1)"
+  },
+  {
+   "verdict": "E20H6-T3 (FAIL) and C2 (stopped)",
+   "effect": "supports",
+   "quote": "market marker gamma hedging activity in SPX 0DTE options represented, at best, just 0.2% of S&P futures notional volume.",
+   "source": "Cboe, 0DTEs Decoded, 2025 (E6)"
+  },
+  {
+   "verdict": "E20H6-T3 (FAIL)",
+   "effect": "supports",
+   "quote": "You will underpeform the SPX if you only use \"market gamma\" as your buy/sell indicator.",
+   "source": "SpotGamma, SPX Long Gamma Backtest, 2019 (E8)"
+  },
+  {
+   "verdict": "K1-cp1-01 and E20H6-T1/T2 (FAIL)",
+   "effect": "supports",
+   "quote": "the share of sessions during which US equities move in the same direction in morning and afternoon trading has plummeted.",
+   "source": "Nomura via ZeroHedge repost on SpotGamma, 2023 (E15; pointer, unsized)"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "https://www.cboe.com/terms",
+   "utc": "2026-10-18T08:39:20Z",
+   "sha256": "996170436e01f09d (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/www.cboe.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.cboe.com/robots.txt",
+   "utc": "2026-10-18T08:39:29Z",
+   "sha256": "b1595e0c837d863f (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/www.cboe.com_robots.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.cboe.com/insights/posts/volatility-insights-evaluating-the-market-impact-of-spx-0-dte-options",
+   "utc": "2026-10-18T08:40:17Z",
+   "sha256": "bad5345bda049279 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/cboe_much_ado_0dte_2023.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.cboe.com/insights/posts/0-dt-es-decoded-positioning-trends-and-market-impact",
+   "utc": "2026-10-18T08:40:26Z",
+   "sha256": "1d18a8799036035a (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/cboe_0dtes_decoded_2025.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://storage.pardot.com/77532/17461948884kPMLz2S/0DTEs_Decoded_Positioning_Trends_and_Market_Impact.pdf",
+   "utc": "2026-10-18T08:41:19Z",
+   "sha256": "1d70a52efc885594 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/cboe_0dtes_decoded_2025.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://spotgamma.com/robots.txt",
+   "utc": "2026-10-18T08:41:30Z",
+   "sha256": "beb0487c960503e3 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/spotgamma.com_robots.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://spotgamma.com/terms-of-service/",
+   "utc": "2026-10-18T08:41:36Z",
+   "sha256": "c1904b396c764f0d (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/spotgamma.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://squeezemetrics.com/monitor/terms",
+   "utc": "2026-10-18T08:41:40Z",
+   "sha256": "b864a5db3632fff3 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/squeezemetrics.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://menthorq.com/robots.txt",
+   "utc": "2026-10-18T08:41:41Z",
+   "sha256": "a0858b8ddf37c91d (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/menthorq.com_robots.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://spotgamma.com/terms-and-conditions/",
+   "utc": "2026-10-18T08:42:00Z",
+   "sha256": "bf8cb7f38d7a7ef1 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/spotgamma.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://menthorq.com/terms-of-use/",
+   "utc": "2026-10-18T08:42:01Z",
+   "sha256": "00b477fc40c23634 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/menthorq.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://menthorq.com/legal/terms-of-use/",
+   "utc": "2026-10-18T08:42:18Z",
+   "sha256": "c4ac8476c539d85b (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/menthorq.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://spotgamma.com/spx-long-gamma-backtest/",
+   "utc": "2026-10-18T08:42:50Z",
+   "sha256": "56674182bac46ccc (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_spx_long_gamma_backtest.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://support.spotgamma.com/hc/en-us/articles/15297954935699",
+   "utc": "2026-10-18T08:43:02Z",
+   "sha256": "87299e073dba157e (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_support_vol_trigger.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://spotgamma.com/socgen-zero-gamma-chart-history/",
+   "utc": "2026-10-18T08:43:14Z",
+   "sha256": "952b42d94c523f9e (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_socgen_zero_gamma.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://spotgamma.com/spotgamma-quarterly-report-card/",
+   "utc": "2026-10-18T08:43:26Z",
+   "sha256": "8e08580e833a9cc5 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_report_card.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.advisorperspectives.com/robots.txt",
+   "utc": "2026-10-18T08:44:21Z",
+   "sha256": "301dc171e5fa8c5f (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/ap_robots.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://spotgamma.com/volmageddon-no-jpm-bofa-say-0-dte-options-are-suppressing-intraday-vol/",
+   "utc": "2026-10-18T08:44:22Z",
+   "sha256": "16c2308f031923f6 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_volmageddon_jpm_bofa.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://spotgamma.com/no-0dte-will-not-result-in-volmageddon-bofa-derivative-gurus-respond-to-kolanovic/",
+   "utc": "2026-10-18T08:44:34Z",
+   "sha256": "033e0ce7fba290b6 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_bofa_respond_kolanovic.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://squeezemetrics.com/monitor/docs",
+   "utc": "2026-10-18T08:44:50Z",
+   "sha256": "c82f9ce8e44195d2 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sqm_docs.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://squeezemetrics.com/monitor/download/pdf/white_paper.pdf",
+   "utc": "2026-10-18T08:44:57Z",
+   "sha256": "23eaf3fa1bbb765d (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sqm_gex_white_paper.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://notes.squeezemetrics.com/2020-04-19.pdf",
+   "utc": "2026-10-18T08:45:04Z",
+   "sha256": "c803fd5f3b670ba6 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sqm_note_2020-04-19.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://mailer.squeezemetrics.com/w/SIIFYZqc14gv41SmeSjRYw?_2023-12-17",
+   "utc": "2026-10-18T08:45:28Z",
+   "sha256": "da671e47fd0104c6 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sqm_note_2023-12-17_dix_power.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://mailer.squeezemetrics.com/w/soIqaaI4wfG6DRZ2RAq7fA?_2025-11-30",
+   "utc": "2026-10-18T08:45:34Z",
+   "sha256": "1c319ed689735141 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sqm_note_2025-11-30_adaptive.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://databento.com/robots.txt",
+   "utc": "2026-10-18T08:46:23Z",
+   "sha256": "0ce0aca613e9cce8 (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/robots_databento.com.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://orats.com/robots.txt",
+   "utc": "2026-10-18T08:46:25Z",
+   "sha256": "07d32613796caba6 (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/robots_orats.com.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.thetadata.net/robots.txt",
+   "utc": "2026-10-18T08:46:26Z",
+   "sha256": "60eb2a37ad9a00bc (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/robots_www.thetadata.net.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://thetadata.net/robots.txt",
+   "utc": "2026-10-18T08:46:28Z",
+   "sha256": "60eb2a37ad9a00bc (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/robots_thetadata.net.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://massive.com/robots.txt",
+   "utc": "2026-10-18T08:46:29Z",
+   "sha256": "7c486b07923fd8b7 (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/robots_massive.com.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://polygon.io/robots.txt",
+   "utc": "2026-10-18T08:46:31Z",
+   "sha256": "7c486b07923fd8b7 (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/robots_polygon.io.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://datashop.cboe.com/robots.txt",
+   "utc": "2026-10-18T08:46:33Z",
+   "sha256": "bb6c6630e659b54c (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/robots_datashop.cboe.com.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://databento.com/pricing",
+   "utc": "2026-10-18T08:46:41Z",
+   "sha256": "a0e190ad44633cb7 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/databento_pricing.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://orats.com/pricing",
+   "utc": "2026-10-18T08:46:42Z",
+   "sha256": "07fb940660f7878e (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/orats_pricing.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.thetadata.net/subscribe",
+   "utc": "2026-10-18T08:46:42Z",
+   "sha256": "1770924a4058bb83 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/thetadata_subscribe.md",
+   "status": "terms-forbid (fetched before terms read; copy deleted)",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://massive.com/pricing",
+   "utc": "2026-10-18T08:46:44Z",
+   "sha256": "4d859aafb2bb44e3 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/massive_pricing.md",
+   "status": "terms-forbid (fetched before terms read; copy deleted)",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://datashop.cboe.com/",
+   "utc": "2026-10-18T08:46:45Z",
+   "sha256": "949944b71a58b585 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/cboe_datashop_home.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://orats.com/llms.txt",
+   "utc": "2026-10-18T08:46:56Z",
+   "sha256": "ec2a0aa03f10ad89 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/orats_llms.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://orats.com/terms-conditions",
+   "utc": "2026-10-18T08:47:06Z",
+   "sha256": "cd85915648e1c7d1 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/orats.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://orats.com/one-minute-data",
+   "utc": "2026-10-18T08:47:12Z",
+   "sha256": "febb09f0ff50401d (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/orats_one_minute_data.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://orats.com/near-eod-data",
+   "utc": "2026-10-18T08:47:17Z",
+   "sha256": "2899ffc1dcc6e43d (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/orats_near_eod.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://datashop.cboe.com/cboe-options-open-close-volume-summary",
+   "utc": "2026-10-18T08:47:31Z",
+   "sha256": "ac4c49e156bee41a (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/datashop_cboe-options-open-close-volume-summary.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://datashop.cboe.com/livevol-pro",
+   "utc": "2026-10-18T08:47:45Z",
+   "sha256": "e6e47d4287b57b67 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/datashop_livevol-pro.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://datashop.cboe.com/option-trades",
+   "utc": "2026-10-18T08:48:00Z",
+   "sha256": "c8a7a16d28a70146 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/datashop_option-trades.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://datashop.cboe.com/option-quote-intervals",
+   "utc": "2026-10-18T08:48:14Z",
+   "sha256": "969f9683b0d3c826 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/datashop_option-quote-intervals.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://databento.com/llms.txt",
+   "utc": "2026-10-18T08:48:44Z",
+   "sha256": "483f70758e11c468 (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/databento_llms.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://databento.com/pricing",
+   "utc": "2026-10-18T08:48:50Z",
+   "sha256": "a45131ebfef96f3a (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/databento_pricing.md",
+   "status": "ok",
+   "tool": "scrapling-fetch"
+  },
+  {
+   "url": "https://databento.com/pricing",
+   "utc": "2026-10-18T08:49:01Z",
+   "sha256": "235b54c38bf81be0 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/databento_pricing.md",
+   "status": "ok",
+   "tool": "scrapling-fetch(network-idle)"
+  },
+  {
+   "url": "https://databento.com/datasets/OPRA.PILLAR",
+   "utc": "2026-10-18T08:49:50Z",
+   "sha256": "0acc4ce9654688bf (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/databento_opra_pillar.md",
+   "status": "ok",
+   "tool": "scrapling-fetch(network-idle)"
+  },
+  {
+   "url": "https://databento.com/catalog/opra/OPRA.PILLAR (#pricing)",
+   "utc": "2026-10-18T08:50:11Z",
+   "sha256": "ad3823defac40f4f (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/databento_catalog_opra_pricing.md",
+   "status": "ok",
+   "tool": "scrapling-fetch(network-idle)"
+  },
+  {
+   "url": "https://datashop.cboe.com/cboe-options-open-close-volume-summary (rendered)",
+   "utc": "2026-10-18T08:51:04Z",
+   "sha256": "c4e39aa00be7b85c (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/datashop_open_close_rendered.md",
+   "status": "ok",
+   "tool": "scrapling-fetch(network-idle)"
+  },
+  {
+   "url": "https://cdn.cboe.com/resources/regulation/rule_filings/approved/2022/SR-CBOE-2022-023.pdf",
+   "utc": "2026-10-18T08:51:35Z",
+   "sha256": "4588673b0f368967 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/cboe_SR-CBOE-2022-023.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.thetadata.net/pricing",
+   "utc": "2026-10-18T08:51:44Z",
+   "sha256": "49edd5dd36cbc6d9 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/thetadata_pricing.md",
+   "status": "terms-forbid (fetched before terms read; copy deleted)",
+   "tool": "scrapling-fetch(network-idle)"
+  },
+  {
+   "url": "https://massive.com/pricing?product=options",
+   "utc": "2026-10-18T08:51:55Z",
+   "sha256": "f24a929d29e0b130 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/massive_pricing_options.md",
+   "status": "terms-forbid (fetched before terms read; copy deleted)",
+   "tool": "scrapling-fetch(network-idle)"
+  },
+  {
+   "url": "https://www.thetadata.net/terms-and-conditions",
+   "utc": "2026-10-18T08:52:32Z",
+   "sha256": "f7e9445210a2decf (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/thetadata.net_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://massive.com/terms",
+   "utc": "2026-10-18T08:52:33Z",
+   "sha256": "a22d3226669425a1 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/massive.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://massive.com/terms",
+   "utc": "2026-10-18T08:52:56Z",
+   "sha256": "b83a6f2b3ea85a56 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/massive.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-fetch"
+  },
+  {
+   "url": "https://massive.com/legal/website-terms-of-service",
+   "utc": "2026-10-18T08:53:39Z",
+   "sha256": "6a8164e1c55dda40 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/massive.com_website_terms.md",
+   "status": "ok",
+   "tool": "scrapling-fetch"
+  },
+  {
+   "url": "https://spotgamma.com/pricing/",
+   "utc": "2026-10-18T08:54:34Z",
+   "sha256": "e36849baba250db9 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_pricing.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://menthorq.com/pricing/",
+   "utc": "2026-10-18T08:54:35Z",
+   "sha256": "a651239913b7bedd (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/menthorq_pricing.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://squeezemetrics.com/monitor/plans",
+   "utc": "2026-10-18T08:54:36Z",
+   "sha256": "0494f159f3771e35 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sqm_plans.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://flashalpha.com/robots.txt",
+   "utc": "2026-10-18T08:55:17Z",
+   "sha256": "98fa9a2d64be7776 (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/fa_robots.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://flashalpha.com/terms",
+   "utc": "2026-10-18T08:55:19Z",
+   "sha256": "6468c5daa66f4022 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/flashalpha.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://flashalpha.com/articles/backtesting-futures-gamma-es-nq-historical-gex",
+   "utc": "2026-10-18T08:55:28Z",
+   "sha256": "32eced1f8aca9903 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/fa_backtesting_futures_gamma.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://flashalpha.com/articles/0dte-gamma-exposure-pin-risk-intraday-options-analytics",
+   "utc": "2026-10-18T08:55:36Z",
+   "sha256": "3fba1ca5a35afaa5 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/fa_0dte_pin_risk.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://spotgamma.com/wp-content/uploads/2023/09/cboeqqq.pdf",
+   "utc": "2026-10-18T08:55:53Z",
+   "sha256": "98313289a1aec2ff (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_cboeqqq.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://support.spotgamma.com/hc/en-us/articles/15297954935699",
+   "utc": "2026-10-18T08:56:14Z",
+   "sha256": "d96722235d886133 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_support_vol_trigger.md",
+   "status": "ok",
+   "tool": "scrapling-fetch(network-idle)"
+  },
+  {
+   "url": "https://support.spotgamma.com/hc/en-us/articles/31209900542867",
+   "utc": "2026-10-18T08:56:34Z",
+   "sha256": "640851dfc0f34937 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_support_key_levels.md",
+   "status": "ok",
+   "tool": "scrapling-fetch(network-idle)"
+  },
+  {
+   "url": "https://vol.land/robots.txt",
+   "utc": "2026-10-18T08:57:46Z",
+   "sha256": "dda983d465204417 (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/robots_vol.land.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://vol.land/",
+   "utc": "2026-10-18T08:57:46Z",
+   "sha256": "dab0441592862f45 (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/home_vol.land.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://tier1alpha.com/robots.txt",
+   "utc": "2026-10-18T08:57:47Z",
+   "sha256": "1a64ba72fb329dda (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/robots_tier1alpha.com.txt",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://tier1alpha.com/",
+   "utc": "2026-10-18T08:57:48Z",
+   "sha256": "73725e413f020ef3 (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/home_tier1alpha.com.md",
+   "status": "terms-forbid (fetched before terms read; copy deleted)",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://tier1alpha.com/terms-of-service/",
+   "utc": "2026-10-18T08:57:55Z",
+   "sha256": "8e16c0d2b9f25393 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/tier1alpha.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.cboe.com/insights/posts/crossed-wires-separating-perception-from-reality",
+   "utc": "2026-10-18T08:58:21Z",
+   "sha256": "58545433ef28108d (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/cboe_crossed_wires.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.cboe.com/insights/posts/small-caps-big-momentum-the-rise-of-0-dte-trading-in-russell-2000-index-etf-options",
+   "utc": "2026-10-18T08:58:28Z",
+   "sha256": "644301c732d3e0b7 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/cboe_rut_0dte.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.cboe.com/insights/posts/market-metrics-that-matter-derivatives-september-2026-volume-highlights",
+   "utc": "2026-10-18T08:58:37Z",
+   "sha256": "bada88abd1be793f (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/cboe_metrics_sep2026.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://storage.pardot.com/77532/1773407238ZAeQvAm2/RUT_0DTE_Options_FINAL.pdf",
+   "utc": "2026-10-18T08:58:47Z",
+   "sha256": "ba05d623ad2dc837 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/cboe_rut_0dte_2026.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://cdn.cboe.com/resources/membership/Cboe_FeeSchedule.pdf",
+   "utc": "2026-10-18T13:24:50Z",
+   "sha256": "a5538f563aefd460 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/cboe_fee_schedule_current.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://flashalpha.com/articles/options-data-pricing-comparison-flashalpha-thetadata-polygon-spotgamma-squeezemetrics",
+   "utc": "2026-10-18T13:25:50Z",
+   "sha256": "fe5cf0ed9a0bbe8e (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/fa_pricing_comparison.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://spotgamma.com/nomura-on-0dte-options-volumes/",
+   "utc": "2026-10-18T13:25:53Z",
+   "sha256": "448fd9d4162a72a0 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_nomura_0dte.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.numerix.com/terms-use",
+   "utc": "2026-10-18T13:26:30Z",
+   "sha256": "827a1e0739aadc0a (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/terms/numerix.com_terms.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.numerix.com/terms-of-use",
+   "utc": "2026-10-18T13:26:46Z",
+   "sha256": "827a1e0739aadc0a (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/nx_try.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.numerix.com/legal",
+   "utc": "2026-10-18T13:26:52Z",
+   "sha256": "827a1e0739aadc0a (first 16 hex)",
+   "path": "/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/37fc9660-82d1-49fd-be83-50b822ab0a5b/scratchpad/R2/nx_try.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.benzinga.com/analyst-ratings/analyst-color/23/03/31230564/jpmorgan-analysts-believe-these-options-could-turn-a-5-market-fall-into-a-deadly-di",
+   "utc": "2026-10-18T13:27:01Z",
+   "sha256": "1e4d2382589b08ce (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/benzinga_jpm_0dte_2023.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  },
+  {
+   "url": "https://www.benzinga.com/analyst-ratings/analyst-color/23/03/31230564/jpmorgan-analysts-believe-these-options-could-turn-a-5-market-fall-into-a-deadly-di",
+   "utc": "2026-10-18T13:27:18Z",
+   "sha256": "28eebf0175684871 (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/benzinga_jpm_0dte_2023.md",
+   "status": "ok",
+   "tool": "scrapling-fetch"
+  },
+  {
+   "url": "https://spotgamma.com/0dte-options-explained/",
+   "utc": "2026-10-18T13:29:04Z",
+   "sha256": "cc660c1717ef125d (first 16 hex)",
+   "path": "/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e25_briefs/pages/R2/sg_0dte_explained_2026.md",
+   "status": "ok",
+   "tool": "scrapling-get"
+  }
+ ],
+ "budget_notices": [
+  "Firecrawl out of credits | 2026-10-18T08:48:44Z | 'Insufficient credits to perform this request'; fell back to scrapling",
+  "WebSearch: 9 calls in resume (cap 25), no over-budget notice",
+  "OpenAlex, Firecrawl, Semantic Scholar not called in resume (per spawn brief)"
+ ],
+ "unfinished": [
+  "Open-Close fee-table column assignment inferred from pdftotext layout; verify on PDF p. 12-13",
+  "ThetaData, Massive, SpotGamma institutional prices secondary-only (FlashAlpha June 2026 comparison)",
+  "Original JPM/BofA/Nomura/Goldman notes, Risk.net QIS article, Numerix white papers, Tier1Alpha: not read",
+  "MenthorQ 75% win-rate and HIRO trade examples: search summaries only [unverified]",
+  "SpotGamma level history availability unverified; Databento OPRA per-GB rate not printed"
+ ]
+}

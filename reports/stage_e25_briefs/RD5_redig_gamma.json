@@ -1,0 +1,351 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "RD5-RedigDealerGamma-OpusHigh",
+ "finished_utc": "2026-10-18T08:51:55Z",
+ "candidates": [
+  {
+   "id": "RD5-C1",
+   "hypothesis": "Change in option market makers' net SPX option position (signed high-frequency SPX trades) predicts the end-of-day S&P 500 futures return",
+   "mechanism": "market-maker delta hedging of gamma plus inventory changes (Egebjerg-Kokholm model)",
+   "instruments": [
+    "ES",
+    "MES"
+   ],
+   "entry_window_ct": "not published (end of day; seminar abstract only)",
+   "hold": "to the close (not published)",
+   "trades_per_year": null,
+   "best_source": "Egebjerg and Kokholm, A Model for the Hedging Impact of Option Market Makers, SSRN 4936978 (2024); Aarhus seminar abstract",
+   "source_url": "https://econ.au.dk/research/finance/seminars/vis/artikel/finance-internal-seminar-phd-seminar-sebastian-egebjerg-au-and-tobias-skipper-soussi-au",
+   "grade": "working-paper [secondary-only]",
+   "sample": "not stated",
+   "post_2015_or_oos": "unknown",
+   "published_effect": "unsized ('a strong predictor')",
+   "price_level_used": "n/a",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "MES",
+   "gross_or_net": "unknown",
+   "dispersion": "not published in the abstract",
+   "quote": "we estimate changes to the net option position of OMMs over an extended period and find that the change is a strong predictor of the end-of-day return on SPX futures",
+   "quote_location": "seminar abstract",
+   "decay_evidence": "none found",
+   "data_needed": "signed SPX option trades by participant type (Cboe Open-Close or equivalent), intraday",
+   "owned": "no",
+   "data_cost": "not read here (R2 owns Cboe/OPRA pricing)",
+   "research_window_testable": "no",
+   "why": "unsized; data not owned; listed as a pointer for the lead",
+   "prop_notes": "one trade a day before the 15:00 CT close; real-time signed data needed",
+   "overlap_ids": [
+    "E20H6-T1",
+    "E20H6-T2",
+    "E20H6-T3",
+    "C2"
+   ],
+   "overlap_note": "same end-of-day window; signal is signed market-maker position change, not price momentum or GEX sign"
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "SqueezeMetrics verified against OptionMetrics",
+   "number": "2002-2017",
+   "quote": "We have verified the computations of SqueezeMetrics using OptionMetrics data over the 2002 to 2017 period, yielding virtually identical results.",
+   "location": "footnote 7",
+   "source": "Baltussen, Da, Lammers, Martens, JFE 142 (2021)",
+   "url": "https://doi.org/10.1016/j.jfineco.2021.04.029",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": ""
+  },
+  {
+   "claim": "Whole-sample negative NGE share",
+   "number": "2930 neg / 3158 pos",
+   "quote": "In the period from 1996 until May 2020 there have been 2930 days with a negative NGE and 3158 with a positive one.",
+   "location": "section 4.1",
+   "source": "Baltussen et al. 2021",
+   "url": "https://doi.org/10.1016/j.jfineco.2021.04.029",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": ""
+  },
+  {
+   "claim": "Table 7 conditional slope",
+   "number": "6.63 (t 4.78) NGE<0; 0.82 (t 1.03) NGE>=0",
+   "quote": "NGEt-1 < 0 | -0.01 (-0.63) | 6.63*** (4.78) | 3.58",
+   "location": "Table 7",
+   "source": "Baltussen et al. 2021",
+   "url": "https://doi.org/10.1016/j.jfineco.2021.04.029",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": ""
+  },
+  {
+   "claim": "Shared time trend control",
+   "number": "NGE x rROD -123.04 (t -3.42)",
+   "quote": "The last two columns confirm that these results are not driven by a time trend shared by intraday momentum and NGE by running a difference-in-difference regression.",
+   "location": "section 4.1, Table 8",
+   "source": "Baltussen et al. 2021",
+   "url": "https://doi.org/10.1016/j.jfineco.2021.04.029",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": ""
+  },
+  {
+   "claim": "GEX sign convention (calls long, puts short for MMs)",
+   "number": "n/a",
+   "quote": "2. Call options are sold by investors; bought by market-makers. ... 3. Put options are bought by investors; sold by market-makers.",
+   "location": "p. 4 Four Assumptions",
+   "source": "SqueezeMetrics, Gamma Exposure white paper, Dec 2017",
+   "url": "https://squeezemetrics.com/monitor/download/pdf/white_paper.pdf",
+   "grade": "vendor",
+   "saved_path": "reports/stage_e25_briefs/pages/RD5/sqzm_gex_white_paper.pdf",
+   "sha256": "23eaf3fa1bbb765dc9b4a9077d64a784d930662bbf329a9872d4da7c9a60a8c1"
+  },
+  {
+   "claim": "GEX forecasts variance",
+   "number": "1-day SD 0.55% vs 0.85%",
+   "quote": "When instead we compare the highest and second-highest** quartiles of GEX to subsequent SPX variance, the 1-day standard deviations are 0.55% and 0.85%, respectively.",
+   "location": "p. 2",
+   "source": "SqueezeMetrics 2017",
+   "url": "https://squeezemetrics.com/monitor/download/pdf/white_paper.pdf",
+   "grade": "vendor",
+   "saved_path": "reports/stage_e25_briefs/pages/RD5/sqzm_gex_white_paper.pdf",
+   "sha256": "23eaf3fa1bbb765dc9b4a9077d64a784d930662bbf329a9872d4da7c9a60a8c1"
+  },
+  {
+   "claim": "Gamma Fragility autocorrelation effect limited",
+   "number": "1% of SD per SD",
+   "quote": "The economic magnitude of the result, however, is limited. A unitary standard deviation increase in the gamma imbalance proxy is associated to a decrease in autocorrelation of about 1% of a standard deviation.",
+   "location": "section III",
+   "source": "Barbon and Buraschi, Gamma Fragility, SoF HSG WP 2020",
+   "url": "https://alexandria.unisg.ch/handle/20.500.14171/111591",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD5/barbon_buraschi_2020_gamma_fragility.pdf",
+   "sha256": "eda0e49bd09bec9cc13b18e2991b37535e74de5e42a0a1ee1a057982d3fc036c"
+  },
+  {
+   "claim": "Gamma Fragility index volatility effect",
+   "number": ">20 bp abs return per SD",
+   "quote": "one standard deviation increase in the gamma imbalance is associated to a decrease in absolute return of the underlying index of more than 20 basis points (about 20% of a standard deviation)",
+   "location": "Table III discussion",
+   "source": "Barbon and Buraschi 2020",
+   "url": "https://alexandria.unisg.ch/handle/20.500.14171/111591",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD5/barbon_buraschi_2020_gamma_fragility.pdf",
+   "sha256": "eda0e49bd09bec9cc13b18e2991b37535e74de5e42a0a1ee1a057982d3fc036c"
+  },
+  {
+   "claim": "Signed measure: MM net gamma mostly positive",
+   "number": "88% of 10-min intervals; monthly mean always positive",
+   "quote": "Figure IA2 shows that Net Γt is positive for 88 percent of all 10-minute trading intervals. ... Summing 0DTE and non-0DTE exposures, we find that the monthly average is always positive.",
+   "location": "section 3 (txt 660-665)",
+   "source": "Adams, Dim, Eraker, Fontaine, Ornthanalai, Vilkov, draft 2026-07-15 (R1 owns)",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/shared/adams_etal_0dte_fontaine.pdf.txt",
+   "sha256": ""
+  },
+  {
+   "claim": "Signed-measure conditional momentum small, not tradable",
+   "number": "about 0.7 bp at 1-2 h (lowest quartile)",
+   "quote": "they increase monotonically from almost zero in the next 10-minute interval to around 0.7 bps at the 1- and 2-hour horizons. ... this result does not translate into a feasible trading strategy since the market makers' net gamma is not observable to other investors.",
+   "location": "section 4.4, Table 7",
+   "source": "Adams et al. 2026",
+   "url": "",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/shared/adams_etal_0dte_fontaine.pdf.txt",
+   "sha256": ""
+  },
+  {
+   "claim": "NGE assumption introduces measurement error (authors' later work)",
+   "number": "n/a",
+   "quote": "The above N GE measure relies on the assumption that market makers are short the entire put and long the entire call open interest at each point in time (see Baltussen et al. (2021)), which introduces measurement errors.",
+   "location": "p. 20-21",
+   "source": "Baltussen, Da, Soebhag, End-of-Day Reversal, WP Apr 2025",
+   "url": "https://www3.nd.edu/~zda/EOD.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD5/baltussen_da_soebhag_eod.pdf",
+   "sha256": "faa9de99da6579a94e499b4ee5bac061861ed7b3c02edcc932dd00e87c60460d"
+  },
+  {
+   "claim": "Market-level TS momentum in stock decomposition",
+   "number": "2.79 bp/day 1993-2019 gross",
+   "quote": "Further, we show the expected profit of the TS strategy, which is 2.79 basis points per day, in line with intraday momentum at the market-level.",
+   "location": "section 4, Table 5",
+   "source": "Baltussen, Da, Soebhag 2025",
+   "url": "https://www3.nd.edu/~zda/EOD.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD5/baltussen_da_soebhag_eod.pdf",
+   "sha256": "faa9de99da6579a94e499b4ee5bac061861ed7b3c02edcc932dd00e87c60460d"
+  },
+  {
+   "claim": "Signed MM position change predicts SPX futures EOD return (unsized)",
+   "number": "none",
+   "quote": "we estimate changes to the net option position of OMMs over an extended period and find that the change is a strong predictor of the end-of-day return on SPX futures",
+   "location": "seminar abstract",
+   "source": "Egebjerg and Kokholm, SSRN 4936978",
+   "url": "https://econ.au.dk/research/finance/seminars/vis/artikel/finance-internal-seminar-phd-seminar-sebastian-egebjerg-au-and-tobias-skipper-soussi-au",
+   "grade": "working-paper [secondary-only]",
+   "saved_path": "reports/stage_e25_briefs/pages/RD5/au_egebjerg_seminar.html",
+   "sha256": "5f04c64b397aee41ffb44fc639e77385f57f63828d06d6b6955db5d41cd3157a"
+  },
+  {
+   "claim": "FX dealer gamma reconstructed from trade repository is negative",
+   "number": "vol +0.7% EURUSD, +0.9% USDJPY",
+   "quote": "we first reconstruct the aggregated OMM's gamma exposure by using trade repository data and find that it is negative",
+   "location": "abstract",
+   "source": "Anderegg, Ulmann, Sornette, JIMF 2022",
+   "url": "https://doi.org/10.1016/j.jimonfin.2022.102627",
+   "grade": "peer-reviewed [secondary-only]",
+   "saved_path": "",
+   "sha256": ""
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "E.14 C2 stopped at power rule (135 GEX<0 dates < 200)",
+   "effect": "supports",
+   "quote": "We have verified the computations of SqueezeMetrics using OptionMetrics data over the 2002 to 2017 period, yielding virtually identical results.",
+   "source": "Baltussen et al. 2021 fn 7; SqueezeMetrics 2017 p. 4 (same sign convention)"
+  },
+  {
+   "verdict": "E.13 prereg C2 section 7 power assumption (48% share) and E.13 lead note 'different construction'",
+   "effect": "weakens",
+   "quote": "In the period from 1996 until May 2020 there have been 2930 days with a negative NGE and 3158 with a positive one.",
+   "source": "Baltussen et al. 2021 section 4.1 (share is whole-sample; derived: >= about 2,700 of the negative days precede May 2011)"
+  },
+  {
+   "verdict": "E20H6-T3 FAIL (134 trades, gross -3.52 ticks)",
+   "effect": "supports",
+   "quote": "this result does not translate into a feasible trading strategy since the market makers' net gamma is not observable to other investors.",
+   "source": "Adams et al. 2026 section 4.4"
+  },
+  {
+   "verdict": "Spawn question: better gamma measure (signed positions) changes count or sign",
+   "effect": "supports",
+   "quote": "Figure IA2 shows that Net Γt is positive for 88 percent of all 10-minute trading intervals.",
+   "source": "Adams et al. 2026 section 3 (count would fall; sign of conditional effect unchanged, size about 0.7 bp)"
+  },
+  {
+   "verdict": "E.13 INF 2.7(a) 'evidence moderate' for gamma conditioning",
+   "effect": "weakens",
+   "quote": "The economic magnitude of the result, however, is limited. A unitary standard deviation increase in the gamma imbalance proxy is associated to a decrease in autocorrelation of about 1% of a standard deviation.",
+   "source": "Barbon and Buraschi 2020 section III"
+  },
+  {
+   "verdict": "E.13 INF 2.7(a): GEX usable as conditioning (size/range) rather than direction",
+   "effect": "supports",
+   "quote": "one standard deviation increase in the gamma imbalance is associated to a decrease in absolute return of the underlying index of more than 20 basis points",
+   "source": "Barbon and Buraschi 2020 Table III discussion"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "https://api.openalex.org/works (search, cites:W3106590193/W3122647810/W4244722880/W4213420418, author.id filters)",
+   "utc": "2026-10-18T08:40:00Z..08:45:00Z",
+   "sha256": "",
+   "path": "scratchpad/RD5/*.json",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://api.openalex.org/works?filter=openalex:(batch 2)",
+   "utc": "2026-10-18T08:46:21Z",
+   "sha256": "",
+   "path": "",
+   "status": "throttled",
+   "tool": "curl"
+  },
+  {
+   "url": "https://alexandria.unisg.ch/server/api/core/bitstreams/25fec636-90a2-4735-a3a4-dfc0b68d3feb/content",
+   "utc": "2026-10-18T08:42:51Z",
+   "sha256": "eda0e49bd09bec9cc13b18e2991b37535e74de5e42a0a1ee1a057982d3fc036c",
+   "path": "reports/stage_e25_briefs/pages/RD5/barbon_buraschi_2020_gamma_fragility.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://squeezemetrics.com/monitor/download/pdf/white_paper.pdf",
+   "utc": "2026-10-18T08:43:40Z",
+   "sha256": "23eaf3fa1bbb765dc9b4a9077d64a784d930662bbf329a9872d4da7c9a60a8c1",
+   "path": "reports/stage_e25_briefs/pages/RD5/sqzm_gex_white_paper.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www3.nd.edu/~zda/EOD.pdf",
+   "utc": "2026-10-18T08:45:27Z",
+   "sha256": "faa9de99da6579a94e499b4ee5bac061861ed7b3c02edcc932dd00e87c60460d",
+   "path": "reports/stage_e25_briefs/pages/RD5/baltussen_da_soebhag_eod.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www3.nd.edu/robots.txt",
+   "utc": "2026-10-18T08:45:34Z",
+   "sha256": "9448f8a1159c9b14e3e1b9d8eab1a6ddf88d26e1f888a34cef430c756e4e6e1e",
+   "path": "reports/stage_e25_briefs/pages/RD5/nd_robots.txt",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://api.semanticscholar.org/graph/v1/paper/batch",
+   "utc": "2026-10-18T08:46:40Z",
+   "sha256": "",
+   "path": "scratchpad/RD5/s2a.json",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://econ.au.dk/robots.txt",
+   "utc": "2026-10-18T08:47:04Z",
+   "sha256": "ba17b40252229022d43a063b14e724dd15ace8411fb8298068cfd0c075d7f089",
+   "path": "reports/stage_e25_briefs/pages/RD5/econ.au.dk_robots.txt",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://econ.au.dk/research/finance/seminars/vis/artikel/finance-internal-seminar-phd-seminar-sebastian-egebjerg-au-and-tobias-skipper-soussi-au",
+   "utc": "2026-10-18T08:47:12Z",
+   "sha256": "5f04c64b397aee41ffb44fc639e77385f57f63828d06d6b6955db5d41cd3157a",
+   "path": "reports/stage_e25_briefs/pages/RD5/au_egebjerg_seminar.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.merlin.uzh.ch/publication/show/21160",
+   "utc": "2026-10-18T08:47:31Z",
+   "sha256": "87771701397a031a2247aa6251330366a38462143961133e5347e3a514625c60",
+   "path": "reports/stage_e25_briefs/pages/RD5/uzh_ekblom_thesis.html",
+   "status": "moved",
+   "tool": "curl"
+  },
+  {
+   "url": "https://optionmetrics.com/robots.txt",
+   "utc": "2026-10-18T08:47:34Z",
+   "sha256": "4a75222a2cb5dba18a24ae1aa58658b4b80cded1ae72ea127d796d15d660987f",
+   "path": "reports/stage_e25_briefs/pages/RD5/optionmetrics_robots.txt",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://optionmetrics.com/research/dealer-gamma-exposure-and-overnight-gap-risk-incremental-information-in-low-volatility-regimes/",
+   "utc": "2026-10-18T08:47:40Z",
+   "sha256": "98f6617703c06e096fb4e3c8812b0a716794ffdb51cfdbeed03c693e37e34775",
+   "path": "reports/stage_e25_briefs/pages/RD5/om_maurer_2026.html",
+   "status": "blocked (curl, Cloudflare); WebFetch summary only",
+   "tool": "curl, WebFetch"
+  }
+ ],
+ "budget_notices": [
+  "2026-10-18T08:43:21Z Firecrawl firecrawl_search HTTP 402 out of credits (3 calls)",
+  "2026-10-18T08:46:21Z OpenAlex keyless daily IP budget exhausted (Rate limit exceeded)"
+ ],
+ "unfinished": [
+  "Ni-Pearson-Poteshman-White RFS 2021 published full text not retrieved (paywall; SSRN blocked)",
+  "Anderegg et al. 2022 full text not fetched (abstract only)",
+  "SSRN-only papers not retrieved: Egebjerg-Kokholm 4936978, Hu-Kirilova-Muravyev 4633451, Chilingarian 7131778 (sign of dealer gamma), Gayda et al. 4138512, Maurer 6650858",
+  "abstracts of second batch of Baltussen forward cites unread after OpenAlex budget ran out",
+  "Rosa JFM 2022 still unverified (Wiley)",
+  "period-concentration arithmetic (>= about 2,700 of 2,930 negative-NGE days before May 2011) is derived from counts on record; needs a check"
+ ]
+}

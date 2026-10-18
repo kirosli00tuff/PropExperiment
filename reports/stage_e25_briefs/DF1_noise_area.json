@@ -1,0 +1,332 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "DF1-NoiseAreaMomentum-OpusHigh",
+ "finished_utc": "2026-10-18T18:23:51Z",
+ "candidates": [
+  {
+   "id": "DF1-C1",
+   "hypothesis": "Noise-area intraday momentum (Zarattini-Aziz-Barbon rule, VM=1, 14-day sigma, half-hour checks, band/VWAP trailing stop, flat at RTH close) on MNQ; MES secondary",
+   "mechanism": "time-of-day volatility-scaled, gap-adjusted band break from the RTH open signals order-flow imbalance that persists intraday",
+   "instruments": [
+    "MNQ",
+    "MES"
+   ],
+   "entry_window_ct": "09:00-14:30 CT checks at HH:00/HH:30; exit by 15:00 CT",
+   "hold": "intraday, at most to 15:00 CT",
+   "trades_per_year": 215,
+   "best_source": "Zarattini, Aziz, Barbon WP (rule); VigorTas 2026 GitHub (MNQ cost)",
+   "source_url": "https://github.com/VigorTas/beat-the-market-replication",
+   "grade": "working-paper (rule); pointer, code checkable (futures numbers)",
+   "sample": "paper SPY 2007-05..2024-04; VigorTas NQ 2010-06..2026-10, ES 2013-01..2026-10",
+   "post_2015_or_oos": "post-publication 2024-06..2026-10: NQ +$13.90/day t 1.37; ES -$5.56/day t -1.21; SPY/ES other tests <= 0",
+   "published_effect": "paper: $0.09/share net per trade at avg SPY $247 (3.64 bp net, 4.01 bp gross); VigorTas NQ net $5.35/day per MNQ (t 2.74)",
+   "price_level_used": "ES 6,000-6,700; NQ 21,000-25,000 for paper bp conversion; VigorTas figures already in points",
+   "gross_per_trade_points": 3.71,
+   "gross_per_trade_micro_ticks": 14.8,
+   "micro": "MNQ",
+   "gross_or_net": "gross",
+   "dispersion": "VigorTas NQ daily t 2.74 (4,053 days), pre-pub t 2.59, post-pub t 1.37 (585 days); paper SPY daily t 5.34 (2,620 traded days)",
+   "quote": "| NQ, before publication | 3,468 | $13,535 | $3.90 | 2.59 | 24% | −$1,786 |",
+   "quote_location": "VigorTas README / results/NQ_yearly.md; per-trade DF1-derived from results/NQ_daily.csv",
+   "decay_evidence": "S&P side <= 0 after 2024-05 in Brusco ES/SPY, VigorTas ES, Paz, Delgado (2025-09..), Maroy-grid OOS; authors 2025-03..08 five of six months negative; NQ side positive but not significant post-pub",
+   "data_needed": "NQ/MNQ (and ES/MES) 1-min OHLCV RTH bars",
+   "owned": "yes",
+   "data_cost": "none (owned)",
+   "research_window_testable": "partial",
+   "why": "Rule fully specified, low frequency, prop-compatible timing; gross per trade on MNQ (14.8 ticks pre-pub, 41 post) exceeds RT in VigorTas; but research window 2025-04..2026-06 already covered by published third-party results (not blind), and S&P side has decayed",
+   "prop_notes": "flat by 15:00 CT; VigorTas max DD -$4,250 per MNQ exceeds 50K $2,000 trailing; 24% winning days strains consistency rules; 10:00 ET entries coincide with releases (P06 fine at 1-2 micros)",
+   "overlap_ids": [
+    "K1-cp2-01",
+    "B-H1",
+    "RT1-RT4",
+    "K1-vwap-01",
+    "E20H6-T1",
+    "V34"
+   ],
+   "overlap_note": "not an opening-range break (vol-scaled, gap-adjusted band rechecked half-hourly); VWAP only as stop leg; no last-half-hour window; V34 dropped it as unsized"
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "Sample",
+   "number": "May 2007-April 2024",
+   "quote": "data from IQFeed, covering the period from May 2007 to April 2024",
+   "location": "sec. 3",
+   "source": "Zarattini, Aziz, Barbon, Beat the Market, WP 2024-05-10, version 2025-09-22",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R10/concretum_Beat-the-Market.txt",
+   "sha256": "934d8b90849f1e239d69dd3e5e1ef9d779472229c92635699dac317539963bd8"
+  },
+  {
+   "claim": "Noise area, gap-adjusted",
+   "number": "max/min(open, prior close) x (1 +/- sigma), 14 days",
+   "quote": "UpperBoundt,HH:M M = max(Opent,9:30 , Closet−1,16:00 ) × (1 + σt,9:30−HH:M M )",
+   "location": "sec. 3 eq.",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R10/concretum_Beat-the-Market.txt",
+   "sha256": "934d8b90849f1e239d69dd3e5e1ef9d779472229c92635699dac317539963bd8"
+  },
+  {
+   "claim": "Half-hour checks",
+   "number": "HH:00, HH:30",
+   "quote": "trading is restricted to semi-hourly intervals, specifically at HH:00 and HH:30",
+   "location": "sec. 3",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R10/concretum_Beat-the-Market.txt",
+   "sha256": "934d8b90849f1e239d69dd3e5e1ef9d779472229c92635699dac317539963bd8"
+  },
+  {
+   "claim": "Trailing stop",
+   "number": "max(UB,VWAP) / min(LB,VWAP)",
+   "quote": "as soon as the price crosses either the curent band or the VWAP, the position is closed",
+   "location": "sec. 3",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R10/concretum_Beat-the-Market.txt",
+   "sha256": "934d8b90849f1e239d69dd3e5e1ef9d779472229c92635699dac317539963bd8"
+  },
+  {
+   "claim": "Cost assumption",
+   "number": "$0.0035 + $0.001 per share per side",
+   "quote": "a commission fee of $0.0035 per share, which represents the entry-level commission charged by Interactive Brokers. Additionally, we account for a slippage of $0.001 per share",
+   "location": "sec. 3",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R10/concretum_Beat-the-Market.txt",
+   "sha256": "934d8b90849f1e239d69dd3e5e1ef9d779472229c92635699dac317539963bd8"
+  },
+  {
+   "claim": "Per-trade profit",
+   "number": "$0.09/share net, avg SPY $247",
+   "quote": "the average profit per trade is $0.09 per share ... From 2007 to 2024, the average SPY price was $247",
+   "location": "FAQ Q23 p.40",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R10/concretum_Beat-the-Market.txt",
+   "sha256": "934d8b90849f1e239d69dd3e5e1ef9d779472229c92635699dac317539963bd8"
+  },
+  {
+   "claim": "Trade count",
+   "number": "7,668 trades, 1.8/day",
+   "quote": "Intra Mom.   Curr.Band + VWAP    Dyn.   7,668       1.8       37%       0.09",
+   "location": "Table 4",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R10/concretum_Beat-the-Market.txt",
+   "sha256": "934d8b90849f1e239d69dd3e5e1ef9d779472229c92635699dac317539963bd8"
+  },
+  {
+   "claim": "Daily t-stat",
+   "number": "12 bp/day, t 5.34, 2,620 traded days",
+   "quote": "Unconditional                2620           12       5.34     43%      1.7",
+   "location": "Tables 5-6",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R10/concretum_Beat-the-Market.txt",
+   "sha256": "934d8b90849f1e239d69dd3e5e1ef9d779472229c92635699dac317539963bd8"
+  },
+  {
+   "claim": "Futures table",
+   "number": "S&P SR 1.32, Nasdaq 1.23, Russell 0.45, 2007-01..2024-09, cost unstated",
+   "quote": "S&P500           Equity         2,501   19.8    14.9   1.32 ; Nasdaq           Equity         1,533   16.8    13.6   1.23 ; Russell          Equity          181     6.1    13.6   0.45",
+   "location": "FAQ Q13 p.35",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R10/concretum_Beat-the-Market.txt",
+   "sha256": "934d8b90849f1e239d69dd3e5e1ef9d779472229c92635699dac317539963bd8"
+  },
+  {
+   "claim": "Authors post-publication",
+   "number": "2025 Jan-Aug +1.0%",
+   "quote": "2025    -1.2    7.6   -0.2    4.3   -2.1    -2      -2    -2.9                                1.0",
+   "location": "FAQ Q24",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R10/concretum_Beat-the-Market.txt",
+   "sha256": "934d8b90849f1e239d69dd3e5e1ef9d779472229c92635699dac317539963bd8"
+  },
+  {
+   "claim": "Paz OOS SPY 2024-05..2026-03",
+   "number": "Sharpe 0.39, daily mean t 0.54",
+   "quote": "The OOS daily mean return of 0.023\\% is not statistically different from zero ($t = 0.54$, $p = 0.59$)",
+   "location": "sec. 4",
+   "source": "Paz (Serpa) 2026, SSRN 7290621 (GitHub copy)",
+   "url": "https://github.com/PazSheimy/spy-intraday-momentum-oos",
+   "grade": "working-paper",
+   "saved_path": "pages/DF1/paz_Out-of-Sample_Intraday_Momentum_SPY_PazSerpa_2026.tex",
+   "sha256": "6e7e1a778c536cd83e7c7bbe10eb78495612c1c57ea3de9288c1ba0d2e973f82"
+  },
+  {
+   "claim": "Delgado post-publication split",
+   "number": "2024-05..2025-08 SR 1.057; 2025-09..2026-08 SR -0.461",
+   "quote": "the subsequent 2 September 2025–14 August 2026 stretch returns -8.1% with Sharpe -0.461",
+   "location": "abstract",
+   "source": "Delgado 2026, SSRN 7323419",
+   "url": "https://doi.org/10.2139/ssrn.7323419",
+   "grade": "working-paper [secondary-only]",
+   "saved_path": "pages/DF1/crossref_ssrn_7323419.json",
+   "sha256": "b65718e51de1c858b810d8daa8ff9487aa9836a869b145cd689c7fb4b3e65529"
+  },
+  {
+   "claim": "Chuk MNQ adaptation",
+   "number": "+$10.26/day net per MNQ, 2020..2026-07, in-sample",
+   "quote": "earns +$10.26 per trading day net of costs (day-block bootstrap 95% interval [+$3.27, +$17.25]), with a daily Sharpe ratio of 1.14 ... The rule is one of two survivors among 144 preregistered tests on the same archive, all intervals are in-sample",
+   "location": "abstract",
+   "source": "Chuk 2026, SSRN 7609644",
+   "url": "https://doi.org/10.2139/ssrn.7609644",
+   "grade": "working-paper [secondary-only]",
+   "saved_path": "pages/DF1/crossref_ssrn_7609644.json",
+   "sha256": "77c820231d80e9cab302ac1767663939b8cc28da3b9af1036277ef87301a92d1"
+  },
+  {
+   "claim": "VigorTas NQ",
+   "number": "all $5.35/day t 2.74; post-pub $13.90/day t 1.37",
+   "quote": "| NQ, after publication | 585 | $8,130 | $13.90 | 1.37 | 24% | −$4,250 |",
+   "location": "README table",
+   "source": "VigorTas 2026 GitHub",
+   "url": "https://github.com/VigorTas/beat-the-market-replication",
+   "grade": "pointer (code checkable, data not)",
+   "saved_path": "pages/DF1/gh_VigorTas_beat-the-market-replication_README.md",
+   "sha256": "7c4c88760b2390fb41926bcec05ce57273121041830582feca5673d6a51d6d46"
+  },
+  {
+   "claim": "VigorTas ES",
+   "number": "all -$0.25/day t -0.20; post-pub -$5.56/day t -1.21",
+   "quote": "| ES, after publication | 585 | −$3,254 | −$5.56 | −1.21 | 23% | −$4,652 |",
+   "location": "README table",
+   "source": "same",
+   "url": "https://github.com/VigorTas/beat-the-market-replication",
+   "grade": "pointer (code checkable, data not)",
+   "saved_path": "pages/DF1/gh_VigorTas_beat-the-market-replication_README.md",
+   "sha256": "7c4c88760b2390fb41926bcec05ce57273121041830582feca5673d6a51d6d46"
+  },
+  {
+   "claim": "VigorTas per trade (DF1-derived)",
+   "number": "NQ net/trade $4.67 pre, $17.91 post; ES $0.97 pre, -$6.44 post",
+   "quote": "tabulated from results CSV columns date,pnl,entries",
+   "location": "results/*_daily.csv",
+   "source": "same",
+   "url": "https://github.com/VigorTas/beat-the-market-replication",
+   "grade": "pointer; DF1 arithmetic",
+   "saved_path": "pages/DF1/gh_VigorTas_NQ_daily.csv",
+   "sha256": "cf4f1fa45181614ab1f723bd6f195dd80a67aa3f9c269c23e07c8817c0c2e7dd"
+  },
+  {
+   "claim": "Brusco ES paper rule 2024-05-30..2026-07-10",
+   "number": "Sharpe -0.07, -0.61 bp/trade net",
+   "quote": "| 0.25 tick | -2.1% | -0.07 | -0.61 bps |",
+   "location": "reports/validation_es.md",
+   "source": "Brusco 2026 GitHub",
+   "url": "https://github.com/giovannibrusco/zarattini-2024-momentum-spy",
+   "grade": "pointer (code checkable, data not)",
+   "saved_path": "pages/DF1/brusco_validation_es.md",
+   "sha256": "2bd39f71a159e52d0284bb8662b4562629a78fa091e7fe573da11593092a3761"
+  },
+  {
+   "claim": "Brusco SPY yearly",
+   "number": "2025 SR -0.27, 2026 SR -1.91",
+   "quote": "| 2026 | -12.9%     |    -1.91 |",
+   "location": "reports/validation.md",
+   "source": "same",
+   "url": "https://github.com/giovannibrusco/zarattini-2024-momentum-spy",
+   "grade": "pointer",
+   "saved_path": "pages/DF1/brusco_validation.md",
+   "sha256": "f8bd0634f5b110ddfe3e768f7a4121484dfca50a8fcf1d9c1c0b93ad829d8af3"
+  },
+  {
+   "claim": "Maroy grid OOS (Brusco)",
+   "number": "OOS 2024-01.. SR 0.16, -0.17 bp",
+   "quote": "| Expectancy (bps) | -0.17    | -0.17             |",
+   "location": "reports/maroy_experiment.md",
+   "source": "same",
+   "url": "https://github.com/giovannibrusco/zarattini-2024-momentum-spy",
+   "grade": "pointer",
+   "saved_path": "pages/DF1/brusco_maroy_experiment.md",
+   "sha256": "f3fa4d41f1721c7d1c05350416c5c5f70785df818b78353df0b898602a1ec331"
+  },
+  {
+   "claim": "Quantitativo ES",
+   "number": "~+2 bp/trade",
+   "quote": "A public replication on ES exists (Quantitativo, Jan 2025) which finds: ~+2bps/trade",
+   "location": "docs/SPEC.md",
+   "source": "cited by Brusco",
+   "url": "https://github.com/giovannibrusco/zarattini-2024-momentum-spy",
+   "grade": "pointer [secondary-only]",
+   "saved_path": "pages/DF1/brusco_SPEC.md",
+   "sha256": "bc8f098eebb62a682db8feb279dfa370615cbd6280f5668ab32f80af0f14d87f"
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "V34 (noise-area momentum unsized)",
+   "effect": "weakens",
+   "quote": "| NQ, before publication | 3,468 | $13,535 | $3.90 | 2.59 | 24% | −$1,786 |",
+   "source": "VigorTas 2026 GitHub; per-trade DF1-derived"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "api.github.com repos/VigorTas/beat-the-market-replication readme, results/NQ_yearly.md, ES_yearly.md, NQ_daily.csv, ES_daily.csv, backtest.py",
+   "utc": "2026-10-18T18:18:22Z..18:19:25Z",
+   "sha256": "see md section 9",
+   "path": "pages/DF1/gh_VigorTas_*",
+   "status": "ok",
+   "tool": "gh api"
+  },
+  {
+   "url": "api.github.com repos/{sophietsay,arnavahuja,svettelnova,hsaeed22058,noiiiise}/... readme",
+   "utc": "2026-10-18T18:18:25Z..18:18:39Z",
+   "sha256": "see md section 9",
+   "path": "pages/DF1/gh_*_README.md",
+   "status": "ok",
+   "tool": "gh api"
+  },
+  {
+   "url": "GitHub search API (7 queries)",
+   "utc": "2026-10-18T18:16Z..18:17Z",
+   "sha256": "",
+   "path": "",
+   "status": "ok",
+   "tool": "gh search"
+  },
+  {
+   "url": "first DF1 run: Brusco repo files, Paz repo + paper, 5 READMEs, Crossref 4 records",
+   "utc": "2026-10-18T13:27Z..13:32Z (mtime)",
+   "sha256": "see md section 9",
+   "path": "pages/DF1/",
+   "status": "ok",
+   "tool": "first-run fetch"
+  },
+  {
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "utc": "R10 2026-10-18T08:4xZ",
+   "sha256": "865010dfd938d513c1cd22a7be5932bc232afe498c3cf493d6d8bd4b0de86ebb",
+   "path": "pages/R10/concretum_Beat-the-Market.pdf",
+   "status": "ok (R10 copy reused)",
+   "tool": "R10 curl"
+  }
+ ],
+ "budget_notices": [
+  "WebSearch 4 calls this run; no over-budget notice",
+  "hook cost notice ~18:16Z, informational only"
+ ],
+ "unfinished": [
+  "Chuk and Delgado full text not retrieved (abstract via Crossref only)",
+  "Quantitativo and Maroy not fetched (pointers)",
+  "notebook results of sophietsay/arnavahuja/svettelnova/blackswan not read",
+  "no test of the 17:00 CT Globex-open variant found",
+  "VigorTas roll method unstated"
+ ]
+}

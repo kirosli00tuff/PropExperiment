@@ -1,0 +1,576 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "R10-Practitioner-OpusHigh",
+ "finished_utc": "2026-10-18T08:55:34Z",
+ "candidates": [
+  {
+   "id": "R10-C1",
+   "hypothesis": "Noise-area intraday momentum (Beat the Market) on equity-index micros: trade band breaks at half-hour checks, trailing stop current band or VWAP, flat EOD",
+   "mechanism": "intraday time-series momentum after abnormal move from open beyond 14-day time-of-day mean absolute move (gap-adjusted); authors cite under-reaction and dealer short-gamma hedging",
+   "instruments": [
+    "MES",
+    "MNQ",
+    "M2K"
+   ],
+   "entry_window_ct": "09:00-14:30 at :00/:30 checks",
+   "hold": "intraday, trailing stop, flat by 15:00",
+   "trades_per_year": 450,
+   "best_source": "Zarattini, Aziz, Barbon, Beat the Market: An Effective Intraday Momentum Strategy for S&P500 ETF (SPY), WP 2024-05-10, version 2025-09-22",
+   "source_url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "sample": "SPY 1-min 2007-05..2024-04; futures table 33 markets 2007-01..2024-09; post-publication update 2024-05..2025-08 (authors)",
+   "post_2015_or_oos": "post-publication months 2024-05..2025-08 by the authors (not independent); no independent OOS",
+   "published_effect": "$0.09 per share per trade net at average SPY price $247 (3.64 bp net); costs $0.0035 commission + $0.001 slippage per share per side",
+   "price_level_used": "ES 6,000 (5,500 low case)",
+   "gross_per_trade_points": 2.41,
+   "gross_per_trade_micro_ticks": 9.6,
+   "micro": "MES",
+   "gross_or_net": "net",
+   "dispersion": "Sharpe 1.33 (dynamic size), 1.24 at 1x; daily t 5.34 unconditional (Table 5, 2620 obs); hit ratio 37% per trade; futures S&P SR 1.32, Nasdaq 1.23, Russell 0.45",
+   "quote": "the average profit per trade is $0.09 per share ... From 2007 to 2024, the average SPY price was $247",
+   "quote_location": "FAQ Q23 p.40; Table 4",
+   "decay_evidence": "2016 -12.8%, 2017 -6.9%; 2025 Jan-Aug +1.0% with five losing months of six from Mar-Aug; authors cite Rosa post-2013 decline of related intraday momentum",
+   "data_needed": "1-min OHLCV, session open, prior close, VWAP from bars",
+   "owned": "yes",
+   "data_cost": "none (owned)",
+   "research_window_testable": "yes",
+   "why": "never screened; V34 dropped it as unsized but FAQ Q23 sizes it; gross per trade about 3x the MES hurdle on the paper's SPY figures; authors report the rule on ES/NQ futures",
+   "prop_notes": "flat before 15:10 CT; about 1.8 trades/day; half-hour decisions allow semi-manual execution; right-skewed day P&L may strain consistency rules; 09:00 CT checks near 09:00 ET releases (P06)",
+   "overlap_ids": [
+    "K1-vwap-01",
+    "K1-cp2-01",
+    "B-H1",
+    "B-H3",
+    "H1-H5",
+    "RT1-RT4",
+    "G3.RTH.15"
+   ],
+   "overlap_note": "time-of-day band from 14-day mean abs moves with gap adjustment and trailing band/VWAP stop; tested members used fixed opening ranges with 4-tick thresholds and fixed holds; K1-vwap-01 is only the stop component"
+  },
+  {
+   "id": "R10-C2",
+   "hypothesis": "ATR-band volatility breakout from the session open (Crabel stretch / Williams volatility breakout modern form): 15-min close beyond open +/- 0.5 x ATR(14), stop at open, EOD exit; optional 5-min counter-move entry overlay",
+   "mechanism": "intraday trend after a move from the open beyond a volatility-scaled threshold (contraction-expansion)",
+   "instruments": [
+    "MES",
+    "MNQ"
+   ],
+   "entry_window_ct": "08:45-14:45 at 15-min marks",
+   "hold": "intraday to close or stop at open",
+   "trades_per_year": null,
+   "best_source": "Zarattini & Pagani, Improving Performance with Fast Alphas, QuanTips #2, Concretum, Feb 2026; Concretum article Breaking the Rules of Intraday Trading (2026)",
+   "source_url": "https://concretumgroup.com/wp-content/uploads/2026/02/Improving-Performance-with-Fast-Alphas-A-Tactical-Overlay-for-Intraday-Trend-Trading.pdf",
+   "grade": "vendor",
+   "sample": "SPY 2007-01..2026-01 (net); 2006-01..2026-01 (gross)",
+   "post_2015_or_oos": "in-sample backtest including 2015-2026; no OOS split",
+   "published_effect": "net CAGR above 13%, Sharpe about 0.87 (vol-targeted 2%/day, 4x cap); gross CAGR 14.1%, Sharpe 0.88; overlay +about 200 bp CAGR, Sharpe 0.99; no per-trade figure",
+   "price_level_used": "n/a",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "MES",
+   "gross_or_net": "net",
+   "dispersion": "Sharpe 0.87 net / 0.88 gross, max drawdown -25.6% (article)",
+   "quote": "the strategy delivers a double-digit CAGR (Compound Annual Growth Rate) above 13% and a Sharpe ratio of approximately 0.87",
+   "quote_location": "QuanTips #2 section 3",
+   "decay_evidence": "not reported by year",
+   "data_needed": "1-min OHLCV, daily ATR from own bars",
+   "owned": "yes",
+   "data_cost": "none (owned)",
+   "research_window_testable": "yes",
+   "why": "modern, cost-aware form of the most-cited practitioner rule family (Crabel, Williams, Fisher); not tested in the program; per-trade size unpublished (lead must size)",
+   "prop_notes": "flat EOD; 15-min decisions; stop at open bounds loss; P06 around 08:30/09:00 releases",
+   "overlap_ids": [
+    "D-H3",
+    "B-H4",
+    "B-H1"
+   ],
+   "overlap_note": "tested members use opening-range or 20-bar range compression; C2 threshold is daily ATR distance from the open"
+  },
+  {
+   "id": "R10-C3",
+   "hypothesis": "5-minute ORB in the direction of the first 5-min candle: enter at second candle open, stop at first-candle extreme, target 10R or EOD",
+   "mechanism": "opening momentum after the first 5-min imbalance",
+   "instruments": [
+    "MNQ",
+    "MES"
+   ],
+   "entry_window_ct": "08:35",
+   "hold": "to stop or 15:00",
+   "trades_per_year": 252,
+   "best_source": "Zarattini & Aziz, Can Day Trading Really Be Profitable? Evidence ... ORB ... (WP 2023-04-24, version 2025-09-22)",
+   "source_url": "https://concretumgroup.com/wp-content/uploads/2026/02/Can-Day-Trading-Really-Be-Profitable.pdf",
+   "grade": "working-paper",
+   "sample": "QQQ 2016-01..2023-02, 1,795 trades",
+   "post_2015_or_oos": "post-2015 in-sample only; no OOS; zero slippage",
+   "published_effect": "0.13R per trade net of $0.0005/share; 31% annual return, Sharpe 1.12, max leverage 4x. R10-derived lower bound per notional: ln(1.31)/252 = 0.107% of account per trade / 4 = at least 2.7 bp",
+   "price_level_used": "NQ 22,000",
+   "gross_per_trade_points": 5.9,
+   "gross_per_trade_micro_ticks": 23.8,
+   "micro": "MNQ",
+   "gross_or_net": "net",
+   "dispersion": "win rate 24%; Sharpe 1.12; 1,795 trades",
+   "quote": "The Win Rate of the strategy was 24%, which made the average PnL per trade equal to 0.13R.",
+   "quote_location": "section 3, p.10",
+   "decay_evidence": "none reported; independent MNQ ORB (30-min OR) walk-forward 2021-2025 T = 0.88 (Mesfin 2026)",
+   "data_needed": "1-min OHLCV",
+   "owned": "yes",
+   "data_cost": "none (owned)",
+   "research_window_testable": "yes",
+   "why": "specific parameterisation (5-min candle direction, stop at its extreme, EOD hold) not tested; points figure is a derived lower bound, not published; zero-slippage stop fills are the main risk",
+   "prop_notes": "one trade/day at 08:35 CT; on 08:30 CT release days the first candle is the release reaction (P06); stop slippage",
+   "overlap_ids": [
+    "B-H1",
+    "K1-cp2-01",
+    "F3_3",
+    "H1-H5",
+    "RT1-RT4"
+   ],
+   "overlap_note": "tested members used 15/30-min ranges with 4-tick breaks and 5/75-min or to-14:58 holds; none took first-5-min direction with stop at its extreme"
+  },
+  {
+   "id": "R10-C4",
+   "hypothesis": "Fixed-percent ORB from the open held to the close (Crabel/Williams/Fisher form): buy stop open x (1+rho), sell stop open x (1-rho), exit at close",
+   "mechanism": "contraction-expansion: large-range days continue from the open",
+   "instruments": [
+    "MCL",
+    "MES"
+   ],
+   "entry_window_ct": "from 08:00 (CL) / 08:30 (ES)",
+   "hold": "to close",
+   "trades_per_year": 52,
+   "best_source": "Lundström, Day trading returns across volatility states, Umeå Economic Studies 861 (2013, rev. 2017); Holmberg, Lönnbark, Lundström, Finance Research Letters 10(1) 2013",
+   "source_url": "http://www.usbe.umu.se/digitalAssets/194/194520_ues861.pdf",
+   "grade": "working-paper",
+   "sample": "CL 1991-01..2011-01, S&P futures 1991-01..2010-11; fixed rho (called out-of-sample by the author)",
+   "post_2015_or_oos": "pre-2015 only",
+   "published_effect": "CL rho 1.0%: average 0.0020 per trade (20 bp), 1,044 trades, p 0.0000; S&P rho 0.5%: 0.0004 (4 bp), 3,314 trades, p 0.0057; no costs, threshold fills",
+   "price_level_used": "CL $65/bbl; ES 6,000",
+   "gross_per_trade_points": 0.13,
+   "gross_per_trade_micro_ticks": 13.0,
+   "micro": "MCL",
+   "gross_or_net": "gross",
+   "dispersion": "HAC p-values as quoted; S&P rho 1.5 and 2.0 not significant",
+   "quote": "crude oil 1.0 1044 0.58 0.0020 0.0000",
+   "quote_location": "Table 2, p.18",
+   "decay_evidence": "HLL 2013: positive only in 2001-10..2011-01, not robust to time; no post-2011 evidence found",
+   "data_needed": "1-min OHLCV (MCL, MES)",
+   "owned": "yes",
+   "data_cost": "none (owned)",
+   "research_window_testable": "yes",
+   "why": "academic test of Crabel's ORB on CL and S&P futures; open +/- fixed % to close not in the tested index; evidence old and time-unstable",
+   "prop_notes": "one trade/day, flat at close; CL EIA Wednesday 09:30 CT release under P06",
+   "overlap_ids": [
+    "K4-cp2-01",
+    "B-H1"
+   ],
+   "overlap_note": "tested members used 15-min opening ranges with 4-tick thresholds and 75-min holds, not open +/- percent to close"
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "C1 per-trade profit",
+   "number": "$0.09/share net; avg SPY $247",
+   "quote": "the average profit per trade is $0.09 per share ... From 2007 to 2024, the average SPY price was $247",
+   "location": "FAQ Q23 p.40",
+   "source": "Zarattini, Aziz, Barbon WP 2024/2025",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_Beat-the-Market.pdf",
+   "sha256": "865010dfd938d513c1cd22a7be5932bc232afe498c3cf493d6d8bd4b0de86ebb"
+  },
+  {
+   "claim": "C1 costs",
+   "number": "$0.0035 commission, $0.001 slippage per share",
+   "quote": "commission fee of $0.0035 per share ... Additionally, we account for a slippage of $0.001 per share",
+   "location": "section 3",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_Beat-the-Market.pdf",
+   "sha256": "865010dfd938d513c1cd22a7be5932bc232afe498c3cf493d6d8bd4b0de86ebb"
+  },
+  {
+   "claim": "C1 headline",
+   "number": "Sharpe 1.33; 19.6%/yr net",
+   "quote": "achieved a total return of 1,985% (net of costs), an annualized return of 19.6%, and a Sharpe Ratio of 1.33",
+   "location": "abstract",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_Beat-the-Market.pdf",
+   "sha256": "865010dfd938d513c1cd22a7be5932bc232afe498c3cf493d6d8bd4b0de86ebb"
+  },
+  {
+   "claim": "C1 futures application",
+   "number": "33 futures; avg SR 0.60; S&P 1.32; Nasdaq 1.23; Russell 0.45",
+   "quote": "We applied the same rules to 33 different futures markets globally, covering 21 commodities and 12 equity indices, between January 2007 and September 2024. Of these, only 2 instruments produced a negative total return. The average Sharpe Ratio across all instruments was 0.60",
+   "location": "FAQ Q13 p.35",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_Beat-the-Market.pdf",
+   "sha256": "865010dfd938d513c1cd22a7be5932bc232afe498c3cf493d6d8bd4b0de86ebb"
+  },
+  {
+   "claim": "C1 NR4 conditioning",
+   "number": "22 bp/day, t 5.14",
+   "quote": "NR4 660 22 5.14 45% 3.2",
+   "location": "Table 5",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_Beat-the-Market.pdf",
+   "sha256": "865010dfd938d513c1cd22a7be5932bc232afe498c3cf493d6d8bd4b0de86ebb"
+  },
+  {
+   "claim": "C1 post-publication 2025",
+   "number": "+1.0% Jan-Aug 2025",
+   "quote": "2025 -1.2 7.6 -0.2 4.3 -2.1 -2 -2 -2.9 1.0",
+   "location": "FAQ Q24 table",
+   "source": "same (2025-09-22 version)",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_Beat-the-Market.pdf",
+   "sha256": "865010dfd938d513c1cd22a7be5932bc232afe498c3cf493d6d8bd4b0de86ebb"
+  },
+  {
+   "claim": "C1 impact-model rerun",
+   "number": "Sharpe 1.17",
+   "quote": "The Sharpe Ratio stands at 1.17 (versus 1.33)",
+   "location": "FAQ Q15",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_Beat-the-Market.pdf",
+   "sha256": "865010dfd938d513c1cd22a7be5932bc232afe498c3cf493d6d8bd4b0de86ebb"
+  },
+  {
+   "claim": "C2 baseline",
+   "number": "CAGR >13%, SR 0.87 net",
+   "quote": "the strategy delivers a double-digit CAGR (Compound Annual Growth Rate) above 13% and a Sharpe ratio of approximately 0.87",
+   "location": "section 3",
+   "source": "Zarattini & Pagani 2026 QuanTips #2",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Improving-Performance-with-Fast-Alphas-A-Tactical-Overlay-for-Intraday-Trend-Trading.pdf",
+   "grade": "vendor",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_Improving-Performance-with-Fast-Alphas-A-Tactical-Overlay-for-Intraday-Trend-Trading.pdf",
+   "sha256": "4904a802a0aefb133d356330d7156270c6249e5eccac006cae9206b674501c47"
+  },
+  {
+   "claim": "C2 gross 2006-2026",
+   "number": "14.1% CAGR, SR 0.88",
+   "quote": "End-of-day liquidation delivers a 14.1% CAGR, a Sharpe ratio of 0.88, and a maximum drawdown",
+   "location": "article body",
+   "source": "Concretum 2026 Breaking the Rules of Intraday Trading",
+   "url": "https://concretumgroup.com/breaking-the-rules-of-intraday-trading/",
+   "grade": "vendor",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_breaking-the-rules-of-intraday-trading.html",
+   "sha256": "35177ad115e8f36e61666b87c0462075c5b22005c3d2d0448fe5a33e36b9ee9c"
+  },
+  {
+   "claim": "C3 per trade",
+   "number": "0.13R",
+   "quote": "The Win Rate of the strategy was 24%, which made the average PnL per trade equal to 0.13R.",
+   "location": "section 3",
+   "source": "Zarattini & Aziz WP 2023/2025",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Can-Day-Trading-Really-Be-Profitable.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_Can-Day-Trading-Really-Be-Profitable.pdf",
+   "sha256": "bb800b06ee8e28c9fb40826a4b086f03e7268eec351152e8b970838f76e51fc8"
+  },
+  {
+   "claim": "C3 zero slippage",
+   "number": "none",
+   "quote": "We assumed no slippage in fills.",
+   "location": "Table 2",
+   "source": "same",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Can-Day-Trading-Really-Be-Profitable.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_Can-Day-Trading-Really-Be-Profitable.pdf",
+   "sha256": "bb800b06ee8e28c9fb40826a4b086f03e7268eec351152e8b970838f76e51fc8"
+  },
+  {
+   "claim": "C4 fixed-rho ORB",
+   "number": "CL 20 bp; S&P 4 bp per trade, no costs",
+   "quote": "crude oil 1.0 1044 0.58 0.0020 0.0000",
+   "location": "Table 2 p.18",
+   "source": "Lundström Umeå WP 861",
+   "url": "http://www.usbe.umu.se/digitalAssets/194/194520_ues861.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/umu_ues861.pdf",
+   "sha256": "7c71f315bd897780eda0c35328eb1cb966974bc929df240b7fb85fd7d7bf631d"
+  },
+  {
+   "claim": "ORB time instability",
+   "number": "positive only 2001-2011",
+   "quote": "HLL (2013) find significantly positive returns only in the last time period, ranging from 2001-10-12 to 2011-01-26, which are thus not robust to time.",
+   "location": "section 1",
+   "source": "Lundström Umeå WP 861",
+   "url": "http://www.usbe.umu.se/digitalAssets/194/194520_ues861.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/umu_ues861.pdf",
+   "sha256": "7c71f315bd897780eda0c35328eb1cb966974bc929df240b7fb85fd7d7bf631d"
+  },
+  {
+   "claim": "HLL perfect fills",
+   "number": "zero costs",
+   "quote": "we assume a perfect order fill at the threshold price, a zero bid ask spread, as well as zero commissions",
+   "location": "section 3",
+   "source": "Holmberg, Lönnbark, Lundström 2013 (WP 845)",
+   "url": "http://www.econ.umu.se/DownloadAsset.action?contentId=196616&languageId=3&assetKey=ues845",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/umu_ues845.pdf",
+   "sha256": "3bbf81e2f9bfb11f1e2622077b3c064ffc541e697fa57729ba55767b375cbeee"
+  },
+  {
+   "claim": "MNQ ORB walk-forward fails",
+   "number": "net +2.82 pts, T 0.88, 447 OOS trades",
+   "quote": "the Opening Range Breakout long at a 15-bar hold (net +2.82 points, T = 0.88 on net returns)",
+   "location": "abstract",
+   "source": "Mesfin 2026, arXiv 2605.04004",
+   "url": "https://arxiv.org/pdf/2605.04004",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/arxiv_2605.04004.pdf",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80"
+  },
+  {
+   "claim": "MNQ gross ceiling",
+   "number": "0.07-1.50 pts vs 2.0 friction",
+   "quote": "Eleven families fail because gross return before friction is 0.07-1.50 points, below the 2.0-point MNQ friction floor",
+   "location": "abstract",
+   "source": "same",
+   "url": "https://arxiv.org/pdf/2605.04004",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/arxiv_2605.04004.pdf",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80"
+  },
+  {
+   "claim": "VWAP trend zero slippage",
+   "number": "about 22,000 trades",
+   "quote": "we assumed no slippage in our order fills",
+   "location": "section 3.4",
+   "source": "Zarattini & Aziz 2023 VWAP WP",
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Volume-Weighted-Average-Price.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R10/concretum_Volume-Weighted-Average-Price.pdf",
+   "sha256": "47137abd00730dd6970d5d6409b3908342d63d75ecfc9cf2badc7d206f6905c8"
+  },
+  {
+   "claim": "Chan FSTX gap strategy",
+   "number": "APR about 13%, SR 1.4",
+   "quote": "[secondary-only][unverified] search-result summary of a futures.io post; book not read",
+   "location": "n/a",
+   "source": "Chan 2013 Algorithmic Trading ch.7",
+   "url": "",
+   "grade": "practitioner-book",
+   "saved_path": "",
+   "sha256": ""
+  },
+  {
+   "claim": "Davey contest returns",
+   "number": "148%, 107%, 112%",
+   "quote": "[secondary-only][unverified] search-result summary of publisher bio",
+   "location": "n/a",
+   "source": "Davey 2014 Wiley bio",
+   "url": "",
+   "grade": "practitioner-book",
+   "saved_path": "",
+   "sha256": ""
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "V34 (2026-10-10) drop of noise-area momentum as unsized",
+   "effect": "weakens",
+   "quote": "the average profit per trade is $0.09 per share ... From 2007 to 2024, the average SPY price was $247",
+   "source": "Zarattini, Aziz, Barbon, Beat the Market, FAQ Q23 (also in E.20's copy)"
+  },
+  {
+   "verdict": "E.7 K1-vwap-01 Tier B",
+   "effect": "supports",
+   "quote": "we assumed no slippage in our order fills",
+   "source": "Zarattini & Aziz 2023, VWAP WP section 3.4"
+  },
+  {
+   "verdict": "D.1 B-H1/B-H3/H1-H5 and K1-cp2-01 ORB failures",
+   "effect": "supports",
+   "quote": "the Opening Range Breakout long at a 15-bar hold (net +2.82 points, T = 0.88 on net returns)",
+   "source": "Mesfin 2026, arXiv 2605.04004"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "https://concretumgroup.com/robots.txt",
+   "utc": "2026-10-18T08:40Z",
+   "sha256": "n/a (read inline)",
+   "path": "not saved",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://concretumgroup.com/terms-of-use/",
+   "utc": "2026-10-18T08:41:13Z",
+   "sha256": "2cd37b3ba39ff0474c7f6e9ef32ebcbbf18eb69d80a40d0058dca7f589ae4d3e",
+   "path": "terms/concretumgroup.com_terms.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://concretumgroup.com/papers/",
+   "utc": "2026-10-18T08:41:36Z",
+   "sha256": "179ab163bec57e24e263dbe8ed380ccae26c5b08cfba0cbaad994279e24f27ba",
+   "path": "pages/R10/concretum_papers.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf",
+   "utc": "2026-10-18T08:41:49Z",
+   "sha256": "865010dfd938d513c1cd22a7be5932bc232afe498c3cf493d6d8bd4b0de86ebb",
+   "path": "pages/R10/concretum_Beat-the-Market.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": ".../2026/02/Can-Day-Trading-Really-Be-Profitable.pdf",
+   "utc": "2026-10-18T08:41:55Z",
+   "sha256": "bb800b06ee8e28c9fb40826a4b086f03e7268eec351152e8b970838f76e51fc8",
+   "path": "pages/R10/concretum_Can-Day-Trading-Really-Be-Profitable.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": ".../2026/02/A-Profitable-Day-Trading-Strategy-For-The-U.S.-Equity-Market.pdf",
+   "utc": "2026-10-18T08:42:02Z",
+   "sha256": "9423012e9f0199e3f6925c500725815c236d7ddbdd7500d50d10bac2be745e91",
+   "path": "pages/R10/concretum_A-Profitable-Day-Trading-Strategy-For-The-U.S.-Equity-Market.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": ".../2026/02/Volume-Weighted-Average-Price.pdf",
+   "utc": "2026-10-18T08:42:09Z",
+   "sha256": "47137abd00730dd6970d5d6409b3908342d63d75ecfc9cf2badc7d206f6905c8",
+   "path": "pages/R10/concretum_Volume-Weighted-Average-Price.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": ".../2026/02/The-Power-Of-Price-Action-Reading.pdf",
+   "utc": "2026-10-18T08:42:15Z",
+   "sha256": "754a770d6e9c667ce482608c75eb064c398b85bc8744d017dff33e9dab5a65cf",
+   "path": "pages/R10/concretum_The-Power-Of-Price-Action-Reading.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": ".../2026/02/Improving-Performance-with-Fast-Alphas-A-Tactical-Overlay-for-Intraday-Trend-Trading.pdf",
+   "utc": "2026-10-18T08:42:22Z",
+   "sha256": "4904a802a0aefb133d356330d7156270c6249e5eccac006cae9206b674501c47",
+   "path": "pages/R10/concretum_Improving-Performance-with-Fast-Alphas-A-Tactical-Overlay-for-Intraday-Trend-Trading.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://concretumgroup.com/research/",
+   "utc": "2026-10-18T08:45:05Z",
+   "sha256": "01701bfdc63dc11deb93f201cca3042d3034c8e94ee56ac90f7ca10af1753383",
+   "path": "pages/R10/concretum_research.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://concretumgroup.com/articles/",
+   "utc": "2026-10-18T08:45:17Z",
+   "sha256": "dd853909806d781737efabd6ec8a896cc389a37be0692674ede760f212f0a152",
+   "path": "pages/R10/concretum_articles.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://concretumgroup.com/trading/",
+   "utc": "2026-10-18T08:45:25Z",
+   "sha256": "cff1bd668d9244188608b0b2437fdc80ec4bda8d2d46a9252d78ad164e393293",
+   "path": "pages/R10/concretum_trading.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://concretumgroup.com/breaking-the-rules-of-intraday-trading/",
+   "utc": "2026-10-18T08:45:41Z",
+   "sha256": "35177ad115e8f36e61666b87c0462075c5b22005c3d2d0448fe5a33e36b9ee9c",
+   "path": "pages/R10/concretum_breaking-the-rules-of-intraday-trading.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://concretumgroup.com/when-execution-delays-erode-short-term-alpha/",
+   "utc": "2026-10-18T08:45:49Z",
+   "sha256": "0c0c9bb3087c5f0b453003c2a51b25ef1072bdea2f5b8b39713bf98ea1afeb51",
+   "path": "pages/R10/concretum_when-execution-delays-erode-short-term-alpha.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://concretumgroup.com/automating-intraday-strategies-from-manual-complexity-to-algorithmic-precision/",
+   "utc": "2026-10-18T08:45:56Z",
+   "sha256": "d8c1e111c737bba9367b2651e75356b866242686c91faf59bce56031f7feccf7",
+   "path": "pages/R10/concretum_automating-intraday-strategies-from-manual-complexity-to-algorithmic-precision.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2605.04004",
+   "utc": "2026-10-18T08:47:18Z",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80",
+   "path": "pages/R10/arxiv_2605.04004.pdf",
+   "status": "ok (arxiv terms: existing terms_log line)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://swopec.hhs.se/umnees/abs/umnees0845.htm, ...0861.htm, ...0948.htm",
+   "utc": "2026-10-18T08:48Z",
+   "sha256": "not kept (scratch)",
+   "path": "scratch only",
+   "status": "ok (robots.txt read: disallows /scripts/ /test/ /RePEc/ only)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://ideas.repec.org/p/hhs/umnees/0861.html, .../0845.html",
+   "utc": "2026-10-18T08:49Z",
+   "sha256": "not kept (scratch)",
+   "path": "scratch only",
+   "status": "ok (terms_log line ideas.repec.org)",
+   "tool": "curl"
+  },
+  {
+   "url": "http://www.usbe.umu.se/digitalAssets/194/194520_ues861.pdf",
+   "utc": "2026-10-18T08:49:32Z",
+   "sha256": "7c71f315bd897780eda0c35328eb1cb966974bc929df240b7fb85fd7d7bf631d",
+   "path": "pages/R10/umu_ues861.pdf",
+   "status": "ok (no robots.txt served; university working-paper series, single named PDF)",
+   "tool": "curl"
+  },
+  {
+   "url": "http://www.econ.umu.se/DownloadAsset.action?contentId=196616&languageId=3&assetKey=ues845",
+   "utc": "2026-10-18T08:49:40Z",
+   "sha256": "3bbf81e2f9bfb11f1e2622077b3c064ffc541e697fa57729ba55767b375cbeee",
+   "path": "pages/R10/umu_ues845.pdf",
+   "status": "ok (as above)",
+   "tool": "curl"
+  }
+ ],
+ "budget_notices": [
+  "2026-10-18T08:44Z Semantic Scholar keyless: Too Many Requests (1 call), logged throttled",
+  "2026-10-18T08:47:02Z OpenAlex: Rate limit exceeded, no-key daily budget used up ($0 remaining; resets at midnight UTC); .env has no OpenAlex key",
+  "2026-10-18T08:48Z Firecrawl firecrawl_search: Insufficient credits; fell back to WebSearch (8 of 45 used)"
+ ],
+ "unfinished": [
+  "Book full texts (Crabel, Raschke-Connors, Williams, Chan, Davey) not read; figures secondary-only/unverified; contest records owned by R7",
+  "Forward-citation sweeps after 08:47Z blocked (OpenAlex budget, S2 throttle)",
+  "C1 futures cost assumption and per-trade figures unpublished; 29 of 33 names masked",
+  "C1 gross adds the paper's own costs to net; $247 is a time-average SPY price",
+  "C3 points figure is an R10-derived lower bound, not published",
+  "C2 ATR(14) bar length not explicit (read as daily, unverified)",
+  "Pointer outside scope: Mesfin 2026 GMM positive controls on MNQ not assessed"
+ ]
+}

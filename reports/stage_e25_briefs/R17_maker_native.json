@@ -1,0 +1,331 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "R17-MakerNative-OpusHigh",
+ "finished_utc": "2026-10-18T13:15:03Z",
+ "candidates": [
+  {
+   "id": "R17-C1",
+   "hypothesis": "Maker-side fade of the 3rd-Friday SOQ spike: resting sell limit k ticks above the Friday 08:30 CT open, trade-through fill, cover by 11:00 CT",
+   "mechanism": "SOQ-related buying pressure into the Friday open that reverses by noon ET (Baltussen-Terstegge-Whelan, owner RD4)",
+   "instruments": [
+    "MES",
+    "MNQ",
+    "MYM"
+   ],
+   "entry_window_ct": "Fri 08:30-11:00",
+   "hold": "up to 2.5 h",
+   "trades_per_year": 12,
+   "best_source": "Baltussen, Terstegge, Whelan (2024), via RD4",
+   "source_url": "reports/stage_e25_briefs/RD4_redig_fx_ags.md (pages/RD4/baltussen_terstegge_whelan_2024_aea.pdf)",
+   "grade": "working-paper",
+   "sample": "2003-2021",
+   "post_2015_or_oos": "sample includes 2015-2021; see RD4",
+   "published_effect": "ES futures reversal -12.89 bp (t -2.40, sd 80.45) after +14.30 bp into the open",
+   "price_level_used": "ES 6000",
+   "gross_per_trade_points": 7.73,
+   "gross_per_trade_micro_ticks": 30.9,
+   "micro": "MES",
+   "gross_or_net": "gross",
+   "dispersion": "t -2.40, sd 80.45 bp (as quoted by RD4)",
+   "quote": "The average overnight cumulative return in the active futures contract is equal to 14 bps which completely reverses by 12:00.",
+   "quote_location": "RD4 evidence row (R17 did not re-read the paper)",
+   "decay_evidence": "see RD4",
+   "data_needed": "1-min bars, 3rd-Friday calendar",
+   "owned": "yes",
+   "data_cost": "none",
+   "research_window_testable": "yes",
+   "why": "Limit-entry variant of RD4-C1's short leg; the limit saves ~0.5 tick on a ~31-tick move but at trade-through fills it fills only if price keeps rising after 08:30 (adverse selection within the event)",
+   "prop_notes": "intraday, flat well before 15:10 CT; 1-2 orders per event; not HFT; no SIM queue reliance",
+   "overlap_ids": [
+    "RD4-C1",
+    "R12-C1",
+    "R12-C2",
+    "E-H3"
+   ],
+   "overlap_note": "same mechanism as RD4-C1/R12; differs only by resting limit entry instead of market order; lead merges"
+  },
+  {
+   "id": "R17-C2",
+   "hypothesis": "Expiry-day pinning: on serial ES-options expiry Fridays, rest limits fading moves away from the nearest 5-pt strike in the last 30 min, flat by 15:05 CT",
+   "mechanism": "market makers' delta-hedge rebalancing pulls futures to the ATM strike (Golez-Jackwerth 2012)",
+   "instruments": [
+    "MES"
+   ],
+   "entry_window_ct": "14:30-15:05 on serial expiry Fridays",
+   "hold": "under 35 min",
+   "trades_per_year": 8,
+   "best_source": "Golez, Jackwerth (2012) Pinning in the S&P 500 futures, JFE 106(3) 566-585",
+   "source_url": "https://kops.uni-konstanz.de/bitstreams/b9492112-cab3-4217-a7d0-d2c4f5ba7825/download",
+   "grade": "peer-reviewed",
+   "sample": "1992-11..2009-11",
+   "post_2015_or_oos": "no; pre-weeklies, pre-0DTE",
+   "published_effect": "abs-return distribution shift of at least 11.00 bp Thu PM to Fri PM; $59M of $115M notional shift in last 30 min",
+   "price_level_used": "ES 6000 (11 bp = 6.6 ES pt; NOT a per-trade P&L)",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "MES",
+   "gross_or_net": "unknown",
+   "dispersion": "not published per trade",
+   "quote": "We find in the long sample (November 1992 until November 2009) a shift of at least 11.00 bps from Thursday PM to expiration Friday PM. ... An amazing $59 million shifts solely within the last 30 min of trading.",
+   "quote_location": "Sec. 5.1",
+   "decay_evidence": "none read; ES options OI has migrated to weeklies/0DTE since sample",
+   "data_needed": "1-min bars, serial-expiry calendar, strike grid; OI by strike for conditioning",
+   "owned": "partial",
+   "data_cost": "options OI not owned; price not gathered",
+   "research_window_testable": "yes (low power)",
+   "why": "Published mechanism and timing in the last 30 min, but no trading rule or per-trade gross; old sample; ~8 events/yr",
+   "prop_notes": "intraday, flat by 15:05 CT; few orders; not HFT",
+   "overlap_ids": [],
+   "overlap_note": "no pinning member in the index; not covered by RD5/R1 (grep)"
+  },
+  {
+   "id": "R17-C3",
+   "hypothesis": "Provide liquidity against the preannounced commodity ETF/GSCI roll in CL calendar spread; hold until spread narrows",
+   "mechanism": "predictable roll flow widens second-front spread before/during the roll, reverses after (Bessembinder et al. 2016; Mou 2011)",
+   "instruments": [
+    "MCL",
+    "CL"
+   ],
+   "entry_window_ct": "roll days (USO 4-day roll; GSCI 5th-9th business day)",
+   "hold": "multi-day",
+   "trades_per_year": 12,
+   "best_source": "Bessembinder, Carrion, Tuttle, Venkataraman (draft June 2015; JFE 121(1) 2016)",
+   "source_url": "https://www.ou.edu/content/dam/price/Finance/energyfinanceconference/Liquidity%20and%20Market%20Quality%20around%20Predictable%20Trades.pdf",
+   "grade": "working-paper",
+   "sample": "2008-03..2009-02, 12 rolls",
+   "post_2015_or_oos": "no",
+   "published_effect": "spread widens 25 bp per roll, narrows 26 bp per roll after",
+   "price_level_used": "CL $70: 25 bp = $0.175/bbl = 17.5 ticks on the spread",
+   "gross_per_trade_points": 0.175,
+   "gross_per_trade_micro_ticks": 17.5,
+   "micro": "MCL",
+   "gross_or_net": "gross",
+   "dispersion": "not read",
+   "quote": "widening of the calendar spread between the second- and the front month contract prices in the days before and during the USO roll, which averages 25 basis points per roll.",
+   "quote_location": "settlement-return section",
+   "decay_evidence": "paper finds more liquidity providers on roll days and narrower spreads; likely competed away",
+   "data_needed": "two contract-month 1-min paths, roll calendars",
+   "owned": "partial",
+   "data_cost": "none",
+   "research_window_testable": "partial",
+   "why": "Largest published maker gross found, but multi-day and two-leg; intraday component reverses in 1-3 min (HFT scale)",
+   "prop_notes": "Topstep forbids overnight holds: incompatible; PropEd allows overnight, automation unclear",
+   "overlap_ids": [],
+   "overlap_note": "no roll member tested (K2-rollspread-01 excluded at E.0, rates)"
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "Passive HFTs earn little per contract in ES at 1-min marks",
+   "number": "+$0.08/contract (0.006 ES ticks)",
+   "quote": "HFTᴾ ... -$1.93 -$0.94 $0.00 $0.75 -$0.62 $1.79 $5.05 $0.08",
+   "location": "Table 7 Panel B, Aug 2010",
+   "source": "Baron, Brogaard, Kirilenko (2014 draft; JFQA 2019) Risk and Return in High Frequency Trading, CFTC OCE",
+   "url": "https://www.cftc.gov/idc/groups/public/@economicanalysis/documents/file/oce_riskandreturn0414.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R17/bbk_riskreturn_2014.pdf",
+   "sha256": "5623cb18d74e677cac8a234e0fe8e6de7b650ec9e0728d4f32f77c3a567e6173"
+  },
+  {
+   "claim": "Non-HFT market makers lose per contract",
+   "number": "-$0.97/contract (-0.078 ES ticks)",
+   "quote": "Non-HFT MM -$2.64 -$1.95 -$0.75 $0.00 -$1.59 $1.11 $4.25 -$0.97",
+   "location": "Table 7 Panel B",
+   "source": "Baron, Brogaard, Kirilenko (2014 draft; JFQA 2019) Risk and Return in High Frequency Trading, CFTC OCE",
+   "url": "https://www.cftc.gov/idc/groups/public/@economicanalysis/documents/file/oce_riskandreturn0414.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R17/bbk_riskreturn_2014.pdf",
+   "sha256": "5623cb18d74e677cac8a234e0fe8e6de7b650ec9e0728d4f32f77c3a567e6173"
+  },
+  {
+   "claim": "Non-HFT MM definition",
+   "number": "aggr<20%, EOD inv<15%, >=20 contracts/day",
+   "quote": "Non-HFT market makers are non-HFT market participants who have a (1) aggressiveness ratio less than 20%, (2) end-of-day inventory ratio less than 15%, and (3) median trading volume of at least 20 contracts (about $1 million) per day.",
+   "location": "Sec. 2",
+   "source": "Baron, Brogaard, Kirilenko (2014 draft; JFQA 2019) Risk and Return in High Frequency Trading, CFTC OCE",
+   "url": "https://www.cftc.gov/idc/groups/public/@economicanalysis/documents/file/oce_riskandreturn0414.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R17/bbk_riskreturn_2014.pdf",
+   "sha256": "5623cb18d74e677cac8a234e0fe8e6de7b650ec9e0728d4f32f77c3a567e6173"
+  },
+  {
+   "claim": "Small traders lose most",
+   "number": "-$3.67/contract",
+   "quote": "Small Trader -$3.49 -$4.42 -$5.05 -$4.25 -$2.87 -$2.05 $0.00 -$3.67",
+   "location": "Table 7 Panel B",
+   "source": "Baron, Brogaard, Kirilenko (2014 draft; JFQA 2019) Risk and Return in High Frequency Trading, CFTC OCE",
+   "url": "https://www.cftc.gov/idc/groups/public/@economicanalysis/documents/file/oce_riskandreturn0414.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R17/bbk_riskreturn_2014.pdf",
+   "sha256": "5623cb18d74e677cac8a234e0fe8e6de7b650ec9e0728d4f32f77c3a567e6173"
+  },
+  {
+   "claim": "Passive HFTs lose at longer horizons",
+   "number": "Table 6 HFT-P medians $5,236 $12,991 $11,408 -$7,917 -$9,774 -$3,428",
+   "quote": "Passive HFTs show the opposite, making money at short horizons and losing money over longer intervals.",
+   "location": "Intro; Table 6",
+   "source": "Baron, Brogaard, Kirilenko (2014 draft; JFQA 2019) Risk and Return in High Frequency Trading, CFTC OCE",
+   "url": "https://www.cftc.gov/idc/groups/public/@economicanalysis/documents/file/oce_riskandreturn0414.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R17/bbk_riskreturn_2014.pdf",
+   "sha256": "5623cb18d74e677cac8a234e0fe8e6de7b650ec9e0728d4f32f77c3a567e6173"
+  },
+  {
+   "claim": "Liquidity taking pays more than providing",
+   "number": "$74,000 vs $12,600 daily",
+   "quote": "the average Aggressive HFT firm earns a daily profit of $74,000 in gross trading revenues, while average Mixed and Passive firms earn $27,910 and $12,600",
+   "location": "Table 2 discussion",
+   "source": "Baron, Brogaard, Kirilenko (2014 draft; JFQA 2019) Risk and Return in High Frequency Trading, CFTC OCE",
+   "url": "https://www.cftc.gov/idc/groups/public/@economicanalysis/documents/file/oce_riskandreturn0414.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R17/bbk_riskreturn_2014.pdf",
+   "sha256": "5623cb18d74e677cac8a234e0fe8e6de7b650ec9e0728d4f32f77c3a567e6173"
+  },
+  {
+   "claim": "Pinning mechanism",
+   "number": "$115M per expiry",
+   "quote": "S&P 500 futures are pulled toward the at the money strike price on days when serial options on the S&P 500 futures expire (pinning) ... driven by the interplay of market makers' rebalancing of delta hedges",
+   "location": "Abstract",
+   "source": "Golez, Jackwerth (2012) Pinning in the S&P 500 futures, JFE 106(3) 566-585",
+   "url": "https://kops.uni-konstanz.de/bitstreams/b9492112-cab3-4217-a7d0-d2c4f5ba7825/download",
+   "grade": "peer-reviewed",
+   "saved_path": "pages/R17/golez_jackwerth_2012.pdf",
+   "sha256": "07fabf4aa169abe42c79f63c1780e691ca885be59a5326361d4583fff0fe0cdb"
+  },
+  {
+   "claim": "Pinning size and timing",
+   "number": ">=11.00 bp Thu PM to Fri PM; $59M in last 30 min",
+   "quote": "We find in the long sample (November 1992 until November 2009) a shift of at least 11.00 bps from Thursday PM to expiration Friday PM. ... An amazing $59 million shifts solely within the last 30 min of trading.",
+   "location": "Sec. 5.1",
+   "source": "Golez, Jackwerth (2012) Pinning in the S&P 500 futures, JFE 106(3) 566-585",
+   "url": "https://kops.uni-konstanz.de/bitstreams/b9492112-cab3-4217-a7d0-d2c4f5ba7825/download",
+   "grade": "peer-reviewed",
+   "saved_path": "pages/R17/golez_jackwerth_2012.pdf",
+   "sha256": "07fabf4aa169abe42c79f63c1780e691ca885be59a5326361d4583fff0fe0cdb"
+  },
+  {
+   "claim": "Roll calendar-spread widening, then narrowing",
+   "number": "25 bp and 26 bp per roll",
+   "quote": "widening of the calendar spread between the second- and the front month contract prices in the days before and during the USO roll, which averages 25 basis points per roll. ... This differential of 3.16% per year equates to 26 basis points per roll",
+   "location": "settlement-return section",
+   "source": "Bessembinder, Carrion, Tuttle, Venkataraman (draft June 2015; JFE 121(1) 2016)",
+   "url": "https://www.ou.edu/content/dam/price/Finance/energyfinanceconference/Liquidity%20and%20Market%20Quality%20around%20Predictable%20Trades.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R17/bctv_predictable_2015.pdf",
+   "sha256": "b914ca1a92b8ee4993f9bfbaaaf611bdee5bfae8e4772e49167bf59feed40fb9"
+  },
+  {
+   "claim": "Intraday roll imbalance reverses in 1-3 min",
+   "number": "1 and 3 minutes",
+   "quote": "imbalance is almost entirely reversed within one minute in the expiring contract and within three minutes in the second nearest-to-expiration contract on roll days",
+   "location": "Intro p.3",
+   "source": "Bessembinder, Carrion, Tuttle, Venkataraman (draft June 2015; JFE 121(1) 2016)",
+   "url": "https://www.ou.edu/content/dam/price/Finance/energyfinanceconference/Liquidity%20and%20Market%20Quality%20around%20Predictable%20Trades.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R17/bctv_predictable_2015.pdf",
+   "sha256": "b914ca1a92b8ee4993f9bfbaaaf611bdee5bfae8e4772e49167bf59feed40fb9"
+  },
+  {
+   "claim": "More liquidity providers, no predation",
+   "number": "",
+   "quote": "a larger number of individual trading accounts provide liquidity on roll days, and do not find evidence of the systematic use of predatory strategies",
+   "location": "Abstract",
+   "source": "Bessembinder, Carrion, Tuttle, Venkataraman (draft June 2015; JFE 121(1) 2016)",
+   "url": "https://www.ou.edu/content/dam/price/Finance/energyfinanceconference/Liquidity%20and%20Market%20Quality%20around%20Predictable%20Trades.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R17/bctv_predictable_2015.pdf",
+   "sha256": "b914ca1a92b8ee4993f9bfbaaaf611bdee5bfae8e4772e49167bf59feed40fb9"
+  },
+  {
+   "claim": "Sample",
+   "number": "12 rolls 2008-03..2009-02",
+   "quote": "spans the period March 1, 2008 to February 28, 2009, and therefore includes twelve monthly rolls",
+   "location": "Sec. 3",
+   "source": "Bessembinder, Carrion, Tuttle, Venkataraman (draft June 2015; JFE 121(1) 2016)",
+   "url": "https://www.ou.edu/content/dam/price/Finance/energyfinanceconference/Liquidity%20and%20Market%20Quality%20around%20Predictable%20Trades.pdf",
+   "grade": "working-paper",
+   "saved_path": "pages/R17/bctv_predictable_2015.pdf",
+   "sha256": "b914ca1a92b8ee4993f9bfbaaaf611bdee5bfae8e4772e49167bf59feed40fb9"
+  },
+  {
+   "claim": "Front-running GSCI roll (Mou 2011)",
+   "number": "Sharpe up to 4.4 [secondary-only]",
+   "quote": "Mou (2011) reports that significant profits can be earned by investors who trade in advance of the dates that the SP-GSCI index begins to track the second- rather than nearest-to-expiration futures contract.",
+   "location": "BCTV Sec. 2 (citing)",
+   "source": "Mou (2011) Columbia thesis",
+   "url": "https://academiccommons.columbia.edu/doi/10.7916/D8H41ZDD",
+   "grade": "thesis [secondary-only]",
+   "saved_path": "pages/R17/bctv_predictable_2015.pdf",
+   "sha256": "b914ca1a92b8ee4993f9bfbaaaf611bdee5bfae8e4772e49167bf59feed40fb9"
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "D.1g/C6 closure (DECISIONS.md, 2026-09-23)",
+   "effect": "supports",
+   "quote": "Non-HFT MM -$2.64 -$1.95 -$0.75 $0.00 -$1.59 $1.11 $4.25 -$0.97",
+   "source": "Baron, Brogaard, Kirilenko (2014 draft; JFQA 2019) Risk and Return in High Frequency Trading, CFTC OCE"
+  },
+  {
+   "verdict": "C-H4 null under trade-through fills (D.1f)",
+   "effect": "supports",
+   "quote": "Passive HFTs show the opposite, making money at short horizons and losing money over longer intervals.",
+   "source": "Baron, Brogaard, Kirilenko (2014 draft; JFQA 2019) Risk and Return in High Frequency Trading, CFTC OCE"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "https://www.cftc.gov/idc/groups/public/@economicanalysis/documents/file/oce_riskandreturn0414.pdf",
+   "utc": "2026-10-18T08:56:24Z",
+   "sha256": "5623cb18d74e677cac8a234e0fe8e6de7b650ec9e0728d4f32f77c3a567e6173",
+   "path": "pages/R17/bbk_riskreturn_2014.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.bankofcanada.ca/wp-content/uploads/2012/11/Brogaard-Jonathan.pdf",
+   "utc": "2026-10-18T08:56:29Z",
+   "sha256": "5a92c9aca4b2156456628cc6af95ea9853dece1597f423de56580af5780eb2ce",
+   "path": "pages/R17/bbk_tradingprofits_2012.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://kops.uni-konstanz.de/bitstreams/b9492112-cab3-4217-a7d0-d2c4f5ba7825/download",
+   "utc": "2026-10-18T08:56:39Z",
+   "sha256": "07fabf4aa169abe42c79f63c1780e691ca885be59a5326361d4583fff0fe0cdb",
+   "path": "pages/R17/golez_jackwerth_2012.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.ou.edu/content/dam/price/Finance/energyfinanceconference/Liquidity%20and%20Market%20Quality%20around%20Predictable%20Trades.pdf",
+   "utc": "2026-10-18T08:57:37Z",
+   "sha256": "b914ca1a92b8ee4993f9bfbaaaf611bdee5bfae8e4772e49167bf59feed40fb9",
+   "path": "pages/R17/bctv_predictable_2015.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://academiccommons.columbia.edu/doi/10.7916/D8DR32JG/download",
+   "utc": "2026-10-18T08:57:47Z",
+   "sha256": "aa326dd18ad061b31df6c814a754832c7d0cee0ce2bcf3d818450a6c6878e29d",
+   "path": "pages/R17/mou_thesis_blocked_anubis.html",
+   "status": "blocked",
+   "tool": "curl"
+  }
+ ],
+ "budget_notices": [
+  "2026-10-18T08:56:05Z OpenAlex: 'Rate limit exceeded ... free daily budget shared by everyone on your network's IP address ... used up ($0 remaining; resets at midnight UTC)'. Fallback to WebSearch/Firecrawl.",
+  "2026-10-18T08:58:26Z WebSearch returned: 'You've hit your session limit · resets 6:10am (America/Vancouver)' after 7 R17 WebSearch calls. Stopped WebSearch; continuing with Firecrawl search.",
+  "2026-10-18T08:58:40Z Firecrawl: 'Insufficient credits to perform this request' / 'The connected Firecrawl account is out of credits'. Fallback: Semantic Scholar keyless (1 call/10 s), arXiv API, direct repository URLs.",
+  "2026-10-18T13:12:42Z Semantic Scholar keyless: 9 consecutive 429 'Too Many Requests' (3 queries x 3 tries, 60 s waits); logged throttled; no S2 results used."
+ ],
+ "unfinished": [
+  "Menkveld 2013, Kirilenko et al. Flash Crash, Silber 1984, Kuserk-Locke 1993, Linnainmaa 2010, LETF close rebalancing, TAS/settlement studies not fetched (OpenAlex, Firecrawl, WebSearch, S2 all exhausted or throttled)",
+  "BBK 2012 BoC version saved, not read",
+  "terms for bankofcanada.ca, kops.uni-konstanz.de, ou.edu not logged before single PDF fetches",
+  "C1 figures taken from RD4, not re-read",
+  "Mou Sharpe 4.4 secondary-only (Columbia bot challenge)"
+ ]
+}

@@ -1,0 +1,538 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "RD7-TrendCarry-OpusHigh",
+ "finished_utc": "2026-10-18T08:56:45Z",
+ "candidates": [
+  {
+   "id": "RD7-C1",
+   "hypothesis": "Fast/medium EWMA trend (EWM-tau-4tau, tau 5-50 days) restricted to large-tick contracts (top half by volatility-normalised tick size) keeps its pre-2009 Sharpe; the post-2009 trend decay is confined to small-tick contracts (equity indices, FX).",
+   "mechanism": "Self-fulfilling impact loop of CTA flow survives in dense (large-tick) order books; HFT liquidity withdrawal broke it in sparse (small-tick) books (Kurth et al. 2026).",
+   "instruments": [
+    "ZT",
+    "ZF",
+    "ZN",
+    "TN",
+    "ZB",
+    "UB",
+    "ZC",
+    "ZS",
+    "ZL",
+    "HE",
+    "LE",
+    "2YY",
+    "10Y",
+    "30Y",
+    "MZC",
+    "MZS",
+    "MZL"
+   ],
+   "entry_window_ct": "daily settlement signal; multi-day position",
+   "hold": "multi-day (signal time scales 5-50 days)",
+   "trades_per_year": null,
+   "best_source": "Kurth, Eisler, Rej, Bouchaud (2026), Is Trend Still Your Friend? A Microstructural Account of the Demise of Short-Term Trend-Following, arXiv 2607.01550v1",
+   "source_url": "https://arxiv.org/abs/2607.01550",
+   "grade": "working-paper",
+   "sample": "about 100 liquid futures, daily settlement, 1995-2025; break at 2008/9",
+   "post_2015_or_oos": "post-break 2009-2025 is after the regime change; not a pre-registered OOS test",
+   "published_effect": "large-tick tier Sharpe 1.0-1.2 post-break (about 1.4 pre-break); small-tick tier about 0; cost treatment not stated in passages read",
+   "price_level_used": "n/a",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "2YY/10Y/30Y, MZC/MZS/MZL",
+   "gross_or_net": "unknown",
+   "dispersion": "bootstrap standard errors shown in Fig. 11 (image, not read); all-contract Table 1 SE about 0.24-0.27",
+   "quote": "Post-break, ST Sharpes collapse to essentially zero (mildly negative for the fastest signals), while LT Sharpes remain in the range 1.0–1.2.",
+   "quote_location": "Sec. 5.2",
+   "decay_evidence": "all-contract fast trend: tau=5 Sharpe 0.84 (1995-2009) -> 0.12 (2009-2025); HOP 1-month 0.06 in 2010-2016",
+   "data_needed": "daily settlement/close and tick size for rates, grain, livestock roots",
+   "owned": "yes",
+   "data_cost": "none (owned 1-min bars 2010-07..2024-02 and research window)",
+   "research_window_testable": "yes",
+   "why": "Only post-2009 trend evidence with Sharpe above 1 in a definable subset; directly bears on E22-F1 weighting. Multi-day, so not a Topstep candidate.",
+   "prop_notes": "Not Topstep-compatible (multi-day). No evidence a day-session-only version keeps the premium (LPS 2019: equity-index TSMOM earns overnight). Multi-day track only (personal IBKR; firm allowing overnight holds).",
+   "overlap_ids": [
+    "E21-T1",
+    "E21-T2",
+    "E22-F1"
+   ],
+   "overlap_note": "Same EWMA-crossover family as E22-F1 (Carver EWMAC); differs by restricting to large-tick contracts and weighting fast speeds there. Conflicts with V39 'no further trend variant on 2010-2024'; the lead decides."
+  },
+  {
+   "id": "RD7-C2",
+   "hypothesis": "Cross-market overnight TSMOM: the US equity market's last half-hour return predicts the next day's first half-hour return of international equity markets.",
+   "mechanism": "Late-informed trading / information spillover from the US close to foreign opens (authors' framing; full text not read).",
+   "instruments": [
+    "CME-listed Nikkei futures (eligibility on Topstep unverified)"
+   ],
+   "entry_window_ct": "foreign open, e.g. Tokyo 09:00 JST = 19:00 CT (US daylight time) / 18:00 CT (standard time)",
+   "hold": "30 minutes",
+   "trades_per_year": null,
+   "best_source": "Xu, Li, Singh, Chen, Li (2025), Cross-market overnight time-series momentum, Journal of International Financial Markets, Institutions and Money 105, 102239",
+   "source_url": "https://research-repository.griffith.edu.au/items/77d29c70-c6f9-426e-a28a-fca4c540dedd",
+   "grade": "peer-reviewed [secondary-only]",
+   "sample": "not stated in the abstract",
+   "post_2015_or_oos": "abstract: significant 'both in- and out-of-sample' (not verified)",
+   "published_effect": "sign and significance only; no size in abstract",
+   "price_level_used": "n/a",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "unknown",
+   "gross_or_net": "unknown",
+   "dispersion": "not available (full text embargoed to 2027-10-21)",
+   "quote": "We propose a new cross-market overnight momentum: the US stock market’s last half-hour return predicts the next day’s first half-hour stock returns in international markets.",
+   "quote_location": "Griffith repository item page, abstract",
+   "decay_evidence": "none known",
+   "data_needed": "1-min bars of CME Nikkei futures; US index futures last half-hour (owned: NQ, RTY, MES)",
+   "owned": "partial",
+   "data_cost": "not looked up (no Databento spend or quote in this stage)",
+   "research_window_testable": "partial",
+   "why": "Forward citation of MOP that yields a one-trade-a-day, 30-minute, in-window hold; unsized, so pointer-level only.",
+   "prop_notes": "Inside Topstep 17:00-15:10 CT day; single trade, not HFT, no scheduled-news exposure; Nikkei availability on Topstep unverified.",
+   "overlap_ids": [
+    "K8-flight-01",
+    "K8-wkndbtc-01"
+   ],
+   "overlap_note": "K8 cross-market family and E.20 RTY E7 (Li-Sakkas-Urquhart, first->last half-hour) differ in direction and timing; R13 owns cross-market lead-lag."
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "TSMOM on equity-index futures earns only overnight",
+   "number": "overnight CAPM alpha 1.40%/month (t 3.24); intraday -0.10% (t -0.24)",
+   "quote": "the monthly overnight CAPM alpha associated with time-series momentum is 1.40% with a t-statistic of 3.24. The corresponding intraday alpha is negative, economically negligible, and statistically indistinguishable from zero.",
+   "location": "text lines 627-630; Table III Panel A",
+   "source": "Lou, Polk, Skouras, A Tug of War (Feb 2018 version; JFE 134, 2019)",
+   "url": "https://personal.lse.ac.uk/loud/ATugofWar.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/lps_tug_of_war.pdf",
+   "sha256": "013d4133e759d4cb65c6e2135917001ae26a67b7061860e141a61f2e6d3c306a"
+  },
+  {
+   "claim": "TSMOM day/night raw returns and skew",
+   "number": "close-to-close 0.81% (t 1.39); overnight 1.10% (t 2.67); intraday -0.29% (t -0.78); skew -0.491/0.178/-2.767",
+   "quote": "Intraday -0.29% -0.10% -0.10% -0.04% 4.85% -2.767",
+   "location": "Table III Panel A",
+   "source": "Lou, Polk, Skouras (2018/2019)",
+   "url": "https://personal.lse.ac.uk/loud/ATugofWar.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/lps_tug_of_war.txt",
+   "sha256": "88f7edb31b6b0e625a17d830f3314be5577663249b81faed93ff18c36b317737"
+  },
+  {
+   "claim": "Intraday trend 2010-2023 too weak to trade after costs",
+   "number": "R^2 0.012-0.027 bp at hour horizons",
+   "quote": "Again, it would be difficult to profitably exploit these weak patterns in the face of trading costs, beyond earning a fair risk premium.",
+   "location": "Sec. 3.2; Table 12",
+   "source": "Safari, Schmidhuber (2025), Physica A; arXiv 2501.16772v2",
+   "url": "https://arxiv.org/abs/2501.16772",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/safari_schmidhuber_2025_passages.md",
+   "sha256": "3ce553b8a1a6f61b3d3af1afc109e2517326408e96627fafcfe5624b04633a7b"
+  },
+  {
+   "claim": "Daily trend coefficient decaying toward zero",
+   "number": "b -> 0 between 2010 and 2030",
+   "quote": "estimates that b→0 somewhere between 2010 and 2030. This has a natural interpretation: so much money has flown into trend-following that it does not work as well any more as it used to.",
+   "location": "end of Sec. 2",
+   "source": "Safari, Schmidhuber (2025)",
+   "url": "https://arxiv.org/abs/2501.16772",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/safari_schmidhuber_2025_passages.md",
+   "sha256": "3ce553b8a1a6f61b3d3af1afc109e2517326408e96627fafcfe5624b04633a7b"
+  },
+  {
+   "claim": "Fast trend collapsed after 2008, slow survived",
+   "number": "tau=5: 0.84 -> 0.12; tau=10: 0.83 -> 0.22; tau=20: 0.79 -> 0.27; tau=50: 0.70 -> 0.40",
+   "quote": "post-2008 the ordering reverses, with the fastest signal collapsing to 0.12 and the slowest still delivering 0.40.",
+   "location": "Sec. 3.2, Table 1",
+   "source": "Kurth, Eisler, Rej, Bouchaud (2026), arXiv 2607.01550v1",
+   "url": "https://arxiv.org/abs/2607.01550",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/kurth_eisler_rej_bouchaud_2026_passages.md",
+   "sha256": "1fbe1aedb344e79379f5c8228283c767c5b0c2396ae5a5920b44e143c3f813b7"
+  },
+  {
+   "claim": "Decay confined to small-tick contracts",
+   "number": "LT 1.0-1.2 post-break; ST about 0",
+   "quote": "Post-break, ST Sharpes collapse to essentially zero (mildly negative for the fastest signals), while LT Sharpes remain in the range 1.0–1.2.",
+   "location": "Sec. 5.2",
+   "source": "Kurth et al. (2026)",
+   "url": "https://arxiv.org/abs/2607.01550",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/kurth_eisler_rej_bouchaud_2026_passages.md",
+   "sha256": "1fbe1aedb344e79379f5c8228283c767c5b0c2396ae5a5920b44e143c3f813b7"
+  },
+  {
+   "claim": "Trend vanished in equity indices and FX, intact in bonds and commodities",
+   "number": "n/a",
+   "quote": "Trend has effectively vanished for IDX and FXR, while YLD and CMD show no appreciable degradation.",
+   "location": "Sec. 3.3",
+   "source": "Kurth et al. (2026)",
+   "url": "https://arxiv.org/abs/2607.01550",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/kurth_eisler_rej_bouchaud_2026_passages.md",
+   "sha256": "1fbe1aedb344e79379f5c8228283c767c5b0c2396ae5a5920b44e143c3f813b7"
+  },
+  {
+   "claim": "Signal decay, not cost",
+   "number": "flat post-2008 even at zero lag without costs",
+   "quote": "produces equally flat post-2008 returns, even without costs.",
+   "location": "Sec. 4.1",
+   "source": "Kurth et al. (2026)",
+   "url": "https://arxiv.org/abs/2607.01550",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/kurth_eisler_rej_bouchaud_2026_passages.md",
+   "sha256": "1fbe1aedb344e79379f5c8228283c767c5b0c2396ae5a5920b44e143c3f813b7"
+  },
+  {
+   "claim": "HOP 2010-2016 gross Sharpe by signal",
+   "number": "1-month 0.06; 3-month 0.30; 12-month 0.73 (2000-2009: 0.70, 0.67, 1.10)",
+   "quote": "Jan 2010–Dec 2016 0.06 0.13 0.30 0.33 0.73 0.70",
+   "location": "JPM Fall 2017 p.5 Exhibit 2 (image, read from rendered page)",
+   "source": "Hurst, Ooi, Pedersen (2017), A Century of Evidence on Trend-Following Investing, JPM",
+   "url": "https://fairmodel.econ.yale.edu/ec439/hurst.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/TrendCarry/hop_century_jpm.pdf",
+   "sha256": ""
+  },
+  {
+   "claim": "HOP 2010-2016 blend net of costs and 2/20",
+   "number": "7.6% gross, 6.2% net of cost, 3.3% net of fees, vol 8.1%, Sharpe 0.41",
+   "quote": "Jan 2010–Dec 2016 7.6% 6.2% 3.3% 8.1% 0.41 –0.15 0.28",
+   "location": "JPM Fall 2017 p.4 Exhibit 1 (image)",
+   "source": "Hurst, Ooi, Pedersen (2017)",
+   "url": "https://fairmodel.econ.yale.edu/ec439/hurst.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/TrendCarry/hop_century_jpm.pdf",
+   "sha256": ""
+  },
+  {
+   "claim": "Daily (1,1) TSMOM decayed after 1994",
+   "number": "Sharpe 2.63 (t 11.91) -> 0.37 (t 1.07)",
+   "quote": "the t-statistic drops dramatically to the insignificant value of 1.07 and the Sharpe ratio to the unattractive value of 0.37.",
+   "location": "p.12",
+   "source": "Baltas, Kosowski (2011 WP), Momentum Strategies in Futures Markets and Trend-following Funds",
+   "url": "efmaefm.org (E.10 copy)",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e10_research/overnight/baltas_kosowski_momf.txt",
+   "sha256": "36807a569a69dde96834e8e97cdf3620c502de968a6701bf74b2a247732d1936"
+  },
+  {
+   "claim": "AQR attributes 2010s weakness to muted moves",
+   "number": "n/a",
+   "quote": "the primary explanatory factor is (1), namely, that the average size of global market moves has been more muted than usual.",
+   "location": "abstract",
+   "source": "Babu, Levine, Ooi, Schroeder, Stamelos (2020), JPM",
+   "url": "https://www.aqr.com/-/media/AQR/Documents/Journal-Articles/JPM-You-Cant-Always-Trend-When-You-Want.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/TrendCarry/aqr_cant_always_trend_jpm.txt",
+   "sha256": "3871dfd8f3640d0757cbae3e3c69ae285b1d8b84abf9e38d5705e755612ea043"
+  },
+  {
+   "claim": "FX carry and FX TSMOM out of sample",
+   "number": "carry OOS Sharpe -0.10 gross/net (2012-10..2020-04); TSMOM OOS -0.16 gross, -0.18 net",
+   "quote": "Replicating these studies, we show that the average out-of-sample Sharpe ratio decreases from +0.39 to − 0.32.",
+   "location": "abstract; Table 2 Panel C",
+   "source": "Hutchinson, Kyziropoulos, O'Brien, O'Reilly, Sharma (2022), IRFA 83, 102245",
+   "url": "https://repository.adu.ac.ae/bitstreams/4912355c-88d1-434c-a489-e44e6ba6494b/download",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/hutchinson_etal_2022_fx_cmv.pdf",
+   "sha256": "17bc83399eff9763a28cbf4f5b3075e19074ed531eaac000d46f429c533149d7"
+  },
+  {
+   "claim": "Overlapping returns inflate measured TSMOM",
+   "number": "n/a",
+   "quote": "the widespread use of overlapping returns in time series momentum (TSM) research, which can materially overstate the strength of TSM signals",
+   "location": "abstract",
+   "source": "How Overlapping Returns Inflate Measured Time Series Momentum, JRFM 19(1) 46 (2026)",
+   "url": "https://www.mdpi.com/1911-8074/19/1/46",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/mdpi_overlapping_tsmom_2026.md",
+   "sha256": "c8ae2a49e0ab187c213e4805abdbf9f904a7beecd4106dc3e42070a24db846b4"
+  },
+  {
+   "claim": "Cross-market overnight TSMOM exists (unsized)",
+   "number": "sign only",
+   "quote": "The COTSM strategy remains profitable with the consideration of transaction costs, and the profitability is driven by some specific market characteristics.",
+   "location": "repository abstract",
+   "source": "Xu, Li, Singh, Chen, Li (2025), JIFMIM 105, 102239",
+   "url": "https://research-repository.griffith.edu.au/items/77d29c70-c6f9-426e-a28a-fca4c540dedd",
+   "grade": "peer-reviewed [secondary-only]",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/griffith_cotsm_item.html",
+   "sha256": "784cd68327c37a376a79c5a3748a8c0f2ccffd504118ae73e0921e4507e5fefd"
+  },
+  {
+   "claim": "Commodity ETF day/night ML predictability (ignores costs)",
+   "number": "n/a",
+   "quote": "the risk-adjusted return (annualized Sharpe ratio) of a stylized long–short strategy that ignores transaction costs",
+   "location": "abstract",
+   "source": "Predicting Commodity ETF Returns with Deep Learning: Overnight Versus Daytime Predictability, Commodities 5(3) 16 (2026)",
+   "url": "https://www.mdpi.com/2813-2432/5/3/16",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/RD7/mdpi_commodity_etf_overnight_2026.md",
+   "sha256": "827d2df1a6361cba6a3e5c04f82b1ceb177997b6929164e329685be42851777c"
+  },
+  {
+   "claim": "E.13 MOP quote re-checked",
+   "number": "match",
+   "quote": "a Sharpe ratio greater than one on an annual basis, or",
+   "location": "mop2012.txt l.175",
+   "source": "Moskowitz, Ooi, Pedersen (2012) JFE",
+   "url": "https://pages.stern.nyu.edu/~lpederse/papers/TimeSeriesMomentum.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/TrendCarry/mop2012.txt",
+   "sha256": "6fdd907354d8347c0731e9a9a8f7f244dec75d2c2beed26ebc18bb63ec65647b"
+  },
+  {
+   "claim": "E.13 HLWZ quote re-checked",
+   "number": "match",
+   "quote": "level, 47 of the 55 assets have a t-statistic of less than 1.65,",
+   "location": "hlwz_w717.txt l.106",
+   "source": "Huang, Li, Wang, Zhou (2020) JFE",
+   "url": "https://down.aefweb.net/WorkingPapers/w717.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/TrendCarry/hlwz_w717.txt",
+   "sha256": "8d6934e64bbcadbfa4d9db38ba128d664ece9c5ec78b4325aef9105274c96be8"
+  },
+  {
+   "claim": "E.13 KMPV quote re-checked",
+   "number": "match",
+   "quote": "remarkable Sharpe ratio of 1.10 per annum.",
+   "location": "kmpv_carry_nber.txt l.1010",
+   "source": "Koijen, Moskowitz, Pedersen, Vrugt (NBER w19325)",
+   "url": "https://www.nber.org/system/files/working_papers/w19325/w19325.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e13_briefs/pages/TrendCarry/kmpv_carry_nber.txt",
+   "sha256": "42fd4572ac986ce48e2391c2b42d24dd89bd5864db028df79ed5d03dba113f9b"
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "V39 (trend consistent with published evidence, not established)",
+   "effect": "supports",
+   "quote": "post-2008 the ordering reverses, with the fastest signal collapsing to 0.12 and the slowest still delivering 0.40.",
+   "source": "Kurth et al. 2026, Table 1"
+  },
+  {
+   "verdict": "E.21 T1-T4 FAIL on Holm (N 532)",
+   "effect": "supports",
+   "quote": "Exhibit 2 row 'Jan 2010–Dec 2016 0.06 0.13 0.30 0.33 0.73 0.70'; Exhibit 1 blend net Sharpe '0.41'",
+   "source": "Hurst, Ooi, Pedersen 2017 pp.4-5"
+  },
+  {
+   "verdict": "E.21 spec_trend HOP 2010-2016 values (read by eye, unchecked)",
+   "effect": "supports",
+   "quote": "Jan 2010–Dec 2016 7.6% 6.2% 3.3% 8.1% 0.41",
+   "source": "Hurst, Ooi, Pedersen 2017 Exhibit 1 (second read of rendered page)"
+  },
+  {
+   "verdict": "V38/V39 trend not prop-compatible (PropEd cannot hold the book; Topstep flat by 15:10)",
+   "effect": "supports",
+   "quote": "time-series momentum occurs entirely overnight ... The corresponding intraday alpha is negative, economically negligible, and statistically indistinguishable from zero.",
+   "source": "Lou, Polk, Skouras 2018/2019"
+  },
+  {
+   "verdict": "E.13 Part D drawdown arithmetic",
+   "effect": "supports",
+   "quote": "re-derived: s_max = D x S / (ln10 x sqrt(252) / 2) = D/121.8, D/60.9, D/36.6 for S 0.15, 0.30, 0.50; Magdon-Ismail quote 'logarithmic (µ > 0), square root (µ = 0), or linear (µ < 0).' matches",
+   "source": "own arithmetic; E.13 T-31"
+  },
+  {
+   "verdict": "E22-F1 design (equal weights on EWMAC 8/32..64/256 across 12 micros incl. MNQ, M2K, M6E)",
+   "effect": "weakens",
+   "quote": "Trend has effectively vanished for IDX and FXR, while YLD and CMD show no appreciable degradation.",
+   "source": "Kurth et al. 2026 Sec. 3.3 (supports the yield and grain micros)"
+  },
+  {
+   "verdict": "E.13 A2/A5 attribution of 2010s weakness to smaller moves (Babu et al. 2020)",
+   "effect": "weakens",
+   "quote": "If capacity were the cause, removing execution costs should restore profitability, which it does not. This means the signal itself has degraded",
+   "source": "Kurth et al. 2026 Sec. 4.1"
+  },
+  {
+   "verdict": "V39 ML overlay on trend not built",
+   "effect": "weakens",
+   "quote": "DeePM attains net risk-adjusted returns that are roughly twice those of classical trend-following strategies and passive benchmarks",
+   "source": "arXiv 2601.05975 abstract [secondary-only]"
+  },
+  {
+   "verdict": "E.13 A4 carry closure",
+   "effect": "supports",
+   "quote": "Panel C carry 'Sharpe ratio − 0.10' gross and net; 'For CAR the in-sample period is November 1983 to September 2012'",
+   "source": "Hutchinson et al. 2022 Table 2 (FX only)"
+  },
+  {
+   "verdict": "V38 no published post-2015 intraday effect clears 1.5 x D8 (trend at intraday horizons)",
+   "effect": "supports",
+   "quote": "Again, it would be difficult to profitably exploit these weak patterns in the face of trading costs, beyond earning a fair risk premium.",
+   "source": "Safari, Schmidhuber 2025 Sec. 3.2"
+  },
+  {
+   "verdict": "E.13 A1 MOP labelled gross",
+   "effect": "supports",
+   "quote": "grep of mop2012.txt for 'transaction cost' finds only a literature citation (l.133) and a reference title (l.1659)",
+   "source": "MOP 2012 on-disk text"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "https://personal.lse.ac.uk/robots.txt",
+   "utc": "2026-10-18T08:42Z",
+   "sha256": "",
+   "path": "reports/stage_e25_briefs/pages/RD7/lse_personal_robots.txt",
+   "status": "ok (404, no robots file)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.lse.ac.uk/lse-information/terms-of-use",
+   "utc": "2026-10-18T08:42Z",
+   "sha256": "5c60834b653edef277ce51711ab1a9d84d2baec68f587cfc4e394e7d3e807e7a",
+   "path": "reports/stage_e25_briefs/terms/www.lse.ac.uk_terms.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://personal.lse.ac.uk/loud/ATugofWar.pdf",
+   "utc": "2026-10-18T08:42:36Z",
+   "sha256": "013d4133e759d4cb65c6e2135917001ae26a67b7061860e141a61f2e6d3c306a",
+   "path": "reports/stage_e25_briefs/pages/RD7/lps_tug_of_war.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "arxiv:2501.16772",
+   "utc": "2026-10-18T08:42Z",
+   "sha256": "3ce553b8a1a6f61b3d3af1afc109e2517326408e96627fafcfe5624b04633a7b",
+   "path": "reports/stage_e25_briefs/pages/RD7/safari_schmidhuber_2025_passages.md",
+   "status": "ok",
+   "tool": "firecrawl_research_read_paper"
+  },
+  {
+   "url": "arxiv:2607.01550",
+   "utc": "2026-10-18T08:43Z",
+   "sha256": "1fbe1aedb344e79379f5c8228283c767c5b0c2396ae5a5920b44e143c3f813b7",
+   "path": "reports/stage_e25_briefs/pages/RD7/kurth_eisler_rej_bouchaud_2026_passages.md",
+   "status": "ok",
+   "tool": "firecrawl_research_read_paper"
+  },
+  {
+   "url": "https://api.openalex.org/works (10 calls)",
+   "utc": "2026-10-18T08:40Z-08:45Z",
+   "sha256": "",
+   "path": "scratch",
+   "status": "ok then throttled (IP budget exhausted)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://api.semanticscholar.org/graph/v1 (KMPV citations, search)",
+   "utc": "2026-10-18T08:46Z-08:47Z",
+   "sha256": "",
+   "path": "",
+   "status": "throttled (429 x2)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1016/j.jfineco.2011.11.003/citations",
+   "utc": "2026-10-18T08:50:53Z",
+   "sha256": "",
+   "path": "scratch",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "firecrawl_search (2 calls)",
+   "utc": "2026-10-18T08:47:43Z",
+   "sha256": "",
+   "path": "",
+   "status": "failed: out of credits",
+   "tool": "Firecrawl"
+  },
+  {
+   "url": "https://research-repository.griffith.edu.au/robots.txt",
+   "utc": "2026-10-18T08:48Z",
+   "sha256": "afbc0f2f7fa9d12870378901b0871a9344fb514b648c22c799064948442298d7",
+   "path": "reports/stage_e25_briefs/pages/RD7/griffith_robots.txt",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.griffith.edu.au/copyright",
+   "utc": "2026-10-18T08:48Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked (403)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://research-repository.griffith.edu.au/items/77d29c70-c6f9-426e-a28a-fca4c540dedd",
+   "utc": "2026-10-18T08:48:24Z",
+   "sha256": "784cd68327c37a376a79c5a3748a8c0f2ccffd504118ae73e0921e4507e5fefd",
+   "path": "reports/stage_e25_briefs/pages/RD7/griffith_cotsm_item.html",
+   "status": "ok (abstract; PDF embargoed)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://repository.adu.ac.ae/robots.txt",
+   "utc": "2026-10-18T08:50Z",
+   "sha256": "",
+   "path": "reports/stage_e25_briefs/pages/RD7/adu_robots.txt",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://repository.adu.ac.ae/bitstreams/4912355c-88d1-434c-a489-e44e6ba6494b/download",
+   "utc": "2026-10-18T08:50:32Z",
+   "sha256": "17bc83399eff9763a28cbf4f5b3075e19074ed531eaac000d46f429c533149d7",
+   "path": "reports/stage_e25_briefs/pages/RD7/hutchinson_etal_2022_fx_cmv.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.mdpi.com/robots.txt",
+   "utc": "2026-10-18T08:51Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked (403)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.mdpi.com/about/terms-and-conditions",
+   "utc": "2026-10-18T08:51Z",
+   "sha256": "",
+   "path": "reports/stage_e25_briefs/terms/www.mdpi.com_terms.md",
+   "status": "ok (WebFetch 403; scrapling get ok)",
+   "tool": "scrapling get"
+  },
+  {
+   "url": "https://www.mdpi.com/1911-8074/19/1/46",
+   "utc": "2026-10-18T08:51:49Z",
+   "sha256": "c8ae2a49e0ab187c213e4805abdbf9f904a7beecd4106dc3e42070a24db846b4",
+   "path": "reports/stage_e25_briefs/pages/RD7/mdpi_overlapping_tsmom_2026.md",
+   "status": "ok",
+   "tool": "scrapling fetch"
+  },
+  {
+   "url": "https://www.mdpi.com/2813-2432/5/3/16",
+   "utc": "2026-10-18T08:52:10Z",
+   "sha256": "827d2df1a6361cba6a3e5c04f82b1ceb177997b6929164e329685be42851777c",
+   "path": "reports/stage_e25_briefs/pages/RD7/mdpi_commodity_etf_overnight_2026.md",
+   "status": "ok",
+   "tool": "scrapling fetch"
+  }
+ ],
+ "budget_notices": [
+  "2026-10-18T08:45Z OpenAlex: 'Rate limit exceeded ... Insufficient budget ... ($0 remaining; resets at midnight UTC)'; no OpenAlex key in .env; OpenAlex stopped",
+  "2026-10-18T08:46Z and 08:47Z Semantic Scholar keyless: HTTP 429 twice (60 s backoff); worked again 08:50:53Z",
+  "2026-10-18T08:47:43Z Firecrawl: 'Insufficient credits to perform this request'; no further Firecrawl calls",
+  "WebSearch: 10 of 45 used; no over-budget notice"
+ ],
+ "unfinished": [
+  "MOP forward-citation sweep partial (Semantic Scholar 1,000 of about 1,500); no KMPV, HOP or HLWZ citer lists (OpenAlex budget, S2 throttling)",
+  "No futures-wide carry replication after 2013 found; E.13 AQR carry recompute not re-run (openpyxl absent)",
+  "Kurth et al.: cost treatment of Sharpe tables and per-contract tick-tier membership not in passages read; Figs. 10, 11, 21 are images, not read",
+  "No day/night split of trend returns found for rates, commodities or FX futures (gap, not null)",
+  "Xu et al. 2025: abstract only, full text embargoed to 2027-10-21; no effect size",
+  "Unread forward citers: DeePM (arXiv 2601.05975), 'Endogeneity and moments in time series momentum's predictability test' (AoAS 2025), 'Speculators and time series momentum in commodity futures markets' (RFE 2025)",
+  "SG Trend 2025-2026 figures not cross-checked against SG's own release (sold via LSEG)"
+ ]
+}

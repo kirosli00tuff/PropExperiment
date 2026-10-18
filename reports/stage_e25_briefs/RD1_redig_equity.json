@@ -1,0 +1,452 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "RD1-RedigEquity-OpusHigh",
+ "finished_utc": "2026-10-18T08:58:56Z",
+ "candidates": [
+  {
+   "id": "RD1-C1",
+   "hypothesis": "Long MNQ at the next 15-minute bar open after a clean GMM regime transition from Regime 0 (Bearish Chop) to Regime 2 (Bullish Drift) with no Regime 1 in the prior two bars, London session 03:00-08:30 ET (London Session Signal B, Mesfin 2026)",
+   "mechanism": "Author's description: the directional move after a regime transition completes within the first post-transition bar; no economic mechanism tested",
+   "instruments": [
+    "MNQ",
+    "NQ"
+   ],
+   "entry_window_ct": "02:00-07:30 CT (15-minute bars)",
+   "hold": "60 min or until 07:30 CT (08:30 ET), whichever first; 20-point fixed stop",
+   "trades_per_year": 93,
+   "best_source": "Mesfin, Structural Limits of OHLCV-Based Intraday Momentum Signals in MNQ Futures, arXiv 2605.04004v3 (May 2026)",
+   "source_url": "https://arxiv.org/abs/2605.04004",
+   "grade": "working-paper (unreviewed arXiv preprint, single independent author; pointer-grade for design)",
+   "sample": "MNQ 15-minute bars 2021-2025; walk-forward OOS 2023, 2024, 2025 Jan-Aug; N 247 OOS trades",
+   "post_2015_or_oos": "yes: walk-forward OOS 2023-2025 (GMM refit per fold)",
+   "published_effect": "walk-forward OOS mean net +4.09 NQ points per trade at 2.0-point round-trip friction; sd 14.97 points; T 4.30; win 61.54%",
+   "price_level_used": "none needed (published in NQ points); paper notes MNQ 11,000-24,000 over the sample",
+   "gross_per_trade_points": 6.09,
+   "gross_per_trade_micro_ticks": 24.36,
+   "micro": "MNQ (0.25 pt tick, $0.50)",
+   "gross_or_net": "net",
+   "dispersion": "per-trade sd 14.97 pts; T 4.30; N 247; per-trade Sharpe 0.27 (paper); trades_per_year derived 247/2.67 yr",
+   "quote": "Walk-forward OOS N 247 / Walk-forward OOS mean net return +4.09 pts / Walk-forward OOS std deviation 14.97 pts / Walk-forward OOS T-statistic (net) 4.30",
+   "quote_location": "Table 11 (txt L470-L483); spec Table A2 (txt L700-L725); friction 'Friction 2.0 points round-trip'",
+   "decay_evidence": "One-bar (15-min) delay flips the sign: 'A one-bar (15-minute) delay reverses T from +4.30 to -2.78' (Table 12). Earlier static backtest (N 289, T 5.15, net +5.77) superseded. No independent re-test.",
+   "data_needed": "1-minute OHLCV of NQ/MNQ incl. overnight session, aggregated to 15-minute bars; volume",
+   "owned": "yes",
+   "data_cost": "none (owned bars)",
+   "research_window_testable": "yes",
+   "why": "Only sized post-2020 MNQ intraday item in the re-read sources above the hurdle in gross terms; E.20 read the paper but recorded only its failures",
+   "prop_notes": "Inside the Topstep day, flat by 07:30 CT so flat before 08:30 ET releases (P06-compatible by construction); 60-min hold, not HFT; overnight-session costs may exceed the day-session D8 round trip; idealized stop fills in the paper; one-bar delay sensitivity argues against manual entry",
+   "overlap_ids": [
+    "A-H1"
+   ],
+   "overlap_note": "A-H1 (D.1, MES) tested a time-of-day European-open drift; RD1-C1 is a regime-classifier trigger on MNQ, long only"
+  },
+  {
+   "id": "RD1-C2",
+   "hypothesis": "ROD momentum (sign of r_ROD) traded only in the last ten minutes of the cash session (unsized; reported for completeness)",
+   "mechanism": "Hedging and rebalancing by option writers and leveraged ETFs trading as near the close as possible (thesis abstract)",
+   "instruments": [
+    "MNQ"
+   ],
+   "entry_window_ct": "14:50 CT",
+   "hold": "10 min to 15:00 CT",
+   "trades_per_year": 250,
+   "best_source": "Majorin, Aalto University master's thesis (2025)",
+   "source_url": "https://aaltodoc.aalto.fi/items/1011f043-edd1-4cb2-9694-b1216d77561f",
+   "grade": "thesis [secondary-only: abstract]",
+   "sample": "20 equity, bond and currency futures, 2008-01..2024-10",
+   "post_2015_or_oos": "yes (sample to 2024-10)",
+   "published_effect": "no figures in the abstract",
+   "price_level_used": "n/a",
+   "gross_per_trade_points": null,
+   "gross_per_trade_micro_ticks": null,
+   "micro": "MNQ",
+   "gross_or_net": "unknown",
+   "dispersion": "not published",
+   "quote": "most of the predictability in the return of the last half an hour stems from the last ten-minute period",
+   "quote_location": "dc.description.abstract (reports/stage_e20_briefs/shared/aalto_thesis_item_api.json)",
+   "decay_evidence": "abstract: 'most intraday momentum and reversal trading strategies may not be feasible after transactions costs, especially in bond and currency futures'",
+   "data_needed": "1-minute NQ bars",
+   "owned": "yes",
+   "data_cost": "none",
+   "research_window_testable": "yes",
+   "why": "Not proposable under V31/V38 (no published size); recorded because E20H6 exits 1-2 minutes before the close inside this window",
+   "prop_notes": "flat by 15:00 CT, before the 15:10 CT flatten",
+   "overlap_ids": [
+    "E20H6-T1"
+   ],
+   "overlap_note": "same signal as E20H6-T1, later entry"
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "Equity 1/N ROD strategy, gross (re-checked: matches E.20)",
+   "number": "6.86 %/yr, sd 3.96, SR 1.73, success 0.55; derived 2.72 bp/trade",
+   "quote": "| η(rROD) | 6.86 | 3.96 | 1.73 | 0.55 |",
+   "location": "Table 6 Panel A, L1734-L1736",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403",
+   "url": "https://pure.eur.nl/files/58145484/1_s2.0_S0304405X21001598_main.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "claim": "Decay of equity ROD coefficient and its middle-of-day part",
+   "number": "beta_ROD 5.96 (t 4.80) 1974-1999 vs 3.98 (t 6.65) 2000-2020; beta_M 6.94 vs 2.42",
+   "quote": "| Equity | 4.97*** (6.06) | 1.67 | 4.83*** (6.02) | 2.42*** (3.82) | 8.89*** (4.11) | 2.73 | 3.98*** (6.65) | 2.34 |",
+   "location": "Table 5 Panel B, L1666 (Panel A L1661)",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403",
+   "url": "https://pure.eur.nl/files/58145484/1_s2.0_S0304405X21001598_main.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "claim": "Authors' cost caveat",
+   "number": "gross only; positive net SR at 1-tick cost on S&P futures (unsized)",
+   "quote": "Note that we do not consider transaction costs. Given that trading on market intraday momentum requires frequent rebalancing, the strategy as presented might not be exploitable to many investors after accounting for transaction costs.",
+   "location": "L1687-L1690",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403",
+   "url": "https://pure.eur.nl/files/58145484/1_s2.0_S0304405X21001598_main.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "claim": "Per-market rows: ES ONFH R2_OOS negative; NQ ROD",
+   "number": "ES ONFH R2_OOS -1.68; NQ ROD 6.36 (t 7.97), R2_OOS 3.76",
+   "quote": "| ES | 5.24*** (3.38) | 0.98 | -1.68 | ... ; | NQ | 7.45*** (5.33) | 2.01 | 1.83*** | ... | 6.36*** (7.97) | 4.10 | 3.76*** |",
+   "location": "Table B1 Panel B, L3429-L3430",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403",
+   "url": "https://pure.eur.nl/files/58145484/1_s2.0_S0304405X21001598_main.pdf",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e13_briefs/pages/InfoSource/baltussen_etal_2021_jfe.md",
+   "sha256": "18cb436e9d18cb3eff3565cddfe85b35fa1c5d5d8bf2afb85df42b6ab49e0465"
+  },
+  {
+   "claim": "Authors' later work: market-level end-of-day autocovariance positive, stocks 1993-2019",
+   "number": "+2.98 bp/day",
+   "quote": "We find that the auto-covariance component is positive and significant (2.98 basis points per day) as expected based on the market intraday momentum pattern.",
+   "location": "Sec. 4, txt L1086-L1088; sample L473",
+   "source": "Baltussen, Da, Soebhag, End-of-Day Reversal, working paper April 2025 (SSRN 5039009)",
+   "url": "https://www3.nd.edu/~zda/EOD.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD1/baltussen_da_soebhag_EOD.pdf",
+   "sha256": "faa9de99da6579a94e499b4ee5bac061861ed7b3c02edcc932dd00e87c60460d"
+  },
+  {
+   "claim": "Stock-level end-of-day reversal size (single stocks, not futures)",
+   "number": "3.78 bp/day VW, 6.86 bp/day EW L-S",
+   "quote": "The effect is very sizable in gross terms with a 3.78 bps reversal per day, or about 9.5% a year, for the value-weighted L-S portfolio, and 6.86 bps per day, or 17.3% a year, for the equal-weighted L-S portfolio.",
+   "location": "txt L772-L775",
+   "source": "Baltussen, Da, Soebhag, End-of-Day Reversal, working paper April 2025 (SSRN 5039009)",
+   "url": "https://www3.nd.edu/~zda/EOD.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/RD1/baltussen_da_soebhag_EOD.pdf",
+   "sha256": "faa9de99da6579a94e499b4ee5bac061861ed7b3c02edcc932dd00e87c60460d"
+  },
+  {
+   "claim": "Baltussen co-authored market-level expiry reversal (Derivative Payoff Bias)",
+   "number": "none here",
+   "quote": "Baltussen, Terstegge, and Whelan (2023) document strong overnight and intraday reversals at the market level around option expiries.",
+   "location": "footnote 2, txt L477-L478",
+   "source": "Baltussen, Da, Soebhag, End-of-Day Reversal, working paper April 2025 (SSRN 5039009)",
+   "url": "https://www3.nd.edu/~zda/EOD.pdf",
+   "grade": "working-paper (cited paper itself [secondary-only])",
+   "saved_path": "reports/stage_e25_briefs/pages/RD1/baltussen_da_soebhag_EOD.pdf",
+   "sha256": "faa9de99da6579a94e499b4ee5bac061861ed7b3c02edcc932dd00e87c60460d"
+  },
+  {
+   "claim": "MNQ 2021-2025: 11 of 14 OHLCV families gross below friction",
+   "number": "0.07-1.50 NQ pts gross vs 2.0 pts friction",
+   "quote": "Eleven families fail because gross return before friction is 0.07-1.50 points, below the 2.0-point friction floor.",
+   "location": "abstract; txt L23",
+   "source": "Mesfin, Structural Limits of OHLCV-Based Intraday Momentum Signals in MNQ Futures, arXiv 2605.04004v3 (May 2026)",
+   "url": "https://arxiv.org/abs/2605.04004",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/pages/NQ/arxiv_2605.04004.pdf",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80"
+  },
+  {
+   "claim": "MNQ ORB long and gap continuation short near-misses",
+   "number": "ORB net +2.82, T 0.88; gap cont. short gross +16.53, net +14.52, T 1.46, 35 trades",
+   "quote": "Gap continuation short is the most credible near-miss in the study. Gross +16.53 points, net +14.52, T = 1.46.",
+   "location": "txt L24, L290",
+   "source": "Mesfin, Structural Limits of OHLCV-Based Intraday Momentum Signals in MNQ Futures, arXiv 2605.04004v3 (May 2026)",
+   "url": "https://arxiv.org/abs/2605.04004",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/pages/NQ/arxiv_2605.04004.pdf",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80"
+  },
+  {
+   "claim": "London Session Signal B walk-forward OOS",
+   "number": "net +4.09 pts, sd 14.97, T 4.30, N 247",
+   "quote": "Walk-forward OOS mean net return +4.09 pts",
+   "location": "Table 11, txt L470-L483",
+   "source": "Mesfin, Structural Limits of OHLCV-Based Intraday Momentum Signals in MNQ Futures, arXiv 2605.04004v3 (May 2026)",
+   "url": "https://arxiv.org/abs/2605.04004",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/pages/NQ/arxiv_2605.04004.pdf",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80"
+  },
+  {
+   "claim": "London B delay sensitivity",
+   "number": "15-min delay T -2.78, net -2.91",
+   "quote": "A one-bar (15-minute) delay reverses T from +4.30 to -2.78; a two-bar delay produces T = -2.16.",
+   "location": "txt L486-L487, Table 12",
+   "source": "Mesfin, Structural Limits of OHLCV-Based Intraday Momentum Signals in MNQ Futures, arXiv 2605.04004v3 (May 2026)",
+   "url": "https://arxiv.org/abs/2605.04004",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/pages/NQ/arxiv_2605.04004.pdf",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80"
+  },
+  {
+   "claim": "RTH Confluence Signal (heavily searched)",
+   "number": "OOS net +11.82 pts, sd 53.8, T 3.11, N 196; 53+ combos",
+   "quote": "First, 53 or more parameter combinations across seven parameters were evaluated before the final specification was locked",
+   "location": "Table 10; txt L445-L449",
+   "source": "Mesfin, Structural Limits of OHLCV-Based Intraday Momentum Signals in MNQ Futures, arXiv 2605.04004v3 (May 2026)",
+   "url": "https://arxiv.org/abs/2605.04004",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e20_briefs/pages/NQ/arxiv_2605.04004.pdf",
+   "sha256": "d0bd26e424a0c81bbca149e35566a3b9929a3cd207934e07638a99e78ca4ca80"
+  },
+  {
+   "claim": "Mesfin follow-ups fail",
+   "number": "VVG best T 1.46; LSTM/GBM no accuracy above base",
+   "quote": "Eight directional configurations were tested. None passed.",
+   "location": "arXiv 2605.11423v3 abstract (also 2605.17724v1)",
+   "source": "Mesfin 2026, arXiv 2605.11423 and 2605.17724",
+   "url": "https://arxiv.org/abs/2605.11423",
+   "grade": "working-paper [secondary-only: abstract]",
+   "saved_path": "reports/stage_e25_briefs/pages/RD1/arxiv_api_mesfin.xml",
+   "sha256": "0a2f725f78528f8450e118e0162a7006c4c333506a3048d45b7629d6e3eabde1"
+  },
+  {
+   "claim": "Aalto thesis: persistence 2008-2024, last ten minutes, cost infeasible",
+   "number": "no figures",
+   "quote": "We first show that the intraday momentum patterns still exist in our dataset spanning January 2008 to October 2024.",
+   "location": "dc.description.abstract",
+   "source": "Majorin, Aalto University master's thesis (2025)",
+   "url": "https://aaltodoc.aalto.fi/items/1011f043-edd1-4cb2-9694-b1216d77561f",
+   "grade": "thesis [secondary-only: abstract]",
+   "saved_path": "reports/stage_e20_briefs/shared/aalto_thesis_item_api.json",
+   "sha256": ""
+  },
+  {
+   "claim": "Rosa: OOS disappearance (abstract re-confirmed; full text closed)",
+   "number": "none",
+   "quote": "The predictability disappears in the out-of-sample period.",
+   "location": "abstract (IDEAS record)",
+   "source": "Rosa, J. Futures Markets 42(12) (2022) 2218-2234",
+   "url": "https://doi.org/10.1002/fut.22375",
+   "grade": "peer-reviewed [secondary-only: abstract]",
+   "saved_path": "reports/stage_e20_briefs/shared/rosa_ideas.html",
+   "sha256": "d4bf996acfc622a6e267d8705c018a083919814caf77ac37b17b8ffbb54f36b9"
+  },
+  {
+   "claim": "Forward-citation counts (OpenAlex 2026-10-18)",
+   "number": "Gao 2018: 228; Baltussen 2021: 94; Rosa 2022: 7; Li-Sakkas-Urquhart: 36",
+   "quote": "n/a (API data)",
+   "location": "OpenAlex filter=cites:W3123013550, W3106590193, W4294956096, W3121499907",
+   "source": "OpenAlex",
+   "url": "https://api.openalex.org",
+   "grade": "exchange-regulator (bibliographic index; metadata only)",
+   "saved_path": "reports/stage_e25_briefs/pages/RD1/openalex/",
+   "sha256": ""
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "E20H6-T1 (r004, FAIL)",
+   "effect": "supports",
+   "quote": "Given that trading on market intraday momentum requires frequent rebalancing, the strategy as presented might not be exploitable to many investors after accounting for transaction costs.",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403, L1687-L1690"
+  },
+  {
+   "verdict": "E20H6-T1 (r004, FAIL)",
+   "effect": "supports",
+   "quote": "| Equity | 3.73*** (2.74) | ... | 5.96*** (4.80) | 3.41 | (1974-1999) vs | Equity | 4.97*** (6.06) | ... | 3.98*** (6.65) | 2.34 | (2000-2020)",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403, Table 5, L1661/L1666"
+  },
+  {
+   "verdict": "E20H6-T1 (r004, FAIL)",
+   "effect": "supports",
+   "quote": "Eleven families fail because gross return before friction is 0.07-1.50 points, below the 2.0-point friction floor.",
+   "source": "Mesfin, Structural Limits of OHLCV-Based Intraday Momentum Signals in MNQ Futures, arXiv 2605.04004v3 (May 2026), abstract"
+  },
+  {
+   "verdict": "E20H6-T1 as a replica of the published rule",
+   "effect": "weakens",
+   "quote": "most of the predictability in the return of the last half an hour stems from the last ten-minute period",
+   "source": "Aalto thesis 2025 abstract; H6 exits at the 14:58 CT bar (fills about 14:59), dropping 1-2 of those minutes; mild, not the FAIL itself (gross 1.25 ticks vs 6.18-tick hurdle)"
+  },
+  {
+   "verdict": "E20H6-T2 (FAIL)",
+   "effect": "supports",
+   "quote": "The predictability disappears in the out-of-sample period. ... A strategy with thresholds delivers higher returns than a strategy that is always active.",
+   "source": "Rosa 2022 abstract (predictor is the overnight return; T2 is not Rosa's rule; threshold still [unverified])"
+  },
+  {
+   "verdict": "K1-cp1-01 (E.7 Tier B)",
+   "effect": "supports",
+   "quote": "| ES | 5.24*** (3.38) | 0.98 | -1.68 |",
+   "source": "Baltussen, Da, Lammers, Martens, Hedging demand and market intraday momentum, JFE 142 (2021) 377-403, Table B1 Panel B L3429 (ONFH R2_OOS negative on S&P futures); Rosa 2022 abstract"
+  },
+  {
+   "verdict": "K1-cp2-01 (E.7 Tier B)",
+   "effect": "supports",
+   "quote": "the Opening Range Breakout long at a 15-bar hold (net +2.82 points, T = 0.88 on net returns)",
+   "source": "Mesfin, Structural Limits of OHLCV-Based Intraday Momentum Signals in MNQ Futures, arXiv 2605.04004v3 (May 2026), txt L24"
+  },
+  {
+   "verdict": "V38 (intraday program on Topstep closed)",
+   "effect": "supports",
+   "quote": "Walk-forward OOS mean net return +4.09 pts ... A one-bar (15-minute) delay reverses T from +4.30 to -2.78",
+   "source": "Mesfin, Structural Limits of OHLCV-Based Intraday Momentum Signals in MNQ Futures, arXiv 2605.04004v3 (May 2026), Table 11-12: the one sized post-2020 exception (gross 24.4 MNQ ticks) is unreviewed, single-author and fragile; it does not overturn V38 but E.20 did not record it"
+  },
+  {
+   "verdict": "V38 / E20H6 (era)",
+   "effect": "supports",
+   "quote": "We find that the auto-covariance component is positive and significant (2.98 basis points per day) as expected based on the market intraday momentum pattern.",
+   "source": "Baltussen, Da, Soebhag, End-of-Day Reversal, working paper April 2025 (SSRN 5039009), L1086-L1088 (sample ends 2019: silent on 2020-2024)"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "https://api.openalex.org/works?filter=cites:{W3123013550,W3106590193,W4294956096,W3121499907} (2 pages each)",
+   "utc": "2026-10-18T08:41Z",
+   "sha256": "see files",
+   "path": "reports/stage_e25_briefs/pages/RD1/openalex/",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://api.openalex.org/works?search=... (Lucca-Moench, Barbon et al.)",
+   "utc": "2026-10-18T08:51Z",
+   "sha256": "",
+   "path": "",
+   "status": "throttled",
+   "tool": "curl"
+  },
+  {
+   "url": "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1002/fut.22375; DOI:10.1016/j.iref.2017.01.005",
+   "utc": "2026-10-18T08:50Z",
+   "sha256": "",
+   "path": "scratch",
+   "status": "ok",
+   "tool": "curl keyless"
+  },
+  {
+   "url": "https://api.semanticscholar.org/graph/v1/paper/batch",
+   "utc": "2026-10-18T08:53Z",
+   "sha256": "",
+   "path": "",
+   "status": "throttled",
+   "tool": "curl keyless"
+  },
+  {
+   "url": "https://www3.nd.edu/~zda/EOD.pdf",
+   "utc": "2026-10-18T08:44:57Z",
+   "sha256": "faa9de99da6579a94e499b4ee5bac061861ed7b3c02edcc932dd00e87c60460d",
+   "path": "reports/stage_e25_briefs/pages/RD1/baltussen_da_soebhag_EOD.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.diva-portal.org/smash/get/diva2:1878991/FULLTEXT01.pdf",
+   "utc": "2026-10-18T08:46:34Z",
+   "sha256": "5428468ae82dd7cf7e944f689fe29285bcc240c31d14388df2c87e398e6d557f",
+   "path": "reports/stage_e25_briefs/pages/RD1/diva_1878991.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://netlibrary.aau.at/obvuklhs/download/pdf/7301728",
+   "utc": "2026-10-18T08:46:47Z",
+   "sha256": "61e66b66b7785b9f6becb1ada64b4258e84bbd08b8b8fbed0ca1413a49b57fc2",
+   "path": "reports/stage_e25_briefs/pages/RD1/aau_7301728.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://assets.super.so/e46b77e7-ee08-445e-b43f-4ffd88ae0a0e/files/ee7dac49-530b-4950-b5d0-e0b5eee08f2e.pdf",
+   "utc": "2026-10-18T08:47Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "tool": "curl/WebFetch/scrapling get"
+  },
+  {
+   "url": "https://hull-repository.worktribe.com/OutputFile/3016448",
+   "utc": "2026-10-18T08:52Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "tool": "curl/WebFetch"
+  },
+  {
+   "url": "https://www.mdpi.com/about/terms-and-conditions",
+   "utc": "2026-10-18T08:48Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "tool": "curl/WebFetch"
+  },
+  {
+   "url": "https://researchmgt.monash.edu/ws/files/519509174/494419119_oa.pdf",
+   "utc": "2026-10-18T08:48Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "tool": "curl (login redirect on robots.txt; not attempted further)"
+  },
+  {
+   "url": "https://dspace5old.zcu.cz/handle/11025/46501",
+   "utc": "2026-10-18T08:54Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked",
+   "tool": "curl (unreachable)"
+  },
+  {
+   "url": "https://export.arxiv.org/api/query?search_query=au:Mesfin",
+   "utc": "2026-10-18T08:49:51Z",
+   "sha256": "0a2f725f78528f8450e118e0162a7006c4c333506a3048d45b7629d6e3eabde1",
+   "path": "reports/stage_e25_briefs/pages/RD1/arxiv_api_mesfin.xml",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://scholars.duke.edu/publication/1585816",
+   "utc": "2026-10-18T08:45Z",
+   "sha256": "",
+   "path": "",
+   "status": "ok",
+   "tool": "WebFetch"
+  },
+  {
+   "url": "https://www.nd.edu/copyright/",
+   "utc": "2026-10-18T08:44Z",
+   "sha256": "281d5d01dab8ad89bfbd3a4a362b34c4298e1490c46b9cc3bd571c9e7a991877",
+   "path": "reports/stage_e25_briefs/terms/www.nd.edu_terms.html",
+   "status": "ok",
+   "tool": "curl"
+  }
+ ],
+ "budget_notices": [
+  "2026-10-18T08:43:44Z Firecrawl: 'Insufficient credits to perform this request' (3 search calls)",
+  "2026-10-18T08:51Z OpenAlex: 'Rate limit exceeded ... Insufficient budget ... free daily budget shared by everyone on your network's IP address ... used up'",
+  "2026-10-18T08:51-08:53Z Semantic Scholar keyless: 429 x3",
+  "WebSearch used: see md section 9"
+ ],
+ "unfinished": [
+  "Rosa 2022 full text (threshold rule) still [unverified]",
+  "Gao et al. JFE published version (author copy 403)",
+  "Liu and Tse 2017 full text (SSRN only)",
+  "Kurov-Wolfe-Gilbert full text and pre-FOMC drift forward literature (OpenAlex budget gone)",
+  "Barbon et al. LETF later versions",
+  "Citing works identified but not read in full: Aleti-Bollerslev-Siggaard (Mgmt Sci 2025), Iwanaga-Sakemoto (2025/2026), Limkriangkrai et al. (PBFJ 2023), Ho-Lv-Schultz (PBFJ 2021), Huddleston-Liu-Stentoft (JFEc 2020), Lai et al. (JRFM 2022), Willeboordse (FRL 2026, gamma: RD5), Zhang et al. (IREF 2026)",
+  "Aalto thesis full text restricted; RD1-C2 unsized",
+  "No data/code release found for Baltussen 2021, Gao 2018, Mesfin"
+ ]
+}

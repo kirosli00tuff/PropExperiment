@@ -195,6 +195,14 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     -1.61/-0.71; Holm smallest p 0.31; the month-end gain is the bonds' drift); confirmation on 2019-05..2024-02
     inconclusive by design (power 0.18) and not computed; all five null; Fable verified every figure. Nothing bought;
     no data fetched.
+  - Stage E.25 — Untapped sources: a research-only pass (V42) for a prop-compatible intraday edge in sources the
+    earlier passes did not cover, plus re-digs of E.13/E.20 sources and a near-miss execution triage (user addenda
+    1-6). Run 2026-10-18 (see reports/E.25_RETURN.md): 47 worker spawns in three waves around two usage-limit
+    pauses; four hypotheses clear 1.5 x D8 on published numbers and duplicate no trial (noise-area intraday momentum
+    on MNQ; the 3rd-Friday price spike; pre-refunding and pre-FOMC ZN drifts) but none is confirmable on the
+    research window (power 0.35 and 0.11-0.22 at published sizes; C1 not blind and weak after publication);
+    Group A empty, Group B one weak candidate; re-dig supports nearly every closure, weakens V38's sentence; Fable
+    review BLOCK, fixed, READY. Nothing read, bought or registered; N 538.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

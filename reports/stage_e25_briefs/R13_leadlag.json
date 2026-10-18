@@ -1,0 +1,416 @@
+{
+ "schema": "stage_e25_reader/1",
+ "reader": "R13-LeadLag-OpusHigh",
+ "finished_utc": "2026-10-18T08:56:56Z",
+ "candidates": [
+  {
+   "id": "R13-C1",
+   "hypothesis": "Conditional overnight drift ('buy the dip'): after a US close with net selling (closing relative signed volume RSV < 0, 15:15-16:15 ET), go long equity index futures 01:30-03:30 ET as European (and Tokyo) participants arrive and dealers offload inventory",
+   "mechanism": "dealer inventory risk: closing order imbalance absorbed by market makers is offloaded when overseas participants arrive (European open); reversal larger after sell-offs",
+   "instruments": [
+    "MES",
+    "MNQ"
+   ],
+   "entry_window_ct": "00:30 CT (01:30 ET), exit 02:30 CT",
+   "hold": "120 min",
+   "trades_per_year": 125,
+   "best_source": "Boyarchenko, Larsen, Whelan, The Overnight Drift, FRBNY Staff Report 917 (rev. Aug 2022); RFS 36(9) 2023",
+   "source_url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr917.pdf",
+   "grade": "working-paper",
+   "sample": "ES E-mini, strategies 2004-01..2020-12 (returns 1998-2020)",
+   "post_2015_or_oos": "in-sample to 2020; authors' 2021-2025 update shows decay (unconditional ~0; imbalance link 'much narrower')",
+   "published_effect": "BtD mean 6.07% annualized before costs, 4.04% after bid-ask; Sharpe 1.78 / 1.10; holds on ~50% of trading days",
+   "price_level_used": "ES 6,000; NQ 21,000",
+   "gross_per_trade_points": 2.92,
+   "gross_per_trade_micro_ticks": 11.7,
+   "micro": "MES",
+   "gross_or_net": "gross",
+   "dispersion": "Sharpe 1.78 gross (annual sd 2.95% on the strategy's daily series), 1.10 after spread",
+   "quote": "We also consider a conditional trading strategy that 'buys-the-dip', denoted BtD, which holds the e-mini during the OD+ period but only on trading days following a negative order flow at market close (RSV close t-1 < 0).",
+   "quote_location": "SR 917 section V (txt lines 1191-1194); sizes Table IX p. 43",
+   "decay_evidence": "Boyarchenko, Larsen, Whelan, Liberty Street Economics 1 Jul 2026: 'that pattern appears to have faded: the 2:00-3:00 window that previously generated roughly 3.7 percent per annum has averaged close to zero since 2021'; 'In 2021-25 ... the spread is much narrower, consistent with a weaker predictive link in the post-publication sample' (E.10 file reports/stage_e10_research/overnight/lse_blog_43261.html)",
+   "data_needed": "aggressor-signed volume at the US close (trades/TBBO with side) for RSV; MES/MNQ 1-min bars for the 01:30-03:30 ET window",
+   "owned": "partial",
+   "data_cost": "not fetched by R13 (Databento pricing pages owned by R2/R4)",
+   "research_window_testable": "partial",
+   "why": "only sized minutes-to-hours effect in the Asia/Europe-to-US area; per-trade derivation 6.07% / (0.5 x 250) = 4.86 bp gross, 3.2 bp after spread; 4.86 bp x 6,000 / 10,000 = 2.92 ES pts = 11.7 MES ticks; at NQ 21,000 = 10.2 pts = 40.8 MNQ ticks (no NQ BtD figure published). Weak: re-used E.10 source, unconditional version (A-H1) failed, authors report post-2021 decay, condition variable not owned",
+   "prop_notes": "inside Topstep trading day (17:00-15:10 CT); flat by 02:30 CT; no scheduled US release; not HFT; API automation or manual at 22:30-00:30 PT",
+   "overlap_ids": [
+    "A-H1",
+    "K9O-001 (E.10 source)",
+    "K9O-002 (E.10 decay note)"
+   ],
+   "overlap_note": "A-H1 tested the unconditional 02:00 ET hour on MES (D.1 fail); BtD conditioning on closing signed volume was not tested; same source already read in E.10"
+  }
+ ],
+ "evidence": [
+  {
+   "claim": "Cross-country index futures lead-lag vanishes within seconds",
+   "number": "max corr at 0.2 s; <5% at 30 s",
+   "quote": "For the FCE/FSMI pair (future vs future), the cross-correlation vanishes very quickly, there is less than 5% of correlation at 30 seconds. We observe that there is more correlation on the side where FCE leads with a LLR of 1.26 and a maximum correlation at 0.2 seconds.",
+   "location": "section 3.1 (txt 597-599)",
+   "source": "Huth, Abergel (2014), arXiv 1111.7103",
+   "url": "https://arxiv.org/pdf/1111.7103",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/huth_abergel_2014_leadlag.pdf",
+   "sha256": "12df47d24d980ce2839e1b2633d2eea8d6dca88816c02498133eee84dc351857"
+  },
+  {
+   "claim": "Lead-lag strategy profit lost to the spread",
+   "number": "+0.4/+0.54 bp at mid; -2.73/-3.44 bp after spread",
+   "quote": "However, all the profit made by the lead/lag strategy is lost when taking into account the bid/ask spread: the average return is -2.73 (resp. -3.44) bps per trade.",
+   "location": "section 4 p. 23 (txt 1842-1843)",
+   "source": "Huth, Abergel (2014), arXiv 1111.7103",
+   "url": "https://arxiv.org/pdf/1111.7103",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/huth_abergel_2014_leadlag.pdf",
+   "sha256": "12df47d24d980ce2839e1b2633d2eea8d6dca88816c02498133eee84dc351857"
+  },
+  {
+   "claim": "E-mini leads cash 10-year Treasuries by 5 ms, not vice versa",
+   "number": "+5 ms",
+   "quote": "indicates that, to the extent that cross-market activity does occur, the E-mini market leads the cash Treasury market (+5 millisecond offset) but not vice versa.",
+   "location": "post body",
+   "source": "Dobrev, Schaumburg (2015), Liberty Street Economics",
+   "url": "https://libertystreeteconomics.newyorkfed.org/2015/08/high-frequency-cross-market-trading-in-us-treasury-markets/",
+   "grade": "exchange-regulator",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/lse_2015_dobrev_schaumburg_crossmarket.html",
+   "sha256": "32cd50bcd4b6bab5a6cf44f8c2f085f05b203dbeb1bb7ba28fd6559c74658d29"
+  },
+  {
+   "claim": "Treasury futures and cash lead each other at 5 ms",
+   "number": "+/-5 ms",
+   "quote": "exhibit very pronounced cross-market trading activity at an offset of +/-5 milliseconds, strikingly consistent with the time it takes to transmit information between the two trading venues using current microwave tower technology.",
+   "location": "post body",
+   "source": "Dobrev, Schaumburg (2015), Liberty Street Economics",
+   "url": "https://libertystreeteconomics.newyorkfed.org/2015/08/high-frequency-cross-market-trading-in-us-treasury-markets/",
+   "grade": "exchange-regulator",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/lse_2015_dobrev_schaumburg_crossmarket.html",
+   "sha256": "32cd50bcd4b6bab5a6cf44f8c2f085f05b203dbeb1bb7ba28fd6559c74658d29"
+  },
+  {
+   "claim": "Chicago futures to NJ equities in single-digit ms",
+   "number": "7.25-7.95 ms",
+   "quote": "Chicago futures markets to the New Jersey equity markets was through fiber optic lines that allowed equity prices to respond within 7.25-7.95 ms of a price change in Chicago",
+   "location": "p. 2 (txt 79-81)",
+   "source": "Laughlin, Aguirre, Grundfest (2014), arXiv 1302.5966",
+   "url": "https://arxiv.org/pdf/1302.5966",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/laughlin_etal_2014_chicago_ny.pdf",
+   "sha256": "8c1a401e79de194870ebd960ce9ee150648ac58b520fc3f6cdd13594eb3fff2a"
+  },
+  {
+   "claim": "1-minute 2016-2018: no persistent UDX->XAU/USD or WTI->USD/CAD link; gold's only leader silver",
+   "number": "lists",
+   "quote": "Table 5: 'XAG/USD XAU/USD'; 'BCO/USD WTI/USD'; 'WTI/USD BCO/USD'; leaders AUX/AUD, ETX/EUR, JPX/JPY, SPX/USD",
+   "location": "Tables 4-5 pp. 23-24",
+   "source": "Basnarkov, Stojkoski, Utkovski, Kocarev (2019), arXiv 1906.10388 (Physica A)",
+   "url": "https://arxiv.org/pdf/1906.10388",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/basnarkov_etal_2019_fx_leadlag.pdf",
+   "sha256": "205f3e3b753492e28387f0a863d7f88f327cb15b8f6c45a30a3590d381e00c44"
+  },
+  {
+   "claim": "E7 caveat: bid quotes only, costs not studied",
+   "number": "2016-01..2018-12",
+   "quote": "a detailed study involving also data on the transaction costs and ask quotes could reveal whether these lead-lag relationships are indeed profitable.",
+   "location": "section 3.2 (txt 394-396)",
+   "source": "Basnarkov et al. (2019)",
+   "url": "https://arxiv.org/pdf/1906.10388",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/basnarkov_etal_2019_fx_leadlag.pdf",
+   "sha256": "205f3e3b753492e28387f0a863d7f88f327cb15b8f6c45a30a3590d381e00c44"
+  },
+  {
+   "claim": "60-min chart extrema lead 5-10 min with +/-30 min uncertainty; DAX leads E-mini; no P&L",
+   "number": "5-10 min",
+   "quote": "The lead-lag ... is between 5 min and 10 min for the point in time of the extrema for the indexes and foreign exchanges and also for Gold versus Silver.",
+   "location": "section 4.2 (txt 645-651)",
+   "source": "Maier-Paape, Platen (2015), arXiv 1504.06235",
+   "url": "https://arxiv.org/pdf/1504.06235",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/maier_paape_platen_2015_sar_minmax_leadlag.pdf",
+   "sha256": "f3a0edc7f51c7a19ff3ee9be3d0ff7a2f78e5bbc1ff1e68758fafd1b7f9a02d1"
+  },
+  {
+   "claim": "VIX futures lead SPX futures in high vol; no profitable strategy after costs",
+   "number": "none",
+   "quote": "However, the tightness of the lead-lag relation prevents the formation of profitable trading strategies in a setup that includes transaction costs.",
+   "location": "abstract",
+   "source": "Bangsgaard, Kokholm (2024), J. Financial Markets 67, 100851",
+   "url": "https://ideas.repec.org/a/eee/finmar/v67y2024ics1386418123000496.html",
+   "grade": "peer-reviewed [secondary-only]",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/repec_bangsgaard_kokholm_2024.html",
+   "sha256": "750080ccd1fff933163843f8d5f1d57d8998f3ea2c74a13c90ecfad7128c418e"
+  },
+  {
+   "claim": "ES/FTSE/DAX sub-second lead-lag (search summary only)",
+   "number": "sub-second",
+   "quote": "No abstract is available for this item.",
+   "location": "RePEc page",
+   "source": "Alsayed, McGroarty (2014), J. Forecasting 33(6) 391-408",
+   "url": "https://ideas.repec.org/a/wly/jforec/v33y2014i6p391-408.html",
+   "grade": "peer-reviewed [secondary-only][unverified]",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/repec_alsayed_mcgroarty_2014.html",
+   "sha256": "c3ca968eabffcb2abcb8da466ff2907988fda24ca4efc39185b516714537fbc8"
+  },
+  {
+   "claim": "European-open drift size",
+   "number": "1.48 bp/day; 3.7% p.a.",
+   "quote": "the largest positive returns are between 2:00 and 3:00 - the opening of European markets in U.S. Eastern Time terms (ET) - averaging 3.7% on an annualized basis (1.48 basis points per day).",
+   "location": "Introduction (txt 58-60)",
+   "source": "Boyarchenko, Larsen, Whelan, FRBNY SR 917",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr917.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/boyarchenko_larsen_whelan_sr917_overnight_drift.pdf",
+   "sha256": "403276b2ea8227c14ccfb854014af1df6a425430e5f622599640d7c0c16e683a"
+  },
+  {
+   "claim": "BtD sizes",
+   "number": "6.07% / 4.04% p.a.; Sharpe 1.78 / 1.10",
+   "quote": "(a) 'Mean 8.95 4.62 4.20 3.75 6.21 6.07' 'Sharpe ratio 0.42 0.34 0.23 1.10 1.30 1.78'; (b) 'Mean 8.95 0.38 -0.05 -0.59 1.91 4.04' 'Sharpe ratio 0.42 -0.04 -0.06 -0.54 0.26 1.10'",
+   "location": "Table IX p. 43",
+   "source": "Boyarchenko, Larsen, Whelan, FRBNY SR 917",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr917.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/boyarchenko_larsen_whelan_sr917_overnight_drift.pdf",
+   "sha256": "403276b2ea8227c14ccfb854014af1df6a425430e5f622599640d7c0c16e683a"
+  },
+  {
+   "claim": "Unconditional OD loses after spread",
+   "number": "Sharpe 1.1 -> -0.5",
+   "quote": "a trading strategy that goes long the S&P 500 futures between 2:00 and 3:00 earns a Sharpe ratio of 1.1 and accounting for bid-ask spreads this reduces to -0.5.",
+   "location": "Introduction (txt 195-196)",
+   "source": "Boyarchenko, Larsen, Whelan, FRBNY SR 917",
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr917.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/boyarchenko_larsen_whelan_sr917_overnight_drift.pdf",
+   "sha256": "403276b2ea8227c14ccfb854014af1df6a425430e5f622599640d7c0c16e683a"
+  },
+  {
+   "claim": "Overnight drift faded after 2021 (authors' update)",
+   "number": "~0 since 2021",
+   "quote": "Five additional years of data later, that pattern appears to have faded: the 2:00-3:00 window that previously generated roughly 3.7 percent per annum has averaged close to zero since 2021.",
+   "location": "post body",
+   "source": "Boyarchenko, Larsen, Whelan (2026), The Disappearing Overnight Drift, Liberty Street Economics",
+   "url": "https://libertystreeteconomics.newyorkfed.org/?p=43261",
+   "grade": "exchange-regulator",
+   "saved_path": "reports/stage_e10_research/overnight/lse_blog_43261.html",
+   "sha256": "7cacdb191577c19bc5dacf6f99f6eebc76adc9ff7748bbc325ce6a85adc60740"
+  },
+  {
+   "claim": "Published version; mechanism incomplete",
+   "number": "RFS 36(9) 3502-3547",
+   "quote": "this mechanism cannot account for all aspects of over-intra outperformance and over-intra correlations.",
+   "location": "section 5.4 (txt 856-858)",
+   "source": "Glasserman, Krstovski, Laliberte, Mamaysky (2025), arXiv 2507.04481",
+   "url": "https://arxiv.org/pdf/2507.04481",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/arxiv_2507.04481_overnight_news.pdf",
+   "sha256": "9ac5796c29529683383b82c08dfca7e57d1eb7c3e039df1d59a56dd339cc19bd"
+  },
+  {
+   "claim": "US stock open raises bond-futures price discovery (information shares only)",
+   "number": "qualitative",
+   "quote": "We find that price discovery increases in the US, UK, and German futures following the opening of the US stock market",
+   "location": "abstract",
+   "source": "Indriawan, Jiao, Tse (2019), J. Futures Markets (accepted manuscript)",
+   "url": "https://openrepository.aut.ac.nz/bitstreams/e1c7c388-f556-4786-975c-ec486378d282/download",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/aut_2019_us_open_bond_futures.pdf",
+   "sha256": "43ef0e0833deefd354ebb446bedfc98e2b71b3e366f5433c5dc73d1a1796b47c"
+  },
+  {
+   "claim": "Oil-currency cojumps rare; oil vs USD/CAD contemporaneous",
+   "number": "qualitative",
+   "quote": "while the probability of cojumps involving oil and currencies is relatively low, currency pairs frequently exhibit simultaneous jumps.",
+   "location": "abstract",
+   "source": "Mensi et al. (2025), Rev. Quant. Finance and Accounting",
+   "url": "https://repository.bilkent.edu.tr/bitstreams/ac8a69c7-38ac-4fc9-a0e9-3fc94f64b695/download",
+   "grade": "peer-reviewed",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/bilkent_2025_oil_currency_cojumps.pdf",
+   "sha256": "f7b3c09814be1e24090b57e765408499c230cc0dbec7f5c1d4da75ed032e61cd"
+  },
+  {
+   "claim": "Oil->CAD lagged predictability daily and ephemeral",
+   "number": "qualitative",
+   "quote": "(search-result text) little systematic relation ... at the monthly and quarterly frequencies; with lagged oil prices the predictive ability is ephemeral",
+   "location": "abstract via search result",
+   "source": "Ferraro, Rogoff, Rossi (2015), JIMF 54",
+   "url": "https://www.nber.org/papers/w17998",
+   "grade": "peer-reviewed [secondary-only]",
+   "saved_path": "",
+   "sha256": ""
+  },
+  {
+   "claim": "Overseas cash-index patterns forecast opening gaps; 35 test days, no trading test",
+   "number": "35 days",
+   "quote": "The testing sample for each specification contains 35 days (curves).",
+   "location": "section 5 (txt 449)",
+   "source": "De Gooijer, Diks, Gatarek (2009), TI DP 2009-107/4",
+   "url": "https://repub.eur.nl/pub/17493/20091074.pdf",
+   "grade": "working-paper",
+   "saved_path": "reports/stage_e25_briefs/pages/R13/degooijer_diks_gatarek_2009_opening_gaps.pdf",
+   "sha256": "cc18abd302df0f35f90b0f28c7f64b6ab5fa52f2aeeba1fcc1a08dcb35170392"
+  }
+ ],
+ "verdict_checks": [
+  {
+   "verdict": "D.1 A-H1 (european-open overnight drift, MES): screen fail",
+   "effect": "supports",
+   "quote": "that pattern appears to have faded: the 2:00-3:00 window that previously generated roughly 3.7 percent per annum has averaged close to zero since 2021.",
+   "source": "Boyarchenko, Larsen, Whelan (2026), Liberty Street Economics (E.10 copy)"
+  },
+  {
+   "verdict": "E.22 K8 NULL (K8-oilcad-01, MCL->6C)",
+   "effect": "supports",
+   "quote": "Table 5 persistent lagged links list oil only as 'BCO/USD WTI/USD' and 'WTI/USD BCO/USD' (no WTI->CAD pair); weak support: spot FX bid quotes 2016-2018, not futures",
+   "source": "Basnarkov et al. (2019), arXiv 1906.10388"
+  },
+  {
+   "verdict": "E.12 Gate 0 FAIL and E.20 search FAIL for g17 60-min lead features",
+   "effect": "supports",
+   "quote": "However, all the profit made by the lead/lag strategy is lost when taking into account the bid/ask spread: the average return is -2.73 (resp. -3.44) bps per trade.",
+   "source": "Huth, Abergel (2014), arXiv 1111.7103 (indirect: lead-lag lives at seconds)"
+  }
+ ],
+ "fetch_log": [
+  {
+   "url": "https://arxiv.org/pdf/1111.7103",
+   "utc": "2026-10-18T08:41:12Z",
+   "sha256": "12df47d24d980ce2839e1b2633d2eea8d6dca88816c02498133eee84dc351857",
+   "path": "pages/R13/huth_abergel_2014_leadlag.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/1302.5966",
+   "utc": "2026-10-18T08:41:29Z",
+   "sha256": "8c1a401e79de194870ebd960ce9ee150648ac58b520fc3f6cdd13594eb3fff2a",
+   "path": "pages/R13/laughlin_etal_2014_chicago_ny.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.atlantafed.org/-/media/documents/news/conferences/2018/1018-financial-stability-implications-of-new-technology/papers/dobrev-schaumburg_high-frequency-cross-market-trading.pdf",
+   "utc": "2026-10-18T08:41:30Z",
+   "sha256": "cbf610a6673b1dca410900853394378b26ddf415c40977efea606b2537d15fba",
+   "path": "deleted",
+   "status": "blocked (404)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://repub.eur.nl/pub/17493/20091074.pdf",
+   "utc": "2026-10-18T08:43:37Z",
+   "sha256": "cc18abd302df0f35f90b0f28c7f64b6ab5fa52f2aeeba1fcc1a08dcb35170392",
+   "path": "pages/R13/degooijer_diks_gatarek_2009_opening_gaps.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://openrepository.aut.ac.nz/bitstreams/e1c7c388-f556-4786-975c-ec486378d282/download",
+   "utc": "2026-10-18T08:43:40Z",
+   "sha256": "43ef0e0833deefd354ebb446bedfc98e2b71b3e366f5433c5dc73d1a1796b47c",
+   "path": "pages/R13/aut_2019_us_open_bond_futures.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.nber.org/papers/w17998.pdf",
+   "utc": "2026-10-18T08:43:41Z",
+   "sha256": "aafedbf1c81f223ec0b1fa88cfed681817fe76b7405d0732ae56308f9a2649c1",
+   "path": "pages/R13/ferraro_rogoff_rossi_nber_w17998.pdf",
+   "status": "terms-forbid (read after fetch; DO_NOT_COMMIT)",
+   "tool": "curl"
+  },
+  {
+   "url": "https://repository.bilkent.edu.tr/bitstreams/ac8a69c7-38ac-4fc9-a0e9-3fc94f64b695/download",
+   "utc": "2026-10-18T08:43:45Z",
+   "sha256": "f7b3c09814be1e24090b57e765408499c230cc0dbec7f5c1d4da75ed032e61cd",
+   "path": "pages/R13/bilkent_2025_oil_currency_cojumps.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/1906.10388",
+   "utc": "2026-10-18T08:43:49Z",
+   "sha256": "205f3e3b753492e28387f0a863d7f88f327cb15b8f6c45a30a3590d381e00c44",
+   "path": "pages/R13/basnarkov_etal_2019_fx_leadlag.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/1504.06235",
+   "utc": "2026-10-18T08:45:11Z",
+   "sha256": "f3a0edc7f51c7a19ff3ee9be3d0ff7a2f78e5bbc1ff1e68758fafd1b7f9a02d1",
+   "path": "pages/R13/maier_paape_platen_2015_sar_minmax_leadlag.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr917.pdf",
+   "utc": "2026-10-18T08:46:17Z",
+   "sha256": "403276b2ea8227c14ccfb854014af1df6a425430e5f622599640d7c0c16e683a",
+   "path": "pages/R13/boyarchenko_larsen_whelan_sr917_overnight_drift.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://libertystreeteconomics.newyorkfed.org/2015/08/high-frequency-cross-market-trading-in-us-treasury-markets/",
+   "utc": "2026-10-18T08:50:26Z",
+   "sha256": "32cd50bcd4b6bab5a6cf44f8c2f085f05b203dbeb1bb7ba28fd6559c74658d29",
+   "path": "pages/R13/lse_2015_dobrev_schaumburg_crossmarket.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://ideas.repec.org/a/wly/jforec/v33y2014i6p391-408.html",
+   "utc": "2026-10-18T08:50:42Z",
+   "sha256": "c3ca968eabffcb2abcb8da466ff2907988fda24ca4efc39185b516714537fbc8",
+   "path": "pages/R13/repec_alsayed_mcgroarty_2014.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://ideas.repec.org/a/eee/finmar/v67y2024ics1386418123000496.html",
+   "utc": "2026-10-18T08:50:49Z",
+   "sha256": "750080ccd1fff933163843f8d5f1d57d8998f3ea2c74a13c90ecfad7128c418e",
+   "path": "pages/R13/repec_bangsgaard_kokholm_2024.html",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://arxiv.org/pdf/2507.04481",
+   "utc": "2026-10-18T08:50:56Z",
+   "sha256": "9ac5796c29529683383b82c08dfca7e57d1eb7c3e039df1d59a56dd339cc19bd",
+   "path": "pages/R13/arxiv_2507.04481_overnight_news.pdf",
+   "status": "ok",
+   "tool": "curl"
+  },
+  {
+   "url": "https://eprints.soton.ac.uk/341452/",
+   "utc": "about 2026-10-18T08:45Z",
+   "sha256": "",
+   "path": "",
+   "status": "blocked (Anubis bot check)",
+   "tool": "curl"
+  }
+ ],
+ "budget_notices": [
+  "2026-10-18T08:47:20Z OpenAlex: 'Rate limit exceeded ... free daily budget shared by everyone on your network's IP ... used up' (R13)",
+  "2026-10-18T08:52:27Z Firecrawl: 'Request failed with status code 402 ... The connected Firecrawl account is out of credits' (firecrawl_search x2; R13 stopped Firecrawl)",
+  "2026-10-18T08:52:27Z Firecrawl earlier 08:42Z: 'Rate limit exceeded. Consumed (req/min): 11' (one firecrawl_search not run)",
+  "2026-10-18T08:52:27Z Semantic Scholar keyless: 3x 'Too Many Requests' with 60 s waits -> throttled",
+  "eprints.soton.ac.uk/341452: Anubis proof-of-work bot check page returned (not bypassed) -> blocked",
+  "WebSearch: 16 of 45 calls used; no over-budget notice"
+ ],
+ "unfinished": [
+  "Forward citations of Huth-Abergel, Basnarkov et al., Boyarchenko et al. not pulled (OpenAlex budget exhausted, S2 throttled, Firecrawl out of credits)",
+  "Dobrev-Schaumburg 2018 working paper full text not retrieved (Atlanta Fed URL 404)",
+  "Alsayed-McGroarty 2014 full text not read (Southampton bot check; RePEc no abstract)",
+  "Bangsgaard-Kokholm 2024 abstract only; horizon not verified",
+  "Ferraro-Rogoff-Rossi only via search-result text (NBER terms forbid robots; copy fetched before reading terms, in DO_NOT_COMMIT)",
+  "No source found for Treasury-to-equity or crude-to-energy-equity intraday predictability with a size; search gap, not proof of absence",
+  "g17 features kept in E.20 search inferred from backward_swap_table.md line 59"
+ ]
+}

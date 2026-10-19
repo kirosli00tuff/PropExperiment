@@ -785,3 +785,25 @@
   data read, N unchanged by E.25. No connector for Reddit, X or YouTube
   exists in the registry; those sites are reached only through search
   results and pages whose terms allow it.
+- 2026-10-18 (user, planning chat): V43. V28 amended for order-book
+  strategies. The user approves that a machine-learning model may itself
+  be the traded strategy, not only a filter on a passing rule, for
+  order-book and limit-order strategies, where the patterns may not
+  reduce to plain rules. Conditions, all binding: the model, its
+  features, labels, training data window, hyperparameters and code are
+  frozen and hashed before any outcome read, as E.20's pipeline was;
+  every configuration searched counts into N; validation uses purged
+  and embargoed cross-validation on the discovery data; the frozen model
+  is then tested once on data that never selected it (a separately
+  purchased period or the research window under a registered read),
+  with the program's bar (Holm, net Sharpe, DSR at N, PBO); costs use the
+  measured fill and adverse-selection model from the tick-data pilot,
+  never touched-means-filled; and no model trades, on paper or live,
+  before it passes. V28 stands unchanged for every other line (no ML
+  layer on an untested rule set elsewhere; meta-labeling only after a
+  base rule passes). Also recorded (user, 2026-10-18): no paper trading
+  for now and no 24/7 gateway on the laptop (E22-F1, E22-F1b, E22-F2 and
+  any C1 forward record parked, unregistered, N 538); a Databento pilot
+  cap of USD 100 for order-book data (the user reports about USD 120 on
+  the account); the later order-book search should use machine learning,
+  likely on a more powerful machine.

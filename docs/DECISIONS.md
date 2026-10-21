@@ -840,3 +840,91 @@
   a gap inventory of the program's methods and deep dives on the
   mathematics and machine learning it never used, with a draft design
   for the ML search under V43. N stays 538.
+- 2026-10-21 (Stage E.26, recording V44's instructions and E.25's
+  corrections): V45. Five records.
+  1. Data move (V44), done in E.26 on 2026-10-21 05:15-05:18 PDT:
+     data/sealed, data/processed_hist, data/processed_step2 and
+     data/vendor/databento (4,579 files, 9,693,260,747 bytes) now live
+     under /mnt/large-storage/market_data/PropExperiment/ (ext4, not
+     encrypted, fstab nofail), with absolute symlinks at the old paths.
+     Every file's sha256, mode, owner and mtime were checked at the
+     destination, read from disk, before the swap (manifest sha256
+     778ec621...). Stayed in the repo: data/processed (a link there
+     changes ml_route.store's research-root refusal and fails a harness
+     test; the fix would be a harness change), data/vendor/release_pages
+     (web pages and the scripts the D.1f preflight scans) and
+     data/vendor/index_history (11 tracked files), so data/ and
+     data/vendor stay real directories. The before and after checks were
+     identical: the holdout status byte for byte (unlocks 0), harness v13,
+     every freeze verification, the E.20 store sha256 block (34 stores),
+     base_rules' row-free preflight over 44 stores, and the data-path test
+     subset (285 passed). .gitignore lists the three top-level links
+     without a trailing slash; two holdout tests now scan through the
+     links and fail on a dangling one. Records written from now on may
+     carry /mnt paths (a new seal records original_relpath None). Any
+     session that reads data first checks `mountpoint -q
+     /mnt/large-storage`. New downloads go straight to the destination
+     root. No secret goes on that drive.
+  2. ACCOUNT_3 (V44): data/config.py registers acct-3 (ACCOUNT_3_ID, key
+     variable DATABENTO_API_KEY3, cap USD 125.00, the credit a new
+     Databento account opens with (U5), an upper bound only; no external
+     ledger), selectable the way acct-1 and acct-2 are
+     (require_databento_key, SpendGate and its ledger lines, the quote
+     tool); acct-1, acct-2, their caps and ACTIVE_ACCOUNT (acct-2) are
+     unchanged. It is a temporary account for the E.28 order-book pilot
+     purchase only (one contract, one schema, 2023-11..2024-02 extended
+     backwards, never 2024-03 or later): PILOT_ONLY_ACCOUNTS makes
+     data/pull_step2.py refuse a step-2 buy on it before any key is read,
+     and data/pull_hist.py already refuses it. A pilot script passes
+     account="acct-3" to both SpendGate and require_databento_key, with
+     its own session id and caps; its spend bound is V44's "all of its
+     funds" (the balance at purchase less a few dollars of margin, under
+     the USD 125.00 account cap), which supersedes V43's USD 100 pilot
+     cap for this account. The user wipes the account after E.28
+     writes "ACCOUNT_3 SAFE TO WIPE". The key was given to the planner as
+     a one-time exception the user chose for this throwaway account; it
+     is checked by variable name only and never printed, copied or
+     logged. Adding the account changes harness members (data/config.py,
+     data/pull_step2.py and two frozen tests that pinned a two-account
+     registry), so the Stage E harness is now v14, sha256
+     2e908c81e01d0aad835b30ab7b95f628182666dd8d76301cdd4ea465bb41edd1,
+     whose manifest differs from v13 (dd2bcc60...) only in those four
+     entries; every Stage E entry point takes the v14 sha from now on.
+     trigger_hold/events.py keeps its v13 pin (a member of the E.23
+     freeze), so E.23's runners refuse until the user decides.
+     The E.26 lead made this call against its prompt's no-harness-change
+     scope, because Task 2 cannot be done otherwise (E.26 return, open
+     choice 1).
+  3. V34 corrected (E.25 R10, DF1): V34's reason for dropping
+     noise-area momentum (Zarattini, Aziz and Barbon, "Beat the Market",
+     WP 2024, v2025-09) was "unsized"; the authors' FAQ sizes it ($0.09 a
+     share net per trade at a $247 average SPY price, about 3.6 bp;
+     futures Sharpe S&P 1.32, Nasdaq 1.23, cost unstated). The drop stands
+     on the post-publication evidence instead: no independent S&P test
+     after publication (2024-05) is distinguishable from zero and the
+     latest are negative (Brusco ES, the paper's rule: -0.61 bp a trade
+     net, Sharpe -0.07; Paz SPY out of sample: Sharpe 0.39, t 0.54;
+     Delgado 2025-09..2026-08: Sharpe -0.46); the one positive Nasdaq
+     test is a pointer (VigorTas NQ after publication, t 1.37 over 585
+     days).
+  4. V38 amended (E.25 RD2, DF2, DF3, RD4): V38's sentence "no published
+     post-2015 intraday effect on the 17 roots exceeds 1.5 x the D8 round
+     trip" now reads: no published post-2015 intraday effect on the 17
+     roots exceeds 1.5 x the D8 round trip, except three working-paper
+     effects whose samples run past 2015, none with a significant
+     post-2015 estimate: the pre-refunding-announcement ZN gain (Wang and
+     Zhao 2025, cash, +12.62 bp, t 3.32), the pre-FOMC ZN drift (Pan and
+     Peng 2026, futures, +7.26 bp, t 2.82, 2004-01..2025-06) and the ES
+     3rd-Friday reversal (Baltussen, Terstegge and Whelan, -12.89 bp, t
+     -2.40, 2003-2021; 2015-23 not significant alone). Each gives 3 to 15
+     events in the research window (power 0.11 to 0.22 at the published
+     sizes), so none can be tested with adequate power on owned data. The
+     closure of the intraday program (V38) stays in place.
+  5. Topstep rules record (E.25 return section 7 item 6):
+     reports/stage_e19_rules.json now carries Topstep's Tier 1 news
+     window from the help pages fetched 2026-10-21 02:20 PDT (page
+     13613539, dateModified 2026-10-20: minis blocked and micros capped
+     to 3/6/9 on 50K/100K/150K Combines, by balance on XFAs, 5 minutes
+     either side of CPI, FOMC, NFP and PPI; existing positions may be
+     held, so R040's "flatten not required" stands with a new source).
+     E.19's simulator was not rerun. N stays 538.

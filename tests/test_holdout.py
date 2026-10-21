@@ -306,7 +306,12 @@ class TestRealStore:
 
     def test_no_plaintext_parquet_under_data_holds_a_holdout_date(self) -> None:
         root = Path(ho.DATA_ROOT)
-        for parquet in root.rglob("*.parquet"):
+        # Stage E.26 (V45): the data stores are symlinks to LARGE STORAGE and rglob does not descend
+        # into a link, so each linked store is scanned from its link; a dangling link fails closed
+        links = [p for p in root.rglob("*") if p.is_symlink()]
+        assert all(p.exists() for p in links), [str(p) for p in links if not p.exists()]
+        bases = (root, *(p for p in links if p.is_dir()))
+        for parquet in [p for base in bases for p in base.rglob("*.parquet")]:
             dates = pq.read_table(parquet, columns=["trade_date"]).column("trade_date").to_pylist()
             assert max(dates, default="") < HOLDOUT_START.isoformat(), parquet
         assert not (root / "processed" / "MES" / ho.ORIGINAL_FULL_PARQUET_NAME).exists()

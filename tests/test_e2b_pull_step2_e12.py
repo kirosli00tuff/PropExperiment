@@ -443,7 +443,11 @@ def test_holdout2_only_quotes_reach_only_gate_quote_and_report_both_accounts(
     assert section["total_usd"] == pytest.approx(sum(
         r["usd_sealed_2024_03_2025_03"] for r in section["per_contract"].values()))
     positions = payload["accounts"]["positions"]
-    assert set(positions) == {"acct-1", "acct-2"}
+    # Stage E.26 (V45): the summary covers every registered account, now acct-3 (no spend here).
+    assert set(positions) == {"acct-1", "acct-2", "acct-3"}
+    assert positions["acct-3"]["spent_usd"] == 0.0
+    assert positions["acct-3"]["account_cap_usd"] == config.ACCOUNT_3_CAP_USD
+    assert positions["acct-3"]["cap_headroom_usd"] == pytest.approx(config.ACCOUNT_3_CAP_USD)
     assert positions["acct-2"]["spent_usd"] == pytest.approx(124.67)
     assert positions["acct-2"]["account_cap_usd"] == config.ACCOUNT_2_CAP_USD
     assert positions["acct-2"]["cap_headroom_usd"] == pytest.approx(
@@ -451,10 +455,12 @@ def test_holdout2_only_quotes_reach_only_gate_quote_and_report_both_accounts(
     assert positions["acct-1"]["spent_usd"] == pytest.approx(9.47 + 82.12)
     assert positions["acct-1"]["cap_headroom_usd"] == pytest.approx(120.00 - 9.47 - 82.12)
     assert payload["accounts"]["combined_headroom_usd"] == pytest.approx(
-        positions["acct-1"]["cap_headroom_usd"] + positions["acct-2"]["cap_headroom_usd"])
+        positions["acct-1"]["cap_headroom_usd"] + positions["acct-2"]["cap_headroom_usd"]
+        + positions["acct-3"]["cap_headroom_usd"])  # Stage E.26 (V45): acct-3 included
     md = out.with_suffix(".md").read_text(encoding="utf-8")
     assert md.startswith(f"# Step 2 quotes, session {E12}")
     assert "## ml-v2+holdout2-only" in md and "| acct-1 |" in md and "| acct-2 |" in md
+    assert "| acct-3 |" in md  # Stage E.26 (V45): the .md lists acct-3's position too
     assert not (tmp_path / "unused.json").exists()
     captured = capsys.readouterr()
     assert FAKE_KEY not in captured.out + captured.err + md + out.read_text(encoding="utf-8")

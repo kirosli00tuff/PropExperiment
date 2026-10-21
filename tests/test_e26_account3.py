@@ -1,0 +1,628 @@
+"""Stage E.26 Task 2 (V44): the third Databento account, acct-3, read from DATABENTO_API_KEY3.
+
+acct-3 is a temporary account for the E.28 order-book pilot only (V44): registered in
+data.config.ACCOUNTS with ACCOUNT_3_CAP_USD and no external ledger, selectable exactly as acct-1
+and acct-2 are (require_databento_key(account=...), SpendGate(account=...), the quote tools'
+--account). acct-1, acct-2, LEGACY_ACCOUNT_ID and the default ACTIVE_ACCOUNT (acct-2) do not move.
+
+Fake keys only ("db-FAKE-..."), set through monkeypatch and .env files under tmp_path; every key
+variable is deleted from the environment first. No network: the Databento client is a fake whose
+billable namespaces are never reached. Every ledger and ACCESS doc lives under tmp_path; the real
+ledger and ACCESS doc are checked untouched.
+"""
+
+from __future__ import annotations
+
+import dataclasses
+import json
+from collections.abc import Iterator
+from pathlib import Path
+from types import SimpleNamespace
+from typing import Any
+
+import pytest
+
+from data import config
+from data import pull_hist as ph
+from data import pull_step2 as ps
+from data.config import (
+    ACCOUNT_1_ID,
+    ACCOUNT_2_ID,
+    ACCOUNT_3_CAP_USD,
+    ACCOUNT_3_ID,
+    ACCOUNTS,
+    DATABENTO_KEY_ENV_BY_ACCOUNT,
+    MissingSecretError,
+    require_databento_key,
+)
+from data.spend_gate import (
+    BudgetRefusedError,
+    Quote,
+    RequestParams,
+    SpendGate,
+    UnknownAccountError,
+    read_entries,
+)
+
+KEY1 = "DATABENTO_API_KEY1"
+KEY2 = "DATABENTO_API_KEY2"
+KEY3 = "DATABENTO_API_KEY3"
+LEGACY = "DATABENTO_API_KEY"
+FAKE_1 = "db-FAKE-KEY1-not-real"
+FAKE_2 = "db-FAKE-KEY2-not-real"
+FAKE_3 = "db-FAKE-KEY3"
+FAKE_FILE_1 = "db-FAKE-FILE-KEY1-not-real"
+FAKE_FILE_2 = "db-FAKE-FILE-KEY2-not-real"
+FAKE_FILE_3 = "db-FAKE-FILE-KEY3-not-real"
+ALL_FAKES = (FAKE_1, FAKE_2, FAKE_3, FAKE_FILE_1, FAKE_FILE_2, FAKE_FILE_3)
+E14 = "stage-E.14-2026-10-05"
+PARAMS = RequestParams("GLBX.MDP3", ("MES.v.0",), "mbp-10", "continuous",
+                       "2023-11-01", "2023-11-02")
+
+
+# ------------------------------------------------------------------ helpers ----
+@pytest.fixture(autouse=True, scope="module")
+def real_files_untouched() -> Iterator[None]:
+    paths = (config.LEDGER_PATH, config.ACCESS_DOC_PATH)
+    before = [p.read_bytes() if p.is_file() else None for p in paths]
+    yield
+    assert [p.read_bytes() if p.is_file() else None for p in paths] == before
+
+
+@pytest.fixture(autouse=True)
+def _clean_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    """No real key variable from the developer's shell reaches a test."""
+    for name in (KEY1, KEY2, KEY3, LEGACY):
+        monkeypatch.delenv(name, raising=False)
+
+
+def _env_file(tmp_path: Path, lines: list[str] | None = None) -> Path:
+    path = tmp_path / ".env"
+    if lines is not None:
+        path.write_text("".join(f"{line}\n" for line in lines), encoding="utf-8")
+    return path
+
+
+def _missing_message(env_file: Path, account: str | None) -> str:
+    with pytest.raises(MissingSecretError) as info:
+        require_databento_key(env_file=env_file, account=account)
+    return str(info.value)
+
+
+def _write_ledger(path: Path, lines: list[dict[str, Any]]) -> Path:
+    path.write_text("".join(json.dumps(line) + "\n" for line in lines), encoding="utf-8")
+    return path
+
+
+def _commit(usd: float, account: str | None, session: str = "old-session") -> dict[str, Any]:
+    line: dict[str, Any] = {"event": "commit", "session_id": session, "usd": usd}
+    if account is not None:
+        line["account"] = account
+    return line
+
+
+def _gate(tmp_path: Path, account: str, session: str = "e26-test", **kwargs: Any) -> SpendGate:
+    if account == ACCOUNT_1_ID and "external_ledger_paths" not in kwargs:
+        external = tmp_path / "external_ledger.jsonl"
+        if not external.exists():
+            _write_ledger(external, [{"usd": 82.12}])
+        kwargs["external_ledger_paths"] = (external,)
+    return SpendGate(session, ledger_path=tmp_path / "ledger.jsonl",
+                     access_doc_path=tmp_path / "ACCESS.md", account=account, **kwargs)
+
+
+class FakeMetadata:
+    """The free metadata endpoints only, at a fixed price."""
+
+    def __init__(self, usd: float) -> None:
+        self.usd = usd
+
+    def get_cost(self, **_: Any) -> float:
+        return self.usd
+
+    def get_billable_size(self, **_: Any) -> int:
+        return 4_096
+
+
+class BillableTrap:
+    """Records any touch of a billable namespace (the quote path guards them first)."""
+
+    def __init__(self, hits: list[str]) -> None:
+        self._hits = hits
+
+    def __getattr__(self, name: str) -> Any:
+        self._hits.append(name)
+        return lambda *a, **k: pytest.fail(f"billable call {name}")
+
+
+def _quote_client(usd: float = 0.01) -> SimpleNamespace:
+    hits: list[str] = []
+    return SimpleNamespace(metadata=FakeMetadata(usd), timeseries=BillableTrap(hits),
+                           batch=BillableTrap(hits), billable_hits=hits)
+
+
+# ----------------------------------------------------------------- registry ----
+def test_acct3_is_registered_with_its_cap_and_no_external_ledger() -> None:
+    # Arrange / Act
+    account = ACCOUNTS[ACCOUNT_3_ID]
+
+    # Assert
+    assert ACCOUNT_3_ID == "acct-3" and ACCOUNT_3_CAP_USD == 125.00
+    assert account == config.DatabentoAccount(
+        "acct-3", 125.00, (),
+        "the temporary E.28 pilot account (V44), wiped by the user after the download is verified")
+
+
+def test_acct1_acct2_the_legacy_id_and_the_active_account_are_unchanged() -> None:
+    # Arrange / Act
+    acct1, acct2 = ACCOUNTS[ACCOUNT_1_ID], ACCOUNTS[ACCOUNT_2_ID]
+
+    # Assert
+    assert list(ACCOUNTS) == ["acct-1", "acct-2", "acct-3"]
+    assert (acct1.cap_usd, acct1.external_ledger_paths) == (120.00, config.EXTERNAL_LEDGER_PATHS)
+    assert (acct2.cap_usd, acct2.external_ledger_paths) == (355.38, ())
+    assert config.ACCOUNT_2_CAP_USD == 355.38 and config.SHARED_ACCOUNT_CAP_USD == 120.00
+    assert config.ACTIVE_ACCOUNT == "acct-2" and config.LEGACY_ACCOUNT_ID == "acct-1"
+    assert config.E14_BUY_ACCOUNT == "acct-2"
+
+
+def test_each_account_has_exactly_one_numbered_key_variable() -> None:
+    # Arrange / Act
+    mapping = dict(DATABENTO_KEY_ENV_BY_ACCOUNT)
+
+    # Assert
+    assert mapping == {"acct-1": KEY1, "acct-2": KEY2, "acct-3": KEY3}
+    assert set(mapping) == set(ACCOUNTS)
+
+
+def test_the_registry_the_key_map_and_each_entry_stay_read_only() -> None:
+    # Arrange
+    acct3 = ACCOUNTS[ACCOUNT_3_ID]
+
+    # Act / Assert
+    with pytest.raises(TypeError):
+        config.ACCOUNTS["acct-4"] = acct3  # type: ignore[index]
+    with pytest.raises(TypeError):
+        DATABENTO_KEY_ENV_BY_ACCOUNT[ACCOUNT_3_ID] = KEY2  # type: ignore[index]
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        acct3.cap_usd = 1_000.00  # type: ignore[misc]
+
+
+# ------------------------------------------------------------- key selection ----
+def test_acct3_reads_key3_from_the_environment(tmp_path: Path,
+                                               monkeypatch: pytest.MonkeyPatch) -> None:
+    # Arrange
+    monkeypatch.setenv(KEY3, FAKE_3)
+
+    # Act
+    key = require_databento_key(env_file=_env_file(tmp_path), account=ACCOUNT_3_ID)
+
+    # Assert
+    assert key == FAKE_3
+
+
+def test_acct3_reads_key3_from_the_env_file_when_the_environment_has_none(
+        tmp_path: Path) -> None:
+    # Arrange
+    env_file = _env_file(tmp_path, [f"{KEY1}={FAKE_FILE_1}", f"{KEY2}={FAKE_FILE_2}",
+                                    f'{KEY3}="  {FAKE_FILE_3}  "'])
+
+    # Act
+    key = require_databento_key(env_file=env_file, account=ACCOUNT_3_ID)
+
+    # Assert
+    assert key == FAKE_FILE_3
+
+
+def test_acct3_environment_value_wins_over_the_env_file(tmp_path: Path,
+                                                        monkeypatch: pytest.MonkeyPatch) -> None:
+    # Arrange
+    monkeypatch.setenv(KEY3, FAKE_3)
+    env_file = _env_file(tmp_path, [f"{KEY3}={FAKE_FILE_3}"])
+
+    # Act
+    key = require_databento_key(env_file=env_file, account=ACCOUNT_3_ID)
+
+    # Assert
+    assert key == FAKE_3
+
+
+@pytest.mark.parametrize("blank", ["", "   ", "\t"])
+def test_a_blank_key3_in_the_environment_does_not_shadow_the_env_file(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, blank: str) -> None:
+    # Arrange
+    monkeypatch.setenv(KEY3, blank)
+    env_file = _env_file(tmp_path, [f"{KEY3}={FAKE_FILE_3}"])
+
+    # Act
+    key = require_databento_key(env_file=env_file, account=ACCOUNT_3_ID)
+
+    # Assert
+    assert key == FAKE_FILE_3
+
+
+@pytest.mark.parametrize("env_value,file_lines", [
+    (None, None),                     # no variable, no .env file
+    (None, [f"{KEY3}="]),             # empty in the file
+    (None, [f"{KEY3}=   "]),          # whitespace only in the file
+    ("  ", [f"# {KEY3}={FAKE_FILE_3}"]),  # blank in the environment, commented out in the file
+])
+def test_missing_or_empty_key3_raises_naming_the_variable_never_a_value(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
+        env_value: str | None, file_lines: list[str] | None) -> None:
+    # Arrange: the other accounts' keys are present and must not stand in for acct-3's
+    monkeypatch.setenv(KEY1, FAKE_1)
+    monkeypatch.setenv(KEY2, FAKE_2)
+    if env_value is not None:
+        monkeypatch.setenv(KEY3, env_value)
+    lines = None if file_lines is None else [f"{KEY1}={FAKE_FILE_1}", f"{KEY2}={FAKE_FILE_2}",
+                                             *file_lines]
+    env_file = _env_file(tmp_path, lines)
+
+    # Act
+    message = _missing_message(env_file, ACCOUNT_3_ID)
+    captured = capsys.readouterr()
+
+    # Assert
+    assert KEY3 in message and ACCOUNT_3_ID in message
+    assert not any(fake in message for fake in ALL_FAKES)
+    assert captured.out == "" and captured.err == ""
+
+
+def test_acct1_and_acct2_still_read_key1_and_key2_and_the_default_is_acct2(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    # Arrange
+    monkeypatch.setenv(KEY1, FAKE_1)
+    monkeypatch.setenv(KEY2, FAKE_2)
+    monkeypatch.setenv(KEY3, FAKE_3)
+    env_file = _env_file(tmp_path)
+
+    # Act
+    keys = {account: require_databento_key(env_file=env_file, account=account)
+            for account in (None, ACCOUNT_1_ID, ACCOUNT_2_ID, ACCOUNT_3_ID)}
+
+    # Assert
+    assert keys == {None: FAKE_2, "acct-1": FAKE_1, "acct-2": FAKE_2, "acct-3": FAKE_3}
+
+
+def test_key3_never_stands_in_for_acct1_acct2_or_the_default(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    # Arrange
+    monkeypatch.setenv(KEY3, FAKE_3)
+    env_file = _env_file(tmp_path, [f"{KEY3}={FAKE_FILE_3}"])
+
+    # Act
+    messages = [_missing_message(env_file, account)
+                for account in (None, ACCOUNT_1_ID, ACCOUNT_2_ID)]
+
+    # Assert
+    assert KEY2 in messages[0] and KEY1 in messages[1] and KEY2 in messages[2]
+    assert not any(fake in message for message in messages for fake in ALL_FAKES)
+
+
+def test_an_unregistered_fourth_account_still_has_no_key(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    # Arrange
+    monkeypatch.setenv(KEY3, FAKE_3)
+
+    # Act
+    message = _missing_message(_env_file(tmp_path), "acct-4")
+
+    # Assert
+    assert repr("acct-4") in message and FAKE_3 not in message
+
+
+# ---------------------------------------------------------------- spend gate ----
+def test_an_acct3_gate_takes_its_registry_cap_and_reads_no_external_ledger(
+        tmp_path: Path) -> None:
+    # Arrange / Act
+    gate = _gate(tmp_path, ACCOUNT_3_ID)
+
+    # Assert
+    assert (gate.account_id, gate.account_cap_usd, gate.external_ledger_paths) == (
+        "acct-3", 125.00, ())
+    assert gate.cap_label == "account cap acct-3"
+    assert gate.account_spent_usd() == 0.0
+
+
+def test_an_acct3_gate_may_tighten_its_cap_but_never_raise_it_or_add_a_ledger(
+        tmp_path: Path) -> None:
+    # Arrange / Act
+    tighter = _gate(tmp_path, ACCOUNT_3_ID, shared_cap_usd=100.00)
+
+    # Assert
+    assert tighter.account_cap_usd == 100.00
+    with pytest.raises(ValueError, match="never raise"):
+        _gate(tmp_path, ACCOUNT_3_ID, shared_cap_usd=125.01)
+    with pytest.raises(ValueError, match="has no external ledger"):
+        _gate(tmp_path, ACCOUNT_3_ID, external_ledger_paths=(tmp_path / "other.jsonl",))
+
+
+def test_each_gate_sums_only_its_own_accounts_lines_with_acct3_lines_present(
+        tmp_path: Path) -> None:
+    # Arrange: a legacy line (acct-1), and lines on each of the three accounts
+    _write_ledger(tmp_path / "ledger.jsonl", [
+        _commit(9.47, None), _commit(5.00, "acct-1"), _commit(124.67, "acct-2"),
+        _commit(10.25, "acct-3"), _commit(1.50, "acct-3")])
+
+    # Act
+    spent = {a: _gate(tmp_path, a).account_spent_usd() for a in ACCOUNTS}
+
+    # Assert
+    assert spent["acct-3"] == pytest.approx(11.75)
+    assert spent["acct-2"] == pytest.approx(124.67)
+    assert spent["acct-1"] == pytest.approx(9.47 + 5.00 + 82.12)
+
+
+def test_an_acct3_gate_writes_every_ledger_line_on_acct3(tmp_path: Path) -> None:
+    # Arrange
+    _write_ledger(tmp_path / "ledger.jsonl", [_commit(124.67, "acct-2"), _commit(3.00, "acct-3")])
+    gate = _gate(tmp_path, ACCOUNT_3_ID, session_cap_usd=50.00)
+
+    # Act
+    quote = gate.quote(_quote_client(usd=7.25), PARAMS)
+    assert quote is not None
+    gate.authorize(PARAMS, quote)
+    gate.commit(quote, note="pilot chunk")
+    gate.settle(quote, actual_usd=7.20, note="billed")
+
+    # Assert
+    new = read_entries(tmp_path / "ledger.jsonl")[2:]
+    assert [(e["event"], e["account"], e["session_id"]) for e in new] == [
+        ("quote", "acct-3", "e26-test"), ("commit", "acct-3", "e26-test"),
+        ("settle", "acct-3", "e26-test")]
+    assert [e["shared_cumulative_usd"] for e in new] == pytest.approx([3.00, 10.25, 10.20])
+    assert gate.account_spent_usd() == pytest.approx(10.20)
+
+
+def test_acct3_spend_never_counts_toward_acct1_or_acct2_and_vice_versa(tmp_path: Path) -> None:
+    # Arrange
+    _write_ledger(tmp_path / "ledger.jsonl", [_commit(9.47, None), _commit(124.67, "acct-2")])
+    gates = {a: _gate(tmp_path, a, session_cap_usd=50.00) for a in ACCOUNTS}
+    before = {a: g.account_spent_usd() for a, g in gates.items()}
+
+    # Act: acct-3 spends, then acct-2 spends
+    q3 = gates["acct-3"].quote(_quote_client(usd=20.00), PARAMS)
+    assert q3 is not None
+    gates["acct-3"].commit(q3)
+    after_acct3 = {a: g.account_spent_usd() for a, g in gates.items()}
+    q2 = gates["acct-2"].quote(_quote_client(usd=4.00), PARAMS)
+    assert q2 is not None
+    gates["acct-2"].commit(q2)
+    after_acct2 = {a: g.account_spent_usd() for a, g in gates.items()}
+
+    # Assert
+    assert after_acct3 == pytest.approx({**before, "acct-3": 20.00})
+    assert after_acct2 == pytest.approx({**after_acct3, "acct-2": 124.67 + 4.00})
+
+
+def test_acct3s_cap_refuses_a_quote_beyond_its_headroom_and_names_acct3(tmp_path: Path) -> None:
+    # Arrange: acct-3 has $5.00 of headroom; acct-2's own lines are irrelevant to it
+    _write_ledger(tmp_path / "ledger.jsonl", [_commit(120.00, "acct-3"),
+                                              _commit(1.00, "acct-2")])
+    gate = _gate(tmp_path, ACCOUNT_3_ID, session_cap_usd=50.00)
+    quote = Quote(PARAMS, usd=5.01, billable_bytes=1)
+
+    # Act
+    with pytest.raises(BudgetRefusedError) as info:
+        gate.authorize(PARAMS, quote)
+
+    # Assert
+    assert "account cap acct-3" in str(info.value)
+    refused = read_entries(tmp_path / "ledger.jsonl")[-1]
+    assert (refused["event"], refused["account"], refused["usd"]) == ("refused", "acct-3", 0.0)
+    assert "`acct-3`" in (tmp_path / "ACCESS.md").read_text(encoding="utf-8")
+    assert gate.authorize(PARAMS, Quote(PARAMS, usd=5.00, billable_bytes=1)).allowed
+
+
+def test_an_unregistered_account_still_closes_the_gate(tmp_path: Path) -> None:
+    # Arrange
+    _write_ledger(tmp_path / "ledger.jsonl", [_commit(1.00, "acct-4")])
+
+    # Act / Assert
+    with pytest.raises(UnknownAccountError):
+        _gate(tmp_path, "acct-4")
+    with pytest.raises(UnknownAccountError):
+        _gate(tmp_path, ACCOUNT_3_ID).account_spent_usd()
+
+
+# ------------------------------------------------------- quote tool selection ----
+@pytest.mark.parametrize("parser", [ph._parser, ps._parser], ids=["pull_hist", "pull_step2"])
+def test_the_quote_tools_account_choices_derive_from_the_registry(parser: Any) -> None:
+    # Arrange
+    argv = ["--quote-only", "--account", "acct-3"]
+    argv += ["--plan", "es2011"] if parser is ph._parser else ["--set", "ml-v2"]
+
+    # Act
+    args = parser().parse_args(argv)
+
+    # Assert
+    assert args.account == "acct-3"
+    with pytest.raises(SystemExit):
+        parser().parse_args([*argv[:2], "acct-4", *argv[3:]])
+
+
+def test_pull_hist_quote_only_on_acct3_loads_key3s_account_and_ledgers_on_acct3(
+        tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    # Arrange
+    client = _quote_client()
+    out = tmp_path / "q" / "quotes.json"
+    keys: list[dict[str, Any]] = []
+    gate_kwargs = {"ledger_path": tmp_path / "ledger.jsonl", "access_doc_path": tmp_path / "A.md"}
+    logs: list[str] = []
+
+    # Act
+    rc = ph.main(["--quote-only", "--plan", "es2011", "--account", "acct-3",
+                  "--quotes-out", str(out)],
+                 key_loader=lambda **kw: keys.append(kw) or FAKE_3,
+                 quote_gate_factory=lambda account: ph.quote_gate(account, **gate_kwargs),
+                 buy_gate_factory=lambda **kw: pytest.fail("buy gate"),
+                 client_factory=lambda key: client, log=logs.append)
+
+    # Assert
+    assert rc == 0 and keys == [{"account": "acct-3"}] and client.billable_hits == []
+    lines = read_entries(tmp_path / "ledger.jsonl")
+    assert len(lines) == 96 and {(e["event"], e["session_id"], e["account"], e["usd"])
+                                 for e in lines} == {("quote", E14, "acct-3", 0.0)}
+    position = json.loads(out.read_text(encoding="utf-8"))["sets"]["plan:es2011"]["account"]
+    assert position == {"account": "acct-3", "account_cap_usd": 125.00, "spent_usd": 0.0,
+                        "headroom_usd": 125.00}
+    captured = capsys.readouterr()
+    assert FAKE_3 not in out.read_text(encoding="utf-8") + "".join(logs) + captured.out \
+        + captured.err
+
+
+# ------------------------------------------------- no existing puller buys on acct-3 ----
+HARNESS = "cd" * 32
+
+
+class Untouchable:
+    """A client stand-in that records every attribute read or write (none is allowed)."""
+
+    def __init__(self) -> None:
+        object.__setattr__(self, "touched", [])
+
+    def __getattr__(self, name: str) -> Any:
+        self.touched.append(f"get {name}")
+        return lambda *a, **k: pytest.fail(f"vendor call {name}")
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        self.touched.append(f"set {name}")
+
+
+@pytest.fixture
+def preflight_passes(monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    """The harness preflight passes, so the account guard is what refuses a buy."""
+    from screening import harness_freeze
+
+    seen: list[str] = []
+    monkeypatch.setattr(harness_freeze, "preflight",
+                        lambda expected, root=None: seen.append(expected) or expected)
+    return seen
+
+
+def test_acct3_is_the_only_pilot_only_account() -> None:
+    # Arrange / Act
+    pilot_only = config.PILOT_ONLY_ACCOUNTS
+
+    # Assert
+    assert pilot_only == frozenset({"acct-3"}) and isinstance(pilot_only, frozenset)
+    assert pilot_only <= set(ACCOUNTS) and config.ACTIVE_ACCOUNT not in pilot_only
+
+
+def test_pull_step2_buy_on_acct3_refuses_before_any_key_load_or_vendor_call(
+        tmp_path: Path, preflight_passes: list[str],
+        capsys: pytest.CaptureFixture[str]) -> None:
+    # Arrange: positive step 2 caps (the config's), the preflight passing
+    keys: list[dict[str, Any]] = []
+    clients: list[str] = []
+    ledger = tmp_path / "ledger.jsonl"
+
+    # Act
+    rc = ps.main(["--buy", "--account", "acct-3", "--roots", "ZN", "--training-window",
+                  "--harness-sha256", HARNESS],
+                 key_loader=lambda **kw: keys.append(kw) or FAKE_3,
+                 gate_factory=lambda account: ps.step2_gate(
+                     account=account, ledger_path=ledger, access_doc_path=tmp_path / "A.md"),
+                 client_factory=lambda key: clients.append(key) or Untouchable(),
+                 vendor_root=tmp_path / "v", reports_base=tmp_path / "r", log=lambda m: None)
+
+    # Assert
+    err = capsys.readouterr().err
+    assert rc == ps.RC_REFUSED and keys == [] and clients == []
+    assert "acct-3" in err and "V44" in err and "pilot-only" in err
+    assert read_entries(ledger) == [] and not (tmp_path / "A.md").exists()
+    assert preflight_passes == [HARNESS]  # refused by the account guard, not the preflight
+
+
+@pytest.mark.parametrize("account", [None, ACCOUNT_3_ID])
+def test_pull_step2_run_buy_refuses_a_gate_on_acct3_before_touching_the_client(
+        tmp_path: Path, preflight_passes: list[str], account: str | None) -> None:
+    # Arrange: a gate on acct-3, whether or not the caller names the account
+    gate = ps.step2_gate(account=ACCOUNT_3_ID, ledger_path=tmp_path / "ledger.jsonl",
+                         access_doc_path=tmp_path / "A.md")
+    client = Untouchable()
+    plan = ps.plan_step2(["ZN"], training_window=True)
+
+    # Act
+    with pytest.raises(ps.Step2Error, match="pilot-only") as info:
+        ps.run_buy(client, gate, plan, expected_harness_sha256=HARNESS,
+                   vendor_root=tmp_path / "v", reports_base=tmp_path / "r", log=lambda m: None,
+                   account=account, training_window=True)
+
+    # Assert
+    assert "acct-3" in str(info.value) and client.touched == []
+    assert read_entries(tmp_path / "ledger.jsonl") == []
+
+
+def _gate_step2(tmp_path: Path, account: str) -> Any:
+    external = tmp_path / "external_ledger.jsonl"
+    external.touch()
+    extra = {"external_ledger_paths": (external,)} if account == ACCOUNT_1_ID else {}
+    return ps.step2_gate(account=account, ledger_path=tmp_path / "ledger.jsonl",
+                         access_doc_path=tmp_path / "A.md", **extra)
+
+
+def test_require_buy_caps_still_passes_acct1_and_acct2_gates(tmp_path: Path) -> None:
+    # Arrange
+    gates = {a: _gate_step2(tmp_path, a) for a in (ACCOUNT_1_ID, ACCOUNT_2_ID)}
+
+    # Act / Assert: no exception, as before E.26
+    for account, gate in gates.items():
+        ps.require_buy_caps(gate, account)
+    ps.require_buy_caps(gates[ACCOUNT_2_ID])  # no account named: ACTIVE_ACCOUNT
+
+
+@pytest.mark.parametrize("plan", ["es2011", "ext2010"])
+def test_pull_hist_buy_on_acct3_refuses_before_any_key_load_or_vendor_call(
+        tmp_path: Path, preflight_passes: list[str], capsys: pytest.CaptureFixture[str],
+        plan: str) -> None:
+    # Arrange
+    keys: list[dict[str, Any]] = []
+    clients: list[str] = []
+    ledger = tmp_path / "ledger.jsonl"
+
+    # Act
+    rc = ph.main(["--buy", "--plan", plan, "--account", "acct-3", "--harness-sha256", HARNESS],
+                 key_loader=lambda **kw: keys.append(kw) or FAKE_3,
+                 buy_gate_factory=lambda plan, account: ph.buy_gate(
+                     plan, account, ledger_path=ledger, access_doc_path=tmp_path / "A.md"),
+                 quote_gate_factory=lambda **kw: pytest.fail("quote gate"),
+                 client_factory=lambda key: clients.append(key) or Untouchable(),
+                 vendor_root=tmp_path / "v", reports_base=tmp_path / "r",
+                 registry_path=tmp_path / "registry.jsonl", log=lambda m: None)
+
+    # Assert
+    err = capsys.readouterr().err
+    assert rc == ph.RC_REFUSED and keys == [] and clients == []
+    assert "buys on acct-2 only" in err and "acct-3" in err
+    assert read_entries(ledger) == [] and not (tmp_path / "registry.jsonl").exists()
+
+
+def test_the_pull_step2_plan_hand_off_on_acct3_is_refused_by_pull_hist(
+        preflight_passes: list[str], capsys: pytest.CaptureFixture[str]) -> None:
+    # Arrange: pull_step2 --plan runs pull_hist's CLI with its default gates (read-only here)
+    keys: list[dict[str, Any]] = []
+    clients: list[str] = []
+
+    # Act
+    rc = ps.main(["--buy", "--plan", "ext2010", "--account", "acct-3",
+                  "--harness-sha256", HARNESS],
+                 key_loader=lambda **kw: keys.append(kw) or FAKE_3,
+                 client_factory=lambda key: clients.append(key) or Untouchable(),
+                 log=lambda m: None)
+
+    # Assert
+    assert rc == ph.RC_REFUSED and keys == [] and clients == []
+    assert "buys on acct-2 only" in capsys.readouterr().err
+
+
+def test_pull_hist_still_buys_on_acct2_only(tmp_path: Path) -> None:
+    # Arrange
+    gate = ph.buy_gate(ph.PLAN_ES2011, ACCOUNT_3_ID, ledger_path=tmp_path / "ledger.jsonl",
+                       access_doc_path=tmp_path / "A.md")
+
+    # Act / Assert
+    with pytest.raises(UnknownAccountError, match="buys on acct-2 only"):
+        ph.require_buy_ready(gate, ph.ES2011, ACCOUNT_3_ID,
+                             registry_path=tmp_path / "registry.jsonl")

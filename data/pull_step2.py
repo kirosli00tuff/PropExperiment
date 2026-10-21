@@ -71,6 +71,7 @@ Stage E.12 (harness v8; V19, V23 items 4 and 19):
 - ``--account acct-1|acct-2``: the gate is built on that account (data.config.ACCOUNTS; acct-1's
   gate reads its external ledger) and the key loader reads that account's key. Required with
   --buy; --quote-only defaults to ACTIVE_ACCOUNT. The banner names the account, never the key.
+  Stage E.26 (V45): acct-3 is pilot-only (PILOT_ONLY_ACCOUNTS) and refused for --buy.
 - ``--roots R1,R2,...`` (--buy and --quote-only): an explicit list of distinct roots, each one of
   the 28 v2 price paths ``ML_V2_PRICE_PATHS``. ``--set ml-v2`` quotes all 28.
 - ``--training-window``: each root's plan is its unsealed chunks from its first priced month
@@ -116,6 +117,7 @@ from data.config import (
     ACCOUNTS,
     ACTIVE_ACCOUNT,
     DATASET,
+    PILOT_ONLY_ACCOUNTS,
     REPO_ROOT,
     STEP2_PURCHASE_SESSION_ID,
     STEP2_REQUEST_CAP_USD,
@@ -611,8 +613,15 @@ def require_account(gate: LockedQuoteGate, account: str) -> None:
 
 def require_buy_caps(gate: LockedQuoteGate, account: str | None = None) -> None:
     """The gate is on ``account`` (any registered account passed explicitly; ACTIVE_ACCOUNT when
-    None) and both session caps are positive."""
-    require_account(gate, ACTIVE_ACCOUNT if account is None else account)
+    None) and both session caps are positive. Stage E.26 (V44, V45): a pilot-only account
+    (data.config.PILOT_ONLY_ACCOUNTS, acct-3), named or under the gate, is refused first."""
+    account_id = ACTIVE_ACCOUNT if account is None else account
+    pilot = sorted({account_id, gate.account_id} & PILOT_ONLY_ACCOUNTS)
+    if pilot:
+        raise Step2Error(
+            f"step 2 buy refused: account {', '.join(pilot)} is pilot-only (V44: spent only by "
+            "Stage E.28's order-book pilot purchase); no step 2 buy may run on it")
+    require_account(gate, account_id)
     if not (gate.session_cap_usd > 0.0 and gate.request_cap_usd > 0.0):
         raise Step2CapError(
             f"step 2 buy refused: session cap ${gate.session_cap_usd:.2f}, request cap "
@@ -716,8 +725,10 @@ def account_position(gate: LockedQuoteGate) -> dict[str, Any]:
 
 
 def accounts_summary(gates: dict[str, LockedQuoteGate]) -> dict[str, Any]:
-    """Both accounts' positions (spent, cap, headroom), each from its own gate, and the
-    combined headroom (the E.12 session caps may never exceed it)."""
+    """Every registered account's position (spent, cap, headroom), each from its own gate, and
+    their combined headroom. Pilot-only accounts (PILOT_ONLY_ACCOUNTS; Stage E.26, V45) are
+    listed but may not be spent by step 2, so a step 2 session cap is bounded by the non-pilot
+    positions, not by combined_headroom_usd."""
     positions = {a: account_position(g) for a, g in gates.items()}
     combined = round(sum(p["cap_headroom_usd"] for p in positions.values()), 6)
     return {"positions": positions, "combined_headroom_usd": combined}
@@ -1102,7 +1113,8 @@ def _check_buy_args(args: argparse.Namespace) -> None:
     if args.quotes_out is not None:
         raise Step2Error("--quotes-out is for --quote-only")
     if args.account is None:
-        raise Step2Error(f"--buy requires --account ({', '.join(ACCOUNTS)}): the gate and the "
+        buyable = ", ".join(a for a in ACCOUNTS if a not in PILOT_ONLY_ACCOUNTS)
+        raise Step2Error(f"--buy requires --account ({buyable}): the gate and the "
                          "key are that account's")
     require_training_window(args.training_window)
 

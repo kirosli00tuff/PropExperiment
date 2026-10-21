@@ -3,8 +3,9 @@
 Each Databento account has its own key, read from the environment or from this repo's
 ``.env``: ``DATABENTO_API_KEY1`` for acct-1, ``DATABENTO_API_KEY2`` for acct-2, chosen by
 ``ACTIVE_ACCOUNT`` unless the caller names the account (Stage E.11, V19; the old single
-``DATABENTO_API_KEY`` is no longer read). This mirrors MLCryptoEngine's pattern of a
-git-ignored ``.env`` read through one config function. A key is never
+``DATABENTO_API_KEY`` is no longer read), and ``DATABENTO_API_KEY3`` for acct-3, the temporary
+E.28 pilot account (Stage E.26, V44), read only when the caller names acct-3. This mirrors
+MLCryptoEngine's pattern of a git-ignored ``.env`` read through one config function. A key is never
 hardcoded, logged, or written anywhere. This module holds NO TopstepX
 credential of any kind and must never grow one in Stage A.1.
 """
@@ -74,6 +75,7 @@ class DatabentoAccount:
 
 ACCOUNT_1_ID = "acct-1"
 ACCOUNT_2_ID = "acct-2"
+ACCOUNT_3_ID = "acct-3"
 LEGACY_ACCOUNT_ID = ACCOUNT_1_ID  # ledger lines with no "account" field
 # acct-2's cumulative cap (V19, V23 item 19; raised in Stage E.12, harness v8). Was 125.00, the
 # credit acct-2 opened with (U5). Arithmetic from the ledger: acct-2's cumulative spend
@@ -91,6 +93,13 @@ LEGACY_ACCOUNT_ID = ACCOUNT_1_ID  # ledger lines with no "account" field
 # the sums of the quote run's own ledger lines, 23:36-00:02 PDT; reports/stage_e17_a3_selection.json)
 # = 355.376373, rounded UP to the cent; under A1's bound 231.599730 + 124.00 = 355.599730.
 ACCOUNT_2_CAP_USD = 355.38
+# acct-3's cumulative cap (Stage E.26, 2026-10-21; V44, the user's decision): acct-3 is a new,
+# temporary account for the E.28 order-book pilot only, all of its funds on one contract and one
+# schema, the span never 2024-03-01 or later; the user wipes it after the download is verified.
+# 125.00 is the credit a new Databento account opens with (U5: acct-2 opened with $125.00), an
+# upper bound only: the balance check at purchase time governs. No external ledger: this repo's
+# ledger is its only spend record.
+ACCOUNT_3_CAP_USD = 125.00
 
 ACCOUNTS: MappingProxyType[str, DatabentoAccount] = MappingProxyType({
     ACCOUNT_1_ID: DatabentoAccount(
@@ -101,7 +110,15 @@ ACCOUNTS: MappingProxyType[str, DatabentoAccount] = MappingProxyType({
         ACCOUNT_2_ID, ACCOUNT_2_CAP_USD, (),
         "the Stage E.1 account, used by this repo only (no external ledger)",
     ),
+    ACCOUNT_3_ID: DatabentoAccount(
+        ACCOUNT_3_ID, ACCOUNT_3_CAP_USD, (),
+        "the temporary E.28 pilot account (V44), wiped by the user after the download is verified",
+    ),
 })
+# Pilot-only accounts (Stage E.26, 2026-10-21; V44, V45): spent only by Stage E.28's order-book
+# pilot purchase; no existing puller may buy on them (data.pull_step2.require_buy_caps refuses
+# them; data.pull_hist buys on E14_BUY_ACCOUNT only).
+PILOT_ONLY_ACCOUNTS: frozenset[str] = frozenset({ACCOUNT_3_ID})
 ACTIVE_ACCOUNT = ACCOUNT_2_ID
 
 # Stage E.1 spend policy (stage prompt, 2026-09-24): Stage E step 1 purchase on ACTIVE_ACCOUNT.
@@ -222,9 +239,11 @@ E17_EXT2010H_SESSION_CAP_USD = 65.82
 # DATABENTO_API_KEY2 only. require_databento_key reads the variable of the account it is asked
 # for (ACTIVE_ACCOUNT by default). The old single DATABENTO_API_KEY is not read, not even as a
 # fallback. Every account in ACCOUNTS has exactly one entry here.
+# Stage E.26 (2026-10-21, V44): DATABENTO_API_KEY3 is acct-3's, the temporary E.28 pilot account.
 DATABENTO_KEY_ENV_BY_ACCOUNT: MappingProxyType[str, str] = MappingProxyType({
     ACCOUNT_1_ID: "DATABENTO_API_KEY1",
     ACCOUNT_2_ID: "DATABENTO_API_KEY2",
+    ACCOUNT_3_ID: "DATABENTO_API_KEY3",
 })
 DATASET = "GLBX.MDP3"
 

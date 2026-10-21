@@ -261,8 +261,13 @@ class TestSealOnArrival:
                   for c in HOLDOUT2_RAW_CHUNKS}
         kept = {client.writes[c]["sha256"]: client.writes[c]["bytes"]
                 for c in CONFIRMATION_RAW_CHUNKS}
+        # Stage E.26 (V45): the data stores are symlinks to LARGE STORAGE and os.walk does not
+        # follow them, so each is scanned from its link; a dangling link fails closed
+        data_links = [p for p in (REPO_ROOT / "data").rglob("*") if p.is_symlink()]
+        dangling = [str(p) for p in data_links if not p.exists()]
+        assert not dangling, dangling
         roots = [world.root, Path("/tmp"), Path(tempfile.gettempdir()), REPO_ROOT,
-                 *CLIENT_CACHE_CANDIDATES]
+                 *CLIENT_CACHE_CANDIDATES, *(p for p in data_links if p.is_dir())]
         found = _files_holding(roots, {**sealed, **kept})
         assert not {sha for sha in found if sha in sealed}, "sealed plaintext survived"
         # Positive control: the same scan finds each of the 58 unsealed chunks, by content only.

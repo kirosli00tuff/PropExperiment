@@ -59,7 +59,8 @@ def test_each_account_maps_to_its_numbered_variable() -> None:
     mapping = dict(DATABENTO_KEY_ENV_BY_ACCOUNT)
 
     # Assert
-    assert mapping == {ACCOUNT_1_ID: KEY1, ACCOUNT_2_ID: KEY2}
+    # Stage E.26 (V45): acct-3, the temporary E.28 pilot account, reads DATABENTO_API_KEY3.
+    assert mapping == {ACCOUNT_1_ID: KEY1, ACCOUNT_2_ID: KEY2, "acct-3": "DATABENTO_API_KEY3"}
 
 
 def test_every_registered_account_has_a_key_variable() -> None:
@@ -253,7 +254,8 @@ def test_empty_or_whitespace_only_environment_value_raises_without_a_file_fallba
     assert KEY2 in message
 
 
-@pytest.mark.parametrize("account", ["acct-3", "", "ACCT-1", "acct_1"])
+# Stage E.26 (V45): acct-3 is registered now (the E.28 pilot account); acct-9 is not.
+@pytest.mark.parametrize("account", ["acct-9", "", "ACCT-1", "acct_1"])
 def test_unknown_account_raises_naming_the_account(tmp_path: Path,
                                                    monkeypatch: pytest.MonkeyPatch,
                                                    account: str) -> None:

@@ -807,3 +807,36 @@
   cap of USD 100 for order-book data (the user reports about USD 120 on
   the account); the later order-book search should use machine learning,
   likely on a more powerful machine.
+- 2026-10-21 (user, planning chat): V44. The user's last Max day. After
+  E.24 (commit 8da6bec: the loader fix in mdio/, both broker adapters on
+  mocks, IBKR's daily close is the last trade, not reliably the
+  settlement; E22-F2 not frozen) and E.25 (commit 715ae8e: five
+  candidates clear the hurdle on published numbers, none confirmable on
+  owned data with power; limit orders rescue no earlier rule; the
+  re-dig supports nearly every closure). Accepted. The direction is now
+  limit-order and order-book strategies at automation-friendly prop
+  firms. Selection method: a blind two-layer ranking of firm-contract
+  pairs (Layer 1, contract feasibility: market structure, competition,
+  book mechanics, published microstructure evidence, with a gate; Layer
+  2, the economics per firm and contract: fees in ticks, limits in
+  ticks and daily ranges, position limits, product restrictions,
+  automation and order-rate rules, each platform's simulated fill rule,
+  latency, firm reliability and eligibility for British Columbia
+  residents), criteria fixed before any lookup. Spend rule (user):
+  pilot data for ONE contract (the top pair's) and ONE schema only; the
+  measurement spec is frozen before the download with a conservative
+  fill rule (back of the visible queue, never a fill on a touch alone);
+  the purchase comes last in the day's order. Account (user): a new,
+  temporary Databento account, ACCOUNT_3 with key variable
+  DATABENTO_API_KEY3; the user chose, as a one-time exception for this
+  throwaway account, to give the key to the planner rather than enter it
+  himself, and will wipe the account once the download is verified; all
+  of its funds go to the one contract and schema, the span extended
+  backwards from 2023-11..2024-02, never into 2024-03 or later; acct-1
+  and acct-2 are not spent. Data move (user): market data moves out of
+  the repo folder to /mnt/large-storage/market_data/PropExperiment/ with
+  symlinks at the old paths (Stage E.26). E22-F2's code fixes are
+  skipped. Stage E.28 also writes a methods brief (the user's priority):
+  a gap inventory of the program's methods and deep dives on the
+  mathematics and machine learning it never used, with a draft design
+  for the ML search under V43. N stays 538.

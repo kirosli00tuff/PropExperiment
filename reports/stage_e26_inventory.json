@@ -1,0 +1,152 @@
+[
+  {
+    "path": "data/vendor/databento",
+    "bytes": 8608399283,
+    "files": 4461,
+    "git": "ignored",
+    "granularity": "sub-directory symlink at data/vendor/databento itself (= data.config.VENDOR_ROOT); not at data/vendor (tracked index_history) and not below databento (realpath guards, _d1e_quotes rglob)",
+    "references": [
+      "docs/HOLDOUT_MANIFEST.json (raw_files[].original_path abs + original_relpath: 4 sealed MES raws under GLBX.MDP3/ohlcv-1m/MES_v_0)",
+      "docs/HOLDOUT2_MANIFEST.json (13 sealed MES raws, abs + rel; .partial names)",
+      "docs/holdout2/{MCL,MGC,MHG,NG}_HOLDOUT2_MANIFEST.json (13 sealed raws each, abs + rel)",
+      "reports/step2/purchase_<R>.json, bars_<R>.json (rel: files[].path, rolls_file, condition_file)",
+      "reports/hist/purchase_<R>_ext2010{,h}.json, bars_*.json (rel, incl. metadata_files.condition/symbology)",
+      "reports/stage_e1_purchase.json (904 rel records with sha256)",
+      "reports/stage_e2a_bars.json (675 inputs, rolls, condition; rel)",
+      "reports/stage_d1f_confirmation_build{,_step4b_failed}.json (abs rolls/condition/symbology)",
+      "reports/tick_crosscheck_summary.json (abs)",
+      "data/config.py:21 VENDOR_ROOT, :229 DATASET",
+      "data/holdout.py:127-136 (vendor_root), :259-264 _relpath_in_repo, :267-286 _record_paths/is_sealed_raw, :402-410, :744-747",
+      "data/step2_seal.py:96-99,145,183-189",
+      "data/build_bars.py:89-90; data/step2_store.py:94-95; data/build_mes_bars.py:70; data/pull_hist.py:136-137,568-570; data/pull_step2.py:823-825",
+      "data/adapter.py:110-127; data/pull_universe.py:576-604; data/pull_mes.py:246",
+      "pattern_search/guard.py:89 and h6_rod/guard.py:71-72 (realpath prefix of VENDOR_ROOT)",
+      "strategy/members/k7/_calendar.py:38-40 (condition file)",
+      "strategy/research/_d1e_quotes.py:172-174 (VENDOR_ROOT.rglob)",
+      "tests/test_k7_members_events.py:69-70; tests/test_d1f_holdout2.py",
+      "reports/stage_e26_briefs/checks.sh:13-22 (holdout status: existence of 69 sealed-raw originals and .partial names)"
+    ]
+  },
+  {
+    "path": "data/vendor/release_pages",
+    "bytes": 153575775,
+    "files": 4263,
+    "git": "ignored",
+    "granularity": "lead decides: default keep in place (saved web pages, not exchange data, 1.5% of bytes); if moved, one sub-directory symlink at data/vendor/release_pages, copied with mtimes kept",
+    "references": [
+      "reports/stage_e2b_release_sources_{macro,commodity,named}.json (raw/txt/saved_path rel)",
+      "reports/stage_e2b_release_calendar.json via screening/build_release_calendar_checks.py:106-128 (_page_path lexical guard)",
+      "in-dir manifests: commodity_manifest.jsonl, named_manifest.jsonl, macro_manifest.jsonl, e4/e5/e4b/e4c manifest.jsonl (rel or name)",
+      "reports/stage_e3..e9 release checks, reports/stage_e4c_release_check.json (provenance)",
+      "28 untracked scripts in {commodity,macro,named}_scripts/ (all hard-code the /home repo path; none calls resolve/realpath; named_scripts/build.py:231 uses st_mtime)",
+      "tests/test_build_release_calendar.py:28-29,434 (skipif is_dir)",
+      "strategy/research/_d1f_preflight.py:124-129,164-165; strategy/research/_d1f_freeze.py:70-74; tests/test_cross_platform_static.py:152-154,405 (rglob over data/)",
+      "screening/harness_freeze.py:37-38 DATA_SUBDIRS (data/vendor prefix, skipped)"
+    ]
+  },
+  {
+    "path": "data/vendor/index_history",
+    "bytes": 1101859,
+    "files": 29,
+    "git": "mixed (11 tracked, 18 ignored)",
+    "granularity": "stays a real directory; nothing moves (the 18 ignored stoxx files are unreferenced by code and could move per file, but 1.1 MB is not worth it)",
+    "references": [
+      "strategy/members/k1/_vxn.py:21 VXN_SOURCE_SHA256 (vxn/VXN_History.csv, tracked)",
+      "strategy/members/k3/_mehedge_signal.py:28-34 (nikkei csv + 3 nikkei_wayback csv, tracked)",
+      "tests/test_k1_members_tables.py:35,52-53,89 (skipif is_file); tests/test_e4_k3_members_m_signal.py:124-126",
+      "reports/stage_e4c_release_check.json (index.N225.saved_path/sha256)",
+      "reports/stage_e7_briefs/k1_files_pre_audit.sha256; reports/stage_e7_briefs/audit_k1/auditor_sha256_at_start.txt",
+      "in-dir tracked manifests: manifest.jsonl, vxn/manifest.jsonl"
+    ]
+  },
+  {
+    "path": "data/processed",
+    "bytes": 303035283,
+    "files": 49,
+    "git": "ignored",
+    "granularity": "whole-directory symlink at data/processed (= PROCESSED_ROOT); needs a lead decision on tests/test_ml_route_store.py:53-56, which fails at this granularity",
+    "references": [
+      "docs/HOLDOUT_MANIFEST.json (research.path abs + research.relpath: MES research parquet)",
+      "docs/HOLDOUT2_MANIFEST.json (guards the MES confirmation parquet)",
+      "reports/stage_e2a_bars.json (45 research parquets, rel); reports/stage_e2a_vehicle_sizes.json (sha only) via screening.stage_e_frozen",
+      "reports/stage_e12_phase1_bars.json (28 research_path, abs)",
+      "reports/stage_e22_mes_closure_rulings.json (store.path rel); reports/stage_e_start_rule_K{3,4,5,6,8}.json (inputs[].path rel)",
+      "data/config.py:22 PROCESSED_ROOT; data/holdout.py:127-136; data/research_bars.py:31,56",
+      "ml_route/store.py:59-65 (resolved containment vs PROCESSED_ROOT)",
+      "base_rules/store.py:77 (resolved is_relative_to PROCESSED_ROOT)",
+      "pattern_search/guard.py:88 and h6_rod/guard.py:71 (realpath prefix of PROCESSED_ROOT)",
+      "trigger_hold/events_validate.py:40 (cwd-relative); screening/runner.py:164-169 (cache key)",
+      "tests/test_holdout.py:301-313; tests/test_ml_route_store.py:53-56; tests/test_ml_route_e2e.py:87-93; tests/test_stage_e_mes_regression.py; tests/test_leakage_canaries.py:160; tests/test_null_generator.py:427; tests/test_e2a_bars.py:501-518; tests/test_d1f_release_table.py; tests/test_e2a_exposure_gate.py",
+      "reports/stage_e26_briefs/checks.sh:13-22 (holdout status: MES research + confirmation sha256 and trade_date)"
+    ]
+  },
+  {
+    "path": "data/processed_step2",
+    "bytes": 592497579,
+    "files": 31,
+    "git": "ignored",
+    "granularity": "whole-directory symlink at data/processed_step2 (= STEP2_ROOT); per-product and per-file links are refused by ml_route/store.py and compute/datarules.py",
+    "references": [
+      "docs/holdout2/{MCL,MGC,MHG,NG}_HOLDOUT2_MANIFEST.json (store rows checked)",
+      "reports/stage_e17_run_manifest.json (27 step2 entries, rel, CWD-resolved)",
+      "reports/stage_e20_search_freeze.json (17 stores); reports/stage_e20_h6_freeze.json (NQ store)",
+      "reports/step2/bars_<R>.json parquet.path (rel); reports/stage_e12_phase1_bars.json store_path (abs)",
+      "reports/stage_e20_H6_RUN_ONCE.json, stage_e20_H6_result.json; reports/stage_e23_events/*.json (rel)",
+      "data/config.py:129 STEP2_ROOT; data/step2_store.py; data/step2_seal.py:203-212",
+      "ml_route/store.py:59-82; base_rules/store.py:68-87; compute/datarules.py:299-301 (via compute/remote.py:174-175, compute/agent.py:137)",
+      "pattern_search/guard.py:80-107, pattern_search/preflight.py:43-45,104-110; h6_rod/constants.py:26, h6_rod/guard.py:64-90",
+      "trigger_hold/events_validate.py:41; reports/stage_e22_briefs/{confirm_run.sh:22-27,power_runs.sh:11}",
+      "reports/stage_e26_briefs/checks.sh:13-22, 86-102, 103-104, 105-106"
+    ]
+  },
+  {
+    "path": "data/processed_hist",
+    "bytes": 464057539,
+    "files": 17,
+    "git": "ignored",
+    "granularity": "whole-directory symlink at data/processed_hist (= HIST_ROOT); not per era (ext2010/ext2010h), which would put the stores outside the realpath prefix of HIST_ROOT",
+    "references": [
+      "reports/stage_e17_run_manifest.json (17 ext2010 entries, rel, CWD-resolved)",
+      "reports/stage_e18_freeze.json external[] (6 ext2010, abs, not compared) + reports/stage_e17_c1_store_hashes.json (sha only)",
+      "reports/hist/bars_<R>_ext2010{,h}.json; reports/stage_e14_c1_result.json, stage_e18_c1b_result.json, stage_e18_verify/{compare,recompute}.json; *_RUN_ONCE.json; reports/stage_e17_c1_verify/hashes.json",
+      "data/config.py:205 HIST_ROOT; data/hist_store.py; base_rules/hist_plan.py:80; c1_replication/evaluate.py:113-117",
+      "pattern_search/guard.py:86 and h6_rod/guard.py:69 (realpath prefix of HIST_ROOT)",
+      "reports/stage_e26_briefs/checks.sh:79-81, 86-102"
+    ]
+  },
+  {
+    "path": "data/sealed",
+    "bytes": 28306346,
+    "files": 70,
+    "git": "ignored",
+    "granularity": "whole-directory symlink at data/sealed (= step2_seal.SEALED_BASE); per-store links would put the four product holdout-2 stores outside the realpath prefix of SEALED_BASE in pattern_search/h6_rod guards",
+    "references": [
+      "docs/HOLDOUT_MANIFEST.json, docs/HOLDOUT2_MANIFEST.json, docs/holdout2/*_HOLDOUT2_MANIFEST.json (sealed_relpath store-rel, sha256)",
+      "data/holdout.py:127-136 DEFAULT_PATHS/HOLDOUT2_PATHS; data/step2_seal.py:35 SEALED_BASE; data/hist_store.py:92,150-152; data/step2_store.py:96,171-173",
+      "base_rules/store.py:75; compute/datarules.py:150-158",
+      "pattern_search/guard.py:68-90 holdout_paths/forbidden_prefixes; h6_rod/guard.py:52-73",
+      "tests/test_holdout.py; tests/test_d1f_holdout2.py",
+      "reports/stage_e26_briefs/checks.sh:13-22 (all 70 blobs hashed by data.holdout status)"
+    ]
+  },
+  {
+    "path": "reports/stage_e22_microbook/cache",
+    "bytes": 725494,
+    "files": 28,
+    "git": "untracked (not ignored)",
+    "granularity": "stays in place (derived daily-mark cache outside data/, rebuilt from bars when absent; not in the move scope)",
+    "references": [
+      "microbook/data.py:73-77,103 (json 'stores' records hold sha256 only, no paths)"
+    ]
+  },
+  {
+    "path": "reports/stage_e14_briefs/gex/DIX.csv",
+    "bytes": 222563,
+    "files": 1,
+    "git": "ignored (.gitignore:25)",
+    "granularity": "stays in place (third-party daily index file; frozen at this path by the E.20 H6 freeze)",
+    "references": [
+      "reports/stage_e20_h6_freeze.json (rel, CWD-resolved); reports/stage_e20_briefs/h6_freeze_manifest.py verify (checks.sh:103-104)"
+    ]
+  }
+]

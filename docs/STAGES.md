@@ -210,6 +210,13 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     on raw bars plus corporate actions; E22-F2 (E22-F1's rule on 11 US ETFs, P&L in excess of BIL) drafted and revised
     for Fable's BLOCK, NOT frozen or registered (code fixes unverified, rechecks cut); warm-up declarations and the
     user checklist written. No broker contacted, no market data read; N 538.
+  - Stage E.26 — Housekeeping (V44, V45). Run 2026-10-21 (see reports/E.26_RETURN.md), one usage-limit pause:
+    data/sealed, processed_hist, processed_step2 and vendor/databento (4,579 files, 9.69 GB) moved to
+    /mnt/large-storage/market_data/PropExperiment/ with symlinks at the old paths, sha256-verified from disk, the
+    holdout, harness and freeze checks identical before and after (data/processed, release_pages and
+    index_history stay); ACCOUNT_3 (DATABENTO_API_KEY3, pilot-only) as harness v14 2e908c81 (Fable APPROVE after
+    fixes); V45 (the move, ACCOUNT_3, V34 corrected, V38 amended); the Topstep rules record refreshed for the Tier 1
+    news window. Nothing bought or registered; N 538.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

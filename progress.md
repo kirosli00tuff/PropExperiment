@@ -4490,3 +4490,115 @@ table above and section 4. The lead's last messages after the count (assembly an
   468 passed, 2 skipped (full end suite not re-run, at the user's instruction).
 - Session cost (cost.py, lead plus Agent subagents): 159,862,914 tokens. Opus 148,737,894; Fable 11,125,020; lead
   30.8%. Workflow agents are reported separately (return section 8).
+
+## 2026-10-21 — Stage E.26: market data moved to LARGE STORAGE, ACCOUNT_3 (harness v14), V45, Topstep rules refreshed; N = 538
+
+Prompt docs/prompts/STAGE_E.26.md (V44), run beside Stage E.28. Return: reports/E.26_RETURN.md; working files
+reports/stage_e26_briefs/; STATE reports/stage_e26_STATE.md. Holdout unlocks_logged 0 at start and end;
+REGISTRATION.md 0 bytes; nothing bought, quoted or registered; no outcome data read.
+
+**What ran.**
+- T1.1 inventory: three read-only sweeps (disk, code references, manifests) and a merge with a completeness critic.
+  Fourteen hazards were found. The decisive one: realpath guards fail open if a link sits below a guarded root, so
+  each link sits exactly at a root.
+- T1.2: a synthetic seal check showed /mnt/large-storage behaves like the repo disk.
+- T1.3: the move plan and tool. MovePlanReviewer-FableXHigh approved after 7 SHOULD FIX, all fixed and retested.
+- T1.4: before-checks, then a sha256 manifest of 4,579 files.
+- T1.5: the move. At 05:15:19-05:15:45 data/sealed, processed_hist, processed_step2 and vendor/databento (9.69 GB)
+  went to /mnt/large-storage/market_data/PropExperiment/. Each was verified at the destination from disk, then
+  swapped for an absolute symlink.
+- T1.6: after-checks identical to the before-checks. The originals were deleted after that, and the STATE file says
+  DATA MOVE: DONE.
+- What stayed in the repo:
+  - data/processed (harness guard H-01);
+  - release_pages (preflight scripts);
+  - index_history (tracked files).
+- Task 2: ConfigCoder-OpusXHigh coded acct-3 in an isolated worktree.
+  - Adding the account changes harness members. The lead ruled for a minimal harness v14 (open choice 1), against
+    the scope line.
+  - A pilot-only guard was added because pull_step2 could otherwise spend acct-3.
+  - ConfigReviewer-FableXHigh approved after fixes (A1 docstring, B1 the key helper's temp file), then FINAL:
+    APPROVE.
+  - Committed 95df9c6 with V45 so E.28 can buy.
+- Task 4 used today's Topstep pages: PPI was added to the Tier 1 window on 2026-10-20.
+- A usage-limit pause ran 03:07-05:10; ConfigCoder was resumed with SendMessage.
+
+**Results.**
+- **Checks before and after the move were identical:**
+  - holdout status JSON, byte for byte;
+  - harness v13 and every freeze;
+  - E.20 store hashes (34);
+  - base_rules' row-free preflight (44 stores);
+  - a 285-test data subset;
+  - git status.
+- **Harness v14** 2e908c81e01d0aad835b30ab7b95f628182666dd8d76301cdd4ea465bb41edd1 differs from v13 only in
+  data/config.py, data/pull_step2.py and two frozen tests.
+- **ACCOUNT_3:** acct-3 has a $125 cap, refused by every existing buy path, selectable by SpendGate and
+  require_databento_key with account="acct-3". DATABENTO_API_KEY3 is not yet in .env.
+- **V45:** the move, ACCOUNT_3 and the pilot spend bound (V44's all funds), V34 corrected, V38 amended, the
+  Topstep record.
+- **Topstep rules record:** R040 holds with a new source; 20 rules added for the Tier 1 window.
+- **End:**
+  - checks: the same as the start apart from the commit and v14;
+  - suite: 1 failed (known, pins v12), 8,090 passed, 5 skipped (2 new from E.24's broker imports), 3 xfailed.
+
+**For the user** (return section 7):
+- Keep v14.
+- E.23's trigger_hold pin stays at v13.
+- Add `mountpoint -q /mnt/large-storage` to the session-start invariants.
+- data/processed stays.
+- Confirm the pilot spend bound.
+- After E.28's "ACCOUNT_3 SAFE TO WIPE": wipe the account, then delete DATABENTO_API_KEY3 from .env.
+- The planner pushes.
+
+### Session cost
+
+Wall clock 02:06-06:07 PDT = 4 h 01 min, of which the usage-limit pause 03:07-05:10 (2 h 03 min) is not work: work
+time about 1 h 58 min (02:06-03:07 and 05:10-06:07). Tokens from this session's transcripts (main .jsonl plus
+subagents/**, including the four workflow agents), per message at its final usage (reports/stage_e26_briefs/cost.py,
+a copy of reports/stage_e10_briefs/cost.py that also globs the workflow agents; output cost_out.txt), through
+06:06 PDT (the final commit's few messages after that are not counted). Never estimated.
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---:|---:|---:|---:|---:|
+| claude-opus-5-5 | 1,384 | 619,133 | 151,390,494 | 3,015,397 | 155,026,408 |
+| claude-fable-5-1 | 1,932 | 158,903 | 10,571,879 | 483,741 | 11,216,455 |
+| all | 3,316 | 778,036 | 161,962,373 | 3,499,138 | 166,242,863 |
+
+Per worker spawn: DataInvDisk-OpusHigh (workflow, opus high) 4,038,814; DataInvCode-OpusHigh (workflow, opus high)
+19,011,261; DataInvManifests-OpusHigh (workflow, opus high) 15,498,880; DataInvMerge-OpusHigh (workflow, opus
+high) 4,460,364; ConfigCoder-OpusXHigh (worker-xhigh, opus) 28,122,365; TopstepRulesReader-OpusMed (worker-medium,
+opus) 1,086,590; MovePlanReviewer-FableXHigh (worker-xhigh, fable) 7,782,928; ConfigReviewer-FableXHigh
+(worker-xhigh, fable) 3,433,527. Workers 83,434,729 (the sum of the eight rows); lead 82,808,134.
+
+Delegation share: lead 49.8%, workers 50.2%. By tier: Opus 93.3% (lead 49.8%, Opus workers 43.4%), Fable 6.7%.
+97.4% of all tokens are cache reads.
+
+### Final ETA table (actuals; the initial estimate in the last column)
+
+| # | Task | Owner | Model | Effort | Start | End | Time | Tokens | Status, deviations | Initial ETA |
+|---|---|---|---|---|---|---|---|---:|---|---|
+| 0 | Startup checks | lead | opus | xhigh | 02:06 | 02:11 | 5 min | lead | done | 15 min |
+| 1a | T1.1 sweep A, disk | DataInvDisk-OpusHigh | opus | high | 02:14 | 02:20 | 6 min | 4,038,814 | done | 25 min |
+| 1b | T1.1 sweep B, code | DataInvCode-OpusHigh | opus | high | 02:14 | 02:27 | 13 min | 19,011,261 | done | 25 min |
+| 1c | T1.1 sweep C, manifests | DataInvManifests-OpusHigh | opus | high | 02:14 | 02:25 | 11 min | 15,498,880 | done | 25 min |
+| 1d | T1.1 merge, critic | DataInvMerge-OpusHigh | opus | high | 02:27 | 02:36 | 9 min | 4,460,364 | done | 15 min |
+| 2 | Task 2 code + 2 follow-ups | ConfigCoder-OpusXHigh | opus | xhigh | 02:14 | 05:12 | about 55 min of work | 28,122,365 | done; cut at 03:07 by the limit, resumed 05:11 | 45 min |
+| 3 | T1.2 seal check | lead | opus | xhigh | 02:16 | 02:16 | 1 min | lead | done | 15 min |
+| 4 | Move tool + test; plan; loader check | lead | opus | xhigh | 02:17 | 02:40 | 23 min | lead | done | 30 min |
+| 4b | Task 4 fetch | TopstepRulesReader-OpusMed | opus | medium | 02:20 | 02:22 | 2 min | 1,086,590 | done (row added) | (in 12) |
+| 5 | Move plan review | MovePlanReviewer-FableXHigh | fable | xhigh | 02:40 | 03:05 | 25 min | 7,782,928 | APPROVE AFTER FIXES | 25 min |
+| 6 | Review fixes, move tool | lead | opus | xhigh | 03:05 | 03:07 | 2 min | lead | done (retest 05:10s) | 15 min |
+| P | **usage-limit pause** | | | | 03:07 | 05:10 | 2 h 03 min | | excluded from work | |
+| 7 | Step-3 edits; before-checks rerun; manifest | lead | opus | xhigh | 05:11 | 05:14 | 4 min | lead | done (first run 02:41-02:43 kept) | 10 min |
+| 8 | T1.5 move | lead | opus | xhigh | 05:15:19 | 05:15:45 | 26 s | lead | done, 0 mismatches | 15 min |
+| 9 | T1.6 after-checks, T1.7 finalize, DONE | lead | opus | xhigh | 05:15 | 05:18 | 3 min | lead | done, all identical | 15 min |
+| 10 | Task 2 apply, v14, tests | lead | opus | xhigh | 05:19 | 05:35 | 16 min | lead | done (v14 rebuilt twice for review fixes) | 10 min |
+| 11 | Task 2 review | ConfigReviewer-FableXHigh | fable | xhigh | 05:13 | 05:30 | 17 min | 3,433,527 | APPROVE AFTER FIXES, FINAL APPROVE | 25 min |
+| 12 | Task 4 rules record | lead | opus | xhigh | 02:22 | 02:25 | 3 min | lead | done (moved early) | 30 min |
+| 13 | Task 3 V45 | lead | opus | xhigh | 05:21 | 05:22 | 1 min (draft 02:26) | lead | done | 20 min |
+| 14 | Commit Tasks 2+3 (95df9c6) | lead | opus | xhigh | 05:35 | 05:35 | 1 min | lead | done | 10 min |
+| 15 | End checks; full suite | lead (background) | n/a | n/a | 05:35 | 06:04 | 29 min | | done | 35 min |
+| 16 | Return, progress, STAGES, cost, final commit | lead | opus | xhigh | 05:36 | 06:07 | 31 min | lead | done | 45 min |
+| | **Cumulative** | | | | 02:06 | 06:07 | **work 1 h 58 min** (wall 4 h 01 min incl. the pause) | **166,242,863** (lead 82,808,134; workers 83,434,729) | | initial estimate: end 07:40, about 5 h 34 min |
+

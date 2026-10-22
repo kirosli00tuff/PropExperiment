@@ -223,6 +223,11 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     also QM; rests on CL-derived statistics), the pilot spec frozen for QM mbp-1 and its code GO after an Opus
     stand-in review. Nothing bought (DATABENTO_API_KEY3 absent by the 20:30 deadline; the pilot then put on hold, V47);
     acct-3 untouched and kept; N 538.
+  - Stage E.29 — Basket simulation (V46): can 2 to 3 ranked contracts in one 50K account lower the break-even? Run
+    2026-10-21/22 on Pro (see reports/E.29_RETURN.md), two usage-limit pauses and two reboots. E.28's model was run
+    on the combined account's daily P&L; B0 equals E.28's QM exactly; all 470 thresholds were grid-confirmed. With a
+    QM-only edge no basket beats QM alone (0 of 80 cells). The setting-(i) wins (27 of 76) come from MGC's inflated
+    alone break-even, not diversification, and rho barely matters. E.28's firm order stands; N 538.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

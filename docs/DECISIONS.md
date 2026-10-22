@@ -951,3 +951,29 @@
      after E.28b's purchase is verified. No outcome read, nothing
      registered, N stays 538. A cross-market lead-lag test (K8 style, CL
      order flow leading QM) waits for the QM pilot's fill results.
+- 2026-10-21 (user, planning chat, 21:53-21:57 PDT): V47.
+  1. External research on QM (planning chat, 2026-10-21) found:
+     - QM trades about 1% of CL's volume (CFTC, Burns and Kane 2022, spot
+       months 2011-2020);
+     - CL carries about 80% of WTI price discovery;
+     - one QM tick is 2.5 CL ticks, so resting QM quotes go stale when CL
+       moves;
+     - 2026 web snapshots suggest QM trades only tens to hundreds of
+       contracts a day (low reliability).
+     E.28's ranking did not observe QM directly: C3 = 1, and its statistics
+     came from CL under OC-1.
+  2. The E.28 pilot purchase (QM mbp-1, pre-2024) did not happen: the
+     DATABENTO_API_KEY3 key was absent at 20:30. It stays on hold. No
+     QM-only purchase is made until the QM volume check passes and the
+     pilot spec is revised:
+     - synchronized CL top of book;
+     - a 2025-2026 sample, which needs a separate user approval;
+     - a trade-through-only fill model beside the back-of-queue model;
+     - a kill rule set before the purchase.
+     The acct-3 account is kept, not wiped.
+  3. Stage E.30: the QM volume check. It buys QM and CL ohlcv-1d from
+     2023-01-01 on acct-2, at a quote of at most USD 1.00. The user
+     approved spending acct-2's remaining few dollars for this. QM fails
+     if its median daily volume over the last 12 months is below 1,000.
+  4. External research on ZM and MGC as the runners-up across the five
+     firms is run in the planning chat. No program data is read for it.

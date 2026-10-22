@@ -1,0 +1,82 @@
+import json
+def f(value, unit, source_file, quote, note=""):
+    return {"value": value, "unit": unit, "source_file": source_file, "quote": quote, "note": note}
+PG = "reports/stage_e28_briefs/pages/A2_platforms/"
+D = {
+ "_meta": {"as_of": "2026-10-21", "worker": "A2_platforms", "pages_dir": PG,
+           "note": "facts only for criteria F and P; no scores. Forum sources are pointers only."},
+ "projectx_topstepx": {
+  "sim_fill_rule": f("trade-through (firm help page; not stated as sim-specific); no engine spec", "category",
+      PG+"ts_8765442_fills.html.txt",
+      "Price execution over speed. Trade-off: the market has to trade through your price — not just touch it. You might not get filled. Partial fills happen.",
+      "Second line L147: 'Limit orders especially — if the market doesn't trade through your price, you don't get filled.'"),
+  "native_api": f(True, "bool", PG+"px_order_place.html.txt", "type integer The order type:", "ProjectX Gateway API; Topstep: not on Live funded accounts (see A2_firm_topstep.md)"),
+  "api_order_types": f(["Limit","Market","Stop","TrailingStop","JoinBid","JoinAsk"], "list", PG+"px_order_place.html.txt",
+      "1 = Limit", "enum lines L34-39: 1 Limit, 2 Market, 4 Stop, 5 TrailingStop, 6 JoinBid, 7 JoinAsk"),
+  "api_oco_bracket": f("brackets attached to an order (stop-loss and take-profit) only in Auto OCO Brackets mode; no standalone OCO endpoint seen", "category",
+      PG+"px_order_place.html.txt", "Auto OCO Brackets . Brackets attach to each order. stopLossBracket and takeProfitBracket are accepted on this endpoint.", "default mode is Position Brackets, which rejects bracket objects"),
+  "api_rate_limit": f(200, "requests per 60 s (all endpoints except bar history; 3.3 per s average)", PG+"px_rate_limits.html.txt",
+      "All other Endpoints 200 requests / 60 seconds", "bar history 50 per 30 s; HTTP 429 on excess"),
+  "sim_market_data": f("TopstepX's own CME feed (2025 FAQ); vendor/location unconfirmed", "category", PG+"ts_8524249_topstepx_faqs_wb20250515.html.txt",
+      "Our own dedicated data feed, direct from the Chicago Mercantile Exchange (CME).", "snippet only [unverified]: ProjectX licensed CME redistributor via Sim2Funded Solutions LLC, servers in Northern Virginia (source page now 404)"),
+  "platform_vps_rule": f("none found at platform level; Topstep firm rule forbids VPS order flow", "category", "", "", "see A2_firm_topstep.md"),
+ },
+ "tradovate": {
+  "sim_fill_rule": f("undocumented", "category", PG+"tv_community_2279.json",
+      "While Tradovate tries to mirror the filling algos as close as we can, reproducing the exchange's matching algorithms with 100% accuracy in a simulation environment would be very difficult for any platform to achieve.",
+      "forum post by staff account BWeis 2021-05-21 (pointer only); users report fills only on trade-through: 'It takes price breaking through my limit in order to get filled'"),
+  "native_api": f(True, "bool", PG+"tv_partner_architecture.md", "https://demo.tradovateapi.com/v1/order/item?id=1000", "REST + WebSocket; firm permission is a firm rule"),
+  "api_order_types": f(["Limit","LimitIfTouched","MIT","Market","QTS","Stop","StopLimit","TrailingStop","TrailingStopLimit"], "list", PG+"tv_partner_place_order.md",
+      "`orderType` (enum, required) — Limit, LimitIfTouched, MIT, Market, QTS, Stop, StopLimit, TrailingStop, TrailingStopLimit", "TIF: Day, FOK, GTC, GTD, IOC"),
+  "api_oco_bracket": f("native placeOCO and placeOSO (brackets)", "category", PG+"tv_partner_place_oco.md",
+      "OCO order strategies link 2 orders together such that if one order is filled, the other order is cancelled.", "OSO: tv_partner_place_oso.md 'OSO orders allow for the most complex multi-bracket trading strategies.'"),
+  "api_rate_limit": f(5000, "requests per hour per authenticated user (table also prints 5,000 per minute and per second)", PG+"tv_partner_rate_limits.md",
+      "| **Authenticated** | 5,000        | 5,000          | 5,000          |", "hourly cap = about 1.4 per s sustained; endpoint-level per-IP limits with p-ticket penalties; partner (prop-firm) docs"),
+  "sim_market_data": f("not documented; Lucid labels the Tradovate path 'CQG'", "category", PG+"lucid_platforms.html.txt", "CQG supported platforms:", "[unverified] that Tradovate sim data is CQG"),
+  "platform_vps_rule": f("none found", "category", PG+"tv_partner_rate_limits.md", "If you're behind a shared IP (corporate network, VPN, shared hosting), you may share limits with other clients.", "shared hosting treated only as a rate-limit case"),
+ },
+ "rithmic": {
+  "sim_fill_rule": f("queue model: fill on trade-through after estimated queue ahead is depleted", "category", PG+"optimus_rithmic_paper_2413.json",
+      "We report a fill when the market trades through your price and when the orders ahead of you in the queue, based upon our estimate of your position in the queue and market activity, are depleted and there is quantity or opposite side order activity at your price level.",
+      "posted 2019-01-31 by account 'Rithmic' on Optimus Futures forum (pointer, vendor-attributed); rithmic.com says only 'simulated matching engine'"),
+  "sim_fill_rule_vendor_page": f("simulated matching engine on live data; rule not stated", "category", PG+"rith_products_exchange-simulator.md",
+      "The difference is that orders are filled against a simulated matching engine rather than the actual exchange.", ""),
+  "native_api": f(True, "bool", PG+"rith_products_api-suite.md", "R | Protocol API™ (a wire-line spec using WebSockets and Google Protocol Buffers, works in any language)", "also R|API+ (C++/.NET), R|Diamond (co-location)"),
+  "api_order_types": f(["market","limit","stop","bracket","OCO","trailing stop"], "list", PG+"rith_products_exchange-simulator.md", "All order types: market, limit, stop, bracket, OCO", ""),
+  "api_oco_bracket": f("native, server side", "category", PG+"rith_products_api-suite.md", "Trailing stops, brackets, and OCOs that execute on Rithmic's servers — fire even when the client connection drops.", ""),
+  "api_rate_limit": f(None, "unknown", PG+"rith_products_api-suite.md", "", "not published on rithmic.com pages fetched; 1 search found none"),
+  "sim_market_data": f("live CME data, same as live accounts", "category", PG+"rith_products_exchange-simulator.md", "Rithmic's paper trading system connects to live exchange data from CME Group and Nasdaq.", ""),
+  "server_side_latency": f("<1", "ms (R|API+ order handling, R|Protocol order routing; excludes network)", PG+"rith_products_api-suite.md", "| Typical latency | <1ms | <1ms | <250µs |", "vendor claim"),
+  "connection_points": f(["New York","Chicago","Aurora","USA East","USA West","São Paulo"], "list", PG+"rith_technology.md", "New YorkChicagoAuroraUSA EastUSA WestSão Paulo", ""),
+  "platform_vps_rule": f("none found; Diamond API requires co-location", "category", PG+"rith_products_api-suite.md", "R | Diamond API™ (ultra-low latency, Linux only, requires co-location)", ""),
+ },
+ "ninjatrader_sim_engine": {
+  "sim_fill_rule": f("documented probabilistic queue model (bid/ask volume, trade volume, time for queue position)", "category", PG+"nt8_simulation.html.txt",
+      "The simulation engine is not a simple algorithm that fills your order once the market trades at your order price.",
+      "applies to NinjaTrader's own simulator (Sim101); a prop account on Tradovate/Rithmic gets that back end's fills [inference]"),
+ },
+ "cqg": {"sim_fill_rule": f("undocumented", "category", "", "", "2 searches; help.cqg.com has no simulation-fill page found")},
+ "volumetrica_dxfeed": {
+  "sim_fill_rule": f("undocumented", "category", PG+"vol_faq.html.txt", "", "2 searches; no fill statement on Volumetrica FAQ or MFFU article"),
+  "sim_market_data": f("dxFeed", "category", PG+"mffu_volumetrica.html.txt", "Volumetrica Trading Platforms, including desktop applications such as VolSys and VolBook, utilize dxFeed as their primary data source.", ""),
+ },
+ "wealthcharts": {"sim_fill_rule": f("undocumented", "category", "", "", "1 search")},
+ "latency": {
+  "vancouver_chicago_rtt": f(53.2, "ms RTT (median of 336 hourly averages, range 52.9-60.5)", PG+"wn_vancouver_chicago.html.txt",
+      "Table generated with the unix command line tool ping , executing 30 pings from Vancouver to Chicago .", "WonderNetwork, 2026-10-07..2026-10-21, data centre to data centre"),
+  "seattle_chicago_rtt": f(44.5, "ms RTT (median of 336 hourly averages, range 44.2-54.1)", PG+"wn_seattle_chicago.html.txt", "44.520ms", "WonderNetwork, same window"),
+  "azure_westus2_northcentralus_rtt": f(51, "ms P50 RTT, 30-day window", PG+"azure_network_latency.html.txt",
+      "The following tabs show the monthly percentile P50 round-trip times between Azure regions for a 30-day window.", "row 'West US 2' in the Central US table: 38 | 51 | 56; page ms.date 2026-07-30"),
+  "chicago_aurora_rtt_microwave": f(0.370, "ms RTT rack to rack (2013, microwave)", PG+"mckay_aurora_cermak_370us_wb.html.txt",
+      "connects exchange datacenters in Aurora, IL and 350 E. Cermak Rd. in downtown Chicago in 370 microseconds round trip time from rack to rack.", "vendor claim, best case"),
+  "chicago_vps_to_cme": f(0.52, "ms (vendor claim; Tradovate 0.52, Rithmic and CQG <1)", PG+"quantvps_chicago_wb.html.txt", "CME Latency 0.52ms", "QuantVPS page, Wayback 2026-04-11"),
+ },
+ "canada_tax": {
+  "income_type": f("business income on CRA's general definition (worker interpretation; no CRA page names prop-firm payouts)", "category", PG+"cra_what_a_business.html.txt",
+      "Business income includes income from any activity you do for profit. For example, the income from a service business is business income.", "Guide T4002 applies to self-employed business income"),
+  "gst_hst_small_supplier_threshold": f(30000, "CAD of worldwide taxable supplies incl. zero-rated, over four consecutive calendar quarters or one quarter", PG+"cra_gsthst_when_register.html.txt",
+      "You exceed the $30,000 threshold 1 in a single calendar quarter.", "whether payouts are taxable supplies is not addressed [unverified]"),
+ },
+}
+json.dump(D, open("/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e28_briefs/A2_platforms.json","w"), indent=1, ensure_ascii=False)
+print("ok", sum(len(v) for k,v in D.items() if k!="_meta"))

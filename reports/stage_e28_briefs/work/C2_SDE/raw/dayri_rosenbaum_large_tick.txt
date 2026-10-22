@@ -1,0 +1,1634 @@
+Large tick assets: implicit spread and optimal tick size
+Khalil Dayri
+
+arXiv:1207.6325v2 [q-fin.TR] 3 Jan 2013
+
+Antares Technologies
+khalil.al-dayri@polytechnique.edu
+Mathieu Rosenbaum
+Laboratory of Probability and Random Models,
+University Pierre and Marie Curie (Paris 6)
+mathieu.rosenbaum@upmc.fr
+November 27, 2024
+
+Abstract
+In this work, we provide a framework linking microstructural properties of an
+asset to the tick value of the exchange. In particular, we bring to light a quantity,
+referred to as implicit spread, playing the role of spread for large tick assets, for
+which the effective spread is almost always equal to one tick. The relevance of this
+new parameter is shown both empirically and theoretically. This implicit spread
+allows us to quantify the tick sizes of large tick assets and to define a notion of
+optimal tick size. Moreover, our results open the possibility of forecasting the
+behavior of relevant market quantities after a change in the tick value and to give
+a way to modify it in order to reach an optimal tick size.
+
+1
+
+Key words: Microstructure of financial markets, high frequency data, large tick assets,
+implicit spread, market making, limit orders, market orders, optimal tick size.
+
+1
+
+Introduction
+
+1.1
+
+Tick value, tick size and spread
+
+On electronic markets, the market platform fixes a grid on which traders can place their
+prices. The grid step represents the smallest interval between two prices and is called
+the tick value (measured in the currency of the asset). For a given security, it is safe to
+consider this grid to be evenly spaced even though the market may change it at times.
+In some markets, the spacing of the grid can depend on the price. For example, stocks
+traded on Euronext Paris have a price dependent tick scheme. Stocks priced 0 to 9.999
+euros have a tick value of 0.001 euro but all stocks above 10 euros have a tick value of
+0.005 euro.
+However, when it comes to actual trading, the tick value is given little consideration.
+What is important is the so called tick size. A trader considers that an asset has a small
+tick size when he “feels” it to be negligible, in other words, when he is not averse to price
+variations of the order of a single tick. In general then, the trader’s perception of the
+tick size is qualitative and empirical, and depends on many parameters such as the tick
+value, the price, the usual amounts traded in the asset and even his own trading strategy.
+All this leads to the following well known remark : the tick value is not a good absolute
+measure of the perceived size of the tick. It has to be viewed relatively to other market
+statistics. For instance, every trader “considers” that the ESX index futures has a much
+greater tick than the DAX index futures though their tick values have the same order of
+magnitude.
+Nevertheless, the notion of “large tick asset” is rather well understood. For Eisler,
+2
+
+Bouchaud and Kockelkoren [14]: “large tick stocks are such that the bid-ask spread is
+almost always equal to one tick, while small tick stocks have spreads that are typically a
+few ticks”. We borrow this definition in this work. This type of asset lead to the following
+specific issues which we address in this paper:
+• How to quantify more precisely the tick sizes of large tick assets ?
+• Many studies have pointed out special relationships between the spread and some
+market quantities. However, these studies reach a limit when discussing large tick
+assets since the spread is artificially bounded from below. How to extend these
+studies to this kind of asset ?
+• What happens to the relevant market quantities when the market designer decides
+to change the tick value and what is then the optimal tick value ?
+This last question is a crucial issue facing by market designers and regulators today,
+see for example [42]. This is shown by the numerous changes and come back recently
+operated on the tick values on various exchanges. In particular, the tick value is one of the
+main tools the exchanges have at their disposal to attract/prevent high frequency trading.
+To our knowledge, this question has been surprisingly quite ignored in the quantitative
+financial economics literature. We believe our approach is a first quantitative step towards
+solving this important and intricate problem.
+In this paper, in order to address the questions related to the tick value, we present
+a framework that allows us to link some microstructural features of the asset together.
+In the literature, such attempts have been considered many times and in the following
+two paragraphs we recall two approaches leading to important relationships between the
+spread and other market quantities in the case of small tick assets. However, these works
+focusing particularly on the spread, they are not relevant when dealing with large tick
+assets since in that case, the spread is collapsed to the minimum and is equal to one tick.
+3
+
+We draw inspiration from these theories and investigate the existence of a variable that
+can be used in lieu of the spread in the case of large tick assets.
+
+1.2
+
+The Madhavan et al. spread theory for small tick assets
+
+The way the spread settles down in the market is widely studied in the microstructure
+literature, see for example [8, 16, 17, 24, 25, 26, 27, 30, 32, 41]. In particular, several
+theoretical models have been built in order to understand the determinants of the spread,
+see [9, 13, 15, 29, 39, 40]. Here we give a here a brief, simplified, overview of Madhavan,
+Richardson, Roomans seminal paper [31] about the link between spread and volatility.
+In [31], the authors assume the existence of a true or efficient price for the asset with ex
+post value pi after the ith trade and that all transactions have the same volume. Then
+they consider the following dynamic for the efficient price:
+
+pi+1 − pi = ξi + θεi ,
+with ξi an iid centered shock component (new information,. . . ) with variance v 2 , εi the
+sign of the ith trade and θ an impact parameter. Note that, in order to simplify the
+presentation, we assume here that the εi are independent (in [31], the authors allow for
+short term dependence in the εi ).
+The idea in [31] is then to consider that market makers cannot guess the surprise of
+the next trade. So, they post (pre trade) bid and ask prices ai and bi given by
+
+ai = pi + θ + ϕ, bi = pi − θ − ϕ,
+
+with ϕ an extra compensation claimed by market makers, covering processing costs and
+the shock component risk. The above rule ensures no ex post regret for the market
+makers: If ϕ = 0, the traded price is on average the right one. In particular, the ex post
+4
+
+average cost of a market order with respect to the efficient price ai − pi+1 or pi+1 − bi is
+equal to 0.
+The Madhavan et al. model allows to compute several relevant quantities. In this
+approach, we obtain that1
+• The spread S is given by S = a − b = 2(θ + ϕ).
+• Neglecting the contribution of the news component, see for example [44] for details,
+2
+satisfies
+the variance per trade of the efficient price σtr
+
+2
+σtr
+= E[(pi+1 − pi )2 ] = θ2 + v 2 ∼ θ2 .
+
+• Therefore:
+S ∼ 2σtr + 2ϕ.
+This last relation, which gives a very precise link between the spread and the volatility
+per trade, will be one of the cornerstones of our study.
+
+1.3
+
+The Wyart et al. approach
+
+We recall now the Wyart et al. approach, see [44], which is another way to derive the
+proportionality between the spread and the volatility per trade. Here again, the idea
+is to use the dichotomy between market makers and market takers. Market makers are
+patient traders who prefer to send limit orders and wait to be executed, thus avoiding to
+cross the spread but taking on volatility risk. Market takers are impatient traders who
+prefer to send market orders and get immediate execution, thus avoiding volatility risk
+but crossing the spread in the process. Wyart et al. consider a generic market making
+strategy on an asset and show that its average profit and loss per trade per unit of volume
+1
+
+We use the symbol ∼ for approximation.
+
+5
+
+can be well approximated by the formula
+S
+c
+− σtr ,
+2
+2
+where S denotes the average spread and c is a constant depending on the asset, but which
+is systematically between 1 and 2.
+This profit and loss should correspond to the average cost of a market order. Then
+Wyart et al. argue that on electronic market, any agent can chose between market orders
+and limit orders. Consequently the market should stabilize so that both types of orders
+have the same average (ex post) cost, that is zero. Indeed, because of the competition
+between liquidity providers, the spread is the smallest admissible value such that the profit
+of the market makers is non negative (otherwise another market maker would come with
+a tighter spread). Thus, if the tick size allows for it, the spread is so that market makers
+do not make profit. Therefore, in this case:
+
+S ∼ cσtr .
+
+Moreover, in [44], Wyart et al. show that this relationship is very well satisfied on market
+data.
+
+1.4
+
+Aim of this work and organization of the paper
+
+The goal of this work is to provide a framework linking microstructural properties of
+the asset to the tick value of the exchange. Because the microstructure manifests itself
+through the statistics of the high frequency returns and durations, our approach is to
+find a formula connecting the tick value to these statistics. As a consequence of that,
+we are able to predict these statistics whenever a change in the tick value is scheduled.
+Furthermore, we can determine beforehand what should the value of the tick be if the
+6
+
+market designer has a certain set of high frequency statistics he wants to achieve.
+In order to reach that goal, we bring to light a quantity, referred to as implicit spread,
+playing the role of spread for large tick assets, for which the effective spread is almost
+always equal to one tick. In particular, it enables us to quantify the tick sizes of this type
+of asset and to define a notion of optimal tick size. The implicit spread is introduced
+thanks to a statistical model described in Section 2. In order to validate the fact that
+our new quantity can be seen as a spread for large tick assets, we show in Section 3 the
+striking validity of the relationship between spread and volatility per trade mentioned
+above on various electronically traded large tick assets, provided the spread is replaced
+by the implicit spread. We also explain this relationship from a theoretical point of view
+through a very simple equilibrium model in Section 4. Finally, in Section 5, we show
+that these results enable us to forecast the behavior of relevant market quantities after a
+change in the tick value and to give a way to modify it in order to reach an optimal tick
+size.
+
+2
+
+The model with uncertainty zones
+
+The implicit spread can be naturally explained in the framework of the model with
+uncertainty zones developed in [34]. Note that we could introduce this notion without
+referring to this model. However, using it is very convenient in order to give simple
+intuitions.
+
+2.1
+
+Statistical model
+
+The model with uncertainty zones is a model for transaction prices and durations (more
+precisely, only transactions leading to a price change are modeled). It is a statistical
+model, which means it has been designed in order to reproduce the stylized facts observed
+
+7
+
+on the market and to be useful for practitioners. It is shown in [34] that this model
+indeed reproduces (almost) all the main stylized facts of prices and durations at any
+frequency (from low frequency data to ultra high frequency data). In practice, this model
+is particularly convenient in order to estimate relevant parameters such as the volatility
+or the covariation at the ultra high frequency level, see [35], or when one wants to hedge
+a derivative in an intraday manner, see [33].
+A priori, such a model is not firmly rooted on individual behaviors of the agents.
+However since it reproduces what is seen on the market, the way market participants act
+has to be consistent with the model. Therefore, as explained in the rest of this section
+and in Section 4, ex post, an agent based interpretation of such a statistical model can
+still be given.
+
+2.2
+
+Description of the model
+
+The heuristic of the model is very simple. When the bid-ask is given, market takers know
+the price for which they can buy and the price for which they can sell. However, they have
+their own opinion about the “fair” price of the asset, inferred from all available market
+data and their personal views. In the latter, we assume that there exists an efficient
+price, representing this opinion. Of course this efficient price should not be seen as an
+“economic price” of the asset, but rather as a market consensus at a given time about
+the asset value. The idea of the model with uncertainty zones is that for large tick assets,
+at a given time, the difference between the efficient price and the best accessible price
+on the market for buying (resp. selling) is sometimes too large so that a buy (resp. sell)
+market order can occur.
+
+8
+
+2.2.1
+
+Efficient price
+
+We propose here a simplified version of the model with uncertainty zones, see [34] for a
+more general version. The first assumption on the model is the following:
+H1 There is a latent efficient price with value Xt at time t, which is a continuous
+semi-martingale of the form
+Z t
+
+Z t
+
+σu− dWu ,
+
+au du +
+
+X t = X0 +
+
+0
+
+0
+
+where Wt is a Ft -Brownian motion, with F a filtration for which au is progressively
+measurable and locally bounded and σu is an adapted right continuous left limited
+process.
+Following in particular the works by Aı̈t-Sahalia et al., see [3, 46], using such kind of
+efficient price process when building a microstructure model has become very popular in
+the recent financial econometrics literature. Indeed, it enables to easily retrieve standard
+Brownian type dynamics in the low frequencies, which is in agreement with both the
+behavior of the data and the classical mathematical finance theory. Also, our assumptions
+on the efficient price process are very weak, allowing in particular for any kind of time
+varying or stochastic volatility. Of course this efficient price is not directly observed by
+market participants. However, they may have their own opinion about its value.
+2.2.2
+
+Uncertainty zones and dynamics of the last traded price
+
+Let α be the tick value of the asset. We define the uncertainty zones as bands around
+the mid tick values with width 2ηα, with 0 < η ≤ 1 a given parameter. The dynamics of
+the last traded price, denoted by Pt , is obtained as a functional of the efficient price and
+the uncertainty zones. Indeed, in order to change the transaction price, we consider that
+market takers have to be “convinced” that it is reasonable, meaning that the efficient
+9
+
+price must be close enough to a new potential transaction price. This is translated in
+Assumption H2.
+H2 Let t0 be any given time and Pt0 the associated last traded price value. Let τtu0 be the
+first time after t0 where Xt upcrosses the uncertainty zone above Pt0 , that is hits
+the value Pt0 + α/2 + ηα. Let τtd0 be the first time after t0 where Xt downcrosses the
+uncertainty zone below Pt0 , that is hits the value Pt0 − α/2 − ηα. Then, one cannot
+have a transaction at some time t > t0 at a price strictly higher (resp. smaller)
+than Pt0 before τtu0 (resp. τtd0 ). Moreover, if τtu0 < τtd0 (resp. τtu0 > τtd0 ) one does have
+a transaction at the new price Pt0 + α (resp. Pt0 − α) at time τtu0 (resp. τtd0 ).
+In fact, when associating it to Assumption H3, we will see that Assumption H2 can
+be understood as follows: at any given time, a buy (resp. sell) market order cannot occur
+if the current value of the efficient price is too far from the best ask (resp. bid).
+Remark that Assumption H2 implies that the transaction price only jumps by one
+tick, which is fairly reasonable for large tick assets. However, imposing jumps of only
+one tick and that a transaction occurs exactly at the times the efficient price exits an
+uncertainty zone is done only for technical convenience. Indeed, it can be easily relaxed
+in the setting of the model with uncertainty zones, see [34].
+A sample path of the last traded price in the model with uncertainty zones is given
+in Figure 1.
+
+2.2.3
+
+Bid-ask spread
+
+In this work, we focus on large tick assets. By this we mean assets whose bid-ask spread
+is essentially constant and equal to one tick. Therefore we make the following assumption
+in the model.
+H3 The bid-ask spread is constant, equal to the tick value α.
+10
+
+101.5
+
+101
+
+Price
+
+100.5
+
+100
+
+99.5
+
+2ηα α
+
+99
+0
+
+50
+
+100
+
+150
+Time
+
+200
+
+250
+
+300
+
+Figure 1: The model with uncertainty zones: example of sample path. The efficient price
+is drawn in blue. The light gray lines drawn at integers form the tick grid of width α.
+The red dotted lines are the limits of the uncertainty zones of width 2ηα. Finally the last
+traded price is the black stepwise curve. The circles indicate a change in the price when
+the efficient price crosses an uncertainty zone.
+
+11
+
+In practice, the preceding assumption means that if at some given time the spread is not
+equal to one tick, limit orders immediately fill the gap. Remark that we do not impose
+the efficient price to lie inside the bid-ask quotes. However, the dynamics of the bid-ask
+quotes still need to be compatible with Assumption H2.
+Within bid-ask quotes of the form [b, b + α], the width of the uncertainty zone represents the range of values for Xt where transactions at the best bid and the best ask can
+both occur. The size of this range is 2ηα. Therefore, it is natural to view the quantity
+2ηα as an implicit spread, see Section 3. More precisely, for given bid-ask quotes [b, b + α],
+Assumptions H2 and H3 enable us to define three areas for the value of the efficient price
+process Xt :
+• The bid zone: (b − α/2 − ηα, b + α/2 − ηα), where only sell market orders can occur.
+• The buy/sell zone: [b + α/2 − ηα, b + α/2 + ηα], where both buy and sell market
+orders can occur. It coincides with the uncertainty zone.
+• The ask zone: (b + α/2 + ηα, b + 3α/2 + ηα), where only buy market orders can
+occur.
+This is summarized in Figure 2.
+
+2.3
+
+Comments on the model and the parameter η
+
+Reproducing and quantifying microstructure effects
+• The model is particularly parsimonious since it only relies on an efficient price
+process and the uncertainty zones parameter η. Despite its simplicity, this simple
+model accurately reproduces all the main stylized facts of market data, see [34].
+• The parameter η turns out to measure the intensity of microstructure effects. Indeed, all the microstructure phenomena such as the autocorrelations of the tick by
+12
+
+102
+
+101.5
+
+Price
+
+101
+
+α = Spread∗ 2ηα = Buy/Sell Zone
+
+100.5
+
+100
+
+Ask Zone
+
+ask=101
+
+bid=100
+
+Bid Zone
+
+99.5
+
+99
+0
+
+100
+
+200
+
+300
+
+400
+
+500
+
+600
+
+700
+
+Time
+
+Figure 2: The three different zones when the bid-ask is 100-101 and the tick value is equal
+to one. The red dotted lines are the limits of the uncertainty zones. The uncertainty
+zone inside the spread is the buy/sell zone. The upper dotted area is the ask zone and
+the lower dotted area is the bid zone.
+
+13
+
+tick returns or the law of the durations between price changes can be easily quantified through the single parameter η, see again [34]. For example, let us consider
+the case where the volatility process is constant equal to σ. Then it is shown in [35]
+that as α goes to zero,
+X
+
+(Pti+1 − Pti )2 →
+
+0≤ti <ti+1 ≤t
+
+σ2t
+,
+2η
+
+(1)
+
+where the ti ’s denote the transaction times with price change. Therefore, if η < 1/2,
+we recover here the very well known stylized fact that the high frequency realized
+variance of the observed price is larger than those of the efficient price, which is
+σ 2 t. More precisely, in that case, we obtain a decreasing behavior of the so called
+signature plot, that is the function from N∗ to R+ defined by
+bnt/∆c
+
+∆→
+
+X
+
+2
+P∆i/n − P∆(i−1)/n ,
+
+(2)
+
+i=1
+
+where n is a fixed ultra high frequency sampling value for the last traded price.
+Since the seminal paper [4], this is considered in the econometric literature as one
+of the most distinctive features of high frequency data. In fact, the estimated values
+of η are indeed systematically found to be smaller than 1/2. In our framework, this
+can be nicely explained from a theoretical point of view, see Section 4.
+• When the tick size is large, market participants are not indifferent to a one tick
+price change and the traded price is modified only if market takers are convinced it
+is reasonable to change it. This is exactly translated in our model through the key
+parameter η. Indeed, in order to have a new transaction price, Xt needs to reach
+a barrier which is at a distance ηα from the mid tick. So, when η is small, a very
+small percentage of the tick value is considered enough for a price change, meaning
+
+14
+
+the tick value is very large and conversely. A different point of view is to consider
+that market participants have a certain resolution, or precision at which they infer
+the efficient price Xt . This resolution is quantified by η, and is close to the tick
+value when η is close to 1/2.
+• The width of a buy/sell zone is 2ηα. Thus, if η is small, there is a lot of mean
+reversion in the price and the buy/sell zones are very small: the tick size is very
+large. If η is close to 1/2, the last traded price can be seen as a sampled Brownian
+motion, there is no microstructure effects, and the width of the buy/sell zones is
+one tick: the tick size is, in some sense, optimal, see Section 5.
+• In fact, we can give a much more precise interpretation of η. Indeed, we show in
+the next section that the quantity 2ηα can be seen as an implicit spread. A by
+product of this is the fact that η can indeed be viewed as a suitable measure for
+the tick size.
+
+Statistical estimation of η and of the volatility
+• The parameter η can be very easily estimated as follows. We define an alternation
+(resp. continuation) of one tick as a price jump of one tick whose direction is
+(a)
+
+opposite to (resp. the same as) the one of the preceding price jump. Let Nα,t and
+(c)
+
+Nα,t be respectively the number of alternations and continuations of one tick over
+the period [0, t]. It is proved in [35] that as the tick value goes to zero, a consistent
+estimator of η over [0, t] is given by
+(c)
+
+ηbα,t =
+
+Nα,t
+
+(a)
+
+.
+
+2Nα,t
+
+• The model with uncertainty zones enables to retrieve the value of the efficient price
+
+15
+
+at the time ti of the i-th price change by the simple relation
+
+Xti = Pti − sign(Pti − Pti−1 )(1/2 − η)α.
+
+Hence, since we can estimate η, we can recover Xti from Pti−1 and Pti . This is
+very convenient for building statistical procedures relative to the efficient. For
+example, the realized variance computed over the estimated values of the efficient
+price between 0 and t:
+2
+d =
+σ[0,t]
+
+X
+
+2
+bt − X
+bt
+X
+,
+i
+i−1
+
+(3)
+
+ti ≤t
+
+bt = Pt − sign(Pt − Pt )(1/2 − η̂α,t )α, is a very sharp estimator of the
+where X
+i
+i
+i
+i−1
+integrated variance of the efficient price over [0, t]:
+Z t
+
+σu2 du.
+
+0
+
+The accuracy of this estimator is α and its asymptotic theory is available in [35].
+
+3
+
+Implicit spread and volatility per trade: empirical
+study
+
+A buy/sell zone [b + α/2 − ηα, b + α/2 + ηα] is a kind of a frontier, such that crossing
+it makes market takers change their view on the efficient price. It is a sort of tolerance
+area defined by their risk aversion to losing one tick. The width of this zone, 2ηα, also
+corresponds to the size of the (efficient) price interval for which market takers are both
+ready to buy and to sell. This is why we see it as a kind of a spread: the market
+taker’s implicit spread. In view of this interpretation, we consider the similarities in the
+16
+
+properties of this implicit spread to those of the conventional spread. In particular, we
+look at the spread-volatility relationship described in Section 1 that stipulates that the
+spread is generally proportional to the volatility per trade. In this section, we empirically
+verify this relationship using our implicit spread and see that it holds remarkably well.
+This approach follows in the some sense those of Roll in [36]. In this paper, the
+author addresses the problem of estimating the bid-ask spread if one has only access to
+√
+transaction data. He shows that in his framework, the quantity −2Cov, where Cov
+denotes the first order autocovariance of the price increments, is a good proxy for the
+spread. This is particularly interesting since this autocovariance can be expressed in term
+of η. Indeed, in the model with uncertainty zones, we have
+√
+
+r
+−2Cov =
+
+2 − 4η
+α.
+1 + 2η
+
+Thus the link between a parameter such as η and a kind of spread is already present in [36].
+However, in [36], the author works at a completely different time scale and this measure
+is not relevant for large tick assets traded at high frequency on electronic markets. In
+particular, it decreases with η for η between 0 and 1/2, which is not consistent with the
+empirical results.
+
+3.1
+
+Definition of the variables
+
+In this section, we want to investigate the relationship
+
+Implicit spread ∼ Volatility per trade + constant.
+
+The implicit spread and the volatility per trade are computed on a daily basis. Following
+the approach of Madhavan et al. [31], the volatility over the period, denoted by σ, is
+2
+d of the cumulative
+taken with reference to the efficient price. We use the estimator σ[0,t]
+
+17
+
+variance of the efficient price over [0, t] introduced in Equation (3) (renormalized in square
+of currency unit) and set
+σ
+b=
+
+q
+
+2
+d.
+σ[0,t]
+
+√
+Then we define the volatility per trade by σ
+b/ M , where M denotes the total number of
+trades (all the transactions, changing the last traded price or not) over [0, t]. From now
+on, abusing notation slightly, we make no difference between the parameters and their
+estimators. Therefore, our relationship can be rewritten
+σ
+ηα ∼ √ + ϕ.
+M
+In the sequel we also need to compute an average daily spread, denoted by S, which is
+in practice not exactly equal to one. This spread is measured as the average over the
+considered time period of the observed spreads right before the trades. Thus, for each
+asset, we record everyday the vector (ηα, σ, M, S).
+
+3.2
+
+Description of the data
+
+We restrict our analysis to assets traded in well regulated electronic markets which match
+the framework of the electronic double auction. We use data of 10 futures contracts on
+assets of different classes and traded in different exchanges. The database2 has millisecond
+accuracy and was recorded from 2009, May 15 to 2009, December 31.
+On the CBOT exchange, we use the 5-Year U.S. Treasury Note Futures (BUS5) and
+the futures on the Dow Jones index (DJ). On the CME, we use the forex EUR/USD
+futures (EURO) and the futures on the SP500 index (SP). On the EUREX exchange, we
+use three interest rates futures based on German government debt: The 10-years EuroBund (Bund), the 5-years Euro-Bobl (Bobl) and the 2-years Euro-Schatz (Schatz). Note
+2
+
+Data provided by QuantHouse. http://www.quanthouse.com/
+
+18
+
+that the tick value of the Bobl changed on 2009, June 15. Thus, we write Bobl 1 when
+referring to the Bobl before this date and Bobl 2 after it. We also investigate futures on
+the DAX index (DAX) and on the EURO-STOXX 50 index (ESX). Finally we use the
+Light Sweet Crude Oil Futures (CL) traded on the NYMEX. As for their asset classes,
+the DJ, SP, DAX and ESX are equity futures, the BUS5, Bund, Bobl and Schatz are
+fixed income futures, the EURO is a foreign exchange rate futures and finally the CL
+is an energy futures. On the exchanges, the settlement dates for these future contracts
+are standardized, one every three months (March, June, September and December) and
+generally three future settlement months are trading at the same time. We deal with this
+issue by keeping, on each day, the contract that recorded the highest number of trades
+and discarding the other maturities.
+These assets are all large tick assets, with a spread almost always equal to one tick.
+To quantify this, for each asset, we compute everyday the percentage of trades for which
+the value of the observed spread right before the trade is equal to one tick. The average of
+these values is denoted by #S= and is reported in Table 1, together with other information
+about the assets, notably the average values of η, denoted by #η.
+Futures
+
+Exchange
+
+Class
+
+Tick Value
+
+Session
+
+# Trades/Day
+
+#η
+
+#S=
+
+BUS5
+DJ
+EURO
+SP
+Bobl 1
+Bobl 2
+Bund
+DAX
+ESX
+Schatz
+CL
+
+CBOT
+CBOT
+CME
+CME
+EUREX
+EUREX
+EUREX
+EUREX
+EUREX
+EUREX
+NYMEX
+
+Interest Rate
+Equity
+FX
+Equity
+Interest Rate
+Interest Rate
+Interest Rate
+Equity
+Equity
+Interest Rate
+Energy
+
+7.8125 $
+5.00 $
+12.50 $
+12.50 $
+5.00 e
+10.00 e
+10.00 e
+12.50 e
+10.00 e
+5.00 e
+10.00 $
+
+7:20-14:00
+8:30-15:15
+7:20-14:00
+8:30-15:15
+8:00-17:15
+8:00-17:15
+8:00-17:15
+8:00-17:30
+8:00-17:30
+8:00-17:15
+8:00-13:30
+
+26914
+48922
+46520
+118530
+18531
+11637
+25182
+39573
+35121
+9642
+73080
+
+0.233
+0.246
+0.242
+0.035
+0.268
+0.142
+0.138
+0.275
+0.087
+0.122
+0.228
+
+94.9
+81.8
+90.6
+99.6
+95.3
+99.2
+98.1
+72.7
+99.5
+99.4
+75.7
+
+Table 1: Data Statistics. The Session column indicates the considered trading hours
+(local time). The sessions are chosen so that we get enough liquidity and are not the
+actual sessions.
+
+19
+
+1500
+
+Dax
+DJ
+EURO
+BUS5
+CL
+Bobl
+Bund
+Schatz
+Eurostoxx
+SP
+
+Dax
+EURO
+CL
+
+σ
+
+1000
+
+SP
+Bund
+Eurostoxx
+
+500
+
+DJ
+BUS5
+
+Bobl
+
+Schatz
+
+0
+0
+
+100
+
+200
+
+300
+
+400
+
+500
+√
+ηα M
+
+600
+
+700
+
+800
+
+900
+
+1000
+
+√
+Figure 3: Cloud (ηα M , σ). The black line is the line y = x.
+
+3.3
+
+Graphical analysis
+
+In order to have a first idea of the relevance of our implicit spread, we give the cloud
+√
+(ηα M , σ) in Figure 33 . Each point represents one asset, one day.
+The results are quite striking. At the visual level, we obtain a linear relationship
+√
+between σ and ηα M , with the same slope for each asset but different intercepts. In
+particular, Figure 3 looks very similar to the kind of graph obtained in [44], where the
+real spread is used with small tick assets.
+3
+
+√
+√
+We give the cloud (ηα M , σ) rather than (ηα, σ/ M ) in order to get more readable values.
+
+20
+
+3.4
+
+Linear regression
+
+In order to get a deeper analysis of the relationship between the implicit spread and the
+volatility per trade, we consider the linear regression associated to the relation
+σ
+ηα ∼ √ + ϕ.
+M
+The constant ϕ includes costs and profits related to the inventory control and to the
+fact that the average spread of the assets is not exactly equal to one tick. In the spirit of
+the approaches mentioned in Section 1, this last fact should imply a slightly larger market
+makers profit than in the case where the spread is exactly equal to one tick. Therefore, we
+consider that for each asset, the constant ϕ is proportional to the average daily spread.
+Thus we consider the daily regression with unknown p1 , p2 , p3 :
+√
+√
+σ = p1 ηα M + p2 S M + p3 .
+
+(4)
+
+The results are given in Table 24 .
+Asset
+
+p1
+
+p2
+
+p3
+
+R2
+
+BUS5
+DJ
+EURO
+SP
+Bobl
+Bund
+Dax
+ESX
+Schatz
+CL
+
+0.67 [0.55,0.79]
+0.93 [0.71,1.15]
+1.31 [1.11,1.51]
+1.67 [1.37,1.96]
+0.91 [0.84,0.97]
+1.11 [1.01,1.20]
+1.09 [1.01,1.16]
+0.89 [0.78,1.01]
+0.80 [0.71,0.90]
+0.97 [0.89,1.05]
+
+0.10 [0.06,0.14]
+0.07 [0.01,0.13]
+0.02 [-0.02,0.07]
+0.07 [0.05,0.08]
+0.08 [0.07,0.09]
+0.11 [0.09,0.13]
+0.11 [0.10,0.13]
+0.13 [0.11,0.15]
+0.10 [0.07,0.12]
+0.11 [0.09,0.12]
+
+-40.21 [-76.28,-4.14]
+38.90 [-18.19,96.00]
+-89.23 [-211.08,32.62]
+-2.84 [-69.90, 64.21]
+19.04 [4.41,33.67]
+-29.99 [-54.16,-5.82]
+54.94 [23.02,86.86]
+-10.15 [-37.71,17.41]
+-0.93 [-9.78,7.92]
+-11.14 [-51.20,28.92]
+
+0.84
+0.73
+0.75
+0.83
+0.90
+0.92
+0.97
+0.90
+0.88
+0.97
+
+Table 2: Estimation of the linear model with 95% confidence intervals.
+By looking at the R2 statistics, we can notice that the linear fits are very good.
+4
+
+Note that we have merged the data corresponding to Bobl 1 and Bobl 2. Anyhow, the regression
+parameters are very close when considering them separately.
+
+21
+
+1400
+
+1200
+
+√
+σ − p2 S M
+
+1000
+
+Dax
+DJ
+EURO
+BUS5
+CL
+Bobl
+Bund
+Schatz
+Eurostoxx
+SP
+
+EURO
+
+Dax
+
+800
+
+CL
+
+600
+
+400
+
+DJ
+Bund
+SP
+BUS5
+Bobl
+Eurostoxx
+
+200
+Schatz
+
+0
+0
+
+200
+
+400
+
+600
+√
+
+800
+
+1000
+
+1200
+
+p1 ηα M
+√
+√
+Figure 4: Cloud (p1 ηα M , σ − p2 S M ). The black line is the line y = x.
+More interestingly, we see that the values of p1 are systematically very close to 1. We
+explain this from a theoretical point of view in the next section. Surprisingly enough,
+we also remark that the constant p2 has the same order of magnitude for all the assets
+(about 0.1). Finally, in order to show that the parameter p3 is negligible, the cloud
+√
+√
+(p1 ηα M , σ − p2 S M ) is given in Figure 4. On this figure, all the points are indeed
+very close to the line y = x.
+
+22
+
+4
+
+Implicit spread and volatility per trade: a simple
+equilibrium model
+
+In our approach, the relationship between the implicit spread ηα and the volatility per
+trade can be theoretically justified in a very natural way. Indeed, we use a simple equilibrium equation between profits and losses of market makers and market takers. To do
+so, in the spirit of Madhavan el al. [31], we compute the ex post expected cost relative
+to the efficient price of a market order.
+
+4.1
+
+A profit and loss equality
+
+To fix ideas, let us consider a market order leading to an upward price change at time t.
+We write Xt for the efficient price at the transaction time t and assume it lies inside the
+bid-ask quotes at the transaction time. Therefore, from the model, the market order has
+been done at price Pt = Xt + α/2 − ηα. After this transaction, there are two possibilities:
+• The next move of the transaction price is a downward move at price Pt −α: it means
+the efficient price has crossed the barrier Xt − 2ηα. This occurs with probability
+1
+.
+1+2η
+
+• The next move of the transaction price is an upward move at price Pt + α: it means
+2η
+.
+the efficient price has crossed the barrier Xt + α. This occurs with probability 1+2η
+
+Therefore, the ex post expected profit and loss of such a market order is
+
+1
+2η
+(Xt + α/2 − ηα) −
+(Xt − 2ηα) +
+(Xt + α) = α/2 − ηα.
+1 + 2η
+1 + 2η
+
+
+Thus, contrary to the classical efficiency condition of small tick markets which states that
+the ex post expected cost of a market order should be zero, see for example [44], in the
+23
+
+large tick case, it is positive. This means that confronted with this large tick, market
+takers are ready to lose α/2 − ηα in order to obtain liquidity.
+As already seen, following Wyart et al. [44], the average profit and loss per trade per
+√
+unit of volume of the market makers is well approximated by α/2 − σ/ M . The gain of
+the market makers being the loss of the market takers, this leads to
+√
+ηα ∼ σ/ M .
+
+Thus, using a theoretical approach inspired by Madhavan et al. [31] and Wyart et al.
+[44], we can explain our empirical finding that ηα plays the role of spread for large tick
+assets.
+
+4.2
+
+A simple agent-based explanation of microstructure effects
+
+A distinctive feature of high frequency data, particularly of large tick assets, is the decreasing behavior of the signature plot (2). Many statistical models aim at reproducing
+this decreasing shape. Most commonly, they use a measurement error approach for the
+price (microstructure noise models), see among others [3, 4, 6, 20, 38, 46]. A pleasant consequence of our approach is that it provides an agent based explanation of a phenomenon
+mostly viewed as a statistical stylized fact.
+Recall that the ex post expected cost of a market order is α/2 − ηα. This does
+explain why for large tick assets with average spread close to one tick, the parameter η is
+systematically smaller than 1/2, which means the signature plot is decreasing. Otherwise
+we would be in a situation where the cost of market orders is negative and market makers
+lose money. To avoid that, market makers would naturally increase the spread, what they
+can always do.
+
+24
+
+5
+
+Changing the tick value
+
+Market designers face the question of choosing a tick value. This is an extremely important and sensitive issue, especially because of its impact on high frequency trading.
+Surprisingly, it has not been given much consideration in the quantitative academic literature. Our approach seems then to be one of the first attempt to fill this gap.
+Fixing the tick value is an intricate problem, see for example [22, 23]. On the one hand,
+when the tick value is too small, one tick is not really significant, neither for market makers
+nor for market takers. Therefore, it is very complicated for market makers to choose levels
+where they should fix their quotes. Furthermore, the order books are very unstable since
+market participants do not hesitate changing marginally the price of their limit orders in
+order to gain in priority, which can be very discouraging for market makers. In particular,
+market participants having only access to a few lines of the order book (typically five or
+ten), if these lines are not reliable or only provide vanishing liquidity, they may not be
+able to assess the prices. On the other hand, it is clear that a tick value which is too
+large prevents the price from moving freely according to the views of market participants
+whose valuation accuracy for the asset is smaller than one tick.
+If the tick value is not satisfying, market platforms have the possibility to change
+it. Such a modification implies changes in various market quantities (number of trades,
+spread, liquidity,...). The first thing the platform designer needs to do is to understand
+the desired effects of this change of tick. This is already a difficult question, see Section
+5.2. Even in the case where market designers have a clear idea of the situation they want
+to reach, they still face the problem of the way to reach it. Indeed, it is commonly acknowledged that tick values have to be determined by trial and error and that the success
+of a change in the tick value can only be assessed ex post, on the basis of the obtained
+effects. Thus, only few predictive models have been designed in the literature, see for
+example [21], and the consequences of a change in the tick value have been essentially
+25
+
+studied from an empirical point of view, see [1, 5, 7, 10, 11, 12, 18, 19, 28, 37, 43, 45].
+
+5.1
+
+The effects of a change in the tick value
+
+We assume we are dealing with a large tick asset. In that case, our approach enables us to
+forecast ex ante the consequences of a change in the tick value on some market quantities,
+in particular η which is the parameter quantifying the intensity of microstructure effects.
+In the following analysis, the variables of interest are: the tick value α, the daily
+volatility σ, the daily number of transactions M , the traded volume within the day V ,
+the regression estimates p1 and p2 , and the parameter η. We put an index 0 for denoting
+a variable before the change in the tick value and no index for the same variable after the
+change in the tick value. We discuss in more details these seven variable in the following:
+• α0 and α are fixed by the exchange.
+• The volatility and the daily traded volume are macroscopic, fundamental quantities
+and should remain essentially invariant after a change in the tick value. Therefore
+we will assume:
+σ = σ0 , V = V0 .
+• The regression parameters p1,0 and p2,0 are known. The parameters p1 and p2 are
+a priori unknown but we have shown that in practice p1 is systematically close to 1
+and p2 is small, close to 0.1. Moreover, this value for p1 is clearly explained from a
+theoretical point of view. Thus we will assume:
+
+p1 ∼ p1,0 ∼ 1 and p2 ∼ p2,0 , p2 ∈ [0, 0.1].
+
+• The daily number of trades M should not be an invariant quantity. Assume for
+example that at any time, the average cumulative latent liquidity available up to
+26
+
+price p is of the form f (|p − midprice|), with f an increasing function. We assume
+also that each market taker takes a fixed proportion of the liquidity at the top of the
+book (equal to f (α/2)). Then, when the tick size decreases, the available liquidity
+at the best levels also decreases. The daily traded volume being approximately
+constant, this implies an increase in the number of transactions M . We will use
+such a function f with a reasonable shape, more precisely:
+
+f (x) = c ∗ xβ , β > 0,
+
+focusing on the classical cases β = 1 (linear case) and β = 1/2 (square root concave
+case).
+• The parameter η0 is known, but the parameter η is a priori unknown.
+Recall that we consider a large tick asset whose tick value is modified. We assume we
+remain in a regime where the spread is approximately equal to one tick, which essentially
+√
+means that M is so that α/2 − σ/ M ≥ 0. Indeed, remind that the market spread is the
+√
+smallest one achievable so that the market makers profit S/2 − σ/ M is non negative.
+Therefore, when decreasing the tick size, the market spread remains equal to one tick
+until the profit and loss of the market makers is equal to zero.
+Using the fact that σ is invariant when changing the tick value, together with the
+preceding assumptions and Equation (4) where the spread is approximated by the tick
+value, we get
+p
+p
+√
+√
+p1 ηα M + p2 α M = p1,0 η0 α0 M0 + p2,0 α0 M0 .
+Then, from the shape of the function f , we obtain the following formula:
+
+η∼
+
+ p η + p  α 1−β/2 p
+1,0 0
+2,0
+0
+2
+− .
+p1
+α
+p1
+27
+
+Now, using different assumptions on p1 and p2 , we obtain three versions of the prediction
+formula for the parameter η after a change in the tick value. These three versions give the
+same order of magnitude for η, which is what matters in practice. For the first version
+we assume p1 = p1,0 and p2 = p2,0 . This gives the following result:
+Effect of a change in the tick value on the microstructure, version 1:
+p2,0  α0 1−β/2 p2,0
+−
+.
+η ∼ η0 +
+p1,0
+α
+p1,0
+
+
+(5)
+
+Again, recall that typical values for β are 1 and 1/2.
+If one wants to get even simpler formulas (which can be particularly important for
+regulators), which do not need any regression but still give the right order of magnitude,
+one may consider p1 = p1,0 = 1 and p2 = p2,0 = 0.1 or even p1 = p1,0 = 1 and p2 = p2,0 = 0.
+In these cases, we obtain the following simple results:
+
+Effect of a change in the tick value on the microstructure, version 2:
+ α 1−β/2
+0
+η ∼ (η0 + 0.1)
+− 0.1.
+α
+
+(6)
+
+Effect of a change in the tick value on the microstructure, version 3:
+
+η ∼ η0
+
+ α 1−β/2
+0
+
+α
+
+.
+
+(7)
+
+Therefore, under reasonable assumptions, we are able to forecast the value of η after
+a change in the tick value. In order to check these formulas on real data, we use the Bobl
+contract. The tick value of this asset has been multiplied by two on 2009, June 15. For
+12 trading days before 2009, June 15, we give in Figure 5 the estimates of the value of
+η after the change of the tick value given by Equation (5) (version 1 above) with β = 1
+28
+
+0.5
+0.45
+
+linear
+concave
+
+α=5
+
+α = 10
+
+0.4
+
+←−15 − 6 − 2009
+0.35
+
+η
+
+0.3
+0.25
+0.2
+0.15
+0.1
+0.05
+0
+0
+
+5
+
+10
+
+15
+
+20
+
+25
+
+day
+
+Figure 5: Testing the prediction of η on the Bobl futures. The blue lines show the daily
+measures of η. The red and green lines are the daily predictions associated to the future
+tick value.
+and β = 1/2.
+The results are very satisfying, both assumptions on the latent liquidity leading to
+good estimates of the future value of η.
+
+5.2
+
+Optimal tick value and optimal tick size
+
+Defining an optimal tick value is a very complicated issue, see for example [2]. Indeed,
+different types of market participants can have opposite views on what is a good tick
+value. We believe that our approach enables us to suggest a reasonable notion of optimal
+tick value. Of course the optimality notion we are about to define is arguable but still we
+think it is a first quantitative step towards solving the tick value question.
+29
+
+We consider that a tick value is optimal if:
+• The (average) ex post cost of a limit order is equal to the (average) ex post cost of
+a market order, both of them equal to zero.
+• The spread is stable and close to one tick.
+Such a situation can be seen as reasonable for both market makers and market takers.
+Indeed, it removes any implicit costs or gains due to the microstructure. Moreover, having
+a stable spread close to one tick prevents sparse order books which can drive liquidity
+away.
+It is easy to see that getting an optimal tick value is equivalent to have η = 1/2
+together with a spread which is still equal to one tick. Thus, we refer to this last situation
+as the optimal tick size case. Note that the optimal tick size is the same for any asset
+(η = 1/2), whereas the optimal tick value depends on the features of the asset. Remark
+that in the optimal situation, the following properties follows for the microstructure:
+• The last traded price can be seen as a sampled Brownian motion.
+• Consequently, the signature plot is flat.
+Starting from a large tick asset, our approach enables us to reach the optimal tick
+size situation. Indeed, this is possible to obtain η = 1/2 and a spread close to one tick by
+changing the tick value only assuming that η increases continuously when the tick value
+decreases. Then, when modifying the tick value, the spread remains equal to one tick as
+long as α/2 − ηα ≥ 0. Indeed, if α∗ denotes the largest tick value such that η = 1/2,
+then for all α > α∗ , market makers make positive profits with a spread of one tick and
+consequently maintain this spread. Then, from Equations (5), (6) and (7), we obtain
+three versions of the formula for the optimal tick value leading to η = 1/2:
+
+30
+
+Optimal tick value formula, version 1:
+
+α ∼ α0
+
+η p
+
+0 1,0 + p2,0
+
+1
+ 1−β/2
+
+p1,0 /2 + p2,0
+
+.
+
+(8)
+
+Optimal tick value formula, version 2:
+
+α ∼ α0
+
+1
+ η + 0.1  1−β/2
+
+0
+
+0.6
+
+.
+
+(9)
+
+Optimal tick value formula, version 3:
+1
+
+α ∼ α0 (2η0 ) 1−β/2 .
+
+(10)
+
+Of course we do not pretend that in practice, applying such rules will exactly lead to
+an optimal tick value (in our sense). However, we do believe that these simple formulas
+give the right order of magnitude for the relevant tick value of a given asset. To end this
+section, we give in Table 3 the optimal tick values for our assets computed from Equation
+(8) with β = 1 or β = 1/2, and the average values of η given in Table 1. Note that these
+tick values are obtained from our 2009 database, and could be updated with more recent
+data.
+Thus, according to our approach, tick values should be quite significantly reduced for
+the considered assets. It is particularly interesting to remark that the optimal tick values
+suggested for the Bobl are almost the same before and after the change in the tick value
+on 2009, June 15.
+
+5.3
+
+Optimal tick value for small tick assets
+
+A crucial point in our approach is that when changing the tick value of a large tick asset,
+the spread remains equal to one tick as long as market makers make profit with such
+
+31
+
+Futures
+
+Tick Value
+
+Optimal tick value
+β=1
+
+Optimal tick value
+β = 1/2
+
+BUS5
+DJ
+EURO
+SP
+Bobl 1
+Bobl 2
+Bund
+DAX
+ESX
+Schatz
+CL
+
+7.8125 $
+5.00 $
+12.50 $
+12.50 $
+5.00 e
+10.00 e
+10.00 e
+12.50 e
+10.00 e
+5.00 e
+10.00 $
+
+2.7 $
+1.6 $
+3.1 $
+0.3 $
+1.8 e
+1.6 e
+1.6 e
+4.9 e
+1.3 e
+0.8 e
+3.1 $
+
+3.8 $
+2.3 $
+5.0 $
+0.9 $
+2.6 e
+2.8 e
+2.9 e
+6.7 e
+2.6 e
+1.5 e
+4.6 $
+
+Table 3: Optimal tick values for the considered assets, in the linear case and the square
+root concave case.
+a spread. So the spread (in ticks) is invariant when the tick value is modified. For a
+small tick asset, when enlarging the tick value, both the spread and the number of trades
+adjust so that the spread and the volatility per trade have of the same order of magnitude.
+The way these two variables are jointly modified is intricate and this is why our method
+cannot, a priori, be used for small tick assets. However, let us stress the fact that it is
+still possible for the exchange to use a two step procedures in the case of a small tick
+asset:
+• Step 1: Enlarge sufficiently the tick value so that the asset becomes a large tick
+asset.
+• Step 2: Use our methodology for large tick assets.
+
+6
+
+Conclusion
+
+To conclude, we recall here the main messages of our paper, which applies to any large
+tick asset.
+
+32
+
+• Measuring microstructure. Most of the microstructure phenomena can be measured
+through a single parameter η, which is very easy to compute in practice. Therefore,
+to predict microstructure features after a change in the tick value, it suffices to
+predict the value of η after such a change.
+• Quantifying the tick size: the implicit spread. In particular, η quantifies the tick
+size of a large tick asset. Indeed, it can be shown both empirically and theoretically
+that the quantity ηα plays the role of spread for large tick assets.
+• Forecasting microstructure after a change in the tick value. We obtain easy and
+straightforward formulas in order to forecast η, see Formulas (5) to (7). These
+results are confirmed in practice thanks to spectacular results on the Bobl.
+• Choosing a tick value leading to given microstructure effects. Inversely, we can find
+the required α for any choice of η. In particular, it allows us to obtain simple
+explicit rules in order to reach what we call an optimal tick value.
+• Optimal tick value. In our approach, an optimal tick value is a tick value such that
+the ex post cost of a limit order is equal to the ex post cost of a market order, both
+of them equal to zero, and the spread is close to one tick.
+• Optimal tick size. Getting an optimal tick value corresponds to the case where
+the spread is close to one tick and the tick size is optimal, that is η = 1/2. This
+situation can always be reached after a suitable change in the tick value of a large
+tick asset, see Formulas (8) to (10).
+
+Acknowledgements
+We are grateful to R. Almgren, E. Bacry, J.P. Bouchaud, M. Hoffmann, J. Kockelkoren,
+C.A. Lehalle, J.F. Muzy, C.Y. Robert and S. Takvorian for helpful discussions.
+33
+
+References
+[1] Ahn, H.J., Cao, C.Q., and H. Choe, 1996, Tick size, spread, and volume,
+Journal of Financial Intermediation 5, 2-22.
+[2] J.J. Angel, 1997, Tick size, Share prices, and stock splits, Journal of Finance 52,
+655-681.
+[3] Aı̈t-Sahalia, Y., Mykland, P.A., and L. Zhang, 2005, How often to sample a
+continuous-time process in the presence of market microstructure noise, The Review
+of Financial Studies 18, 351-416.
+[4] Andersen, T.G., Bollerslev, T., Diebold, F.X. and P. Labys, 2000,
+Great realizations, Risk 13, 105-108.
+[5] J.M. Bacidore, 1997, The impact of decimalization on market quality: An empirical investigation of the Toronto Stock Exchange, Journal of Financial Intermediation 6, 92–20.
+[6] Bandi, F. and J.R. Russel, 2008, Microstructure noise, realized variance and
+optimal sampling, Review of Economic Studies 75, 339-369.
+[7] H. Bessembinder, 2000, Tick Size, spreads, and liquidity: An analysis of Nasdaq
+securities trading near ten dollars, Journal of Financial Intermediation 9, 213-239.
+[8] Biais, B., Foucault, T., and P. Hillion, 1997, Microstructure des marchés
+financiers, PUF.
+[9] Bouchaud, J.P., Mézard, M., and M. Potters, 2002, Statistical properties
+of stock order books: empirical results and models, Quantitative Finance 2, 251-256.
+[10] Bourghelle, D. and F. Declerck, 2004, Why markets should not necessarily
+reduce the tick size, Journal of banking and finance 28, 373-398.
+34
+
+[11] Chung, K.H., and C. Chuwonganant, 2002, Tick size and quote revisions on
+the NYSE, Journal of Financial Markets 5, 391-410.
+[12] Chung, K.H., and R.A. Van Ness, 2001, Order handling rules, tick size, and
+the intraday pattern of bid–ask spreads for Nasdaq stockss, Journal of Financial
+Markets 4, 143-161.
+[13] Daniels, M.G., Farmer, J.D., Gillemot, L., Iori, G., and E. Smith,
+2003, Quantitative model of price diffusion and market friction based on trading as
+a mechanistic random process, Physical review letters 90, 108102.
+[14] Eisler, Z., Bouchaud, J.P., and J. Kockelkoren, 2011, The price impact
+of order book events: market orders, limit orders and cancellations, Quantitative
+Finance, forthcoming.
+[15] Foucault, T., Kadan, O., and E. Kandel, 2005, Limit order book as a market
+for liquidity, Review of Financial Studies 18, 1171-1217.
+[16] L.R. Glosten, 1987, Components of the bid-ask spread and the statistical properties of transaction prices, Journal of Finance 42, 1293-1307.
+[17] Glosten, L.R. and P.R. Milgrom, 1985, Bid, ask and transaction prices in
+a specialist market with heterogeneously informed traders, Journal of Financial
+Economics 1, 71-100.
+[18] Goldstein, M.A., and K.A. Kavajecz, 2000, Eighths, sixteenths, and market depth: changes in tick size and liquidity provision on the NYSE, Journal of
+Financial Economics 1, 125-149.
+[19] Griffiths, M.D., Smith, B.F., Turnbull, D.A.S., and R.W. White, 1998,
+The role of tick size in upstairs trading and downstairs trading, Journal of Financial
+Intermediation 7, 393-417.
+35
+
+[20] Hansen, P.R. and A. Lunde, 2006, Realized variance and market microstructure
+noise, Journal of Business and Economics Statistics 24, 127-161.
+[21] L.E. Harris, 1994, Minimum price variations, discrete bid-ask spreads, and quotation sizes, Review of Financial Studies 7, 149-178.
+[22] L.E. Harris, 1997, Decimalization: A review of the arguments and evidence,
+Unpublished working paper, University of Southern California.
+[23] L.E. Harris, 1999, Trading in pennies: a survey of the issues, Unpublished working
+paper, University of Southern California.
+[24] J. Hasbrouck, 1991, Measuring the information content of stock trades, Journal
+of Finance 46, 179-207.
+[25] Hollifield, B., Miller, R.A., and P. Sandas, 2004, Empirical analysis of
+limit order markets, Journal of the American Statistical Association 71, 1027-1063.
+[26] Huang, R.D. and H.R. Stoll, 1997, The components of the bid-ask spread: A
+general approach, Review of Financial Studies 10, 995-1034.
+[27] Huang, R.D. and H.R. Stoll, 2001, Tick size, bid-ask spreads, and market
+structure, Journal of Financial and Quantitative Analysis 36, 503-522.
+[28] Lau, S.T., and T.H. McInish, 1995, Reducing tick size on the Stock Exchange
+of Singapore, Pacific-Basin Finance Journal 3, 485-496.
+[29] H. Luckock, 2003, A steady-state model of the continuous double auction, Quantitative Finance 3, 385-404.
+[30] A. Madhavan, 2000, Market microstructure: A survey, Journal of Financial Markets 3, 205-258.
+
+36
+
+[31] Madhavan, A., Richardson, M., and M. Roomans, 1997, Why do security
+prices change? A transaction-level analysis of NYSE stocks, Review of Financial
+Studies 10, 1035-1064.
+[32] M. O’Hara, 1995, Market microstructure theory, Cambridge, Blackwell.
+[33] Robert, C.Y., and M. Rosenbaum, 2010, On the microstructural hedging error,
+SIAM Journal of Financial Mathematics 1, 427-453.
+[34] Robert, C.Y., and M. Rosenbaum, 2011, A new approach for the dynamics of
+ultra-high-frequency data: The model with uncertainty zones, Journal of Financial
+Econometrics 9, 344-366.
+[35] Robert, C.Y., and M. Rosenbaum, 2012, Volatility and covariation estimation
+when microstructure noise and trading times are endogenous, Mathematical Finance
+22, 133-164.
+[36] R. Roll, 1984, A simple implicit measure of the effective bid-ask spread in an
+efficient Market, Journal of Finance 39, 1127-1139.
+[37] Ronen, T., and D.G. Weaver, 2001, Teenies anyone?, Journal of Financial
+Markets 4, 231-260.
+[38] M. Rosenbaum, 2012, A new microstructure index, Quantitative Finance 11, 883899.
+[39] I. Roşu, 2009, A dynamic model of the limit order book, Review of Financial
+Studies 22, 4601-4641.
+[40] Smith, E., Farmer, J.D., Gillemot, L. and S. Krishnamurthy, 2003,
+Statistical theory of the continuous double auction, Quantitative Finance 3, 481514.
+37
+
+[41] H. Stoll, 2000, Friction, Journal of Finance 55, 1479-1514.
+[42] U.S. Securities and Exchange Commission, 2012, Report to congress on
+decimalization.
+[43] Wu, Y., Krehbiel, T., and B.W. Brorsen, 2011, Impacts of tick size reduction on transaction costs, International Journal of Economics and Finance 3,
+57-65.
+[44] Wyart, M., Bouchaud, J.P., Kockelkoren, J., Potters, M., and M.
+Vettorazzo, 2008, Relation between bid-ask spread, impact and volatility in
+double auction markets, Quantitative Finance 8, 41-57.
+[45] Zhao, X., and K.H. Chung, 2006, Decimal pricing and information-based trading: Tick size and informational efficiency of asset price, Journal of Business Finance and Accounting 33, 753-766.
+[46] Zhang, L., Mykland, P.A., and Y. Aı̈t-Sahalia, 2005, A tale of two time
+scales: Determining integrated volatility with noisy high-frequency data, Journal
+of the American Statistical Association 100, 1394-1411.
+
+38
+
+

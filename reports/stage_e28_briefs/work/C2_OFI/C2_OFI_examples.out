@@ -1,0 +1,54 @@
+== 1. OFI on four toy MES BBO updates (prices in index points)
+  event 1: e = +5
+  event 2: e = +5
+  event 3: e = +10
+  event 4: e = -7
+  OFI = 13
+  mid change = 0.50 ticks
+  stylized dP = OFI/(2D), D=20: 0.3250 ticks; OFI for 1 tick = 40
+  stylized dP = OFI/(2D), D=100: 0.0650 ticks; OFI for 1 tick = 200
+  stylized dP = OFI/(2D), D=630: 0.0103 ticks; OFI for 1 tick = 1260
+== 2. predictive R2 from contemporaneous R2 (dP_k = b*OFI_k + eps, OFI AR(1) rho)
+  R2c=0.65, rho=0.05: predictive R2 = 0.00163
+  R2c=0.65, rho=0.1: predictive R2 = 0.00650
+  R2c=0.65, rho=0.2: predictive R2 = 0.02600
+== 3. cost hurdles (rules/products.py: MES tick $1.25 RT 122c; ES tick $12.50 RT 378c)
+  MES: fees = 0.9760 ticks/RT; taker RT (1-tick spread) = 1.9760 ticks = $2.47; maker RT max gross 1 tick, net 0.0240 ticks = $0.03
+  ES: fees = 0.3024 ticks/RT; taker RT (1-tick spread) = 1.3024 ticks = $16.28; maker RT max gross 1 tick, net 0.6976 ticks = $8.72
+  R2=0.01: E|forecast| with sd(dP)=1 tick = 0.080 ticks
+  R2=0.05: E|forecast| with sd(dP)=1 tick = 0.178 ticks
+  R2=0.2: E|forecast| with sd(dP)=1 tick = 0.357 ticks
+== 4. queue imbalance and logistic map (Gould-Bonart eq 7, logistic with x0, x1)
+  nb=40, na=10: I=0.600, p_up=0.769
+  nb=10, na=40: I=-0.600, p_up=0.231
+  nb=25, na=25: I=0.000, p_up=0.500
+== 5. XGBoost leaf weight (Chen-Guestrin eq 5,6) squared loss, h_i = 1
+  G=-0.60, H=3, lambda=1.0: w*=0.1500, leaf objective=-0.0450
+== 6. integrated OFI (Cont-Cucuringu-Zhang eq 4), toy weights
+  ofi_I = 0.540
+== 7. sample sizes: two-group mean difference in markouts (two-sided 5%, power 80%)
+  sd=1.0 ticks, delta=0.1 ticks: n per group = 1570
+  sd=1.0 ticks, delta=0.2 ticks: n per group = 393
+  sd=2.0 ticks, delta=0.2 ticks: n per group = 1570
+  sd=3.0 ticks, delta=0.25 ticks: n per group = 2261
+  AUC test: n for AUC=0.55 vs 0.5 (Hanley-McNeil approx, equal classes)
+   AUC=0.52, n per class=500: z = 1.10
+   AUC=0.52, n per class=2000: z = 2.19
+   AUC=0.52, n per class=10000: z = 4.90
+   AUC=0.55, n per class=2000: z = 5.51
+   AUC=0.6, n per class=2000: z = 11.23
+== 8. data and memory, ES BBO event rate 45/s (Takahashi 2025 Table 1, 2008-2013)
+  RTH events/day = 1,053,000; 84 days = 88,452,000
+  10 float32 features per event: 3.5 GB
+  20 float32 features per event: 7.1 GB
+  40 float32 features per event: 14.2 GB
+  10-second bars: per RTH day 2340.0 ; 84 days = 196560
+== 9. cloud cost (RunPod RTX 4090 $0.89/h; A100 PCIe 80GB $1.79/h; Lambda H100 PCIe $3.29/h)
+  10 GPU-h: 4090 $9; A100 $18; H100 $33
+  50 GPU-h: 4090 $44; A100 $90; H100 $164
+  200 GPU-h: 4090 $178; A100 $358; H100 $658
+== 10. slow maker break-even toxic share (BCS eq 6.4 logic, sniper wins w.p. 1)
+  MES: J=1.0 tick jump, fee/side=0.488: break-even toxic share = 1.200%
+  MES: J=2.0 tick jump, fee/side=0.488: break-even toxic share = 0.600%
+  ES: J=1.0 tick jump, fee/side=0.151: break-even toxic share = 34.880%
+  ES: J=2.0 tick jump, fee/side=0.151: break-even toxic share = 17.440%

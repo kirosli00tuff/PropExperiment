@@ -1,0 +1,2894 @@
+Archive ouverte UNIGE
+https://archive-ouverte.unige.ch
+
+Article scientifique
+
+Article
+
+2015
+
+Submitted version
+
+Public access
+
+This is an author manuscript pre-peer-reviewing (submitted version) of the original publication. The layout of
+the published version may differ .
+
+Jumps in high-frequency data : spurious detections, dynamics, and news
+
+Bajgrowicz, Pierre Georges; Scaillet, Olivier; Treccani, Adrien
+
+How to cite
+BAJGROWICZ, Pierre Georges, SCAILLET, Olivier, TRECCANI, Adrien. Jumps in high-frequency data :
+spurious detections, dynamics, and news. In: Management science, 2015, vol. 62, n° 8, p. 2198–2217. doi:
+10.1287/mnsc.2015.2234
+
+This publication URL:
+
+https://archive-ouverte.unige.ch/unige:41800
+
+Publication DOI:
+
+10.1287/mnsc.2015.2234
+
+© This document is protected by copyright. Please refer to copyright holder(s) for terms of use.
+Last update in Archive ouverte UNIGE on 14.03.2023 23:15
+
+Jumps in high-frequency data: spurious detections,
+dynamics, and news ∗
+Pierre Bajgrowicz†
+
+Olivier Scaillet‡
+
+Adrien Treccani§
+
+July 2013
+
+JEL classification: C58, G12, G14.
+Keywords: jumps, high-frequency data, spurious detections,
+jumps dynamics, news releases, cojumps.
+
+∗
+
+We would like to thank the editor, the associate editor and the referee for constructive
+criticism and numerous suggestions that have led to substantial improvements over previous versions of the paper. We thank Eric Ghysels, Rajna Gibson, Raul Gonzalez, Michael
+Rockinger, Neil Shephard, as well as seminar participants at the Humboldt University of
+Berlin CASE-QPL Distinguished Lecture Series (2010), Oxford-Man Institute (2010), the
+Econometric Society World Congress (2010), SoFiE (2010), Banque de France (2010), MAF
+(2010), Université d’Orleans (2010), Edhec Risk Institute (2010), University College of Dublin
+(2010), the EC2 conference (2009), Solvay Business School (2009), Université Paris X–Nanterre
+(2009), ESEM (2009), and the Swiss Doctoral Workshop in Finance (2009) for helpful comments. Both authors received financial support from the Swiss National Science Foundation
+through the National Center of Competence in Research: Financial Valuation and Risk Management (NCCR FINRISK).
+†
+University of Geneva, and Litasco SA, 40 Bd du Pont d’Arve, 1211 Geneva, Switzerland.
+Voice: +41 22 705 22 27. Fax: +41 22 379 81 04. E-mail: pierre.bajgrowicz@unige.ch.
+‡
+University of Geneva and Swiss Finance Institute, 40 Bd du Pont d’Arve, 1211
+Geneva, Switzerland.
+Voice: +41 22 379 88 16.
+Fax: +41 22 379 81 04.
+E-mail:
+olivier.scaillet@unige.ch.
+§
+University of Geneva and Swiss Finance Institute, 40 Bd du Pont d’Arve, 1211
+Geneva, Switzerland.
+Voice: +41 22 379 81 66.
+Fax: +41 22 379 81 04.
+E-mail:
+adrien.treccani@unige.ch.
+
+1
+
+Abstract
+Applying tests for jumps to financial data sets can lead to an important
+number of spurious detections. Bursts of volatility are often incorrectly
+identified as jumps when the sampling is too sparse. At a higher frequency, methods robust to microstructure noise are required. We argue
+that whatever the jump detection test and the sampling frequency, a highly
+relevant number of spurious detections remain because of multiple testing
+issues. We propose a formal treatment based on an explicit thresholding
+on available test statistics. We prove that our method eliminates asymptotically all remaining spurious detections. In Dow Jones stocks between
+2006 and 2008, spurious detections can represent up to 90% of the jumps
+detected initially. For the stocks considered, jumps are rare events, they
+do not cluster in time, and no cojump affects all stocks simultaneously,
+suggesting jump risk is diversifiable. We relate the remaining jumps to
+macroeconomic news, prescheduled company-specific announcements, and
+stories from news agencies which include a variety of unscheduled and uncategorized events. The vast majority of news do not cause jumps but
+may generate a market reaction of the form of bursts of volatility.
+
+2
+
+1
+
+Introduction
+
+Evidence of stochastic skewness and kurtosis of asset return distributions has led
+to the development of models with jumps to better incorporate these dynamics.
+Jumps are rare and larger events than what can be explained by a continuous
+diffusion process. Detecting jumps and studying their dynamics is important
+because of the consequences in applications including derivatives pricing and
+risk management. However, determining from discrete observations whether
+a large return should be considered as a jump is no trivial task1 . Numerous
+statistical methods to test for the presence of jumps in high-frequency data
+have been introduced in recent years. When studying the dynamics of jump
+arrivals, the jump detection tests have to be applied over a period of time, i.e.,
+over a series of days simultaneously. Such a procedure results in performing
+multiple testing, and leads by construction to making a significant number of
+spurious detections, regardless of the underlying test. For instance, if the jump
+tests are carried out at the 5% significance level over a one-year period (i.e., 252
+trading days) with no single jump, on average more than 12 days are still going
+to be erroneously selected as containing a jump. As we show in a Monte Carlo
+study provided in the supplemental file, the presence of spurious detections
+can seriously bias the estimated proportion of jump days and results on jump
+dynamics, e.g., tests of clustering of jump arrivals. In this paper, we propose
+a new methodology to resolve such erroneous detection problems. The Monte
+Carlo results show that it performs well in finite samples. Our thresholding
+technique reveals a low frequency of jumps but more frequent bursts of volatility.
+We study their dynamics and investigate whether they can be explained by news
+(including stories from news agencies).
+Our first contribution is to propose a method to eliminate spurious detections due to multiple testing via an explicit thresholding on available test
+statistics. We are the first to provide a formal treatment of the multiple testing
+bias when applying jump detection tests over a sample of many days. We prove
+that if we consider test statistics above a certain threshold level only, the likelihood of making such spurious detections disappears asymptotically. Monte
+Carlo results show that our approach behaves also well in finite samples. Our
+theoretical results legitimize the ad hoc response to the multiple testing issue
+taken in some studies, which is to use very conservative critical values, e.g.,
+at a 0.1% significance level for one-sided tests (Bollerslev, Law and Tauchen
+1
+
+The recent literature, e.g., Aı̈t-Sahalia (2004) and Lee and Hannig (2010), distinguishes
+between big Poisson-type jumps and small possibly infinite-activity jumps. We concentrate
+on the first kind in order to study the relation with important news announcements.
+
+3
+
+(2008), Giot, Laurent and Petitjean (2010)). In our analysis, we focus on very
+liquid large-capitalization U.S. stocks. We collect high-frequency returns from
+the Trades and Quotes (TAQ) database for the Dow Jones Industrial Average
+Index (DJIA) constituents, over the three-year period of January 2006 to December 2008. We also study the presence of jumps in the index, which we proxy
+with the Diamonds exchange-traded fund (ETF) and a price-weighted portfolio
+of the 30 Dow Jones constituents. We consider 2 minutes and 10 seconds sampling frequencies, and use the adjusted ratio statistic of Barndorff-Nielsen and
+Shephard (2006) (BNS) and the estimator of Christensen, Oomen and Podolskij (2011) (COP) as the underlying tests to detect jumps. Nevertheless, our
+method to eliminate spurious detections can be applied just as easily on other
+existing jump detection techniques, such as Aı̈t-Sahalia and Jacod (2009), or
+Andersen, Bollerslev and Dobrev (2007). To summarize this analysis, first, we
+find significantly less jumps in the 10 seconds case than in the 2 minutes case.
+This confirms the results of COP, who argue that stock price processes exhibit
+bursts of volatility that are incorrectly captured as jumps when the sampling
+grid is too sparse. Second, we find that up to 90% of the jumps found at the 10
+seconds frequency are spurious detections due to multiple testing2 . This illustrates the important bias induced by multiple testing, making our thresholding
+technique essential for a proper analysis of jumps. Our results bring the high
+number of jumps detected by existing tests down to an amount more in line
+with the intuition that jumps are rare events.
+The second contribution is the investigation of the dynamic features of durations between jumps in equity prices. We run simulations which show that
+the true dynamics of jump arrivals can only be uncovered once erroneous detections are removed with our thresholding technique. The empirical series do
+not reveal a clustering in time of jump occurrences. Our results are in favor
+of the hypothesis that jump arrivals follow a simple low intensity Poisson process and, hence, support the jump process used by Merton (1976) to correct
+the discrepancies between market prices and the Black-Scholes value of options.
+During the three years of our study, we find no day where the 30 stocks all
+jump simultaneously and we detect a jump in more than 20% of the stocks
+only on two occasions. The absence of cojumps affecting all stocks supports
+the assumption in Merton (1976) that the jump component is nonsystematic
+or diversifiable. One consequence of the diversifiability is that the jump risk
+2
+
+We assess the robustness of our results by repeating the procedure at 5 minutes and 20
+seconds sampling frequencies with the BNS and COP estimators, respectively. We obtain
+similar results, but the effect of bursts of volatility is even more pronounced at a 5 minutes
+frequency.
+
+4
+
+does not require a risk premium. Also, we do not observe a number of cojumps
+significantly larger than if the stocks jumped independently when we consider
+industry sectors separately.
+The third contribution of the paper is to relate the few jumps that remain
+after we apply our thresholding technique to news announcements. Early papers
+have conjectured that jumps are caused by the arrival of important new information, most often specific to the firm, and occasionally more general economic
+or market news. Market-level news can cause jumps in many stocks simultaneously which can propagate even to a diversified index. Examining what type
+of information is dynamically related to jumps helps better explaining market
+phenomena and improving pricing models. We start by investigating the effect
+of macroeconomic announcements and observe no significant effect, even when
+accounting for the surprise component of the news. Our results differ from the
+findings in other markets, e.g., Dungey, McKenzie and Smith (2009) find that
+two thirds of cojumps in bond prices coincide with a scheduled US news release,
+albeit the authors do not control for multiple testing and do not consider the
+same frequency of data. Next, we look at prescheduled announcements specific
+to each stock. We observe no increase in the occurrence of jumps neither on
+quarterly earnings nor on dividend announcements. Finally, we consider stories from two news agencies: Reuters News and Dow Jones News Service. By
+examining the content of news stories, we can analyze the impact of a variety
+of unscheduled and uncategorized events, and are not limited to a predetermined set of event types such as earnings announcements, mergers, or analyst
+recommendations. We use the Factiva database to retrieve the news stories. To
+our knowledge, we are the first to perform an extensive analysis of the relation
+between stories from news agencies and sudden market moves. Given the huge
+quantity of information archived in the Factiva repository, one major challenge
+is to get everything relevant while eliminating erroneous and unimportant stories. Our results show that news releases are not likely to cause jumps neither.
+Companies purposefully shift most important announcements after the bell or
+early in the morning in order to avoid uncontrolled investor reactions and the
+consequent impact on the stock price. These results are consistent with the
+fact that we find a very limited number of actual jumps once we correct for the
+different sources of bias. Our conclusions differ from the findings of Lee and
+Mykland (2008) who examine the association of news with jumps on a small
+sample of stocks over only three months, and find a story for each jump they
+detect. However, if we loosely define a burst of volatility as a jump detection
+at a relatively low frequency that is not captured at high frequency, we iden-
+
+5
+
+tify a link between news and volatility. For instance, we find that the press
+releases following scheduled Federal Open Market Committee (FOMC) meetings increase the likelihood of bursts of volatility, although not to a statistically
+significant extent. Also, announcements concerning share repurchase programs,
+therefore directly related to the balance sheet of the company, have a significant
+impact on the volatility of the share price.
+
+2
+
+Eliminating spurious jump detections
+
+2.1
+
+Setting and assumptions
+
+The Black-Scholes option pricing model assumes that stock prices follow a
+stochastic process that generates a continuous trajectory. This requirement implies that over a short period of time, the stock price cannot suddenly change
+by much. This assumption is challenged by the too many outliers observed in
+empirical studies and the behavior of option prices3 . One solution to capture
+the skewness and kurtosis of asset returns is to include jumps, i.e., to allow
+for stock price variations of extraordinary magnitude, no matter how small the
+interval between successive observations. As explained by Merton (1976), including jumps also allows to solve the discrepancy between market prices of
+options and their Black-Scholes value. The stock price is then written as a
+combination of two types of changes. The continuous part models normal variations in price. The jump part captures abnormal variations. In Merton (1976),
+the latter are supposed to be due to the arrival of new important information
+about the stock. Typically, such information is most often specific to the firm
+or its industry.
+Let Xt for continuous time t ≥ 0 denote the log-price of the asset. The
+workhorse model of modern asset pricing theory assumes that the log-price
+follows an Itô semimartingale. A semimartingale can be decomposed into the
+sum of a drift, a continuous Brownian-driven part, and a discontinuous, or
+jump, part:
+dXt = bt dt + σt dWt + dJt ,
+|
+{z
+}
+|{z}
+continuous part
+
+jump part
+
+where Wt denotes a standard Brownian motion and Jt is a pure jump process. We follow the assumption that jumps are relatively rare and large events
+(Merton (1976), Barndorff-Nielsen and Shephard (2006)), and do not consider
+infinite-activity jumps (Aı̈t-Sahalia (2004)).
+3
+See Aı̈t-Sahalia (2002), Carr and Wu (2003), who test whether a diffusion is sensible to
+model asset prices.
+
+6
+
+Identifying jumps empirically is difficult because only discretely sampled
+data are available. In reality, detecting jumps amounts to answering the following question. Given that we observe in discrete data a change in the asset
+return of a large magnitude, what does that tell us about the likelihood that
+such a change involves a jump, as opposed to just a large realization of the
+Brownian part?
+
+2.2
+
+Thresholding technique
+
+Numerous jump detection methods have been developed since high-frequency
+data have become easily available. In a typical empirical application, the jump
+tests are applied to detect the jump days over a sample period. For each day, a
+test statistic S is computed to test the null hypothesis of no jump. The problem
+is that performing the tests for many days simultaneously results in conducting
+multiple testing, which by nature leads to making a proportion of spurious
+detections equal to the significance level of the individual tests. For example,
+if the individual tests are performed at the 5% significance level during a oneyear period with no single jump, by construction on average more than 12 days
+are going to be erroneously selected as containing a jump. As we show in our
+simulation experiments, it is essential to remove these spurious detections when
+studying the proportion of jump days and jump dynamics. Not accounting for
+spurious detections leads to wrong calibration of risk management and option
+pricing models. An ad hoc response to the multiple testing issue has been the
+use of critical values further in the tails, i.e., 0.1% critical values in Bollerslev,
+Law and Tauchen (2008) and Giot, Laurent and Petitjean (2010).
+The major methodological contribution of the present paper is to propose a
+formal treatment to the multiple testing issue. We are the first to explicitly account for multiple testing when applying jump tests over many days. Applying
+the jump detection methods of Andersen, Bollerslev and Dobrev (2007) and Lee
+and Mykland (2008) on a single day leads to a multiple testing situation that
+is taken into account by both methods. Their approaches require performing a
+number of tests simultaneously within the day when computing one individual
+test statistic. Andersen, Bollerslev and Dobrev (2007) control for the size of
+the multiple jump tests using a Bonferroni correction. Lee and Mykland (2008)
+use the extreme value theory. To our knowledge, however, there is no empirical
+and theoretical literature on the issues arising when applying a jump detection
+test on a sample containing a large number of days. Lee and Hannig (2010)
+perform a multiple test adjustment only when assessing small Lévy jumps but
+make no adjustment when looking at big jumps.
+
+7
+
+Our thresholding technique allows to eliminate the spurious detections,
+based on the following theoretical result developed in detail in the appendix.
+Denote by N the number of days in the study, and by n the number of observations per day used to compute each individual test statistic. We obtain a series
+n ). For most available tests,
+of daily statistics which can be written as (S1n , . . . , SN
+
+under the null hypothesis of no jumps, the statistics converge to independent
+standard normal random variables. Theorem 1 of the appendix states that, under some technical conditions about the relative rate of convergence of n with
+respect to N and about the
+we get, under the null
+ underlying price process,
+
+p
+hypothesis of no jumps, P sup |Stn | ≤ 2 log N → 1, as N, n → ∞. This
+t
+
+means that, if there are no jumps, the event that the largest and the smallest
+
+ √
+√
+n ) stay within − 2 log N , 2 log N beof the entries of the vector (S1n , . . . , SN
+√
+comes certain for large n and N . The bound 2 log N is the so-called universal
+threshold for a sample of size N . As explained in Donoho and Johnstone (1994),
+it is asymptotically a common, i.e., universal, upper bound on the root mean
+square error of thresholded estimates in multivariate normal decision theory.
+Using the theorem, we obtain a method to eliminate spurious detections
+that can be applied very easily on top of most existing jump detection tests. In
+the first step, we compute the test statistics individually for each day. In the
+ √
+
+√
+second step, we discard statistics in the band − 2 log N , 2 log N . This way,
+spurious detections of jumps become negligible with high probability. Our theoretical results legitimize the ad hoc choice of more conservative critical values.
+The precise statement and the proof of the theorem are in the appendix, for a
+general test statistic, as well as for the specific example of the BNS statistic.
+The theorem provides a theoretically appropriate significance level, which depends on the number N of tests, instead of an ad hoc one. Indeed, we can map
+√
+the universal threshold 2 log N into a significance level αN by using the characterization of the quantile of a standard Gaussian. We just need to compute
+√
+αN /2 = (1 − Φ( 2 log N )), where Φ is the cdf of a standard Gaussian random
+√
+variable. By solving 0.2%/2 = (1 − Φ( 2 log N )), we deduce that an a priori
+ad-hoc rule based on 0.2% for two-sided tests is misguided when N is different from exp((Φ−1 (1 − .002/2))2 /2) ≃ 118, a little bit less than a half year of
+√
+data. If N > 118, we need to use a larger threshold 2 log N (larger bands), or
+equivalently a smaller probability level αN , to get an adequate multiple testing
+control. One-sided tests give the same size and power if you use half of the
+significance level, for example 0.1%.
+
+8
+
+2.3
+
+FDR thresholding
+
+In addition to the universal threshold, we also report results using the dataadaptive thresholding scheme of Abramovich, Benjamini, Donoho and Johnstone (2006), based on the control of the false discovery rate (FDR). FDR
+control is a relatively recent innovation in simultaneous testing, which ensures
+that at most a certain expected fraction of the rejected null hypothesis correspond to spurious detections. Barras, Scaillet and Wermers (2010) use the
+FDR in the context of mutual fund performance assessment, and Bajgrowicz
+and Scaillet (2012) to account for data snooping while assessing performance of
+technical trading rules. Throughout the paper, we set the FDR target level at
+10%, which results in a less conservative threshold level than with the universal
+threshold, and eliminates fewer jump days. When we set the control of the
+FDR at 10%, we are more liberal and admit that 10% of the rejected null hypotheses, i.e., detected jump days, will be by construction spurious. We obtain
+qualitatively similar results with an FDR level between 5% and 20%. Setting
+the FDR target level to zero is equivalent to using the universal threshold. The
+FDR approach results in a threshold inherently adaptive to the data. The FDR
+threshold is higher when there are few true jumps, i.e., the signal is sparse, and
+lower when there are many jumps, i.e., the signal is dense.
+The choice of which threshold to use—universal or FDR—depends on the
+application. If, for example, we are interested in the probability of a jump
+conditional on a news release, the FDR threshold is more appropriate as it
+reduces the likelihood of missing true jumps. On the other hand, if the goal
+is to study what kind of news cause jumps, it is better to apply the universal
+threshold in order to avoid looking vainly for a news when in fact the detection
+is spurious.
+
+2.4
+
+Jump detection techniques
+
+Our thresholding technique can be applied to most existing jump detection
+tests. In the present paper, we use the standard tests of BNS and COP, with
+respective frequencies of 2 minutes and 10 seconds4 .
+The essence of the BNS jump detection method is to compare the realized quadratic variation which incorporates volatility originating from jumps
+4
+
+Determining from high-frequency data whether an asset return process has jumps has
+been considered by a number of authors, see e.g., Carr and Wu (2003), Barndorff-Nielsen and
+Shephard (2006), Andersen, Bollerslev, Diebold and Labys (2003), Andersen, Bollerslev and
+Diebold (2007), Huang and Tauchen (2005), Andersen, Bollerslev and Dobrev (2007), Lee
+and Mykland (2008), Fan and Wang (2007), Jiang and Oomen (2008), Aı̈t-Sahalia and Jacod
+(2009), Andersen, Dobrev and Schaumburg (2012), Mancini (2009), Lee and Hannig (2010)
+and Christensen, Oomen and Podolskij (2011).
+
+9
+
+(if present) to the realized bipower variation which is robust to jumps. Each
+day t = 1, . . . , N , we observe the log price process X at the discrete times
+i∆n , i = 1, . . . , n + 1, where ∆n is the sampling interval and n is large.
+We denote by Xt,i∆n the ith intraday price observation on day t, and by
+n ≡ X
+th intraday return on day t, i = 1, . . . , n.
+∆Xt,i
+t,(i+1)∆n − Xt,i∆n the i
+
+The realized quadratic variation (RV ) and the realized bipower variation (BV )
+of X are defined as follows and converge to different quantities of the underlying
+jump-diffusion process.
+RVtn ≡
+
+n
+X
+i=1
+
+BVtn ≡
+
+n
+X
+
+n 2
+(∆Xt,i
+) −−−→
+n→∞
+
+Z t
+t−1
+
+n
+n
+|∆Xt,i
+||∆Xt,i−1
+| −−−→ µ21
+n→∞
+
+i=2
+
+Nt
+X
+
+σs2 ds +
+
+Z t
+
+c2i ,
+
+i>Nt−1
+
+σs2 ds,
+
+t−1
+
+√ √
+2/ π, Nt is a simple counting process and the ci are nonzero
+P t
+random variables so that Jt = N
+i=1 ci . If the jumps are of finite activity, the
+where µ1 =
+
+probability of observing jumps in two consecutive returns approaches zero. Consequently, the product of any two consecutive returns is asymptotically driven
+by the diffusion component only and the contribution of jumps is eliminated in
+the bipower variation. The assumption underlying the BNS test that jumps are
+large and rare events makes it particularly well-suited for our analysis of the
+impact of important news.
+One of the statistic we use in the remaining of the paper is the adjusted ratio
+statistic of BNS defined below. It is the preferred test in Huang and Tauchen
+(2005) who investigate size, jump detection rate, and power properties. Up to
+a scaling factor, the ratio
+
+n
+µ−2
+1 BVt
+RVtn − 1 converges to a standard normal random
+
+variable under the null hypothesis of no jumps:
+−1/2
+
+∆n
+p
+ϑ max ((n∆n )−1 , QVtn /(BVtn )2 )
+where QVtn ≡ ∆−1
+n
+
+
+
+n
+µ−2
+1 BVt
+−1
+RVtn
+
+
+→ N (0, 1),
+
+Pn
+
+n
+n
+n
+n
+i=4 |∆Xt,i ||∆Xt,i−1 ||∆Xt,i−2 ||∆Xt,i−3 |, is the realized quadpower variation, and ϑ = (π 2 /4) + π − 5.
+
+COP show that low frequency analysis, i.e. when the sampling interval ∆n
+is not sufficiently small, seriously overestimate the number of jumps because
+of frequent bursts of volatility. They advocate the use of high frequency data
+with an adequate estimator, which is robust to microstructure noise. The BNS
+estimator does not have this robustness property and its size is biased at high
+frequencies, in particular (see, e.g., Huang and Tauchen (2005)). We consider
+
+10
+
+n
+
+n
+
+¯ and BV
+¯ , for which noise is
+noise-robust versions of RV and BV denoted by RV
+t
+t
+smoothed out with a pre-averaging technique. We follow the suggestion of COP
+and use the weighting function g : [0, 1] → R defined by g(x) ≡ min(x, 1 − x).
+These noise-robust estimators have the same respective probability limits as
+the noise-free analogs RVtn and BVtn . For this reason, we can use the distance
+¯ nt and BV
+¯ nt to test for the presence of jumps. Precisely, COP show
+between RV
+that under some regularity conditions, the following convergence in distribution
+holds:
+n1/4
+
+
+
+p
+ln
+¯ n
+Σ̄11 + Σ̄22 − 2Σ̄12 /(µ−2
+1 BV t )
+
+¯ n 
+RV
+t
+→ N (0, 1),
+¯ n
+µ−2 BV
+1
+
+t
+
+
+where Σ̄ij 1≤i,j≤2 denote individual entries of the asymptotic covariance matrix
+R
+R
+¯ nt − t σs2 ds, µ−2 BV
+¯ nt − t σs2 ds). In practice,
+of the bivariate vector n1/4 (RV
+t−1
+
+1
+
+t−1
+
+this matrix is not known and we estimate it using the subsampling technique
+of COP. Additionally, we implement the threshold filter proposed by COP in
+¯ n . Our Monte Carlo simulation study confirms that it
+order to estimate BV
+t
+
+is primordial to pre-trim the data to reduce the small sample bias5 . The data
+generating process for the log-price is the two-factor stochastic volatility model6
+with rare jumps as in Chernov, Gallant, Ghysels and Tauchen (2003) and Huang
+and Tauchen (2005). This choice allows us to check the impact of sudden bursts
+of volatility which might alter our jump detection technique. The conclusions of
+the Monte Carlo study is that implementation of the COP estimator corrected
+for multiple testing provides excellent statistical properties for empirical work.
+
+3
+
+Empirical results on true proportion of jump days
+
+We conduct our analysis over the three-year period from January 2006 to December 2008, on the 30 stocks composing the Dow Jones Industrial Average
+(DJIA) index between November 21, 2005 and February 19, 2008. Most stocks
+are listed on the NYSE, except for Microsoft and Intel which are listed on
+the NASDAQ. The cleaning of high-frequency data has been highlighted in
+e.g. Dacorogna, Gencay, Muller, Olsen and Pictet (2001), and Hansen and
+5
+
+We refer to COP for further details on the filtering technique and on the precise definition
+¯ n
+¯ n
+of RV
+t and BV t , as well as for a detailed explanation of the asymptotic covariance matrix
+estimation and the threshold filter used to estimate the BV. Notice that Podolskij and Vetter
+(2009a) propose an alternative element by element estimator of the asymptotic covariance
+matrix, but their approach does not guarantee positive semi-positiveness, which is particularly
+problematic with small samples.
+6
+An alternative choice to have a persistent component and a rapidly moving component in
+the diffusion part could be a volatility driven by a diffusive component and a jump component
+as in Eraker, Johannes and Polson (2003).
+
+11
+
+Lunde (2006). We closely follow Barndorff-Nielsen, Hansen, Lunde and Shephard (2009) and also discard ‘bounce back’ outliers as defined in Aı̈t-Sahalia,
+Mykland and Zhang (2011). The supplemental file gives a detailed description
+of the data and the cleaning procedure.
+[Figure 1]
+Table 1 shows the average number of detections per year for each stock
+at 2 minutes and 10 seconds frequencies. For the latter, the results are given
+respectively before thresholding, after applying the universal threshold, and
+after applying the FDR threshold7 . The table reveals two different sources
+of bias when we try to detect jumps. First, we find many less jumps at the
+higher frequency than at the lower frequency. This result is consistent with
+the findings of COP, who argue that the frequent bursts of volatility in asset
+prices are incorrectly interpreted as jumps when the sampling grid is too sparse.
+Indeed, financial series tend to have a highly dynamic conditional volatility,
+which leads to fast but continuous price changes. A high frequency sampling
+captures intermediary price steps and avoids these spurious detections. Second,
+Table 1 reveals an even more severe source of spurious detections due to multiple
+testing. In average, the FDR threshold removes more than 75% of the residual
+jump dates of the 10 seconds case. The universal threshold gets rid of even more
+jump dates. The average number of actual jumps per year amounts to less than
+5. This means that both biases should be considered for a jump analysis; we
+need to use high frequency sampling and to correct for spurious detections. For
+this reason, we consider a 10 seconds frequency and a FDR threshold in the
+following. We always present results at the 2 minutes frequency and without
+thresholding for comparison purpose.
+The Monte Carlo study shows the good properties of the underlying jump
+detection method and of our thresholding technique. Although the power deteriorates with diminishing jump size and sampling frequency, the simulation
+results are very good. In practice, the results can be heavily influenced by different phenomena acting simultaneously. Not knowing which effect is stronger
+(e.g. very small jumps, microstructure noise) renders the analysis of the results even more difficult. One illustration of the difficulty to run the tests on
+real data is the low intersection between jumps detected by different tests. For
+example, Gilder (2009) shows that the methods of Andersen, Bollerslev and
+Dobrev (2007) and BNS agree on only 50% of detected jump days, and COP
+7
+
+We obtain similar results with the COP estimator at 5 and 20 seconds frequency. Results
+are available on request.
+
+12
+
+get very limited jump days in common with BNS. Part of this discrepency is
+due to erroneous detections.
+[Table 1]
+As an illustration, Figure 1 shows the thresholding process for Boeing (BA)
+during the first six months of 2007. For each day in the sample, the points show
+the value of the COP statistic at the 10 seconds minutes frequency. Dashed
+lines show the critical value of the individual tests, the FDR threshold, and the
+universal threshold. The dates selected after applying the FDR threshold are
+shown by asterisks, and the corresponding spurious detections are depicted by
+circles.
+
+4
+
+Dynamics of jump occurrences
+
+In this section, we study the dynamics of jump arrivals and show how important it is to remove the spurious detections in order to obtain correct results.
+Since the work of Merton (1976) on the application of jump processes in option pricing, the inclusion of jumps in financial modeling has gained a lot of
+attention amongst academics and practitioners. The empirical literature shows
+that deep-in-the-money, deep-out-of-the-money, and shorter-maturity options
+tend to sell for more than their Black-Scholes price, and longer-maturity and
+marginally in-the-money options sell for less. Merton (1976) suggests to correct the discrepancies between market prices and the Black-Scholes value of
+options by including a jump component. For deep-out-of-the-money call options, there is relatively little probability that the stock price exceeds the strike
+price prior to expiration if we exclude the possibility of jumps. However, the
+possibility of a jump in price significantly increases this probability, and hence,
+makes the option more valuable. Similarly, for deep-in-the-money call options,
+there is little chance that the stock will decline below the exercise price prior
+to expiration if the underlying process is continuous. However, this event becomes non-negligible if we allow for the possibility of jumps. The phenomenon
+is exacerbated with short-maturity options
+The widely used assumption is that jump arrival times follow a simple Poisson process, or equivalently that durations between successive jumps are independent and exponentially distributed. In the present section, we study the
+dynamics of jump arrivals to assess whether this assumption is realistic, or
+whether there is a dependency between successive jump arrivals. The jump
+tests of BNS and COP indicate whether one or more jumps occurred on a given
+
+13
+
+day but do not give the exact number of jumps. As a result, we cannot observe
+the durations between successive jumps and are unable to test whether they
+follow an exponential distribution. For the same reason, because we do not
+know the probability of more than one jump in a day, we cannot use the standard methods to test whether jump occurrences are driven by a simple Poisson
+process. To circumvent this difficulty, we use the runs test developed by Mood
+(1940)8 . As we show in the supplemental file by performing a Monte Carlo
+study, the runs test is a powerful method to detect clustering of jumps in time.
+Removing the spurious detections, e.g., with our thresholding technique, is essential in order to get a correct picture of the jumps dynamics. Table 2 reports
+the results of the runs test for the 30 Dow Jones stocks over the period from
+January 2006 to December 2008. With no account for spurious detections, approximately 10% of the stocks reveal clustering in jumps at both 2 minutes and
+10 seconds frequencies but they do not agree on the stocks because of spurious
+jump detections. In the 2 minutes case, American International Group, Microsoft and AT&T are rejected by the runs test, whereas Boeing and Procter &
+Gamble are rejected at the 10 seconds frequency. This is not surprising as COP
+show that the jump dates are very different depending on the estimator and
+the frequency considered. Additionally, many detections are spurious because
+of multiple testing. Applying the FDR threshold or the universal threshold in
+the high frequency case corrects for these errors and removes remaining rejections of the runs test. Additionally, looking at our two index proxies, the runs
+test indicates that neither DIA nor PWI do cluster in time. Since jump occurrences are very rare after controlling for multiple testing, we observe a strong
+non-rejection of the null hypothesis of no clustering. Overall, our results do not
+invalidate the assumption that jump are driven by a simple Poisson process.
+[Table 2]
+Even if we do not observe exactly the durations between successive jumps, in
+particular if there are many jumps within the same day, we can still estimate the
+parameters of the simple Poisson process that would have most likely generated
+the observations. If we suppose that the durations between jumps follow an
+8
+
+The runs test compares the number of sequences of consecutive days with jump and
+without jump, or runs, against its sampling distribution under the hypothesis of random
+arrival. For example, a particular sequence of 10 jump tests may be represented by 0011101001,
+containing three runs of 1s, and three runs of 0s. In contrast, the sequence 1111100000 contains
+the same number of 0s and 1s, but only two runs. Too few runs indicate the presence of
+clustering. Too many runs indicate an oscillation. The runs test has been used in Fama
+(1965) to test the random walk hypothesis of stock returns. See Section 2.2.2 of Campbell, Lo
+and MacKinlay (1996) for details and the exact test statistic. We use the runstest function
+from the MATLAB Statistics Toolbox.
+
+14
+
+exponential distribution with parameter λ, then the probability of one or more
+jumps occurring on a given day is 1 − e−λ . Hence, even if we do not observe
+b = − ln(1 − pb),
+the exact number of jumps within days, we can estimate λ as λ
+where pb denotes the estimated probability of occurrence of a jump, obtained as
+the ratio of the number of days with jumps over the total number of days. We
+find intensities between 0.0040 and 0.0244, or equivalently average durations of
+250.0 and 41.0 days.
+
+5
+
+Cojumps
+
+Among other explanations, jumps in individual stocks can be due to stockspecific news or common market-level news. Market-level news can cause jumps
+in many stocks simultaneously, which can in theory propagate even to a diversified index. In this section, we study simultaneous jumps (cojumps) in the
+Dow Jones stocks and their relation to jumps in the index. We examine in
+detail the relation between jumps and news announcements in the next section.
+Other empirical studies of cojumps include Bollerslev, Law and Tauchen (2008)
+who examine the relationship between jumps in a sample of forty large-cap
+U.S. stocks and the corresponding aggregate market index, Lahaye, Laurent
+and Neely (2011a) who investigate cojumps between stock index futures, bond
+futures, and exchange rates, and Dungey, McKenzie and Smith (2009) who
+consider simultaneous jumps across the term structure.
+We define cojumps with the univariate tests as simultaneous significant
+jumps, i.e., occurring on the same day, rather than using the multivariate tests
+proposed e.g. by Bollerslev, Law and Tauchen (2008), or Jacod and Todorov
+(2009). We detect a jump in more than 20% of the stocks on only two occasions
+when applying the FDR threshold or the universal threshold (February 15, 2008
+and May 29, 2008). Those two events happen during the subprime crisis, but
+interestingly, there appears to be no date where more than 20% of the stocks
+jump together during the highly volatile second semester of 2008. Considering
+a 2 minutes frequency with no thresholding gives a totally different picture of
+the joint structure of jump events. Because of the positive bias inherent to this
+method, the results incorrectly suggest that cojumps involving a large portion
+of the market constituents are frequent. For instance, jumps occurring in more
+than 40% of the data occur in 17% of the jump detection dates, whereas the
+COP estimator corrected for multiple-testing detects no single cojump affecting
+more than 40% of Dow Jones constituents during the three years of our study.
+The same pattern is revealed when we group stocks by industry sectors.
+Many cojumps are identified at a 2 minutes frequency without multiple testing
+15
+
+correction but disappear at higher frequency and with thresholding. Table 3
+shows the repartition of our thirty stocks among the different Global Industry
+Classification Standard9 (GICS) sectors, and Table 4 displays the number of
+cojumps within each sector for respectively, no account for spurious detections
+at 2 minutes and 10 seconds frequencies, and use of the universal threshold and
+FDR threshold at 10 seconds frequency. An asterisk indicates that there are
+significantly more cojumps than if the stocks jumped independently10 . For all
+but one sectors the number of cojumps is significant at a 2 minutes frequency.
+However, correcting for both biases using the thresholded COP estimator at
+a 10 seconds frequency again confirms that cojumps are extremely rare. The
+data reveal no day where there are significantly more cojumps than if the stocks
+jump independently.
+[Tables 3 and 4]
+Then, we investigate the relation between jumps in our index proxies and
+jumps in the individual Dow Jones stocks. Table 5 shows the likelihood of a
+jump in DIA or PWI conditional on the proportion of stocks cojumping. We
+find that cojumps affecting less than 10% of the stocks are very unlikely to have
+a market-wide impact. DIA and PWI jump in 1.1% and 1.5% of these dates
+when we apply the FDR threshold, respectively; the universal threshold is even
+more severe as it detects less than 0.5% of market jumps in this case. This is
+a significant result as it means that not only jumps are extremely rare events,
+but they also generally do not induce market-wide jumps. This is a strong
+argument in favor of diversifiability of the jump risk.
+Table 6 displays information on the distribution of the proportion of stocks
+jumping simultaneously, depending on whether or not there is a jump in the
+index. When applying the FDR threshold, the average percentage of stocks
+jumping raises from 1.0% to 3.3% when there is a jump in DIA, and can reach
+23.3%. With no jump in the index, the percentage of stocks jumping on the
+same day never exceeds 16.7%. Our results agree with the findings of Bollerslev,
+Law and Tauchen (2008), who report that the index jumps less often than the
+individual stocks, and conclude that the idiosyncratic jumps are diversified away
+in the aggregate portfolio. They also examine the puzzling fact that jumps in
+the index are uncorrelated with jumps in its constituents.
+9
+The Global Industry Classification Standard (GICS) is an industry taxonomy developed
+by Morgan Stanley Capital International (MSCI) and Standard & Poor’s.
+10
+Under the null hypothesis that stocks jump independently, the probability that the stocks
+jump simultaneously on a given day is the product of the jump probabilities of the individual stocks. The distribution of the corresponding test statistic is obtained from a simple
+application of the Central Limit Theorem and the Delta method.
+
+16
+
+[Tables 5 and 6]
+
+6
+
+Relation to news releases
+
+Having removed the spurious detections with our thresholding technique, we
+now investigate to which extent the few residual jumps are caused by the arrival of news. We cover three different categories of news. We first consider
+macroeconomic news, which can in theory explain the rare simultaneous jumps
+in multiple stocks. Next, we look at prescheduled announcements specific to
+each stock. Finally, we analyze the impact of stories from news agencies, i.e.,
+Reuters and Dow Jones News Service. We show thanks to our methodology that
+the popular belief in a relationship between jumps and these three categories is
+not supported by high-frequency data.
+
+6.1
+
+Relation to macroeconomic news release
+
+In this section, we investigate the impact of macroeconomic announcements,
+which are the most likely sort of news to cause simultaneous jumps among
+many stocks. Our results confirm the findings of the previous section that cojumps are a very rare event. There is a long literature on the market reaction
+to macroeconomic news. Cutler, Poterba and Summers (1989) estimate the
+fraction of the variance in aggregate stock returns that can be attributed to
+various kinds of news, including major political and world events. Ederington
+and Lee (1993) and Ederington and Lee (1996) are the first to investigate the
+intraday reaction of bond prices to macro announcements. More recently, Andersen, Bollerslev, Diebold and Vega (2007) show using high-frequency data
+that reaction times to news are very short, and Aı̈t-Sahalia, Andritzky, Jobst,
+Nowak and Tamirisa (2012) examine the market response to policy initiatives
+during the recent financial crisis. To our knowledge, however, the only papers
+studying the link between jumps in assets and macroeconomic news are Dungey,
+McKenzie and Smith (2009), Lahaye, Laurent and Neely (2011b), and Huang
+(2007). Numerous other studies which mention the relation of jumps to macroeconomic announcements merely investigate the timing of jumps to see whether
+an unusual pattern corresponds to a regularly scheduled news announcement.
+For all announcements except the target Fed funds rate, we use the International Money Market Services (MMS) data on expected (surveyed) and realized
+(announced) macroeconomic fundamentals. MMS conducts a Friday telephone
+survey of about 40 money managers, collects forecasts of all indicators to be
+released during the next week, and reports the median forecasts from the sur-
+
+17
+
+vey. One of the first article to use the MMS survey data is Andersen, Bollerslev,
+Diebold and Vega (2003). The authors study the effect of macro announcements
+on U.S. dollar spot exchange rates but do not look at jumps. The target Fed
+funds rate forecasts are obtained from Action Economics, which also gathers
+estimates on economic data once a week from economists, strategists, and a few
+traders. We obtain the data from Haver Analytics. As of December 16, 2008,
+the funds target rate is a range, i.e., zero to 0.25%, rather than a specific rate.
+The Federal Open Market Committee (FOMC) can also surprise the market by
+changing the Fed funds target between scheduled meetings. In our sample, the
+decisions following such unscheduled meetings are always released early on the
+next morning and therefore do not cause jumps during market hours.
+[Tables 7 and 8]
+We consider only the announcements released during the trading hours,
+listed in Table 7. Table 8 presents the results with the BNS estimator at 2
+minutes frequency, and the COP estimator at 10 seconds frequency with respectively no thresholding, use of the universal threshold, and use of the FDR
+threshold. For each macroeconomic news, the table displays the number of
+announcement days in our sample, the average probability of a jump in individual stocks on an announcement day, the probability of a jump in the Diamonds
+ETF, and the probability of a jump in our PWI portfolio. The last row presents
+corresponding results based on all days in our sample independently on the presence or absence of news.
+The impact of the sampling frequency is notable. At a 2 minutes frequency,
+most macroeconomic news announcement types generate a significant probability of jump in stocks and also at the index level. At a 10 seconds frequency
+with COP though, the significance disappears even before correcting for multiple testing. The FDR threshold and universal threshold only make this result
+stronger by removing most of the residual jump detections on announcement
+days. This result suggests that macroeconomic news generate financial reactions of the form of sudden rises of volatility, which are incorrectly interpreted
+as jumps when the sampling is not fine enough. In order to go further with
+this intuition, we define a burst of volatility as a jump that is identified at a
+relatively low frequency but is not at high frequency. This concept is already
+put forward by COP. We consider the thresholded version of the BNS estimator at a 2 minutes frequency and compare the jump dates with the thresholded
+version of COP a 10 seconds frequency. We find that the only announcement
+which actually increases the likelihood of a burst of volatility is the target Fed
+funds rate.
+18
+
+It may not be the act of releasing information to the market itself that is important. Rather, it may be the extent to which the actual announcement differs
+from the market expectation, i.e., the surprise content of each announcement,
+that determines whether assets jump in reaction to the information release.
+We capture the surprise content of the announcements using the survey data
+from MMS and Action Economics. To account for the discrepancies across
+the various news items, we compute the standardized surprise, defined as the
+difference between expectations and realizations, divided by the standard deviation. We do not observe any effect caused by the surprise component of
+macro news announcements, even if we consider separately surprises above and
+below expectations. The detailed analysis of the above results is available upon
+request.
+
+6.2
+
+Relation to scheduled company-specific announcements
+
+In this section, we look at two types of scheduled company-specific announcements. First, we investigate whether dividends can cause the stock price to
+jump. We obtain data from COMPUSTAT and CRSP (for the declaration
+date). We do not observe significantly more jumps on the ex-dividend date.
+This result is not surprising, given that companies usually commit to a dividend policy for the long run, that the amounts are known in advance, and that
+dividends are settled after the bell. The likelihood of a jump increases slightly
+on the dividend declaration date, but this is not statistically significant. Pooling all the stocks together, the observed probability of a jump on a dividend
+declaration day is 2.0% against 1.2% when applying the FDR threshold.
+Second, using data from I/B/E/S, we perform a similar analysis for quarterly earnings announcements. Patton and Verardo (2012) show that the beta
+of individual stocks increases by an economically significant amount on quarterly earnings announcement days. We do not, however, detect any effect on the
+likelihood of a jump in the price. This is explained by the fact that earnings are
+most often published outside of the trading hours. Using the Factiva database,
+Bagnoli, Clement and Watts (2005) find that between 2000 and 2003, only 27%
+of earnings announcements occur during trading hours on the major New York
+stock exchanges. That figure was higher in the past, i.e., 67% in the 1970s.
+Managers choose the release time of news strategically to minimize the impact
+of the news on share prices. Therefore, managers attempt to release bad news
+when investors have limited opportunities to act on it. Another explanation is
+that managers delay the release of bad news so investors anticipate it, thus mitigating the drop in stock price at the announcement itself. Finally, we focus on
+
+19
+
+the 15 announcements made during trading hours, which represent only 4.2%
+of all the announcements for the 30 stocks during our three-year sample, and
+find that it does not increase the likelihood of a jump neither. The detailed
+analysis of the impact of dividends and quarterly earnings announcements is
+available upon request.
+
+6.3
+
+Relation to stories from news agencies
+
+We investigate whether jumps can be explained by news stories from two major
+newswires, i.e., Dow Jones News Service (DJNS) and Reuters News. By examining the content of news stories, we can analyze the impact of a variety of
+unscheduled and uncategorized events and are not limited to a predetermined
+set of event types such as earnings announcements, mergers, or analyst recommendations. To our knowledge, the present study is the first to perform an
+extensive study of news stories and investigate whether they can cause jumps
+in stock prices. Previous attempts to study the impact of news are much less
+detailed, e.g., Cutler, Poterba and Summers (1989) or Lee and Mykland (2008)
+who consider a small sample of three stocks over three months. Tetlock (2007)
+and Tetlock, Saar-Tsechansky and Macskassy (2008) also analyze financial news
+stories, though their goal is to quantifying the language in an attempt to extract
+investor sentiment.
+We access the DJNS and Reuters News newswires through Factiva. Factiva
+is a news database that aggregates content from thousands of leading news and
+business sources. Retrieving information effectively from such a huge repository
+is a difficult task. The perfect mix of getting everything and avoiding irrelevant
+or erroneous stories is difficult to achieve. The technology to automatically
+quantifying language content is not ripe for the scope of our study11 . Therefore,
+we rely on the taxonomy applied by Factiva which provides a hierarchy of
+company names, industries, regions, and subjects. Such an indexing allows to
+narrow search results on a specific topic, or retrieve stories which are actually
+about a particular company, and not all the stories where the company name
+merely occurs.
+The Factiva web interface does not allow to perform queries on the “publication time” field, and it is not possible to automate or customize queries.
+To circumvent this problem, we export all the news stories in XML format.
+11
+Tetlock (2007) and Tetlock, Saar-Tsechansky and Macskassy (2008) are only able to construct a simple indicator of media pessimism, or look at the fraction of negative words. In the
+industry, the Thomson Reuters News Analytics service claims to be able to interpret news by
+providing sentiment analysis. However, each news is merely attributed a -1, 0, or 1 sentiment
+indication and no study is available on how relevant this indication really is.
+
+20
+
+We then parse the XML files and reconstruct our own database. Although the
+“publication time” field is not searchable using the web interface, it is encoded
+properly when exporting documents in XML format. As we can download the
+full articles with indexing, we do not loose any information. This process also
+allows us to perform text analysis inside the articles, and run custom searches
+efficiently. Keeping news published in the US only, we are left with 30,071
+DJNS stories and 31,228 Reuters stories about our thirty companies during our
+three-year sample12 . The stocks we consider are large multinational companies
+and are the subject of one or more important stories almost every day. We
+further eliminate irrelevant stories by selecting news published during market
+hours only and by requiring that the company name appears in the headline13 .
+This allows us to reduce the number of stories to 8,498 for DJNS and 6,520 for
+Reuters News, which corresponds to around one story every three days for each
+stock.
+Having eliminated the irrelevant stories, we analyze the probability of jumps
+occurring on specific news types using the Factiva indexing hierarchy. We also
+investigate the impact of news flagged as “Dow Jones/Reuters Top Wire News”
+in order to capture any uncategorized and unusual story. An important proportion of the “Top Wire News” are stories about earnings. The majority of
+them is discarded, however, when we eliminate news released outside market
+hours. Table 9 presents results for a selection of news types susceptible to
+cause jumps. Results for further kinds of news are available upon request. As
+one additional precaution, we require that a particular news appears simultaneously on both the DJNS and Reuters News wires. For each news type,
+the first two columns indicate the total number of stories and the number of
+stories published during market hours. 78 percent of the announcements are
+made outside market hours. Once again, only by importing the news stories
+into our own database are we able to filter out news outside market hours automatically. The remaining columns show the conditional pooled probability of a
+jump on days a news is released, for each type of news. After applying the FDR
+threshold, the unconditional probability of a jump computed over all days and
+stocks is 1.4 percent. The news types for which we observe an increased prob12
+
+These numbers are obtained by using the Factiva option to remove duplicates and exclude republished news, recurring pricing and market data, and non-business stories such as
+obituaries, sports or calendars.
+13
+The Factiva indexing system does not solve the aboutness vs occurrence issue perfectly.
+For instance, an article containing a “Top Wire News” story about Microsoft and secondarily
+mentioning Intel will also be retrieved in a search for “Top Wire News” and Intel, although
+the information might be not very important for Intel. When imposing that the headline
+mentions the company name, we must account for the fact that one company can have different
+denominations. For example, Bank of America appears as BofA, Bank of Amer, or B of A.
+
+21
+
+ability of jumps are “Government Contracts” (4.5%), “Dividends” (2.2%) and
+“Divestitures / Asset Sales” (7.1%) (a subcategory of “Ownership Changes”).
+However, none of these increases are statistically significant, which shows that
+news stories are not very likely to cause jumps. Companies purposefully shift
+most important announcements after the bell or early in the morning in order
+to avoid uncontrolled investor reactions and the consequent impact on the stock
+price.
+[Table 9]
+Our findings differ from the conclusions of Lee and Mykland (2008). First,
+Lee and Mykland (2008) sample at the low 15-minute frequency and keep the
+opening transactions, which leads them to systematically detect jumps in the
+first return of a day. The opening transactions of each day are very erratic and
+do not correspond to normal returns as they result from information accumulated over the night. Second, the companies under consideration are the subject
+of news articles every day. It is therefore not surprising that Lee and Mykland
+(2008) are able to find a story for each day they detect a jump. If all such
+events would systematically induce jumps, we should observe jumps scattered
+across the day, and not just when the market opens.
+In the preceding sections, we have investigated the likelihood that a news
+release causes a jump, i.e., P(jump|news). In Table 10, we report what proportion of jumps is associated with a particular type of news, i.e., P(news|jump).
+When searching for news on jump days, we consider the news investigated in the
+preceding sections, i.e., macroeconomic announcements, eanrnings announcements, dividend declaration dates, and Reuters or DJNS news. The number
+of announcements corresponds to the total over the 30 stocks. Considering the
+number of stocks affected, macroeconomic news are much more frequent than
+other types of announcements. As a consequence, we find a macroeconomic
+announcement on approximately 30% of jump days. However, no single type
+of macroeconomic news we consider significantly increases the likelihood of a
+jump.
+[Table 10]
+
+7
+
+Conclusion
+
+This paper introduces a method to eliminate spurious detections of jumps in
+high-frequency data via an explicit thresholding on available test statistics. Our
+
+22
+
+theoretical result is the first to provide a formal treatment of the multiple testing issue when identifying jumps over a long period of time. A Monte Carlo
+study shows that our technique behaves well in finite sample, and illustrates
+the importance of removing spurious detections when investigating the dynamics of jump arrivals. Applying our method on high-frequency data for the 30
+Dow Jones stocks over the three-year period between 2006 and 2008, we find
+that up to 90% of days selected initially as containing a jump are spurious detections. Overall, our tests do no detect time clustering phenomena of jumps
+arrivals, and, hence, do not reject the hypothesis that jump arrivals are driven
+by a simple Poisson process. We do not detect cojumps affecting all stocks
+simultaneously, which supports the assumption in Merton (1976) that jump
+risk is diversifiable. The main empirical contribution of the paper is to study
+the relation between jumps and information arrival. We find that scheduled
+macroeconomic announcements and company-specific announcements do not
+increase the likelihood of a jump to a statistically significant extent. Using the
+Factiva database, we also study the impact of Reuters and Dow Jones News
+Service news and find that it does not cause jumps neither. Those results show
+that the conjecture about jumps coming from announcements is not supported
+by the data. This does not mean announcements have no market impact. Our
+results indicate that they may induce bursts of volatility. We consider only U.S.
+large capitalization stocks in our empirical study. It would be interesting to investigate the jump behavior of stocks with different characteristics, especially
+when studying liquidity issues as an explanation for jumps.
+
+Appendix: Proof of asymptotic control
+We prove Theorem 1 with BNS for simplicity here but it can be applied to
+COP. We can also apply it to other strategies yielding jump detection tests,
+such as Aı̈t-Sahalia and Jacod (2009) in a similar way. The proof is available
+on request. Under the null hypothesis of no jumps, Section 3 of BNS shows
+that the asymptotic distribution of jump test statistics converges to independent standard normal random variables from a classical use of infill asymptotics.
+These standard results follow from showing asymptotic negligibility of the drift
+contributions and application of a CLT for triangular arrays of martingale differences.
+n, 1 ≤ t ≤ N,
+For each integer n ≥ 1, let the real-valued random variables Yt,i
+
+1 ≤ i ≤ n, form N square integrable martingale difference sequences w.r.t. the
+n ⊂ F n ⊂ . . . ⊂ F n , that is, suppose that Y n is measurable w.r.t.
+σ-fields Ft,0
+t,n
+t,1
+t,i
+n with E[(Y n )2 ] < ∞ and E[Y n |F n ] = 0 a.s. for all n, i and t. We apply a
+Ft,i
+t,1
+t,i t,i
+
+23
+
+CLT to quantities written as Stn =
+
+n
+X
+
+n
+Yt,i
+. In the following theorem, we show
+
+i=1
+
+that the event that the largest and the smallest of the entries of the vector
+√
+√
+n ) stay within [− 2 log N , 2 log N ] becomes certain for large n and
+(S1n , . . . , SN
+N . We use two conditions on higher moments, which imply the conditions to
+apply the CLT for triangular arrays of martingale differences when n goes to
+infinity, and require that N is not too large w.r.t. the asymptotics in n.
+Theorem 1. Let Stn =
+
+n
+X
+
+n
+Yt,i
+, 1 ≤ t ≤ N . If, for 0 < γ < ∞,
+
+i=1
+
+Lnt,2γ = E
+
+" n
+X
+
+#
+n 2+2γ
+|Yt,i
+|
+→ 0,
+
+as
+
+n → ∞,
+
+(1)
+
+i=1
+
+
+n
+Mt,2γ
+= E
+
+n
+X
+
+1+γ
+
+ n 2 n
+E (Yt,i
+) |Ft,i − 1
+
+
+ → 0,
+
+as
+
+n → ∞,
+
+(2)
+
+i=1
+
+and
+(1 +
+
+p
+n
+2 log N )3+6γ N ≤ α(Lnt,2γ + Mt,2γ
+)−1 ,
+
+(3)
+
+with α > 0. Then,
+
+P
+
+sup |Stn | ≤
+t
+
+
+p
+2 log N → 1,
+
+as
+
+N, n → ∞.
+
+(4)
+
+Proof. Conditions (1) and (2) imply the conditions of the CLT for triangular arrays of martingale differences, and we get the weak convergence of the
+normal distribution Φ(x) as n → ∞.
+distribution
+P [Stn ≤ x] to the
+
+ standard
+h
+i
+p
+p
+p
+n
+n
+n
+Now P sup |St | ≤ 2 log N = P |S1 | ≤ 2 log N , . . . , |SN
+| ≤ 2 log N =
+t
+
+N
+Y
+
+h
+
+P |Stn | ≤
+
+p
+
+i
+2 log N by independence. We have independence since a mar-
+
+t=1
+
+tingale difference sequence has no serial correlation by construction (see e.g.
+Hayashi (2000) p. 104 for a proof), the entries Stn are linear combinations
+n forming martingale difference sequences, all σ-fields indexed by i and
+of Yt,i
+
+t are increasing, and the equivalence between zero correlation and independence for Gaussian vectors. From Grama (1997) Theorem 2.1, Condition (3)
+ensures that we can use exact bounds for the departure from normality of
+
+
+
+
+√
+√
+P Stn ≥ 2 log N and P Stn ≤ − 2 log N (see also Hauesler (1988) Theorem 2 for exact uniform bounds, and Lipster and Shiryayev (1989) Section 5.7
+Theorems 1 and 2 for uniform bounds, i.e., Berry-Esseen type bounds, instead
+of the exact nonuniform bounds for moderate deviations that we use here). We
+24
+
+ n
+
+
+√
+√
+Q 
+|St | ≤ 2 log N = N
+t=1 1 − 2Φ(− 2 log N ) {1 + Rt (α, γ, N )} ,
+
+√
+n ) 1/(3+2γ) is
+where Rt (α, γ, N ) = θC(α, γ) (1 + 2 log N )3+6γ N (Lnt,2γ + Mt,2γ
+get
+
+QN
+
+t=1 P
+
+the remainder term, with |θ| < 1 and C(α, γ) being a constant only depending
+√
+√
+√
+on α and γ. Using Φ(− 2 log N ) ≤ φ( 2 log N )/ 2 log N with φ denoting the
+density of the standard normal distribution, we deduce the stated result from
+
+√
+QN 
+as N → ∞, and the asymptotic negligibilt=1 1 − 2Φ(− 2 log N ) → 1,
+ity of the contribution of the remainder term as N, n → ∞ since Rt (α, γ, N ) is
+bounded by θC(α, γ)α3+6γ because of (3).
+Condition (3) is rather weak as clearly illustrated in the case of independent
+n = η /√n, where η
+random variables by Grama (1997). Let Yt,i
+t,i
+t,i form N
+given independent sequences of i.i.d. random variables which satisfy E[ηt,1 ] = 0,
+n =0
+E[(ηt,1 )2 ] = 1, m2γ = E[|ηt,1 |2+2γ ] < ∞ with 0 < γ < ∞. In this case Mt,2γ
+
+and Lnt,2γ = n−γ m2γ . Thus for standard Gaussian ηt,1 , condition (3) is easily
+(2+2γ)!
+met for various (n, m, α, γ) since m2γ = 21+γ
+.
+(1+γ)!
+
+BNS test: We can write the linear test statistic of Barndorff-Nielsen and
+n
+n
+Shephard (2006) (based on the difference µ−2
+1 BVt − RVt ) in the above form
+
+n
+n
+n 2
+n −1/2
+n
+µ−2
+using Yt,i
+:= (ϑµ−4
+1 |∆Xt,i ||∆Xt,i−1 | − |∆Xt,i | . Since
+1 ∆n QVt )
+
+n −(1+γ)
+n 2+2γ
+|Yt,i
+|
+≤ (ϑµ−4
+1 ∆n QVt )
+
+∞
+X
+
+2 + 2γ
+l
+
+l=0
+
+!
+2(2+2γ−l)
+n
+n
+|∆Xt,i
+||∆Xt,i−1
+|
+n 2l
+|∆Xt,i
+| ,
+
+2 + 2γ
+
+l−1
+
+!
+
+1Y
+(2 + 2γ − k), Condition (1) holds from the conl!
+l
+k=0
+n
+X
+2(2+2γ−l)
+−1/2 1−2(1+γ)
+n
+n
+n 2l
+vergence of ∆n ∆n
+|∆Xt,i
+||∆Xt,i−1
+|
+|∆Xt,i
+| in law to
+where
+
+=
+
+i=2
+−(1+γ)
+
+−1/2
+
+1−2(1+γ)
+
+Gaussian variables for X continuous, the equality ∆n
+= ∆ n ∆n
+n
+X h
+2+γ−3/2
+n
+n
+∆n
+, and ∆n → 0. Condition (2) holds since
+E (µ−2
+1 |∆Xt,i ||∆Xt,i−1 |−
+i=2
+i
+Rt
+n 2 2
+n
+4
+|∆Xt,i | ) |Ft,i converges to t−1 σs ds (see e.g. Barndorff-Nielsen, Graversen,
+Jacod and Shephard (2006)). The reasoning is similar for the adjusted ratio
+statistic based on
+
+n
+µ−2
+1 BVt
+RVtn − 1.
+
+References
+Abramovich, F., Benjamini, Y., Donoho, D. L. and Johnstone, I. M. (2006),
+‘Adapting to unknown sparsity by controlling the false discovery rate’,
+
+25
+
+The Annals of Statistics 34(2), 584–653.
+Aı̈t-Sahalia, Y. (2002), ‘Telling from discrete data whether the underlying
+continuousı̈¿ 12 time model is a diffusion.’, Journal of Finance 57(5), 2075 –
+2112.
+Aı̈t-Sahalia, Y. (2004), ‘Disentangling diffusion from jumps’, Journal of Financial Economics 74, 487–528.
+Aı̈t-Sahalia, Y., Andritzky, J., Jobst, A., Nowak, S. and Tamirisa, N. (2012),
+‘How to stop a herd of running bears? market response to policy initiatives during the global financial crisis’, Journal of International Economics
+87(4), 162–177.
+Aı̈t-Sahalia, Y. and Jacod, J. (2009), ‘Testing for jumps in a discretely observed
+process’, The Annals of Statistics 37(1), 184–222.
+Aı̈t-Sahalia, Y., Mykland, P. A. and Zhang, L. (2011), ‘Ultra high frequency
+volatility estimation with dependent microstructure noise’, Journal of
+Econometrics 160(1), 160–175.
+Andersen, T. G., Bollerslev, T. and Diebold, F. X. (2007), ‘Roughing it up:
+Including jump components in the measurement, modeling, and forecasting
+of return volatility’, Review of Economics and Statistics 89(4), 701–720.
+Andersen, T. G., Bollerslev, T., Diebold, F. X. and Labys, P. (2003), ‘Modeling
+and forecasting realized volatility’, Econometrica 71(2), 579–625.
+Andersen, T. G., Bollerslev, T., Diebold, F. X. and Vega, C. (2003), ‘Micro
+effects of macro announcements: Real-time price discovery in foreign exchange’, The American Economic Review 93(1), 38–62.
+Andersen, T. G., Bollerslev, T., Diebold, F. X. and Vega, C. (2007), ‘Realtime price discovery in global stock, bond and foreign exchange markets’,
+Journal of International Economics 73(2), 251 – 277.
+Andersen, T. G., Bollerslev, T. and Dobrev, D. (2007), ‘No-arbitrage semimartingale restrictions for continuous-time volatility models subject to
+leverage effects, jumps and i.i.d. noise: Theory and testable distributional
+implications’, Journal of Econometrics 138, 125–180.
+Andersen, T. G., Dobrev, D. and Schaumburg, E. (2012), ‘Jump-robust volatility estimation using nearest neighbor truncation’, Journal of Econometrics
+169(1), 75–93.
+26
+
+Bagnoli, M., Clement, M. and Watts, S. G. (2005), Around-the-clock media
+coverage and the timing of earnings announcements, Working paper.
+Bajgrowicz, P. and Scaillet, O. (2012), ‘Technical trading revisited: False discoveries, persistence tests, and transaction costs’, Journal of Financial
+Economics 106(3), 473–491.
+Barndorff-Nielsen, O. E., Graversen, S. E., Jacod, J. and Shephard, N. (2006),
+‘Limit theorems for bipower variation in financial econometrics’, Econometric Theory 22(04), 677–719.
+Barndorff-Nielsen, O. E., Hansen, P. R., Lunde, A. and Shephard, N. (2009),
+‘Realized kernels in practice: Trades and quotes’, Econometrics Journal
+2, C1–C32.
+Barndorff-Nielsen, O. E. and Shephard, N. (2006), ‘Econometrics of testing for
+jumps in financial economics using bipower variation’, Journal of Financial
+Econometrics 4(1), 1–30.
+Barras, L., Scaillet, O. and Wermers, R. (2010), ‘False discoveries in mutual
+fund performance: Measuring luck in estimated alphas’, Journal of Finance
+65, 179–216.
+Bollerslev, T., Law, T. H. and Tauchen, G. (2008), ‘Risk, jumps, and diversification’, Journal of Econometrics 144, 234–256.
+Campbell, J. Y., Lo, A. W. and MacKinlay, A. C. (1996), The Econometrics of
+Financial Markets, Princeton University Press.
+Carr, P. and Wu, L. (2003), ‘What type of process underlies options? a simple
+robust test’, Journal of Finance 58, 2581–2610.
+Chernov, M., Gallant, R., Ghysels, E. and Tauchen, G. (2003), ‘Alternative
+models for stock price dynamics’, Journal of Econometrics 116(1), 225–
+257.
+Christensen, K., Oomen, R. and Podolskij, M. (2011), Fact or friction: jumps
+at ultra high frequency, Working paper.
+Cutler, D., Poterba, J. and Summers, L. H. (1989), ‘What moves stock prices?’,
+The Journal of Portfolio Management 15, 4–12.
+Dacorogna, M. M., Gencay, R., Muller, U. A., Olsen, R. B. and Pictet, O. V.
+(2001), An Introduction to High-Frequency Finance, Academic Press, San
+Diego.
+27
+
+Donoho, D. L. and Johnstone, J. (1994), ‘Ideal spatial adaptation by wavelet
+shrinkage’, Biometrika 81(3), 425–455.
+Dungey, M., McKenzie, M. and Smith, L. V. (2009), ‘Empirical evidence on
+jumps in the term structure of the us treasury market’, Journal of Empirical Finance 16(3), 430 – 445.
+Ederington, L. H. and Lee, J. H. (1993), ‘How markets process information:
+News releases and volatility’, The Journal of Finance 48(4), 1161–1191.
+Ederington, L. H. and Lee, J. H. (1996), ‘The creation and resolution of market
+uncertainty: The impact of information releases on implied volatility’, The
+Journal of Financial and Quantitative Analysis 31(4), 513–539.
+Eraker, B., Johannes, M. and Polson, N. (2003), ‘The impact of jumps in volatility and returns’, Journal of Finance 58(3), 1269–1300.
+Fama, E. (1965), ‘The behavior of stock market prices’, Journal of Business
+38, 34–105.
+Fan, J. and Wang, Y. (2007), ‘Multi-scale jump and volatility analysis for highfrequency financial data.’, Journal of the American Statistics Association
+102, 1349–1362.
+Gilder, D. (2009), An empirical investigation of intraday jumps and cojumps in
+us equities, Working paper.
+Giot, P., Laurent, S. and Petitjean, M. (2010), ‘Trading activity, realized volatility and jumps’, Journal of Empirical Finance 17(1), 168 – 175.
+Grama, I. (1997), ‘On moderate deviations for martingales’, Annals of Probability 25, 152–183.
+Hansen, P. R. and Lunde, A. (2006), ‘Realized variance and market microstructure noise’, Journal of Business and Economic Statistics 24(2), 127–161.
+Hauesler, I. (1988), ‘On moderate deviations for martingales’, Annals of Probability 16, 275–299.
+Hayashi, F. (2000), Econometrics, Princeton University Press.
+Huang, X. (2007), Macroeconomic news announcements, financial market
+volatility and jumps, Unpublished manuscript.
+Huang, X. and Tauchen, G. (2005), ‘The relative contribution of jumps to total
+price variance’, Journal of Financial Econometrics 3, 456–499.
+28
+
+Jacod, J. and Todorov, V. (2009), ‘Testing for common arrival of jumps
+in discretely-observed multidimensional processes’, Annals of Statistics
+37, 1792–1938.
+Jiang, Geroge, J. and Oomen, Roel, C. (2008), ‘Testing for jumps when asset
+prices are observed with noise - a swap variance approach’, Journal of
+Econometrics 144, 352–370.
+Lahaye, J., Laurent, S. and Neely, C. J. (2011a), ‘Jumps, cojumps and macro
+announcements’, Journal of Applied Econometrics 26(6), 893–921.
+Lahaye, J., Laurent, S. and Neely, C. J. (2011b), ‘Jumps, cojumps and macro
+announcements’, Journal of Applied Econometrics 26(6), 893–921.
+Lee, S. and Hannig, J. (2010), ‘Detecting jumps from lı̈¿ 12 vy jump diffusion
+processes’, Journal of Financial Economics 96, 271–290.
+Lee, S. and Mykland, P. A. (2008), ‘Jumps in financial markets: a new nonparametric test and jump dynamics’, The Review of Financial Studies 21, 2535–
+2563.
+Lipster, R. and Shiryayev, A. (1989), Theory of Martingales, Kluwer Academic
+Publishers, Dordrecht.
+Mancini, C. (2009), ‘Non-parametric threshold estimation for models with
+stochastic diffusion coefficient and jumps’, Scandinavian Journal of Statistics 36, 270–296.
+Merton, R. C. (1976), ‘Option pricing when underlying stock returns are discontinuous’, Journal of Financial Economics 3, 125–144.
+Mood, A. (1940), ‘The distribution theory of runs’, Annals of Mathematical
+Statistics 11, 367–392.
+Patton, A. J. and Verardo, M. (2012), ‘Does beta move with news? firm-specific
+information flows and learning about profitability’, Review of Financial
+Studies 25(9), 2789–2839.
+Tetlock, P. C. (2007), ‘Giving content to investor sentiment: The role of media
+in the stock market’, The Journal of Finance 62(3), 1139–1168.
+Tetlock, P. C., Saar-Tsechansky, M. and Macskassy, S. (2008), ‘More than
+words: Quantifying language to measure firms’ fundamentals’, The Journal
+of Finance 63(3), 1437–1467.
+
+29
+
+Ticker Company name
+Dow Jones stocks:
+AA
+Alcoa
+AIG
+American International Group
+AXP
+American Express
+BA
+Boeing
+C
+Citigroup
+CAT
+Caterpillar
+DD
+DuPont
+DIS
+Walt Disney
+GE
+General Electric
+GM
+General Motors
+HD
+The Home Depot
+HON
+Honeywell
+HPQ
+Hewlett-Packard
+IBM
+IBM
+INTC Intel
+JNJ
+Johnson & Johnson
+JPM
+JPMorgan Chase
+KO
+Coca-Cola
+MCD
+McDonald’s
+MMM 3M
+MO
+Altria Group
+MRK
+Merck
+MSFT Microsoft
+PFE
+Pfizer
+PG
+Procter & Gamble
+T
+AT&T
+UTX
+United Technologies Corporation
+VZ
+Verizon Communications
+WMT Wal-Mart
+XOM
+ExxonMobil
+Index:
+DIA
+PWI
+
+Diamonds Trust
+Price-weighted index
+
+Summary for stocks:
+Mean
+Median
+Minimum
+Maximum
+
+2-minute
+No
+thresholding
+
+No
+thresholding
+
+10-second
+Universal
+threshold
+
+FDR
+threshold
+
+73.3
+75.3
+72.0
+57.7
+57.7
+59.0
+81.0
+86.7
+76.7
+77.0
+70.7
+61.7
+66.7
+55.0
+89.0
+68.0
+60.0
+73.7
+75.7
+62.7
+73.3
+69.3
+94.0
+93.0
+61.0
+82.0
+59.3
+75.0
+50.3
+43.7
+
+16.3
+21.3
+22.7
+21.7
+11.7
+15.7
+19.7
+20.0
+18.0
+31.0
+16.7
+22.0
+18.3
+22.3
+17.7
+20.7
+15.0
+19.3
+22.3
+16.7
+20.7
+21.3
+20.0
+17.3
+19.0
+20.7
+15.7
+19.0
+15.3
+15.7
+
+2.0
+3.7
+2.7
+5.0
+3.0
+2.7
+4.3
+3.7
+2.7
+2.7
+2.0
+0.3
+2.0
+2.7
+3.3
+3.3
+1.0
+1.3
+1.7
+2.0
+2.3
+2.7
+2.7
+2.7
+2.0
+3.3
+2.0
+3.0
+2.0
+3.0
+
+1.7
+4.3
+3.0
+6.0
+3.3
+3.7
+5.7
+4.0
+3.3
+4.3
+2.7
+1.3
+2.0
+2.7
+3.3
+3.0
+1.0
+1.3
+2.0
+2.7
+3.0
+2.3
+2.0
+2.7
+1.7
+4.0
+2.3
+3.0
+2.3
+4.7
+
+91.7
+72.7
+
+18.3
+15.3
+
+1.3
+1.6
+
+3.0
+4.7
+
+70.0
+71.3
+43.7
+94.0
+
+19.1
+19.1
+11.7
+31.0
+
+2.7
+2.7
+0.3
+5.0
+
+4.7
+3.0
+1.0
+6.0
+
+Table 1: Average number of jumps per year. This table reports the average
+yearly number of jumps over the three-year period between 2006 and 2008, for
+the 30 Dow Jones stocks, the Diamonds ETF (DIA), and a price-weighted index
+portfolio of the 30 stocks (PWI). We use the BNS jump detection test at a 2minute sampling frequency and the COP test at a 10-second frequency. Results
+for the latter are reported for respectively, no account for spurious detections,
+use of the universal threshold, and use of the FDR threshold.
+
+30
+
+Ticker Company name
+Dow Jones stocks:
+AA
+Alcoa
+AIG
+American International Group
+AXP
+American Express
+BA
+Boeing
+C
+Citigroup
+CAT
+Caterpillar
+DD
+DuPont
+DIS
+Walt Disney
+GE
+General Electric
+GM
+General Motors
+HD
+The Home Depot
+HON
+Honeywell
+HPQ
+Hewlett-Packard
+IBM
+IBM
+INTC Intel
+JNJ
+Johnson & Johnson
+JPM
+JPMorgan Chase
+KO
+Coca-Cola
+MCD
+McDonald’s
+MMM 3M
+MO
+Altria Group
+MRK
+Merck
+MSFT Microsoft
+PFE
+Pfizer
+PG
+Procter & Gamble
+T
+AT&T
+UTX
+United Technologies Corporation
+VZ
+Verizon Communications
+WMT Wal-Mart
+XOM
+ExxonMobil
+
+2-minute
+No
+thresholding
+
+No
+thresholding
+
+10-second
+Universal
+threshold
+
+FDR
+threshold
+
+0.93
+0.00∗
+0.14
+0.89
+0.08
+0.49
+0.65
+0.40
+0.40
+0.09
+0.15
+0.14
+0.55
+0.51
+0.23
+0.36
+0.29
+0.45
+0.52
+0.70
+0.16
+0.92
+0.00∗
+0.12
+0.49
+0.02∗
+0.17
+0.49
+0.47
+0.35
+
+1.00
+0.63
+1.00
+0.03∗
+0.34
+0.35
+0.61
+1.00
+0.44
+0.71
+0.45
+0.70
+0.73
+1.00
+1.00
+0.24
+0.43
+0.29
+0.05
+0.84
+0.77
+1.00
+0.50
+0.20
+0.01∗
+1.00
+0.35
+0.50
+0.60
+0.66
+
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+1.00
+
+0.10
+0.21
+
+0.14
+1.00
+
+1.00
+1.00
+
+1.00
+1.00
+
+10.0
+
+6.7
+
+0.0
+
+0.0
+
+Index:
+DIA
+Diamonds Trust
+PWI
+Price-weighted index
+Summary for stocks:
+Percentage of stocks with clustering
+
+Table 2: Runs tests. This table reports p-values from the runs test of the
+Null hypothesis that jump arrivals do not cluster in time. Results are presented
+for the 30 Dow Jones stocks, the Diamonds ETF (DIA), and a price-weighted
+index portfolio of the 30 stocks (PWI), over the three-year period between
+2006 and 2008. We use the BNS jump detection test at a 2-minute sampling
+frequency and the COP test at a 10-second frequency. Results for the latter are
+reported for respectively, no account for spurious detections, use of the universal
+threshold, and use of the FDR threshold.
+
+31
+
+Industry sector
+Energy
+Materials
+Industrials
+Consumer Discretionary
+Consumer Staples
+Health Care
+Financials
+Information Technology
+Telecommunication Services
+
+Dow Jones constituents
+ExxonMobil
+Alcoa, DuPont
+Boeing, Caterpillar, General Electric,
+Honeywell, 3M, United Technologies Corporation
+Walt Disney, General Motors, The Home Depot,
+McDonald’s
+Coca-Cola, Altria Group, Procter & Gamble,
+Wal-Mart
+Johnson & Johnson, Merck, Pfizer
+American International Group, American Express,
+Citigroup, JPMorgan Chase
+Hewlett-Packard, IBM, Intel, Microsoft
+AT&T, Verizon Communications
+
+Table 3: Global Industry Classification Standard industry sectors. This
+table shows the repartition of the 30 Dow Jones stocks among the different
+sectors.
+
+32
+
+33
+
+2-minute
+No
+thresholding
+76∗
+3∗
+9∗
+3
+31∗
+10∗
+18∗
+97∗
+FDR
+threshold
+1
+0
+0
+0
+0
+1
+0
+0
+
+Table 4: Cojumps within industry sectors. This table shows the number of cojumps within each industry sector. We use the
+BNS jump detection test at a 2-minute sampling frequency and the COP test at a 10-second frequency. Results for the latter are
+reported for respectively, no account for spurious detections, use of the universal threshold, and use of the FDR threshold. An asterisk
+indicates that there are significantly more cojumps than if the stocks were independent.
+
+Sector
+Materials
+Industrials
+Consumer Discretionary
+Consumer Staples
+Health Care
+Financials
+Information Technology
+Telecom. Services
+
+Nb stocks
+in sector
+2
+6
+4
+4
+3
+4
+4
+2
+
+Number of cojumps
+10-second
+No
+Universal
+thresholding threshold
+10∗
+1
+0
+0
+0
+0
+0
+0
+1
+0
+1
+0
+0
+0
+∗
+12
+0
+
+Proportion of stocks
+jumping simultaneously
+
+Number of
+occurrences
+
+P(jump in
+DIA) (%)
+
+P(jump in
+PWI) (%)
+
+2-minute, no thresholding:
+0–10%
+10–20%
+20–40%
+40–60%
+60–80%
+80–100%
+
+20
+128
+469
+121
+8
+1
+
+5.0
+15.6
+36.0
+63.6
+87.5
+100.0
+
+0.0
+10.9
+27.3
+55.4
+100.0
+100.0
+
+10-second, no thresholding:
+0–10%
+10–20%
+20–40%
+40–60%
+60–80%
+80–100%
+
+438
+273
+35
+0
+1
+0
+
+3.2
+11.7
+22.9
+100.0
+-
+
+1.6
+10.6
+25.7
+100.0
+-
+
+10-second, universal threshold:
+0–10%
+10–20%
+20–40%
+40–60%
+60–80%
+80–100%
+
+736
+9
+2
+0
+0
+0
+
+0.4
+0.0
+50.0
+-
+
+0.3
+11.1
+100.0
+-
+
+10-second, FDR threshold:
+0–10%
+10–20%
+20–40%
+40–60%
+60–80%
+80–100%
+
+733
+12
+2
+0
+0
+0
+
+1.1
+0.0
+50.0
+-
+
+1.5
+8.3
+100.0
+-
+
+Table 5: Probability of a jump in the index conditional on the proportion of stocks jumping simultaneously. This table shows the probability
+of a jump in the Diamonds ETF (DIA), and in the price-weighted index portfolio of the 30 Dow Jones stocks (PWI), conditional on the proportion of stocks
+jumping simultaneously. We use the BNS jump detection test at a 2-minute
+sampling frequency and the COP test at a 10-second frequency. Results for the
+latter are reported for respectively, no account for spurious detections, use of
+the universal threshold, and use of the FDR threshold.
+
+34
+
+Proportion of stocks
+jumping simultaneously
+
+Jump in DIA:
+No
+Yes
+
+Jump in PWI:
+No
+Yes
+
+2-minute, no thresholding:
+Mean (%)
+Median (%)
+Maximum (%)
+
+25.1
+23.3
+60.0
+
+33.4
+30.0
+93.3
+
+25.3
+26.7
+53.3
+
+35.0
+33.3
+93.3
+
+10-second, no thresholding:
+Mean (%)
+Median (%)
+Maximum (%)
+
+7.2
+6.7
+36.7
+
+13.6
+13.3
+63.3
+
+7.2
+6.7
+33.3
+
+15.3
+13.3
+63.3
+
+10-second, universal threshold:
+Mean (%)
+Median (%)
+Maximum (%)
+
+0.8
+0.0
+16.7
+
+3.0
+3.3
+20.0
+
+0.8
+0.0
+13.3
+
+4.2
+3.3
+20.0
+
+10-second, FDR threshold:
+Mean (%)
+Median (%)
+Maximum (%)
+
+1.0
+0.0
+16.7
+
+3.3
+3.3
+23.3
+
+1.0
+0.0
+13.3
+
+4.3
+3.3
+23.3
+
+Table 6: Proportion of stocks jumping simultaneously conditional on
+a jump in the index. This table displays the distribution of the proportion
+of stocks jumping simultaneously, depending on whether or not we detect a
+jump in the index. Results are reported for the Diamonds ETF (DIA), and the
+price-weighted index portfolio of the 30 Dow Jones stocks (PWI). We use the
+BNS jump detection test at a 2-minute sampling frequency and the COP test
+at a 10-second frequency. Results for the latter are reported for respectively, no
+account for spurious detections, use of the universal threshold, and use of the
+FDR threshold.
+
+35
+
+Announcement
+Monthly announcements:
+Consumer credit
+Construction spending
+Factory orders
+Business inventories
+Government budget deficit
+Consumer confidence index
+ISM manufacturing composite index
+
+Source
+
+Announcement time
+
+FRB
+BC
+BC
+BC
+FMS
+CB
+ISM
+
+3:00 p.m.
+10:00 a.m.
+10:00 a.m.
+10:00 a.m.
+2:00 p.m.
+10:00 a.m.
+10:00 a.m.
+
+Six-week announcements:
+Target federal funds rate
+
+FRB
+
+2:15 p.m.
+
+Table 7: Macroeconomic news announcements. This table displays the
+most important U.S. macroeconomic announcements published during market
+hours. The sources are: Federal Reserve Board (FRB), Bureau of the Census
+(BC), Financial Management Service (FMS), Conference Board (CB), Institute
+for Supply Management (ISM).
+
+36
+
+Nb of
+ann.
+
+P(jump
+in stocks)
+
+P(jump
+in DIA)
+
+P(jump
+in PWI)
+
+35
+35
+35
+36
+36
+36
+35
+23
+
+28.6 (7.6)
+27.9 (7.6)
+29.7 (7.7)
+28.7 (7.5)
+25.3 (7.2)
+24.6 (7.2)
+28.4 (7.6)
+29.3 (9.5)
+
+42.9 (8.4)
+20.0 (6.8)
+40.0 (8.3)
+41.7 (8.2)
+36.1 (8.0)
+33.3 (7.9)
+34.3 (8.0)
+34.8 (9.9)
+
+34.3 (8.0)
+11.4 (5.4)
+31.4 (7.8)
+25.0 (7.2)
+33.3 (7.9)
+27.8 (7.5)
+25.7 (7.4)
+34.8 (9.9)
+
+All days
+
+747
+
+28.1 (1.6)
+
+36.9 (1.8)
+
+29.2 (1.7)
+
+10-second, no thresholding:
+Consumer credit
+Construction spending
+Factory orders
+Business inventories
+Government budget deficit
+ISM manufacturing composite index
+Target federal funds rate
+
+35
+35
+35
+36
+36
+35
+23
+
+6.0 (4.0)
+6.9 (4.3)
+7.6 (4.5)
+9.1 (4.8)
+7.0 (4.3)
+8.1 (4.6)
+3.9 (4.0)
+
+11.4 (5.4)
+5.7 (3.9)
+2.9 (2.8)
+5.6 (3.8)
+2.8 (2.7)
+8.6 (4.7)
+-
+
+2.9 (2.8)
+8.6 (4.7)
+5.7 (3.9)
+11.1 (5.2)
+8.6 (4.7)
+-
+
+All days
+
+747
+
+7.7 (1.0)
+
+7.4 (1.0)
+
+6.2 (0.9)
+
+10-second, universal threshold:
+Consumer credit
+Construction spending
+Factory orders
+Business inventories
+Government budget deficit
+Consumer confidence index
+ISM manufacturing composite index
+Target federal funds rate
+
+35
+35
+35
+36
+36
+36
+35
+23
+
+0.2 (0.7)
+1.0 (1.7)
+1.1 (1.8)
+1.4 (2.0)
+1.0 (1.7)
+0.9 (1.6)
+1.0 (1.7)
+0.4 (1.4)
+
+2.9 (2.8)
+-
+
+2.9 (2.8)
+2.8 (2.7)
+-
+
+All days
+
+747
+
+1.0 (0.4)
+
+0.5 (0.3)
+
+0.7 (0.3)
+
+10-second, FDR threshold:
+Consumer credit
+Construction spending
+Factory orders
+Business inventories
+Government budget deficit
+Consumer confidence index
+ISM manufacturing composite index
+Target federal funds rate
+
+35
+35
+35
+36
+36
+36
+35
+23
+
+0.3 (0.9)
+1.3 (1.9)
+1.3 (1.9)
+1.3 (1.9)
+1.5 (2.0)
+0.9 (1.6)
+1.2 (1.9)
+0.4 (1.4)
+
+2.9 (2.8)
+5.7 (3.9)
+-
+
+2.9 (2.8)
+2.9 (2.8)
+2.8 (2.7)
+2.9 (2.8)
+-
+
+All days
+
+747
+
+1.2 (0.4)
+
+1.2 (0.4)
+
+1.9 (0.5)
+
+Announcement
+2-minute, no thresholding:
+Consumer credit
+Construction spending
+Factory orders
+Business inventories
+Government budget deficit
+Consumer confidence index
+ISM manufacturing composite index
+Target federal funds rate
+
+Table 8: Probability of a jump on macroeconomic news announcements. This table presents the probability (%) of a jump on announcement
+days for the 30 Dow Jones stocks, the Diamonds ETF (DIA), and the priceweighted index portfolio of the 30 Dow Jones constituents (PWI). We use the
+BNS jump detection test at a 2-minute sampling frequency and the COP test
+at a 10-second frequency. Results for the latter are reported for respectively,
+no account for spurious detections, use of the universal threshold, and use of
+the FDR threshold. An asterisk indicates that the likelihood of a jump is significantly larger after a news is released than on days with no news of the same
+type. Numbers in parentheses correspond to standard deviations.
+37
+
+38
+
+All
+949
+44
+125
+82
+807
+660
+48
+53
+35
+167
+3
+34
+243
+58
+693
+65
+747
+
+During
+market hours
+196
+14
+40
+31
+173
+148
+9
+10
+7
+57
+2
+12
+79
+13
+109
+11
+747
+
+Conditional probability of jump in stocks
+2-minute
+10-second
+No
+No
+Universal
+FDR
+thresholding
+thresholding
+threshold
+threshold
+46.6∗ (3.6)
+12.4 (2.4)
+1.0 (0.7)
+1.1 (0.7)
+34.1 (12.7)
+6.8 (6.7)
+4.5 (5.6)
+4.5 (5.6)
+6.9 (4.0)
+1.3 (1.8)
+0.4 (1.1)
+0.4 (1.1)
+20.0 (7.2)
+15.6 (6.5)
+2.2 (2.6)
+2.2 (2.6)
+28.4 (3.4)
+5.1 (1.7)
+0.7 (0.7)
+0.7 (0.7)
+30.2 (3.8)
+4.3 (1.7)
+1.0 (0.8)
+1.0 (0.8)
+50.0∗ (16.7)
+28.6 (15.1)
+7.1 (8.6)
+7.1 (8.6)
+33.3 (14.9)
+42.9∗ (18.7)
+48.4∗ (6.6)
+11.1 (4.2)
+14.6 (10.2)
+4.2 (5.8)
+22.4 (4.7)
+7.4 (3.0)
+0.3 (0.6)
+0.3 (0.6)
+30.8 (12.8)
+7.7 (7.4)
+25.3 (4.2)
+1.9 (1.3)
+0.4 (0.6)
+0.5 (0.7)
+7.1 (7.8)
+28.1 (1.6)
+7.7 (1.0)
+1.0 (0.4)
+1.2 (0.4)
+
+Table 9: Probability of a jump on Reuters/DJNS news. This table displays the probability of a jump in stocks on different
+types of news appearing on the Reuters and DNS news wires. We use the BNS jump detection test at a 2-minute sampling frequency
+and the COP test at a 10-second frequency. Results for the latter are reported for respectively, no account for spurious detections,
+use of the universal threshold, and use of the FDR threshold. An asterisk indicates that the likelihood of a jump is significantly larger
+after a news is released than on days with no news of the same type. Numbers in parentheses correspond to standard deviations.
+
+News subject
+Dow Jones/Reuters Top Wire News
+Government Contracts
+Non-governmental Contracts
+Dividends
+Ownership Changes
+- Acquisitions/Mergers/Takeovers
+- Divestitures/Asset Sales
+Share Capital
+- Share Buybacks
+Corporate Crime/Legal/Judicial
+- Insider Dealing
+Corporate Credit Ratings
+Management Moves
+Sales Figures
+Earnings Projections
+Analyst Comment/Recommendation
+All days
+
+Number of news
+
+Nb. of
+ann. days
+
+P(news if
+jump in stocks)
+
+P(news if
+jump in DIA)
+
+P(news if
+jump in PWI)
+
+329
+15
+30×236?
+629
+
+1.2 (0.1)
+0.1 (0.0)
+31.4 (0.6)
+2.8 (0.2)
+
+32.4 (2.8)
+-
+
+32.6 (3.2)
+-
+
+All news
+
+1209?
+
+33.9 (0.6)
+
+-
+
+-
+
+10-second, no thresholding:
+Dividends declaration
+Earnings announcements
+Macroeconomic news
+Reuters/DJNS news
+
+329
+15
+236
+629
+
+2.3 (0.4)
+0.1 (0.1)
+29.1 (1.1)
+3.1 (0.4)
+
+25.5 (5.9)
+-
+
+23.9 (6.3)
+-
+
+All news
+
+1209
+
+32.4 (1.1)
+
+-
+
+-
+
+10-second, universal threshold:
+Dividends declaration
+Earnings announcements
+Macroeconomic news
+Reuters/DJNS news
+
+329
+15
+236
+629
+
+2.1 (0.9)
+0.0 (0.0)
+27.5 (2.9)
+5.2 (1.4)
+
+25.0 (21.7)
+-
+
+40.0 (21.9)
+-
+
+All news
+
+1209
+
+32.6 (3.1)
+
+-
+
+-
+
+10-second, FDR threshold:
+Dividends declaration
+Earnings announcements
+Macroeconomic news
+Reuters/DJNS news
+
+329
+15
+236
+629
+
+2.6 (1.0)
+0.0 (0.0)
+27.6 (2.7)
+4.9 (1.3)
+
+33.3 (15.7)
+-
+
+28.6 (12.1)
+-
+
+All news
+
+1209
+
+32.5 (2.9)
+
+-
+
+-
+
+Announcement
+2-minute, no thresholding:
+Dividends declaration
+Earnings announcements
+Macroeconomic news
+Reuters/DJNS news
+
+Table 10: Probability (%) of finding a news story on jump days. This
+table displays the probability that a jump is caused by one of the announcements
+we consider. The table shows the number of announcement days, and the
+probability of finding a news explaining jumps in the 30 Dow Jones stocks, the
+Diamonds ETF (DIA), and the price-weighted index portfolio of the 30 Dow
+Jones constituents (PWI). We use the BNS jump detection test at a 2-minute
+sampling frequency and the COP test at a 10-second frequency. Results for the
+latter are reported for respectively, no account for spurious detections, use of
+the universal threshold, and use of the FDR threshold. A star highlights that,
+except for macroeconomic news, the number of announcements corresponds to
+the total over the 30 stocks. An asterisk indicates that the likelihood of a news
+is significantly larger on days with jump than on days with no jump. Numbers
+in parentheses correspond to standard deviations.
+
+39
+
+Figure 1: Thresholding test statistics. This figure displays daily COP test
+statistics (points) for Boeing, over the period between January and June 2007,
+using a 10-second sampling frequency. The spurious detections and the true
+jumps identified when applying the FDR threshold are depicted respectively by
+circles and asterisks.
+
+40
+
+

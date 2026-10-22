@@ -1,0 +1,3605 @@
+The Annals of Statistics
+2009, Vol. 37, No. 1, 184–222
+DOI: 10.1214/07-AOS568
+c Institute of Mathematical Statistics, 2009
+
+arXiv:0903.0226v1 [math.ST] 2 Mar 2009
+
+TESTING FOR JUMPS IN A DISCRETELY OBSERVED PROCESS
+By Yacine Aı̈t-Sahalia1 and Jean Jacod
+Princeton University and Université Pierre et Marie Curie
+We propose a new test to determine whether jumps are present in
+asset returns or other discretely sampled processes. As the sampling
+interval tends to 0, our test statistic converges to 1 if there are jumps,
+and to another deterministic and known value (such as 2) if there
+are no jumps. The test is valid for all Itô semimartingales, depends
+neither on the law of the process nor on the coefficients of the equation
+which it solves, does not require a preliminary estimation of these
+coefficients, and when there are jumps the test is applicable whether
+jumps have finite or infinite-activity and for an arbitrary Blumenthal–
+Getoor index. We finally implement the test on simulations and asset
+returns data.
+
+1. Introduction. The problem of deciding whether the continuous-time
+process which models an economic or financial time series should have continuous paths or exhibit jumps is becoming an increasingly important issue,
+in view of the high-frequency observations that are now widely available. In
+the case where a large jump occurs, a simple glance at the dataset might be
+sufficient to decide this issue. But such large jumps are usually infrequent,
+may not belong to the model itself, can be considered as breakdowns in
+the homogeneity of the model, or may be dealt with separately using other
+methods such as risk management.
+On the other hand, a visual inspection of most such time series in practice
+does not provide clear evidence for either the presence or the absence of
+small or medium sized jumps. Since small frequent jumps should definitely
+be incorporated into the model, and since models with and without jumps
+do have quite different mathematical properties and financial consequences
+(for option hedging, portfolio optimization, etc.), it is important to have
+statistical methods that can shed some light on the issue.
+Received October 2006; revised October 2007.
+Supported in part by NSF Grants SBR-03-50772 and DMS-05-32370.
+AMS 2000 subject classifications. Primary 62F12, 62M05; secondary 60H10, 60J60.
+Key words and phrases. Jumps, test, discrete sampling, high-frequency.
+1
+
+This is an electronic reprint of the original article published by the
+Institute of Mathematical Statistics in The Annals of Statistics,
+2009, Vol. 37, No. 1, 184–222. This reprint differs from the original in pagination
+and typographic detail.
+1
+
+2
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+Determining whether a process has jumps has been considered by a number of authors. Aı̈t-Sahalia (2002) relies on restrictions on the transition
+function of the process that are compatible with continuity of the process, or
+lack thereof, to derive a test for the presence of jumps at any observable frequency. Using high-frequency data, Carr and Wu (2003) exploit the differential behavior of short dated options to test for the presence of jumps. Multipower variations can separate the continuous part of the quadratic variation;
+see Barndorff-Nielsen and Shephard (2006). Andersen, Bollerslev and Diebold
+(2003) and Huang and Tauchen (2006) study financial datasets using multipower variations, in order to assess the proportion of quadratic variation
+attributable to jumps. Jiang and Oomen (2005) construct a test motivated
+by the hedging error of a variance swap replication strategy. Other methods
+have been introduced as well [see, e.g., Lee and Mykland (2008)] and the
+literature about evaluating the volatility when there are jumps [see, e.g.,
+Aı̈t-Sahalia (2004), Aı̈t-Sahalia and Jacod (2007), Mancini (2001), Mancini
+(2004) and Woerner (2006b)] can also be viewed as an indirect way of checking for jumps. Woerner (2006a) proposes estimators of the Blumenthal–
+Getoor index or the Hurst exponent of a stochastic process based on highfrequency data, and those can be used to detect jumps and their intensity.
+These are two closely related but different issues: one is to decide whether
+jumps are present or not, another one is to determine the impact of jumps
+on the overall variability of the observed process. So far, most of the literature has concentrated on the second issue, and it usually assumes a special
+structure on the process, especially regarding its jump part if one is present,
+such as being a compound Poisson, or sometimes a Lévy process. We plan
+to have a systematic look at the question of measuring the impact of jumps
+in a future paper, using a variety of distances and doing so under weak assumptions, and also taking into account the usually nonnegligible market
+microstructure noise.
+In this paper, we concentrate on the first problem, namely whether there
+are jumps or not, while pretending that the underlying process is perfectly
+observed at n discrete times, and n is large. We introduce a direct and very
+simple test which gives a solution to this problem, irrespective of the precise
+structure of the process within the very large class of Itô semimartingales.
+More specifically, a process X = (Xt ) on a given time interval [0, T ] is
+observed at times i∆n for ∆n = T /n. We propose an easy-to-compute family
+of test statistics, say Sn , which converge as ∆n → 0 to 1 if there are jumps,
+and to another deterministic and known value (such as 2) if there are no
+jumps. This holds as soon as the process X is an Itô semimartingale, and
+it depends neither on the law of the process nor on the coefficients of the
+equation which it solves, and it does not require any preliminary estimation
+of these coefficients. We provide a central limit theorem for Sn , under both
+alternatives (jumps and no jumps); again this does not require any a priori
+
+TESTING FOR JUMPS
+
+3
+
+knowledge of the coefficients of the model, and when there are jumps it
+is applicable whether the jumps have finite or infinite activity, and for an
+arbitrary Blumenthal–Getoor index. Hence we can construct tests with a
+given level of significance asymptotically and which are fully nonparametric.
+The paper is organized as follows. Sections 2 and 3 describe our setup and
+the statistical problem. We provide central limit theorems for our proposed
+statistics in Section 4, and use them to construct the actual tests in Section
+5. We present the results of Monte Carlo simulations in Section 6, and in
+Section 7 examine the empirical distribution of the test statistic over all
+2005 transactions of the Dow Jones stocks. Proofs are in Section 8.
+2. Setting and assumptions. The underlying process X which we observe at discrete times is a one-dimensional process which we specify below.
+Observe that taking a one-dimensional process is not a restriction in our context since, if it were multidimensional, a jump would necessarily be a jump
+for at least one of its components, so any test for jumps can be performed
+separately on each of its components.
+As already mentioned, we do not want to make any specific model assumption on X, such as assuming some parametric family of models. We
+do need, however, a mild structural assumption which is satisfied in all
+continuous-time models used in finance, at least as long as one wants to
+rule out arbitrage opportunities. In any case, in the absence of some kind
+of assumption, anything can happen from a continuous process which is a
+linear interpolation between the observations, to a pure jump process which
+is constant between successive observation times.
+Our structural assumption is that X is an Itô semimartingale on some
+filtered space (Ω, F, (Ft )t≥0 , P), which means it can be written as
+Xt = X0 +
+(1)
++
+
+Z t
+0
+
+Z tZ
+0
+
+E
+
+bs ds +
+
+Z t
+0
+
+σs dWs +
+
+Z tZ
+0
+
+E
+
+κ ◦ δ(s, x)(µ − ν)(ds, dx)
+
+κ′ ◦ δ(s, x)µ(ds, dx),
+
+where W and µ are a Wiener process and a Poisson random measure on R+ ×
+E with (E, E) an auxiliary measurable space on the space (Ω, F, (Ft )t≥0 , P)
+and the predictable compensator (or intensity measure) of µ is ν(ds, dx) =
+ds ⊗ λ(dx) for some given finite or σ-finite measure on (E, E). Moreover κ is a
+continuous function with compact support and κ(x) = x on a neighborhood
+of 0, and κ′ (x) = x − κ(x).
+Above, the function κ is arbitrary; a change of this function amounts to a
+change in the drift coefficient bt . Also, it is always possible to take (E, E, λ)
+to be R equipped with Lebesgue measure.
+Of course the coefficients bt (ω), σt (ω) and δ(ω, t, x) should be such that
+the various integrals in (1) make sense [see, e.g., Jacod and Shiryaev (2003)
+
+4
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+for a precise definition of the last two integrals in (1)], and in particular bt
+and σt are optional processes and δ is a predictable function. However, we
+need a bit more than just the minimal integrability assumptions, plus the
+nontrivial fact that the volatility σt is also an Itô semimartingale, of the
+form
+σt = σ0 +
+(2)
+
++
+
+0
+
+Z tZ
+0
+
++
+
+Z t
+
+E
+
+Z tZ
+0
+
+e
+bs ds +
+
+E
+
+Z t
+0
+
+es dWs +
+σ
+
+Z t
+0
+
+es′ dWs′
+σ
+
+e x)(µ − ν)(ds, dx)
+κ ◦ δ(s,
+e x)µ(ds, dx),
+κ′ ◦ δ(s,
+
+where W ′ is another Wiener process independent of (W, µ).
+All our additional requirements are expressed in the next assumption, for
+which we need a few additional notations. We write
+(3)
+
+∆Xs = Xs − Xs−
+
+for the jumps of the X process. Of course, ∆Xs = 0 for all s when X is
+continuous, and for all s outside a (random) countable set in all cases. Let
+(4)
+
+δt′ (ω) =
+
+(Z
+
+κ ◦ δ(ω, t, x)λ(dx),
+
++∞,
+
+if the integral makes sense,
+otherwise
+
+and τ = inf(t; ∆Xt 6= 0). In the finite-activity case for jumps we have τ > 0
+a.s., whereas in the infinite-activity case we usually (but not necessarily)
+R
+have τ = 0 a.s. Observe that the fifth term in (2) is a.s. equal to − 0t δs′ ds
+for all t in the (possibly empty) set [0, τ ]; so outside a null set in (ω, t) for
+the product measure P(dω) ⊗ dt, the process δt′ (ω) takes finite values for all
+t ≤ τ (ω), whereas we may very well have δt′ (ω) = ∞ for all t > τ (ω).
+Assumption 1. (a) All paths t 7→ ebt (ω) are locally bounded.
+et (ω), t 7→ σ
+et′ (ω) are right-continuous with
+(b) All paths t 7→ bt (ω), t 7→ σ
+left limits.
+e
+(c) All paths t 7→ δ(ω, t, x) and t 7→ δ(ω,
+t, x) are left-continuous with right
+limits.
+e
+(d) All paths t 7→ supx∈E |δ(ω,t,x)|
+and t 7→ supx∈E |δ(ω,t,x)|
+are locally boundγ(x)
+γ(x)
+R
+ed, where γ is a (nonrandom) nonnegative function satisfying E (γ(x)2 ∧
+1)λ(dx) < ∞.
+(e) All paths t 7→ δt′ (ω) are left-continuous with right limits on the semiopen
+set [0, τ (ω)).
+R
+(f) We have 0t |σs | ds > 0 a.s. for all t > 0.
+
+TESTING FOR JUMPS
+
+5
+
+The nondegeneracy condition (f) says that almost surely the continuous
+martingale part of X is not identically 0 on any interval [0, t] with t > 0.
+Most results of this paper are true without (f), but not all, and in any
+case this condition is satisfied in all applications we have in mind. Apart
+from this nondegeneracy condition, Assumption 1 accommodates virtually
+all models for stochastic volatility, including those with jumps, and allows for
+correlation between the volatility and the asset price processes. For example,
+if we consider a d-dimensional equation
+(5)
+
+dYt = f (Yt− ) dZt ,
+
+where Z is a multidimensional Lévy process with Gaussian components, and
+f is a C 2 function with at most linear growth, then any of the components of
+Y satisfies Assumption 1 except perhaps (e); this comes from Itô’s formula
+and from the representation of a Lévy process in terms of a Wiener process
+and a Poisson random measure. The same holds for more general equations
+driven by a Wiener process and a Poisson random measure.
+Except when stated otherwise, we will maintain Assumption 1 throughout
+the paper and will therefore omit it in the statements of the results that
+follow.
+3. The statistical problem.
+3.1. Preliminaries. Our process X is discretely observed over a given
+time interval [0, t], and it is convenient in practice to allow t to vary. So we
+suppose that X can be observed at times i∆n for all i = 0, 1, . . . and we take
+into account only those observation times i∆n smaller than or equal to t,
+whether t is a multiple of ∆n or not. Moreover the testing procedures given
+below are “asymptotic,” in the sense that we can specify the level or the
+power function asymptotically as n → ∞ and ∆n → 0.
+Recall that we want to decide whether there are jumps or not, for the
+process (1); equivalently, we want to decide whether the coefficient δ is
+identically 0 or not. A few remarks can be stated right away, which show
+some of the difficulties or peculiarities of this statistical problem:
+1. It is a nonparametric problem: we do not specify the coefficients b, σ, δ.
+2. It is an asymptotic problem, which only makes sense for high-frequency
+data.
+3. When “n is infinite,” that is, in the ideal although unrealistic situation
+of a complete observation of the path of X over [0, t], we can of course
+tell whether our particular path has jumps or not. However, when the
+measure λ is finite there is a positive probability that the path X(ω) has
+no jump on [0, t], although the model itself may allow for jumps.
+
+6
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+4. In the realistic case n < ∞ we cannot do better than in the “completely
+observed case.” That is, we can hopefully infer something about the jumps
+which actually occurred for our particular observed path, but nothing
+about those which belong to the model but did not occur on the observed
+path.
+5. Rather than “testing for jumps,” there are cases in practice where one
+wants to estimate in some sense the part of the variability of the process
+which is due to the jumps, compared to the part due to the continuous
+component. This is what most authors have studied so far, in some special
+cases at least, and we will take a systematic look at this question in our
+further paper in preparation on the topic, using essentially the same tools
+as in the present paper. However, under the null hypothesis that jumps are
+present, it is not clear how one should go about specifying the proportion
+of quadratic variation attributable to jumps without already assuming
+not only the type but also the “quantity” of jumps, for instance when
+using statistics such as those in Barndorff-Nielsen and Shephard (2006).
+The test we propose below does not have this problem.
+6. Coming back to testing for jumps, an important property of test statistics
+is that they should be scale-invariant (invariant if X is multiplied by an
+arbitrary constant). It would also be desirable for the limiting behavior
+of the statistic to be independent of the dynamics of the process. We will
+see that our test has all these features.
+In view of comments 3 and 4 above, the problem which we really try to
+solve in this paper is to decide, on the basis of the observations Xi∆n which
+belong to the time interval [0, t], in which of the following two complementary
+sets the path which we have discretely observed falls:
+(6)
+
+
+
+Ωjt = {ω : s 7→ Xs (ω) is discontinuous on [0, t]},
+Ωct = {ω : s 7→ Xs (ω) is continuous on [0, t]}.
+
+If we decide on Ωjt , then we also implicitly decide that the model has jumps,
+whereas if we decide on Ωct it does not mean that the model is continuous,
+even on the interval [0, t] (of course, in both cases we can say nothing about
+what happens after t!).
+3.2. Measuring the variability of X. Let us now introduce a number
+of processes which all measure some kind of variability of X, or perhaps
+its continuous and jump components separately, and depend on the whole
+(unobserved) path of X:
+(7)
+
+A(p)t =
+
+Z t
+0
+
+|σs |p ds,
+
+where p is a positive number.
+
+B(p)t =
+
+X
+s≤t
+
+|∆Xs |p ,
+
+7
+
+TESTING FOR JUMPS
+
+Note that A(p) is finite-valued for all p > 0 (under Assumption 1), whereas B(p) is finite-valued if p ≥ 2 but often not when p < 2. Also, recall that
+[X, X] = A(2) + B(2).
+We have Ωjt = {B(p)t > 0} for any p > 0, so in a sense our problem “simply” amounts to determining whether B(p)t > 0 for our particular observed
+path, and with any prespecified p. Moreover a reasonable measure of the relative variability, or variance, due to the jumps is B(2)t /[X, X]t , and this is the
+measure used, for example, by Huang and Tauchen (2006); other measures
+p/2
+of this variability could be B(p)t /A(p)t or B(p)t /[X, X]t for other values
+of p (the power p/2 in the denominator is to ensure the scale-invariance).
+In any event, everything boils down to estimating, on the basis of the
+actual observations, the quantity B(p)t in (7), and the difficulty of this
+estimation depends on the value of p. Let
+∆ni X = Xi∆n − X(i−1)∆n
+
+(8)
+
+denote the observed discrete increments of X [all of them, not just those
+due to jumps, unlike (3)] and define for p > 0 the estimator
+[t/∆n ]
+
+(9)
+For r ∈ (0, ∞), let
+
+r
+
+(10)
+
+X
+
+b
+B(p,
+∆n )t :=
+
+mr = E(|U | ) = π
+
+i=1
+
+|∆ni X|p .
+
+−1/2 r/2
+
+2
+
+
+
+r+1
+Γ
+2
+
+
+
+denote the rth absolute moment of a variable U ∼ N (0, 1). We have the
+following convergences in probability, locally uniform in t:
+
+(11)
+
+
+
+
+p>2
+
+
+
+
+
+p=2
+
+
+
+
+p < 2
+
+⇒
+⇒
+⇒
+
+P
+
+b
+B(p,
+∆n )t −→ B(p)t ,
+P
+b
+B(p, ∆n )t −→ [X, X]t ,
+1−p/2
+
+∆n
+mp
+
+
+
+
+
+
+
+
+
+
+ X is continuous
+
+P
+
+b
+B(p,
+∆n )t −→ A(p)t ,
+1−p/2
+
+⇒
+
+∆n
+mp
+
+P
+
+b
+B(p,
+∆n )t −→ A(p)t .
+
+These properties are known: for p = 2 this is the convergence of the realized quadratic variation, for p > 2 this is due to Lepingle (1976) for all
+semimartingales, and for the other cases one may see, e.g., Jacod (2008).
+b
+The intuition for the behavior of B(p,
+∆n )t is as follows. Suppose that X
+can jump. Among the increments of X, there are those that contain a large
+jump and those that do not. While the increments containing large jumps are
+much less frequent than those that contain only a Brownian contribution and
+
+8
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+many small jumps, or only a Brownian contribution when λ is finite, they
+are so much bigger than the rest that when jumps occur, their contribution
+to B(p) for p > 2 overwhelms everything else. This is because high powers
+(p > 2) magnify the large increments at the expense of the small ones. Then
+the sum behaves like the sum coming from the jumps only; this is the first
+result in (11). When p is small (p < 2), on the other hand, the magnification
+of the large increments by the power is not strong enough to overcome the
+fact that there are many more small increments than large ones. Then the
+behavior of the sum is driven by the summation of all these small increments;
+this is the third result in (11). When p = 2, we are in the situation where
+these two effects (magnification of the relatively few large increments vs.
+summation of many small increments) are of the same magnitude; this is
+the second result in (11). When X is continuous, we are only summing
+small increments and we get for all values of p the same behavior as the one
+in the third result where the summation of the small increments dominates
+the sum; this is the fourth result in (11).
+3.3. The test statistics. Based on this intuition, upon examining (11), we
+b
+see that when p > 2 the limit of B(p,
+∆n )t does not depend on the sequence
+∆n going to 0, and it is strictly positive if X has jumps between 0 and t.
+b
+On the other hand, when X is continuous on [0, t], then B(p,
+∆n )t converges
+again to a limit not depending on ∆n , but only after a normalization which
+does depend on ∆n .
+b
+These considerations lead us to compare B(p,
+∆n )t on two different ∆n b
+scales. Specifically, we choose an integer k and compare B(p,
+∆n )t with
+b
+B(p, k∆n )t , the latter obtained by considering only the increments of X
+between successive multiples of k∆n . Then we set
+(12)
+
+b k, ∆n )t =
+S(p,
+
+b
+B(p,
+k∆n )t
+b
+B(p,
+∆n )t
+
+as our (family of) test statistics.
+In view of the first and fourth limits in (11), we readily get:
+b k, ∆n )t
+Theorem 1. Let t > 0, p > 2 and k ≥ 2. Then the variables S(p,
+converge in probability to the variable S(p, k)t defined by
+
+(13)
+
+S(p, k)t =
+
+
+
+1,
+kp/2−1 ,
+
+on the set Ωjt ,
+on the set Ωct .
+
+(On the set Ωct , the convergence holds for p ≤ 2 as well.) Therefore our test
+statistics will converge to 1 in the presence of jumps and, with the selection
+of p = 4 and k = 2, to 2 in the absence of jumps. The following corollary is
+immediate:
+
+9
+
+TESTING FOR JUMPS
+
+Corollary 1.
+
+Let t > 0, p > 2 and k ≥ 2. The decision rule defined by
+
+ℑ(n) = ℑ(n, t, p, k) =
+
+(
+
+X is discontinuous on [0, t],
+X is continuous on [0, t],
+
+b k, ∆n )t < a,
+if S(p,
+b
+if S(p, k, ∆n )t ≥ a
+
+is consistent, in the sense that the probability that it gives the wrong answer
+tends to 0 as ∆n → 0, for any choice of a in the interval (1, k p/2 − 1).
+4. Central limit theorems.
+4.1. CLT for power variations. The previous corollary provides the first
+step toward constructing a test for the presence or absence of jumps, but it is
+hardly enough. To construct tests, we need to derive the rates of convergence
+and the asymptotic variances when X jumps and when it is continuous.
+We start with the following general theorem, to be proved in Section 8
+(as above, k is an integer larger than 1). The asymptotic variances in the
+theorem involve the process A(p)t already defined in (7) as well as the more
+complex process
+D(p)t =
+
+(14)
+
+X
+s≤t
+
+2
+|∆Xs |p (σs−
++ σs2 )
+
+for p > 0. Like B(p)t , D(p)t is finite-valued if p ≥ 2 but often not when p < 2.
+Theorem 2.
+
+(a) Let p > 3. For any t > 0 the pair of variables
+
+b
+b
+∆n−1/2 (B(p,
+∆n )t − B(p)t , B(p,
+k∆n )t − B(p)t )
+
+converges stably in law to a bidimensional variable of the form (Z(p)t , Z(p)t +
+e F,
+e
+Z ′ (p, k)t ), where both Z(p)t and Z ′ (p, k)t are defined on an extension (Ω,
+e of the original filtered space (Ω, F, (Ft )t≥0 , P) and conditionally
+(Fet )t≥0 , P)
+on F are centered, with Z ′ (p)t having the following conditional variance:
+(15)
+
+e ′ (p, k)2 | F) =
+E(Z
+t
+
+k−1 2
+p D(2p − 2)t .
+2
+
+Moreover if the processes σ and X have no common jumps, the variable
+Z ′ (p)t are F -conditionally Gaussian.
+(b) Assume in addition that X is continuous, and let p ≥ 2. The pair of
+variables
+b
+b
+B(p, k∆n )t − kp/2−1 mp A(p)t )
+B(p, ∆n )t − mp A(p)t , ∆1−p/2
+∆n−1/2 (∆1−p/2
+n
+n
+
+converges stably in law to a bidimensional variable (Y (p)t , Y ′ (p, k)t ) defined
+on an extension ( e
+Ω, e
+F, (Fet )t≥0 , e
+P) of the original filtered space (Ω, F, (Ft )t≥0 , P)
+
+10
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+and which conditionally on F is a centered Gaussian variable with variancecovariance given by
+(16)
+
+
+2
+2
+e
+
+ E(Y (p)t | F) = (m2p − mp )A(2p)t ,
+e
+E(Y ′ (p, k)2t | F) = kp−1 (m2p − m2p )A(2p)t ,
+
+e
+′
+p/2 2
+
+E(Y (p)t Y (p, k)t | F) = (mk,p − k
+
+and where
+(17)
+
+mk,p = E(|U |p |U +
+
+√
+
+mp )A(2p)t
+
+k − 1V |p )
+
+for U , V independent N (0, 1) variables.
+The “stable convergence in law” mentioned above is a mode of convergence introduced by Rényi (1963), which is slightly stronger than the mere
+convergence in law, and its important feature for us is that if Vn is any
+sequence of variables converging in probability to a limit V on the space
+(Ω, F, (Ft )t≥0 , P), whereas the variables Vn′ converge stably in law to V ′ ,
+then the pair (Vn , Vn′ ) converges stably in law again to the pair (V, V ′ ).
+The property “the processes σ and X have no common jumps” may hold,
+even though both processes are driven by the same Poisson measure; indeed,
+it holds when the product δδe vanishes identically, or more generally when
+e
+(δδ)(ω,
+s, z) = 0 for P(dω) × ds × λ(dz) almost all (ω, s, z). Because of the
+freedom we have in the choice of the driving Poisson measure, in this case
+e to drive σ and
+we can also use two independent Poisson measures µ and µ
+X, without changing the law of the pair (X, σ), whereas conversely if this is
+e into a single one.
+true we can “aggregate” the two measures µ and µ
+The reader will observe the restriction p > 3 in (a) above: the CLT simply
+does not hold if p ≤ 3, when there are jumps. On the other hand, (b) holds
+also if p < 2, under the additional assumption that σ does not vanish, but
+we do not need this improvement here.
+4.2. CLT for the nonstandardized statistics. This theorem allows us to
+b k, ∆n )t :
+deduce a CLT for our statistics S(p,
+−1/2
+
+b k, ∆n )t − 1) conTheorem 3. (a) Let p > 3 and t > 0. Then ∆n (S(p,
+j
+verges stably in law, in restriction to the set Ωt of (13), to a variable S(p, k)jt
+which, conditionally on F , is centered with variance
+
+(18)
+
+(k − 1)p2 D(2p − 2)t
+e
+.
+E((S(p, k)j )2 | F) =
+t
+
+2
+
+B(p)2t
+
+Moreover if the processes σ and X have no common jumps, the variable
+S(p, k)jt is F -conditionally Gaussian.
+
+11
+
+TESTING FOR JUMPS
+
+(b) Assume in addition that X is continuous, and let p ≥ 2 and t >
+−1/2 b
+0. Then ∆n (S(p,
+k, ∆n )t − kp/2−1 ) converge stably in law to a variable
+c
+S(p, k)t which, conditionally on F , is centered normal with variance
+A(2p)t
+e
+,
+E((S(p, k)c )2 | F) = M (p, k)
+
+(19)
+
+t
+
+where
+(20) M (p, k) =
+
+A(p)2t
+
+1 p−2
+(k (1 + k)m2p + kp−2 (k − 1)m2p − 2kp/2−1 mk,p ).
+m2p
+
+Note that (a) and (b) are not contradictory, since Ωjt = ∅, when X is
+continuous. It is also worth noticing that the conditional variances (18) and
+(19), although of course random, are more or less behaving in time like 1/t.
+4.3. Consistent estimators of the asymptotic variances. To evaluate the
+b k, ∆n )t , we need consistent estimators
+level of tests based on the statistic S(p,
+for the asymptotic variances obtained in Theorem 3. That is, we will need
+to estimate D(p) when p ≥ 2 and when there are jumps, and also for A(p)
+when p ≥ 2 and X is continuous.
+To estimate A(p), we can use a realized truncated pth variation: for any
+constants α > 0 and ̟ ∈ (0, 21 ), we have from Jacod (2008) that, if either
+p = 2, or p > 2 and X is continuous, then
+(21)
+
+b ∆n )t :=
+A(p,
+
+1−p/2 [t/∆
+Xn ]
+
+∆n
+mp
+
+i=1
+
+P
+
+−→ A(p)t .
+|∆ni X|p 1{|∆ni X|≤α∆̟
+n}
+
+Alternatively, we can use the multipower variations of Barndorff-Nielsen
+and Shephard (2006). For any r ∈ (0, ∞) and any integer q ≥ 1, we have
+from Barndorff-Nielsen et al. (2006a) that if X is continuous
+(22)
+
+Ã(r, q, ∆n )t :=
+
+1−qr/2 [t/∆X
+n ]−q+1 q
+Y
+
+∆n
+mqr
+
+i=1
+
+j=1
+
+P
+
+|∆ni+j−1 X|r −→ A(qr)t
+
+1−r/2
+
+b ∆n )].
+[when q = 1, we have Ã(r, 1, ∆n ) = (∆n
+/mr )B(r,
+It turns out that we also need some results concerning the behavior of
+b
+A(p, ∆n )t or Ã(r, q, ∆n ) when X is discontinuous. These results will be stated
+below, together with the consistency of the estimators of D(p)t which we
+presently describe. Estimators for D(p)t are a bit more difficult to construct
+2 and σ 2 when s is a jump time, and this
+because we need to evaluate σs−
+s
+involves a kind of nonparametric estimation. A possibility, among many
+others, is as follows: take any sequence kn of integers satisfying
+
+(23)
+
+kn → ∞,
+
+kn ∆n → 0
+
+12
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+and then let In,t (i) = {j ∈ N : j 6= i : 1 ≤ j ≤ [t/∆n ], |i − j| ≤ kn } define a local
+window in time of length 2kn ∆n around time i∆n and
+(24)
+
+b
+D(p, ∆n )t =
+
+[t/∆n ]
+X
+X
+1
+|∆ni X|p
+,
+(∆nj X)2 1{|∆nj X|≤α∆̟
+n}
+kn ∆n i=1
+j∈I (i)
+n,t
+
+where α > 0 and ̟ ∈ (0, 1/2).
+The following theorem establishes the consistency of these estimators, and
+also contains the technical result (25) whose proof goes along the same lines,
+and which is needed for the consistency of the tests given below when the
+null hypothesis is that X does not jump.
+Theorem 4.
+(25)
+
+(26)
+
+(a) We have
+
+p ≥ 2, t > 0, α > 0,
+b
+∆n A(2p,
+∆n )t P
+−→ 0,
+b
+A(p, ∆n )2t
+
+1 1
+1
+− <̟<
+2 p
+2
+
+⇒
+
+lim sup
+
+r ∈ (0, 2), q ∈ N
+
+⇒
+
+Ã(r, q, ∆n )t −→ A(qr)t ,
+
+n
+
+P
+
+locally uniformly in t.
+(b) If α > 0, ̟ ∈ (0, 1/2) and p > 2, we have
+(27)
+
+P
+b
+D(p, ∆n )t −→ D(p)t
+
+∀t ≥ 0.
+
+If further X is continuous, then
+(28)
+
+P
+
+b
+∆1−p/2
+D(p,
+∆n )t −→ mp A(p + 2)t
+n
+
+locally uniformly in t.
+
+Note that (27) and (28) are not contradictory, because D(p) = 0 when
+X is continuous. In fact we have more than (25), namely the convergence
+(21) when there are jumps, but only under some restrictions on the jumps
+and also some restrictions on ̟ connected with the structure of the jumps
+and the value p > 2; but these refinements are useless here. Of course (26)
+reduces to (22) when X is continuous.
+4.4. CLT for the standardized statistics. Using Theorem 4, we can immediately construct consistent estimators of the asymptotic variances of the
+test statistics established in (18) and (19), respectively. We deduce from
+and (27) the following CLT for the standardized test statistics
+(11), (26)
+R
+[recall 0t |σs |p ds > 0 a.s., by (f) of Assumption 1]:
+
+13
+
+TESTING FOR JUMPS
+
+Theorem 5.
+(29)
+
+(a) Let p > 3 and t > 0. With
+j
+=
+Vbn,t
+
+b
+− 2, ∆n )t
+∆n (k − 1)p2 D(2p
+,
+b
+2B(p, ∆n )2t
+
+j −1/2 b
+)
+(S(p, k, ∆n )t − 1) converge stably in law, in restriction
+the variables (Vbn,t
+j
+to the set Ωt of (6), to a variable which, conditionally on F , is centered with
+variance 1, and which is N (0, 1) if in addition the processes σ and X have
+no common jumps.
+(b) Assume in addition that X is continuous, and let p ≥ 2 and t > 0. The
+c )−1/2 (S(p,
+b k, ∆n )t − k p/2−1 ) converge stably in law to a variable
+variables (Vbn,t
+c is based on truncations:
+which, conditionally on F , is N (0, 1), where Vbn,t
+c
+Vbn,t
+=
+
+(30)
+
+∆n M (p, k) b
+A(2p, ∆n )t
+b ∆n )2
+A(p,
+t
+
+,
+
+or is replaced by the multipower estimator:
+(31)
+
+c
+Ṽn,t
+=
+
+∆n M (p, k)Ã(p/([p] + 1), 2[p] + 2, ∆n )t
+.
+Ã(p/([p] + 1), [p] + 1, ∆n )2t
+
+In (31) we have chosen r = p/([p] + 1) and respectively q = 2[p] + 2 and
+q = [p] + 1. Any other choice with r ∈ (0, 2) and respectively q = 2p/r and
+q = p/r would do as well.
+5. Testing for jumps. We now use the preceding results to construct
+actual tests, either for the null hypothesis that there are no jumps, or for
+the null hypothesis that jumps are present.
+5.1. When there are no jumps under the null hypothesis. In a first case,
+we set the null hypothesis to be “no jump.” We choose an integer k ≥ 2 and
+a real p > 3, and associate the critical (rejection) region of the form
+(32)
+
+c
+Cn,t
+={b
+S(p, k, ∆n )t < ccn,t }
+
+for some sequence ccn,t > 0, possibly ccn,t = cct for all n, and possibly even a
+random sequence.
+The customary way for defining the asymptotic level of this test is as folc ), a notation which emphasizes the dependency
+lows: if αcn,t (b, σ, δ) = P(Cn,t
+on the coefficients (b, σ, δ) of (1), one should take the supremum over all
+triples (b, σ, δ) in the null hypothesis (i.e., with δ ≡ 0) of lim supn αnt (b, σ, δ).
+However, as mentioned at the end of Section 3.1, we only observe a particular
+path s 7→ Xs (ω) over [0, t], and even only at times i∆n , so there is obviously
+no way of statistically separating the genuine null hypothesis from the case
+
+14
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+where there are jumps, but none occurred in the interval [0, t]. Therefore,
+recalling the sets Ωct and Ωjt of (6), it is natural to take the following as our
+definition of the asymptotic level:
+(33)
+
+c
+α = sup lim sup P(Cn,t
+| Ωct ),
+b,σ,δ
+
+n
+
+with the convention that P(· | Ωct ) = 0 if P(Ωct ) = 0. Observe that we take
+first the lim sup and next the supremum; should we proceed the other way
+around, we would find α = 1. In a similar way, the power function for the
+coefficients triple (b, c, δ) is the following conditional probability:
+(34)
+
+c
+c
+βn,t
+(b, σ, δ) = P(Cn,t
+| Ωjt ).
+
+The right-hand side above makes sense as soon as the function δ in restriction
+to Ω × [0, t] × E is not P(dω) ds λ(dx)-almost everywhere vanishing, since
+P(Ωjt ) > 0 in that case, whereas otherwise P(Ωjt > 0) = 0 and our process
+is continuous on [0, t] (since our setting is nonhomogeneous in time, a test
+based on observations on [0, t] can of course say nothing about what happens
+after time t).
+For α ∈ (0, 1), denote by zα the α-quantile of N (0, 1), that is, P(U > zα ) =
+α, where U is N (0, 1). We have:
+Theorem 6.
+let
+(35)
+
+Let t > 0, choose a real p > 3 and an integer k ≥ 2, and
+q
+
+c ,
+ccn,t = kp/2−1 − zα Vbn,t
+
+c is given by (30) with α > 0 and 1/2−1/p < ̟ < 1/2, or is replaced
+where Vbn,t
+c of (31). Then:
+by Ṽn,t
+(a) The asymptotic level (33) of the critical region defined by (32) for
+testing the null hypothesis “no jump” equals α.
+c (b, σ, δ) → 1 for all coefficients
+(b) The power function (34) satisfies βn,t
+(b, σ, δ) such that P(Ωjt ) > 0 (and of course satisfying Assumption 1).
+
+5.2. When jumps are present under the null hypothesis. In a second case,
+we set the null hypothesis to be that “there are jumps,” in which case the
+critical (rejection) region is of the form
+(36)
+
+j
+b k, ∆n )t > cj }
+= {S(p,
+Cn,t
+n,t
+
+for some sequence cjn,t > 0. As in (33), the asymptotic level is
+(37)
+
+j
+α′ = sup lim sup P(Cn,t
+| Ωjt ),
+b,σ,δ
+
+n
+
+TESTING FOR JUMPS
+
+15
+
+with the convention that P(· | Ωjt ) = 0 if P(Ωjt ) = 0, and the power function
+for the coefficients triple (b, σ, δ) is
+(38)
+
+j
+j
+| Ωct ).
+(b, σ, δ) = P(Cn,t
+βn,t
+
+j
+) when δ = 0, and it makes sense
+The right-hand side above is simply P(Cn,t
+c
+c
+as soon as P(Ωt ) > 0, whereas when P(Ωt ) = 0, then the null hypothesis is
+of course satisfied.
+
+Theorem 7. Let t > 0 and choose a real p > 3 and an integer k ≥ 2. Let
+α ∈ (0, 1) and ̟ ∈ (0, 1/2).
+(a) Letting
+(39)
+
+cjn,t = 1 +
+
+q
+
+j
+/α,
+Vbn,t
+
+j
+is given by (29), the asymptotic level (37) of the critical region
+where Vbn,t
+defined by (36) for testing the null hypothesis “there are jumps” is smaller
+than α.
+(b) Suppose that we restrict our attention to models in which the processes
+X and σ have no common jumps. If
+
+(40)
+
+q
+
+j
+,
+cjn,t = 1 + zα Vbn,t
+
+then the asymptotic level (37) of the critical region defined by (36) for testing
+the null hypothesis “there are jumps” is equal to α.
+j
+(b, σ, δ) → 1 for all
+(c) In all cases the power function (38) satisfies βn,t
+c
+coefficients (b, σ, δ) such that P(Ωt ) > 0.
+5.3. Choosing the free parameters p, k, α and ̟. In both Theorems 6
+and 7 one has two “basic” parameters to choose, namely p > 3 and the
+c in Theorem
+integer k ≥ 2. For the standardization, and except if we use Ven,t
+6, we also need to choose α > 0 and ̟, which should be in (1/2 − 1/p, 1/2)
+for the first theorem, and in (0, 1/2) for the second one. Let us give some
+remarks regarding the selection of these parameters, and the impact of the
+choices on the test.
+First, about the real p > 3: the larger it is, the more the emphasis put on
+“large” jumps. Since those are in any case relatively easy to detect, or at
+least much easier than the small ones, it is probably wise to choose p “small.”
+However, choosing p close to 3 may induce a rather poor fit in the central
+limit theorem for a number n of observations which is not very large, since
+for p = 3 there is still a CLT, but with a bias. A good compromise seems to
+be p = 4, since in addition the computations are easier when p is an integer.
+Second, about k: when k increases, we have to separate two points (1 and k
+when p = 4) which are further and further apart, but on the other hand in
+
+16
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+(18) and (19) we see that the asymptotic variances are increasing with k.
+Furthermore, large values of k lead to a decrease in the effective sample size
+b
+employed to estimate the numerator B(p,
+k∆n )t of the test statistic, which is
+inefficient. So one should choose k not too big. Numerical experiments with
+k = 2, 3, 4 have been conducted below, showing no significant differences for
+the results of the test itself. More experiments should probably be conducted;
+however, we think that the choice k = 2 is in all cases reasonable.
+Third, about α and ̟: from a number of numerical experiments, not
+reported here to save space, it seems that choosing ̟ close to 1/2 (as ̟ =
+0.47 or ̟ = 0.48), and α between 3 and 5 times the “average” value of σ,
+leads to the left-hand sides of (27) and (28) being very close to the righthand sides, for relatively small values of n. Of course choosing α as above
+may seem circular because σt is unknown, and usually random and timevarying, but in practice one very often has a pretty good idea of the order
+of magnitude of σt , especially for financial data. Even if no a priori order of
+magnitude is available, it is possible to estimate
+consistently the volatility
+R
+of the continuous part of the semimartingale, ( 0t σs2 ds)1/2 , in the presence
+of jumps; see the literature on disentangling jumps from diffusions cited
+in the Introduction. The multipower variations (22) do not suffer from the
+drawback of having to choose α and ̟ a priori, but they cannot be used
+for Theorem 7, and when there are jumps the quality of the approximation
+in (26) strongly depends on the relative sizes of σ and of the cumulated
+jumps.
+Finally, let us calculate more explicitly the critical regions for the values p = 4. We obtain that M (4, 2) = 160/3, and more generally M (4, k) =
+16k(2k2 − k − 1)/3, and the cut-off point in (35) when further k = 2 becomes
+
+(41)
+
+v
+u
+b ∆n )t
+u 160∆n A(8,
+c
+cn,t = 2 − zα t
+b ∆n )2
+3A(4,
+
+or
+
+t
+
+ccn,t
+
+v
+u
+u 160∆n Ã(4/5, 10, ∆n )t
+=2−z t
+.
+α
+
+3Ã(4/5, 5, ∆n )2t
+
+In a similar way, (40) becomes
+(42)
+
+v
+u
+b
+u 8∆n D(6,
+∆n )t
+j
+.
+cn,t = 1 + zα t
+b
+B(4, ∆n )2
+t
+
+The α-quantiles of N (0, 1) at the 10% and 5% level are z0.1 = 1.28 and
+z0.05 = 1.64, respectively.
+
+TESTING FOR JUMPS
+
+17
+
+5.4. The effect of microstructure noise. As already said before, the observations of the process X are blurred with a (small) noise, which messes
+things up when data are recorded with high-frequency.
+We do not intend to provide a deep study of this topic here, but merely
+to establish some basic facts from the point of view of the consistency of our
+statistics (rates of convergence are more difficult to obtain). We assume that
+each observation is affected by an additive noise, that is, instead of Xi∆n we
+really observe Yi∆n = Xi∆n + εi , and the εi are supposed to be i.i.d. with
+b ∆n )t (we consider the case
+E(ε2i ) and E(ε4i ) finite. Then, instead of B(4,
+p = 4 here), we actually observe (for k = 1 and also k ≥ 2):
+[t/k∆n ]
+
+b ′ (4, k∆n )t =
+B
+
+X
+i=1
+
+(Xik∆n − X(i−1)k∆n + εki − εk(i−1) )4
+[t/k∆n ]
+
+b
+= B(4,
+k∆n )t + 2
+
+X
+i=1
+
+(Xik∆n − X(i−1)k∆n )2 (εki − εk(i−1) )2
+
+[t/k∆n ]
+
++
+
+X
+i=1
+
+(εki − εk(i−1) )4 .
+
+b k∆n )t and the third one
+The second term above behaves like 4E(ε2i )B(2,
+like t(2E(ε4i ) + 6E(ε2i )2 )/(k∆n ). It follows that the statistics Sb′ (4, k, ∆n )t =
+b ′ (4, k∆n )t /B
+b ′ (4, ∆n )t that we actually observe instead of (12) has the folB
+lowing behavior, as ∆n → 0:
+
+P 1
+Sb′ (4, k, ∆n )t −→ .
+k
+The relevance of this limit will become clear when we apply the test to real
+data in Section 7 below. Finally, note that when ∆n is moderately small,
+things may be different: if E(ε2i ) and E(ε4i ) are small (as they are in practice),
+Sb′ (4, k, ∆n )t will be close to 1 on Ωjt and to k on Ωct .
+
+(43)
+
+6. Simulation results. Throughout the simulations, we use p = 4. We
+calibrate the values to be realistic for a liquid stock trading on the NYSE.
+We use an observation length of t = 1 day, consisting of 6.5 hours of trading,
+that is, 23,400 seconds. The simulations contain no microstructure noise.
+Under the null of no jumps, the performance of the test in simulations
+is reported in Table 1. The distribution of the test statistic in simulations
+is close to the theoretical normal limit centered at k in simulations; histograms for the test statistic and the corresponding asymptotic distribution
+are shown in Figure 1 for the nonstandardized (top panel) and standardized test statistics (lower panel) and the cases k = 2 (left panel) and k = 3
+
+18
+
+Y. AÏT-SAHALIA AND J. JACOD
+Table 1
+Level of the test under the null hypothesis of no jumps
+
+∆n
+
+b k, ∆n )
+Mean value of S(4,
+
+Rejection rate in simulations
+
+n
+
+k
+
+Asymptotic
+
+Simulations
+
+10%
+
+5%
+
+1 sec
+1 sec
+1 sec
+
+23,400
+23,400
+23,400
+
+2
+3
+4
+
+2
+3
+4
+
+2.000
+2.998
+3.999
+
+0.098
+0.099
+0.094
+
+0.046
+0.048
+0.043
+
+5 sec
+5 sec
+5 sec
+
+4680
+4680
+4680
+
+2
+3
+4
+
+2
+3
+4
+
+1.998
+2.998
+3.995
+
+0.099
+0.099
+0.095
+
+0.044
+0.043
+0.038
+
+10 sec
+15 sec
+30 sec
+
+2340
+1560
+780
+
+2
+2
+2
+
+2
+2
+2
+
+2.000
+1.999
+2.007
+
+0.093
+0.090
+0.085
+
+0.041
+0.043
+0.035
+
+Note: This table reports the results of 5000 simulations of the test statistic under the
+null hypothesis of no jumps. The data generating process is the stochastic volatility model
+1/2
+1/2
+dXt /Xt = σt dWt , with σt = vt , dvt = κ(β − vt ) dt + γvt dBt , E[dWt dBt ] = ρ dt, β 1/2 =
+0.4, γ = 0.5, κ = 5, ρ = −0.5. The parameter values are realistic for a stock based on
+Aı̈t-Sahalia and Kimmel (2007). The test statistic is standardized with the estimator of
+c
+Vbn,t
+given in (30) with α = 5β 1/2 and ̟ = 0.47 in (21).
+
+(right panel.) The differences between the cases k = 2 and k = 3 conform to
+the theoretical arguments given above in Section 5.3, in terms of trade-off
+between variance and separation of the modes of the distributions.
+Under the null that jumps are present, the test statistic is now centered
+around the predicted value of 1. We report in Table 2 the performance of
+the test statistic when jumps are compound Poisson. Figure 2 plots the
+distribution of the test statistic for different values of the jump arrival rate,
+λ. An interesting phenomenon happens, when multiple jumps can occur with
+high probability (λ high). While the likelihood that jumps will take place in
+successive observations is small, such paths will happen over a large number
+b
+of simulations. When that situation happens, we may see in B(4,
+2∆n )t the
+two jumps either compensate each other, if they are of opposite signs, or
+cumulate into a single larger jump if they are of the same sign. On the other
+b
+hand, no such compensation or cumulation takes place in B(4,
+∆n )t . As a
+b
+result, their ratio S(4, 2, ∆n )t can exhibit a small number of outliers.
+Similar results for the case where jumps are generated by a Cauchy process are reported in Table 3 and in Figure 3 for the nonstandardized (top
+panel) and standardized test statistics (bottom panel), for different values
+of the Cauchy scale parameter θ. The contrast between the top (very far
+from normal) and bottom (nearly normal) panels in Figure 3 illustrates the
+role of the standardization in making the test statistic asymptotically normal: recall from Theorem 3(a) that the nonstandardized statistic b
+S(4, 2, ∆n )t
+
+TESTING FOR JUMPS
+
+19
+
+Fig. 1. Monte Carlo and theoretical asymptotic distributions of the non-standardized
+(top row) and standardized (bottom row) test statistics S(4, k, ∆n ) for k = 2, 3 and ∆n = 1
+second under the null hypothesis of no jumps. In the standardized case, the solid curve is
+the N (0, 1) density.
+
+is in general non-Normal unconditionally, whereas from Theorem 5(a) the
+j −1/2 b
+)
+(S(4, 2, ∆n )t − 1) is asymptotically N (0, 1)
+standardized statistic (Vbn,t
+unconditionally.
+In Figure 4, we illustrate what happens when there are paths containing
+either no jumps or jumps that are too tiny to be detected as jumps. In
+the Poisson case (left panel), we set λ to correspond to 1 jump per day
+on average, but keep all paths, including those where no jump took place.
+Such paths with no jumps occur with positive probability, unlike the Cauchy
+case. But since we condition on having jumps, we removed those paths in
+Figure 2 to compute the distribution of the statistic under the null that
+jumps are present, as required under Theorem 5(a); this is the practical
+implication of the restriction to the set Ωjt . Now, when those paths are kept,
+we obtain a clear-cut bimodal result: either no jump occurred, and those
+
+20
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+Table 2
+Compound Poisson jumps: Level of the test under the null hypothesis that jumps are
+present
+
+∆n
+
+n
+
+k
+
+Mean value of b
+S(4, k, ∆n )
+
+Asymptotic
+
+Simulations
+
+Rejection rate in simulations
+10%
+
+5%
+
+λ = 1 jump per day
+1 sec
+4 sec
+15 sec
+
+23,400
+5,850
+1560
+
+2
+2
+2
+
+1
+1
+1
+
+1.000
+1.002
+1.003
+
+1 sec
+4 sec
+15 sec
+
+23,400
+5850
+1560
+
+2
+2
+2
+
+1
+1
+1
+
+1.002
+1.006
+1.012
+
+0.110
+0.107
+0.100
+
+0.056
+0.054
+0.053
+
+λ = 5 jumps per day
+0.113
+0.112
+0.129
+
+0.057
+0.059
+0.071
+
+λ = 10 jumps per day
+1 sec
+4 sec
+15 sec
+
+23,400
+5850
+1560
+
+2
+2
+2
+
+1
+1
+1
+
+1.002
+1.009
+1.029
+
+0.105
+0.134
+0.163
+
+0.056
+0.076
+0.099
+
+Note: This table reports the results of 5000 simulations of the test statistic under the null
+hypothesis that jumps are present. The model under the null is dXt /Xt = σt dWt + Jt dNt ,
+where σt is the same stochastic volatility process with the same parameter values as in
+Table 1, Jt is the product of a uniformly distributed variable on [−2, −1] ∪ [1, 2] times
+a constant JS and N is a Poisson process with intensity λ. The total variance of the
+increments, σ 2 + (7/3)JS2 λ is held constant at 0.42 . As a result, jumps that are more
+frequent tend to be smaller in size. In the simulations, 25% of the total variance is due
+to the Brownian motion and 75% to the jumps. Since the test is conditional on a path
+containing jumps, paths that do not contain any jump are excluded from the simulated
+sample and replaced by new simulations. Thus, in sample, the number of jumps is slightly
+higher than specified by the value of λ in the table. The test statistic is standardized with
+−1/4
+j
+the estimator of Vbn,t
+given in (29) with kn = [50∆n ] in (24).
+
+paths are grouped around 2, or (at least) 1 jump occurred and those paths
+are grouped around 1.
+In the Cauchy case (right panel of Figure 4), when a small value of θ is
+selected, although each path has infinitely many jumps, a sizeable proportion
+of paths has no jump large enough to make the path look markedly different
+from that of a pure Brownian motion at our observation frequency. As a
+result, we get a bimodal distribution with a second mode at the (continuous
+case) value of 2. Compared to the left panel of the figure, the infinite-activity
+of the process produces a more diffuse situation where some paths have only
+tiny jumps, and the statistic takes intermediary values between 1 and 2.
+Finally, we confirm in simulations that jumps in σ do not affect the distribution of the test statistic; as predicted by Theorem 5, this is always the
+case if X is continuous, and when X jumps, remains the case as long as σ
+
+TESTING FOR JUMPS
+
+21
+
+Fig. 2. Monte Carlo and theoretical N (0, 1) asymptotic distributions of the standardized
+b 2, ∆n ) − 1) for ∆n = 1 second under the null hypothesis that
+test statistic (Vbnj )−1/2 (S(4,
+jumps are present, using the same data generating process with Poisson jumps as in Table
+2.
+
+and X have no common jumps. To check this, we repeat the simulations
+above with jumps added to σ that are independent from those of X (if any):
+we simulate v = σ 2 from the model used in Table 1 plus proportional compound Poisson jumps that are uniformly distributed on [−30%, 30%]. The
+results are largely unchanged from those in the tables above, and are not
+reported here to save space.
+7. Empirical application. We now conduct the test for each of the 30
+Dow Jones Industrial Average (DJIA) stocks and each trading day in 2005;
+the data source is the TAQ database. Each day, we collect all transactions
+on the NYSE or NASDAQ, from 9 : 30am until 4 : 00pm, for each one of these
+stocks. We sample in calendar time every 5 seconds. Each day and stock is
+treated on its own. We use filters to eliminate clear data errors (price set to
+zero, etc.) as is standard in the empirical market microstructure literature.
+
+22
+
+Y. AÏT-SAHALIA AND J. JACOD
+Table 3
+Cauchy jumps: level of the test under the null hypothesis that jumps are present
+
+b k, ∆n )
+Mean value of S(4,
+
+∆n
+
+n
+
+k
+
+Asymptotic
+
+Simulations
+
+1 sec
+5 sec
+15 sec
+
+23,400
+4680
+1560
+
+2
+2
+2
+
+1
+1
+1
+
+1.002
+1.010
+1.027
+
+Rejection rate in simulations
+10%
+
+5%
+
+Jump size: θ = 10
+0.112
+0.117
+0.126
+
+0.062
+0.066
+0.081
+
+Jump size: θ = 50
+1 sec
+5 sec
+15 sec
+
+23,400
+4680
+1560
+
+2
+2
+2
+
+1
+1
+1
+
+1.000
+1.002
+1.003
+
+0.090
+0.100
+0.094
+
+0.051
+0.059
+0.059
+
+Note: This table reports the results of 5000 simulations of the test statistic under the null
+hypothesis that jumps are present. The model under the null is dXt /Xt = σt dWt + θ dYt ,
+where σt is the same stochastic volatility process as in Tables 1 and 2, Y is a Cauchy process
+standardized to have characteristic function E(exp(iuYt )) = exp(−t|u|/2). The value of the
+long-run mean of volatility, β 1/2 , is 0.2; the other parameter values are identical. Given β,
+the parameter θ measures the size of the jumps relative to the volatility. The test statistic
+−1/4
+j
+is standardized with the estimator of Vbn,t
+given in (29) with kn = [50∆n ] in (24).
+
+We plot in Figure 5 a histogram showing the empirical distribution of the
+statistic computed on these data. As expected, we see evidence of market
+microstructure noise in the form of density mass below 1 (the limit is 1/2,
+see Section 5.4, if the noise is i.i.d., but may be different with other kinds
+of noise). The striking feature of the results is that most of the observed
+values are around 1, providing evidence for the presence of jumps, with only
+few observations around 2, the expected limit in the continuous case. As we
+sample less frequently, the distribution spreads out, consistently with both
+the asymptotic theory and the simulations above.
+8. Proofs.
+
+n (Y ) for E(Y |
+8.1. Preliminaries. We use the shorthand notation Ei−1
+F(i−1)∆n ), and we set
+
+δin = σ(i−1)∆n ∆ni W,
+
+θin = |∆ni X|1{|∆ni X|≤α∆̟
+n}
+
+for a given pair α > 0 and ̟ ∈ (0, 12 ). We will consider a strengthened version
+of Assumption 1:
+e
+
+et | +
+Assumption 2. We have Assumption 1, and |bt | + |σt | + |bt | + |σ
+e x)| ≤ γ(x) and also γ(x) ≤ K for some
+et′ | ≤ K and |δ(t, x)| ≤ γ(x) and |δ(t,
+|σ
+
+constant K.
+
+TESTING FOR JUMPS
+
+23
+
+Fig. 3. Monte Carlo distribution of the nons-tandardized test statistic S(4, 2, ∆n ) for
+∆n = 1 second under the null hypothesis that jumps are present, using the same data
+generating process with Cauchy jumps as in Table 3. The asymptotic distribution of the
+nonstandardized statistic is nonnormal as expected (see upper panel). However, the asymptotic distribution of the standardized test statistic is N (0, 1) (the solid curve in the lower
+panel).
+
+A localization procedure shows that for proving Theorems 2 and 4 we
+can replace everywhere Assumption 1 by Assumption 2; this procedure is
+described in detail in Jacod (2008) and works with no change at all here, so
+we omit it.
+Now we state a number of consequences of this strengthened assumption,
+to be used a number of times in the following proofs. Below, K denotes a
+e, σ
+e ′ , δe′ ) and
+constant which may depend on the coefficients (b, c, δ) and (eb, σ
+which changes from line to line. We write it Ka if it depends on an additional
+parameter a. We also write Xt′ and Xt′′ for the sum of the first three terms,
+resp. of the last two terms, in (1). First, for all q ≥ 2 we have the following
+classical estimates [proved, e.g., in Jacod (2008)] under Assumption 2:
+Eni−1 (|∆ni X ′ |q + |δin |q ) ≤ Kq ∆q/2
+n ,
+
+Eni−1 (|∆ni X ′′ |q ) ≤ Kq ∆n ,
+
+24
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+Fig. 4. Monte Carlo distribution of the non-standardized test statistic S(4, 2, ∆n ) for
+∆n = 1 second, computed using a data generating process with either one Poisson jump
+per day on average including paths that contain no jumps (left panel) or tiny Cauchy jumps
+(θ = 1, right panel).
+
+b(4, 2, ∆n ) for different
+Fig. 5. Empirical distribution of the nonstandardized statistic S
+values of the sampling interval ∆n . Each sample point is computed using all the transactions for one of the 30 DJIA stocks observed over one trading day in 2005. This produces
+7560 realizations of the statistic.
+
+25
+
+TESTING FOR JUMPS
+
+(44)
+
+Eni−1 (|∆ni σ|q ) ≤ Kq ∆n ,
+
+Eni−1 (|∆ni X ′ − δin |q ) ≤ K∆n1+q/2 .
+
+Next, the proof of Lemma 5.12 of Jacod (2008) applied with ε being the
+supremum of the bounded function γ shows that under Assumption 2,
+(45)
+
+Eni−1 (|∆ni X ′′ |2 ∧ η 2 ) ≤ K∆n
+
+ 2
+
+
+
+η + ∆n
++ Γ(θ)
+θ2
+
+for all η > 0 and θ ∈ (0, 1), and where Γ(θ) → 0 as θ → 0. Combining this
+with the second line in (44) yields that also
+(46)
+
+Eni−1 (|∆ni X − δin |2 ∧ η 2 ) ≤ K∆n
+
+ 2
+
+
+
+η + ∆n
++ Γ(θ) .
+θ2
+
+Finally let us also mention two inequalities, valid for all x, y ∈ R and
+0 < ε < 1 < A and for p ≥ 2 and 0 < r < 2:
+(47)
+
+||x + y|p 1{|x+y|≤ε} − |x|p |
+
+≤ Kp (|x|p 1{|x|>ε/2} + εp−2 (y 2 ∧ ε2 ) + |x|p−1 (|y| ∧ ε))
+
+and
+(48)
+
+||x + y|r − |x|r |
+≤ Kr (εr + Aε + Ar−2 (x2 + y 2 ) + Ar ε−2 (y 2 ∧ 1)).
+
+These inequalities are elementary, although a bit tedious to show: for the first
+one, one singles out three cases, namely the case |x| > ε/2, the case |x| ≥ ε/2
+and |y| ≥ ε/2, and the case |x| ≤ ε/2 < |y|, and proves the inequality in each
+of the cases. The second one is proved analogously, after singling out five
+cases: the case |x| ≤ |y|, the case |x| > |y| and |x| > A, the case |y| < |x| ≤ ε,
+the case |y| ≤ ε < |x| ≤ A, and the case ε < |y| < |x| ≤ A.
+8.2. Proof of Theorem 2. For proving Theorem 2 we need to exhibit the
+limits Z(p), Z ′ (p, k), Y (p) and Y ′ (p, k) and it takes some additional notation
+to do so. We consider an auxiliary space (Ω′ , F ′ , P′ ) which supports a number
+of variables and processes:
+′
+
+• four sequences (Uq ), (Uq′ ), (U q ), (U q ) of N (0, 1) variables;
+• a sequence (κq ) of uniform variables on [0, 1];
+• a sequence (Lq ) of uniform variables on the finite set {0, 1, . . . , k − 1} (k ≥ 2
+is the integer showing up in the theorem);
+′
+• two standard Wiener processes W and W ;
+and all these processes or variables are mutually independent. Then we put
+e = Ω × Ω′ ,
+Ω
+
+Fe = F ⊗ F ′ ,
+
+e = P ⊗ P′
+P
+
+26
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+and we extend the variables Xt , bt , . . . defined on Ω and W , Uq , . . . defined
+e in the obvious way, without changing the notation.
+on Ω′ to the product Ω
+e
+e Finally, denote by (Tn )n≥1 an enuWe write E for the expectation w.r.t. P.
+meration of the jump times of X which are stopping times, and let (Fet )
+be the smallest (right-continuous) filtration of Fe containing the filtration
+′
+(Ft ) and w.r.t. which W and W are adapted and such that Un , Un′ , U n ,
+′
+U n , κn and Ln are FeTn -measurable for all n. We hence get an extension
+e Fe , (Fet )t≥0 , P)
+e of the original space (Ω, F, (Ft )t≥0 , P). Obviously, W , W ′ ,
+(Ω,
+′
+W , W are Wiener processes and µ is a Poisson measure with compensator
+ν on ( e
+Ω, e
+F, (Fet )t≥0 , e
+P).
+Now we exhibit the limits. If (hs ) and (h′s ) are adapted processes with
+right-continuous or left-continuous paths, defined on (Ω, F, (Ft )t≥0 , P), we
+set
+′
+
+Y (h, h )t =
+
+(49)
+
+Z t
+0
+
+hs dW s +
+
+Z t
+0
+
+′
+
+h′s dW s .
+
+This defines a local martingale on the extension, which conditionally on
+the σ-field F is a centered Gaussian martingale. Furthermore if (ks , ks′ ) is
+another pair of processes we have
+(50)
+
+e (h, h′ )t Y (k, k ′ )t | F) =
+E(Y
+
+Z t
+0
+
+(hs ks + h′s ks′ ) ds
+
+as in Jacod (2008). In a similar way, with any function g on R which is
+locally bounded and with g(x)/x → 0 as x → 0, we associate the following
+two processes:
+q
+X
+√
+g(∆XTq )( κq Uq σTq − + 1 − κq Uq′ σTq ),
+Z(g)t =
+(51)
+q : Tq ≤t
+
+(52)
+
+Z ′ (g)t =
+
+X
+
+q : Tq ≤t
+
+q
+
+g(∆XTq )( Lq U q σTq − +
+
+q
+
+′
+
+k − 1 − Lq U q σTq ).
+
+That Z(g) is well defined is proved in Jacod (2008) and the proof that Z ′ (g)
+is also well defined is exactly the same. Again, conditionally on F , these two
+processes are independent martingales with mean 0 and
+
+(53)
+
+2
+1
+e
+E(Z(g)
+t | F) = 2
+
+e ′ (g)2 | F) =
+E(Z
+t
+
+X
+
+2
+g(∆Xs )2 (σs−
++ σs2 ),
+
+s≤t
+
+k−1X
+2
+g(∆Xs )2 (σs−
++ σs2 ).
+2 s≤t
+
+Moreover, conditionally on F , Y (h, h′ ) and (Z(g), Z ′ (g)) are independent,
+and the latter is also a Gaussian martingale as soon as the processes X and
+σ have no common jumps.
+
+27
+
+TESTING FOR JUMPS
+
+At this stage we can proceed to proving Theorem 2(a). As a matter of
+fact, it is clearer to prove a more general result: with k an integer strictly
+bigger than 1 and with any function f on R, we consider the two processes
+[t/∆n ]
+n
+
+V (f )t =
+
+X
+
+f (∆ni X),
+
+i=1
+
+(54)
+n
+
+V (f )t =
+
+[t/k∆n ]
+
+X
+i=1
+
+f (∆nki−k+1 X + ∆nki−k+2 X + · · · + ∆nki X).
+
+P
+
+We also write V (f )t = s≤t f (∆Xs ), which is well defined as soon as f (x)/x2
+is bounded on a neighborhood of 0.
+Theorem 8. Under Assumption 1, let f be C 2 with f (0) = f ′ (0) =
+f ′′ (0) = 0 (f ′ and f ′′ are the first two derivatives). The pair of processes
+
+
+
+
+1
+1
+n
+√ (V n (f )t − V (f )∆n [t/∆n ] ), √ (V (f )t − V (f )k∆n [t/∆n ] )
+∆n
+∆n
+
+converges stably in law, on the product D(R+ , R)× D(R+ , R) of the Skorokhod
+spaces, to the process (Z(f ′ ), Z(f ′ ) + Z ′ (f ′ )).
+We have the (stable) convergence in law of the above processes, as elements of the product functional space D(R+ , R)2 , but usually not as elements
+of the space D(R+ , R2 ) with the (two-dimensional) Skorokhod topology, because a jump of X entails a jump for both components above, but “with
+a probability close to j/k” the times at which these two components jump
+differ by an amount j∆n , for j = 1, . . . , k − 1.
+Proof. As said in the beginning of this section, we can assume Assumption 2. The proof is an extension of the proof of Theorem 2.12(i) of
+Jacod (2008). We start the proof under the additional assumption that f
+vanishes on [−2kε, 2kε] for some ε > 0. Let Sq be the successive jump times
+of the Poisson process µ([0, t] × {x : γ(x) > ε}). Let Ωn (t, ε) be the set of
+all ω such that each interval [0, t] ∩ (i∆n , (i + k)∆n ] contains at most one
+Sq (ω), and S1 (ω) > k∆n and |X(i+1)∆n (ω) − Xi∆n (ω)| ≤ 2ε for all i ≤ t/∆n
+and |X(i+1)k∆n (ω) − Xik∆n (ω)| ≤ 2ε for all i ≤ t/k∆n . Next, on the set
+{(ik + j)∆n < Sq ≤ (ik + j + 1)∆n } for i ≥ 1 and 0 ≤ j < k, we set
+L(n, q) = j,
+Sp
+− (ik + j),
+∆n
+1
+α− (n, q) = √ (WSq − W(ik+j)∆n ),
+∆n
+K(n, q) =
+
+28
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+1
+(W(ik+j+1)∆n − WSq ),
+∆n
+1
+β− (n, q) = √ (W(ik+j)∆n − Wik∆n ),
+∆n
+1
+β+ (n, q) = √ (W(i+1)k∆n − W(ik+j+1)∆n ),
+∆n
+
+α+ (n, q) = √
+
+X(ε)t = Xt −
+
+X
+
+∆XSq ,
+
+q : Sq ≤t
+
+R− (n, q) = X(ε)(ik+j)∆n − X(ε)ik∆n ,
+
+′
+R+
+(n, q) = X(ε)(i+1)k∆n − X(ε)(ik+j+1)∆n ,
+
+Rq′n = Rqn + R− (n, q) + R+ (n, q),
+
+Rqn = ∆n(ik+j+1)∆n X(ε),
+Rq =
+
+√
+
+R− (q) =
+
+q
+
+κq Uq σSq − +
+L q U q σSq − ,
+
+q
+
+1 − κq Uq′ σSq ,
+R+ (q) =
+
+q
+
+′
+
+k − 1 − L q U q σSq .
+
+We can extend the proof of Lemma 6.2 of Jacod and Protter (1998) in this
+L−(s)
+
+more complicated context, and with −→ denoting the stable convergence
+in law, to obtain that
+(L(n, q), K(n, q), α− (n, q), α+ (n, q), β− (n, q), β+ (n, q))q≥1
+
+q
+q
+q
+√
+′
+−→ (Lq , κq , κq Uq , 1 − κq Uq′ , Lq U q , k − Lq − 1U q )q≥1 .
+
+L−(s)
+
+We deduce from this, as in Lemma 5.9 of Jacod (2008), that
+p
+
+p
+
+p
+
+(Rqn / ∆n , R− (n, q)/ ∆n , R+ (n, q)/ ∆n )q≥1
+
+(55)
+
+L−(s)
+
+−→ (Rq , R− (q), R+ (q))q≥1 .
+
+Now, since f (x) = 0 if |x| ≤ 2kε, on the set Ωn (t, ε) and for all s ≤ t we
+have
+V n (f )s − V (f )∆n [s/∆n ] =
+=
+
+X
+
+q : Sq ≤∆n [s/∆n ]
+
+X
+
+q : Sq ≤∆n [s/∆n ]
+
+(f (∆XSq + Rqn ) − f (∆XSq ))
+e n )Rn ,
+f ′ (R
+q
+q
+
+e n is between ∆XS and ∆XS + Rn . In a similar way, we get
+where R
+q
+q
+q
+q
+n
+
+V (f )s − V (f )k∆n [s/k∆n ] =
+
+X
+
+q : Sq ≤k∆n [s/k∆n ]
+
+e ′n )R′n
+f ′ (R
+q
+q
+
+29
+
+TESTING FOR JUMPS
+
+e ′n between ∆XS and ∆XS + R′n . Since Rn , R− (n, q) and R+ (n, q)
+with R
+q
+q
+q
+q
+q
+e ′n also go to 0 (for each ω), whereas
+e n and R
+go to 0, we deduce that R
+q
+q
+Ωn (t, ε) → Ω. Since f ′ is continuous, we readily deduce the result of the
+theorem from (55).
+Now we turn to the general case, where f does not necessarily vanish
+around 0. With ψρ a C 2 function equal to 1 on [−ρ, ρ] and to 0 outside
+[−2ρ, 2ρ] and with fρ = f ψρ , we have for all η > 0:
+
+
+
+
+p
+
+lim lim sup P sup|V n (fρ )s − V (fρ )∆n [s/∆n ] |/ ∆n > η = 0
+
+ρ→0
+
+n
+
+s≤t
+
+n
+
+[this is (5.48) in Jacod (2008)] and we obviously have the same for V . Since
+we have the stable convergence in law when we take the functions f − fρ ,
+and since obviously Z(fρ′ ) and Z ′ (fρ′ ) converge locally uniformly in time to
+Z(f ′ ) and Z ′ (f ′ ), respectively, we readily deduce the stable convergence in
+law for the function f . 
+We now prove part (a) of the theorem.
+Proof of Theorem 2(a) under Assumption 2. The previous theorem applied with the function f (x) = |x|p (recall p > 3) yields the stable
+convergence in law of the processes
+
+
+
+
+1
+1
+b
+b
+√ (B(p,
+∆n )t − B(p)∆n [t/∆n ] ), √ (B(p,
+k∆n )t − B(p)k∆n [t/k∆n ] )
+∆n
+∆n
+
+toward (Z(f ′ )t , Z(f ′ )t + Z ′ (f ′ )t ), and f ′ (x) = p|x|p−1 sign(x). Hence if Z ′ (p,
+k)t = Z ′ (f ′ )t , the formula (15) follows from (53), and it remains to prove that
+√
+P
+(B(p)t − B(p)k∆n [t/k∆n ] )/ ∆n −→ 0 for all integers k. Since |δ(ω, t, x)| ≤
+γ(x) ≤ K we have
+E(B(p)t − B(p)k∆n [t/k∆n ] ) = E
+=E
+
+X
+
+p
+
+k∆n [t/k∆n ]<s≤t
+
+Z t
+
+ds
+
+k∆n [t/k∆n ]
+
+≤
+R
+
+Z t
+
+k∆n [t/k∆n ]
+
+ds
+
+|∆Xs |
+Z
+
+E
+
+Z
+
+E
+
+!
+
+p
+
+!
+
+|δ(s, x)| λ(dx)
+
+γ(x)p λ(dx) ≤ Kk∆n ,
+
+where K = γ(x)p λ(dx) is finite (recall p > 3), and the result follows. 
+For Theorem 2(b) it is also convenient to prove a more general result.
+Let g = (gj )1≤j≤2 be an R2 -valued C 2 function on Rk with second partial derivatives having polynomial growth, and which is globally even [i.e.,
+
+30
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+g(−x) = g(x)] and set
+[t/k∆n ]
+n
+
+V (g)t =
+
+X
+
+p
+
+p
+
+p
+
+g(∆nki−k+1 X/ ∆n , ∆nki−k+2 X/ ∆n , . . . , ∆nki X/ ∆n ).
+
+i=1
+
+(56)
+We also denote by ρy the normal law N (0, y), and by ρk⊗
+y its k-fold tensor
+product, and by ρk⊗
+(f
+)
+the
+integral
+of
+any
+function
+f
+w.r.t. it. With the
+y
+above assumptions we then have the following (a d-dimensional version is
+also available, of course):
+Theorem 9.
+tinuous. Then
+(57)
+
+Under Assumption 1, assume in addition that X is con1
+∆n V (g)t −→ V (g)t :=
+k
+P
+
+n
+
+Z t
+0
+
+ρk⊗
+σu (g).
+
+1
+Furthermore the processes √∆
+(∆n V n (g) − V (g)) converge stably in law to
+n
+the two-dimensional process (Y (h, 0), Y (h′ , h′′ )) [recall (49)], where the pro
+cesses (ht ), (h′t ) and (h′′t ) are such that the matrix hh′ t h0′′ is a square root
+
+of the matrix Θt = (Θij
+t )1≤i,j≤2 given by
+
+(58)
+
+t
+
+t
+
+1 k⊗
+k⊗
+k⊗
+Θij
+t = (ρσt (gi gj ) − ρσt (gi )ρσt (gj )).
+k
+
+Proof. The proof is similar to the unipower case in Barndorff-Nielsen et al.
+(2006a). We indicate the changes that are necessary. Everywhere the sums
+over i from 1 to [nt] are replaced
+√ by sums from 1 to [t/k∆n ]. In (4.1)
+of that paper we replace βin = nσ(i−1)/n ∆ni W by the collection βin (j) =
+√ 1 σk(i−1)∆ ∆n
+n
+k(i−1)+j W for j = 1, . . . , k. Then the same proof as for Propo∆n
+sition 4.1 of that paper shows that if
+[t/k∆n ]
+
+Ve n (g) =
+
+X
+
+g(βin (1), βin (2), . . . , βin (k)),
+
+i=1
+
+we have (57) and the stable convergence in law with Ve n (g) instead of V n (g),
+and the same process V (g). √Next, similarly √
+to Theorem 5.6 of that paper,
+and with ζin = g(∆nki−k+1 X/ ∆n , . . . , ∆nki X/ ∆n ), the processes
+p
+
+∆n
+
+[t/k∆n ]
+
+X
+i=1
+
+(ζin − E(ζin | Fk(i−1)∆n ))
+
+converge stably in law to (Y (h, 0), Y (h′ , h′′ )), and this easily yields (57) for
+V n (g).
+
+31
+
+TESTING FOR JUMPS
+
+For the stable convergence in law, it remains to prove that the array
+ζ ′ni =
+
+p
+
+
+
+∆n E(ζin | Fk(i−1)∆n ) −
+
+P[t/∆ ]
+
+1
+k∆n
+
+Z ki∆n
+
+k(i−1)∆n
+
+ρk⊗
+σu (g) du
+
+
+
+P
+
+n
+satisfies
+|ζ ′ni | −→ 0. This is proved as in Barndorff-Nielsen et al.
+i=1
+(2006a); the fact that g is a function of several variables makes no real
+difference, and since g here is C 2 we are in the case of Hypothesis (K) of
+that paper [and not in the more complicated case of Hypothesis (K′ )]. 
+
+Finally, we prove part (b) of the theorem.
+Proof of Theorem 2(b) under Assumption 2. We simply apply
+the previous theorem to the even function g with components
+g1 (x1 , . . . , xk ) = |x1 |p + · · · + |xk |p ,
+
+g2 (x1 , . . . , xk ) = |x1 + · · · + xk |p
+
+(recall that p ≥ 2, hence g is C 2 ). The matrix Θt of (58) is then
+2
+2p
+Σ11
+t = (m2p − mp )|σt | ,
+
+p−1
+Σ22
+(m2p − m2p )|σt |2p .
+t =k
+
+p/2 2
+Σ12
+mp )|σt |2p ,
+t = (mk,p − k
+
+Then a version of the triple (h, h′ , h′′ ) is given by ht = α|σt |p and h′t = α′ |σt |p
+and h′′t = α′′ |σt |p , where
+q
+1
+α′ = (mk,r − kr/2 m2r ),
+α = m2r − m2r ,
+α
+α′′ =
+
+q
+
+kr−1 (m2r − m2r ) − αα′ .
+
+Hence the result obtains, with Y (p)t = Y (h, 0)t and Y ′ (p, k)t = Y (h′ , h′′ )t ,
+upon noting that (16) follows from (50). 
+8.3. Proof of Theorem 3.
+b
+Proof. (a) Write Un = (∆n )−1/2 (B(p,
+∆n )t −B(p)t ) and Vn = (∆n )−1/2 ×
+b
+(B(p,
+k∆n )t − B(p)t ). Then
+b
+B(p,
+k∆n )nt
+Vn − Un
+b
+S(p, k, ∆n )t − 1 =
+− 1 = (∆n )1/2
+.
+b
+b
+B(p, ∆n )t
+B(p, ∆n )t
+
+Theorem 3 yields that under Assumption 1 and if p > 3, then Vn − Un converges stably in law to Z ′ (p, k)t , and the result follows from (15).
+1−p/2 b
+(b) Write Un′ = (∆n )−1/2 (∆n
+B(p, ∆n )− mpA(p)) and Vn′ = (∆n )−1/2 ×
+1−p/2 b
+(∆n
+B(p, k∆n ) − kp/2−1 mp A(p)). Then
+b k, ∆n )t − k p/2−1 =
+S(p,
+
+b
+B(p,
+k∆n )nt
+b
+B(p,
+∆n )t
+
+− kp/2−1 = (∆n )1/2
+
+Vn′ − kp/2−1 Un′
+b
+B(p,
+∆n )t
+
+.
+
+32
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+Since Vn′ − kp/2−1 Un′ converges stably in law to Y ′ (p, k)t − kp/2−1 Y (p)t when
+p ≥ 2 and X is continuous, the result easily follows from (16). 
+8.4. Proof of Theorem 4.
+Proof of (25) under Assumption 2. We fix p ≥ 2, t > 0, ̟ ∈ (1/2 −
+1/p, 1/2) and α > 0. Apply (47) to get, for any B ≥ 1,
+|Un (B) − Un′ | ≤ Kp (An (B) + A′n (B) + A′′n (B)),
+
+(59)
+where
+
+[t/∆n ]
+
+[t/∆n ]
+
+Un (B) = ∆1−p/2
+n
+
+X
+i=1
+
+and
+
+|∆ni X|p 1{|∆n X|≤√B∆n } ,
+
+Un′ = ∆1−p/2
+n
+
+i
+
+X
+i=1
+
+|∆ni X ′ |p
+
+[t/∆n ]
+
+An (B) = ∆1−p/2
+n
+
+X
+
+|∆ni X ′ |p 1{|∆n X ′ |>√B∆n /2} ,
+i
+
+i=1
+
+[t/∆n ]
+
+A′n (B) = B p/2−1
+
+X
+i=1
+
+(|∆ni X ′′ |2 ∧ B∆n ),
+
+[t/∆n ]
+
+A′′n (B) = ∆1−p/2
+n
+
+X
+i=1
+
+|∆ni X ′ |p−1 (|∆ni X ′′ | ∧
+
+p
+
+B∆n ).
+
+√
+1/4
+Then if we apply (44) and (45) with η = B∆n and θ = ∆n , and also
+Bienaymé–Chebyshev for An (B) and Cauchy–Schwarz for A′′n (B), and with
+1/2
+1/4
+the notation ε2n = ∆n + Γ(∆n ) (so εn → 0), we readily obtain (recall
+B ≥ 1):
+Kp t
+,
+E(A′n (B)) ≤ Kp tB p/2 ε2n ,
+B
+It follows that (with other constants Kp ):
+E(An (B)) ≤
+
+P(An (B) > B −1/2 ) ≤ Kp tB −1/2 ,
+
+E(A′′n (B)) ≤ Kp tB 1/2 εn .
+
+P(A′n (B) + A′′n (B) > εn1/2 ) ≤ Kp tε1/2
+n .
+
+On the other hand we can apply the last property in (11) to X ′ , which
+P
+satisfies Assumption 2 and is continuous, to get Un′ −→ mp A(p)t . Combining
+this with the above estimates and (59), and since εn → 0, we obtain for some
+constants K and K ′ depending on p and t, and all η > 0 and B > 1:
+(60)
+
+lim sup P(Un (B) < mp A(p)t − KB −1/2 − η) ≤ K ′ B −1/2 .
+n
+
+√
+Now, for any B ≥ 1 we have α∆̟
+n > B∆n for all n large enough because ̟ < 1/2. Therefore (60) remains valid if we replace the sets {|∆ni X| ≤
+
+33
+
+TESTING FOR JUMPS
+
+√
+
+B∆n } by {|∆ni X| ≤ α∆̟
+n } in the definition of Un (B). Since A(p)t > 0
+a.s. and B is arbitrarily large and η arbitrarily small, we deduce that Cn =
+P[t/∆n ] n p
+satisfies
+|∆i X| 1{|∆ni X|≤α∆̟
+i=1
+n}
+(61)
+
+
+
+2
+>
+P
+1−p/2
+m
+A(p)
+p
+t
+∆n
+Cn
+1
+
+
+
+=P
+
+
+
+mp A(p)t
+∆1−p/2
+Cn <
+n
+2
+
+
+
+→ 0.
+
+At this stage, the proof of (25) is straightforward. Indeed, since |∆ni X|2p ≤
+
+̟
+p
+n
+n
+αp ∆p̟
+n |∆i X| when |∆i X| ≤ α∆ , one deduces from (21) that
+p̟+1−p/2
+
+b
+K∆n
+∆n A(2p,
+∆n )t K∆p̟
+n
+=
+.
+≤
+1−p/2
+2
+b
+Cn
+A(p, ∆n )t
+∆n
+Cn
+
+Since p̟ + 1 − p/2 > 0, the result readily follows from (61). 
+Proof of (26) under Assumption 2. Barndorff-Nielsen, Shephard
+and Winkel (2006b) proved a similar result under more restrictive conditions.
+√
+1/4
+Apply (45) with η = ∆n and θ = ∆n , and divide par ∆n , to get
+p
+
+Eni−1 (|∆ni X ′′ / ∆n |2 ∧ 1) ≤ αn
+
+(62)
+
+for a (deterministic) sequence
+αn going to 0.
+√ Next, we apply (48) with 0 <
+√
+n
+′′
+n
+′
+r < 2 and x = ∆i X / ∆n and y = ∆i X / ∆n and we use (44) for q = 2
+and (62) to get
+p
+
+p
+
+Eni−1 (||∆ni X/ ∆n |r − |∆ni X ′ / ∆n |r |) ≤ K(εr + Aε + Ar−2 + Ar ε−2 αn ).
+1/4
+
+−1/8
+
+Hence by taking ε = εn = αn and A = An = αn
+
+, we get as soon as αn ≤ 1:
+
+(2−r)/8
+(63) ∆n−r/2 sup Eni−1 (||∆ni X|r − |∆ni X ′ |r |) ≤ α′n = K(α1/8
+) → 0.
+n +α
+i
+
+Now, from Barndorff-Nielsen et al. (2006a), we know that the result holds
+when X is continuous: the processes V ′ (r, q, ∆n ) defined by (22) with X
+substituted with X ′ converge in probability, locally uniformly in time, to
+the process A(qr) (this holds even when r ≥ 2). Therefore it is enough to
+prove that
+(64)
+
+
+
+
+
+′
+
+E sup |V (q, r, ∆n )s − V (q, r, ∆n )s | → 0.
+s≤t
+
+The left-hand side of (64) at time t is smaller than
+q
+q−1
+1−qr/2 Y
+Y
+∆n
+n
+n
+r
+ζi =
+|∆i+j−1 X| −
+|∆ni+j−1 X ′ |r
+q
+mr
+j=1
+j=1
+
+ζin (l) = ∆n1−rq/2
+
+l−1
+Y
+
+j=1
+
+P[t/∆n ]
+i=1
+
+E(ζin ), where
+
+q
+
+1 X n
+ζ (l),
+= q
+mr l=1 i
+
+|∆ni+j−1 X|r ||∆ni+l−1 X|r − |∆ni+l−1 X ′ |r |
+
+q
+Y
+
+j=l+1
+
+|∆ni+j−1 X ′ |r ,
+
+34
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+where an empty product is set to be 1. Taking successive conditional expectations, and using (44) and (63), we readily obtain that E(ζin (l)) ≤ Kα′n ∆n .
+P[t/∆ ]
+Then obviously i=1 n E(ζin (l)) ≤ Ktα′n → 0 for each l = 1, . . . , q, hence
+(64). 
+Lemma 1.
+
+Under Assumption 2 and if
+[t/∆n ]
+X
+X
+1
+P
+|∆ni X|p
+(δjn )2 −→ D(p)t
+kn ∆n i=1
+j∈I (i)
+
+b ′ n :=
+D
+
+(65)
+
+t
+
+n,t
+
+and also, when X is continuous,
+(66)
+
+b ′′ n :=
+D
+t
+
+1
+p/2
+kn ∆n
+
+[t/∆n ]
+
+X
+i=1
+
+|δin |p
+
+X
+
+j∈In,t (i)
+
+P
+
+(δjn )2 −→ mp A(p + 2)t ,
+
+then (27) holds, as well as (28) when X is continuous.
+Proof. In (28) both members are increasing in t and the limit is continuous in t, so it is enough to prove the convergence separately for each t.
+To unify the proof of the two results, we write un = 1 and D = D(p) if X
+1−p/2
+jumps, and un = ∆n
+and D = mp A(p + 2) if X is continuous, in which
+case we also set
+′
+
+b n :=
+D
+t
+
+[t/∆ ]
+X
+un Xn
+|∆ni X|p
+(δjn )2 .
+kn ∆n i=1
+j∈I (i)
+n,t
+
+P
+
+b
+∆n )t −→ Dt , and in a
+With this notation, (27) and (28) amount to un D(p,
+′n
+P
+b
+first step we show that this is equivalent to Dt −→ Dt .
+Apply (47) with p = 2 and x = δin and y = ∆ni X − δin and θ = α∆̟
+n , and
+use Cauchy–Schwarz and Bienaymé–Chebyshev and (44), and also (46) with
+1/2
+η = ηn = α∆̟
+n and ε = ηn , to get after some simple calculations that, with
+K = Kα :
+
+(67)
+
+1
+E(|(θin )2 − (δin )2 | | F(i−1)∆n )
+∆n
+b n := K(∆n + ∆̟ + Γ(η 1/2 ) + ∆̟/2 +
+≤Γ
+n
+
+n
+
+n
+
+q
+
+1/2
+
+Γ(ηn )) → 0,
+1/2
+
+where the final convergence follows from ηn → 0, hence Γ(ηn ) → 0 as well.
+b
+b ′ n , with δ n substituted with θ n .
+Observe that un D(p,
+∆n ) is the same as D
+i
+j
+b
+b ′ n is the sum of less than 2kn [t/∆n ]
+Hence the difference un D(p,
+∆n )t − D
+t
+terms (strictly less, because of the border effects at 0 and [t/∆n ]), each one
+
+35
+
+TESTING FOR JUMPS
+
+n
+|∆ni X|p ||(θjn )2 − (δjn )2 |, for some i 6= j. Then, by
+being smaller than knu∆
+n
+taking two successive conditional expectations and using (44) and (67), we
+b n /kn in both
+see that the expectation of such a term is smaller than Kp ∆n Γ
+′
+
+b
+b n |) ≤ Kp tΓ
+bn.
+cases (X continuous or not). Therefore E(|un D(p,
+∆n )t − D
+t
+b n → 0, the claim of this step is complete.
+Since Γ
+So far we have proved that (65) implies (27). For proving that (66) implies
+b ′n −
+(28) when X is continuous, it remains to show that in this case E(|D
+t
+b ′′ n |) → 0. Exactly as above, D
+b ′n − D
+b ′′ n is the sum of less than 2kn [t/∆n ]
+D
+t
+t
+t
+′ = un ||∆n X|p | − |δ n |p |(δ n )2 , for
+terms, each one being smaller than ζi,j
+j
+j
+i
+kn ∆n
+p
+p
+some i 6= j. Since ||x + y| − |x| | ≤ Kp (|x|p−1 |y| + |y|p ), and since X = X ′
+because X is continuous, we deduce from (44) and by taking two successive
+n ) ≤ K u ∆1/2+p/2 /k , hence E(|D
+b ′n −
+conditional expectations that E(ζi,j
+p n n
+n
+t
+√
+′′ n
+b
+Dt |) ≤ Kp t ∆n , and we are done. 
+
+Proof of (27) under Assumption 2. Step 1. For any ρ ∈ (0, 1) we set
+ψρ (x) = 1 ∧ (2 − |x|/ρ)+ (a continuous function with values in [0, 1], equal to
+1 if |x| ≤ ρ and to 0 if |x| ≥ 2ρ), and we introduce two increasing processes:
+Y (ρ)nt =
+
+[t/∆n ]
+X
+X
+1
+ψρ (∆ni X)|∆ni X|p
+(δjn )2 ,
+kn ∆n i=1
+j∈I (i)
+n,t
+
+b ′n −Y (ρ)n .
+Z(ρ)nt = D
+t
+t
+
+By the previous lemma we need to prove (65), and for this it is obviously
+enough to show the following three properties, for some suitable processes
+Z(ρ):
+(68)
+
+lim lim sup E(Y (ρ)nt ) = 0,
+
+ρ→0
+
+n
+
+P
+
+(69)
+
+ρ ∈ (0, 1), n → ∞
+
+⇒
+
+Z(ρ)nt −→ Z(ρ)t ,
+
+(70)
+
+ρ→0
+
+⇒
+
+Z(ρ)t −→ Dt .
+
+P
+
+Step 2. By singling out the cases 2|x| > |y| and 2|x| ≤ |y|, we check that
+(recall ρ < 1):
+ψρ (x + y)|x + y|p ≤ Kp (|x|p + (y 2 ∧ ρ2 )).
+
+Using this with x = δin and y = ∆ni X − δin , plus (44) and (46) with η = ρ
+√
+and θ = ρ, we obtain
+1 n
+√
+Ei−1 (ψρ (∆ni X)|∆ni X|p ) ≤ Γ′n (ρ) := Kp (∆p/2−1
++ ρ + Γ( ρ) + ∆n ρ−1 ).
+n
+∆n
+Now, Y (ρ)nt is the sum of less than 2kn [t/∆n ] terms, all smaller than kn1∆n ×
+|∆ni X|p |δjn |2 for some i 6= j. By taking two successive conditional expectations, as in the previous lemma, and by using (44) and the above, we see
+
+36
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+that the expectation of such a term is smaller than Kp ∆n Γ′n (ρ)/kn . Thus
+E(Y (ρ)nt ) ≤ KtΓ′n (ρ), and since obviously limρ→0 lim supn Γ′n (ρ) = 0 we obtain (68).
+Step 3. Now we define the process Z(ρ). Let us call Tq (ρ) for q = 1, 2, . . .
+the successive jump times of the Poisson process µ([0, t] × {x : γ(x) > ρ/2}),
+and set
+X
+
+Z(ρ)t =
+
+q : Tq (ρ)≤t
+
+|∆XTq (ρ) |p (1 − ψρ (∆XTp (ρ) ))(σT2 q (ρ)− + σT2 q (ρ) ).
+
+For all ω ∈ Ω, q ≥ 1, ρ′ ∈ (0, ρ) there is q ′ such that Tq (ρ)(ω) = Tq′ (ρ′ )(ω),
+whereas 1−ψρ increases to the indicator of R\{0}. Thus Z(ρ)t (ω) ↑ D(p)t (ω),
+and we have (70).
+Step 4. It remains to prove (69). Fix ρ ∈ (0, 1) and write Tq = Tq (ρ). Recall
+that for u different from all Tq ’s, we have |∆Xu | ≤ ρ/2. Hence, for each ω
+and each t > 0, we have the following properties for all n large enough: there
+is no Tq in (0, kn ∆n ], nor in (t − (kn + 1)∆n , t]; there is at most one Tq in
+an interval ((i − 1)∆n , i∆n ] with i∆n ≤ t, and if this is not the case we have
+ψρ (∆ni X) = 1. Hence for n large enough we have
+X
+
+Z(ρ)nt =
+
+ζqn ,
+
+q : kn ∆n <Tq ≤t−(kn +1)∆n
+
+where
+ζqn =
+
+X
+1
+|∆ni(n,q) X|p (1 − ψρ (∆ni(n,q) X))
+(δjn )2
+kn ∆n
+′
+j∈I (n,q)
+
+and i(n, q) = inf(i : i∆n ≥ Tq ) and I ′ (n, q) = {j : j 6= i(n, q), |j − i(n, q)| ≤ kn }.
+P
+
+To get (69) it is enough that ζqn −→ |∆XTq |p (1 − ψρ (∆XTq ))(σT2 q − + σT2 q )
+for any q. Since |∆ni(n,q) X|p (1 − ψρ (∆ni(n,q) X)) → |∆XTq |p (1 − ψρ (∆XTp ))
+pointwise, so it remains to prove that
+(71)
+
+X
+1
+P
+(δn )2 −→ σT2 q − ,
+kn ∆n j∈I ′ (n,q) j
+
+X
+1
+P
+(δn )2 −→ σT2 q ,
+kn ∆n j∈I ′ (n,q) j
++
+
+−
+
+′ (n, q) and I ′ (n, q) are the subsets of I ′ (n, q) consisting in those j
+where I−
++
+smaller, respectively bigger, than i(n, q). We write
+
+Uqn =
+snq =
+Sqn =
+
+1
+kn ∆n
+
+X
+
+(∆nj W )2 ,
+
+′ (n,q)
+j∈I−
+
+inf
+
+σu2 ,
+
+sup
+
+σu2 .
+
+u∈[Tq −kn ∆n ,Tq )
+u∈[Tq −kn ∆n ,Tq )
+
+37
+
+TESTING FOR JUMPS
+
+On the one hand, both snq and Sqn converge as n → ∞ to σT2 q − , because
+kn ∆n → 0. On the other hand, the left-hand side of the first expression in
+(71) is in between the two quantities snq Uqn and Sqn Uqn . Moreover the variables
+P n
+∆ni W are i.i.d. N (0, ∆n ), so Uqn is distributed as Un′ = k1n ki=1
+Vi where the
+Vi ’s are i.i.d. N (0, 1), and by the usual law of large numbers we have Un′ → 1
+P
+a.s., hence Uqn −→ 1; these facts entail the first part of (71), and the second
+part is proved in the same way. 
+Proof of (28) under Assumption 2. Step 1. We have to prove that
+when X is continuous, then (66) holds. We have
+[t/∆n ]
+
+∆−p/2
+n
+
+X
+i=1
+
+P
+
+|δin |p+2 −→ mp+2 A(p + 2)t
+
+[this property is the preliminary step in Jacod (2008) to prove the last part
+P
+b ′n − D
+b ′′n −→
+of (11); alternatively, it can be deduced from (11) exactly as D
+0
+t
+t
+in the end of the proof of Lemma 1]. Therefore it is enough to prove that
+Ytn :=
+
+[t/∆n ]
+
+1
+p/2
+kn ∆n
+
+X
+
+X
+
+i=1 j∈In,t (i)
+
+P
+
+n
+ζi,j
+−→ 0,
+
+n p+2 .
+n p n 2
+n =m
+where ζi,j
+p+2 |δi | |δj | − mp |δi |
+
+Let T (n, i) = (i − kn − 1)+ ∆n . When j > i we have (recall σt is bounded):
+
+n
+2
+2
+|Eni−1 (ζi,j
+)| = |Eni−1 (mp+2 |σ(i−1)∆n |p (σ(j−1)∆
+− σ(i−1)∆
+)|∆ni W |p |∆nj W |2
+n
+n
+
++ |σ(i−1)∆n |p+2 (mp+2 |∆ni W |p |∆nj W |2 − mp |∆ni W |p+2 ))|
+
+2
+2
+≤ Kp ∆n Eni−1 (|σ(j−1)∆
+− σ(i−1)∆
+||∆ni W |p |).
+n
+n
+
+When i − kn ≤ j < i we have
+n
+|E(ζi,j
+| F(j−1)∆n )|
+
+= |E(mp+2 |σ(j−1)∆n |2 (|σ(i−1)∆n |p − |σ(j−1)∆n |p )|∆ni W |p |∆nj W |2
+
++ |σ(j−1)∆n |p+2 (mp+2 |∆ni W |p |∆nj W |2 − mp |∆ni W |p+2 ) | F(j−1)∆n )|
+
+p
+p
+n
+2
+≤ Kp ∆p/2
+n E(||σ(i−1)∆n | − |σ(j−1)∆n | ||∆j W | |F(j−1)∆n ).
+
+Therefore, since ||σ(i−1)∆n |q − |σ(j−1)∆n |q | ≤ Kq |σ(i−1)∆n − σ(j−1)∆n | for any
+q ≥ 1, we deduce from (44) and Cauchy–Schwarz and the two estimates
+above that
+(72)
+
+j ∈ In,t (i)
+
+⇒
+
+n
+|E(ζi,j
+| FT (n,i) )| ≤ Kp ∆3/2+p/2
+.
+n
+
+38
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+Moreover, as a trivial consequence of (44) again, we get
+(73)
+
+j ∈ In,t (i)
+
+⇒
+
+n 2
+E(|ζi,j
+| | FT (n,i) ) ≤ Kp ∆2+p
+n .
+
+Now we set
+ηin =
+
+X
+
+1
+
+p/2
+kn ∆n j∈In,t
+
+[t/∆n ]
+n
+ζi,j
+,
+
+Zn =
+
+X
+i=1
+
+E(ηin | FT (n,i) ),
+
+Zn′ = Ytn − Zn .
+
+√
+On the one hand (72) yields |Zn | ≤ Kp t ∆n → 0. On the other hand Zn′ =
+P[t/∆n ] n
+n
+n
+i=1 (ηi − E(ηi | FT (n,i) )), whereas ηi is FT (n,i+2kn +1) -measurable. Hence (73) gives
+X
+
+E(Z ′2n ) =
+
+i,i′ : 1≤i,i′ ≤[t/∆
+
+≤
+
+≤
+
+n]
+
+E((ηin − E(ηin | FT (n,i) ))(ηin′ − E(ηin′ | FT (n,i′ ) )))
+
+X
+
+i,i′ : 1≤i≤[t/∆n ],|i−i′ |≤2kn +1
+
+E((ηin − E(ηin | FT (n,i) ))
+
+× (ηin′ − E(ηin′ | FT (n,i′ ) )))
+
+X
+
+i,i′ : 1≤i≤[t/∆n ],|i−i′ |≤2kn +1
+
+E(|ηin ηin′ |) ≤ (4kn + 3)[t/∆n ]Kp ∆2n
+
+≤ Kp t(kn ∆n ),
+P
+
+which goes to 0 by virtue of (23). It then follows that Ytn −→ 0, and we are
+done. 
+8.5. Proof of Theorem 6.
+c )−1/2 (S(p,
+b k,
+Proof. (a) When X is continuous the variables Un = (Vbn,t
+
+∆n )t − kp/2−1 ) converge stably in law to N (0, 1) by Theorem 5(b), for both
+c . In particular if cc is given by (35) we have that P(C c ) =
+choices of Vbn,t
+n,t
+n,t
+P(Un < −zα ) → α, and we even have more, because of the stable convergence
+in law; namely, for any measurable subset B of Ω, then
+c
+P(Cn,t
+∩ B) = P({Un < −zα } ∩ B) → αP(B).
+
+(74)
+
+Now, this is not quite enough to prove (a), since it may happen that X
+is not continuous but the observed path is continuous on [0, t]. To deal with
+this case, for any integer N we introduce the process
+(N )
+
+Xt
+
+= X0 +
+
+Z t
+0
+
+bs ds +
+
+Z t
+0
+
+σs dWs −
+
+Z t
+0
+
+δs′ 1{|δs′ |≤N } ds.
+
+Put an additional exponent (N ) for the variables defined on the basis of X (N ) ,
+c(N )
+(N )
+c(N )
+S(p, k, ∆n )t or Cn,t . Then (74) applied
+writing, for example, Vbn,t or b
+
+39
+
+TESTING FOR JUMPS
+c(N )
+
+with the continuous process X (N ) shows that P(Cn,t
+
+∩ B) → αP(B) for
+
+(N )
+(N )
+any B ∈ F . However, on the set Ωt where Xs = Xs for all s ∈ [0, t] we
+(N )
+c(N )
+(N )
+c(N )
+c and b
+S(p, k, ∆n )t , hence Cn,t ∩ Ωt =
+S(p, k, ∆n )t = b
+have Vbn,t = Vbn,t
+c ∩ Ω(N ) . Therefore P(C c ∩ Ω(N ) ) → αP(Ω(N ) ). Since Ω(N ) increases to
+Cn,t
+n,t
+t
+t
+t
+t
+Ωct by virtue of (e) of Assumption 1, we deduce (i).
+P
+b k, ∆n )t −→
+(b) Finally assume P(Ωjt ) > 0. Then Theorem 1 yields that S(p,
+c we
+1 on the set Ωjt . On the other hand if we use the version (30) for Vbn,t
+P
+deduce from (25) that ccn,t −→ kp/2−1 > 1, whereas if we use the version (31)
+P
+P
+c /∆ −→
+we have Vbn,t
+M (p, k)A(2p)t /A(p)2t , hence again ccn,t −→ kp/2−1 > 1;
+n
+
+so the result is obvious. 
+8.6. Proof of Theorem 7.
+
+Proof. Relative to the proof of the previous theorem, we need a few
+changes. First we replace (a) of Theorem 6 by two statements (a) and (b)
+here: the case (b) corresponds to the situation where the limit in Theorem
+5(a) is normal, and so this is similar to Theorem 6(a). The case (a) here corresponds to a nonnormal limit with variance 1, and for this limit we cannot
+evaluate exactly the quantiles and we rely upon the Chebyshev inequality;
+this is why we only get a bound on the level but not the exact value. Apart
+from these changes, the proof for the level is the same.
+For (c) we suppose that P(Ωct ) > 0. Letting T = inf(s : ∆Xs 6= 0), we have
+T > t on Ωt , whereas µ({(s, z) : s ≤ T, δ(s, z) 6= 0}) ≤ 1, hence E(ν({(s,
+R z)
+R :s ≤
+T, δ(s, z) 6= 0})) ≤ 1, hence a fortiori the predictable process Ys = 0s E |κ ◦
+δ(r, z)|ν(dr, dz) is finite-valued on [0, T ], so there is an increasing sequence
+(Tq ) of stopping times with Tq ≤ T and YTq ≤ q and P({Tq < t} ∩ Ωcn,t ) →
+j
+| {Tq < t} ∩ Ωcn,t) → 1
+P(Ωcn,t ), and it is clearly enough to show that P(Cn,t
+c
+for all q having P({Tq < t} ∩ Ωn,t) > 0.
+Now with q fixed we consider the process
+X s = X0 +
+
+Z s
+0
+
+br dr +
+
+Z s
+0
+
+σr dWr −
+
+Z s∧Tq Z
+0
+
+E
+
+κ ◦ δ(r, z)ν(dr, dz).
+
+This process satisfies Assumption 1 and is continuous, and it coincides with
+X on the interval [0, Tq ). Then similarly to the previous proof, we see that
+P
+
+P
+
+b k, ∆n )t −→ k p/2−1 and Vb j −→ 0 [use
+on the set {Tq < t} ∩ Ωcn,t we have S(p,
+nt
+(23) and (28) for the latter], hence the result. 
+
+Acknowledgments. We are very grateful to a referee, an Associate Editor and Cecilia Mancini, for constructive comments that helped us greatly
+improve this paper.
+
+40
+
+Y. AÏT-SAHALIA AND J. JACOD
+
+REFERENCES
+Aı̈t-Sahalia, Y. (2002). Telling from discrete data whether the underlying continuoustime model is a diffusion. J. Finance 57 2075–2112.
+Aı̈t-Sahalia, Y. (2004). Disentangling diffusion from jumps. J. Financial Economics 74
+487–528.
+Aı̈t-Sahalia, Y. and Jacod, J. (2007). Volatility estimators for discretely sampled Lévy
+processes. Ann. Statist. 35 355–392. MR2332279
+Aı̈t-Sahalia, Y. and Kimmel, R. (2007). Maximum likelihood estimation of stochastic
+volatility models. J. Financial Economics 83 413–452.
+Andersen, T. G., Bollerslev, T. and Diebold, F. X. (2003). Some like it smooth,
+and some like it rough. Technical Report, Northwestern Univ.
+Barndorff-Nielsen, O., Graversen, S., Jacod, J., Podolskij, M. and Shephard,
+N. (2006a). A central limit theorem for realised bipower variations of continuous
+semimartingales. In From Stochastic Calculus to Mathematical Finance, The Shiryaev
+Festschrift (Y. Kabanov, R. Liptser and J. Stoyanov, eds.) 33–69. Springer, Berlin.
+MR2233534
+Barndorff-Nielsen, O. E. and Shephard, N. (2006). Econometrics of testing for jumps
+in financial economics using bipower variation. J. Financial Econometrics 4 1–30.
+Barndorff-Nielsen, O. E., Shephard, N. and Winkel, M. (2006b). Limit theorems
+for multipower variation in the presence of jumps. Stochastic Process. Appl. 116 796–
+806. MR2218336
+Carr, P. and Wu, L. (2003). What type of process underlies options? A simple robust
+test. J. Finance 58 2581–2610.
+Huang, X. and Tauchen, G. (2006). The relative contribution of jumps to total price
+variance. J. Financial Econometrics 4 456–499.
+Jacod, J. (2008). Asymptotic properties of realized power variations and related functionals of semimartingales. Stochastic Process. Appl. 118 517–559.
+Jacod, J. and Protter, P. (1998). Asymptotic error distributions for the Euler method
+for stochastic differential equations. Ann. Probab. 26 267–307. MR1617049
+Jacod, J. and Shiryaev, A. N. (2003). Limit Theorems for Stochastic Processes, 2nd ed.
+Springer, New York. MR1943877
+Jiang, G. J. and Oomen, R. C. (2005). A new test for jumps in asset prices. Technical
+report, Univ. Warwick, Warwick Business School.
+Lee, S. and Mykland, P. A. (2008). Jumps in financial markets: A new nonparametric
+test and jump clustering. Review of Financial Studies. To appear.
+Lepingle, D. (1976). La variation d’ordre p des semi-martingales. Z. Wahrsch. Verw.
+Gebiete 36 295–316. MR0420837
+Mancini, C. (2001). Disentangling the jumps of the diffusion in a geometric jumping
+Brownian motion. Giornale dell’Istituto Italiano degli Attuari LXIV 19–47.
+Mancini, C. (2004). Estimating the integrated volatility in stochastic volatility models
+with Lévy type jumps. Technical report, Univ. Firenze.
+Rényi, A. (1963). On stable sequences of events. Sankyā Ser. A 25 293–302. MR0170385
+Woerner, J. H. (2006a). Analyzing the fine structure of continuous-time stochastic processes. Technical Report, Univ. Göttingen.
+Woerner, J. H. (2006b). Power and multipower variation: Inference for high-frequency
+data. In Stochastic Finance (A. Shiryaev, M. do Rosário Grosshino, P. Oliviera and M.
+Esquivel, eds.) 264–276. Springer, Berlin.
+
+TESTING FOR JUMPS
+Department of Economics
+Princeton University and NBER
+Princeton, New Jersey 08544-1021
+USA
+E-mail: yacine@princeton.edu
+
+41
+
+Institut de Mathématiques de Jussieu
+CNRS UMR 7586
+Université Pierre et Marie Curie
+75252 Paris Cédex 05
+France
+E-mail: jean.jacod@upmc.fr
+
+

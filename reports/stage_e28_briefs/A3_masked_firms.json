@@ -1,0 +1,1168 @@
+{
+ "_about": "Stage E.28 Part A masked firm sheets (FactTable-OpusHigh). Firm, platform, plan, payment-service and product names replaced by labels or tokens. Product codes are shown only as their product class. Rate R per product class listed, A, F and the Rel deductions per the spec anchors.",
+ "_class_context": {
+  "globex_hours_by_class": {
+   "crude_oil": "Sunday-Friday from 18:00 ET, nearly 24 hours, 60-minute daily break (17:00-18:00 ET)",
+   "natural_gas": "Sun-Fri 17:00-16:00 CT, 60-minute daily halt from 16:00 CT (Sun-Fri 15:00-14:00 America/Vancouver)",
+   "metals": "Sun-Fri 17:00-16:00 CT, 60-minute break 16:00-17:00 CT",
+   "fx": "Sun-Fri 17:00-16:00 CT, 60-minute daily break from 16:00 CT",
+   "crypto": "Sun-Fri 17:00-16:00 CT, 60-minute daily break from 16:00 CT; closed Fri 16:00 CT to Sun 17:00 CT (until 24/7 from 2026-05-29)",
+   "equity_index": "Sunday-Friday 18:00-17:00 ET (17:00-16:00 CT), daily 17:00-18:00 ET break; 16:15-16:30 ET halt removed from trade date 2021-06-28",
+   "rates": "Sunday 5:00 p.m. - Friday 4:00 p.m. CT, daily maintenance 4:00-5:00 p.m. CT",
+   "grains": "Sun-Fri 19:00-07:45 CT and Mon-Fri 08:30-13:20 CT (17:00-05:45 and 06:30-11:20 America/Vancouver)"
+  },
+  "class_specific_scheduled_events": {
+   "crude_oil": "weekly inventory report (1 per week, inside the main session) central to the class",
+   "natural_gas": "weekly storage report (1 per week, inside the main session) central to the class",
+   "grains": "government crop and export reports (weekly in season, plus monthly) central to the class",
+   "equity_index": "no class-specific weekly report; shares the macro calendar",
+   "metals": "no class-specific weekly report; shares the macro calendar",
+   "fx": "central-bank decisions about 8 per year; shares the macro calendar",
+   "crypto": "no scheduled class-specific report found",
+   "rates": "auctions about monthly per tenor; macro calendar"
+  }
+ },
+ "_rating_schema": {
+  "file": "reports/stage_e28_briefs/A3_blind_ratings.json",
+  "contracts": {
+   "<Cnn>": {
+    "C1a": "high | medium | low  (unknown -> medium)",
+    "C1b": "low | medium | high  (unknown -> high)",
+    "C6": "integer 0..4 by the spec anchors",
+    "reasons": {
+     "C1a": "one line quoting the masked evidence",
+     "C1b": "...",
+     "C6": "..."
+    }
+   }
+  },
+  "firms": {
+   "<Fnn>": {
+    "R": {
+     "<product class>": "integer 0..4 (unknown -> 1); give every class listed in the sheet"
+    },
+    "A": "integer 0..4 (0 = the pair gate fails)",
+    "F": "integer 1, 2 or 4",
+    "Rel_deductions": {
+     "under_2_years": "0 or 1",
+     "payout_delays_denials_disputes_12m": "0 or 1",
+     "two_plus_adverse_rule_changes_12m": "0 or 1",
+     "regulatory_action_vs_firm": "0 or 2"
+    },
+    "reasons": {
+     "R": "...",
+     "A": "...",
+     "F": "...",
+     "Rel": "..."
+    }
+   }
+  }
+ },
+ "firms": {
+  "F01": {
+   "label": "F01",
+   "product_classes_listed_on_50K": [
+    "crude_oil",
+    "equity_index",
+    "fx",
+    "grains",
+    "metals",
+    "natural_gas"
+   ],
+   "R_evidence": {
+    "restrictions_by_class (firm-wide rules under \"all\")": {
+     "all": "no news rules; no product-specific restriction found; flat by 16:45 ET; no overnight or weekend holds"
+    },
+    "rule_records": [
+     {
+      "item": "news",
+      "value": "none",
+      "quote": "We do not have any rules against or guidelines around trading news events."
+     },
+     {
+      "item": "product_specific",
+      "value": "none found",
+      "note": "EUREX P01 only; hedging rule firm-wide"
+     },
+     {
+      "item": "hours",
+      "value": "Globex 18:00-17:00 ET; flat by 16:45 ET; no overnight or weekend holds",
+      "quote": "A trading day runs from 6:00 PM ET to 5:00 PM ET the next calendar day."
+     },
+     {
+      "item": "flat_by",
+      "value": "16:45 ET (12:59 ET holiday early close)",
+      "quote": "Close all positions by 4:45 PM Eastern Time (Monday-Friday)"
+     }
+    ]
+   },
+   "A_evidence": [
+    {
+     "item": "bots_allowed",
+     "value": "yes, own non-HFT bots, eval and funded",
+     "quote": "At [FIRM], we allow the use of bots and algorithms under certain conditions:"
+    },
+    {
+     "item": "api",
+     "value": "P01 only on LIVE funded; none in eval/sim funded; P18 API unstated; no P13",
+     "quote": "The P01 is only available for LIVE funded accounts. It is not available for evaluation or sim funded accounts."
+    },
+    {
+     "item": "order_rate_limit",
+     "note": "HFT banned without threshold"
+    },
+    {
+     "item": "min_hold",
+     "value": "10 s rule (>50% trades and profit), funded payout gate",
+     "quote": "This rule applies to funded accounts only. It does not apply during an evaluation.",
+     "note": "news article says it also gates evaluation activation: conflict"
+    },
+    {
+     "item": "sim_exploit",
+     "value": "prohibited",
+     "quote": "exploitation of simulated conditions"
+    },
+    {
+     "item": "microscalping",
+     "value": ">50% of trades and >50% of profit from holds >10 s, payout gate",
+     "quote": "Over 50% of your trades are longer than 10 seconds / Over 50% of your profit must come from trades held longer than 10 seconds."
+    },
+    {
+     "item": "brokers",
+     "value": "[\"P01\", \"P18\", \"P12\"]",
+     "quote": "[FIRM] supports three broker connections: P01, P18, and P12."
+    }
+   ],
+   "F_evidence": {
+    "firm_records": [
+     {
+      "item": "sim_fill_rule",
+      "note": "no [FIRM] or P01 statement found"
+     },
+     {
+      "item": "brokers",
+      "value": "[\"P01\", \"P18\", \"P12\"]",
+      "quote": "[FIRM] supports three broker connections: P01, P18, and P12."
+     }
+    ],
+    "platform_records (API platforms the strategy would use)": {
+     "P18": [
+      {
+       "item": "sim_fill_rule",
+       "value": "queue model: fill on trade-through after estimated queue ahead is depleted",
+       "quote": "We report a fill when the market trades through your price and when the orders ahead of you in the queue, based upon our estimate of your position in the queue and market activity, are depleted and there is quantity or opposite side order activity at your price level.",
+       "note": "posted 2019-01-31 by account 'P18' on Optimus Futures forum (pointer, vendor-attributed); P18.com says only 'simulated matching engine'"
+      },
+      {
+       "item": "native_api",
+       "value": "true",
+       "quote": "P18™ (a wire-line spec using WebSockets and Google Protocol Buffers, works in any language)",
+       "note": "also P18 (C++/.NET), R|Diamond (co-location)"
+      },
+      {
+       "item": "api_oco_bracket",
+       "value": "native, server side",
+       "quote": "Trailing stops, brackets, and OCOs that execute on P18's servers — fire even when the client connection drops."
+      },
+      {
+       "item": "api_rate_limit",
+       "note": "not published on P18.com pages fetched; 1 search found none"
+      },
+      {
+       "item": "platform_vps_rule",
+       "value": "none found; Diamond API requires co-location",
+       "quote": "P18™ (ultra-low latency, Linux only, requires co-location)"
+      },
+      {
+       "item": "sim_market_data",
+       "value": "live CME data, same as live accounts",
+       "quote": "P18's paper trading system connects to live exchange data from [EXCHANGE]."
+      }
+     ],
+     "P01": [
+      {
+       "item": "sim_fill_rule",
+       "value": "undocumented",
+       "quote": "While P01 tries to mirror the filling algos as close as we can, reproducing the exchange's matching algorithms with 100% accuracy in a simulation environment would be very difficult for any platform to achieve.",
+       "note": "forum post by staff account BWeis 2021-05-21 (pointer only); users report fills only on trade-through: 'It takes price breaking through my limit in order to get filled'"
+      },
+      {
+       "item": "native_api",
+       "value": "true",
+       "quote": "[URL]",
+       "note": "REST + WebSocket; firm permission is a firm rule"
+      },
+      {
+       "item": "api_oco_bracket",
+       "value": "native placeOCO and placeOSO (brackets)",
+       "quote": "OCO order strategies link 2 orders tog[PRODUCT] such that if one order is filled, the other order is cancelled.",
+       "note": "OSO: [FILE] 'OSO orders allow for the most complex multi-bracket trading strategies.'"
+      },
+      {
+       "item": "api_rate_limit",
+       "value": "5000",
+       "quote": "| **Authenticated** | 5,000        | 5,000          | 5,000          |",
+       "note": "hourly cap = about 1.4 per s sustained; endpoint-level per-IP limits with p-ticket penalties; partner (prop-firm) docs"
+      },
+      {
+       "item": "platform_vps_rule",
+       "value": "none found",
+       "quote": "If you're behind a shared IP (corporate network, VPN, shared hosting), you may share limits with other clients.",
+       "note": "shared hosting treated only as a rate-limit case"
+      },
+      {
+       "item": "sim_market_data",
+       "value": "not documented; [FIRM] labels the P01 path 'P11'",
+       "quote": "P11 supported platforms:",
+       "note": "[unverified] that P01 sim data is P11"
+      }
+     ]
+    }
+   },
+   "Rel_evidence": [
+    {
+     "item": "operating_since",
+     "value": "<= 2022-12-05",
+     "quote": "[FIRM] – Accessible trading education and funding",
+     "note": "interview says futures prop launched 2024 (pointer)"
+    },
+    {
+     "item": "regulatory_actions",
+     "value": "none found",
+     "note": "Firecrawl gov search + WebSearch; NFA BASIC unread; absence is a gap"
+    },
+    {
+     "item": "disputes_12m",
+     "value": "review-site reports only (pointer)",
+     "note": "thetrustedprop.com, PropFirmMatch [snippet]"
+    },
+    {
+     "item": "rule_changes_12m",
+     "value": "[\"[FIRM] 3.0 (~2026-04): subscriptions ended, ~3% price rise, [PLAN] 50K target 2,500->3,000\", \"[PLAN] eval consistency removed (2026-10)\", \"[PLAN] 100K/150K reset fees up (2026-10)\", \"[crude_oil product] fee 6.00->5.98\", \"VPS clause / Risk & Compliance FAQ (~2026-09)\"]",
+     "note": "see md for sources"
+    }
+   ],
+   "not_scored_context (payout record, Canada terms)": [
+    {
+     "item": "payout_claims",
+     "value": "Over $350 million in verified payouts; 1 hour payouts",
+     "quote": "Over $350 million in verified payouts"
+    },
+    {
+     "item": "funded_payout_rate",
+     "value": "0.285",
+     "quote": "(c) 28.5% of individual participants at the Funded Level received a payout"
+    },
+    {
+     "item": "eval_pass_rate",
+     "value": "0.172",
+     "quote": "(a) 17.2% of evaluation accounts initiated were successfully completed"
+    },
+    {
+     "item": "processing",
+     "value": "24-48 h after approval; up to 72 h outside business hours",
+     "quote": "Payments will be issued within 24-48 hours after the withdrawal has been processed."
+    },
+    {
+     "item": "canada_payout_terms",
+     "value": "none specific; [PAYMENT-SERVICE] (bank ACH, crypto, local currencies) or [PAYMENT-SERVICE]; [PAYMENT-SERVICE] + [PAYMENT-SERVICE] KYC; CAD unstated",
+     "quote": "Local Currencies - Varies by region"
+    }
+   ]
+  },
+  "F02": {
+   "label": "F02",
+   "product_classes_listed_on_50K": [
+    "crude_oil",
+    "equity_index",
+    "fx",
+    "grains",
+    "metals",
+    "natural_gas"
+   ],
+   "R_evidence": {
+    "restrictions_by_class (firm-wide rules under \"all\")": {
+     "all": "news trading allowed on the evaluated plan family; flat by 16:45 ET Mon-Fri; no product-specific restriction found"
+    },
+    "rule_records": [
+     {
+      "item": "news_pro",
+      "value": "allowed, no window",
+      "quote": "Allowed on [PLAN], [PLAN] and [PLAN]",
+      "note": "[FIRM]: red folder news is a hard breach"
+     },
+     {
+      "item": "flat_by",
+      "value": "16:45 ET Mon-Fri; reopen 18:00 ET Sun-Thu",
+      "quote": "All positions must be closed by 4:45 PM EST, Monday through Friday",
+      "note": "auto-closed, not a failure; holidays: before market close"
+     },
+     {
+      "item": "product_specific",
+      "note": "none in sim stages"
+     }
+    ]
+   },
+   "A_evidence": [
+    {
+     "item": "allowed",
+     "value": "true",
+     "quote": "Automated trading systems and trade copiers are permitted",
+     "note": "firm-wide; no eval/funded distinction stated"
+    },
+    {
+     "item": "api",
+     "note": "no [FIRM] page names P01, P18 P18, P13 or P04 API; [snippet] secondary claims only"
+    },
+    {
+     "item": "hft",
+     "value": "banned, qualitative definition",
+     "quote": "HFT strategies can result in hundreds of orders being placed within minutes",
+     "note": "no numeric threshold"
+    },
+    {
+     "item": "microscalping",
+     "value": "flag if >50% of profits from trades held <=5 s",
+     "quote": "More than 50% of your profits are generated from trades held for 5 seconds or less",
+     "note": "unchanged since 2026-03-30 copy"
+    },
+    {
+     "item": "scalping",
+     "value": "true",
+     "quote": "Genuine scalping is allowed"
+    },
+    {
+     "item": "order_rate_limit",
+     "note": "none published"
+    },
+    {
+     "item": "sim_fill_exploitation_ban",
+     "value": "banned",
+     "quote": "While utilizing the Website, Software, and Services, taking advantage of the simulated environment to gain an edge is not permitted.",
+     "note": "also [REF]: 'Exploiting discrepancies in simulated prices'"
+    },
+    {
+     "item": "list",
+     "value": "P11: P04, P01, P16; P18: P06, P20, P21, P02, P07, P05, P03, P18, P17",
+     "quote": "All listed platforms work with all [FIRM] account types.",
+     "note": "updated 2026-07-28"
+    }
+   ],
+   "F_evidence": {
+    "firm_records": [
+     {
+      "item": "sim_fill_rule",
+      "note": "no [FIRM] page documents it; P18 paper-trading queue claim is a forum pointer only"
+     },
+     {
+      "item": "list",
+      "value": "P11: P04, P01, P16; P18: P06, P20, P21, P02, P07, P05, P03, P18, P17",
+      "quote": "All listed platforms work with all [FIRM] account types.",
+      "note": "updated 2026-07-28"
+     }
+    ],
+    "platform_records (API platforms the strategy would use)": {
+     "P18": [
+      {
+       "item": "sim_fill_rule",
+       "value": "queue model: fill on trade-through after estimated queue ahead is depleted",
+       "quote": "We report a fill when the market trades through your price and when the orders ahead of you in the queue, based upon our estimate of your position in the queue and market activity, are depleted and there is quantity or opposite side order activity at your price level.",
+       "note": "posted 2019-01-31 by account 'P18' on Optimus Futures forum (pointer, vendor-attributed); P18.com says only 'simulated matching engine'"
+      },
+      {
+       "item": "native_api",
+       "value": "true",
+       "quote": "P18™ (a wire-line spec using WebSockets and Google Protocol Buffers, works in any language)",
+       "note": "also P18 (C++/.NET), R|Diamond (co-location)"
+      },
+      {
+       "item": "api_oco_bracket",
+       "value": "native, server side",
+       "quote": "Trailing stops, brackets, and OCOs that execute on P18's servers — fire even when the client connection drops."
+      },
+      {
+       "item": "api_rate_limit",
+       "note": "not published on P18.com pages fetched; 1 search found none"
+      },
+      {
+       "item": "platform_vps_rule",
+       "value": "none found; Diamond API requires co-location",
+       "quote": "P18™ (ultra-low latency, Linux only, requires co-location)"
+      },
+      {
+       "item": "sim_market_data",
+       "value": "live CME data, same as live accounts",
+       "quote": "P18's paper trading system connects to live exchange data from [EXCHANGE]."
+      }
+     ],
+     "P01": [
+      {
+       "item": "sim_fill_rule",
+       "value": "undocumented",
+       "quote": "While P01 tries to mirror the filling algos as close as we can, reproducing the exchange's matching algorithms with 100% accuracy in a simulation environment would be very difficult for any platform to achieve.",
+       "note": "forum post by staff account BWeis 2021-05-21 (pointer only); users report fills only on trade-through: 'It takes price breaking through my limit in order to get filled'"
+      },
+      {
+       "item": "native_api",
+       "value": "true",
+       "quote": "[URL]",
+       "note": "REST + WebSocket; firm permission is a firm rule"
+      },
+      {
+       "item": "api_oco_bracket",
+       "value": "native placeOCO and placeOSO (brackets)",
+       "quote": "OCO order strategies link 2 orders tog[PRODUCT] such that if one order is filled, the other order is cancelled.",
+       "note": "OSO: [FILE] 'OSO orders allow for the most complex multi-bracket trading strategies.'"
+      },
+      {
+       "item": "api_rate_limit",
+       "value": "5000",
+       "quote": "| **Authenticated** | 5,000        | 5,000          | 5,000          |",
+       "note": "hourly cap = about 1.4 per s sustained; endpoint-level per-IP limits with p-ticket penalties; partner (prop-firm) docs"
+      },
+      {
+       "item": "platform_vps_rule",
+       "value": "none found",
+       "quote": "If you're behind a shared IP (corporate network, VPN, shared hosting), you may share limits with other clients.",
+       "note": "shared hosting treated only as a rate-limit case"
+      },
+      {
+       "item": "sim_market_data",
+       "value": "not documented; [FIRM] labels the P01 path 'P11'",
+       "quote": "P11 supported platforms:",
+       "note": "[unverified] that P01 sim data is P11"
+      }
+     ]
+    }
+   },
+   "Rel_evidence": [
+    {
+     "item": "operating_since",
+     "value": "2025 (waitlist page on 2025-02-20; domain for sale 2024-09-01)",
+     "quote": "Sign up now to join our waitlist and receive our exclusive launch discount.",
+     "note": "under 2 years at lookup"
+    },
+    {
+     "item": "regulatory_actions",
+     "note": "WebSearch + Firecrawl gov search; NFA BASIC not queried"
+    },
+    {
+     "item": "disputes",
+     "value": "review-site complaints (closures after payout approval, KYC locks)",
+     "note": "[snippet] Trustpilot/PropFirmMatch; not evidence"
+    },
+    {
+     "item": "rule_changes_12m",
+     "value": "[\"2025-11-28 split 100% first $10k -> 90/10\", \"2025-11-28 [PLAN] funded consistency 35% -> 40%\", \"50K eval $135 list (2025-11-01) -> $172 (2026-10-05); reset $90 -> $120\", \"[FIRM] legacy, [FIRM]/[FIRM]Maxx added, new Live structure 2026-10-14\", \"news: [FIRM] ban added 2026-07..08\", \"Payout 5 maximum (start date unknown)\"]",
+     "quote": "Accounts purchased or reset before 11/28/2025 at 3:00 PM EST are still eligible for 100% on the first $10k.",
+     "note": "see md section 6 for each source"
+    }
+   ],
+   "not_scored_context (payout record, Canada terms)": [
+    {
+     "item": "firm_claims",
+     "value": "$700M+ earned by traders; 15ish min from request to bank",
+     "quote": "$700M+",
+     "note": "unaudited firm claims"
+    },
+    {
+     "item": "payout_methods",
+     "value": "[PAYMENT-SERVICE] (bank transfer or [PAYMENT-SERVICE]) or crypto for international",
+     "quote": "Available for both U.S. and international traders",
+     "note": "currency not stated"
+    },
+    {
+     "item": "kyc",
+     "value": "at payout when required by provider",
+     "quote": "Yes — at the time of payout when required by the payout provider."
+    },
+    {
+     "item": "pricing_page_today",
+     "value": "HTTP 403 to WebFetch on 2026-10-21; latest Wayback 200 copy 2026-10-05",
+     "note": "today's price unverified; 16-day-old capture used"
+    }
+   ]
+  },
+  "F03": {
+   "label": "F03",
+   "product_classes_listed_on_50K": [
+    "crude_oil",
+    "crypto",
+    "equity_index",
+    "fx",
+    "grains",
+    "metals",
+    "natural_gas",
+    "rates"
+   ],
+   "R_evidence": {
+    "restrictions_by_class (firm-wide rules under \"all\")": {
+     "equity_index": "Tier 1 news: no new opening transactions 5 min before to 5 min after CPI, FOMC decision, FOMC press conference, NFP and PPI on the full-size equity index products; micros capped (3 at 50K [PLAN]) in the window",
+     "metals": "Tier 1 news window as for equity index (full-size metals); 50K volatility caps per product",
+     "crude_oil": "50K volatility caps per product (temporary); not affected by the Tier 1 news rule",
+     "natural_gas": "none product-specific found (energies unaffected by the Tier 1 news rule)",
+     "fx": "none product-specific (FX unaffected by the Tier 1 news rule)",
+     "crypto": "none product-specific found",
+     "rates": "none product-specific (rates unaffected by the Tier 1 news rule)",
+     "grains": "grain trading hours 19:00-07:45 and 08:30-13:20 CT (the Globex grain sessions)",
+     "all": "flat by 15:10 CT every weekday; flat 15 min before any early close; orders outside the current best bid or offer prohibited (scope undefined)"
+    },
+    "rule_records": [
+     {
+      "item": "tier1_news",
+      "value": "no new opens on [equity_index product],[equity_index product],[equity_index product],[equity_index product],[equity_index product],[metals product],[metals product],[metals product],[metals product] 5 min before to 5 min after CPI, FOMC decision, FOMC presser, NFP, PPI; micros capped (3 at 50K [PLAN]); energies, rates, FX unaffected",
+      "quote": "No new opening transactions permitted during the 10-minute window surrounding the release (5 minutes before, 5 minutes after). ... Other products (energies, rates, FX, etc.) are unaffected."
+     },
+     {
+      "item": "volatility_caps_50k",
+      "value": "{\"[crude_oil product]\": 3, \"[crude_oil product]\": 3, \"[other energy product]\": 3, \"[other energy product]\": 3, \"[crude_oil product]\": 30, \"[metals product]\": 3, \"[metals product]\": 30, \"[metals product]\": 0, \"[metals product]\": 2, \"[metals product]\": 0, \"[metals product]\": 2, \"[metals product]\": 0}",
+      "quote": "Crude Oil ([crude_oil product]) = 3/6/9 ... Micro Crude Oil ([crude_oil product]) = 30/60/90 ... [PRODUCT] ([metals product]) = 0 ... [PRODUCT] ([metals product]) = 2/5/7 ... [PRODUCT] ([metals product]) = 0",
+      "note": "[PLAN]/[PLAN]/[PLAN] column; temporary, no end date"
+     },
+     {
+      "item": "flat_by",
+      "value": "15:10",
+      "quote": "All positions must be closed by 3:10 PM CT every weekday."
+     },
+     {
+      "item": "grain_hours",
+      "value": "19:00-07:45 and 08:30-13:20 CT",
+      "quote": "Sunday–Monday: 7:00 PM – 7:45 AM CT ... Monday–Friday: 8:30 AM – 1:20 PM CT"
+     },
+     {
+      "item": "holiday_rule",
+      "value": "flat 15 min before early close",
+      "quote": "All account types must close positions 15 minutes before any early close."
+     }
+    ]
+   },
+   "A_evidence": [
+    {
+     "item": "automation_combine",
+     "value": "allowed with conditions",
+     "quote": "Yes, with conditions. [FIRM] won't help set up or troubleshoot automated strategies"
+    },
+    {
+     "item": "automation_xfa",
+     "value": "allowed with conditions",
+     "quote": "Yes, with conditions. [FIRM] won't help set them up or cover malfunctions."
+    },
+    {
+     "item": "api_bots",
+     "value": "allowed via P13/P13; HFT prohibited; not on [PLAN]",
+     "quote": "Custom automated strategies and bots are allowed via the P13 / P13, subject to standard platform rules and our prohibition on highfrequency trading (HFT)."
+    },
+    {
+     "item": "api_cost",
+     "value": "14.5",
+     "quote": "that's $14.50/month, valid every month with no end date"
+    },
+    {
+     "item": "api_rate_limit",
+     "value": "200 requests / 60 s (bars 50 / 30 s)",
+     "quote": "All other Endpoints | 200 requests / 60 seconds"
+    },
+    {
+     "item": "terms_short_term_hft",
+     "value": "Terms cite short-term or HF trades as an example of prohibited manipulation",
+     "quote": "for example, by engaging in any short term or high frequency trades or simultaneously entering into opposite positions;"
+    },
+    {
+     "item": "sim_fill_exploitation",
+     "value": "prohibited",
+     "quote": "Running scalping algorithms designed to exploit unrealistic SIM fills ... Making hundreds of rapid trades to take advantage of preferential queue position in SIM ... usually hundreds or thousands of trades per day, with average durations measured in seconds, not minutes."
+    },
+    {
+     "item": "outside_bbo",
+     "value": "prohibited (undefined scope)",
+     "quote": "Placing orders at prices outside the current best bid or offer."
+    },
+    {
+     "item": "min_hold_or_rate_rule",
+     "note": "No numeric minimum hold or order-rate rule found on today's pages"
+    },
+    {
+     "item": "lfa_api",
+     "value": "false",
+     "quote": "No, Live funded accounts are not allowed to trade through the P13."
+    },
+    {
+     "item": "platforms",
+     "value": "[\"P13\", \"P20 via P13 ([PLAN]/[PLAN])\", \"P13\"]",
+     "quote": "P20 via P13 is available for the [PLAN] and [PLAN] ([PLAN]) only."
+    }
+   ],
+   "F_evidence": {
+    "firm_records": [
+     {
+      "item": "sim_limit_fill_rule",
+      "value": "trade-through (not touch); partial fills",
+      "quote": "the market has to trade through your price — not just touch it. You might not get filled. Partial fills happen."
+     },
+     {
+      "item": "platforms",
+      "value": "[\"P13\", \"P20 via P13 ([PLAN]/[PLAN])\", \"P13\"]",
+      "quote": "P20 via P13 is available for the [PLAN] and [PLAN] ([PLAN]) only."
+     }
+    ],
+    "platform_records (API platforms the strategy would use)": {
+     "P13": [
+      {
+       "item": "sim_fill_rule",
+       "value": "trade-through (firm help page; not stated as sim-specific); no engine spec",
+       "quote": "Price execution over speed. Trade-off: the market has to trade through your price — not just touch it. You might not get filled. Partial fills happen.",
+       "note": "Second line L147: 'Limit orders especially — if the market doesn't trade through your price, you don't get filled.'"
+      },
+      {
+       "item": "native_api",
+       "value": "true",
+       "quote": "type integer The order type:",
+       "note": "P13; [FIRM]: not on Live funded accounts (see [FILE])"
+      },
+      {
+       "item": "api_oco_bracket",
+       "value": "brackets attached to an order (stop-loss and take-profit) only in Auto OCO Brackets mode; no standalone OCO endpoint seen",
+       "quote": "Auto OCO Brackets . Brackets attach to each order. stopLossBracket and takeProfitBracket are accepted on this endpoint.",
+       "note": "default mode is Position Brackets, which rejects bracket objects"
+      },
+      {
+       "item": "api_rate_limit",
+       "value": "200",
+       "quote": "All other Endpoints 200 requests / 60 seconds",
+       "note": "bar history 50 per 30 s; HTTP 429 on excess"
+      },
+      {
+       "item": "platform_vps_rule",
+       "value": "none found at platform level; [FIRM] firm rule forbids VPS order flow",
+       "note": "see [FILE]"
+      },
+      {
+       "item": "sim_market_data",
+       "value": "P13's own CME feed (2025 FAQ); vendor/location unconfirmed",
+       "quote": "Our own dedicated data feed, direct from the Chicago Mercantile Exchange (CME).",
+       "note": "snippet only [unverified]: P13 licensed CME redistributor via [FIRM], servers in Northern Virginia (source page now 404)"
+      }
+     ]
+    }
+   },
+   "Rel_evidence": [
+    {
+     "item": "founded",
+     "value": "2010 ([FIRM]); [FIRM] Trader launched 2012",
+     "quote": "Founding of [FIRM] ... Launch of [FIRM] Trader"
+    },
+    {
+     "item": "regulatory_actions",
+     "value": "none found",
+     "note": "3 WebSearch calls; NFA BASIC unreadable by curl; negative search result only"
+    },
+    {
+     "item": "nfa_registration_news",
+     "value": "NFA member, Swap Firm, CTA (Apr-May 2026) [secondary press]",
+     "quote": "Prop trading firm [FIRM] has registered with the National Futures Association (NFA) as a Swap Firm and has also been approved to operate as a Commodity Trading Advisor (CTA)."
+    },
+    {
+     "item": "litigation",
+     "value": "McCrudden v. [FIRM], M.D. Fla. 3:26-cv-00816, filed 2026-04-09, open",
+     "quote": "COMPLAINT against All Defendants (Filing fee $405.00, receipt number 38733) filed by Vincent McCrudden."
+    },
+    {
+     "item": "outages_late_2025",
+     "value": "reported P13 outages [pointer]",
+     "quote": "In late 2025, [FIRM], experienced a series of critical technical failures on its proprietary trading platform, P13."
+    },
+    {
+     "item": "change_payout_cap",
+     "value": "Oct 2025: $5,000 or 50% all sizes -> now 50K Standard $2,000",
+     "quote": "Traders can request a payout of up to $5,000 or 50% of their account balance after accumulating five winning trading days per payout request."
+    },
+    {
+     "item": "change_consistency",
+     "value": "Sep 2025: best day below 50% -> now 55% no buffer",
+     "quote": "Consistency Target: Best Day below 50% of total profits made"
+    },
+    {
+     "item": "change_platforms",
+     "value": "Sep 2025 named P04, P20, P01, P16 -> now P13 only (+P20 via P13)",
+     "quote": "All other trading platforms, including, but not limited to, P04, P20, P01, and P16"
+    },
+    {
+     "item": "change_b2f_window",
+     "value": "7 -> 30 days on 2026-05-29",
+     "quote": "On May 29th, 2026, the Reactivation window increased from 7 days to 30 days!"
+    },
+    {
+     "item": "change_wise",
+     "value": "[PAYMENT-SERVICE] restored for Canada Aug 2026",
+     "quote": "[PAYMENT-SERVICE] is available again as a payout method for traders in China, Canada, and the United Kingdom."
+    }
+   ],
+   "not_scored_context (payout record, Canada terms)": [
+    {
+     "item": "paid_out_claim",
+     "value": "USD 1.5B+ (home) / 1.4B+ (instant payouts page)",
+     "quote": "Paid out to prop firm traders1",
+     "note": "instant-payouts page shows $1.4B+; firm claims"
+    },
+    {
+     "item": "approval_rate_claim",
+     "value": "0.9926",
+     "quote": "Payout approval rate",
+     "note": "value shown '99.26%'; firm claim"
+    },
+    {
+     "item": "stats_2025",
+     "value": "{\"[REF]\": 0.168, \"[REF]\": 0.518, \"[REF]\": 0.333, \"[REF]\": 0.0071}",
+     "quote": "16.8% of all [PLAN]s initiated were successfully completed"
+    },
+    {
+     "item": "payout_approval_time",
+     "value": "1-3 business days internal approval",
+     "quote": "Internal approval can take 1-3 business days."
+    },
+    {
+     "item": "payout_methods_canada",
+     "value": "[\"[PAYMENT-SERVICE] (no [FIRM] fee, 1-3 business days)\", \"Wire/SWIFT (USD 30, 5-10 business days)\"]",
+     "quote": "[PAYMENT-SERVICE] is available again as a payout method for traders in China, Canada, and the United Kingdom."
+    },
+    {
+     "item": "currency",
+     "quote": "supports local currency conversion",
+     "note": "payout currency not stated"
+    },
+    {
+     "item": "kyc",
+     "value": "ID + selfie before second purchase; W-8BEN",
+     "quote": "It's required before your second purchase and takes only minutes to complete."
+    }
+   ]
+  },
+  "F04": {
+   "label": "F04",
+   "product_classes_listed_on_50K": [
+    "crude_oil",
+    "crypto",
+    "equity_index",
+    "fx",
+    "grains",
+    "metals",
+    "natural_gas"
+   ],
+   "R_evidence": {
+    "restrictions_by_class (firm-wide rules under \"all\")": {
+     "all": "news trading allowed (no blackout windows); flat by 15:59 CT, no overnight; no product-specific restriction found"
+    },
+    "rule_records": [
+     {
+      "item": "news",
+      "value": "allowed, no blackout windows",
+      "quote": "Yes. Trade straight through the economic calendar — CPI, FOMC, NFP and every other release. No blackout windows, no forced position closing, no penalties.",
+      "note": "today confirmed"
+     },
+     {
+      "item": "product_specific",
+      "note": "none found"
+     },
+     {
+      "item": "trading_day",
+      "value": "17:00 CT to 16:00 CT next day",
+      "quote": "The trading day starts at 5:00 PM and ends at 4:00 PM the following day, North American Central Time (CT)."
+     },
+     {
+      "item": "flat_by",
+      "value": "15:59 CT all products all stages; no overnight",
+      "quote": "All positions must be closed by 3:59 PM (CT)."
+     }
+    ]
+   },
+   "A_evidence": [
+    {
+     "item": "bots_allowed",
+     "value": "yes, user-built personal tools only; both stages (no distinction stated)",
+     "quote": "Yes. Bots, algorithms and trade copiers are permitted.",
+     "note": "Only user-built tools intended solely for the account owner’s personal use are permitted. Commercial, shared, rented or publicly distributed automation tools are not allowed."
+    },
+    {
+     "item": "third_party_approval",
+     "value": "required",
+     "quote": "any third-party algorithm, automated trading software, or other third-party trading technology must be reviewed and approved by the [FIRM] management team before use.",
+     "note": "Terms Updated October 2026, lines 268-271"
+    },
+    {
+     "item": "api",
+     "value": "P18 via an approved third-party API or P15 interface; P18 product not named; no P01; P13 gone since Dec 2025",
+     "quote": "Payment of this fee permits direct connectivity to the P18 platform through an approved third-party API or P15 interface"
+    },
+    {
+     "item": "api_fee",
+     "value": "100",
+     "quote": "you shall be required to pay a third-party API/P15 Software fee of one hundred dollars ($100) per month."
+    },
+    {
+     "item": "banned",
+     "value": "scalping algorithms; P10 API; 'automated discretional trading'; hundreds or thousands of rapid trades; reckless trades exploiting lack of execution",
+     "quote": "using “scalping” algorithms, P10 API or automated discretional trading in any of the trading environments. Open and close hundreds or thousand of rapid trades by using any trading algorithms. Implementation of reckless transactions in rough markets to benefit from lack of execution.",
+     "note": "no numeric threshold; profits may be refused"
+    },
+    {
+     "item": "order_rate_limit",
+     "note": "not published"
+    },
+    {
+     "item": "minimum_hold",
+     "note": "not published"
+    },
+    {
+     "item": "flipping_review",
+     "value": "[unverified] payout denials for 'flipping trading days' reported on Trustpilot; said to be [PLAN] Agreement s.5.6",
+     "note": "search-snippet pointer only"
+    },
+    {
+     "item": "platforms",
+     "value": "P18, P04 (free licence on [PLAN]), P20, P02, P17, P03 and others (20+)",
+     "quote": "More than 20, including P04, P18, P20, P02, P17 and P03."
+    }
+   ],
+   "F_evidence": {
+    "firm_records": [
+     {
+      "item": "sim_fill_rule",
+      "quote": "We report a fill when the market trades through your price and when the orders ahead of you in the queue, ... based upon our estimate of your position in the queue and market activity, are depleted",
+      "note": "not documented by [FIRM]; forum post by an account named P18 (2019) is a pointer only"
+     },
+     {
+      "item": "server",
+      "value": "P18, Chicago gateway",
+      "quote": "Under  System , select P18."
+     },
+     {
+      "item": "platforms",
+      "value": "P18, P04 (free licence on [PLAN]), P20, P02, P17, P03 and others (20+)",
+      "quote": "More than 20, including P04, P18, P20, P02, P17 and P03."
+     }
+    ],
+    "platform_records (API platforms the strategy would use)": {
+     "P18": [
+      {
+       "item": "sim_fill_rule",
+       "value": "queue model: fill on trade-through after estimated queue ahead is depleted",
+       "quote": "We report a fill when the market trades through your price and when the orders ahead of you in the queue, based upon our estimate of your position in the queue and market activity, are depleted and there is quantity or opposite side order activity at your price level.",
+       "note": "posted 2019-01-31 by account 'P18' on Optimus Futures forum (pointer, vendor-attributed); P18.com says only 'simulated matching engine'"
+      },
+      {
+       "item": "native_api",
+       "value": "true",
+       "quote": "P18™ (a wire-line spec using WebSockets and Google Protocol Buffers, works in any language)",
+       "note": "also P18 (C++/.NET), R|Diamond (co-location)"
+      },
+      {
+       "item": "api_oco_bracket",
+       "value": "native, server side",
+       "quote": "Trailing stops, brackets, and OCOs that execute on P18's servers — fire even when the client connection drops."
+      },
+      {
+       "item": "api_rate_limit",
+       "note": "not published on P18.com pages fetched; 1 search found none"
+      },
+      {
+       "item": "platform_vps_rule",
+       "value": "none found; Diamond API requires co-location",
+       "quote": "P18™ (ultra-low latency, Linux only, requires co-location)"
+      },
+      {
+       "item": "sim_market_data",
+       "value": "live CME data, same as live accounts",
+       "quote": "P18's paper trading system connects to live exchange data from [EXCHANGE]."
+      },
+      {
+       "item": "sim_fill_rule_vendor_page",
+       "value": "simulated matching engine on live data; rule not stated",
+       "quote": "The difference is that orders are filled against a simulated matching engine rather than the actual exchange."
+      }
+     ]
+    }
+   },
+   "Rel_evidence": [
+    {
+     "item": "operating_since",
+     "value": "2021-06-12 or earlier",
+     "quote": "[PLAN] ... [PLAN] ... Get your first $10,000 without commissions",
+     "note": "earliest Wayback capture; third-party sites say 2021 or 2022 [snippet]"
+    },
+    {
+     "item": "regulatory_actions",
+     "value": "none found",
+     "note": "4 WebSearches; NFA BASIC/CFTC/state AG databases not queried directly"
+    },
+    {
+     "item": "disputes",
+     "value": "[unverified] Trustpilot ~4.5/5 (~2K reviews); 'flipping' payout denials reported in 2026",
+     "note": "search snippets; review sites are pointers only"
+    },
+    {
+     "item": "rule_changes_12m",
+     "value": "[{\"value\": \"billing: monthly auto-renew -> one-time $175 with 30-day access\", \"unit\": null, \"[REF]\": \"[FILE]\", \"quote\": \"The subscription is automatically renewed every 30 days until you cancel it yourself.\", \"note\": \"line 209; [snippet] affiliate news dates it 2026-08-17\"}, {\"value\": \"max [PLAN] accounts: 3 (Aug 2025) / 11 (Dec 2025) -> 5\", \"unit\": null, \"[REF]\": \"[FILE]\", \"quote\": \"Trader could have unlimited [PLAN]s and up to 11 active [PLAN]s.\", \"note\": \"line 225\"}, {\"value\": \"automation: 'not forbidden' -> user-built only, third-party approval, $100/month API fee\", \"unit\": null, \"[REF]\": \"[FILE]\", \"quote\": \"Our company does not provide any kind of algorithms. However, it is not forbidde"
+    }
+   ],
+   "not_scored_context (payout record, Canada terms)": [
+    {
+     "item": "payout_speed_claim",
+     "value": "[PLAN] weekly (Wednesdays); [PLAN] and [PLAN] same day",
+     "quote": "on a regular [PLAN] payouts are processed every Wednesday.",
+     "note": "firm claim"
+    },
+    {
+     "item": "entity",
+     "value": "[FIRM], Wilmington DE",
+     "quote": "[FIRM] 1201 N Orange St, Ste 7149 Wilmington, DE 19801"
+    },
+    {
+     "item": "payout_methods",
+     "value": "ACH or wire transfer, [PAYMENT-SERVICE]; no [FIRM] transfer fee",
+     "quote": "[FIRM] does not charge a transfer fee."
+    },
+    {
+     "item": "kyc",
+     "value": "Withdrawal Information Form, valid ID, hand-signed W-8BEN",
+     "quote": "Every trader must complete the [FIRM] Withdrawal Information Form and include a valid identification document."
+    },
+    {
+     "item": "payout_currency",
+     "note": "not stated (USD amounts)"
+    }
+   ]
+  },
+  "F05": {
+   "label": "F05",
+   "product_classes_listed_on_50K": [
+    "crude_oil",
+    "crypto",
+    "equity_index",
+    "fx",
+    "grains",
+    "metals"
+   ],
+   "R_evidence": {
+    "restrictions_by_class (firm-wide rules under \"all\")": {
+     "all": "hours 18:00 ET to 16:10 ET auto-flat; T1 news unrestricted on the 50K [PLAN] plan in evaluation and sim funded (the 2-minute T1 window applies to other account types); news-burst strategies (straddles) banned; no trading within 2% of a CME price limit (sim funded and live); hedging banned",
+     "metals": "[metals product] and [metals product] restricted (temporary, since 2026-02-07); metals micros capped at 5 on 50K",
+     "natural_gas": "[natural_gas product] and [natural_gas product] restricted (temporary, since 2026-02-07)",
+     "crypto": "[crypto product] counted as a mini"
+    },
+    "rule_records": [
+     {
+      "item": "hours",
+      "value": "18:00 ET open to 16:10 ET auto-flat",
+      "quote": "Trades may be placed beginning at 6:00 PM EST when the Globex session opens and can remain open until the New York session closes at 4:10 PM EST."
+     },
+     {
+      "item": "news_builder",
+      "value": "unrestricted in eval and sim funded; live allowed",
+      "quote": "Unrestricted Accounts : Trading on T1 News events is permitted for the following: All evaluations / [PLAN] Plans",
+      "note": "conflicting general lines: news page 'Ensuring no open positions or orders are active in the order book 2 minutes before and after any data release.'; fair play 'Tier 1 Economic Data Trading: Engaging in trades during tier 1 economic data releases is restricted.'"
+     },
+     {
+      "item": "news_restricted_accounts",
+      "value": "no positions or orders 2 min before/after T1: FOMC, FOMC minutes, Employment, CPI; [AGENCY] for energy; Ag reports for ags",
+      "quote": "No positions or orders (including limit orders) can be open 2 minutes before and after the release.",
+      "note": "applies to [PLAN] and [PLAN] sim funded"
+     },
+     {
+      "item": "news_burst_ban",
+      "value": "true",
+      "quote": "Utilizing strategies that exploit immediate news bursts, such as straddles or strangles."
+     },
+     {
+      "item": "price_limit_rule",
+      "value": "no trading within 2% of CME price limit (sim funded, live)",
+      "quote": "we do not allow market participation when a product is trading within 2% of a price limit"
+     },
+     {
+      "item": "restricted_products",
+      "value": "[\"[metals product]\", \"[metals product]\", \"[metals product]\", \"[natural_gas product]\", \"[natural_gas product]\"]",
+      "quote": "The following products are currently restricted from trading: [PRODUCT] ([metals product]) [PRODUCT] ([metals product]) Platinum ([metals product]) Natural Gas ([natural_gas product]) E-Mini Natural Gas ([natural_gas product])",
+      "note": "'temporary', since February 7 [2026]"
+     },
+     {
+      "item": "hedging_ban",
+      "value": "true",
+      "quote": "[FIRM] prohibits hedging of any kind."
+     },
+     {
+      "item": "metals_micros_cap",
+      "value": "5",
+      "quote": "$50k account → maximum 5 micro contracts",
+      "note": "since April 17 [2026]"
+     },
+     {
+      "item": "mbt_as_mini",
+      "value": "true",
+      "quote": "[crypto product] is treated as a mini contract."
+     }
+    ]
+   },
+   "A_evidence": [
+    {
+     "item": "eval_and_sim_funded",
+     "value": "allowed if not exploiting sim fills",
+     "quote": "Traders may make use of automated trading strategies tailored to their own specific settings so long as these automated tools do not aim to exploit the favorable fills offered in the Simulated Environment."
+    },
+    {
+     "item": "live",
+     "value": "allowed under CME guidelines",
+     "quote": "Traders trading live accounts with automated trading must abide by CME guidelines."
+    },
+    {
+     "item": "hft",
+     "value": "banned, undefined",
+     "quote": "High-frequency Trading is not allowed on our plans.",
+     "note": "pre-Sept-2025 wording defined >200 trades/day and banned bots ([FILE])"
+    },
+    {
+     "item": "order_rate_limit",
+     "note": "none published"
+    },
+    {
+     "item": "min_hold",
+     "quote": "Yes, microscalping is permitted on the live accounts.",
+     "note": "no minimum hold published for sim"
+    },
+    {
+     "item": "trade_count_live",
+     "value": "no limit",
+     "quote": "No, there are no limits to the maximum or minimum number of trades you can have per week or per day."
+    },
+    {
+     "item": "sim_fill_exploits_banned",
+     "value": "true",
+     "quote": "Slippage and Bracket Usage: Exploiting the absence of slippage and utilizing tight brackets to gain from favorable fills are not permitted.",
+     "note": "also bans multiple limit orders at same price to manipulate fills, and isolated fills in gapped/illiquid markets"
+    },
+    {
+     "item": "api",
+     "value": "no [FIRM] API documented; P01 accounts (plus P09 connection for P20/P03/P08/P09); no P18 or P13",
+     "quote": "Access P01 : Head over to the P01 website at [URL] and sign in using your credentials.",
+     "note": "P01 enablement for [FIRM] accounts unverified"
+    },
+    {
+     "item": "copier",
+     "value": "allowed for own accounts",
+     "quote": "P14 is our preferred trade copier partner and is fully compatible with all [FIRM] accounts."
+    },
+    {
+     "item": "platforms",
+     "value": "[\"P04\", \"P19\", \"P01\", \"P16\", \"P20\", \"P09\", \"P08\", \"P03\"]",
+     "quote": "Platform Choices",
+     "note": "dateModified 2026-10-08"
+    }
+   ],
+   "F_evidence": {
+    "firm_records": [
+     {
+      "item": "sim_fill_rule",
+      "value": "undocumented",
+      "quote": "Certain trading strategies may exploit the simulated fill algorithm, performing well in the evaluation stage but inevitably resulting in losses when transitioned to live markets."
+     },
+     {
+      "item": "platforms",
+      "value": "[\"P04\", \"P19\", \"P01\", \"P16\", \"P20\", \"P09\", \"P08\", \"P03\"]",
+      "quote": "Platform Choices",
+      "note": "dateModified 2026-10-08"
+     }
+    ],
+    "platform_records (API platforms the strategy would use)": {
+     "P01": [
+      {
+       "item": "sim_fill_rule",
+       "value": "undocumented",
+       "quote": "While P01 tries to mirror the filling algos as close as we can, reproducing the exchange's matching algorithms with 100% accuracy in a simulation environment would be very difficult for any platform to achieve.",
+       "note": "forum post by staff account BWeis 2021-05-21 (pointer only); users report fills only on trade-through: 'It takes price breaking through my limit in order to get filled'"
+      },
+      {
+       "item": "native_api",
+       "value": "true",
+       "quote": "[URL]",
+       "note": "REST + WebSocket; firm permission is a firm rule"
+      },
+      {
+       "item": "api_oco_bracket",
+       "value": "native placeOCO and placeOSO (brackets)",
+       "quote": "OCO order strategies link 2 orders tog[PRODUCT] such that if one order is filled, the other order is cancelled.",
+       "note": "OSO: [FILE] 'OSO orders allow for the most complex multi-bracket trading strategies.'"
+      },
+      {
+       "item": "api_rate_limit",
+       "value": "5000",
+       "quote": "| **Authenticated** | 5,000        | 5,000          | 5,000          |",
+       "note": "hourly cap = about 1.4 per s sustained; endpoint-level per-IP limits with p-ticket penalties; partner (prop-firm) docs"
+      },
+      {
+       "item": "platform_vps_rule",
+       "value": "none found",
+       "quote": "If you're behind a shared IP (corporate network, VPN, shared hosting), you may share limits with other clients.",
+       "note": "shared hosting treated only as a rate-limit case"
+      },
+      {
+       "item": "sim_market_data",
+       "value": "not documented; [FIRM] labels the P01 path 'P11'",
+       "quote": "P11 supported platforms:",
+       "note": "[unverified] that P01 sim data is P11"
+      }
+     ]
+    }
+   },
+   "Rel_evidence": [
+    {
+     "item": "operating_since",
+     "value": "2023",
+     "quote": "© 2023- 2026 [FIRM]. All rights reserved.",
+     "note": "month unverified"
+    },
+    {
+     "item": "regulatory_actions",
+     "value": "none found (search-negative; CFTC search 403; NFA BASIC not queried)",
+     "note": "pointer: Finance Magnates 2025 says not registered with NFA/CFTC"
+    },
+    {
+     "item": "payout_disputes_12m",
+     "value": "no firm or regulator evidence; third-party review pointers only",
+     "note": "[unverified]"
+    },
+    {
+     "item": "rule_changes_12m",
+     "value": "[\"fee schedule raised (most products) between 2025-10-07 and 2026-01-13 captures\", \"[PLAN] split 90% from 2026-01-12\", \"2026-02-07 temporary restriction [metals product]/[metals product]/[metals product]/[natural_gas product]/[natural_gas product] ([metals product] until mid-2026)\", \"2026-04-17 metals micro cap 5 at 50K\", \"2026-08-25 one-time payment model and 7-day inactivity closure\", \"[PLAN] plan launched 2026; live-breach 21-day cooldown\", \"P19 platform added Oct 2026\"]",
+     "quote": "As of February 7th:",
+     "note": "see md section 6"
+    }
+   ],
+   "not_scored_context (payout record, Canada terms)": [
+    {
+     "item": "paid_claim",
+     "value": "$250M+",
+     "quote": "$250M+ / Paid to traders"
+    },
+    {
+     "item": "program_stats",
+     "value": "{\"[REF]\": 0.1997, \"[REF]\": 0.392, \"[REF]\": 0.042}",
+     "quote": "39.2% of participants who reached the simulated Funded Stage earned at least one payout",
+     "note": "measurement period not stated"
+    },
+    {
+     "item": "processing",
+     "value": "most instant; manual review up to 6-12 business hours",
+     "quote": "Most payouts are approved instantly. If a manual review is required, processing may take up to 6–12 business hours on weekdays."
+    },
+    {
+     "item": "kyc",
+     "value": "[PAYMENT-SERVICE]; ID, selfie, proof of address <= 3 months; before sim funded trading",
+     "quote": "It is a prerequisite to begin trading your simulated-funded account."
+    },
+    {
+     "item": "payout_methods_canada",
+     "value": "[PAYMENT-SERVICE] bank transfer or crypto (ACH is US-only); currency not stated",
+     "quote": "You can withdraw funds via bank transfer or cryptocurrency."
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,46 @@
+...F.......F........                                                     [100%]
+=================================== FAILURES ===================================
+______ test_side_none_trade_through_fills_under_spec_but_never_adds_to_v _______
+
+    def test_side_none_trade_through_fills_under_spec_but_never_adds_to_v():
+        """DOCUMENTS spec 3 'any aggressor' through clause: a trade with side N (no aggressor:
+        CME tag 5797 = 0, implied-involved or opening trades) at the price never adds to V, but
+        one strictly through the price fills. Finding RS-05 asks for this to be restricted or
+        reported."""
+        tape_at = (Tape(bid=100, ask=101, bsz=1, asz=1).quote(G - S)
+                   .trade(J + 1 * S, 100, 50, "N"))
+        cols, _ = orders(tape_at)
+        assert fill(cols, mc.RULE_SPEC, pick(cols, "T", +1)) is None
+        tape_thr = (Tape(bid=100, ask=101, bsz=1, asz=1).quote(G - S)
+                    .trade(J + 1 * S, 99, 1, "N"))
+        cols, _ = orders(tape_thr)
+>       assert fill(cols, mc.RULE_SPEC, pick(cols, "T", +1)) == J + 1 * S
+E       AssertionError: assert None == (1699974000050000000 + (1 * 1000000000))
+E        +  where None = fill({'grid_index': [0, 0], 'g_ns': [1699974000000000000, 1699974000000000000], 'j_ns': [1699974000050000000, 1699974000050000000], 'life_end_ns': [1699974060100000000, 1699974060100000000], ...}, 'spec', 0)
+E        +    where 'spec' = mc.RULE_SPEC
+E        +    and   0 = pick({'grid_index': [0, 0], 'g_ns': [1699974000000000000, 1699974000000000000], 'j_ns': [1699974000050000000, 1699974000050000000], 'life_end_ns': [1699974060100000000, 1699974060100000000], ...}, 'T', +1)
+
+reports/stage_e28_briefs/work/REV_spec/test_rev_spec_adversarial.py:106: AssertionError
+__ test_life_window_may_extend_past_a_session_piece_end_if_the_grid_allows_it __
+
+    def test_life_window_may_extend_past_a_session_piece_end_if_the_grid_allows_it():
+        """DOCUMENTS a latent dependence: the life (j, j + 60.05 s) is not clipped at the piece
+        end; only the 5-minute grid edge exclusion keeps lives inside pieces. With a forced grid
+        30 s before the piece end, a trade after the piece end still fills; its markouts are then
+        dropped as session_end."""
+        plan = pc.make_test_plan(DAY, [pc.Piece(pc.MAIN, G - 10 * 60 * S, G + 30 * S)], [G])
+        tape = (Tape(bid=100, ask=101, bsz=1, asz=1).quote(G - S)
+                .trade(J + 45 * S, 100, 5, "A"))  # 15 s after the piece ended
+        cols, _ = orders(tape, plan)
+        b = pick(cols, "T", +1)
+>       assert fill(cols, mc.RULE_SPEC, b) == J + 45 * S
+E       AssertionError: assert None == (1699974000050000000 + (45 * 1000000000))
+E        +  where None = fill({'grid_index': [0, 0], 'g_ns': [1699974000000000000, 1699974000000000000], 'j_ns': [1699974000050000000, 1699974000050000000], 'life_end_ns': [1699974030000000000, 1699974030000000000], ...}, 'spec', 0)
+E        +    where 'spec' = mc.RULE_SPEC
+
+reports/stage_e28_briefs/work/REV_spec/test_rev_spec_adversarial.py:180: AssertionError
+=========================== short test summary info ============================
+FAILED reports/stage_e28_briefs/work/REV_spec/test_rev_spec_adversarial.py::test_side_none_trade_through_fills_under_spec_but_never_adds_to_v
+FAILED reports/stage_e28_briefs/work/REV_spec/test_rev_spec_adversarial.py::test_life_window_may_extend_past_a_session_piece_end_if_the_grid_allows_it
+2 failed, 18 passed in 0.50s
+rc=1 2026-10-21 17:19:20 PDT

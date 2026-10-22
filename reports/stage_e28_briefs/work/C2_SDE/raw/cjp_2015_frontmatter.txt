@@ -1,0 +1,902 @@
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+A L G O R I T H M I C A N D H I G H - F R E QU E N C Y T R A D I N G
+
+The design of trading algorithms requires sophisticated mathematical models, a solid analysis of financial data, and a deep understanding of how markets and exchanges function.
+In this textbook the authors develop models for algorithmic trading in contexts such as:
+executing large orders, market making, targeting VWAP and other schedules, trading pairs
+or collection of assets, and executing in dark pools. These models are grounded on how
+the exchanges work, whether the algorithm is trading with better informed traders (adverse
+selection), and the type of information available to market participants at both ultra-high
+and low frequency.
+Algorithmic and High-Frequency Trading is the first book that combines sophisticated
+mathematical modelling, empirical facts and financial economics, taking the reader from
+basic ideas to the cutting edge of research and practice.
+If you need to understand how modern electronic markets operate, what information
+provides a trading edge, and how other market participants may affect the profitability of
+the algorithms, then this is the book for you.
+Á lva r o c a r t e a is a Reader in Financial Mathematics at University College London.
+Before joining UCL he was Associate Professor of Finance at Universidad Carlos III,
+Madrid-Spain (2009–2012) and from 2002 until 2009 he was a Lecturer (with tenure) in the
+School of Economics, Mathematics and Statistics at Birkbeck – University of London. He
+was previously JP Morgan Lecturer in Financial Mathematics at Exeter College, University
+of Oxford.
+
+s e b a s t i a n ja i m u n g a l is an Associate Professor and Chair, Graduate Studies in
+the Department of Statistical Sciences at the University of Toronto where he teaches in
+the PhD and Masters of Mathematical Finance programs. He consults for major banks and
+hedge funds focusing on implementing advance derivative valuation engines and algorithmic trading strategies. He is also an associate editor for the SIAM Journal on Financial
+Mathematics, the International Journal of Theoretical and Applied Finance, the journal
+Risks and the Argo newsletter. Jaimungal is the Vice Chair for the Financial Engineering &
+Mathematics activity group of SIAM and his research is widely published in academic
+and practitioner journals. His recent interests include High-Frequency and Algorithmic
+trading, applied stochastic control, mean-field games, real options, and commodity models
+and derivative pricing.
+
+j o s É p e na lva is an Associate Professor at the Universidad Carlos III in Madrid where
+he teaches in the PhD and Master in Finance programmes, as well as at the undergraduate
+level. He is currently working on information models and market microstructure and his
+research has been published in Econometrica and other top academic journals.
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+ALGORITHMIC AND
+HIGH-FREQUENCY TRADING
+Á LVA RO C A RT E A
+University College London
+
+S E BA S T I A N JA I M U N G A L
+University of Toronto
+
+J O S É P E NA LVA
+Universidad Carlos III de Madrid
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+University Printing House, Cambridge CB2 8BS, United Kingdom
+Cambridge University Press is part of the University of Cambridge.
+It furthers the University’s mission by disseminating knowledge in the pursuit of
+education, learning and research at the highest international levels of excellence.
+www.cambridge.org
+Information on this title: www.cambridge.org/9781107091146
+© Álvaro Cartea, Sebastian Jaimungal and José Penalva 2015
+This publication is in copyright. Subject to statutory exception
+and to the provisions of relevant collective licensing agreements,
+no reproduction of any part may take place without the written
+permission of Cambridge University Press.
+First published 2015
+Printed in the United Kingdom by Bell and Bain Ltd
+A catalogue record for this publication is available from the British Library
+Library of Congress Cataloguing in Publication data
+Cartea, Álvaro.
+Algorithmic and high-frequency trading / Álvaro Cartea, Sebastian Jaimungal, José Penalva.
+pages cm
+Includes bibliographical references and index.
+ISBN 978-1-107-09114-6 (Hardback : alk. paper)
+1. Electronic trading of securities–Mathematical models. 2. Finance–Mathematical models.
+3. Speculation–Mathematical models. I. Title.
+HG4515.95.C387 2015
+332.64–dc23 2015018946
+ISBN 978-1-107-09114-6 Hardback
+Additional resources for this publication at www.cambridge.org/9781107091146
+Cambridge University Press has no responsibility for the persistence or accuracy of
+URLs for external or third-party internet websites referred to in this publication,
+and does not guarantee that any content on such websites is, or will remain,
+accurate or appropriate.
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+v
+
+To my girls, in order of appearance, Victoria, Amaya, Carlota, and Penélope.
+— Á.C.
+To my parents, Korisha and Paul, and my siblings Shelly, Cristina and
+especially my brother Curt for his constant injection of excitement and
+encouragement along the way.
+— S.J.
+To Nuria, Daniel, Jose Marı́a and Adelina.
+For their patience and encouragement every step of the way, and for never
+losing faith.
+— J.P.
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+Contents
+
+Preface
+How to Read this Book
+
+Part I
+
+Microstructure and Empirical Facts
+
+page xiii
+xvi
+
+Introduction to Part I
+
+1
+3
+
+1
+
+Electronic Markets and the Limit Order Book
+1.1
+Electronic markets and how they function
+1.2
+Classifying Market Participants
+1.3
+Trading in Electronic Markets
+1.3.1 Orders and the Exchange
+1.3.2 Alternate Exchange Structures
+1.3.3 Colocation
+1.3.4 Extended Order Types
+1.3.5 Exchange Fees
+1.4
+The Limit Order Book
+1.5
+Bibliography and Selected Readings
+
+4
+4
+6
+9
+9
+10
+11
+12
+13
+14
+18
+
+2
+
+A Primer on the Microstructure of Financial Markets
+2.1
+Market Making
+2.1.1 Grossman–Miller Market Making Model
+2.1.2 Trading Costs
+2.1.3 Measuring Liquidity
+2.1.4 Market Making using Limit Orders
+2.2
+Trading on an Informational Advantage
+2.3
+Market Making with an Informational Disadvantage
+2.3.1 Price Dynamics
+2.3.2 Price Sensitive Liquidity Traders
+2.4
+Bibliography and Selected Readings
+
+19
+20
+21
+24
+26
+28
+30
+34
+36
+37
+37
+
+3
+
+Empirical and Statistical Evidence: Prices and Returns
+3.1
+Introduction
+3.1.1 The Data
+3.1.2 Daily Asset Prices and Returns
+
+39
+39
+39
+41
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+viii
+
+Contents
+
+3.2
+3.3
+3.4
+3.5
+3.6
+3.7
+3.8
+
+3.1.3 Daily Trading Activity
+3.1.4 Daily Price Predictability
+Asset Prices and Returns Intraday
+Interarrival Times
+Latency and Tick Size
+Non-Markovian Nature of Price Changes
+Market Fragmentation
+Empirics of Pairs Trading
+Bibliography and Selected Readings
+
+42
+42
+46
+48
+49
+52
+54
+57
+60
+
+4
+
+Empirical and Statistical Evidence: Activity and Market Quality
+4.1
+Daily Volume and Volatility
+4.2
+Intraday Activity
+4.2.1 Intraday Volume Patterns
+4.2.2 Intrasecond Volume Patterns
+4.2.3 Price Patterns
+4.3
+Trading and Market Quality
+4.3.1 Spreads
+4.3.2 Volatility
+4.3.3 Market Depth and Trade Size
+4.3.4 Price Impact
+4.3.5 Walking the LOB and Permanent Price Impact
+4.4
+Messages and Cancellation Activity
+4.5
+Hidden Orders
+4.6
+Bibliography and Selected Readings
+
+61
+61
+63
+65
+67
+68
+69
+71
+76
+79
+81
+87
+90
+95
+96
+
+Part II
+
+Mathematical Tools
+
+97
+99
+
+Introduction to Part II
+5
+
+Stochastic Optimal Control and Stopping
+5.1
+Introduction
+5.2
+Examples of Control Problems in Finance
+5.2.1 The Merton Problem
+5.2.2 The Optimal Liquidation Problem
+5.2.3 Optimal Limit Order Placement
+5.3
+Control for Diﬀusion Processes
+5.3.1 The Dynamic Programming Principle
+5.3.2 Dynamic Programming Equation / Hamilton–Jacobi–
+Bellman Equation
+5.3.3 Veriﬁcation
+5.4
+Control for Counting Processes
+5.4.1 The Dynamic Programming Principle
+5.4.2 Dynamic Programming Equation / Hamilton–Jacobi–
+Bellman Equation
+
+© in this web service Cambridge University Press
+
+100
+100
+101
+101
+102
+103
+103
+105
+107
+112
+113
+114
+115
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+Contents
+
+5.5
+
+5.6
+5.7
+
+Part III
+
+5.4.3 Combined Diﬀusion and Jumps
+Optimal Stopping
+5.5.1 The Dynamic Programming Principle
+5.5.2 Dynamic Programming Equation
+Combined Stopping and Control
+Bibliography and Selected Readings
+
+ix
+
+120
+122
+124
+124
+128
+130
+
+Algorithmic and High-Frequency Trading
+Introduction to Part III
+
+131
+133
+
+6
+
+Optimal Execution with Continuous Trading I
+6.1
+Introduction
+6.2
+The Model
+6.3
+Liquidation without Penalties only Temporary Impact
+6.4
+Optimal Acquisition with Terminal Penalty and Temporary Impact
+6.5
+Liquidation with Permanent Price Impact
+6.6
+Execution with Exponential Utility Maximiser
+6.7
+Non-Linear Temporary Price Impact
+6.8
+Bibliography and Selected Readings
+6.9
+Exercises
+
+134
+134
+135
+139
+141
+144
+150
+152
+154
+155
+
+7
+
+Optimal Execution with Continuous Trading II
+7.1
+Introduction
+7.2
+Optimal Acquisition with a Price Limiter
+7.3
+Incorporating Order Flow
+7.3.1 Probabilistic Interpretation
+7.4
+Optimal Liquidation in Lit and Dark Markets
+7.4.1 Explicit Solution when Dark Pool Executes in Full
+7.5
+Bibliography and Selected Readings
+7.6
+Exercises
+
+158
+158
+159
+167
+174
+175
+178
+182
+182
+
+8
+
+Optimal Execution with Limit and Market Orders
+8.1
+Introduction
+8.2
+Liquidation with Only Limit Orders
+8.3
+Liquidation with Exponential Utility Maximiser
+8.4
+Liquidation with Limit and Market Orders
+8.5
+Liquidation with Limit and Market Orders Targeting Schedules
+8.6
+Bibliography and Selected Readings
+8.7
+Exercises
+
+184
+184
+185
+193
+196
+206
+209
+209
+
+9
+
+Targeting Volume
+9.1
+Introduction
+9.2
+Targeting Percentage of Market’s Speed of Trading
+9.2.1 Solving the DPE when Targeting Rate of Trading
+
+212
+212
+215
+216
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+x
+
+Contents
+
+9.2.2 Stochastic Mean-Reverting Trading Rate
+9.2.3 Probabilistic Representation
+9.2.4 Simulations
+Percentage of Cumulative Volume
+9.3.1 Compound Poisson Model of Volume
+9.3.2 Stochastic Mean-Reverting Volume Rate
+9.3.3 Probabilistic Representation
+Including Impact of Other Traders
+9.4.1 Probabilistic Representation
+9.4.2 Example: Stochastic Mean-Reverting Volume
+Utility Maximiser
+9.5.1 Solving the DPE with Deterministic Volume
+Bibliography and Selected Readings
+Exercises
+
+220
+222
+225
+227
+231
+232
+233
+235
+237
+238
+239
+240
+243
+243
+
+10
+
+Market Making
+10.1 Introduction
+10.2 Market Making
+10.2.1 Market Making with no Inventory Restrictions
+10.2.2 Market Making At-The-Touch
+10.2.3 Market Making Optimising Volume
+10.3 Utility Maximising Market Maker
+10.4 Market Making with Adverse Selection
+10.4.1 Impact of Market Orders on Midprice
+10.4.2 Short-Term-Alpha and Adverse Selection
+10.5 Bibliography and Selected Readings
+10.6 Exercises
+
+246
+246
+247
+253
+254
+257
+259
+261
+262
+266
+271
+272
+
+11
+
+Pairs Trading and Statistical Arbitrage Strategies
+11.1 Introduction
+11.2 Ad Hoc Bands
+11.3 Optimal Band Selection
+11.3.1 The Optimal Exit Problem
+11.3.2 The Optimal Entry Problem
+11.3.3 Double-Sided Optimal Entry-Exit
+11.4 Co-integrated Log Prices with Short-Term-Alpha
+11.4.1 Model Setup
+11.4.2 The Agent’s Optimisation Problem
+11.4.3 Solving the DPE
+11.4.4 Numerical Experiments
+11.5 Bibliography and Selected Readings
+
+273
+273
+274
+277
+278
+279
+281
+283
+284
+286
+288
+292
+294
+
+12
+
+Order Imbalance
+12.1 Introduction
+
+295
+295
+
+9.3
+
+9.4
+
+9.5
+9.6
+9.7
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+Contents
+
+12.2
+
+12.3
+12.4
+12.5
+12.6
+
+Intraday Features
+12.2.1 A Markov Chain Model
+12.2.2 Jointly Modelling Market Orders
+12.2.3 Modelling Price Jumps
+Daily Features
+Optimal Liquidation
+12.4.1 Optimisation Problem
+Bibliography and Selected Readings
+Exercises
+
+Appendix A
+Stochastic Calculus for Finance
+A.1 Diﬀusion Processes
+A.1.1 Brownian Motion
+A.1.2 Stochastic Integrals
+A.2 Jump Processes
+A.3 Doubly Stochastic Poisson Processes
+A.4 Feynman–Kac and PDEs
+A.5 Bibliography and Selected Readings
+Bibliography
+Glossary
+Subject index
+
+© in this web service Cambridge University Press
+
+xi
+
+295
+297
+300
+303
+305
+306
+308
+313
+313
+315
+315
+316
+316
+319
+322
+325
+326
+327
+337
+342
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+Preface
+
+We have written this book because we feel that existing ones do not provide a
+suﬃciently broad view to address the rich variety of issues that arise when trying
+to understand and design a successful trading algorithm. This book puts together
+the diverse perspectives, and backgrounds, of the three authors in a manner that
+ties together the basic economics, the empirical foundations of high-frequency
+data, and the mathematical tools and models to create a balanced perspective
+of algorithmic and high-frequency trading.
+This book has grown out of the authors’ interest in the ﬁeld of algorithmic and high-frequency ﬁnance and from graduate courses taught at University College London, University of Toronto, Universidad Carlos III de Madrid,
+IMPA, and University of Oxford. Readers are expected to have basic knowledge of continuous-time ﬁnance, but it assumes that they have no knowledge
+of stochastic optimal control and stopping. To keep the book self-contained, we
+include an appendix with the main stochastic calculus tools and results that are
+needed. The treatment of the material should appeal to a wide audience and
+it is ideal for a graduate course on Algorithmic Trading at a Master’s or PhD
+level. It is also ideal for those already working in the ﬁnance sector who wish
+to combine their industry knowledge and expertise with robust mathematical
+models for algorithmic trading. We welcome comments! Please send them to
+algo.trading.book@gmail.com.
+
+Brief guide to the contents
+This book is organised into three parts that take the reader from the workings of electronic exchanges to the economics behind them, then to the relevant
+mathematics, and ﬁnally to models and problems of algorithmic trading.
+Part I starts with a description of the basic elements of electronic markets
+and the main ways in which people participate in the market: as active traders
+exploiting an informational advantage to proﬁt from possibly ﬂeeting proﬁt opportunities, or as market makers, simultaneously oﬀering to buy and sell at
+advantageous prices.
+A textbook on algorithmic trading would be incomplete if the development
+of strategies was not motivated by the information that market participants see
+in electronic markets. Thus it is necessary to devote space to a discussion of
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+xiv
+
+Preface
+
+data and empirical implications. The data allow us to present the context which
+determines the ultimate fate of an algorithm. By looking at prices, volumes, and
+the details of the limit order book, the reader will get a basic overview of some of
+the key issues that any algorithm needs to account for, such as the information
+in trades, properties of price movements, regularities in the intraday dynamics
+of volume, volatility, spreads, etc.
+Part II develops the mathematical tools for the analysis of trading algorithms.
+The chapter on stochastic optimal control and stopping provides a pragmatic
+approach to material which is less standard in ﬁnancial mathematics textbooks.
+It is also written so that readers without previous exposure to these techniques
+equip themselves with the necessary tools to understand the mathematical models behind some algorithmic trading strategies.
+Part III of the book delves into the modelling of algorithmic trading strategies.
+The ﬁrst two chapters are concerned with optimal execution strategies where the
+agent must liquidate or acquire a large position over a pre-speciﬁed window and
+trades continuously using only market orders. Chapter 6 covers the classical
+execution problem when the investor’s trades impact the price of the asset and
+also adjusts the level of urgency with which she desires to execute the programme.
+In Chapter 7 we develop three execution models where the investor: i) carries
+out the execution programme as long as the price of the asset does not breach
+a critical boundary, ii) incorporates order ﬂow in her strategy to take advantage
+of trends in the midprice which are caused by one-sided pressure in the buy or
+sell side of the market, and iii) trades in both a lit venue and a dark pool.
+In Chapter 8 we assume that the investor’s objective is to execute a large
+position over a trading window, but employs only limit orders, or uses both limit
+and market orders. Moreover, we show execution strategies where the investor
+also tracks a particular schedule as part of the liquidation programme.
+Chapter 9 is concerned with execution algorithms that target volume-based
+schedules. We develop strategies for investors who wish to track the overall volume traded in the market by targeting: Percentage of Volume, Percentage of
+Cumulative Volume, and Volume Weighted Average Price, also known as VWAP.
+The ﬁnal three chapters cover various topics in algorithmic trading. Chapter
+10 shows how market makers choose where to post limit orders in the book. The
+models that are developed look at how the strategies depend on diﬀerent factors
+including the market maker’s aversion to inventory risk, adverse selection, and
+short-term lived trends in the dynamics of the midprice.
+Finally, Chapter 11 is devoted to statistical arbitrage and pairs trading, and
+Chapter 12 shows how information on the volume supplied in the limit order
+book is employed to improve execution algorithms.
+
+Style of the book
+In choosing the content and presentation of the book we have tried to provide
+a rigorous yet accessible overview of the main foundational issues in market
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+Preface
+
+xv
+
+microstructure, and of some of the empirical themes of electronic trading, using the US equities market as the one most familiar to readers. These provide
+the basis for a thorough mathematical analysis of models of trade execution,
+volume-based algorithms, market making, statistical arbitrage, pairs trading,
+and strategies based on order ﬂow information. Most chapters in Part III end
+with exercises of varying levels of diﬃculty. Some exercises closely follow the
+material covered in the chapter and require the reader to: solve some of the
+problems by looking at them from a diﬀerent perspective; ﬁll in the gaps of some
+of the derivations; see it as an invitation to experiment further. We have set
+up a website, http://www.algorithmic-trading.org, from which readers can
+download datasets and MATLAB code to assist in such experimentation.
+This book does not cover any of the information technology aspects of algorithmic trading. Nor does it cover in detail certain aspects of market quality or
+discuss regulation issues.
+
+Acknowledgements
+We are thankful to those who took the time to read parts of the manuscript and
+gave us very useful feedback: Ali Al-Aradi, Gene Amromin, Robert Almgren,
+Ryan Francis Donnelly, Luhui Gan, John Goodacre, Hui Gong, Tianyi Jia, Hoi
+Kong, Tim Leung, Siyuan Li, Eddie Ng, Zhen Qin, Jason Ricci, Anton Rubisov,
+Mark Stevenson, Mikel Tapia and Jamie Walton. We also thank the students
+who have taken our courses at University College London, University of Toronto,
+University of Oxford, IMPA and Universidad Carlos III de Madrid.
+Álvaro is grateful for the hospitality and generosity of the Finance Group at
+Saı̈d Business School, University of Oxford, with special thanks to Tim Jenkinson and Colin Mayer, and the Department of Statistical Sciences, University of
+Toronto, where a great deal of this book was written.
+Sebastian is grateful for the hospitality of the Mathematical Institute, University of Oxford and the Department of Mathematics, University College London,
+where parts of this book were written.
+José is grateful for the hospitality of the Department of Mathematics, University College London and the Department of Finance at Cass Business School
+where parts of this book were written, as well as his home institution, the Business Department of the Universidad Carlos III for allowing him to make these
+visits. He also wishes to thank Artem Novikov of TradingPhysics for his availability and help in accessing the data and clarifying speciﬁc issues faced by traders
+and technicians in high-frequency trading environments.
+May 2015, Oxford, London, Toronto, Madrid, Mallorca
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+Cambridge University Press
+978-1-107-09114-6 - Algorithmic and High-Frequency Trading
+Álvaro Cartea, Sebastian Jaimungal And José Penalva
+Frontmatter
+More information
+
+How to Read this Book
+
+This book is aimed at those who want to learn how to develop the mathematical
+aspects of Algorithmic Trading. It is ideal for a graduate course on Algorithmic
+Trading at a Master’s or PhD level, and is also ideal for those already working in
+the ﬁnance sector who wish to combine their industry knowledge and expertise
+with robust mathematical models for algorithmic trading.
+Much of this book can be covered in an intensive one semester/term course
+as part of a Graduate course in Financial Mathematics/Engineering, Computational Finance, and Applied Mathematics. A typical student at this stage will
+be learning stochastic calculus as part of other courses, but will not be taught
+stochastic optimal control, or be proﬁcient in the way modern electronic markets
+operate. Thus, they are strongly encouraged to read Part I of the book to: gain
+a good understanding of how electronic markets operate; understand basic concepts of microstructure theory that underpin how the market reaches equilibrium
+prices in the presence of diﬀerent types of risks; and, study stylised statistical
+issues of the dynamics of the prices of stocks in modern electronic markets. And
+to read Part II to learn the stochastic optimal control tools which are essential
+to Part III where we develop sophisticated mathematical models for Algorithmic
+and High-Frequency trading.
+Those with a solid understanding of stochastic calculus and optimal control,
+may skip Part II of the book and cover in detail Part III. However, we still
+encourage them to read Part I to gain an understanding of the stylised statistical
+features of the market, and to develop a better intuition of why algorithmic
+models are designed in particular ways or with speciﬁc objectives in mind.
+For a shorter and more compact course on algorithmic trading, students should
+focus on learning about the limit order book, Chapter 1, then optimal control
+in Part II, and then concentrate on selected Chapters in Part III, for instance
+Chapters 6, 8 and 10.
+Readers in the ﬁnancial industry who have some knowledge of how electronic
+markets are organised may want to skip Chapter 1 but are encouraged to read the
+other chapters which cover microstructure theory and the empirical and statistical evidence of stock prices before delving into the details of the mathematical
+models in Part III.
+
+© in this web service Cambridge University Press
+
+www.cambridge.org
+
+

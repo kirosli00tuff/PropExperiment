@@ -1,0 +1,2205 @@
+High-Frequency Jump Tests: Which Test Should We Use?∗
+Worapree Maneesoonthorn†, Gael M. Martin‡, Catherine S. Forbes§
+
+arXiv:1708.09520v3 [q-fin.ST] 19 Jan 2020
+
+January 22, 2020
+
+Abstract
+We conduct an extensive evaluation of price jump tests based on high-frequency financial
+data. After providing a concise review of multiple alternative tests, we document the size and
+power of all tests in a range of empirically relevant scenarios. Particular focus is given to the
+robustness of test performance to the presence of jumps in volatility and microstructure noise,
+and to the impact of sampling frequency. The paper concludes by providing guidelines for
+empirical researchers about which test to choose in any given setting.
+Keywords: Price jump tests; Nonparametric jump measures; Bivariate jump diffusion model;
+Volatility jumps; Microstructure noise; Sampling frequency
+JEL Classifications: C12, C22, C58.
+
+1
+
+Introduction
+
+Extreme movements (or ‘jumps’) in asset prices play an important role in the tail behaviour of
+return distributions, with the perceived risk (and, hence, risk premium) associated with this extreme behaviour differing from that associated with small and regular movements (see, Bates, 1996,
+and Duffie et al., 2000, for early illustrations of this point, and Todorov and Tauchen, 2011, Maneesoonthorn et al., 2012, and Bandi and Renò, 2016, for more recent expositions). Indeed, the
+modelling of jumps, in both the price itself and its volatility, has been given particular attention
+in the option pricing literature, where the additional risk factors implied by random jumps have
+helped explain certain stylized patterns in option-implied volatility (Merton, 1976; Bates, 2000;
+Duffie et al., Eraker, 2004; Todorov, 2010; Maneesoonthorn et al.; Bandi and Renò). Evidence of
+price jump clustering in spot returns - whereby price and/or volatility jumps occur in consecutive
+time periods - has also been uncovered, with various approaches having been adopted to model this
+dynamic behaviour, including the use of simultaneous price and volatility jumps over time (Chan
+∗
+
+This research has been supported by Australian Research Council Discovery Grants No. DP150101728 and
+DP170100729. We thank a co-editor, an associate editor and two anonymous referees for very helpful and constructive
+comments on earlier drafts of the paper. We are also grateful to John Maheu, Herman van Dijk, Maria Kalli and Jim
+Griffin, plus participants at the 11th Annual RCEA Bayesian Econometric Workshop (Melbourne, 2017), for very
+helpful comments on an earlier version of the paper.
+†
+Melbourne Business School, The University of Melbourne, Australia.
+‡
+Corresponding author. Department of Econometrics and Business Statistics, Monash University, Australia.
+Email: gael.martin@monash.edu.
+§
+Department of Econometrics and Business Statistics, Monash University, Australia.
+
+1
+
+and Maheu, 2002; Eraker et al., 2003; Maheu and McCurdy, 2004; Fulop et al., 2014; Aı̈t-Sahalia
+et al., 2015; Bandi and Renò; Maneesoonthorn et al., 2017).
+Coincident with the trend towards more sophisticated models for asset prices, the use of highfrequency intraday data to construct nonparametric measures of asset price variation - including the
+jump component thereof - has become wide-spread. Multiple alternative methods are now available
+to practitioners, both for testing for jumps and for measuring price variation in the presence of
+jumps, with some empirical analyses exploiting such measures in addition to, or as a replacement
+of, measurements based on end-of-day prices. (See Koopman and Scharth, 2013, Christensen et al.,
+2014, and Maneesoonthorn et al., 2017, for recent examples, including references to earlier work.)
+This short paper provides the results of an investigation into the relative accuracy of the many
+high-frequency price jump tests that are now on offer. Particular attention is given to the robustness
+of the tests to the presence of jumps in volatility, and to the effect of microstructure noise. The
+impact of sampling frequency on test performance is also documented. In addition to enabling key
+insights to be drawn, the current study also provides a template for future studies regarding jump
+tests that may be of interest.
+We begin, in Section 2, by providing a very brief review of price jump tests that have been
+proposed to date. These methods are grouped into five categories: 1) those based on the difference
+between a measure of total (squared) variation and a jump-robust measure of integrated variation
+(Barndorff-Nielsen and Shephard, 2004, 2006; Huang and Tauchen, 2005; Corsi et al., 2010; Andersen et al., 2012); 2) those that exploit measures of higher-order variation (Aı̈t-Sahalia and Jacod,
+2009; Podolskij and Ziggel, 2010); 3) those based on returns, rather than measures of variation
+(Andersen et al., 2007; Lee and Mykland, 2008); 4) those that exploit a variance swap (Jiang and
+Oomen, 2008); and 5) those that are expressly designed to mitigate the impact of microstructure
+noise (Aı̈t-Sahalia et al., 2012; Lee and Mykland, 2012). Section 3 makes note of the various tuning
+components that influence the price jump tests; with the performance of these tests documented
+in Section 4. Guidelines for practitioners are provided in Section 5.
+
+2
+
+Review of price jump tests
+
+Defining pt = ln (Pt ) as the natural log of the asset price, Pt at time t > 0, we begin by assuming
+the following jump diffusion process for pt ,
+dpt = µt dt +
+
+p
+
+Vt dWtp + dJtp ,
+
+(1)
+
+where Wtp is the Brownian motion, and dJtp = Ztp dNtp , with Ztp denoting the random price jump
+size and dNtp the increment of a discrete count process, with P (dNtp = 1) = δp dt and P (dNtp =
+0) = (1 − δp ) dt.
+
+The aim of a price jump test is to detect the presence of the discontinuous component, dJtp ,
+
+and to conclude whether or not dNtp is non-zero over a particular period. The availability of
+high-frequency data has enabled measures of variation - incorporating both the continuous and
+2
+
+discontinuous components of (1) - to be constructed over a specified interval of time, e.g. one
+day, with the statistical properties of such measures established using in-fill asymptotics. The
+relevant distributional results are then utilized in the construction of a price jump test, where
+the null hypothesis is usually that the asset price is continuous over the particular interval under
+investigation. All tests investigated in this paper entertain the same null hypothesis of a continuous
+price path, with the alternative hypothesis being that the price path contains jumps and, hence, is
+discontinuous.
+This section reviews available tests based on the concepts of, respectively, squared variation
+(Section 2.1), higher-order power variation (Section 2.2), standardized daily returns (Section 2.3),
+and variance swaps (Section 2.4), as well as tests that are designed to be robust to microstructure
+noise (Section 2.5). The detail of eleven specific test statistics (and limiting distributions) are
+summarized in Tables 1 and 2. The role of certain tuning parameters, including those appearing
+in the test descriptions in Tables 1 and 2, is discussed in Section 3.
+
+2.1
+
+Squared variation
+
+The early literature on price jump testing exploits various measures of the squared variation of the
+asset price process. In the context of a continuous-time price process, as defined in (1), the object
+of interest is the difference between total quadratic variation over a discrete time period (typically a
+Rt
+PNtp
+2
+(Zsp ) , and variation from the continuous component
+trading day), QVt−1,t = t−1 Vs ds + t−1<s≤t
+Rt
+alone, quantified by the integrated variance, Vt−1,t = t−1 Vs ds. By definition, the difference between
+
+2
+=
+these two quantities defines the contribution to price variation of the discontinuous jumps, Jt−1,t
+p
+P Nt
+p 2
+t−1<s≤t (Zs ) , and price jump test statistics can thus be constructed from the difference between
+
+various measures of QVt−1,t and Vt−1,t . In Panel A of Table 1, we provide details of the test
+
+proposed by Barndorff-Nielsen and Shephard (2004, 2006) (also exploited by Huang and Tauchen,
+
+2005), plus an alternative test proposed by Corsi et al. (2010) and two tests suggested by Andersen
+et al. (2012) (referenced hereafter as BNS, CPR and MINRV and MEDRV, respectively). In all
+M
+P
+cases, the test statistic is constructed using the difference between realized volatility, RVt =
+rt2i ,
+i=1
+
+where rti = pti − pti−1 denotes the ith of M equally-spaced returns observed during day t, and a
+
+chosen measure of integrated variance. All tests are one-sided upper-tailed tests by construction.
+
+2.2
+
+Higher-order P-power variation
+
+A second class of price jump test exploits the behaviour of higher-order P-power variation, and
+estimators thereof. Following Barndorff-Nielson and Shephard (2004), let an estimator of the PM
+b (P, ∆M ) = P |rt |P , where ∆M = 1/M denotes the common
+power variation of pt be defined as B
+i
+t
+i=1
+
+length of the time intervals between consecutive returns, and P > 0. The limiting behaviour of this
+
+estimator, for different values of P, sheds light on the different components of the variation in pt .
+p
+b (P, ∆M ) −→
+QVt−1,t as M → ∞, as is consistent with the distributional
+In the case of P = 2, B
+t
+
+3
+
+p
+
+result that RVt −→ QVt−1,t , as M → ∞. For 0 < P < 2,
+1−P/2
+
+where A (P)t =
+π −1/2 2P/2 Γ
+
+P+1
+2
+
+Z t
+
+∆M
+mP
+1/2 P
+
+Vs
+
+p
+b (P, ∆M ) −→
+A (P)t as M → ∞,
+B
+t
+
+(2)
+
+
+
+ds denotes the P-power integrated variation, mP = E |U |P =
+
+ t−1
+and U denotes a standard normal random variable. In contrast, for P > 2, the
+
+increments from the jump component dominate, and the estimator converges in probability to the
+P
+P-power jump variation, B (P)t =
+|dJs |P . If the jump component in (1) is not present and
+t−1<s≤t
+
+pt is continuous as a consequence, then the limiting result in (2) holds for any P > 0.
+
+These limiting results can be used in a variety of ways to detect jumps. Specifically, Aı̈t-Sahalia
+b (P, ∆M ) constructed over two different sampling
+and Jacod (2009) (ASJ, hereafter) compare B
+t
+
+intervals, while Podolskij and Ziggel (2010) (PZ, hereafter) rely on the limiting distribution of a
+b (P, ∆M ) . Both tests are one-sided, with the ASJ test being lower-tailed,
+modified version of B
+t
+
+while the PZ test is upper-tailed. These two approaches are outlined in Panel B of Table 1.
+
+2.3
+
+Standardized returns
+
+Rather than construct price jump test statistics from various measures of variation, an alternative
+is to consider the behaviour of (appropriately standardized) returns themselves. In brief, based on
+the assumption of Brownian motion for the asset price, the return computed over a chosen interval
+length and scaled by the square root of a consistent estimator of the corresponding integrated
+variance, should be asymptotically standard normal if price jumps are absent. Two tests that exploit
+this property are proposed by Andersen et al. (2007) and Lee and Mykland (2008), referenced as
+ABD and LM, hereafter. ABD conduct multiple two-tailed tests on standardized returns observed
+over the trading day, while LM propose an upper-tailed test based on the maximum absolute
+standardized return. Details regarding the form of these two test statistics and their limiting
+distribution under the null hypothesis of no jumps are given in Panel A of Table 2.
+
+2.4
+
+Variance swaps
+
+Variance swaps are instruments made up of financial assets and/or derivatives and are used as tools
+to hedge against volatility risk. The payoff of a variance swap can be replicated by taking a short
+position in the so-called “log contract” and a long position in the underlying asset, with the long
+position being continuously re-balanced (see Neuberger, 1994). The payoff of such a replicating
+strategy, computed as the accumulated difference between proportional returns and continuously
+compounded logarithmic returns, equates to half of the integrated variance when there is no price
+jump. When a jump is present, the replication error is completely determined by the realized jump,
+including the sign of such a jump. Jiang and Oomen (2008), JO hereafter, exploit this relation in
+their two-tailed test construction, with the test details given in Panel B of Table 2.
+
+4
+
+2.5
+
+Treatment for microstructure noise
+
+Finally, we investigate the performance of two tests that are specifically designed to be robust to the
+presence of microstructure noise. Lee and Mykland (2012), LM12 hereafter, provide an alternative
+to the LM test whereby the test statistic is computed from prices averaged over a small window.
+Aı̈t-Sahalia et al. (2012) propose an alternative test to ASJ (denoted here by ASJL) that is based
+on locally smoothed prices. Similar to their corresponding predecessors, the LM12 test, based on
+extreme value theory, is an upper-tailed test, while the ASJL is a lower-tailed test. Details of these
+two alternative tests are provided in Panel C of Table 2.
+
+3
+
+Tuning parameter choice
+
+As is clear from the outline of the test procedures in Section 2, all require a decision, of one form or
+√
+another, to be made regarding the mechanism used to distinguish a continuous increment ( Vt dWtp )
+from a discontinuous increment (dJtp ) in (1). Such ‘tuning’ decisions will patently influence the
+outcome of any test, the values of the jump measures that are derived from preliminary application
+of the test and, hence, any inferential results based on those measures. In this section, we discuss
+the impact of alternative choices for the significance level and certain other tuning values.
+
+3.1
+
+Significance level
+
+All tests are, of course, subject to the selection of a significance level, which determines the value
+beyond which the null hypothesis of ‘no jump’ is rejected. Although certain authors suggest the
+use of certain (typically small) significance levels (e.g. Tauchen and Zhou, 2011; ABD), there does
+not appear to be widespread consensus in the literature regarding this choice. It is important
+to recognize that use of a higher level of significance will automatically lead to the identification
+of a greater number of apparent ‘jumps’, including those having a relatively small magnitude,
+according to the usual trade-off between the size of a test and its power in a neighbourhood of
+the null hypothesis of no jump. Thus, if the desired focus is to detect (and subsequently measure)
+jumps with reasonably large magnitude only, then a small significance level should be selected. In
+Section 4 we conduct all size and power assessments based on two significance levels: 5% and 1%.
+
+3.2
+
+Threshold value
+
+The higher-order P-power variation-based PZ, ASJ and ASJL tests, along with the CPR test, also
+entail the choice of certain threshold values that determine the particular jump-free variations that
+
+are accumulated. That is, these threshold values determine whether an individual return belongs
+to the diffusive component or to the jump component in the calculation of P-power variation. The
+
+thresholds for these tests are selected as a multiple (cϑ ) of the local volatility estimate (See Panel A,
+Table 1). For example, CPR suggest truncating returns at three times the local volatility measure.
+
+The choice of this multiplier is guided by the properties of a normal distribution, since if a jump
+
+5
+
+is indeed absent, then the return (assumed to be normally distributed by approximation of the
+diffusive process) should cross the threshold only about 0.3% of the time. Naturally, a smaller
+multiplier will correspond to a larger proportion of returns being considered as part of the jump
+contribution. The PZ and ASJ tests prescribe truncations that involve the choice of the truncation
+root, ̟ (see Panel B, Table 1). In both cases, a larger value of ̟ corresponds to a smaller level of
+the actual truncation point, again implying that a larger number of returns are considered as part
+of the jump contribution. PZ recommend ̟ = 0.4, while ASJ recommend the use of ̟ = 0.48,
+recommendations that we adopt for our study of the performance of these tests, presented in Section
+4.
+
+3.3
+
+Value of P
+
+The P-power variation-based tests are also subject to the choice of P itself, noting that, at least
+asymptotically, the jump contribution will dominate for values of P > 2. However, with limited
+
+intra-day sampling available, a larger value of P will tend to accentuate jumps with relatively large
+
+magnitude and thereby diminish the role in the test outcome of relatively small jumps, for any
+given choice of significance level. In Section 4 we report results for the PZ test based on P = 2 and
+
+P = 4 (PZ2 and PZ4 respectively), to gauge the effect of this tuning parameter. We also report
+results for the ASJ and ASJL tests based on the author-recommended choice of P = 4.
+
+3.4
+
+Sampling interval
+
+The sampling interval over which intraday returns are computed also plays an important role in the
+performance of jump tests. A consensus seems to have developed in the literature that estimates
+of QVt−1,t and Vt−1,t are optimally computed over the five-minute interval, due to the mitigation
+
+of microstructure noise when sampling at that (relatively low) frequency (see Bandi and Russell,
+2008). Whether such optimality carries over to the performance of the corresponding price jump
+test is still questionable. It is worth noting that the choice of the sampling interval will impact
+each of the ASJ and ASJL tests in two ways - first through the choice of ∆M , and secondly, via
+the tuning choice k, which determines the central location of the tests under the null hypothesis.
+We conduct both tests using k = 2, a choice that is recommended by the authors. We document
+test performance over four alternative sampling frequencies, in order to provide some insight into
+the influence of the choice of sampling frequency.
+
+4
+
+Assessment of test performance
+
+4.1
+
+Experimental design
+
+We assess the finite sample size and power of each test in empirically relevant scenarios. In contrast
+to the earlier assessment of test performance by Dumitru and Urga (2012), our simulation exercise
+is used to shed particular light on the robustness of (an expanded set of) price jump tests to the
+
+6
+
+presence of a discontinuous volatility process. This is something that has not, to our knowledge,
+been documented elsewhere, for any of the tests discussed, and which is relevant to recent empirical
+work, in which both (possibly dynamic) price and volatility jumps are modelled (see Fulop et al.,
+2014 and Maneesoonthorn et al., 2017, for examples).
+We generate data from the process in (1), in conjunction with the following explicitly defined
+jump diffusion process for Vt ,
+dVt = κ (Vt − θ) + σv
+
+p
+
+Vt dWtv + dJtv .
+
+(3)
+
+The Brownian increment dWtv is assumed to be correlated with dWtp (in (1)) with corr (dWtv , dWtp ) =
+ρ, but is assumed to be uncorrelated with the increment in the volatility jump process, denoted
+by dJtv . The data are generated using parameter values: µt = 0, κ = 5, θ = 0.42 , σv = 0.5 and
+ρ = −0.5 (adhering to the theoretical restriction 2κθ ⩾ σv2 ), and with the diffusive variance process
+
+initialized at θ.1
+
+A very fine Euler discretization is employed to simulate high-frequency observations, with 21600
+observations created per trading day, equivalent to generating price observations every one second
+over a six-hour trading period. The price jump test statistics are then constructed using four
+different sampling frequencies: five seconds, 30 seconds, one minute and five minutes. We then
+compute, over 1000 independent Monte Carlo replications, the proportion of times that a test
+detects a price jump, under several different scenarios. First, we set dJtp = 0 for all t, and assess
+the size of the tests, both in the absence (dJtv = 0) and in the presence (dJtv 6= 0) of volatility
+
+jumps. When a volatility jump is present, only one jump occurs and its arrival time is random.
+The size of the volatility jump increment is assumed to be either ‘moderate’, dJtv = 3θ, or ‘large’,
+dJtv = 10θ. Secondly, we assess the power of the tests in the case where a single price jump arrives
+√
+randomly over the day, and where the price jump size is either ‘moderate’, dJtp = 3 θ, or ‘large’,
+√
+dJtp = 10 θ. Power is also assessed in both the absence and the presence of volatility jumps.2
+Finally, we assess the size and power of all tests in the presence of microstructure noise, under
+both independent and identically distributed (i.i.d.) Gaussian and Student-t noise assumptions,
+as well as when the microstructure noise follows a Gaussian autocorrelated process (Aı̈t-Sahalia
+and Mancini, 2008). Test performance in the absence and presence of microstructure noise is
+documented in Section 4.2 and Section 4.3 respectively.
+1
+
+This DGP and its parameter settings are also used in the simulation exercise of Aı̈t-Sahalia and Jacod (2009),
+and broadly reflect empirical results recorded in the literature. See Eraker et al. (2003) and Fulop et al. (2014) for
+examples.
+2
+The size of the price jump is expressed as a proportion of the square root of the long run variance (θ), to fit
+with the scale of dpt . The size of the volatility jump, on the other hand, is expressed as a proportion of the long run
+variance itelf.
+
+7
+
+4.2
+4.2.1
+
+Test performance in the absence of microstructure noise
+Empirical size
+
+In Table 3, we report empirical size, based on nominal sizes of 5% and 1%, with the following
+summary relevant to the results for both significance levels.
+Two of the four tests based on measures of squared variation, MINRV and MEDRV, have an
+empirical size that is closest to the nominal value, for all sampling frequencies, and in the presence
+of volatility jumps. In contrast, the CPR test is uniformly oversized, and the BNS test oversized
+in the presence of large volatility jumps, in particular.
+The tests based on P-power variation, standardized returns and variance swaps (PZ2, PZ4, ASJ,
+
+ABD, LM and JO) have reasonable size performance in the absence of volatility jumps, although
+
+ASJ and LM are quite undersized, in particular for the lower sampling frequencies (one and five
+minutes). In the presence of volatility jumps, the PZ and ABD tests are very (at times, grossly)
+over-sized, whilst the ASJ and LM tests remain somewhat under-sized3 . Of this set, the JO test is
+the most robust to the presence of volatility jumps, and to the choice of sampling frequency; but
+is still not as accurately sized as MINRV and MEDRV.
+In the absence of microstructure noise, the tests designed to accommodate such noise (LM12 and
+ASJL) perform well at the highest sampling frequency of five seconds, and under no volatility jump;
+but neither test is uniformly robust to either the sampling frequency or the presence of volatility
+jumps. It should be noted that these tests require a smoothing (averaging) process over sub-blocks
+throughout the day, so the effective sample size decreases rapidly as the sampling frequency is
+reduced.4
+As a general rule, across all tests, the proportion of incorrect detections of a price jump increases
+with size of the volatility jump, highlighting the confounding influence of this feature of the DGP.
+4.2.2
+
+Empirical power
+
+Table 4 reports the power of each test conducted at the 5% nominal size level.5 As is to be expected,
+all tests exhibit greater power when the price jump size is larger. However, for any given price jump
+size, the level of power still varies, across test, sampling frequency and volatility jump size. It is
+interesting to note that for all tests, and for all designs, power is greatest when the test is conducted
+at the highest frequency.
+Except for the LM12 and ASJL tests, power uniformly decreases as the volatility jump size
+gets larger, when the test is conducted at the highest frequency of five seconds. As the sampling
+3
+
+Our detection of a decreasing test size at lower frequencies is in line with sizes reported in ASJ’s Table 1,
+notwithstanding the fact that the lowest frequency they report corresponds to 30 seconds.
+4
+In both Lee and Mykland (2012) and Aı̈t-Sahalia et al. (2012), test performance is assessed at extremely high
+frequency, with the lowest frequency recorded being three seconds for the LM12 test and five seconds for ASJL.
+Furthermore, Aı̈t-Sahalia et al. only assess their test over three consecutive trading days, as opposed to a single
+trading day as is typically done in an empirically relevant context, and as we have done here.
+5
+Findings at the 1% significance level were qualitatively similar and, hence, are not reported.
+
+8
+
+interval becomes longer however, a variety of patterns are observed, in particular when the price
+jump is only moderate.
+Whilst the power of the ASJ test is always highest at the highest frequency (as tallies with the
+qualitative finding in Dumitru and Urga, 2012) it ranks lowest amongst all tests, overall, with a
+power that does not exceed 50% over all designs considered.6 At the other end of the spectrum,
+the PZ2, PZ4 and ABD tests tend to have the highest power overall, in particular at the higher
+frequencies, and are the most robust to the size of the volatility jump.
+The (relatively) well-sized MINRV and MEDRV tests also have high power in the presence or
+otherwise of volatility jumps, as long as the price jump is large and the sampling frequency is high
+(five seconds). This statement needs to be qualified somewhat for the lower sampling frequencies.
+In particular, when the volatility jump is also large a sampling interval beyond 30 seconds leads to
+quite a reduction in power for these two tests, as indeed is a feature for all tests.
+The tests designed to cater for microstructure noise (LM12 and ASJL) have high power in its
+absence only when the sampling frequency is very high (five seconds), the price jump to be detected
+is large, and the (confounding) volatility jump is not.
+
+4.3
+
+Test performance in the presence of microstructure noise
+
+The presence of microstructure noise is known to hamper the quality of measures constructed from
+high-frequency data, including any subsequent price jump tests conducted based on these measures
+(see Hansen and Lunde, 2006, and Bandi and Russell, 2008, amongst others). In Table 5, the
+empirical size and power of the tests conducted at a nominal level of 5%, is recorded, under the
+three assumptions of microstructure noise described in Section 4.17 . Power is assessed for the case
+√
+where price jump size is large (dJtp = 10 θ) and volatility jumps are absent.
+As a general observation, the presence of microstructure noise impacts negatively on the empirical size of the tests that are not expressly designed to cater for noise, and that impact varies
+according to the form of noise. For instance, the Student-t noise leads to the most inaccurate
+empirical sizes overall, including the least robustness of size to sampling frequency. Once again, the
+size of the MEDRV and MINRV tests tend to be the most robust to sampling frequency, although
+under the Student-t and (Gaussian) autocorrelated noise the tests are extremely undersized when
+computed using five second data.
+Microstructure noise of all forms has arguably less impact on power than it does on size. Other
+than ASJ, all tests not designed to be robust to noise retain high power under Gaussian noise, in
+6
+ASJ entertain two different null hypotheses: one where the price path is continuous under the null, and one
+where the null accommodates a discontinuous price path. In the latter case, the ability of their test to detect a price
+jump is measured by empirical size (only), and this is what they report. However, a key assumption underlying the
+distribution of the test statistic under this null hypothesis is that there are no common price and volatility jumps.
+We view this as a very restrictive assumption, particularly given the noted interest and empirical evidence found in
+support of this situation. Hence our use of the null hypothesis of a continuous process, and our documentation of
+empirical power under scenarios that allow for volatility jumps, including those that occur contemporaneously with
+a price jump.
+7
+Results produced for the 1% nominal level are available but are not recorded here.
+
+9
+
+particular for the higher frequencies (five and 30 seconds), remembering that this assessment is
+now under large price jumps and zero volatility jumps.
+Not surprisingly, the tests that are designed to accommodate microstructure noise are relatively
+robust to the type of noise assumed, at the highest frequency of five seconds, with the appropriate
+size and high power. However, the LM12 test is severely oversized, and the AJL test lacks power,
+when conducted at a lower frequency, mimicking their performance in the no microstructure noise
+case.
+
+5
+
+Guidelines for Practitioners
+
+To conclude, we offer practitioners the following guidelines:
+1. The ASJ is the least powerful test overall, over the variety of designs considered, as well
+as being consistently undersized. This confirms (albeit in slightly different scenarios) the
+findings of Dumitru and Urga (2012). Our finding holds both in the absence and presence of
+microstructure noise.
+2. If microstructure noise alone is thought to be present, the two tests designed to cater for
+that feature - LM12 and ASJL - based on very high-frequency (five second) data, are the
+best choice. Importantly, these tests continue to perform well when microstructure is absent,
+but only when the sampling frequency remains very high, the price jump size is large and
+volatility jumps are absent.
+3. If the data generating process is thought to feature volatility jumps, we advocate for the
+use of one of the two squared-variation tests, MINRV or MEDRV. To balance size and power
+performance, we also advise computation of the selected test statistic at a moderate frequency
+of 30 seconds.
+While these guidelines flow from the settings covered in the experiments summarised in the
+paper, it is prudent to remind the reader that good (or poor) test performance under the available
+settings does not guarantee similarly good (or poor) performance under alternative simulation
+designs. Nevertheless, the approach used here, including the justifications used to determine the
+guidelines, may serve as a template for investigating the performance of price jump tests, and
+consequent price variation measures, under alternative DGPs and/or volatility jump size settings.
+
+References
+[1] Aı̈t-Sahalia, Y., Cacho-Diaz, J. and Laeven, R.J.A. 2015. Modeling Financial Contagion Using
+Mutually Exciting Jump Processes. Journal of Financial Economics, 109: 224-249.
+[2] Aı̈t-Sahalia, Y. and Jacod, J. 2009. Testing for Jumps in a Discretely Observed Process. The
+Annals of Statistics, 37: 184-222.
+
+10
+
+[3] Aı̈t-Sahalia, Y., Jacod, J., and Li, J. 2012. Testing for jumps in noisy high frequency data.
+Journal of Econometrics, 168(2), 207-222.
+[4] Aı̈t-Sahalia, Y., and Mancini, L. 2008. Out of Sample Forecasts of Quadratic Variation. Journal
+of Econometrics, 147: 17-33.
+[5] Andersen, T.G., Bollerslev, T. and Dobrev, D. 2007. No-Arbitrage Semi-Martingale Restrictions for Continuous-Time Volatility Models Subject to Leverage Effects, Jumps and IID Noise:
+Theory and Testable Distributional Implications. Journal of Econometrics, 138: 125-180.
+[6] Andersen, T.G., Dobrev, D. and Schaumburg, E. 2012. Jump-Robust Volatility Estimation
+using Nearest Neighbor Truncation. Journal of Econometrics, 169: 75-93.
+[7] Bandi, F.M. and Renò, R. 2016. Price and Volatility Co-Jumps. Journal of Financial Economics,
+119: 107-146.
+[8] Bandi, F.M. and Russell, J.R. 2008. Microstructure Noise, Realized Variance and Optimal
+Sampling. The Review of Economic Studies, 75: 339-369.
+[9] Barndorff-Nielsen, O.E. and Shephard, N. 2004. Power and Bipower Variation with Stochastic
+Volatility and Jumps. Journal of Financial Econometrics, 2: 1-37.
+[10] Barndorff-Nielsen, O.E. and Shephard, N. 2006. Econometrics of Testing for Jumps in Financial
+Economics Using Bipower Variation. Journal of Financial Econometrics, 4: 1-30.
+[11] Bates, D.S. 1996. Jumps and Stochastic Volatility: Exchange Rate Processes Implicit in
+Deutsche Mark Options. Review of Financial Studies, 9: 69-107.
+[12] Bates, D.S. 2000. Post-87 Crash Fears in the S&P 500 Futures Option Market. Journal of
+Econometrics, 94: 181-238.
+[13] Chan, W.H. and Maheu, J.M. 2002. Conditional Jump Dynamics in Stock Market Returns.
+Journal of Business and Economic Statistics, 20: 377-389.
+[14] Christensen, K., Oomen, Roel, C.A. and Podolskij. Mark, 2014. Fact or Friction: Jumps at
+Ultra High Frequency. Journal of Financial Economics, 114, 576-599.
+[15] Corsi, F., Pirino, D. and Renò, R. 2010. Threshold Bipower Variation and the Impact of Jumps
+on Volatility Forecasting. Journal of Econometrics, 159: 276-288.
+[16] Duffie, D., Pan J. and Singleton, K. 2000. Transform Analysis and Asset Pricing for Affine
+Jump-Diffusions. Econometrica, 68: 1343-1376.
+[17] Dumitru, A.M. and Urga, G. 2012. Identifying Jumps in Financial Assets: A Comparison
+Between Nonparametric Jump Tests. Journal of Business and Economic Statistics, 30: 242-255.
+[18] Eraker, B., Johannes, M. and Polson, N. 2003. The Impact of Jumps in Volatility and Returns.
+The Journal of Finance, LVIII: 1269-1300.
+[19] Eraker, B. 2004. Do Stock Prices and Volatility Jump? Reconciling Evidence from Spot and
+Option Prices. The Journal of Finance, LIX: 1367-1403.
+[20] Fulop, A., Li, J. and Yu, J. 2014. Self-Exciting Jumps, Learning, and Asset Pricing Implications. Review of Financial Studies, 28: 876-912.
+[21] Hansen, P.R. and Lunde, A. 2006. Realized Variance and Microstructure Noise. Journal of
+Business and Economic Statistics, 24: 127-161.
+[22] Huang, X. and Tauchen, G. 2005. The Relative Contribution of Jumps to Total Price Variance.
+Journal of Financial Econometrics, 3: 456-499.
+[23] Jiang, G.J. and Oomen, R.C. 2008. Testing for Jumps When Asset Prices are Observed with
+Noise: A ‘Swap Variance’ Approach. Journal of Econometrics, 144: 352-370.
+11
+
+[24] Koopman, S.J. and Scharth, M. 2013. The Analysis of Stochastic Volatility in the Presence of
+Daily Realized Measures. Journal of Financial Econometrics, 11: 76-115.
+[25] Lee, S.S. and Mykland, P.A. 2008. Jumps in Financial Markets: A New Nonparametric Test
+and Jump Dynamics. Review of Financial Studies, 21: 2535-2563.
+[26] Lee, S.S. and Mykland, P.A. 2012. Jumps in Equilibrium Prices and Market Microstructure
+Noise. Journal of Econometrics, 168: s396-406.
+[27] Maheu, J.M. and McCurdy, T.H. 2004. News Arrival, Jump Dynamics, and Volatility Components for Individual Stock Returns. The Journal of Finance, LIX: 755-793.
+[28] Maneesoonthorn, W., Forbes, C.S. and Martin, G.M. 2017. Inference on Self-Exciting Jumps
+Using High-Frequency Measures. Journal of Applied Econometrics, 32: 504-532.
+[29] Maneesoonthorn, W., Martin, G.M., Forbes, C.S. and Grose, S. 2012. Probabilistic Forecasts
+of Volatility and its Risk Premia. Journal of Econometrics, 171: 217-236.
+[30] Merton, R.C. 1976. Option Pricing When Underlying Stock Returns Are Discontinuous. Journal
+of Financial Economics, 3: 125-144.
+[31] Neuberger, A. 1994. The Log Contract. The Journal of Portfolio Management, 20: 74-80.
+[32] Podolskij, M. and Ziggel, D. 2010. New Tests for Jumps in Semimartingale Models. Statistical
+Infererence for Stochastic Processes, 13: 15-41.
+[33] Podolskij, M., and Vetter, M. 2009. Estimation of Volatility Functionals in the Simultaneous
+Presence of Microstructure Noise and Jumps. Bernoulli, 15: 634-658.
+[34] Tauchen G. and Zhou, H. 2011. Realized Jumps on Financial Markets and Predicting Credit
+Spreads. Journal of Econometrics, 160: 102-118.
+[35] Todorov, V. 2010. Variance Risk-Premium Dynamics: The Role of Jumps. Review of Financial
+Studies, 23: 345-383.
+[36] Todorov, V. and Tauchen, G. 2011. Volatility Jumps. Journal of Business & Economic Statistics,
+29: 356-371.
+
+12
+
+Table 1: The jump tests outlined in Section 2.1 (squared variation) and Section 2.2 (higher-order
+power variation). All test statistics reported have a N (0, 1) limiting distribution under the null
+hypothesis of no jump.
+Test
+
+Test Statistic
+
+Panel A: Tests based on squared variation
+
+BNS
+
+TBN S,t = r
+T Pt = µ−3
+4/3
+
+CPR
+
+M
+M −1
+
+t
+
+
+
+M2
+
+M −2
+
+ M
+X
+i=3
+
+CT riP Vt = µ−3
+4/3
+(
+
+
+
+M
+P
+
+i=2
+
+|rti | rti−1 ,
+
+| rti−2 |4/3 | rti−1 |4/3 | rti |4/3 , and µ4/3 = 22/3 Γ(7/6)Γ(1/2)−1
+
+t
+
+
+X
+M
+M2
+τ4/3,ti τ4/3,ti−1 τ4/3,ti−2 , τ1,ti =
+M −2
+i=3
+
+
+
+X
+M
+M
+τ1,ti τ1,ti−1 ,
+M −1
+i=2
+
+2
+|rti | for
+p rti < ϑti2
+,
+1.094 ϑti for rti > ϑti
+
+|rti |4/3 for rt2i < ϑti
+, and ϑti = c2ϑ Vbti , where Vbti denotes a local variance estimator
+2/3
+1.129ϑti for rt2i > ϑti
+MinRVt
+RVt
+
+1−
+
+π
+ , where M inRVt = π−2
+
+MinRQt
+1.81M −1 max 1,
+2
+
+TM inRV,t = s
+
+
+
+π
+and M inRQt = 3π−8
+
+MEDRV
+
+
+
+t
+1 − CTRVBV
+π
+t
+
+
+ , where CT BVt = 2
+
+2
+riP Vt
+π
++ π − 5 M −1 max 1, CT
+2
+CT BV 2
+
+TCP R,t = r
+
+τ4/3,ti =
+
+MINRV
+
+t
+1 − BV
+π
+RVt
+
+
+ , where BVt = 2
+
+2
+T Pt
+π
++ π − 5 M −1 max 1, BV
+2
+2
+
+1−
+
+MinRVt
+
+P
+
+M2
+M −1
+
+M
+i=2 min
+
+|rti | , rti−1
+
+MedRVt
+RVt
+
+4
+
+
+
+M
+M −1
+
+π
+ , where M edRVt = π+6−4√3
+
+MedRQt
+−1
+0.96M max 1,
+2
+
+TM edRV,t = s
+
+MedRVt
+M2
+
+3π √
+and M edRQt = 9π+72−52
+3
+
+
+
+M −2
+
+P
+
+M
+i=3 med
+
+P
+
+
+
+|rti | , rti−1 , rti−2
+
+M
+i=2 min
+
+M
+M −2
+
+4
+
+P
+
+|rti | , rti−1
+
+M
+i=3 med
+
+2
+
+|rti | , rti−1 , rti−2
+
+2
+
+Panel B: Tests based on P-power variation
+M
+
+PZ
+
+ASJ
+
+P−1
+2
+
+M
+P
+
+P
+
+|rti |
+
+
+
+1−ηi 1
+
+̟
+
+
+
+{|rti |<ϑ(∆M ) }
+i=1
+where ηi is a symmetric IID random variable
+M
+P
+u
+P
+tV ar(η )M P
+2 −1
+|rti | 1{|rt |<ϑ(∆ )̟ }
+i
+i
+i=1
+M
+
+with E (ηi ) = 1, V ar (ηi ) < ∞ and E |ηi |2+d > 0 for some d > 0; and P ≥2.
+
+TP Z,t = v
+u
+
+Under H0 of continuous price path
+−1/2 
+
+
+b
+b
+∆ M (P,k)A(2P,∆
+M )t b c
+M )t
+b (P, k, ∆M ) − k P2 −1 , where Sb (P, k, ∆M ) = B(P,k∆
+bc
+, ΣM,t = M b
+S
+TASJ,t = Σ
+2
+t
+M,t
+t
+b
+1−P/2 M
+
+∆
+and Ab (P, ∆M )t = M
+mP
+
+P
+
+B(P,∆M )t
+
+P
+
+A(P,∆M )t
+
+|rti | 1{|rt |<ϑ∆̟ } , for k ≥ 2 and P > 2.
+M
+i
+Here, M (P, k) and mP are constants defined by expectations of absolute power of standard normal variables.
+i=1
+
+13
+
+Table 2: The jump tests outlined in Section 2.3 (standardized daily returns), Section 2.4 (variance
+swaps) and Section 2.5 (microstructure noise). The limiting distribution for each test statistic
+under the null hypothesis of no price jump given in column 3 below.
+Test
+
+Test Statistics
+
+Limiting Dist.
+
+Panel A: Tests based on standardized returns
+ABD
+
+r
+
+ti
+TABD,ti = √M −1
+. The significance level needs to be adjusted for multiple testing.
+BV
+t
+
+TLM,t =
+LM
+
+(max(TeLM,ti )−CM )
+SM
+
+|rt |
+where TeLM,ti = q i ,
+V̂ti
+
+M )1/2
+M)
+CM = (2 log0.8
+− log π+log(log1/2
+,
+1.6(2 log π)
+1
+SM =
+and V̂ti denotes the local variance estimate
+0.6(2 log π)1/2
+
+Panel B: Test based on variance
+swap
+
+
+P
+BV
+RVt
+√t
+TJO,t =
+1 − SwV
+, where SwVt = 2 M
+i=1 (Rti − rti )
+M −1
+
+JO
+
+b SwV
+Ω
+
+N(0,1)
+
+Gumbel
+
+t
+
+with Rti = arithmatic returns
+M 3
+3/2
+b SwV = 3.05 M 3 P Q rt
+and Ω
+i−k
+M −3
+
+N(0,1)
+
+i=1 k=0
+
+Panel C: Tests that account for microstructure noise
+1/2 log π+log(log⌊ n ⌋)
+|χ(tj )|−An
+n
+kM
+TLM 12 = max
+where An = 2 log⌊ kM
+⌋
+−
+1/2 ,
+B
+n
+n
+2(2 log⌊ kM
+⌋)
+tj ∈Gk
+n
+q
+1/2
+
+n
+Bn = 2 log⌊ kM
+⌋
+, χ (tj ) = VMn pbtj +kM − pbtj ,
+LM12
+and pbtj is the average log price over a block size M ,
+with the average price computed using every k th observations.
+Vn is computed using Podolskij & Vetter (2009)
+
+ASJL
+
+Test statistic as in ASJ, but with the power variation computed
+from smoothed log prices. The estimator of the asymptotic variance
+of the test statistic is modified accordingly.
+Code to conduct the test is available at https://sites.duke.edu/jiali/research/.
+
+14
+
+Gumbel
+
+N(0,1)
+
+Table 3: The empirical size of price jump tests constructed at the five second, 30 second, one
+minute and five minute sampling frequencies. The tests are conducted under three DGPs. DGP1
+assumes volatility jumps are absent (labelled as ‘dJtv = 0’); DGP2 assumes that a volatility jump
+is present and is of moderate size (labelled as ‘dJtv = 3θ’); DGP3 assumes a large volatility jump is
+present (labelled as ‘dJtv = 10θ’). Nominal sizes of 5% and 1% are shown in columns 3-6 and 7-10,
+respectively. Microstructure noise is absent.
+
+DGP1
+no VJ
+(dJtv = 0)
+
+DGP2
+moderate VJ
+(dJtv = 3θ)
+
+DGP3
+large VJ
+(dJtv = 10θ)
+
+Nominal Size = 5%
+5 sec 30sec 1min 5min
+
+Nominal Size = 1%
+5 sec 30sec 1min 5min
+
+BNS
+CPR
+MINRV
+MEDRV
+PZ2
+PZ4
+ASJ
+ABD
+LM
+JO
+LM12
+ASJL
+
+0.051
+0.086
+0.051
+0.054
+0.047
+0.046
+0.018
+0.086
+0.032
+0.054
+0.037
+0.055
+
+0.052
+0.133
+0.046
+0.041
+0.057
+0.051
+0.011
+0.058
+0.009
+0.049
+0.124
+0.057
+
+0.042
+0.165
+0.048
+0.057
+0.070
+0.058
+0.004
+0.053
+0.007
+0.068
+0.209
+0.011
+
+0.055
+0.464
+0.044
+0.060
+0.092
+0.078
+0.000
+0.063
+0.005
+0.079
+0.521
+0.093
+
+0.008
+0.016
+0.006
+0.010
+0.009
+0.014
+0.002
+0.020
+0.003
+0.007
+0.011
+0.018
+
+0.009
+0.045
+0.005
+0.008
+0.018
+0.015
+0.000
+0.012
+0.001
+0.011
+0.055
+0.009
+
+0.010
+0.059
+0.005
+0.005
+0.028
+0.026
+0.000
+0.011
+0.002
+0.016
+0.103
+0.002
+
+0.020
+0.241
+0.010
+0.014
+0.051
+0.046
+0.000
+0.020
+0.000
+0.025
+0.386
+0.091
+
+BNS
+CPR
+MINRV
+MEDRV
+PZ2
+PZ4
+ASJ
+ABD
+LM
+JO
+LM12
+ASJL
+
+0.078
+0.104
+0.050
+0.054
+0.216
+0.214
+0.022
+0.827
+0.023
+0.053
+0.205
+0.113
+
+0.078
+0.127
+0.057
+0.056
+0.268
+0.260
+0.004
+0.532
+0.009
+0.068
+0.287
+0.088
+
+0.066
+0.155
+0.049
+0.044
+0.271
+0.268
+0.004
+0.409
+0.009
+0.078
+0.372
+0.035
+
+0.066
+0.275
+0.049
+0.061
+0.179
+0.180
+0.000
+0.194
+0.011
+0.110
+0.579
+0.118
+
+0.021
+0.033
+0.014
+0.011
+0.185
+0.189
+0.001
+0.568
+0.003
+0.011
+0.079
+0.041
+
+0.030
+0.045
+0.021
+0.017
+0.230
+0.229
+0.000
+0.259
+0.000
+0.017
+0.156
+0.030
+
+0.018
+0.048
+0.007
+0.010
+0.237
+0.233
+0.000
+0.212
+0.000
+0.021
+0.224
+0.007
+
+0.022
+0.105
+0.010
+0.021
+0.152
+0.150
+0.000
+0.083
+0.001
+0.045
+0.438
+0.111
+
+BNS
+CPR
+MINRV
+MEDRV
+PZ2
+PZ4
+ASJ
+ABD
+LM
+JO
+LM12
+ASJL
+
+0.121
+0.140
+0.048
+0.056
+0.800
+0.802
+0.018
+0.996
+0.031
+0.059
+0.544
+0.220
+
+0.119
+0.153
+0.072
+0.063
+0.723
+0.718
+0.002
+0.922
+0.033
+0.070
+0.535
+0.172
+
+0.115
+0.157
+0.054
+0.050
+0.636
+0.635
+0.004
+0.818
+0.030
+0.087
+0.595
+0.083
+
+0.101
+0.192
+0.068
+0.084
+0.421
+0.424
+0.000
+0.477
+0.042
+0.140
+0.703
+0.165
+
+0.040
+0.053
+0.016
+0.012
+0.794
+0.794
+0.000
+0.975
+0.005
+0.016
+0.324
+0.130
+
+0.060
+0.079
+0.023
+0.018
+0.713
+0.711
+0.000
+0.765
+0.008
+0.018
+0.379
+0.077
+
+0.045
+0.065
+0.012
+0.017
+0.624
+0.619
+0.000
+0.585
+0.006
+0.031
+0.433
+0.024
+
+0.048
+0.093
+0.023
+0.029
+0.400
+0.399
+0.000
+0.272
+0.016
+0.066
+0.581
+0.155
+
+15
+
+Table 4: The empirical power of price jump tests constructed at the five second, 30 second, one
+minute and five minute sampling frequencies. The tests
+√ are conducted under two scenarios for√the
+price jump size: moderate (left panel, with dJtp = 3 θ) and large (right panel, with dJtp = 10 θ),
+and under three DGPs for the volatility jump process. DGP1 assumes volatility jumps are absent
+(labelled as ‘dJtv = 0’); DGP2 assumes that a volatility jump is present and is of moderate size
+(labelled as ‘dJtv = 3θ’); DGP3 assumes a large volatility jump is present (labelled as ‘dJtv = 10θ’).
+All tests are conducted using a nominal size of 5%. Microstructure noise is absent.
+
+DGP1
+no VJ
+(dJtv = 0)
+
+DGP2
+moderate VJ
+(dJtv = 3θ)
+
+DGP3
+large VJ
+(dJtv = 10θ)
+
+Moderate Price
+√ Jump
+(dJtp = 3 θ)
+5 sec 30sec 1min 5min
+
+Large Price √
+Jump
+(dJtp = 10 θ)
+5 sec 30sec 1min 5min
+
+BNS
+CPR
+MINRV
+MEDRV
+PZ2
+PZ4
+ASJ
+ABD
+LM
+JO
+LM12
+AJL
+
+0.793
+0.881
+0.540
+0.776
+1.000
+1.000
+0.492
+1.000
+0.646
+0.999
+0.626
+0.130
+
+0.201
+0.384
+0.149
+0.219
+0.813
+0.811
+0.191
+0.907
+0.073
+0.334
+0.244
+0.059
+
+0.120
+0.311
+0.101
+0.124
+0.375
+0.370
+0.050
+0.486
+0.019
+0.178
+0.245
+0.014
+
+0.068
+0.479
+0.050
+0.064
+0.098
+0.091
+0.000
+0.079
+0.002
+0.104
+0.508
+0.083
+
+1.000
+1.000
+1.000
+1.000
+1.000
+1.000
+0.492
+1.000
+1.000
+1.000
+1.000
+0.998
+
+1.000
+1.000
+1.000
+1.000
+1.000
+1.000
+0.487
+1.000
+0.936
+1.000
+0.960
+0.813
+
+0.998
+1.000
+0.992
+1.000
+1.000
+1.000
+0.484
+1.000
+0.730
+1.000
+0.931
+0.511
+
+0.573
+0.862
+0.490
+0.705
+0.961
+0.960
+0.017
+0.968
+0.108
+0.818
+0.675
+0.112
+
+BNS
+CPR
+MINRV
+MEDRV
+PZ2
+PZ4
+ASJ
+ABD
+LM
+JO
+LM12
+AJL
+
+0.474
+0.579
+0.284
+0.418
+1.000
+1.000
+0.475
+1.000
+0.457
+0.818
+0.316
+0.152
+
+0.158
+0.254
+0.111
+0.130
+0.598
+0.591
+0.027
+0.808
+0.052
+0.138
+0.302
+0.092
+
+0.099
+0.190
+0.066
+0.077
+0.338
+0.335
+0.006
+0.515
+0.013
+0.118
+0.369
+0.033
+
+0.087
+0.294
+0.061
+0.064
+0.204
+0.189
+0.000
+0.214
+0.006
+0.121
+0.566
+0.120
+
+1.000
+1.000
+1.000
+1.000
+1.000
+1.000
+0.492
+1.000
+0.995
+1.000
+0.998
+0.980
+
+0.995
+0.999
+0.976
+0.997
+1.000
+1.000
+0.471
+1.000
+0.785
+1.000
+0.859
+0.539
+
+0.928
+0.965
+0.826
+0.941
+1.000
+1.000
+0.389
+1.000
+0.547
+0.989
+0.801
+0.259
+
+0.363
+0.605
+0.277
+0.415
+0.806
+0.800
+0.003
+0.841
+0.073
+0.524
+0.639
+0.122
+
+BNS
+CPR
+MINRV
+MEDRV
+PZ2
+PZ4
+ASJ
+ABD
+LM
+JO
+LM12
+ASJL
+
+0.283
+0.322
+0.137
+0.173
+0.995
+0.995
+0.118
+1.000
+0.376
+0.180
+0.541
+0.240
+
+0.160
+0.211
+0.088
+0.098
+0.739
+0.742
+0.002
+0.940
+0.085
+0.087
+0.496
+0.160
+
+0.117
+0.165
+0.051
+0.064
+0.653
+0.652
+0.000
+0.823
+0.041
+0.096
+0.588
+0.079
+
+0.119
+0.214
+0.080
+0.081
+0.416
+0.415
+0.000
+0.465
+0.042
+0.157
+0.696
+0.164
+
+1.000
+1.000
+0.996
+1.000
+1.000
+1.000
+0.492
+1.000
+0.940
+1.000
+0.971
+0.779
+
+0.881
+0.905
+0.589
+0.787
+1.000
+1.000
+0.318
+1.000
+0.625
+0.923
+0.742
+0.278
+
+0.666
+0.745
+0.371
+0.530
+0.997
+0.997
+0.101
+0.999
+0.449
+0.640
+0.718
+0.128
+
+0.237
+0.368
+0.162
+0.198
+0.609
+0.607
+0.000
+0.664
+0.094
+0.236
+0.682
+0.160
+
+16
+
+Table 5: The empirical size and power of price jump tests constructed at the five second, 30 second,
+one minute and five minute sampling frequencies, in the presence of microstructure noise. The tests
+are conducted under DGP1, but with three different types of microstructure noise: Gaussian noise;
+Student-t noise and autocorrelated noise. Each test is conducted using a √
+nominal size of 5%, with
+p
+the power assessment conducted using a large price jump size dJt = 10 θ. Volatility jumps are
+absent.
+
+DGP1
+Gaussian noise
+
+DGP1
+Student-t noise
+
+DGP1
+Gaussian
+Autocorrelated noise
+
+5 sec
+
+Size
+30sec 1min
+
+5min
+
+5 sec
+
+Power
+30sec 1min
+
+5min
+
+BNS
+CPR
+MINRV
+MEDRV
+PZ2
+PZ4
+ASJ
+ABD
+LM
+JO
+LM12
+AJL
+
+0.000
+0.000
+0.054
+0.054
+0.059
+0.054
+0.019
+0.062
+0.025
+0.006
+0.043
+0.053
+
+0.040
+0.109
+0.056
+0.056
+0.057
+0.056
+0.013
+0.082
+0.006
+0.039
+0.155
+0.046
+
+0.048
+0.181
+0.064
+0.064
+0.059
+0.064
+0.002
+0.074
+0.007
+0.042
+0.216
+0.014
+
+0.060
+0.443
+0.068
+0.068
+0.072
+0.068
+0.000
+0.052
+0.001
+0.072
+0.511
+0.082
+
+0.999
+0.999
+0.869
+1.000
+1.000
+1.000
+0.529
+1.000
+0.990
+1.000
+1.000
+0.999
+
+1.000
+1.000
+0.999
+1.000
+1.000
+1.000
+0.501
+1.000
+0.875
+1.000
+0.965
+0.818
+
+0.997
+0.999
+0.975
+0.996
+1.000
+1.000
+0.517
+1.000
+0.683
+1.000
+0.921
+0.507
+
+0.533
+0.847
+0.440
+0.649
+0.950
+0.950
+0.020
+0.967
+0.118
+0.809
+0.671
+0.105
+
+BNS
+CPR
+MINRV
+MEDRV
+PZ2
+PZ4
+ASJ
+ABD
+LM
+JO
+LM12
+AJL
+
+0.117
+0.410
+0.000
+0.000
+0.997
+0.997
+0.000
+1.000
+0.722
+0.208
+0.051
+0.063
+
+0.050
+0.192
+0.022
+0.036
+0.374
+0.370
+0.006
+0.463
+0.063
+0.074
+0.148
+0.054
+
+0.046
+0.210
+0.031
+0.044
+0.172
+0.183
+0.005
+0.198
+0.018
+0.056
+0.221
+0.018
+
+0.065
+0.488
+0.044
+0.054
+0.088
+0.079
+0.000
+0.070
+0.002
+0.084
+0.512
+0.101
+
+0.999
+0.999
+0.353
+0.610
+1.000
+1.000
+0.157
+1.000
+0.996
+0.997
+1.000
+0.998
+
+0.999
+1.000
+0.910
+0.952
+1.000
+1.000
+0.394
+1.000
+0.893
+0.996
+0.955
+0.798
+
+0.991
+0.997
+0.926
+0.964
+1.000
+1.000
+0.460
+1.000
+0.680
+0.997
+0.925
+0.488
+
+0.548
+0.846
+0.434
+0.639
+0.935
+0.935
+0.016
+0.948
+0.114
+0.798
+0.722
+0.110
+
+BNS
+CPR
+MINRV
+MEDRV
+PZ2
+PZ4
+ASJ
+ABD
+LM
+JO
+LM12
+ASJL
+
+0.000
+0.000
+0.000
+0.000
+0.062
+0.053
+0.023
+0.039
+0.020
+0.013
+0.030
+0.070
+
+0.050
+0.133
+0.047
+0.056
+0.062
+0.058
+0.015
+0.047
+0.009
+0.040
+0.164
+0.058
+
+0.063
+0.189
+0.044
+0.048
+0.068
+0.063
+0.004
+0.056
+0.007
+0.048
+0.216
+0.015
+
+0.058
+0.468
+0.041
+0.051
+0.082
+0.077
+0.000
+0.060
+0.000
+0.086
+0.536
+0.095
+
+1.000
+1.000
+1.000
+1.000
+1.000
+1.000
+0.517
+1.000
+0.999
+1.000
+1.000
+0.997
+
+1.000
+1.000
+1.000
+1.000
+1.000
+1.000
+0.486
+1.000
+0.894
+1.000
+0.958
+0.822
+
+0.994
+0.998
+0.985
+1.000
+1.000
+1.000
+0.475
+1.000
+0.710
+1.000
+0.925
+0.488
+
+0.560
+0.827
+0.459
+0.619
+0.939
+0.937
+0.014
+0.956
+0.115
+0.797
+0.736
+0.118
+
+17
+
+

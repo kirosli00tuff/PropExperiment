@@ -217,6 +217,12 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     index_history stay); ACCOUNT_3 (DATABENTO_API_KEY3, pilot-only) as harness v14 2e908c81 (Fable APPROVE after
     fixes); V45 (the move, ACCOUNT_3, V34 corrected, V38 amended); the Topstep rules record refreshed for the Tier 1
     news window. Nothing bought or registered; N 538.
+  - Stage E.28 — Methods brief, firm-contract ranking and order-book pilot (V44, V45, V46). Run 2026-10-21 in two
+    sessions (Max, then E.28b on Pro; see reports/E.28_RETURN.md): the methods brief (costs and data granularity
+    bound the program, not missing mathematics; phased design), the blind ranking (Topstep x QM first, the next four
+    also QM; rests on CL-derived statistics), the pilot spec frozen for QM mbp-1 and its code GO after an Opus
+    stand-in review. Nothing bought (DATABENTO_API_KEY3 absent by the 20:30 deadline; the pilot then put on hold, V47);
+    acct-3 untouched and kept; N 538.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

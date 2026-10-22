@@ -1,0 +1,64 @@
+| Agent | Effort file | Model | Run | First (PDT) | Last (PDT) | Min | Tokens |
+|---|---|---|---|---|---|---|---|
+| MethodsInventory-OpusHigh | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:20 | 02:30 | 10 | 13,795,423 |
+| MethodReader-OpusHigh:DeepLOB | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:20 | 02:42 | 22 | 23,906,218 |
+| MethodReader-OpusHigh:LOB | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:20 | 02:44 | 24 | 24,646,665 |
+| MethodReader-OpusHigh:Hawkes | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:20 | 02:48 | 28 | 20,773,596 |
+| MethodReader-OpusHigh:SDE | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:20 | 02:44 | 24 | 18,842,025 |
+| MethodReader-OpusHigh:Control | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:20 | 02:39 | 19 | 18,615,449 |
+| ContractStats-OpusHigh | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:30 | 02:41 | 11 | 3,752,211 |
+| MethodReader-OpusHigh:OFI | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:39 | 02:58 | 19 | 16,804,677 |
+| MethodReader-OpusHigh:Pooled | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:41 | 02:57 | 16 | 15,027,211 |
+| MethodReader-OpusHigh:Filter | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:42 | 03:03 | 20 | 14,902,101 |
+| MethodReader-OpusHigh:StatsRMT | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:44 | 03:10 | 26 | 14,017,814 |
+| MethodReader-OpusHigh:AFML | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:44 | 03:09 | 25 | 18,546,707 |
+| MethodReader-OpusHigh:Firms | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:49 | 03:06 | 17 | 17,051,614 |
+| ContractReader-OpusHigh:crude | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:57 | 03:09 | 13 | 8,935,952 |
+| ContractReader-OpusHigh:natgas | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 02:58 | 03:09 | 12 | 5,990,880 |
+| ContractReader-OpusHigh:metals | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 03:03 | 03:10 | 7 | 1,794,397 |
+| ContractReader-OpusHigh:fx | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 03:06 | 03:10 | 5 | 2,066,482 |
+| MethodReader-OpusHigh:StatsRMT | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:11 | 05:17 | 6 | 3,593,700 |
+| ContractReader-OpusHigh:crude | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:11 | 05:30 | 19 | 16,989,790 |
+| MethodReader-OpusHigh:Firms | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:11 | 05:12 | 1 | 516,471 |
+| MethodReader-OpusHigh:AFML | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:11 | 05:12 | 1 | 902,903 |
+| ContractReader-OpusHigh:natgas | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:11 | 05:30 | 19 | 18,310,823 |
+| ContractReader-OpusHigh:metals | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:11 | 05:45 | 34 | 20,608,214 |
+| ContractReader-OpusHigh:fx | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:12 | 05:38 | 26 | 21,080,703 |
+| ContractReader-OpusHigh:crypto | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:12 | 05:42 | 30 | 23,308,486 |
+| ContractReader-OpusHigh:equity | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:17 | 05:43 | 25 | 22,635,808 |
+| ContractReader-OpusHigh:rates | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:30 | 06:11 | 41 | 35,949,333 |
+| ContractReader-OpusHigh:grains | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:30 | 06:08 | 37 | 29,271,958 |
+| FirmReader-OpusHigh:topstep | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:38 | 05:59 | 21 | 18,921,688 |
+| FirmReader-OpusHigh:lucid | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:42 | 06:04 | 22 | 14,624,972 |
+| FirmReader-OpusHigh:tradeify | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:43 | 06:10 | 27 | 17,489,540 |
+| FirmReader-OpusHigh:mffu | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:45 | 06:01 | 16 | 11,435,575 |
+| FirmReader-OpusHigh:bulenox | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 05:59 | 06:19 | 20 | 13,437,402 |
+| PlatformReader-OpusHigh | worker-high | claude-opus-5-5 | wf_aafdf932-52a | 06:01 | 06:17 | 15 | 15,585,926 |
+| MathReviewer-FableXHigh:G2 | worker-xhigh | claude-fable-5-1 | wf_6a9d64d8-26a | 06:05 | 06:18 | 14 | 4,394,703 |
+| MathReviewer-FableXHigh:G5 | worker-xhigh | claude-fable-5-1 | wf_cc674605-c65 | 06:08 | 06:22 | 14 | 1,948,818 |
+| MathReviewer-FableXHigh:G3 | worker-xhigh | claude-fable-5-1 | wf_32286c51-7c5 | 06:10 | 06:21 | 11 | 1,682,644 |
+| MathReviewer-FableXHigh:G4 | worker-xhigh | claude-fable-5-1 | wf_44c3806b-6c8 | 06:12 | 06:19 | 7 | 719,159 |
+| EconCoder-OpusXHigh | worker-xhigh | claude-opus-5-5 | wf_b313fd3e-77a | 10:12 | 11:09 | 57 | 29,910,369 |
+| FactTable-OpusHigh | worker-high | claude-opus-5-5 | wf_b313fd3e-77a | 10:12 | 10:36 | 24 | 20,468,921 |
+| MathReviewer-FableXHigh:G2 | worker-xhigh | claude-fable-5-1 | wf_6016fd3f-f3f | 10:12 | 10:37 | 25 | 2,574,878 |
+| MathReviewer-FableXHigh:G5 | worker-xhigh | claude-fable-5-1 | wf_6016fd3f-f3f | 10:12 | 10:31 | 19 | 3,341,331 |
+| MathReviewer-FableXHigh:G3 | worker-xhigh | claude-fable-5-1 | wf_ddfb96f0-bd7 | 10:31 | 11:02 | 31 | 4,221,144 |
+| BlindScorer-OpusXHigh | worker-xhigh | claude-opus-5-5 | wf_b313fd3e-77a | 10:36 | 10:54 | 19 | 7,203,034 |
+| MathReviewer-FableXHigh:G4 | worker-xhigh | claude-fable-5-1 | wf_53f0af3a-a4e | 10:36 | 11:11 | 34 | 9,773,081 |
+| MathReviewer-FableXHigh:G1 | worker-xhigh | claude-fable-5-1 | wf_92dc4ada-5dd | 10:38 | 11:08 | 30 | 4,854,154 |
+| MathReviewer-FableXHigh:G6 | worker-xhigh | claude-fable-5-1 | wf_bb7d9819-7ac | 10:42 | 11:09 | 27 | 2,734,189 |
+| EconCoder-OpusXHigh | worker-xhigh | claude-opus-5-5 | wf_b313fd3e-77a | 15:12 | 16:07 | 56 | 11,557,057 |
+| BlindScorer-OpusXHigh | worker-xhigh | claude-opus-5-5 | wf_b313fd3e-77a | 15:12 | 15:13 | 2 | 1,010,675 |
+| BriefFixer-SonnetHigh:G1 | worker-high | claude-sonnet-5-5 | wf_b778c409-c1a | 15:12 | 15:13 | 1 | 949,433 |
+| BriefFixer-SonnetHigh:G2 | worker-high | claude-sonnet-5-5 | wf_b778c409-c1a | 15:12 | 15:13 | 1 | 849,821 |
+| BriefFixer-SonnetHigh:G4 | worker-high | claude-sonnet-5-5 | wf_b778c409-c1a | 15:12 | 15:14 | 2 | 911,749 |
+| BriefFixer-SonnetHigh:G3 | worker-high | claude-sonnet-5-5 | wf_b778c409-c1a | 15:12 | 15:13 | 1 | 511,302 |
+| BriefFixer-SonnetHigh:G5 | worker-high | claude-sonnet-5-5 | wf_b778c409-c1a | 15:13 | 15:14 | 1 | 647,878 |
+| BriefFixer-SonnetHigh:G6 | worker-high | claude-sonnet-5-5 | wf_b778c409-c1a | 15:13 | 15:15 | 2 | 1,506,667 |
+| ScoreApplier-SonnetHigh | worker-high | claude-sonnet-5-5 | wf_6971bb48-723 | 15:13 | 16:06 | 53 | 2,461,132 |
+| PilotCoder-OpusXHigh | worker-xhigh | claude-opus-5-5 | Agent tool | 15:18 | 16:43 | 85 | 37,790,821 |
+| RankingReviewer-FableXHigh | worker-xhigh | claude-fable-5-1 | wf_cbe3e2d9-acc | 16:09 | 16:35 | 26 | 5,573,128 |
+| SpecReviewer-FableXHigh | worker-xhigh | claude-fable-5-1 | wf_cbe3e2d9-acc | 16:09 | 16:32 | 23 | 3,437,483 |
+| ScoreApplierV2-SonnetHigh | worker-high | claude-sonnet-5-5 | wf_997b4b50-44f | 16:37 | 16:41 | 4 | 2,941,988 |
+
+60 spawns, 688,108,273 tokens. Min is first to last message, so it includes any usage-limit pause the agent spanned.

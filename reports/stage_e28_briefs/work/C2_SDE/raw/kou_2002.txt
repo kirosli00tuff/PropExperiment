@@ -1,0 +1,2757 @@
+A Jump-Diffusion Model
+for Option Pricing
+S. G. Kou
+
+Department of Industrial Engineering and Operations Research, 312 Mudd Building,
+Columbia University, New York, New York 10027
+kou@ieor.columbia.edu
+
+B
+
+rownian motion and normal distribution have been widely used in the Black–Scholes
+option-pricing framework to model the return of assets. However, two puzzles emerge
+from many empirical investigations: the leptokurtic feature that the return distribution of
+assets may have a higher peak and two (asymmetric) heavier tails than those of the normal
+distribution, and an empirical phenomenon called “volatility smile” in option markets. To
+incorporate both of them and to strike a balance between reality and tractability, this paper
+proposes, for the purpose of option pricing, a double exponential jump-diffusion model.
+In particular, the model is simple enough to produce analytical solutions for a variety of
+option-pricing problems, including call and put options, interest rate derivatives, and pathdependent options. Equilibrium analysis and a psychological interpretation of the model are
+also presented.
+(Contingent Claims; High Peak; Heavy Tails; Interest Rate Models; Rational Expectations; Overreaction and Underreaction)
+
+1.
+
+Introduction
+
+Despite the success of the Black–Scholes model based
+on Brownian motion and normal distribution, two
+empirical phenomena have received much attention
+recently: (1) the asymmetric leptokurtic features—in
+other words, the return distribution is skewed to the
+left, and has a higher peak and two heavier tails than
+those of the normal distribution, and (2) the volatility
+smile. More precisely, if the Black–Scholes model is
+correct, then the implied volatility should be constant.
+In reality, it is widely recognized that the implied
+volatility curve resembles a “smile,” meaning it is a
+convex curve of the strike price.
+Many studies have been conducted to modify the Black–Scholes model to explain the two
+empirical phenomena. To incorporate the asymmetric leptokurtic features in asset pricing, a variety
+of models have been proposed:1 (a) chaos theory,
+1
+Although most of the studies focus on the leptokurtic features
+under the physical measure, it is worth mentioning that the
+leptokurtic features under the risk-neutral measure(s) lead to the
+“volatility smiles” in option prices.
+
+Management Science © 2002 INFORMS
+Vol. 48, No. 8, August 2002 pp. 1086–1101
+
+fractal Brownian motion, and stable processes; see, for
+example, Mandelbrot (1963), Rogers (1997), Samorodnitsky and Taqqu (1994); (b) generalized hyperbolic
+models, including log t model and log hyperbolic
+model; see, for example, Barndorff-Nielsen and
+Shephard (2001), Blattberg and Gonedes (1974);
+(c) time-changed Brownian motions; see, for example, Clark (1973), Madan and Seneta (1990), Madan
+et al. (1998), and Heyde (2000). An immediate problem with these models is that it may be difﬁcult to
+obtain analytical solutions for option prices. More
+precisely, they might give some analytical formulae
+for standard European call and put options, but any
+analytical solutions for interest rate derivatives and
+path-dependent options, such as perpetual American
+options, barrier, and lookback options, are unlikely.
+In a parallel development, different models are
+also proposed to incorporate the “volatility smile” in
+option pricing. Popular ones include: (a) stochastic
+volatility and ARCH models; see, for example, Hull
+and White (1987), Engle (1995), Fouque et al. (2000);
+(b) constant elasticity model (CEV) model; see,
+0025-1909/02/4808/1086$5.00
+1526-5501 electronic ISSN
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+for example, Cox and Ross (1976), and Davydov
+and Linetsky (2001); (c) normal jump models proposed by Merton (1976); (d) afﬁne stochastic-volatility
+and afﬁne jump-diffusion models; see, for example,
+Heston (1993), and Dufﬁe et al. (2000); (e) models
+based on Lévy processes; see, for example, Geman
+et al. (2001) and references therein; (f) a numerical
+procedure called “implied binomial trees”; see, for
+example, Derman and Kani (1994) and Dupire (1994).
+Aside from the problem that it might not be easy
+to ﬁnd analytical solutions for option pricing, especially for path-dependent options (such as perpetual American options, barrier, and lookback options),
+some of these models may not produce the asymmetric leptokurtic feature (see §2.3).
+The current paper proposes a new model with
+the following properties: (a) It offers an explanation for two empirical phenomena—the asymmetric
+leptokurtic feature, and the volatility smile (see §§3
+and 5.3). (b) It leads to analytical solutions to many
+option-pricing problems, including European call and
+put options (see §5); interest rate derivatives, such
+as swaptions, caps, ﬂoors, and bond options (see
+§5.3 and Glasserman and Kou 1999); path-dependent
+options, such as perpetual American options, barrier, and lookback options (see §2.3 and Kou and
+Wang 2000, 2001). (c) It can be embedded into a rational expectations equilibrium framework (see §4). (d) It
+has a psychological interpretation (see §2.2).
+The model is very simple. The logarithm of the
+asset price is assumed to follow a Brownian motion
+plus a compound Poisson process with jump sizes
+double exponentially distributed. Because of its simplicity, the parameters in the model can be easily
+interpreted, and the analytical solutions for option
+pricing can be obtained. The explicit calculation is
+made possible partly because of the memoryless
+property of the double exponential distribution.
+The paper is organized as follows. In §2, the model
+is proposed, is evaluated by four criteria, and is compared with other alternative models. Section 3 studies
+the leptokurtic feature. A rational expectations equilibrium justiﬁcation of the model is given in §4. Some
+preliminary results, including the Hh functions, are
+given in §5.1. Formulae for option-pricing problems,
+including options on futures, are provided in §5.2.
+Management Science/Vol. 48, No. 8, August 2002
+
+The “volatility smiles” phenomenon is illustrated in
+§5.3. The ﬁnal section discusses some limitations of
+the model.
+
+2.
+
+The Model
+
+2.1. The Model Formulation
+The following dynamic is proposed to model the asset
+price, St, under the physical probability measure P:
+
+
+N t
+
+dSt
+Vi − 1
+=  dt +  dW t + d
+(1)
+St−
+i=1
+where W t is a standard Brownian motion, N t is
+a Poisson process with rate , and Vi  is a sequence
+of independent identically distributed (i.i.d.) nonnegative random variables such that Y = logV  has an
+asymmetric double exponential distribution2 3 with
+the density
+fY y = p · 1 e−1 y 1y≥0 + q · 2 e2 y 1y<0
+1 > 1 2 > 0
+where p q ≥ 0, p + q = 1, represent the probabilities of
+upward and downward jumps. In other words,
+ +
+
+with probability p
+ ,
+d
+logV  = Y =
+(2)
+− − , with probability q
+where  + and  − are exponential random variables
+with means 1/1 and 1/2 , respectively, and the notad
+tion = means equal in distribution. In the model,
+all sources of randomness, N t, W t, and Y s, are
+assumed to be independent, although this can be
+relaxed, as will be suggested in §2.2. For notational
+simplicity and in order to get analytical solutions
+for various option-pricing problems, the drift  and
+the volatility  are assumed to be constants, and
+the Brownian motion and jumps are assumed to be
+2
+
+If 1 = 2 and p = 1/2, then the double exponential distribution is
+also called “the ﬁrst law of Laplace” (proposed by Laplace in 1774),
+while the “second law of Laplace” is the normal density.
+
+3
+Ramezani and Zeng (1999) independently propose the same jumpdiffusion model from an econometric viewpoint as a way of
+improving the empirical ﬁt of Merton’s normal jump-diffusion
+model to stock price data.
+
+1087
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+one dimensional. These assumptions, however, can be
+easily dropped to develop a general theory.
+Solving the stochastic differential equation (1) gives
+the dynamics of the asset price:
+
+
+ N t
+
+1 2
+St = S0 exp  −  t + W t
+Vi 
+2
+i=1
+
+(3)
+
+Note that EY  = p − q , VarY  = pq 1 + 1 2 +  p2 +
+1
+2
+1
+2
+1
+q
+, and
+2
+2
+
+EV  = EeY 
+2
+1
+=q
++p
+2 + 1
+1 − 1
+
+1 > 1
+
+2 > 0 (4)
+
+The requirement 1 > 1 is needed to ensure that
+EV  <  and ESt < ; it essentially means that
+the average upward jump cannot exceed 100%, which
+is quite reasonable.
+There are two interesting properties of the double exponential distribution that are crucial for the
+model. First, it has the leptokurtic feature; see Johnson
+et al. (1995). As will be shown in §3, the leptokurtic feature of the jump size distribution is inherited
+by the return distribution. Secondly, a unique feature (also inherited from the exponential distribution)
+of the double exponential distribution is the memoryless property. This special property explains why
+the closed-form solutions for various option-pricing
+problems, including barrier, lookback, and perpetual American options, are feasible under the double exponential jump-diffusion model while it seems
+impossible for many other models, including the normal jump-diffusion model (Merton 1976); see §2.3 for
+details.
+2.2. Evaluating the Model
+Because essentially all models are “wrong” and rough
+approximations of reality, instead of arguing the
+“correctness” of the proposed model I shall evaluate and justify the double exponential jump-diffusion
+model by four criteria.
+1. A model must be internally self-consistent. In
+the ﬁnance context, it means that a model must be
+arbitrage-free and can be embedded in an equilibrium
+setting. Note that some of the alternative models may
+1088
+
+have arbitrage opportunities, and thus are not selfconsistent (to give an example, it is shown by Rogers
+1997 that models using fractal Brownian motion may
+lead to arbitrage opportunities). The double exponential jump-diffusion model can be embedded in a rational expectations equilibrium setting; see §4.
+2. A model should be able to capture some important empirical phenomena. The double exponential
+jump-diffusion model is able to reproduce the leptokurtic feature of the return distribution (see §3)
+and the “volatility smile” observed in option prices
+(see §5.3). In addition, the empirical tests performed
+in Ramezani and Zeng (1999) suggest that the double
+exponential jump-diffusion model ﬁts stock data better than the normal jump-diffusion model. Andersen
+et al. (1999) demonstrate empirically that, for the S&P
+500 data from 1980–1996, the normal jump-diffusion
+model has a much higher p-value (0.0152) than those
+of the stochastic volatility model (0.0008) and the
+Black–Scholes model <10−5 . Therefore, the combination of results in the two papers gives some empirical support of the double exponential jump-diffusion
+model.4
+3. A model must be simple enough to be amenable
+to computation. Like the Black–Scholes model, the
+double exponential jump-diffusion model not only
+yields closed-form solutions for standard call and
+put options (see §5), but also leads to a variety
+of closed-form solutions for path-dependent options,
+such as barrier options, lookback options, and perpetual American options (see §2.3 and Kou and Wang
+2000, 2001), as well as interest rate derivatives (see
+§5.3 and Glasserman and Kou 1999).
+4. A model must have some (economical, physical,
+psychological, etc.) interpretation. One motivation for
+the double exponential jump-diffusion model comes
+from behavioral ﬁnance. It has been suggested from
+extensive empirical studies that markets tend to have
+4
+However, we should emphasize that empirical tests should not be
+used as the only criterion to judge a model good or bad. Empirical
+tests tend to favor models with more parameters. However, models
+with many parameters tend to make calibration more difﬁcult (the
+calibration may involve high-dimensional numerical optimization
+with many local optima), and tend to have less tractability. This is
+a part of the reason why practitioners still like the simplicity of the
+Black–Scholes model.
+
+Management Science/Vol. 48, No. 8, August 2002
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+both overreaction and underreaction to various good or
+bad news (see, for example, Fama 1998 and Barberis
+et al. 1998, and references therein). One may interpret
+the jump part of the model as the market response
+to outside news. More precisely, in the absence of
+outside news the asset price simply follows a geometric Brownian motion. Good or bad news arrives
+according to a Poisson process, and the asset price
+changes in response according to the jump size distribution. Because the double exponential distribution5 has both a high peak and heavy tails, it can be
+used to model both the overreaction (attributed to the
+heavy tails) and underreaction (attributed to the high
+peak) to outside news. Therefore, the double exponential jump-diffusion model can be interpreted as an
+attempt to build a simple model, within the traditional random walk and efﬁcient market framework,
+to incorporate investors’ sentiment.
+Incidently, as a by-product, the model also suggests
+that the fact of markets having both overreaction and
+underreaction to outside news can lead to the leptokurtic feature of asset return distribution.
+2.3. Comparison with Other Models
+There are many alternative models that can satisfy at
+least some of the four criteria listed above. A main
+attraction of the double exponential jump-diffusion
+model is its simplicity, particularly its analytical tractability for path-dependent options and interest rate derivatives.
+Unlike the original Black–Scholes model, many alternative models can only compute prices for standard call and put options, and analytical solutions
+for other equity derivatives (such as path-dependent
+options) and some most liquid interest rate derivatives (such as swaption, caps, and ﬂoors) are unlikely.
+Even numerical methods for interest rate derivatives
+and path-dependent options are not easy, as the convergence rates of binomial trees and Monte Carlo
+simulation for path-dependent options are typically
+much slower than those for call and put options (for
+a survey, see Boyle et al. 1997).
+5
+
+Interestingly enough, the double exponential distribution has been
+widely used in mathematical psychology literature, particularly in
+vision cognitive studies; see, for example, the list of papers on the
+web page of David Mumford at the computer vision group, Brown
+University.
+
+Management Science/Vol. 48, No. 8, August 2002
+
+This makes it harder to persuade practitioners to
+switch from the Black–Scholes model to more realistic alternative models. The double exponential jumpdiffusion model attempts to improve the empirical
+implications of the Black–Scholes model while still
+retaining its analytical tractability. Below is a more
+detailed comparison between the proposed model
+and some popular alternative models.
+(1) The CEV Model. Like the double exponential
+jump-diffusion model, analytical solutions for pathdependent options (see Davydov and Linetsky 2001)
+and interest rate derivatives (e.g., Cox et al. 1985 and
+Andersen and Andersen 2000) are available under the
+CEV model. However, the CEV model does not have
+the leptokurtic feature. More precisely, the return distribution in the CEV model has a thinner right tail
+than that of the normal distribution. This undesirable
+feature also has a consequence in terms of the implied
+volatility in option pricing. Under the CEV model the
+implied volatility can only be a monotone function of
+the strike price. Therefore, if the implied volatility is
+a convex function (but not necessarily a decreasing
+function), as frequently observed in option markets,
+the CEV model is unable to reproduce the implied
+volatility curve.
+(2) The Normal Jump-Diffusion Model. Merton
+(1976) was the ﬁrst to consider a jump-diffusion
+model similar to (1) and (3). In Merton’s paper
+Y s are normally distributed. Both the double exponential and normal jump-diffusion models can lead
+to the leptokurtic feature (although the kurtosis
+from the double exponential jump-diffusion model
+is signiﬁcantly more pronounced), implied volatility smile, and analytical solutions for call and put
+options, and interest rate derivatives (such as caps,
+ﬂoors, and swaptions; see Glasserman and Kou 1999).
+The main difference between the double exponential jump-diffusion model and the normal jumpdiffusion model is the analytical tractability for the
+path-dependent options.
+Here I provide some intuition to understand why
+the double exponential jump-diffusion model can lead
+to closed-form solutions for path-dependent options,
+while the normal jump-diffusion model cannot. To
+price perpetual American options, barrier options,
+1089
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+and lookback options for general jump-diffusion processes, it is crucial to study the ﬁrst passage time of
+a jump-diffusion process to a ﬂat boundary. When a
+jump-diffusion process crosses a boundary sometimes
+it hits the boundary exactly and sometimes it incurs
+an “overshoot” over the boundary.
+The overshoot presents several problems for option
+pricing. First, one needs to get the exact distribution
+of the overshoot. It is well known from stochastic
+renewal theory that this is only possible if the jump
+size Y has an exponential-type distribution, thanks to
+the special memoryless property of the exponential
+distribution. Secondly, one needs to know the dependent structure between the overshoot and the ﬁrst
+passage time. The two random variables are conditionally independent, given that the overshoot is bigger than 0, if the jump size Y has an exponential-type
+distribution, thanks to the memoryless property. This
+conditionally independent structure seems to be very
+special to the exponential-type distribution and does
+not hold for other distributions, such as the normal
+distribution.
+Consequently, analytical solutions for the perpetual American, lookback, and barrier options can be
+derived for the double exponential jump-diffusion
+model. However, it seems impossible to get similar
+results for other jump-diffusion processes, including
+the normal jump-diffusion model.
+(3) Models
+Based
+on
+t-Distribution.
+The
+t-distribution is widely used in empirical studies
+of asset pricing. One problem with t-distribution
+(or other distributions with power-type tails) as a
+return distribution is that it cannot be used in models
+with continuous compounding. More precisely, suppose that at time 0 the daily return distribution X has
+a power-type right tail. Then in models with continuous compounding, the asset price tomorrow At is
+given by At = A0eX . Since X has a power-type
+right tail, it is clear that EeX  = . Consequently,
+EAt = EA0eX  = A0EeX  = 
+In other words, the asset price tomorrow has an inﬁnite expectation. This paradox holds for t-distribution
+with any degrees of freedom, as long as one considers
+models with continuous compounding. Furthermore,
+1090
+
+if the risk-neutral return also has a power-type right
+tail, then the call option price is also inﬁnite:
+E∗ At − K+  ≥ E∗ At − K = 
+Therefore, the only relevant models with
+t-distributed returns are models with discretely compounded returns. However, in models with discrete
+compounding, closed-form solutions are in general
+impossible.6
+(4) Stochastic Volatility Models. The double exponential jump-diffusion model and the stochastic
+volatility model complement each other: The stochastic volatility model can incorporate dependent structure better, while the double exponential jumpdiffusion model has better analytical tractability,
+especially for path-dependent options and complex
+interest rate derivatives. One empirical phenomenon
+worth-mentioning is that the daily return distribution tends to have more kurtosis than the distribution
+of monthly returns. As Das and Foresi (1996) point
+out, this is consistent with models with jumps, but
+inconsistent with stochastic volatility models. More
+precisely, in stochastic volatility models (or essentially
+any models in a pure diffusion setting) the kurtosis
+decreases as the sampling frequency increases, while
+in jump models the instantaneous jumps are independent of the sampling frequency.
+(5) Afﬁne Jump-Diffusion Models. Dufﬁe et al.
+(2000) propose a very general class of afﬁne jumpdiffusion models which can incorporate jumps,
+stochastic volatility, and jumps in volatility. Both normal and double exponential jump-diffusion models can be viewed as special cases of their model.
+However, because of the special features of the
+exponential distribution, the double exponential
+jump-diffusion model leads to analytical solutions
+for path-dependent options, which are difﬁcult for
+other afﬁne jump-diffusion models (even numerical methods are not easy). Furthermore, the double exponential model is simpler than general afﬁne
+6
+
+Another interesting point worth mentioning is that, for a sample size of 5,000 (20-years-daily data), it may be very difﬁcult to
+distinguish empirically the double exponential distribution from
+the power-type distributions, such as t-distribution (although it is
+quite easy to detect the differences between them and the normal
+density).
+
+Management Science/Vol. 48, No. 8, August 2002
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+jump-diffusion models: It has fewer parameters that
+makes calibration easier. The double exponential
+jump-diffusion model attempts to strike a balance
+between reality and tractability.
+(6) Models Based on Lévy Processes (the processes with independent and stationary increments).
+Although the double exponential jump-diffusion
+model is a special case of Lévy processes, because of
+the special features of the exponential distribution it
+has analytical tractability for path-dependent options
+and interest rate derivatives, which are difﬁcult for
+other Lévy processes.
+
+3.
+
+Leptokurtic Feature
+
+Using (3), the return over a time interval t is given
+by:
+St + t
+St
+=
+−1
+St
+St
+
+
+1 2
+= exp  −  t + W t + t − W t
+2
++
+
+N t+t
+
+
+
+i=N t+1
+
+Yi − 1
+
+where the summation over an empty set is taken to
+be zero. If the time interval t is small, as in the case
+of daily observations, the return can be approximated
+in distribution, ignoring the terms with orders higher
+than t and using the expansion ex ≈ 1 + x + x2 /2, by
+√
+St
+(5)
+≈ t + Z t + B · Y
+St
+where Z and B are standard normal and Bernoulli
+random variables, respectively, with PB = 1 = t
+and PB = 0 = 1 − t, and Y is given by (2).
+The density7 g of the right-hand side of (5), being
+an approximation for the return St/St, is plotted
+7
+
+The density
+
+
+
+1 − t
+x − t
+gx =
+$
+√
+√
+ t
+ t
+
+
+
+x − t −  2 1 t
+ 2 2 t/2 −x−t1
++ t p1 e 1
+e
+%
+√
+ t
+2 2
+
++ q2 e 2 t/2 ex−t2
+
+
+x − t +  2 2 t
+×% −
+√
+ t
+
+Management Science/Vol. 48, No. 8, August 2002
+
+in Figure 1 along with the normal density with the
+same mean and variance. The parameters are t =
+1 day = 1/250 year,  = 20% per year,  = 15% per
+year, = 10 per year, p = 030, 1/1 = 2%, and 1/2 =
+4%. In this case, EY  = −22%, and SDY  = 447%. In
+other words, there are about 10 jumps per year with
+the average jump size −22%, and the jump volatility 447%. The jump parameters used here seem to
+be quite reasonable, if not conservative, for the U.S.
+stocks.
+The leptokurtic feature is quite evident. The peak
+of the density g is about 31, whereas that of the normal density is about 25. The density g has heavier tails than the normal density, especially for the
+left tail, which could reach well below −10% while
+the normal density is basically conﬁned within −6%.
+Additional numerical plots suggest that the feature of
+having a higher peak and heavier tails becomes more
+pronounced if either 1/i (the jump size expectations)
+or (the jump rate) increases.
+
+4.
+
+Equilibrium for General
+Jump-Diffusion Models
+
+Consider a typical rational expectations economy
+(Lucas 1978) in which a representative investor
+tries to solve a utility maximization problem
+
+maxc E' 0 U ct t dt), where U ct t is the utility function of the consumption process ct. There is
+an exogenous endowment process, denoted by *t,
+available to the investor. Also given to the investor is
+an opportunity to invest in a security (with a ﬁnite
+liquidation date T0 , although T0 can be very large)
+which pays no dividends. If *t is Markovian, it can
+be shown (see, for example, pp. 484–485 in Stokey
+and Lucas 1989) that, under mild conditions, the rational expectations equilibrium price (also called the
+with
+
+
+
+
+p
+q
+−
+t
+1 2
+2 
+
+ 
+1
+1
+p
+q
+Varg G =  2 t + pq
+t
++
++
++
+1 2
+12 22
+2
+
+q
+p
+−
+t1 − t
++
+1 2
+Eg G = t +
+
+where $· is the standard normal density function.
+
+1091
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+Figure 1
+30
+
+30
+
+25
+
+28
+
+20
+26
+15
+24
+
+10
+
+22
+
+5
+− 0.1
+
+− 0.05
+
+0.05
+
+0.1
+
+− 0.01
+
+1
+
+1
+
+0.8
+
+0.8
+
+0.6
+
+0.6
+
+0.4
+
+0.4
+
+0.2
+
+0.2
+
+− 0.1 − 0.08 − 0.06 − 0.04 − 0.02
+
+− 0.005
+
+0.02
+
+0.005
+
+0.04
+
+0.06
+
+0.08
+
+0.01
+
+0.1
+
+Notes. The ﬁrst panel compares the overall shapes of the density g and the normal density with the same mean and variance, the second one details the
+shapes around the peak area, and the last two show the left and right tails. The dotted line is used for the normal density, and the solid line is used for the
+model.
+
+“shadow” price) of the security, pt, must satisfy the
+Euler equation
+pt =
+
+EUc *T  T pT  t 
+Uc *t t
+
+∀ T ∈ 't T0 )
+
+(6)
+
+where Uc is the partial derivative of U with respect
+to c. At this price pt, the investor will never change
+his/her current holdings to invest in (either long
+or short) the security, even though he/she is given
+the opportunity to do so. Instead, in equilibrium the
+investor ﬁnds it optimal to just consume the exogenous endowment; i.e., ct = *t for all t ≥ 0.
+In this section I shall derive explicitly the implications of the Euler equation (6) when the endowment
+process *t follows a general jump-diffusion process
+under the physical measure P:
+
+N t
+
+d*t
+= 1 dt + 1 dW1 t + d
+Vi − 1
+(7)
+*t−
+i=1
+where the Vi ≥ 0 are any independent identically distributed, nonnegative random variables. In addition,
+all three sources of randomness, the Poisson process
+N t the standard Brownian motion W1 t, and the
+jump sizes V are assumed to be independent.
+1092
+
+Although it is intuitively clear that, generally
+speaking, the asset price pt should follow a similar
+jump-diffusion process as that of the dividend process *t, a careful study of the connection between
+the two is needed. This is because pt and *t
+may not have similar jump dynamics (see the remark
+after Corollary 1). Furthermore, deriving explicitly the
+change of parameters from *t to pt also provides
+some valuable information about the risk premiums
+embedded in jump-diffusion models.
+The work in this section builds upon and extends
+the previous work by Naik and Lee (1990), in which
+the special case that Vi has a lognormal distribution
+is investigated. Another difference is that Naik and
+Lee (1990) require that the asset pays continuous dividends and there is no outside endowment process,
+while here the asset pays no dividends and there is an
+outside endowment process. Consequently, the pricing formulae are different even in the case of lognormal jumps.
+For simplicity, as in Naik and Lee (1990), I shall
+only consider the utility function of the special forms
+.
+U c t = e−-t c. if 0 < . < 1 and U c t = e−-t logc if
+. = 0, where - > 0 (although most of the results below
+Management Science/Vol. 48, No. 8, August 2002
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+hold for more general utility functions). Under these
+types of utility functions, the rational expectations
+equilibrium price of (6) becomes
+pt =
+
+Ee−-T *T .−1 pT  t 
+
+e−-t *t.−1
+
+(8)
+
+Assumption. The discount rate - should be large
+enough so that
+1
+.−1
+- > −1 − .1 + 12 1 − .2 − . + /1
+2
+a
+
+a
+
+As will be seen in Proposition 1, this assumption
+guarantees that in equilibrium the term structure of
+interest rates is positive.
+.−1
+
+Proposition 1. Suppose /1
+< . (1) Letting
+Bt T  be the price of a zero coupon bond with maturity
+T , the yield r 1= −1/T − tlogBt T  is a constant
+independent of T ,
+1
+r = - + 1 − .1 − 12 1 − .2 − .
+2
+.−1
+
+> 0
+
+(2) Let Zt 1= ert Uc *t t = er−-t *t.−1 . Then
+Zt is a martingale under P,
+
+∗
+
+Using Zt, one can deﬁne a new probability measure P :
+dP∗ /dP 1= Zt/Z0 Under P∗ , the Euler Equation (8)
+holds if and only if the asset price satisﬁes
+∀ T ∈ 't T0 )
+
+(11)
+
+Furthermore, the rational expectations equilibrium price of
+a (possibly path-dependent) European option, with the payoff 3S T  at the maturity T , is given by
+3S t = e
+
+−rT −t
+
+∗
+
+E 3S T  t 
+
+∀ t ∈ '0 T )
+
+Management Science/Vol. 48, No. 8, August 2002
+
+.+5−1
+
+(12)
+
+.−1
+
+− /1
+
+ = r + 1 41 − . − /1
+
+
+1
+= - + 1 − . 1 − 12 2 − . + 1 4
+2
+.+5−1
+
+(10)
+
+.−1
+
+<  and /1
+< . The
+Theorem 1. Suppose /1
+model (13) satisﬁes the equilibrium requirement (11) if and
+only if
+
+− /1
+
+i=1
+
+St = e−rT −t E∗ ST  t 
+
+where W2 t is a Brownian motion independent of
+W1 t. In other words, the same Poisson process
+affects both the endowment *t and the asset price
+St, and the jump sizes are related through a power
+function, where the power 5 ∈ −  is an arbitrary
+constant. The diffusion coefﬁcients and the Brownian
+motion part of *t and St, though, are totally different. It remains to determine what constraints should
+be imposed on this model so that the jump-diffusion
+model can be embedded in the rational expectations
+equilibrium requirement (8) or (11).
+.+5−1
+
+(9)
+
+dZt
+.−1
+= − /1
+dt + 1 . − 1 dW1 t
+Zt−
+
+N t
+ .−1
++d
+Vi − 1 
+
+
+
+
+dSt
+=  dt +  4 dW1 t + 1 − 42 dW2 t
+St−
+
+
+N t
+
+5
++d
+Vi − 1
+Vi = V i
+(13)
+i=1
+
+where the notation /1 means /1 1= E'V a − 1).
+
+− /1
+
+Proof. See Appendix A. 
+Given the endowment process *t, it must be
+decided what stochastic processes are suitable for the
+asset price St to satisfy the equilibrium requirement
+(8) or (11). I now postulate a special jump-diffusion
+form for St,
+
+
+
+(14)
+
+If (14) is satisﬁed, then under P∗ ,
+dSt
+= r dt −
+St−
+
+∗
+
+5
+
+E∗ Vi − 1 dt
+
+∗
+
++  dW t + d
+
+N t
+
+
+i=1
+
+
+5
+Vi − 1
+
+
+
+(15)
+
+Here, under P∗ , W ∗ t is a new Brownian motion, N t is
+a new Poisson process with jump rate ∗ = EVi.−1  =
+.−1
++ 1, and {Vi  are independent identically dis/1
+tributed random variables with a new density under P∗ :
+fV∗ x =
+
+1
+.−1
+/1
++1
+
+x.−1 fV x
+
+(16)
+
+1093
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+Proof. See Appendix A. 
+The following corollary gives a condition under
+which all three dynamics, *t and St under P and
+St under P∗ , have the same jump-diffusion form,
+which is very convenient for analytical calculation.
+Corollary 1. Suppose the family  of distributions
+of the jump size V for the endowment process *t satisﬁes
+that, for any real numbers a ∈ '0 1 and b ∈ − ,
+V b ∈  and
+
+const · xa−1 fV x ∈ 
+
+(17)
+a−1
+
++ 1−1
+where the normalizing constant, const, is /1
+a−1
+(provided that /1
+< ). Then the jump sizes for the
+asset price St under P and the jump sizes for St under
+the rational expectations risk-neutral measure P∗ all belong
+to the same family  .
+Proof. Immediately follows from (7), (13), and
+(16). 
+Condition (17) essentially requires that the jump
+size distribution belongs to the exponential family.
+It is satisﬁed if logV  has a normal distribution or
+a double exponential distribution. However, the log
+power-type distributions, such as log t-distribution,
+do not satisfy (17).
+
+5.
+
+Option Pricing
+
+In this section I will compute the rational expectations
+equilibrium option-pricing formula (12) explicitly for
+the European call and put options. For notational simplicity, I will drop ∗ in the risk-neutral notation, i.e.,
+write 1 instead of 1∗ , etc. To compute (12), one has to
+study the distribution of the sum of the double exponential random variables and normal random variables. Fortunately, this distribution can be obtained
+in closed form in terms of the Hh function, a special
+function of mathematical physics.
+5.1. Hh Functions
+For every n ≥ 0, the Hh function is a nonincreasing
+function deﬁned by:
+ 
+1  
+2
+Hhn−1 y dy =
+t − xn e−t /2 dt ≥ 0
+Hhn x =
+n! x
+x
+n = 0 1 2 
+(18)
+√
+√
+2
+Hh−1 x = e−x /2 = 28$x
+Hh0 x = 28%−x9
+1094
+
+see Abramowitz and Stegun (1972, p. 691). The Hh
+function can be viewed as a generalization of the
+cumulative normal distribution function.
+The integral in (18) can be evaluated very fast by
+many software packages (for example, Mathematica).8
+In addition,
+√
+2
+Hhn x = 2−n/2 8e−x /2
+
+1
+1 1 1 2
+1
+3 1 2 
+1 F1  2 n+ 2 2 2 x 
+1 F1  2 n+1 2 2 x 
+×
+−x
+√
+;  21 + 12 n
+2; 1+ 12 n
+where 1 F1 is the conﬂuent hypergeometric function.
+A three-term recursion is also available for the Hh
+function (see pp. 299–300 and p. 691 of Abramowitz
+and Stegun 1972):
+nHhn x = Hhn−2 x − xHhn−1 x
+
+n ≥ 1
+
+(19)
+
+Therefore, one can compute all Hhn x n ≥ 1, by
+using the normal density function and normal distribution function. The Hh function is illustrated in
+Figure 2.
+5.2. European Call and Put Options
+Introduce the following notation: For any given probability P, deﬁne
+<  
+
+p 1 2 9 a T  1= PZT  ≥ a
+
+N t
+where Zt = t +  W t + i=1 Yi Y has a double exponential distribution with density fY y ∼ p ·
+1 e−1 y 1y≥0 + q · 2 ey2 1y<0 , and N t is a Poisson
+process with rate . The pricing formula of the call
+option will be expressed in terms of < , which in
+turn can be derived as a sum of Hh functions. An
+explicit formula for < will be given in Theorem B.1 in
+Appendix B.
+8
+
+A short code (about seven lines) can be downloaded from
+the author’s Web page. Note that the integrand in (18) has
+√
+a maxima at x + x2 + 4n/2; therefore, to numerically compute the integral, one should split the integral more around the
+maxima.
+
+Management Science/Vol. 48, No. 8, August 2002
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+Figure 2
+
+The Hh Function for n = 1 3 5 with the Steepest Curve for n = 5 and the Flattest Curve for n = 1
+
+80
+
+60
+
+40
+
+20
+
+−4
+
+−2
+
+2
+
+Theorem 2. From (12), the price of a European call
+option 9 is given by
+
+1
+3c 0 = S0< r +  2 − /  ˜ p̃ ˜ 1 ˜ 2 9
+2
+
+logK/S0 T
+
+1
+− Ke−rT · < r −  2 − / 
+2
+
+logK/S0 T
+
+p  1 2 9
+(20)
+
+where
+p̃ =
+
+1
+p
+·
+1 + / 1 − 1
+
+˜ 1 = 1 − 1
+
+p1
+q2
+˜ 2 = 2 + 1 ˜ = / + 1 / =
++
+− 1
+1 − 1 2 + 1
+The price of the corresponding put option, 3p 0, can be
+obtained by the put-call parity:
+3p 0 − 3c 0 = e−rT E∗ K − ST + − ST  − K+ 
+= e−rT E∗ K − ST  = Ke−rT − S0
+9
+
+To give a numerical example, if 1 = 10 2 = 5 = 1 p = 04  =
+016 r = 5% S0 = 100 K = 98 T = 05 then (20) yields the call
+price 9.14732. Although in the pricing formula < involves inﬁnite
+series, my experience suggests that numerically only the ﬁrst 10 to
+15 terms in the series are needed for most applications.
+
+Management Science/Vol. 48, No. 8, August 2002
+
+4
+
+The result (20) resembles the Black-Scholes formula for a call option under the geometric Brownian motion model, with < taking the place of %. The
+proof of Theorem 2 is similar to that of Theorem 3 in
+Kou and Wang (2001), hence is omitted.
+Now I consider the problem of pricing options on
+futures contracts. Assume, for now, that the term
+structure of interest rate is ﬂat, and r is a constant.
+Then the futures price, F t T ∗ , with delivery date T ∗ ,
+∗
+is given by F t T ∗  = E∗ ST ∗  t  = erT −t St.
+Corollary 2. The price of the European call option on
+a futures contract is given by
+3c F D F 0 T ∗  T 
+
+
+1 2
+= D · F 0 T ∗ <
+ − /  ˜ p̃ ˜ 1 ˜ 2 9
+2
+
+ 
+
+K
+1
+log
+T − K< −  2 − / 
+∗
+F 0 T 
+2
+
+ 
+K
+p 1 2 9 log
+T
+F 0 T ∗ 
+where D = e−rT . The put option can be priced according to
+the put-call parity:
+3p F D F 0 T ∗  T  − 3c F D F 0 T ∗  T 
+= e−rT K − F 0 T ∗ 
+
+1095
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+∗
+
+Proof. Since F T T ∗  − K+ = erT −T  ST  −
+∗
+Ke−rT −T  + , we have
+
+Figure 3
+
+Midmarket and Model-Implied Volatilities for Japanese
+LIBOR Caplets in May 1998
+
+E'e−rT F T T ∗  − K+ )
+
+
+1
+rT ∗ −T 
+=e
+S0< r +  2 − /  ˜ p̃ ˜ 1 ˜ 2 9
+2
+
+∗
+logKe−rT −T  /S0 T
+
+1
+e < r − 2 − / 
+− Ke
+2
+
+∗
+1 2 9 logKe−rT −T  /S0 T
+−rT ∗ −T  −rT
+
+
+=e
+
+−rT
+
+p
+
+
+
+1
+F 0 T < r +  2 − /  ˜ p̃ ˜ 1 ˜ 2 9
+2
+
+logK/F 0 T ∗  + rT T
+∗
+
+
+
+1
+− K< r −  2 − / 
+2
+
+p  1 2 9
+
+
+logK/F 0 T ∗  + rT T
+from which the conclusion follows by noting that
+N T 
+Pr + T + W T  + i=1 Yi ≥ a + rT  = PT +
+N T 
+W T  + i=1 Yi ≥ a. 
+Using the fact that for every t ≥ 0, Zt converges in
+distribution to t + W t as both 1 →  and 2 →
+, one easily gets the following corollary.
+Corollary 3. (1) As the jump size gets smaller and
+smaller, the pricing formulae in Theorem 2 and Corollary
+2 degenerate to the Black–Scholes formula and Black’s
+futures option formula. More precisely, as both 1 → 
+and 2 →  while all other parameters remain ﬁxed,
+3c 0 → S0%b+  − Ke−rT %b− 
+3c F 0 → e−rT F 0 T ∗ %b+ F  − K%b− F 
+where
+b± 1=
+
+logS0/K + r ±  2 /2T
+√
+ T
+
+b± F 1=
+
+logF 0 T ∗ /K ±  2 T /2
+
+√
+ T
+
+(2) If the jump rate is zero, i.e., = 0, then the pricing
+formulae again degenerate to the Black–Scholes and Black’s
+futures option formulae, respectively.
+
+1096
+
+Notes. The parameters used in the ﬁtted model are: for the two-year caplet
+1 = 37 2 = 18 p = 004 = 14 = 021; and for the nine-year caplet
+1 = 23 2 = 18 p = 009 = 02 = 009.
+
+5.3. The “Volatility Smile”
+To illustrate that the model can produce “implied
+volatility smile,” I consider a real data set used ﬁrst
+in Andersen and Andreasen (2000) for two-year and
+nine-year caplets in the Japanese LIBOR market as of
+late May 1998. Figure 3 shows both observed implied
+volatility curves and calibrated implied volatility
+curves derived by using the futures option formula
+in Corollary 2, with the discount parameter D being
+the corresponding bond prices and the underlying
+asset being the LIBOR rate. For details of calibration
+and the theoretical justiﬁcation of using the futures
+option formula for caplets; see Glasserman and Kou
+(1999).
+I should emphasize that this example is not meant
+to be an empirical test of the model; it only serves as
+an illustration to show that the model can produce a
+close ﬁt even to a very sharp volatility skew.
+
+6.
+
+Limitations of the Model
+
+There are several limitations of the model. First,
+one disadvantage of the model is that the pricing
+formulae, although analytical, appear quite complicated. This perhaps is not a major problem because
+
+Management Science/Vol. 48, No. 8, August 2002
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+the Hh function can be computed easily, and what
+appears to be lengthy to human eyes might make little difference in terms of computer programming, as
+long as it is a closed-form solution.
+Secondly, a more serious criticism is the difﬁculties with hedging. Due to the jump part, the market is incomplete, and the conventional riskless hedging arguments are not applicable here. However, it
+should be pointed out that the riskless hedging is
+really a special property of continuous-time Brownian
+motion, and it does not hold for most of the alternative models. Even within the Brownian motion framework, the riskless hedging is impossible if one wants
+to do it in discrete time. For some suggestions about
+hedging with jump risk, see, for example, Grünewald
+and Trautmann (1996), Merton (1976), and Naik and
+Lee (1990).
+Finally, just like all models based on Lévy processes,
+one empirical observation that the double exponential
+jump-diffusion model cannot incorporate is the possible dependence structure among asset returns (the
+so-called “volatility clustering effect”), simply because
+the model assumes independent increments. Here a
+possible way to incorporate the dependence is to use
+some other point process, N t with dependent increments, to replace the Poisson process N t, while still
+retaining the independence between the Brownian
+motion, the jump sizes, and N t. The modiﬁed model
+no longer has independent increments, yet is simple
+enough to produce closed-form solutions, at least for
+standard call and put options. However, it seems difﬁcult to get analytical solutions for path-dependent
+options by using the new process N t instead
+of N t.
+
+Appendix A:
+Expectations
+
+Derivation of the Rational
+
+Proof of Proposition 1.
+(1) Since BT T  = 1, Equation (8) yields
+Bt T  = e−-T −t
+
+E*T .−1 t 
+
+*t.−1
+
+(A1)
+
+Using the facts that
+
+
+*T 
+*t
+
+.−1
+
+
+
+
+1
+= exp . − 1 1 − 12 T − t
+2
+
++ 1 . − 1W1 T  − W1 t
+
+
+E
+
+
+
+.−1
+i
+
+V
+
+i=N t+1
+
+
+
+i=N t+1
+
+
+
+N T 
+
+N T 
+
+=
+
+Vi.−1
+
+
+
+' T − t)j .−1
+e− T −t
++ 1j
+/1
+j!
+j=0
+.−1
+
+= exp /1
+
+T − t
+
+Equation (A1) yields
+
+
+
+
+1
+Bt T  = exp −T − t - − . − 1 1 − 12
+2
+
+1 2
+.−1
+− 1 . − 12 − /1
+2
+from which (9) follows.
+(2) Note that (A1) implies
+e−rT −t = EUc *T  T /Uc *t t t 
+
+(A2)
+
+which shows that Zt is a martingale under P. Furthermore,
+(7) and (9) lead to
+
+
+
+1
+Zt = *0.−1 er−-t exp . − 1 1 − 12 t
+2
+ N t
+ .−1
+Vi
++ 1 . − 1W1 t
+i=1
+
+
+
+1
+.−1
+= *0.−1 exp − 12 . − 12 − /1
+t
+2
+ N t
+ .−1
++ 1 . − 1W1 t
+Vi
+i=1
+
+Acknowledgments
+This paper was previously titled “A Jump Diffusion Model for
+Option Pricing with Three Properties: Leptokurtic Feature, Volatility Smile, and Analytical Tractability.” The author is grateful to
+an anonymous referee who made many helpful suggestions. The
+author also thanks many people who offered insight into this work,
+including Mark Broadie, Peter Carr, Gregory Chow, Savas Dayanik,
+Paul Glasserman, Lars Hansen, Chris Heyde, Vadim Linetsky, Mike
+Staunton, and Hui Wang. This research is supported in part by NSF
+grants DMI-9908106 and DMS-0074637.
+
+Management Science/Vol. 48, No. 8, August 2002
+
+from which (10) follows. Now by (8) and (A2),
+3S t =
+
+
+
+EUc *T  T 3S T  t 
+ZT 
+3S T  t
+= e−rT E
+Uc *t t
+Zt
+
+= e−rT E∗ 3S T  t 
+
+
+
+Proof of Theorem 1. The Girsanov theorem for jump-diffusion
+processes (see Björk et al. 1997) tells us that under P∗ W1 t 1=
+W1 t − 1 . − 1t is a new Brownian motion, and under P∗ the
+.−1
+jump rate of N t is ∗ = EVi.−1  = /1
++ 1 and Vi has a new
+
+1097
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+.−1
+
+density fV∗ x = 1//1
+St is given by
+
++ 1x.−1 fV x Therefore, the dynamics of
+
+where Pn k and Qn k are given by
+
+
+
+Pn k =
+
+N t
+
+ 5
+dSt
+Vi − 1
+=  dt + 4 dW1 t + 1 − 42 dW2 t + 
+St−
+i=1
+
+=  + 1 4. − 1 dt + 4 dW1 t + 1 − 42 dW2 t
+
+N t
+ 5
+Vi − 1 
++
+
+
+  
+i−k 
+n−i
+ n−k−1 n
+1
+2
+pi q n−i
+·
+i−k
+i
+1 + 2
+1 + 2
+i=k
+
+n−1
+
+1 ≤ k ≤ n−1
+  
+n−i 
+i−k
+n−1 
+
+n−k−1 n
+1
+2
+pn−i q i
+·
+Qn k =
+i−k
+i
+1 + 2
+1 + 2
+i=k
+1 ≤ k ≤ n − 1 Pn n = pn
+
+i=1
+
+Because
+5
+
+E∗ Vi  =
+=
+we have
+
+∗
+
+∗
+
+ 
+0
+
+x5
+
+1
+.−1
+
+/1
+
+1
+.−1
+
+/1
+
++1
+
++1
+
+EV
+
+.+5−1
+1
+
+5
+i
+
+E V  − 1 = /
+
+
+and 00 is deﬁned to be one. Here i+ and i− are i.i.d. exponential random
+variables with rates 1 and 2 , respectively.
+
+x.−1 fV x dx
+
+.+5−1
+
+−/
+
+.+5−1
+
+=
+
+.−1
+1
+
+/1
+
+.−1
+
+/1
+
+As a key step in deriving closed-form solutions for call and
+put options, this proposition indicates that the sum of i.i.d. double
+exponential random variables can be written, in distribution, as a
+(randomly) mixed gamma random variable.10 To prove Proposition
+B.1, the following lemma is needed.
+
++1
+
++1
+
+. Therefore,
+
+dSt
+=  + 1 4. − 1 + /.+5−1 − /.−1  dt
+St−
+
+5
+− ∗ E∗ Vi  − 1 dt + 4 dW1 t + 1 − 42 dW2 t
+
+N t
+ 5
++
+Vi − 1 
+
+Lemma B.1.
+n
+m
+
+
+i+ − j−
+i=1
+
+j=1
+
+i=1
+
+Hence, to satisfy the rational equilibrium requirement St =
+e−rT −t E∗ ST  t  we must have  + 1 4. − 1 + /.+5−1 −
+/.−1  = r from which (14) follows. If (14) is satisﬁed, under the
+measure P∗ , the dynamics of St is given by
+dSt
+= r dt −
+St−
+
+∗
+
++
+
+
+
+
+5
+i
+
+V − 1
+
+i=1
+
+ k
+
+
+
+i
+
+
+
+
+i=1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+n−k 
+
+m n − k + m − 1 
+
+
+1
+2
+
+
+·
+
+1 +2
+1 +2
+
+m−1
+
+
+
+
+k = 1  n
+with prob.
+
+l
+
+
+
+
+
+− i with prob.
+
+
+
+i=1
+
+
+n 
+m−l n − l + m − 1
+
+
+
+1
+2
+
+·
+
+
+1 +2
+1 +2
+
+n−1
+
+
+l = 1  m
+
+Derivation of the < Function
+
+d
+
+An m =
+
+B.1.
+
+Decomposition of the Sum of Double Exponential
+Random Variables
+The memoryless property of exponential random variables yields
+d
+d
+ + −  −  + >  −  =  + and  + −  −  + <  −  = − − thus leading
+to the conclusion that
+d
+
++ − − =
+
++
+− −
+
+with probability 2 /1 + 2 
+with probability 1 /1 + 2 
+
+(B1)
+
+because the probabilities of the events  + >  − and  + <  − are
+2 /1 + 2  and 1 /1 + 2 , respectively. The following proposition extends (B1).
+Proposition B.1. For every n ≥ 1, we have the following
+decomposition
+n
+
+i=1
+
+d
+
+Yi =
+
+1098
+
+k +
+
+with probability Pn k k = 1 2    n
+i=1 i
+− ki=1 i− with probability Qn k k = 1 2    n
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Proof. Introduce the random variables An m =
+m ˜
+j=1 j . Then
+
+from which (15) follows. 
+
+Appendix B:
+
+d
+
+=
+
+
+5
+E∗ Vi  − 1 dt + 4 dW1 t + 1 − 42 dW2 t
+
+N t
+
+Qn n = q n
+
+(B2)
+
+d
+
+=
+
+
+
+(B3)
+
+n
+
+i=1
+
+i −
+
+An − 1 m − 1 +  + 2 /1 + 2 
+An − 1 m − 1 −  − 1 /1 + 2 
+An m − 1 2 /1 + 2 
+An − 1 m 1 /1 + 2 
+
+via (B1). Now imagine a plane with the horizontal axis representing the number of i+  and the vertical axis representing the
+number of j− . Suppose we have a random walk on the integer
+lattice points of the plane. Starting from any point n m, n m ≥ 1,
+the random walk goes either one step to the left with probability
+1 /1 + 2  or one step down with probability 2 /1 + 2 , and
+10
+
+A result similar to the decomposition (B2) was ﬁrst discovered
+by Shanthikumar (1985), although (B2) gives a more explicit calculation of Pn k and Qn k . Furthermore, the proofs are totally different: A combinatorial approach is used here, while the proof in
+Shanthikumar (1985) is based on the Laplace transform.
+
+Management Science/Vol. 48, No. 8, August 2002
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+the random walk stops once it reaches either the horizontal or vertical axis. For any path from n m to k 0 1 ≤ k ≤ n, it must reach
+k 1 ﬁrst before it makes a ﬁnal move to k 0. Furthermore, all the
+paths going from n m to k 1 must have exactly n − k lefts and
+
+
+m − 1 downs, whence the total number of such paths is n−k+m−1
+.
+m−1
+Similarly, the total number of paths from n m to 0 l, 1 ≤ l ≤ m,
+
+
+is n−l+m−1
+. Thus,
+n−1
+ k
+
+
+
+
+i
+
+
+
+i=1
+
+
+
+
+
+
+
+
+
+
+
+
+
+d
+
+An m =
+
+l
+
+
+
+
+
+− i
+
+
+
+i=1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+with prob.
+
+
+
+
+
+
+n−k  
+m n − k + m − 1 
+ 
+
+
+1
+2
+
+·
+
+
+
+1 + 2
+1 + 2
+m−1
+
+
+
+
+k = 1  n
+
+
+
+
+with prob.
+
+
+
+
+
+
+
+n  
+ 
+m−l n − l + m − 1
+
+
+1
+2
+
+·
+
+
+
+1 + 2
+1 + 2
+n−1
+
+
+
+l = 1  m
+
+and the lemma is proven. 
+Proof of Proposition B.1. By the same analogy used in
+Lemma B.1 to compute probability Pn k , 1 ≤ k ≤ n, the probability
+
+
+weight assigned to ki=1 i+ when we decompose ni=1 Yi , it is equivalent to consider the probability of the random walk ever reach
+k 0 starting from the point i n − i 0 ≤ i ≤ n, with probability
+
+of starting from i n − i being ni pi q n−i . Note that the point k 0
+can only be reached from points i n − i such that k ≤ i ≤ n − 1,
+because the random walk can only go left or down, and stops
+once it reaches the horizontal axis. Therefore, for 1 ≤ k ≤ n − 1
+(B3) leads to
+Pn k =
+
+n−1
+
+
+n−1
+
+
+n−i 
+  
+2
+i + n − i − k − 1
+n i n−i
+·
+pq
+n − i − 1
+i
+1 + 2
+i=k
+ 
+i−k 
+n−i
+n−1 
+
+n−k−1 n
+1
+2
+=
+pi q n−i
+n−i−1
+i
+1 + 2
+1 + 2
+i=k
+
+ 
+i−k 
+n−i
+n−1
+ n−k−1 n
+1
+2
+=
+pi q n−i 
+i−k
+i
+1 + 2
+1 + 2
+i=k
+1
+1 + 2
+
+Qn k =
+
+
+
+n−1
+i=k
+
+
+
+n−1
+
+
+
+1
+1 +2
+
+n
+
+k=1
+
+Management Science/Vol. 48, No. 8, August 2002
+
+Pn k +
+
+(B5)
+
+1  
+2
+t − xn e−t /2 dt
+n! x
+2n   n −t2 /2
+2n   n −t2 /2
+≤
+t e
+dt +
+x e
+dt = O x n 
+n! −
+n! −
+
+For option pricing it is important to evaluate the integral
+In c9 . 5 *,
+In c9 . 5 * 1=
+
+ 
+c
+
+e.x Hhn 5x − * dx n ≥ 0
+
+(B6)
+
+for arbitrary constants . c, and 5.
+Proposition11 B.2. (1) If 5 > 0 and . = 0, then for all n ≥ −1,
+n−i
+n 
+e.c 
+5
+Hhi 5c − *
+. i=0 .
+
+ n+1 √
+
+2
++ .
+.
+5
+28 .*
++
+e 5 252 % −5c + * +
+
+.
+5
+5
+
+In c9 . 5 * = −
+
+(B7)
+
+(2) If 5 < 0 and . < 0, then for all n ≥ −1
+n−i
+n 
+e.c 
+5
+Hhi 5c − *
+. i=0 .
+ n+1 √
+
+
+2
++ .
+5
+.
+28 .*
+−
+e 5 252 % 5c − * −
+
+.
+5
+5
+
+In c9 . 5 * = −
+
+(B8)
+
+Proof. Case 1. 5 > 0 and . = 0. Since, for any constant . and
+n ≥ 0 e.x Hhn 5x − * → 0 as x →  thanks to (B4), integration by
+parts leads to
+In =
+
+n−i 
+
+with Qn n = q n . Incidentally, we have also shown that
+Qn k  = 1. 
+
+Hhn x = O x n 
+
+Hhn x =
+
+Pgoing from n−i i to 0 k·Pstarting from n−i i
+
+i−k 
+ 
+
+2
+n−i+i −k−1
+n
+·
+pn−i q i
+n−i−1
+n−i
+1 +2
+i=k
+
+ 
+n−i 
+i−k
+n−1
+ n−k−1 n
+1
+2
+=
+pn−i q i
+1 +2
+1 +2
+i −k
+i
+i=k
+=
+
+(B4)
+
+Here (B4) follows from Equations (19.14.3) and (19.8.1) in
+Abramowitz and Stegun (1972); and (B5) is clearly true for n = −1,
+while for n ≥ 0 note that as x → −,
+
+i−k 
+
+Of course, Pn n = pn . Similarly, we can compute Qn k :
+
+
+
+1
+2
+lim Hhn x/ n+1 e−x /2 = 1
+x→
+x
+and as x → −,
+
+Pgoing from i n − i to k 0 · Pstarting from i n − i
+
+i=k
+
+=
+
+B.2. Results on Hh Functions
+First of all, note that Hhn x → 0, as x → , for n ≥ −1; and
+√
+Hhn x → , as x → −, for n ≥ 1; and Hh0 x = 28%−x →
+√
+28, as x → −. Also, for every n ≥ −1, as x → ,
+
+1 
+Hhn 5x − * de.x
+. c
+
+=−
+
+1
+5   .x
+e Hhn−1 5x − * dx
+Hhn 5c − *e.c +
+.
+. c
+
+If 5 > 0 and . = 0, then for all n ≥ 0 In c9 . 5 * = 51 Hhn+1 5c −
+*. If 5 ≤ 0 and . ≥ 0, then for all n ≥ 0 In c9 . 5 * = . If 5 = 0
+
+and . < 0, then for all n ≥ 0 In c9 . 5 * = c e.x Hhn −* dx =
+.c
+Hhn −*e .
+
+11
+
+1099
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+In other words, we have a recursion,
+−e.c /. Hhn 5c − * + 5/.In−1 with
+√   .x
+I−1 = 28
+e $−5x + * dx
+√
+
+c
+
+
+
+for
+
+n ≥ 0 In =
+
+Letting y = x −  2 / yields
+fZ+n
+
+
+i=1 i
+
+×
+
+ 
+
+.*
+.
+28
+.
+exp
++ 2 % −5c + * +
+
+5
+5
+25
+5
+
+=
+
+2
+
+Solving it yields, for n ≥ −1,
+ n+1
+i
+n 
+e.c 
+5
+5
+In = −
+Hhn−i 5c − * +
+I−1
+. i=0 .
+.
+n−i
+n 
+e.c 
+5
+=−
+Hhi 5c − *
+. i=0 .
+ n+1 √
+
+ 
+
+5
+.*
+28
+.
+.2
++
+exp
++ 2 % −5c + * +
+.
+5
+5
+25
+5
+where the sum over an empty set is deﬁned to be zero.
+Case 2. 5 < 0 and . < 0. In this case, we must also have, for
+n ≥ 0 and any constant . < 0 e.x Hhn 5x − * → 0 as x → , thanks
+to (B5). Using integration by parts, we again have the same recursion, for n ≥ 0 In = −e.c /. Hhn 5c − * + 5/.In−1 , but with a different initial condition
+√   .x
+e $−5x + * dx
+I−1 = 28
+√
+
+c
+
+ 
+
+.
+.*
+.
+28
+=−
+exp
++ 2 % 5c − * −
+
+5
+5
+25
+5
+
+
+Solving it yields (B8), for n ≥ −1.
+
+2
+
+(2) The tail probabilities are given by
+
+
+
+
+n
+
+n
+1
+2
+−
+(B11)
+P Z + i ≥ x = √ e /2 In−1 x9 − −
+
+ 28
+i=1
+
+
+
+
+n
+
+1
+n
+2
+− 
+(B12)
+P Z − i ≥ x = √ e /2 In−1 x9 
+
+ 28
+i=1
+n
+n
+Proof. Case 1. The densities of Z + i=1 i and Z − i=1 i  We
+have
+ 
+fn i t − xfZ x dx
+fZ+n i t =
+−
+
+1
+2
+√ e−y /2 dy
+28
+
+2
+
+a
+
+because 1/n − 1! − a − yn−1 e−y /2 dy = Hhn−1 −a. The derivation of fZ−n i t is similar.
+i=1
+
+
+Case 2. PZ + ni=1 i ≥ x and PZ − ni=1 i ≥ x. From (B9), it is
+clear that
+
+
+
+
+2
+n
+
+t
+n e /2   −t
+e Hhn−1 − +  dt
+P Z + i ≥ x =
+√
+
+x
+ 28
+i=1
+
+
+2
+1
+n e /2
+−
+In−1 x9 − −
+√
+
+ 28
+n
+by (B6). We can compute PZ − i=1 i ≥ x similarly. 
+=
+
+Theorem B.1. With 8n 1= PN T  = n = e− T  T n /n! and In in
+Proposition B.2, we have
+2
+
+PZT  ≥ a =
+
+n
+
+√
+
+e1  T /2 
+8n Pn k  T 1 k
+√
+ 28T n=1 k=1
+
+
+√
+1
+× Ik−1 a − T 9 −1 − √ −1 T
+ T
+2
+
+n
+
+√
+
+e2  T /2 
+8n Qn k  T 2 k
+√
+ 28T n=1 k=1
+
+
+√
+1
+× Ik−1 a − T 9 2 √ −2 T
+ T
+
+
+a − T
++ 80 % − √
+
+ T
+
++
+
+Proof. By the decomposition (B2),
+
+
+
+n
+√
+
+
+PZT  ≥ a =
+8n P T +  T Z + Yj ≥ a
+n=0
+
+j=1
+
+√
+= 80 PT +  T Z ≥ a
+
+
+n
+
+k
+√
+
+
+
++ 8n Pn k P T +  T Z + j+ ≥ a
+n=1
+
+k=1
+
+
+
+n
+
+n=1
+
+k=1
+
+
+
+j=1
+
+
+k
+√
+ 
+
++ 8n Qn k P T +  T Z − j− ≥ a 
+j=1
+
+The result now follows via (B11) and (B12) for 1 > 1 and
+2 > 0. 
+
+i=1
+
+ t ex t − xn−1
+1
+2
+2
+√ e−x /2  dx
+n − 1!  28
+−
+ t t − xn−1
+1
+2
+2 2
+2
+= e−t n e /2
+√ e−x−  /2  dx
+− n − 1! 
+28
+= e−t n 
+
+1100
+
+n − 1!
+
+−
+2
+
+
+
+Sum of Double Exponential and the Normal
+Random Variables
+Proposition B.3. Suppose {1 2    } is a sequence of i.i.d. exponential random variables with rate  > 0, and Z is a normal random variable with distribution N 0  2 . Then for every n ≥ 1, we have: (1) The
+density functions are given by
+
+
+2
+e /2
+t
+(B9)
+fZ+n i t = n √ e−t Hhn−1 − + 
+i=1
+
+ 28
+
+
+2
+t
+e /2
++  
+(B10)
+fZ−n i t = n √ et Hhn−1
+i=1
+
+ 28
+
+ t/− t/ − y − n−1
+
+e /2 n−1 n −t
+= √
+  e Hhn−1 −t/ + 
+28
+
+B.3.
+
+i=1
+
+2
+
+t = e−t e /2  n−1 n
+
+References
+
+Abramowitz, M., I. A. Stegun. 1972. Handbook of Mathematical
+Function, 10th Printing. U.S. National Bureau of Standards,
+Washington, D.C.
+
+Management Science/Vol. 48, No. 8, August 2002
+
+KOU
+A Jump-Diffusion Model for Option Pricing
+
+Andersen, L., J. Andreasen. 2000. Volatility skews and extensions of
+the libor market model. Appl. Math. Finance 7 1–32.
+Andersen, T., L. Benzoni, J. Lund. 1999. Estimating jump-diffusions
+for equity returns. Working paper, Northwestern University,
+Evanston, IL.
+Barberis, N., A. Shleifer, R. Vishny. 1998. A model of investor sentiment. J. Financial Econom. 49 307–343.
+Barndorff-Nielsen, O. E., N. Shephard. 2001. Non-Gaussian
+Ornstein-Uhlenbeck based models and some of their uses in
+ﬁnancial economics (with discussion). J. Roy. Statist. Soc., Ser. B.
+63 167–241.
+Björk, T., Y. Kabanov, W. Runggaldier. 1997. Bond market structure in
+the presence of marked point processes. Math. Finance 7 211–239.
+Blattberg, R. C., N. J. Gonedes. 1974. A comparison of the stable and
+student distributions as statistical models for stock prices. J. Bus.
+47 244–280.
+Boyle, P., M. Broadie, P. Glasserman. 1997. Simulation methods for
+security pricing. J. Econom. Dynam. Control 21 1267–1321.
+Clark, P. K. 1973. A subordinated stochastic process model with ﬁnite
+variance for speculative prices. Econometrica 41 135–155.
+Cox, J. C., S. A. Ross. 1976. The valuation of options for alternative
+stochastic processes. J. Financial Econom. 3 145–166.
+, J. E. Ingersoll, S. A. Ross. 1985. A theory of the term structure
+of interest rates. Econometrica 53 385–407.
+Das, S. R., S. Foresi. 1996. Exact solutions for bond and option prices
+with systematic jump risk. Rev. Derivatives Res. 1 7–24.
+Davydov, D., V. Linetsky. 2001. The valuation and hedging of pathdependent options under the CEV process. Management Sci. 47
+949–965.
+Derman, E., I. Kani. 1994. Riding on a smile. RISK (Feb) 7 32–39.
+Dufﬁe, D., J. Pan, K. Singleton. 2000. Transform analysis and option
+pricing for afﬁne jump-diffusions. Econometrica 68 1343–1376.
+Dupire, B. 1994. Pricing with a smile. RISK (Feb) 7 18–20.
+Engle, R. 1995. ARCH, Selected Readings. Oxford University Press,
+Oxford, U.K.
+Fama, E. 1998. Market efﬁciency, long-term returns, and behavioral
+ﬁnance. J. Financial Econom. 49 283–306.
+Fouque, J.-P., G. Papanicolaou, K. R. Sircar. 2000. Derivatives in
+Financial Markets with Stochastic Volatility. Cambridge University
+Press, Cambridge, U.K.
+Geman, H., D. B. Madan, M. Yor. 2001. Time changes for Lévy processes. Math. Finance 11 79–96.
+Glasserman, P., S. G. Kou. 1999. The term structure of simple interest rates with jump risk. Working paper, Columbia University,
+New York.
+
+Grünewald, B., S. Trautmann. 1996. Option hedging in the presence
+of jump risk. Preprint, Johannes Gutenberg-Universität Mainz,
+Germany.
+Heston, S. 1993. A closed-form solution of options with stochastic
+volatility with applications to bond and currency options. Rev.
+Financial Stud. 6 327–343.
+Heyde, C. C. 2000. A risky asset model with strong dependence
+through fractal activity time. J. Appl. Probab. 36 1234–1239.
+Hull, J., A. White. 1987. The pricing of options on assets with
+stochastic volatilities. J. Finance 42 281–300.
+Johnson, N., S. Kotz, N. Balakrishnan. 1995. Continuous Univariate
+Distribution, Vol. 2, 2nd ed. Wiley, New York.
+Kou, S. G., H. Wang. 2000. First passage times for a jump diffusion
+process. Working paper, Columbia University, New York.
+,
+. 2001. Option pricing under a double exponential
+jump diffusion model. Working paper, Columbia University,
+New York.
+Lucas, R. E. 1978. Asset prices in an exchange economy. Econometrica
+46 1429–1445.
+Madan, D. B., E. Seneta. 1990. The variance gamma (V.G.) model for
+share market returns. J. Bus. 63 511–524.
+, P. Carr, E. C. Chang. 1998. The variance gamma process and
+option pricing. Eur. Finance Rev. 2 79–105.
+Mandelbrot, B. 1963. The variation of certain speculative prices.
+J. Bus. 36 394–419.
+Merton, R. C. 1976. Option pricing when underlying stock returns
+are discontinuous. J. Financial Econom. 3 125–144.
+Naik, V., M. Lee. 1990. General equilibrium pricing of options on
+the market portfolio with discontinuous returns. Rev. Financial
+Stud. 3 493–521.
+Ramezani, C. A., Y. Zeng. 1999. Maximum likelihood estimation
+of asymmetric jump-diffusion process: Application to security
+prices. Working paper, Department of Statistics, University of
+Wisconsin, Madison, WI.
+Rogers, L. C. G. 1997. Arbitrage from fractional Brownian motion.
+Math. Finance 7 95–105.
+Samorodnitsky, G., M. S. Taqqu. 1994. Stable Non-Gaussian Random
+Processes: Stochastic Models with Inﬁnite Variance. Chapman and
+Hall, New York.
+Shanthikumar, J. G. 1985. Bilateral phase-type distributions. Naval
+Res. Logist. Quart. 32 119–136.
+Stokey, N. L., R. E. Lucas. 1989. Recursive Methods in Economic
+Dynamics. Harvard University Press, Cambridge, MA.
+
+Accepted by Paul Glasserman; received November 29, 2001. This paper was with the authors 2 months and 3 weeks for 2 revisions.
+
+Management Science/Vol. 48, No. 8, August 2002
+
+1101
+
+

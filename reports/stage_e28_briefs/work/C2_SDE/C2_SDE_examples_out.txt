@@ -1,0 +1,60 @@
+E1 ABM vs GBM at tick scale
+daily log-vol 0.00945; daily points 47.25; per-second points 0.3089 = 1.235 ticks
+  h= 1s sd=0.309 pts = 1.24 ticks
+  h=10s sd=0.977 pts = 3.91 ticks
+  h=60s sd=2.392 pts = 9.57 ticks
+  GBM-vs-ABM mean gap over 60s with zero log-drift: 0.000572 pts = 0.002289 ticks
+  GBM-vs-ABM mean gap over 3600s with zero log-drift: 0.034341 pts = 0.137363 ticks
+
+E2 Brownian touch probability P(max over [0,t] >= a) = 2(1-Phi(a/(sigma sqrt t)))
+  a=1 tick(s): h=1s:0.418  h=10s:0.798  h=60s:0.917
+  a=2 tick(s): h=1s:0.105  h=10s:0.609  h=60s:0.834
+  a=4 tick(s): h=1s:0.001  h=10s:0.306  h=60s:0.676
+
+E3 Martingale markout arithmetic for a 1-tick spread
+  half-spread 0.125 pts = $0.625; two passive fills (round turn) earn 1 tick = $1.25
+  round-turn commission $1.22; margin before adverse selection $0.03 per round turn
+  adverse selection 0.00 tick per fill -> net $+0.030 per round turn
+  adverse selection 0.05 tick per fill -> net $-0.095 per round turn
+  adverse selection 0.10 tick per fill -> net $-0.220 per round turn
+  adverse selection 0.25 tick per fill -> net $-0.595 per round turn
+  cost per fill = commission/2 = $0.610 = 0.488 tick; martingale markout vs fill = +0.5 tick
+  h=1s per-fill markout sd 1.24 ticks; fills needed delta=0.05:3,774  delta=0.1:944  delta=0.25:151
+  h=10s per-fill markout sd 3.91 ticks; fills needed delta=0.05:37,745  delta=0.1:9,436  delta=0.25:1,510
+  h=60s per-fill markout sd 9.57 ticks; fills needed delta=0.05:226,467  delta=0.1:56,617  delta=0.25:9,059
+
+E4 OU exact AR(1): phi=exp(-kappa h), half-life=ln2/kappa; Kendall/Marriott-Pope bias -(1+3phi)/n
+  phi=0.95 n=600: kappa=0.05129/s half-life=13.5s; approx E[phi_hat]=0.94358 -> kappa=0.05807/s (x1.13), half-life 11.9s
+  phi=0.999 n=600: kappa=0.00100/s half-life=692.8s; approx E[phi_hat]=0.99234 -> kappa=0.00769/s (x7.69), half-life 90.1s
+  phi=0.999 n=23400: kappa=0.00100/s half-life=692.8s; approx E[phi_hat]=0.99883 -> kappa=0.00117/s (x1.17), half-life 591.7s
+  Monte Carlo (4000 reps, unknown mean) phi=0.95 n=600: mean phi_hat=0.94381 (bias -0.00619; formula -0.00642); median kappa_hat=0.05624 vs true 0.05129; P(phi_hat>0)=1.000
+  Monte Carlo (4000 reps, unknown mean) phi=0.999 n=600: mean phi_hat=0.99025 (bias -0.00875; formula -0.00666); median kappa_hat=0.00806 vs true 0.00100; P(phi_hat>0)=1.000
+
+E5 Realised variance vs TSRV on one synthetic day (efficient ABM, 1s grid)
+  true integrated variance 2232.1 pts^2
+  iid noise sd 0.10 pt: zero 1s returns 0.000; RV1s=2714.5 RV10s=2170.4 RV60s=2091.7 RV300s=1618.6; TSRV(K=818)=1421.7
+    implied noise var from RV1s/(2n) = 0.05800 pts^2
+  rounded to 0.125 grid (mid of 1-tick book): zero 1s returns 0.162; RV1s=2283.9 RV10s=2148.4 RV60s=2082.8 RV300s=1600.5; TSRV(K=818)=1421.2
+    implied noise var from RV1s/(2n) = 0.04880 pts^2
+
+E6 Lee-Mykland threshold constants (c=sqrt(2/pi))
+  n=23400 (1s, one RTH day): Cn=5.139 Sn=0.2794 critical |L|=6.42
+  n=390 (1min, one RTH day): Cn=3.798 Sn=0.3628 critical |L|=5.47
+  n=1872000 (1s, 80 RTH days pooled): Cn=6.291 Sn=0.2332 critical |L|=7.36
+  beta*(1%)=4.6001
+  window K range for nobs/day=23400: sqrt(252*n)=2428 .. 252*n=5896800
+  window K range for nobs/day=390: sqrt(252*n)=313 .. 252*n=98280
+  naive per-observation 5% test on 23400 1s returns: 1170 false flags per day
+
+E7 Jump share of quadratic variation
+  share 1%: jump var 22.5 pts^2/day; lambda=1.0/day -> RMS jump 4.75 pts = 19.0 ticks
+  share 1%: jump var 22.5 pts^2/day; lambda=5.0/day -> RMS jump 2.12 pts = 8.5 ticks
+  share 5%: jump var 117.5 pts^2/day; lambda=1.0/day -> RMS jump 10.84 pts = 43.4 ticks
+  share 5%: jump var 117.5 pts^2/day; lambda=5.0/day -> RMS jump 4.85 pts = 19.4 ticks
+  share 20%: jump var 558.0 pts^2/day; lambda=1.0/day -> RMS jump 23.62 pts = 94.5 ticks
+  share 20%: jump var 558.0 pts^2/day; lambda=5.0/day -> RMS jump 10.56 pts = 42.3 ticks
+  Kou p=0.4, 1/eta1=0.002, 1/eta2=0.003: E[Y]=-0.00100, E[Y^2]=1.400e-05, RMS=0.00374 = 18.71 pts at P0
+
+E5b Monte Carlo, 200 synthetic days, 1s grid: mean (sd) of estimator / true IV
+  iid: RV1=1.210(0.011)  RV60=0.993(0.071)  RV300=0.993(0.148)  TSRV60=0.978(0.055)  TSRV300=0.982(0.126)  TSRV818=0.964(0.220)
+  round: RV1=1.027(0.009)  RV60=0.990(0.071)  RV300=0.993(0.149)  TSRV60=0.978(0.055)  TSRV300=0.982(0.126)  TSRV818=0.964(0.220)

@@ -1,0 +1,66 @@
+=== C2_DeepLOB.md ===
+[D:31] fee RT ticks = 0.9760; tick bp @4700 = 0.532; @5000 = 0.500; taker RT = 1.976
+[D:118-121] blocks 2128,2608,4656 inception 9888 lstm 41216 dense 195 total 60691; pytorch(+4H) 60947; lstm share 0.679
+[D:155-157] sum past 28201.125 m- 4700.1875 m+ 4700.5750 l3 4.2550e-05 (0.425 bp) l4 8.2444e-05 (0.824 bp); m+-pt 0.200 pts = 0.80 ticks
+[D:script .out] reader script 'm- (i=0..k-1)' = 4700.2250 -> l4 0.745 bp (differs from text 0.82 bp; text follows its stated 1/(k+1) definition)
+   alpha 2.50e-05: eq3 1 eq4 1
+   alpha 1.00e-04: eq3 0 eq4 0
+   alpha 2.00e-03: eq3 0 eq4 0
+[D:134] 80 / (250*5) stock-days = 1/15.6; 100 events x 0.192 s = 19.2 s; k=20 -> 3.84 s
+[D:194-195] z_beta=0.8416; n(sd=2,d=0.5)=472.3 -> ceil 473; total x3 = 1419; n(sd=2,d=0.25)=1890; with z_beta=0.84 exactly: 471.9
+[D:241] 0.002*4700 = 9.40 pts = 37.6 ticks; @5000 40.0 ticks
+[D:304] receptive field kernel 2, dilations 1..16 = 1 + 31 = 32
+[D:352-353] 0.10 bp = 0.188 ticks; 3.05 bp = 5.734; 0.40 bp = 0.752; 270/96 = 2.81
+[D:396-397] MI = 0.1927 nats; terms 0.8*ln1.6=0.3760, 0.2*ln0.4=-0.1833
+[D:448] 1e7 params x 16 B = 0.16 GB
+[D:485-486] 68.40-61.75=6.65; 69.02-68.40=0.62; 61.82-61.10=0.72; 61.10-54.79=6.31
+[D:518-521] robustness: 100-87.6=12.4; |A|=7.5 -> S=4.9; gen 2021: |A|=19.4, 100-73.7=26.3 -> S=6.9
+[D:597] pT = 10/(100+100-10) = 0.0526; [D:607] 959h16m27s/135 = 7.11 GPU-h
+[D:693-695] 12*0.005 = 0.060 bp; /0.5 = 12.00%
+[D:725-729] good 0.024 bad -1.976; blind -0.376; filtered -0.082 (weights 0.72 / 0.05)
+[D:809] h* = (c + l)/(g + l)
+   c=0.976: g=l=1: 0.988, g=l=2: 0.744, g=l=4: 0.622
+   c=1.976: g=l=1: 1.488, g=l=2: 0.994, g=l=4: 0.747
+[D:812-814] 1.5-tick: gross 0.675 net -0.301; 3-tick: gross 1.350 net 0.374 net-1tick -0.626
+[D:864-865] 10-100 ms vs 200 us: 50-500x; vs 0.1-1 ms: 10-1000x; vs 2 us: 5000-50000x
+[D:906-908] paper 4M/epoch: 0.21 h/epoch, 40 ep 8.5 h
+[D:906-908] paper 16M/epoch: 0.85 h/epoch, 40 ep 33.9 h
+[D:906-908] pytorch32 4M/epoch: 0.53 h/epoch, 40 ep 21.2 h
+[D:906-908] pytorch32 16M/epoch: 2.12 h/epoch, 40 ep 85.0 h
+[D:906-908] translob 4M/epoch: 0.14 h/epoch, 40 ep 5.8 h
+[D:906-908] translob 16M/epoch: 0.58 h/epoch, 40 ep 23.0 h
+[D:912] 200k x 40 x 4 B = 32 MB; x80 = 2.56 GB
+[D:924,932] 18 GPU-h: 4090 $16, A100 $32, Lambda A100 $36; 1000 h = 6.0 weeks
+[D:924,932] 100 GPU-h: 4090 $89, A100 $179, Lambda A100 $199; 1000 h = 6.0 weeks
+[D:924,932] 500 GPU-h: 4090 $445, A100 $895, Lambda A100 $995; 1000 h = 6.0 weeks
+[D:924,932] 1000 GPU-h: 4090 $890, A100 $1790, Lambda A100 $1990; 1000 h = 6.0 weeks
+[D:958] 3*3*2*5 = 90
+
+=== C2_OFI.md ===
+[O:36-37] MES: fee 0.9760 ticks; taker 1.9760 ticks = $2.47; maker 0.0240 ticks = $0.03; f/2 0.488
+[O:36-37] ES: fee 0.3024 ticks; taker 1.3024 ticks = $16.28; maker 0.6976 ticks = $8.72; f/2 0.151
+[O:137-142] e_n = [5, 5, 10, -7]; OFI = 13; mid 5000.125 -> 5000.25 = 0.50 ticks; OFI/(2D): D=20 0.325, D=100 0.065; 2*630 = 1260
+[O:186-187] events/day 1,053,000; 84 days 88.5 M; x10 f32 3.54 GB; x20 7.08 GB
+[O:239] 84*13 = 1092; XGH 252*11 = 2772 per stock; x6 stocks = 16632; ratios 0.39 (per stock) 0.066 (all)
+[O:250-252] MLOFI2 = 30 - (-10) = 40; fit 0.02*13 + 0.005*40 = 0.46
+[O:336] ofi_I = 0.540
+[O:318-321] top eigenvalue 6.0489 vs max over 20000 random unit vectors 6.0484
+[O:432] 17 - 5 = 12 test weeks; 52 - 5 = 47
+[O:443-446] sqrt(0.02) = 0.1414; x sqrt(2/pi) = 0.1128; 1.976/0.1414 = 14.0 sd
+[O:471-472] n = 9/0.01 = 900; 9/0.001 = 9000; exact t for rho=0.1,n=900: 3.012
+[O:488] 50 h: 4090 $44.5, A100 $89.5, H100 $164.5
+[O:542] I = 0.6; P(up) = 0.769; reversed 0.231; (1+I)/2 = 0.80 = nb/(nb+na) = 0.80
+[O:558] HM z: AUC 0.55 n=2000/class 5.51; AUC 0.52 2.19
+[O:174-176] n(sd=1,d=0.2) = 392.4 -> 393; x3 = 1179; n(sd=1,d=0.1) = 1570
+[O:623-625] w* = 0.150; obj = -0.0450; lambda=0: 0.200
+[O:675] 84*23*3600 = 6,955,200 rows; x40 f32 = 1.11 GB
+[O:707] R2_pred / (rho^2 R2_c) simplifies to: 1
+[O:710] 0.65*rho^2: rho=0.1 0.0065, 0.05 0.0016, 0.2 0.026
+[O:729] R2=0.01: E|f| = 0.080 ticks; /1.976 = 0.040
+[O:729] R2=0.05: E|f| = 0.178 ticks; /1.976 = 0.090
+[O:729] R2=0.2: E|f| = 0.357 ticks; /1.976 = 0.181
+[O:796-804] ceil(1+f)= 2 ticks; net up 1.024 = $1.28; net down -4.976 = $-6.22; p* = 0.8293; symmetric 2: 0.7440
+[O:927] net per fill simplifies to -J*pi - f/2 + 1/2; break-even pi = (1 - f)/(2*J)
+   MES: f/2 0.488; J=1 1.200%; J=2 0.600%; 1/pi = 83
+   ES: f/2 0.151; J=1 34.880%; J=2 17.440%; 1/pi = 3
+[O:853] 0.26/0.32 = 81.25%; [O:993] SE = 0.0109; [O:1079] fixed 5, all horizons 11

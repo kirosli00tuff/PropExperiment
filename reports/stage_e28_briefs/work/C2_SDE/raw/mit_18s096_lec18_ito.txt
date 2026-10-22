@@ -1,0 +1,512 @@
+Lecture 18 : Itō Calculus
+
+1. Ito’s calculus
+In the previous lecture, we have observed that a sample Brownian path is
+nowhere differentiable with probability 1. In other words, the differentiation
+dBt
+dt
+does not exist. However, while studying Brownain motions, or when using
+Brownian motion as a model, the situation of estimating the difference of a
+function of the type
+f (Bt )
+over an infinitesimal time difference occurs quite frequently (suppose that
+f is a smooth function). To be more precise, we are considering a function
+f (t, Bt ) which depends only on the second variable. Hence there exists an
+implicit dependence on time since the Brownian motion depends on time.
+t
+If the differentiation dB
+dt existed, then we can easily do this by using chain
+rule:
+
+
+dBt 0
+df =
+· f (Bt ) dt.
+dt
+We already know that the formula above makes no sense.
+One possible way to work around this problem is to try to describe the
+difference df in terms of the difference dBt . In this case, the equation above
+becomes
+(1.1)
+
+df = f 0 (Bt )dBt .
+
+Our new formula at least makes sense, since there is no need to refer to the
+t
+differentiation dB
+dt which does not exist. The only problem is that it does
+not quite work. Consider the Taylor expansion of f to obtain
+(∆x)3 000
+(∆x)2 00
+f (x) +
+f (x) + · · · .
+2
+6
+To deduce Equation (1.1) from this formula, we must be able to say that
+the significant term is the first term (∆x) · f 0 (x) and all other terms are of
+smaller order of magnitude. Is this true for x = Bt ? For x = Bt , we have
+f (x + ∆x) − f (x) = (∆x) · f 0 (x) +
+
+(∆Bt )2 00
+(∆Bt )3
+f (x) +
+2
+f 000 (x) + · · · .
+6
+Now consider the term (∆Bt )2 . Since Bt is a Brownian motion, we know
+that E[(∆Bt )2 ] = ∆t. Since a difference in Bt is necessarily accompanied by
+a difference in t, we see that the second term is no longer negligable. The
+theory of Ito calculus essentially tells us that we can make the substitution
+∆f = (∆Bt ) · f 0 (Bt ) +
+
+1
+
+Lecture 18
+2
+
+(∆Bt )2 = ∆t, and the remaining terms are negligable. Hence the equation
+above becomes
+∆t 00
+∆f = (∆Bt ) · f 0 (Bt ) +
+f (x) + · · · ,
+2
+which in terms of infinitesimals becomes
+1
+(1.2)
+df (Bt ) = f 0 (Bt )dBt + f 00 (Bt )dt.
+2
+This equation known as the Ito’s lemma is the main equation of Ito’s calculus.
+More generally, consider a smooth function f (t, x) which depends on two
+variables, and suppose that we are interested in the differential of f (t, Bt ).
+In classical calculus, we will get
+df =
+
+∂f
+∂f
+dt +
+dx,
+∂t
+∂x
+
+but in Ito calculus, we will have
+∂f
+1 ∂2f
+∂f
+dt +
+dBt +
+(dBt )2
+2
+∂t
+∂x
+2
+∂x
+
+
+∂f
+1 ∂2f
+∂f
+=
++
+dt +
+dBt .
+2
+∂t
+2 ∂x
+∂x
+
+df (t, Bt ) =
+
+Theorem 1.1. (Ito’s lemma) Let f (t, x) be a smooth function of two variables, and let Xt be a stochastic process satisfying dXt = µt dt + σt dBt for a
+Brownian motion Bt . Then
+
+
+∂f
+∂f
+1 2 ∂2f
+∂f
+df (t, Xt ) =
++ µt
++ σ
+dt +
+dBt .
+∂t
+∂x 2 t ∂x2
+∂x
+Proof. We have
+∂f
+∂f
+1 ∂2f
+dt +
+dXt +
+(dXt )2
+2
+∂t
+∂x
+2
+∂x
+
+
+∂f
+∂f
+1 2 ∂2f
+∂f
+=
++ µt
++ σ
+dt + σt dBt + ..dtdBT + ..(dt)2 .
+∂t
+∂x 2 t ∂x2
+∂x
+
+df (t, Xt ) =
+
+We can ignore the terms dtdBt and (dt)2 .
+
+
+
+Definition 1.2. We define integration as an inverse of differentiation, i.e.,
+ˆ
+ˆ
+F (t, Bt ) = f (t, Bt )dBt + g(t, Bt )dt,
+if and only if
+dF = f (t, Bt )dBt + g(t, Bt )dt.
+Example 1.3. (i) The stochastic process Xt = µt + σBt is known as the
+Brownian motion with drift µ and variance σ. For this process, we have
+dXt = µdt + σdBt .
+
+Lecture 18
+3
+
+(ii) Consider the function f (x) = 12 x2 . We see that
+1
+df (Bt ) = Bt dBt + dt.
+2
+Equiavlently,
+1 2
+B =
+2 T
+This implies that
+
+ˆ T
+
+ˆ T
+Bt dBt +
+
+0
+
+0
+
+1
+dt =
+2
+
+ˆ T
+Bt dBt +
+0
+
+T
+.
+2
+
+ˆ T
+
+1
+T
+Bt dBt = BT2 − .
+2
+2
+0
+Note how this ‘violates’ the fundamental theorem of calculus.
+(iii) Let f (t, x) = exp(µt + σx). Then
+1
+df (t, Bt ) = (µ + σ 2 )f (t, Bt )dt + σf (t, Bt )dBt .
+2
+We can now answer the question of finding the stochastic process Xt (t, Bt )
+such that
+dXt = σXt · dBt .
+To do this we can just set µ = − 12 σ 2 in the function above, i.e., Xt (t, Bt ) =
+exp(− 12 σ 2 t + σBt ).
+(iv) Let f (t, x) = t2 + x2 , and Xt = µt + σBt . Then
+df (t, Xt ) = 2tdt + 2Xt dXt + (dXt )2
+= 2tdt + 2(µdt + σdBt ) + σ 2 dt
+= (2t + 2µ + σ 2 )dt + 2σdBt .
+We discussed an elegant way to work around the fact that Bt is not
+differentiable to understand the difference of a function of a Brownian motion
+over a small period of time. For the remainder of this class, we will study
+the properties of Ito calculus by addressing the following type of questions:
+´
+´
+(1) Given g(t, Bt ) = a dBt + b dt for some functions a and b, is there
+a simple way to describe the variance of g?
+(2) Given g(t, Bt ) as above, when is g a martingale?
+(3) Suppose that b = 0. Then when is g(t, Bt ) normally distributed at
+time t?
+Remark. The theory of calculus can be extended to cover Brownian motions
+in several different ways which are all ‘correct’ (in other words, there can
+be several different versions of Ito’s calculus). For example, there exists a
+theory of calculus where
+1
+df = f 0 (Bt )dBt − f 00 (Bt )dt.
+2
+
+Lecture 18
+4
+
+However, Ito integral is the most natural one in the context of how the time
+variable fits into the theory, because the fact that we cannot see the future
+is the basis of the whole theory. We will further study this in next section.
+2. Properties of Ito calculus
+First theorem can be seen as an extension of the fact that the sum of
+independent normal random variables is a random variable.
+Theorem. Let B(t) be a Brownian motion, and let ∆(t) be a nonrandom
+function of time. Suppose that a stochastic process I(t) satisfies
+ˆ
+dI = ∆(s)dBs i.e. I(t) = ∆(s)dBs .
+where I(0) = 0. Then for each t ≥ 0, the random variable I(t) is normally
+distributed.
+What happens when we allow ∆(t) to be a random function of time?
+Here is an interesting and natrual class of random varialbes ∆(t) that we
+consider.
+Definition 2.1. Let Xt be a stochastic process. A process ∆t is called an
+adapted process (with respect to Xt ) if for all t ≥ 0, the random variable ∆t
+depends only on Xs for s ≤ t.
+Example 2.2. Let Xt be a stochastic process.
+(i) The process ∆(t) = Xt is an adapted process.
+(ii) The process ∆(t) = min{Xt , c} is an adapted process (where c is a
+constant).
+(iii) The process ∆(t) = max0≤t≤T Xt is not an adapted process.
+(iv) If τ is a stopping time, then Xτ is an adapted process.
+For example, suppose that we model the price of a stock using a stochastic
+process, and are trying to find a strategy which has positive expected return.
+Consider a simple strategy where at each time t, we either buy or sell one
+stock, hence ∆t = 1 or −1. Our strategy only makes sense if ∆t is an
+adapted process, since otherwise it contradicts the fact that we cannot see
+the future.
+Our second theorem asserts that for a Brownian motion Bt , the Ito integral of an adapted process with respect to Bt is also a martingale.
+Theorem 2.3. Let Bt be a Brownian motion. Then for all adapted processes
+g(t, Bt ), the integral
+ˆ
+g(t, Bt ) dBs
+is a martingale, as long as g is a ‘reasonable function’. Formally, if g ∈ L2 ,
+i.e.,
+ˆ ˆ
+t
+
+g 2 (t, Bt )dtdBt < ∞.
+0
+
+Lecture 18
+5
+
+Example 2.4. The process Bt itself is an adapted process. Recall that
+ˆ t
+1
+t
+Bs dBs = Bt2 − ,
+2
+2
+0
+and E[Bt2 ] = t. Hence
+
+ˆ t
+E[ Bs dBs ] = 0.
+0
+
+More generally,
+
+
+
+
+ˆ t2
+1 2
+1 2
+t2
+t1
+Bs dBs | Ft1 ] = E[ Bt2 −
+E[
+| F1 ] −
+B −
+2
+2
+2 t1
+2
+t1
+1
+1 2
+t2 1 2
+t1
+= 0.
+= (t2 − t1 ) + Bt1 − − Bt1 +
+2
+2
+2
+2
+2
+This confirms the theorem above for ∆(t) = Bt .
+Here is another useful fact about the Ito integral of an adapted process
+known as Ito isometry. It can be used to compute the variance of the Ito
+integral.
+Theorem 2.5. (Ito isometry) Let Bt be a Brownian motion. Then for all
+adapted processes ∆(t), we have
+"ˆ
+2 #
+ˆ t
+
+t
+2
+E
+∆(s)dBs
+=E
+∆(s) ds .
+0
+
+0
+
+Example 2.6. Let ∆(t) = 1. Then the left hand side of the theorem above
+is
+"ˆ
+2 #
+t
+E
+∆(s)dBs
+= E[Bt2 ] = t,
+0
+
+and the right hand side of the above is
+ˆ t
+
+2
+E
+∆(s) ds = E[t] = t.
+´t
+
+0
+
+Note that 0 ∆(s)dBs = 0 by Theorem 2.1 given above. Hence Ito isometry tell us how to compute the variance of this integral .
+3. Change of measure
+Following is a quote from [3].
+Can a stochastic process with drift also be viewed as a process without drift? This modestly paradoxical question is
+no mere curiosity. It has many important consequences, the
+most immediate of which is the discovery that almost any
+question about Brownian motion with drift may be rephrased
+as a parallel question about standard Brownian motion.
+
+Lecture 18
+6
+
+Recall that a stochastic process is a probability distribution over a set of
+paths. A change of measure of a stochastic process is a method of shifting
+the probability distribution into another probability distribution. In this
+section, we fix a final time T and suppose that all paths are defined over the
+time 0 ≤ t ≤ T . Also, we take a more abstract view of defining stochastic
+processes in terms of an underlying space Ω. Hence a stochastic process X is
+a function X : Ω → [0, T ]∞ for ω ∈ Ω, where P is a probability distribution
+over Ω and describes the probability distribution of paths through X −1 , i.e.
+P(A) = P(X −1 (A)) for all set of paths A ⊂ [0, T ]∞ . We denote a particular
+realization of a stochastic process as Xω .
+´
+Let Z be a positive random variable satisfying Z(ω) dX(ω) = 1. Then
+we can define a new stochastic process X̃ whose probability distribution is
+given by
+ˆ
+P̃(A) =
+
+Z(ω) dX(ω),
+A
+
+for all sets A. Since Z is positive, we see that
+(3.1)
+
+P(A) > 0 ⇔ P̃(A) > 0 ∀A.
+
+Hence the set of paths ‘observed’ under the probability measures P and P̃
+are the same.
+Definition 3.1. We say that two probability distributions P and P̃ are
+equivalent if (3.1) holds.
+When changing measures, we fix a set Ω of possible paths, and change
+a probability distribution P over Ω, and make it into another equivalent
+(property 3.1) probability distribution over Ω. Thus the underlying space
+is the same but we only change our point of view. This is not true for
+general transformations. For example, consider the square of a path. The
+probability distribution of the square of a Brownian motion B(t)2 is not
+equivalent to the probability distribution of B(t).
+The function Z is known as the Radon-Nikodým derivative of P̃ with
+respect to P, and is denoted as
+Z=
+
+dP̃
+.
+dP
+
+Changing measures is of theoretical importance since it provides a tool
+to understand the relation between two different but equivalent stochastic
+processes. It is also of practical importance, since converting one probability
+distribution into another can reveal hidden insights. For example, in finance,
+we can convert a non-martingale stochastic process into a martingale by
+changing measure, and this gives a method of pricing financial derivatives.
+We now come back to the original question that we posted: ‘Can a stochastic process with drift also be viewed as a process without drift?’. We
+now see that this is the same question as asking whether the two stochastic
+
+Lecture 18
+7
+
+processes are equivalent. Our first theorem asserts that this indeed is the
+case for Brownian motions.
+Theorem 3.2. (Girsanov’s theorem, simple version) Let (Ω, P) be a probability space, and let X : Ω → [0, T ]∞ be a stochastic process which is a
+Brownian motion with drift µ under the probability distribution inudced by
+(Ω, P). Consider the probability distribution P̃ over Ω defined as
+dP̃
+2
+(ω) = e−µω(T )−µ T /2 .
+dP
+Then X is a Brownian motion with no drift under the probability distribution
+induced by (Ω, P̃).
+Following is a more general version of the theorem above.
+Theorem 3.3. (Girsanov’s theorem) Let (Ω, P) be a probability space, and
+let X : Ω → [0, T ]∞ be a stochastic process which is a Brownian motion with
+no drift under the probability distribution induced by (Ω, P). Let ∆(t) be a
+bounded adapted process, and consider the probability distribution P̃ over Ω
+defined as
+´T
+´
+1 T
+dP̃
+2
+(ω) = e− 0 ∆(u)dω− 2 0 ∆(u) du .
+dP
+Then the stochastic process defined as
+ˆ t
+Yω (t) = Xω (t) +
+∆(u)du,
+0
+
+˜
+is a Brownian motion under the probability distribution induced by (Ω, P).
+4. Remarks
+We avoided all technalities in this lecture note. Formalizaing the theory
+of Ito calculus requires a solid background in measure theory.
+References
+[1] P. Wilmott, S. Howison, J. Dewynne, The mathematics of financial derivatives
+[2] S. Shreve, Stochastic calculus for finance II: continuous-time models
+[3] M. Steele, Stochastic calculus and financial applications
+[4] Failure
+of
+pathwise
+integration
+for
+FV
+processes,
+http://almostsure.wordpress.com/2010/06/02/failure-of-pathwise-integration-forfv-processes/
+[5] R. Karandikar, On pathwise stochastic integration, Stochastic Process. Appl. 57
+(1995), p. 11-18.
+[6] M. Nutz, Pathwise construction of stochastic integrals
+
+MIT OpenCourseWare
+http://ocw.mit.edu
+
+18.S096 Topics in Mathematics with Applications in Finance
+Fall 2013
+
+For information about citing these materials or our Terms of Use, visit: http://ocw.mit.edu/terms.
+
+

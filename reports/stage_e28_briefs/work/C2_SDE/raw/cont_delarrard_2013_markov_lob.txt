@@ -1,0 +1,1191 @@
+Price dynamics in a Markovian limit order market
+Rama CONT & Adrien de LARRARD
+
+arXiv:1104.4596v1 [q-fin.TR] 24 Apr 2011
+
+IEOR Dept, Columbia University, New York
+&
+Laboratoire de Probabilités et Modèles Aléatoires
+CNRS-Université Pierre et Marie Curie, Paris.
+
+We propose and study a simple stochastic model for the dynamics of a limit order book, in which arrivals of
+market order, limit orders and order cancellations are described in terms of a Markovian queueing system.
+Through its analytical tractability, the model allows to obtain analytical expressions for various quantities of
+interest such as the distribution of the duration between price changes, the distribution and autocorrelation
+of price changes, and the probability of an upward move in the price, conditional on the state of the order
+book. We study the diffusion limit of the price process and express the volatility of price changes in terms
+of parameters describing the arrival rates of buy and sell orders and cancelations. These analytical results
+provide some insight into the relation between order flow and price dynamics in order-driven markets.
+Key words : limit order book, market microstructure, queueing, diffusion limit, high-frequency data,
+liquidity, duration analysis, point process.
+
+Contents
+1 Introduction
+1.1 Summary . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+1.2 Outline . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+2
+2
+3
+
+2 A Markov model of limit order book dynamics
+2.1 Level-1 representation of a limit order book . . . . . . . . . . . . . . . . . . . . . . .
+2.2 Order book dynamics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.3 Price dynamics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.4 Summary . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.5 Quantities of interest . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+3
+3
+4
+6
+7
+7
+
+3 Analytical results
+7
+3.1 Duration until the next price change . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+3.2 Probability of upward move in the price for a balanced limit order book . . . . . . . 10
+3.3 Dynamics of the price . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+4 Diffusion limit of the price process
+4.1 Balanced order book . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+4.2 Empirical test using high-frequency data . . . . . . . . . . . . . . . . . . . . . . . . .
+4.3 Case when market orders and cancelations dominate . . . . . . . . . . . . . . . . . .
+4.4 Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+1
+
+14
+14
+15
+16
+17
+
+2
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+1. Introduction
+An increasing number of stocks are traded in electronic, order-driven markets, in which orders to
+buy and sell are centralized in a limit order book available to to market participants and market
+orders are executed against the best available offers in the limit order book. The dynamics of prices
+in such markets are not only interesting from the viewpoint of market participants –for trading
+and order execution (Alfonsi et al. (2010), Predoiu et al. (2011))– but also from a fundamental
+perspective, since they provide a rare glimpse into the dynamics of supply and demand and their
+role in price formation.
+Equilibrium models of price formation in limit order markets (Parlour (1998), Rosu (2009)) have
+shown that the evolution of the price in such markets is rather complex and depends on the state
+of the order book. On the other hand, empirical studies on limit order books (Bouchaud et al.
+(2008), Farmer et al. (2004), Gourieroux et al. (1999), Hollifield et al. (2004), Smith et al. (2003))
+provide an extensive list of statistical features of order book dynamics that are challenging to
+incorporate in a single model. While most of these studies have focused on unconditional/steady–
+state distributions of various features of the order book, empirical studies (see e.g. Harris and
+Panchapagesan (2005)) show that the state of the order book contains information on short-term
+price movements so it is of interest to provide forecasts of various quantities conditional on the
+state of the order book. Providing analytically tractable models which enable to compute and/or
+reproduce conditional quantities which are relevant for trading and intraday risk management
+has proven to be challenging, given the complex relation between order book dynamics and price
+behavior.
+The search for tractable models of limit order markets has led to the development of stochastic
+models which aim to retain the main statistical features of limit order books while remaining
+computationally manageable. Stochastic models also serve to illustrate how far one can go in
+reproducing the dynamic properties of a limit order book without resorting to detailed behavioral
+assumptions about market participants or introducing unobservable parameters describing agent
+preferences, as in more detailed market microstructure models.
+Starting from a description of order arrivals and cancelations as point processes, the dynamics
+of a limit order book is naturally described in the language of queueing theory. Engle and Lunde
+(2003) formulates a bivariate point process to jointly analyze trade and quote arrivals. Cont et al.
+(2010b) model the dynamics of a limit order book as a tractable multiclass queueing system and
+compute various transition probabilities of the price conditional on the state of the order book,
+using Laplace transform methods.
+1.1. Summary
+We propose in this work a Markovian model of a limit order market, which captures some salient
+features of the dynamics of market orders and limit orders, yet is even simpler than the model of
+Cont et al. (2010b) and enables a wide range of properties of the price process to be computed
+analytically.
+Our approach is motivated by the observation that, if one is primarily interested in the dynamics
+of the price, it is sufficient to focus on the dynamics of the (best) bid and ask queues. Indeed,
+empirical evidence shows that most of the order flow is directed at the best bid and ask prices
+(Biais et al. (1995)) and the imbalance between the order flow at the bid and at the ask appears
+to be the main driver of price changes (Cont et al. (2010a)).
+Motivated by this remark, we propose a parsimonious model in which the limit order book is
+represented by the number of limit orders (qtb , qta ) sitting at the bid and the ask, represented as a
+system of two interacting queues. The remaining levels of the order book are treated as a ‘reservoir’
+of limit orders represented by the distribution of the size of the queues at the ’next-to-best’ price
+levels. Through its analytical tractability, the Markovian version of our model allows to obtain
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+3
+
+analytical expressions for various quantities of interest such as the distribution of the duration until
+the next price change, the distribution and autocorrelation of price changes, and the probability
+of an upward move in the price, conditional on the state of the order book.
+Compared with econometric models of high frequency data Engle and Russell (1998), Engle
+and Lunde (2003) where the link between durations and price changes is specified exogenously,
+our model links these quantities in an endogenous manner, and provides a first step towards joint
+’structural’ modeling of high frequency dynamics of prices and order flow.
+A second important observation is that order arrivals and cancelations are very frequent and
+occur at millisecond time scale, whereas, in many applications such as order execution, the metric of
+success is the volume-weighted average price (VWAP) so one is interested in the dynamics of order
+flow over a large time scale, typically tens of seconds or minutes. As shown in Table 1.1, thousands
+of order book events may occur over such time scales. This aggregation of events actually simplifies
+much of the analysis and enables us to use asymptotic methods. We study the link between price
+volatility and order flow in this model by studying the diffusion limit of the price process. In
+particular, we express the volatility of price changes in terms of parameters describing the arrival
+rates of buy and sell orders and cancelations. These analytical results provide some insight into
+the relation between order flow and price dynamics in order-driven markets. Comparison of these
+asymptotic results with empirical data shows that main insights of the model to be correct: in
+particular, we show that in limit order markets where orders arrive frequently, the volatility of
+price changes is increase with the ratio of the order arrival intensity to market depth, as predicted
+by our model.
+Average no. of Price changes
+orders in 10s
+in 1 day
+Citigroup
+4469
+12499
+General Electric
+2356
+7862
+General Motors
+1275
+9016
+Table 1
+
+Average number of orders in 10 seconds and number of price changes (June 26th, 2008).
+
+1.2. Outline
+The paper is organized as follows. Section 2 introduces a reduced-form representation of a limit
+order book and presents a Markovian model in which limit orders, market orders and cancellations
+occur according to Poisson processes. Section 3 presents various analytical results for this model: we
+compute the distribution of the duration until the next price change (section 3.1), the probability
+of upward move in the price (section 3.2) and the dynamics of the price (section 3.3). In Section
+4, we show that the price behaves, at longer time scales, as a Brownian motion whose variance is
+expressed in terms of the parameters describing the order flow, thus establishing a link between
+volatility and order flow statistics.
+
+2. A Markov model of limit order book dynamics
+2.1. Level-1 representation of a limit order book
+Empirical studies of limit order markets suggest that the major component of the order flow occurs
+at the (best) bid and ask price levels (see e.g. Biais et al. (1995)). Furthermore, studies on the price
+impact of order book events show that the net effect of orders on the bid and ask queue sizes is
+the main factor driving price variations (Cont et al. (2010a)). These observations, together with
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+4
+
+the fact that queue sizes at the best bid and ask (“Level I” order book) are more easily obtainable
+(from trades and best quotes) than Level II data, motivate a reduced-form modeling approach in
+which we represent the state of the limit order book by
+• the bid price sbt and the ask price sat
+• the size of the bid queue qtb representing the outstanding limit buy orders at the bid, and
+• the size of the ask queue qta representing the outstanding limit sell orders at the ask
+Figure 1 summarizes this representation.
+
+Quantities
+
+qb
+
+qa
+
+δ
+
+Price
+sa
+
+sb
+
+Figure 1
+
+Simplified representation of a limit order book.
+
+The bid and ask prices are multiples of the tick size δ. As shown in Table 2.1, for liquid stocks
+the bid-ask spread sat − sbt is equal to one tick for more than 98% of observations. We will therefore
+make the simplifying assumption that the spread is equal to one tick, i.e. sat = sbt + δ, resulting in
+a further reduction of dimension in the model.
+Bid-ask spread
+Citigroup
+General Electric
+General Motors
+Table 2
+
+1 tick 2 tick ≥ 3 tick
+98.82 1.18
+0
+98.80 1.18
+0.02
+98.71 1.15
+0.14
+
+Percentage of observations with a given bid-ask spread (June 26th, 2008).
+
+The state of the limit order book is thus described by the triplet Xt = (sbt , qtb , qta ) which takes
+values in the discrete state space δ.Z × N2 .
+2.2. Order book dynamics
+The state Xt of the order book is modified by order book events: limit orders (at the bid or ask),
+market orders and cancelations (see Cont et al. (2010b,a), Smith et al. (2003)). A limit buy (resp.
+sell) order of size x increases the size of the bid (resp. ask) queue by x, while a market buy (resp.
+sell) order decreases the corresponding queue size by x. Cancellation of x orders in a given queue
+reduces the queue size by x. Given that we are interested in the queue sizes at the best bid/ask
+levels, market orders and cancellations have the same effect on the state variable Xt .
+We will assume that these events occur according to independent Poisson processes:
+• Market buy (resp. sell) orders arrive at independent, exponential times with rate µ,
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+5
+
+• Limit buy (resp. sell) orders at the (best) bid (resp. ask) arrive at independent, exponential
+times with rate λ,
+• Cancellations occur at independent, exponential times with rate θ.
+• These events are mutually independent.
+• All orders sizes are equal (assumed to be 1 without loss of generality).
+Denoting by (Tia , i ≥ 1) (resp. Tib ) the times at which the size of ask (resp. the bid) queue changes
+and Via (resp. Via ) the size of the associated change in queue size, the above assumptions translate
+into the following properties for the sequences Tia , Tib , Via , Vib :
+a
+(i) (Ti+1
+− Tia )i≥0 is a sequence of independent random variables with exponential distribution
+with parameter λ + θ + µ,
+b
+(ii) (Ti+1
+− Tib )i≥0 is a sequence of independent random variables with exponential distribution
+with parameter λ + θ + µ,
+(iii) (Via )i≥0 is a sequence of independent random variables with
+
+P[Via = 1] =
+
+λ
+µ+θ
+and P[Via = −1] =
+,
+λ+µ+θ
+λ+µ+θ
+
+(1)
+
+(iv) (Vib )i≥0 is a sequence of independent random variables with
+P[Vib = 1] =
+
+µ+θ
+λ
+and P[Vib = −1] =
+λ+µ+θ
+λ+µ+θ
+
+(2)
+
+• All the previous sequences are independent.
+Once the bid (resp. the ask) queue is depleted, the price will move to the queue at the next level,
+which we assume to be one tick below (resp. above). The new queue size then corresponds to what
+was previously the number of orders sitting at the price immediately below (resp. above) the best
+bid (resp. ask). Instead of keeping track of these queues (and the corresponding order flow) at
+all price levels (as in Cont et al. (2010b), Smith et al. (2003)), we treat these sizes as stationary
+variables drawn from a certain distribution f on N2 . Here f (x, y) represents the probability of
+observing (qtb , qta ) = (x, y) right after a price increase. Similarly, we denote f˜(x, y) the probability
+of observing (qtb , qta ) = (x, y) right after a price decrease. More precisely, denoting by Ft the history
+of prices and order book events on [0, t],
+a
+• if qt−
+= 0 then (qtb , qta ) is a random variable with distribution f , independent from Ft− .
+b
+• if qt− = 0 then (qtb , qta ) is a random variable with distribution f˜, independent from Ft− .
+Given the independence assumptions on event types, the probability that these two situations occur
+simultaneously is zero.
+
+Remark 1. The asumption that (qtb , qta )is independent from Ft− is not necessary. If one only
+assume that the random variables used to replace the quantity of orders once the price moves are
+stationnary, all the results from this paper remain valid. However, without this assumption, the
+process (qtb , qta )t≥0 becomes non-Markovian.
+The distributions f and f˜ summarize the interaction of the queues at the best bid/ask levels with
+the rest of the order book, viewed here as a ’reservoir’ of limit orders. For simplicity we shall
+assume f˜(x, y) = f (y, x) i.e. events occurring on the bid and on the ask side have similar statistical
+properties but our analysis may be readily extended to the asymmetric case. Figure 2 shows the
+(joint) empirical distribution of bid and ask queue sizes after a price move for Citigroup stock on
+June 26th 2008.
+Under these assumptions qt = (qtb , qta ) is thus a Markov process, taking values in N2 , whose
+transitions correspond to the order book events {Tia , i ≥ 1} ∪ {Tib , i ≥ 1}:
+• At the arrival of a new limit buy (resp. sell) order the bid (resp. ask) queue increases by one
+unit. This occurs at rate λ.
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+6
+
+Figure 2
+
+Joint density of bid and ask queue sizes after a price move (Citigroup, June 26th 2008).
+
+• At each cancellation or market order, which occurs at rate θ + µ, either:
+(a) the corresponding queue decreases by one unit if it is > 1, or
+(b) if the ask queue is depleted then qt is a random variable with distribution f .
+(c) if the bid queue is depleted then qt is a random variable with distribution f˜.
+The values of λ and µ + θ are readily estimated from high-frequency records of order books (see
+Cont et al. (2010b) for a description of the estimation procedure). Table 2.2 gives examples of such
+parameter estimates for the stocks mentioned above. We note that in all cases λ < µ + θ but that
+the difference is small: |(µ + θ) − λ|  λ.
+
+λ̂ µ̂ + θ̂
+Citigroup
+2204 2331
+General Electric 317 325
+General Motors 102 104
+Table 3
+
+Estimates for the intensity of limit orders and market orders+cancellations, in number of batches per
+second (each batch representing 100 shares) on June 26th, 2008).
+
+2.3. Price dynamics
+When the bid or ask queue is depleted, the price moves up or down to the next level of the order
+book. We will assume that the order book contains no ‘gaps’ (empty levels) so that these price
+increments are equal to one tick:
+• When the bid queue is depleted, the price decreases by one tick.
+• When the ask queue is depleted, the price increases by one tick.
+If there are gaps in the order book, this results in ’jumps’ (i.e. variations of more than one tick) in
+the price. The price process sbt is thus a piecewise constant process whose transitions correspond
+to hitting times of the {(0, y), y ∈ N} ∪ {(x, 0), x ∈ N} by the Markov process qt = (qta , qtb ).
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+7
+
+2.4. Summary
+In summary, the process Xt = (sbt , qtb , qta ) is a continuous-time process with right-continuous, piecewise constant sample paths whose transitions correspond to the order book events {Tia , i ≥ 1} ∪
+{Tib , i ≥ 1}. At each event:
+• If an order or cancelation arrives on the ask side i.e. T ∈ {Tia , i ≥ 1}:
+(sbT , qTb , qTa ) = (sbT − , qTb − , qTa − + Via )1qTa − >−Via + (STb − + δ, Rib , Ria )1qTa − ≤−Via ,
+• If an order or cancelation arrives on the bid side i.e. T ∈ {Tib , i ≥ 1}:
+
+(sbT , qTb , qTa ) = (sbT − , qTb − + Vib , qTa − )1qb
+
+T−
+
+b
+b
+a
+b ≤−V b ,
+>−Vib + (sT − − δ, R̃i , R̃i )1qT
+i
+−
+
+where (Via )i≥1 and (Vib )i≥1 are sequences of IID variables with distribution given by (1)-(2),
+(Ri )i≥1 = (Rib , Ria )i≥1 is a sequence of IID variables with (joint) distribution f , and (R̃i )i≥1 =
+(R̃ib , R̃ia )i≥1 is a sequence of IID variables with (joint) distribution f˜.
+Remark 2 (Independence assumptions). The IID assumption for the sequences (Rn ), (R̃n ) is
+only used in Section 4. The results of Section 3 do not depend on this assumption.
+2.5. Quantities of interest
+In applications, one is interested in computing various quantities that intervene in high frequency
+trading such as:
+• the conditional distribution of the duration between price moves, given the state of the order
+book (Section 3.1),
+• the probability of a price increase, given the state of the order book (Section 3.2),
+• the dynamics of the price :autocorrelations and distribution and autocorrelations of price
+changes (section 3.3), and
+• the volatility of the price (section 4).
+We will show that all these quantities may be characterized analytically in this model, in terms of
+order flow statistics.
+
+3. Analytical results
+The high-frequency dynamics of the price may be described in terms of durations between successive
+price changes and the magnitude of these price changes. Given that the state of the (Level I) order
+book is observable, it is of interest to examine what information the current state of the order
+book gives about the dynamics of the price. We now proceed to show how the model presented
+above may be used to compute the conditional distributions of durations and price changes, given
+the current state of the order book, in terms of the arrival rates of market orders, limit orders
+and cancellations. The result of this section do not depend on the assumptions on the sequences
+(Rn ), (R̃n ).
+3.1. Duration until the next price change
+We consider first the distribution of the duration until the next price change, starting from a given
+configuration (b, a) of the order book. We define
+• σa the first time when the ask queue (qta , t ≥ 0) is depleted,
+• σb the first time when the bid queue (qtb , t ≥ 0) is depleted
+
+8
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+Since the queue sizes are constant between events, one can express these stopping times as:
+σ a = inf {Tia , qTa a − + Via = 0}
+
+σ b = inf {Tib , qTb b − + Vib = 0}
+
+i
+
+i
+
+The price (st , t ≥ 0) moves when the queue qt = (qtb , qta ) hits one of the axes: the duration until the
+next price move is thus
+τ = σa ∧ σb .
+The following theorem gives the distribution of the duration τ , conditional on the initial queue
+sizes:
+Proposition 1 (Distribution of duration until next price move). The distribution of τ
+conditioned on the state of the order book is given by:
+r
+µ + θ a+b
+a
+b
+P[τ > t|q0 = a, q0 = b] = (
+) ψa,λ,θ+µ (t)ψb,λ,θ+µ (t)
+(3)
+λ
+Z ∞
+p
+n
+In (2 λ(θ + µ)u)e−u(λ+θ+µ) du
+(4)
+where
+ψn,λ,θ+µ (t) =
+u
+t
+and In is the modified Bessel function of the first kind. The conditional law of τ has a regularly
+varying tail
+• with tail exponent 2 if λ < µ + θ
+• with tail exponent 1 if λ = µ + θ. In particular, if λ = µ + θ, E[τ |q0a = a, q0b = b] = ∞ whenever
+a > 0, b > 0.
+Proof. Since (qta , t ≥ 0) follows a birth and death process with birth rate λ and death rate µ + θ,
+L(s, x) := E[e−sσa |q0a = x] satisfies:
+L(s, x) =
+
+λL(s, x + 1) + (µ + θ)L(s, x − 1)
+.
+λ+µ+θ+s
+
+We can find the roots of the polynomial: λX 2 − (λ + µ + θ + s)X + µ + θ; one root is > 1, the other
+is < 1; since L(s, 0) = 1 and limx→∞ L(s, x) = 0,
+p
+(λ + µ + θ + s) − ((λ + µ + θ + s))2 − 4λ(µ + θ) x
+L(s, x) = (
+) .
+2λ
+Moreover if we use the relation P[τ > t|q0a = x, q0b = y] = P[σ a > t|q0a = x]P[σ b > t|q0b = y],
+Z ∞
+Z ∞
+a
+b
+P[τ > t|q0 = x, q0 = y] =
+L̂(u, x)du
+L̂(u, y)du.
+t
+
+t
+
+This Laplace transform may be inverted (see (Feller 1971, XIV.7)) and the inversion yields
+r
+p
+x
+µ+θ x
+L̂(t, x) =
+(
+) Ix (2 λ(θ + µ)t)e−t(λ+θ+µ) ,
+t
+λ
+which gives us the expected result.
+Tail behavior of τ :
+• If λ < µ + θ:
+L(s, x) = α(s)x ∼ 1 −
+s→0
+
+x(λ + µ + θ)
+s,
+2λ(µ + θ − λ)
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+Figure 3
+
+9
+
+Above: P (τ > t|q0a = 4, q0b = 5) as a function of t for λ = 12, µ + θ = 13. Below: same figure in log-log
+coordinates. Note the Pareto tail which decays as t−2 .
+
+so Karamata’s Tauberian theorem (Feller 1971, XIII.5) yields
+P[σ a > t|q0a = x] ∼
+
+x(λ + µ + θ) 1
+
+t→∞ 2λ(µ + θ − λ) t
+
+;
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+10
+
+therefore the conditional law of the duration τ is a regularly varying with tail index 2
+xy(λ + µ + θ)2 1
+.
+t→∞ λ2 (µ + θ − λ)2 4t2
+
+P[τ > t|q0a = x, q0b = y] ∼
+
+(5)
+
+• If the order flow is balanced i.e. λ = µ + θ then
+
+x √
+L(s, x) = (α(s))x ∼ 1 − √
+s,
+s→0
+λ
+the law of σ a is regularly-varying with tail index 1/2 and
+x 1
+P[σ a > t|q0a = x] ∼ √ √ .
+t→∞
+πλ t
+The duration then follows a heavy-tailed distribution with infinite first moment:
+xy 1
+;
+t→∞ πλ t
+
+P[τ > t|q0a = x, q0b = y] ∼
+
+(6)
+
+The expression given in (3) is easily computed by discretizing the integral in (4). Plotting (3) for
+a fine grid of values of t typically takes less than a second on a laptop. Figure 3 gives a numerical
+example, with λ = 12 sec−1 , µ + θ = 13 sec−1 , q0a = 4, q0b = 5 (queue sizes are given in multiples of
+average batch size).
+3.2. Probability of upward move in the price for a balanced limit order book
+Assume now that λ = µ + θ, i.e. that the flow of limit orders is balanced by the flow of market
+orders and cancellations. Therefore for all t ≤ τ , qt = MN2λt , where (Mn , n ≥ 0) is a symmetric
+random walk on Z2 killed when it hits either the x-axis or the y-axis and (N2λt , t ≥ 0) is a Poisson
+process with parameter 2λ. Hence the probability of an upward move in the price starting from
+a configuration qtb = n, qta = p for the order book is equal to the probability that the random walk
+M starting from (n, p) hits the x-axis before the y-axis. This probability is given by the following
+proposition:
+Proposition 2. For (n, p) ∈ N2 , the probability φ(n, p) that the next price move is an increase,
+conditioned on having the n orders on the bid side and p orders on the ask side is:
+Z
+p
+sin(nt) cos( 2t )
+1 π
+φ(n, p) =
+(2 − cos(t) − (2 − cos(t))2 − 1)p
+dt.
+(7)
+π 0
+sin( 2t )
+Proof. The generator of the bivariate random walk (Mn , n ≥ 1) is the discrete Laplacian so
+b
+a
+φ(n, p) = P[σa < σb |q0−
+= n, q0−
+= p] satisfies, for all n ≥ 1 and p ≥ 1,
+4φ(n, p) = φ(n + 1, p) + φ(n − 1, p) + φ(n, p + 1) + φ(n, p − 1),
+
+(8)
+
+with the boundary conditions: φ(0, p) = 0 for all p ≥ 1 and φ(n, 0) = 1 for all n ≥ 1. This problem
+is known as the discrete Dirichlet problem; solutions of (8) are called discrete harmonic functions.
+(Lawler and Limic 2010, Ch. 8) show that for all t ≥ 0, the functions
+ft (x, y) = exr(t) sin(yt),
+
+and
+
+f˜t (x, y) = e−xr(t) sin(yt)
+
+with r(t) = cosh−1 (2 − cos t)
+
+are solutions of (8). In (Lawler and Limic 2010, Corollary 8.1.8) it is shown that the probability
+that a simple random walk (Mk , k ≥ 1) starting at (n, p) ∈ Z+ × Z+ reaches the axes at (x, 0) is
+Z
+2 π −r(t)p
+e
+sin(nt) sin(tx)dt,
+π 0
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+therefore
+
+∞
+X
+
+2
+φ(n, p) =
+π
+k=1
+Since
+
+m
+X
+
+sin(kt) =
+
+k=1
+
+Z π
+
+11
+
+e−r(t)p sin(tn) sin(tk)dt.
+
+0
+
+sin( mt
+) sin( (m+1)t
+) cos( 2t ) − cos((m + 12 )t)
+2
+2
+=
+,
+sin(t/2)
+2 sin(t/2)
+
+using integration by parts we see that the second term leads to the integral:
+Z π
+Z π −r(t)p
+1
+e
+sin(nt)
+1
+g 0 (t) sin((m + )t)dt → 0.
+cos((m + 1/2)t)dt = −
+1
+m→∞
+sin(t/2)
+2
+m+ 2 0
+0
+|
+{z
+}
+g(t)
+
+since g 0 is bounded. So finally:
+Z
+cos( 2t )
+1 π −r(t)p
+dt.
+φ(n, p) =
+e
+sin(tn)
+π 0
+sin( 2t )
+p
+Noting that e−r(t) = (2 − cos(t) − (2 − cos(t))2 − 1) we obtain the result.
+Note that the conditional probabilities (7) are, in the case of a balanced order book, independent
+of the parameters describing the order flow.
+The expression (7) is easily computed numerically: Figure 4 displays the shape of the function Φ.
+The comparison with the corresponding empirical transition frequencies for CitiGroup tick-by-tick
+data on June 26, 2008 shows good agreement between the theoretical conditional probabilities and
+their empirical counterparts.
+3.3. Dynamics of the price
+The high-frequency dynamics of the price in this model is described by a piecewise constant, right
+continuous process (st , t ≥ 0) whose jumps times correspond to times when the order book process
+(qt , t ≥ 0) hits one of the axes. Denote by (τ1 , τ2 , ...) the successive durations between price changes.
+The number of price changes that occur during [0, t] is given by
+Nt := max{ n ≥ 0, τ1 + ... + τn ≤ t }
+a = 0 and sτ = sτ
+At t = τi , sτi = sτi− + 1 if qτi−
+− 1 if qτ b = 0. (X1 , X2 , X3 , ..., Xn , ...) are the
+i
+i−
+i−
+successive moves in the price. Note that in general this is not a sequence of independent random
+variables. We define for n ≥ 1,
+n
+X
+Zn =
+Xi
+
+i=1
+
+the value of the price, after n changes. Hence, for all t ≥ 0, st = ZNt .
+Proposition 3. Let pcont = P[X2 = δ |X1 = δ] = P[X2 = −δ |X1 = −δ] be the probability of two
+successive price moves in the same direction.
+• ∀k ≥ 1, Cov(X1 , Xk ) = (2pcont − 1)k−1 .
+• Conditional on the current state of the limit order book, the distribution of the n-th subsequent
+price change Xn is:
+pn (x, y) := P[Xn = δ |q0a = x, q0b = y] =
+
+1 + (2pcont − 1)n−1 (2p1 (x, y) − 1)
+,
+2
+
+12
+
+Figure 4
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+Above: Conditional probability of a price increase, as a function of the bid and ask queue size. Below:
+comparison with transition frequencies for CitiGroup tick-by-tick data on June 26, 2008.
+
+Proof. Let, for (x, y) ∈ N2 , and for all n ≥ 2, pn (x, y) the probability that Xn = δ, conditioned
+on q0a = x and q0b = y. To simplify, we note pn for pn (x, y). pn is characterized by the following
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+13
+
+recurrence relation:
+
+
+hence
+
+
+ 
+
+
+pn
+pcont 1 − pcont
+pn−1
+=
+,
+1 − pn
+1 − pcont pcont
+1 − pn−1
+
+ 
+n−1 
+
+pn
+pcont 1 − pcont
+p1
+=
+.
+1 − pn
+1 − pcont pcont
+1 − p1
+
+The eigenvalues of this matrix are 1 and 2pcont − 1:
+
+
+ 
+
+
+
+pcont 1 − pcont
+1 1
+1
+0
+1/2 1/2
+=
+.
+1 − pcont pcont
+1 −1
+0 2pcont − 1
+1/2 −1/2
+
+Therefore
+pn =
+
+1 + (2pcont − 1)n−1 (2p1 − 1)
+.
+2
+
+Moreover for all n ≥ 2,
+Cov(X1 , Xn ) = p1 pn + (1 − pn )(1 − p1 ) − p1 (1 − pn ) − pn (1 − p1 )
+Cov(X1 , Xn ) = (1 + 2pn p1 − pn − p1 )
+Cov(X1 , Xn ) = (2pcont − 1)n−1 .
+Remark 3 (Negative autocorrelation of price changes at first lag). It is empirically observed that high frequency price movements have a negative autocorrelation at the first lag
+Cont (2001). In our model Cov(Xk , Xk+1 ) < 0 if and only if pcont < 1/2, which happens when
+∞ X
+X
+
+f (i, j) > 1/2
+
+i=1 j≥i
+
+where f is the joint distribution of queue sizes after a price increase. This condition is verified on
+all high-frequency data sets we have examined. For example, for CitiGroup stock we find
+∞ X
+X
+
+f (i, j) > 0.7
+
+i=1 j≥i
+
+This asymmetry condition on f corresponds to the fact that, after an upward price move, the new
+bid queue is generally smaller than the ask queue since the ask queue corresponds to the limit
+order previously sitting at second best ask level, while the bid queue results from the accumulation
+of orders over the very short period since the last price move. Under this condition, high frequency
+increments of the price are negatively correlated: an increase in the price is more likely to be
+followed by a decrease in the price.
+Remark 4. The sequence of price increments (X1 , X2 , ...) is uncorrelated if and only if pcont = 1/2
+which happens when
+∞ X
+X
+f (i, j) = 1/2.
+i=1 j≥i
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+14
+
+4. Diffusion limit of the price process
+As discussed in Section 3.3, the high frequency dynamics of the price is described by a piecewise
+constant stochastic process st = ZNt where
+Zn = X1 + ... + Xn
+
+and Nt = sup{k; τ1 + ... + τk ≤ t}
+
+is the number of price moves during [0, t].
+However, over time scales much larger than the interval between individual order book events,
+prices are observed to have diffusive dynamics and modeled as such. To establish the link between
+the high frequency dynamics and the diffusive behavior at longer time scales, we shall consider a
+time scale tn = tζ(n) over which the average number of order book events is of order n and exhibit
+conditions under which the rescaled price process
+st
+(snt := √n , t ≥ 0)n≥1
+n
+verifies a functional central limit theorem i.e. converges in distribution to a non-degenerate process
+(pt , t ≥ 0) as n → ∞. The choice of the time scale tn = tζ(n) cannot be arbitrary: it is imposed by
+the distributional properties of the durations which, as observed in Section 3.1, are heavy tailed.
+More precisely, ζ(n) is chosen such that
+τ1 + ... + τn
+ζ(n)
+has a well-defined limit. In this section, we show that, under a symmetry condition, this limit can
+be identified as a diffusion process whose diffusion coefficient may be computed from the statistics
+of the order flow driving the limit order book.
+Assume λ + θ ≤ µ and that the joint distribution f of the queue sizes after a price move satisfies:
+D(f ) =
+
+∞ X
+∞
+X
+
+ijf (i, j) < ∞
+
+(9)
+
+i=1 j=1
+
+p
+The quantity D(f ) represents a measure of market depth: more precisely, D(F ) is the geometric
+average of the size of the bid queue and the size of the ask queue after a price change.
+In this section we assume that the distribution f is symmetric with respect to its arguments:
+∀i, j ≥ 0, f (i, j) = f (j, i). Under this assumption, the sequence of increments (Xi , i ≥ 0) of the
+price is a sequence of independent random variables. We will show that the limit p is then a
+diffusion process which describes the dynamics of the price at lower frequencies. In particular, we
+will compute the volatility of this diffusion limit p and relate it to the properties of the order flow.
+In the following D denotes the space of right continuous paths ω : [0, ∞) → R2 with left limits,
+equipped with the Skorokhod topology J1 , and ⇒ will designate weak convergence on (D, J1 ) (see
+Billingsley (1968), Whitt (2002) for a discussion).
+4.1. Balanced order book
+We first consider the case of a balanced order flow for which the intensity of market orders and
+cancelations is equal to the intensity of limit orders. The study of high-frequency quote data
+indicates that this is an empirically relevant case for many liquid stocks.
+Theorem 1 If λ = µ + θ,
+
+
+sn log nt
+√ ,t ≥ 0
+n
+
+
+
+s
+n→∞
+
+⇒
+
+δ
+
+!
+πλ
+Wt , t ≥ 0
+D(f )
+
+where δ is the tick size, D(f ) is given by (9) and W is a standard Brownian motion.
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+Proof.
+
+For all t ≥ 0 and n ≥ 1, let tn = n log nt and
+
+
+sn log nt Z(tπλ/D(f ))δ
+Z(Ntn )δ Z(tπλ/D(f ))δ
+√
+√
+√
+√
+=
++
+−
+n
+n
+n
+n
+
+15
+
+(10)
+
+Z(tπλn/D(f ))
+√
+Using Donsker’s invariance principle, the sequence of processes (
+, t ≥ 0) converges
+n
+r
+πλ
+. Let ρ : (1, ∞) 7→ (1, ∞) be a function
+in (D, J1 ) to a Brownian motion with volatility δ
+D(f )
+satisfying:
+ρ(t) log(ρ(t)) = t
+t
+Since ρ(t) ∼t→∞
+,
+log(t)
+πλtζ(n)
+tπλζ(n)
+Ntn ∼ ρ(
+)∼
+,
+(11)
+n→∞
+D(f )
+D(f ) log(ζ(n))
+tπλ
+.
+n→∞ D(f )
+
+Ntn ∼
+Therefore for all t ≥ 0,
+
+
+
+Z(Ntn )δ Z(tπλ/D(f ))δ
+√
+√
+−
+n
+n
+
+
+
+n→∞
+
+⇒ 0
+
+(12)
+
+Therefore the finite 
+dimensional distributions of the sequence of processes
+
+Z(Ntn )δ Z(tπλ/D(f ))δ
+√
+√
+−
+converge to a point mass at zero . Since this sequence of processes
+n
+n
+t≥0
+is tight on (D, J1 ), it converges weakly to zero on (D, J1 ) (see Whitt (2002)). Finally,
+s
+
+
+πλ
+sn log nt
+n→∞
+√ ,t ≥ 0 ⇒ δ
+W.
+D(f )
+n
+4.2. Empirical test using high-frequency data
+Theorem 1 relates the ’coarse-grained’ volatility of intraday returns at lower frequencies to the
+high-frequency arrival rates of orders. Denote by τ0 = 1/λ the typical time scale separating order
+book events. Typically τ0 is of the order of milliseconds. In plain terms, Theorem 1 states that,
+observed over a time scale τ2 >> τ0 (say, 10 minutes), the price has a diffusive behavior with a
+diffusion coefficient given by
+s
+nπλ
+σ=δ
+(13)
+D(f )
+where δ is the tick size, n is an integer
+p verifying n ln n τ0 = τ2 which represents the average number
+of orders during an interval τ2 and D(F ), the geometric average of the size of the bid queue and
+the size of the ask queue after a price change, is a measure of market depth.
+Formula (13) links properties of the price to the properties of the order flow. the left hand side
+represents the variance of price changes, whereas the right hand side only involves the tick size and
+quantities: it yields an estimator for price volatility which may be computed without observing the
+price!
+The relation (13) has an intuitive interpretation. It shows that, in two ’balanced’ limit order
+markets with the same tick size and same rate of arrival of orders at the bext bid/ask, the market
+with higher depth of the next-to-best queues will lead to lower price volatility.
+More precisely, this formula shows that the microstructure of order flow affects price volatility
+through the ratio λ/D(f ) where λ is the rate of arrival of limit orders and D(f ), given by (9), is a
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+16
+
+measure of market depth: in fact, our model predicts a proportionality between the variance of price
+increments and this ratio. This is an empirically testable prediction: Figure 5 compares,
+p for stocks
+in the Dow Jones index, the standard deviation of 10-minute price increments with λ/D(f ).
+We observe that, indeed, stocks with a higher value of the ratio λ/D(f ) have p
+a higher variance,
+and standard deviation of price increments increases roughly proportionally to λ/D(f ).
+
+Figure 5
+
+p
+
+λ/D(f ), estimated from tick-by-tick order flow (vertical axis) vs standard deviation of 10-minute price
+increments (horizontal axis) for stocks in the Dow Jones Index, estimated from high frequency data on
+June 26, 2008. Each point represents one stock. Red line indicates the best linear approximation.
+
+4.3. Case when market orders and cancelations dominate
+We now consider the case in which the flow of market orders and cancellations dominates that of
+limit orders: λ < θ + µ. In this case, price changes are more frequent since the order queues are
+depleted at a faster rate than they are replenished by market orders. We also obtain a diffusion
+limit though with a different scaling:
+Theorem 2 Let λ < θ + µ and f a probability distribution on N2 which satisfies
+∞ X
+∞
+X
+m(λ, θ + µ, f ) =
+m(λ, θ + µ, i, j)f (i, j) < ∞,
+i=1 j=1
+∗ 2
+
+where for all (x, y) ∈ (N ) ,
+Z ∞
+m(λ, θ + µ, x, y) =
+
+Z ∞
+dt
+
+0
+
+Z ∞
+ψx,λ,µ+θ (u)du
+
+t
+
+ψy,λ,µ+θ (u)du
+t
+
+where ψx,λ,µ+θ is given by (4). Then
+s
+!
+
+
+snt
+1
+n→∞
+√ ,t ≥ 0 ⇒
+δWt , t ≥ 0
+m(λ, θ + µ, f )
+n
+where W is a standard Brownian motion.
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+17
+
+Proof. The sequence (τ2 , τ3 , ...) is a sequence of i.i.d random variables with finite mean equal
+to m(λ, θ + µ, f ). We apply the law of large numbers:
+τ1 + τ2 + ... + τn n→∞
+→ m(λ, θ + µ, f ).
+n
+Therefore,
+∀t ≥ 0,
+
+n→∞
+
+Ntn ∼ [
+
+tn
+].
+m(λ, θ + µ, f )
+
+The rest of the proof follows the lines of the proof of theorem 1.
+Variance of price change at intermediate frequency Similarly to Theorem 1, Theorem 2 leads to
+an expression of the variance of the price at a time scale τ >> τ0 , where τ0 (∼ ms) is the average
+interval between order book events:
+σ2 =
+
+πλ
+τ
+δ2
+τ0 m(λ, θ + µ, f )
+
+(14)
+
+Here, m(λ, θ + µ, f ) represents the expected hitting time of the axes by the queueing system with
+parameters (λ, θ + µ) and random initial condition with distribution f in the positive orthant.
+As before, while the left hand side of this equation is the variance of price changes (over a time
+scale τ2 ), the right hand side only involves the tick size and quantities which relate to the statistical
+properties of the order flow.
+4.4. Conclusion
+We have exhibited a simple model of a limit order market in which order book events are described
+in terms of a Markovian queueing system. The analytical tractability of our model allows to compute
+various quantities of interest such as
+• the distribution of the duration until the next price change,
+• the distribution of price changes, and
+• the diffusion limit of the price process and its volatility.
+in terms of parameters describing the order flow. These results provide some insight into the relation
+between price dynamics and order flow in a limit order market.
+We view this stylized model as a first step in the elaboration of the analytical study of realistic
+stochastic models of order book dynamics. Yet, comparison with empirical data shows that even
+our simple modeling set-up is capable of yielding useful analytical insights into the relation between
+volatility and order flow, worthy of being further pursued. Moreover, the connection with twodimensional queueing systems allows to use the rich analytical theory developed for these systems
+(see Cohen and Boxma (1983)) to compute many other quantities. We hope to pursue further some
+of these ramifications in future work.
+A relevant question is to examine which of the above results are robust to departures from the
+model assumptions and whether the intuitions conveyed by our model remain valid in a more
+general context where one or more of these assumptions are dropped. This issue is further studied
+in a companion paper Cont and de Larrard (2010) where we explore a more general dynamic model
+relaxing some of the assumptions above.
+
+Acknowledgments
+The authors thank Jean-Philippe Bouchaud, Peter Carr, Xin Guo, Charles Lehalle, Pete Kyle, Arseniy
+Kukanov, Costis Maglaras and seminar participants at the European Meeting of Statisticians (Athens, August
+2010), Morgan Stanley, INFORMS 2010, the SIAM Conference on Financial Engineering and the Conference
+on Market microstructure (Paris, 2010) for helpful comments and discussions.
+
+18
+
+Rama Cont & Adrien de Larrard: Price dynamics in a Markovian limit order market
+
+References
+Alfonsi, A., A. Schied, A. Schulz. 2010. Optimal execution strategies in limit order books with general shape
+function. Quantitative Finance 10 143–157.
+Biais, Bruno, Pierre Hillion, Chester Spatt. 1995. An empirical analysis of the order flow and order book in
+the paris bourse. Journal of Finance 50(5) 1655–1689.
+Billingsley, P. 1968. Convergence of Probability Measures. Wiley Series in Probability and Statistics.
+Bouchaud, Jean-Philippe, Doyne Farmer, Fabrizio Lillo. 2008. How markets slowly digest changes in supply and demand. T. Hens, K. Schenk-Hoppe, eds., Handbook of Financial Markets: Dynamics and
+Evolution. Elsevier: Academic Press.
+Cohen, Jacob Willem, O. J. Boxma. 1983. Boundary value problems in queueing system analysis, NorthHolland Mathematics Studies, vol. 79. North-Holland Publishing Co., Amsterdam.
+Cont, Rama. 2001. Empirical properties of asset returns: stylized facts and statistical issues. Quantitative
+Finance 1(2) 223–236.
+Cont, Rama, Adrien de Larrard. 2010. Linking volatility with order flow: heavy traffic approximations and
+diffusion limits of order book dynamics. Working paper.
+Cont, Rama, Arseniy Kukanov, Sasha Stoikov. 2010a. The price impact of order book events. Working Paper
+http://ssrn.com/abstract=1712822, SSRN.
+Cont, Rama, Sasha Stoikov, Rishi Talreja. 2010b. A stochastic model for order book dynamics. Operations
+Research 58 549–563.
+Engle, R., J. Russell. 1998. Autoregressive conditional duration: a new model for irregularly-spaced transaction data. Econometrica 66 1127–1162.
+Engle, Robert F., Asger Lunde. 2003. Trades and Quotes: A Bivariate Point Process. Journal of Financial
+Econometrics 1(2) 159–188.
+Farmer, J. Doyne, László Gillemot, Fabrizio Lillo, Szabolcs Mike, Anindya Sen. 2004. What really causes
+large price changes? Quantitative Finance 4 383–397.
+Feller, William. 1971. An Introduction to Probability Theory and Its Applications, Vol. 2 . John Wiley and
+Sons.
+Gourieroux, Christian, Joanna Jasiak, Gaelle Le Fol. 1999. Intra-day market activity. Journal of Financial
+Markets 2(3) 193–226.
+Harris, Lawrence E., Venkatesh Panchapagesan. 2005. The information content of the limit order book:
+evidence from NYSE specialist trading decisions. Journal of Financial Markets 8(1) 25–67.
+Hollifield, B., R. A. Miller, P. Sandas. 2004. Empirical analysis of limit order markets. Review of Economic
+Studies 71(4) 1027–1063.
+Lawler, Gregory F., Vlada Limic. 2010. Random Walk: A Modern Introduction, vol. 123. Cambridge Studies
+in Advanced Mathematics.
+Parlour, Christine A. 1998. Price dynamics in limit order markets. Review of Financial Studies 11(4)
+789–816.
+Predoiu, S., G. Shaikhet, S. Shreve. 2011. Optimal execution of a general one-sided limit-order book. SIAM
+Journal on Financial Mathematics, Vol 2, 183–212.
+Rosu, Ioanid. 2009. A dynamic model of the limit order book. Review of Financial Studies 22 4601–4641.
+Smith, E., J. D. Farmer, L. Gillemot, S. Krishnamurthy. 2003. Statistical theory of the continuous double
+auction. Quantitative Finance 3(6) 481–514.
+Whitt, Ward. 2002. Stochastic Process Limits. Springer Verlag.
+
+

@@ -1,0 +1,4684 @@
+Exact Distribution of the Mean Reversion Estimator in
+the Ornstein-Uhlenbeck Process∗
+Yong Bao†
+
+Aman Ullah‡
+
+Department of Economics
+
+Department of Economics
+
+Purdue University
+
+University of California, Riverside
+Yun Wang§
+
+School of International Trade and Economics
+University of International Business and Economics
+August 31, 2014
+
+Abstract: Econometricians have recently been interested in estimating and testing the mean reversion parameter (κ) in linear diffusion models. It has been documented that the maximum likelihood estimator (MLE) of κ
+tends to over estimate the true value. Its asymptotic distribution, on the other hand, depends on how the data
+are sampled (under expanding, infill, or mixed domain) as well as how we spell out the initial condition. This
+poses a tremendous challenge to practitioners in terms of estimation and inference. In this paper, we provide
+new and significant results regarding the exact distribution of the MLE of κ in the Ornstein-Uhlenbeck process
+under different scenarios: known or unknown drift term, fixed or random start-up value, and zero or positive κ.
+In particular, we employ numerical integration via analytical evaluation of a joint characteristic function. Our
+numerical calculations demonstrate the remarkably reliable performance of our exact approach. It is found that
+the true distribution of the MLE can be severely skewed in finite samples and that the asymptotic distributions
+in general may provide misleading results. Our exact approach indicates clearly the non-mean-reverting behavior of the real federal fund rate.
+JEL Classification: C22, C46, C58
+Key Words: Distribution, Mean Reversion Estimator, Ornstein-Uhlenbeck Process
+∗ We are thankful to Yacine Aı̈t-Sahalia, Peter Phillips, and Jun Yu, for helpful comments. We also benefited from discussions
+with Victoria Zinde-Walsh on the subject matter.
+† Corresponding Author: Department of Economics, Purdue University, 403 W. State Street, West Lafayette, IN 47907, USA.
+E-mail: ybao@purdue.edu.
+‡ Department of Economics, University of California, Riverside, CA 92521, USA. E-mail: aman.ullah@ucr.edu.
+§ School of International Trade and Economics, University of International Business and Economics, Beijing, China. E-mail:
+wyuncolor@gmail.com.
+
+1
+
+Introduction
+
+Since the seminal works of Merton (1971) and Black and Scholes (1973), continuous-time models have been used
+extensively in financial economics, see the excellent survey by Sundaresan (2000). Econometricians have also
+paid close attention to this line of literature. Maximum likelihood, generalized method of moments, simulated
+method of moments, and nonparametric approaches have been developed for model estimation, see, for instance,
+Singleton (2001), Bandi and Phillips (2003), Hong and Li (2005), and Phillips and Yu (2009a).
+As shown in the literature, there exists serious bias in estimating the mean reversion parameter (κ) by
+almost all the methods, especially when the diffusion process has a linear drift function and the speed of mean
+reversion is slow (i.e., small values of κ). For example, Phillips and Yu (2005) found that the bias of the maximum
+likelihood estimator (MLE) for κ in the CIR model (Cox, Ingersoll, and Ross, 1985) can be substantial for data
+sets with very long time spans, regardless of data frequency. Recently, Tang and Chen (2009) showed that the
+bias of κ
+b is up to O(T −1 ) in the stationary Vasicek model (Vasicek, 1977), where T is the time span. They also
+derived the approximate biases of the diffusion and drift estimators, and their simulations demonstrated that
+the estimation biases of diffusion and drift parameters are virtually zero, but κ
+b could be severely biased. Since
+the mean reversion parameter κ is of most importance for asset pricing, risk management, and forecasting,
+considerable attention in the literature has arisen to improve its estimation accuracy. Recent contributions
+include indirect inference (Phillips and Yu, 2009b), bootstrapping (Tang and Chen, 2009), and analytical bias
+approximation (Yu, 2012).
+In addition to the classical asymptotic analysis under expanding domain (T → ∞), asymptotic results under
+infill (n → ∞, where n is the number of sample observations within a data span T ) and mixed (n → ∞
+and T → ∞) domains are also analyzed in the literature. In the context of Vasicek and CIR processes with
+unknown drift, Tang and Chen (2009) showed that asymptotic distributions of the MLE are quite different under
+expanding and mixed domains. Aı̈t-Sahalia (2002) derived the asymptotic distribution of his approximate MLE
+under the expanding domain in diffusions models. A striking observation from his simulations is that under the
+stationary case, the asymptotic distribution of the estimated mean reversion parameter deviates more seriously
+from its corresponding finite-sample distribution as the true parameter value deceases from 10 to 1, i.e., as the
+process is getting closer to a unit root process, even with a very large sample size (n = 1000). Under the mixed
+domain, Brown and Hewitt (1975) obtained the limit normal distribution for the MLE of κ in the Vasicek model
+with a known drift term, see also Bandi and Phillips (2003, 2007), and Phillips and Yu (2009c) for asymptotic
+analysis under mixed domain. In a recent paper, Zhou and Yu (2010) derived the asymptotic distributions of the
+least squares (LS) estimator of κ in a general class of diffusion models under the three different domains. They
+
+2
+
+provided Monte Carlo evidence that the infill asymptotic distribution is much more accurate in approximating
+the true finite-sample distribution than the asymptotic distributions under the other two domains.
+The problems of estimation bias and inaccurate and different distribution approximations floating in the
+literature are largely due to the absence of exact analytical distribution results. Moreover, in reality, given the
+discretized data (with a given finite data span T and finite sample size n ), we do not really know under which
+asymptotic domain our inference about κ̂ shall be, but the asymptotic distribution results can behave quite
+differently under expanding, infill, and mixed domains. To address these problems, in this paper we investigate
+the exact distribution of the estimated mean reversion parameter in the Ornstein-Uhlenbeck process. To the
+best of our knowledge, our paper is the first to examine the exact finite-sample distribution of the estimated κ in
+continuous-time models. Since the MLE of κ is a simple transformation of the LS estimator of the autoregressive
+coefficient φ in a first-order autoregressive (AR(1)) model with discrete data, our study is intrinsically related
+to the vast literature studying the finite-sample distribution of the AR(1) coefficient estimator φ̂. The Imhof
+(1961) technique, in conjunction with Davies (1973, 1980), was typically used to develop the exact distribution
+of φ̂, see Ullah (2004) for a comprehensive review. Nevertheless, the Imhof (1961) technique is applicable only
+when the process is strictly stationary with an initial random observation included in formulating φ̂, or when the
+first observation is discarded. Computational burden of the Imhof (1961) technique also increases tremendously
+as the sample size of the AR process increases, since it involves computation of eigenvalues of a matrix whose
+dimension is the same as the sample size. In this paper, we take a different approach by first analytically
+evaluating the joint characteristic function of the random numerator and denominator in defining φ̂, and then
+inverting it via Gurland (1948) and Gil-Pelaez (1951) to calculate the exact finite-sample distribution. This
+approach is in line with Tsui and Ali (1992, 1994) and Ali (2002). However, note that in Tsui and Ali (1992,
+1994) and Ali (2002), no intercept term was included in the AR(1) model. This is equivalent to a known
+drift term in the linear diffusion process. In this paper, we consider explicitly the case when the drift term is
+unknown. Moreover, Tsui and Ali (1992, 1994) did not include the initial observation in formulating the LS
+estimator φ̂, whereas Ali (2002) focused on the approximate distribution with the initial observation included.
+The initial observation does matter in studying the exact distributions in finite samples; in fact, it also matters
+even for the asymptotic distributions under several scenarios.
+The remainder of our paper is as follows. In Section 2, we derive the exact distribution of the MLE of the
+mean reversion parameter κ. We also presents simulation results and compare our exact distribution results
+with the asymptotic results under the three different domains. In Section 3 we construct the exact confidence
+intervals for the mean reversion parameter κ when the linear diffusion model is used to study the real federal
+
+3
+
+fund rate, and we find strong evidence of the non-mean-reverting behavior. Section 4 concludes. Technical
+details are collected in the appendix.
+
+2
+
+Exact Distribution
+
+We consider the Ornstein-Uhlenbeck (OU) process with the initial value x(0),
+
+dx(t) = κ(µ − x(t))dt + σdB(t),
+
+(2.1)
+
+where κ ∈ R, µ ∈ R, σ > 0, and B(t) is a standard Brownian motion. We are interested in estimating the
+parameter κ. When κ 6= 0, the solution to the above process is
+Z t
+x(t) = µ + (x(0) − µ) exp (−κt) + σ
+
+exp (κ(s − t)) dB(s), t ≥ 0.
+
+(2.2)
+
+0
+
+Usually κ > 0 is assumed, and then as t → ∞, the deterministic part of x tends to the mean level µ, so we have
+a mean-reverting process. When κ = 0, the process is no longer mean reverting:
+
+x(t) = x(0) + σB(t),
+
+(2.3)
+
+where the parameter µ vanishes.
+In practice, the observed data are discretely recorded at (0, h, 2h, · · · , nh) in the time interval [0, T ], where
+h is the sampling interval and T is the data span. The exact discrete model corresponding to (2.1) is an AR(1)
+model:
+xih = α + φx(i−1)h + εih , i = 0, 1, · · · , n,
+
+(2.4)
+
+where φ = exp(−κh), α = µ[1−exp(−κh)], and εih ∼ i.i.d.N(0, σ 2ε ). The definition of the error term εih depends
+p
+√
+on whether κ is positive or zero: εih = σi (1 − exp(−2κh))/(2κ) when κ > 0, εih = σ hi when κ = 0, where
+i ∼ i.i.d.N(0, 1). Correspondingly, σ 2ε = σ 2 (1 − exp(−2κh))/(2κ) when κ > 0 and σ 2ε = σ 2 h when κ = 0.
+Note that the autoregressive coefficient φ is always positive by definition. When κ = 0, φ = 1, α = 0, so (2.4)
+becomes a random walk (with no drift). In the sequel, we suppress h in xih and εih for notational convenience.
+It is well known that the LS/ML estimator of κ based on the discrete data is
+
+κ̂ = −
+
+ln(φ̂)
+,
+h
+
+4
+
+(2.5)
+
+where φ̂ is the LS estimator of φ in (2.4). When µ is known (without loss of generality, µ = 0), φ̂ =
+Pn
+Pn
+Pn
+Pn
+2
+2
+i=1 (xi−1 − x̄)xi /
+i=1 (xi−1 − x̄) , where x̄ =
+i=1 xi−1 xi /
+i=1 xi−1 ; for the case of unknown µ, φ̂ =
+Pn
+n−1 i=1 xi−1 .1
+We are interested in studying the properties of κ̂ estimated from the discrete sample via φ̂. As can be
+expected, the exact properties of κ̂ depend on how we spell out the initial observation x(0) = x0 . It can be fixed
+(at zero or a non-zero constant) or random. In this paper, when x0 is random, we assume that the time series
+(x0 , x1 , · · · , xn ) is stationary.
+Note that (2.5) is defined only if φ̂ > 0. However, φ̂ can be negative with a non-zero probability. Thus, we
+define exact distribution of κ̂ − κ as Pr(κ̂ − κ ≤ w) ≡ Pr(κ̂ − κ ≤ w|φ̂ > 0). With this definition, we can show
+that
+Pr (κ̂ − κ ≤ w) =
+
+1 − Fφ̂ (φ exp (−hw) − φ)
+1 − Fφ̂ (−φ)
+
+,
+
+(2.6)
+
+where Fφ̂ (·) denotes the cumulative distribution function (CDF) of φ̂ − φ.2
+As can be seen, with a given sampling frequency h, the distribution of κ̂ − κ follows from the distribution of
+φ̂−φ. When κ > 0 and x0 is random, we can write φ̂−φ as a ratio of quadratic forms in the normal random vector
+(x0 , x1 , · · · , xn )0 , and the technique of Imhof (1961) can be used to evaluate Fφ̂ , and thus Fκ̂ . For a fixed x0 , it is
+not obvious how to directly apply Imhof (1961).3 More fundamentally, Imhof’s procedure requires computation
+of eigenvalues of an (n + 1) × (n + 1) matrix, which becomes very cumbersome as the sampling interval h
+decreases. Therefore, we proceed to derive the distribution function Fφ̂ by using the results from Gurland
+(1948) and Gil-Pelaez (1951) on a ratio of two random variables: Let Y1 and Y2 have the joint characteristic
+function (CF) ϕ (u, v) = E(exp (iuY1 + ivY2 )). If Pr (Y2 ≤ 0) = 0, then the distribution of φ̂ − φ = Y1 /Y2 is
+given by
+1
+1
+Fφ̂ (y) = Pr(φ̂ − φ ≤ y) = −
+2 π
+
+Z ∞
+
+
+Im
+
+0
+
+ϕ(u, −uy)
+u
+
+
+du.
+
+(2.7)
+
+Given the CDF (2.6), one might be tempted to evaluate the probability distribution function (PDF) of
+κ̂ − κ (again conditional on φ̂ > 0), fκ̂ (w) = hφ exp (−hw) fφ̂ (φ exp (−hw) − φ)/[1 − Fφ̂ (−φ)], where fφ̂ (·)
+R∞
+denotes the PDF of φ̂ − φ and can be calculated from Fφ̂0 (y) = π −1 0 Im (∂ϕ(u, v)/∂v|v=−uy ) du. As pointed
+out by Hillier (2001), the density function of a ratio of normal quadratic forms (for instance, in the case when
+κ > 0 and x0 is random), can be nonanayltic at some points. Thus in this paper we focus on the CDF only.
+1 Since we are interested in studying the finite sample properties of κ̂, the initial condition x matters and we include it in the
+0
+estimation procedure. This stands in contrast to the convention of Hurwicz (1950). For the case of known µ, if µ 6= 0, one can
+simply define yi = xi − µ and work with yi .
+2 Note that (2.6) holds regardless of the distribution assumption.
+3 If we discard x in formulating φ̂, then the Imhof (1961) technique is still applicable, as we can define φ̂ in terms of quadratic
+0
+forms in the random vector (x1 , x2 , · · · , xn )0 .
+
+5
+
+2.1
+
+Joint Characteristic Function
+
+For us to be able to use (2.7) to derive (2.6) for κ̂ − κ, an essential task is to evaluate the joint characteristic
+function of the numerator and denominator in defining φ̂ − φ. To facilitate presentation, we first introduce
+some notation. Let 0n be an n × 1 vector of zeros, I n be the identity matrix of size n, ιn be an n × 1 vector
+of ones, M n = I n − n−1 ιn ι0n , ei,n be a unit/elementary vector in the n-dimensional Euclidean space with its
+i-th element being 1. Given an (n − 1) × (n − 1) matrix C n−1 , we define AC
+n as an n × n matrix with its lower
+left block being C n−1 and all other elements being zero, and B C
+n as an n × n matrix with its upper left block
+being C n−1 and all other elements being zero. When C n−1 = I n−1 , we simply put An = AIn and B n = B In .
+(ij)
+
+For an n × n matrix C n , we use cn,ij to denote its ij-th element, and cn
+
+to denote the ij-th element of C −1
+n ,
+
+whenever it exists. Throughout, V n is an n × n matrix with its ij-th element φ|i−j| .
+Pn
+Pn
+Pn
+2
+When κ > 0, define zi = (xi −µ)/σ ε , i = 0, · · · , n, and z̄ = n−1 i=1 zi−1 . Obviously, φ̂ = i=1 zi−1 zi / i=1 zi−1
+Pn
+Pn
+for the case of known µ, and φ̂ = i=1 (zi−1 − z̄)zi / i=1 (zi−1 − z̄)2 for the case of unknown µ.
+Pn
+In the case of κ = 0, the parameter µ vanishes, and we define z̃i = xi /σ ε and z̃¯ = n−1 i=1 z̃i−1 . In practice,
+we may still proceed to estimate φ from the discrete AR(1) model without or with an intercept even when the
+Pn
+Pn
+Pn
+P
+2
+¯ i / n (z̃i−1 −
+parameter µ is not defined. Correspondingly, φ̂ = i=1 z̃i−1 z̃i / i=1 z̃i−1
+or φ̂ = i=1 (z̃i−1 − z̃)z̃
+i=1
+¯ 2.
+z̃)
+Denote z n = (z1 , · · · , zn )0 and ζ n+1 = (z0 , z n )0 . Note that (z2 , · · · , zn )0 = (0n−1 , I n−1 ) z n , (z1 , · · · , zn−1 )0 =
+0
+
+(I n−1 , 0n−1 ) z n , and (z0 − z̄, · · · , zn−1 − z̄) = M n An z n +z0 M n e1,n . (Results pertaining to z̃ can be obviously
+defined.) Thus we can express the following sums in matrix notation:
+Pn
+0
+0
+0
+i=1 zi−1 zi = z0 z n e1,n + z n An z n = ζ n+1 An+1 ζ n+1 ,
+Pn
+0
+2
+2
+0
+i=1 zi−1 = z0 + z n B n z n = ζ n+1 B n+1 ζ n+1 ,
+Pn
+0
+M
+0
+0
+i=1 (zi−1 − z̄)zi = z n M n An z n + z0 z n M n e1,n = ζ n+1 An+1 ζ n+1 ,
+Pn
+0
+0
+0
+M
+2
+0
+2 0
+0
+i=1 (zi−1 − z̄) = z n An M n An z n + z0 e1,n M n e1,n + 2z0 z n An M n e1,n = ζ n+1 B n+1 ζ n+1 .
+Consequently, when κ > 0, we can write the numerator and denominator (Y1 and Y2 ) in formulating
+φ̂ − φ in terms of quadratic forms in either z n (when x0 is fixed) or ζ n+1 (when x0 is random). Define
+the following matrices/vectors (note that these matrices and vectors depend on u, v, and model parameters; we
+have suppressed their arguments):
+
+Rn = I n + φ2 + 2iuφ − 2iv B n − (φ + iu) (An + A0n ),
+δ n = iu(I n − 2φA0n )M n e1,n + 2ivA0n M n e1,n + φe1,n ,
+S n = I n + φ2 B n − φ(An + A0n ) − iu(M n An + A0n M n ) + 2i(uφ − v)A0n M n An ,
+M
+M0
+M
+T n+1 = (1 − φ2 )V −1
+n+1 − iu(An+1 + An+1 ) + 2i(uφ − v)B n+1 .
+
+6
+
+Then we can present the characteristic function ϕ(u, v) under the different scenarios as follows (see the appendix
+for detailed derivation; when κ = 0, Rn , δ n , and S n are defined with φ = 1 in their expressions).
+
+Characteristic Function of φ̂ − φ
+κ
+
+µ (intercept in AR(1) or not)
+
+x0
+
+ϕ (u, v)
+
+>0
+
+Known (no intercept)
+
+Fixed
+
+h 2
+i
+z
+−1/2
+|
+exp 20 1 − |R|Rn+1
+|Rn |
+|
+n
+p
+−1/2
+1 − φ2 |Rn+1 | − φ2 |Rn |
+
+Random
+
+Unknown (with intercept)
+
+=0
+
+No intercept
+
+Random
+
+h 2 2
+i
+
+φ z
+−1/2
+exp − 2 0 − i(uφ − v)z02 1 − n1 + 12 z02 δ 0n S −1
+n δ n |S n |
+p
+−1/2
+1 − φ2 |T n+1 |
+
+Fixed
+
+exp
+
+Fixed
+
+With intercept
+
+h 2
+z̃0
+2
+
+|
+1 − |R|Rn+1
+n|
+
+i
+
+−1/2
+
+|Rn |
+
+h 2 2
+i
+
+φ z̃
+−1/2
+exp − 2 0 − i(u − v)z̃02 1 − n1 + 12 z̃02 δ 0n S −1
+n δ n |S n |
+
+With ϕ (u, v) in hand, we can directly use (2.7) to derive the distribution function of φ̂, which in turn
+can be plugged into (2.6) to obtain the distribution function of κ̂. Clearly, in this procedure we need to find
+−1
+determinants (|Rn | , |Rn+1 | , |S n | , and |T n+1 |) and inverses (S −1
+n and T n+1 ). When n is small, this can be
+
+done easily numerically. But for a moderately large n, for example, T = 10, h = 1/252, n = 2520 (daily data
+over 10 years), this can be quite time consuming. Instead of numerically evaluating these determinants and
+inverses, we proceed to derive direct analytical expressions, presented in Appendix B, by utilizing the special
+structures of these matrices.
+The essential merit of our approach is computational efficiency based on analytical, instead of numerical,
+determinants and inverses. We make no attempt to control computational accuracy when applying numerical
+integration in (2.7); instead we rely on Matlab’s adaptive Gauss-Kronrod quadrature integral procedure quadgk
+by setting numerical absolute error tolerance (1e − 12). The eigenvalue-based approach via Imhof (1961), when
+applicable, might be able to manually control the integration error and truncation error, see Davies (1973, 1980),
+Ansley et al. (1992), and Lu and King (2002). Our numerical exercise in the next subsection demonstrates that
+our numeral integration approach in fact produces very accurate results. Also, as emphasized before, the Imhof
+(1961) approach is not always applicable.
+
+7
+
+2.2
+
+Numerical Results
+
+In this section, we conduct Monte Carlo simulations to illustrate the finite sample performance of our exact
+distribution in comparison with the “true” distribution and the asymptotic distribution. The data generating
+process follows the OU model in (2.4), and the error term is generated from a normal distribution. The
+asymptotic distribution results are available from Zhou and Yu (2010).4 Note that under the infill asymptotics,
+the results are conditional on the initial x0 .
+We set T = 1, 2, 5, 10, h = 1/12, 1/52, 1/252, κ = 0.01, 0.1, 1, µ = 0, 0.1, σ = 0.1, x0 = µ or x0 ∼
+N(µ, σ 2 /(2κ)). Compared with Zhou and Yu (2010), we have a more comprehensive experiment design, so as
+to have a better understanding of the finite-sample distributions. For the fixed start-up case (x0 = 0), we also
+consider κ = 0. As pointed out in Zhou and Yu (2010), the values of 0.01 and 0.1 for κ are empirically realistic
+for interest rate data while the value of 1 is empirically realistic for volatility.
+Tables 1–4 report the cumulative distributions of T (κ̂ − κ), where the “true” distribution results come from
+1,000,000 replications, and we make comparison of the exact (p), true (pedf ), and asymptotic results under the
+three asymptotics (pexp , pmix , pinf ).5 In calculating the exact distribution with the analytical characteristic
+function, we still need to implement numerical integration in (2.7). Appendix C discusses how to overcome
+the problem of discontinuity of the square root function in the complex domain. The complete experiment
+results are available from the corresponding author upon request. To save space, we report only the results for
+h = 1/12, 1/252 in Tables 1–4 (each with two panels corresponding to T = 1, 10, respectively). Tables 1 and
+2 report the cumulative distributions of T (κ̂ − κ) under a fixed start-up when κ = 0.01, with x0 = µ = 0, 0.1,
+respectively, and Tables 3 and 4 report the results when x0 is random.
+Several striking features are present in these tables. First, the exact distribution results match to at least
+the third decimal place with those obtained by 1 million simulations, in all the cases considered. This indicates
+high accuracy of the exact results calculated by our numerical integration algorithm. In consistent with the
+asymptotic results in Zhou and Yu (2010), there is no much difference between the results under the expanding
+and mixed domains, and the infill asymptotics provide relatively better performance. Yet, the asymptotic
+distribution under the infill domain may still provide poor approximation to the true distribution when the
+data span is short, especially so in the left tails. While increasing data frequency does not affect much the
+4 Zhou and Yu (2010) did not give the expanding and infill asymptotic distribution results when κ = 0 and µ 6= 0. This
+corresponds to the scenario, in a discrete framework, when no intercept is present in the true model, but a constant term is
+included in the regression. The expanding and infill asymptotic distribution results easily follow via the generalized delta method.
+5 In simulating the asymptotic (non-normal) results, 10,000 replications are used and a sample size of 5,000 is used to approximate
+the integrals involving the Brownian motion by the discrete Riemann sums, with the exception that the infill asymptotic results
+when x0 is random are calculated as averaging over 2,000 replications, where in each replication, x0 ∼ N(µ, σ 2 /(2κ)) and the
+discrete AR(1) process is of sample size of 2,000.
+
+8
+
+asymptotic distributions, it does affect the true distribution, and the remarkable performance of the exact
+distribution is robust to data frequency, as well as to data span and other aspects of model specification.
+Second, the true distribution of κ̂ is highly skewed to the right. Normality is a terrible approximation of the
+finite-sample distribution of κ̂. Moreover, we can infer from these tables the exact/true median of T (κ̂ − κ) in
+all cases are substantially positive. (A direct calculation of the median is also possible, see the last paragraph
+in this section to follow.) This suggests that κ̂ can significantly over estimate κ in finite samples. This degree
+of overestimation does not decrease with a higher data frequency (given a fixed data span). This is in line with
+the observations made by Phillips and Yu (2005) and Tang and Chen (2009). On the other hand, increasing
+data span might help alleviate this problem, though somewhat marginally.
+Third, how the initial observation is spelled out affects significantly the exact distribution of κ̂. For example,
+for the fixed start-up case, the exact distribution is less skewed to the right when x0 = 0 compared with when
+x0 6= 0. Comparing the random start-up case versus the fixed start-up case with a known drift term (Table
+3 versus Table 1), we see quite a difference in the exact distributions across the two cases and the former one
+is less skewed; on the other hand, with a unknown drift term (Table 4 versus Table 2), there is virtually no
+significant difference in the exact distributions across the two cases.6 This feature is related to the role of initial
+observation in the unit-root test literature, see, for example, Müller and Elliott (2003) and Elliot and Müller
+(2006). It also suggests that the conclusions in Tsui and Ali (1992, 1994) with x0 discarded should be examined
+with more scrutiny.
+Given the CDF function (2.7), one might be tempted to calculate the quantile function Fκ̂−1 (t), t ∈ [0, 1]
+by Newton’s method of interpolation. However, this involves calculation of the PDF function, which requires
+another round of numerical integration, in addition to the possible problem pointed out by Hillier (2001).
+Instead, we suggest employing a very simple bisection search algorithm. Since it is relatively cheap to simulate
+the asymptotic results and we have observed that the infill asymptotic results are more reliable compared with
+the expanding and mixed asymptotic results, we start with the t-th empirical quantile of the simulated sample
+for approximating the in-fill asymptotic results, say c0 . If Fκ̂ (c0 ) < t, we set c1 as the min {2t, 1}-th empirical
+quantile of the simulated sample. (Typically, Fκ̂ (c1 ) > t. If not, one can set c1 as the min {ct, 1}-th empirical
+quantile of the simulated sample, c = 3, 4, · · · , until one finds Fκ̂ (c1 ) > t.) If Fκ̂ (c0 ) > t, we set c1 as the
+t/2-th empirical quantile of the simulated sample. (Typically, Fκ̂ (c1 ) < t. If not, one can set c1 as the ct-th
+empirical quantile of the simulated sample, c = 1/3, 1/4, · · · , until one finds Fκ̂ (c1 ) < t.) Given the two initial
+points c0 and c1 , a bisection search can then be straightforwardly applied to search numerically for Fκ̂−1 (t). This
+6 The effects of the initial observation x can be examined more carefully by looking at the characteristic functions presented
+0
+in Section 2.1. For fixed x0 , the characteristic functions behave differently under zero and non-zero x0 . When the drift term is
+unknown, we see that in the characteristic function, the exponent has terms involving α that dominate the initial value x0 .
+
+9
+
+algorithm is in a similar spirit of the algorithm in Lu and King (2002).
+
+3
+
+An Empirical Example
+
+The linear diffusion model has been used to study the short-term interest rate in the literature. Even though the
+term structure literature has documented that the short-term interest rate is highly persistent, an agreement
+has yet to reach among economists regarding whether there is a unit root in the time series.
+Figure 1: Real Federal Fund Rate
+5
+4
+3
+2
+1
+0
+-1
+-2
+90
+
+92
+
+94
+
+96
+
+98
+
+00
+
+02
+
+04
+
+06
+
+08
+
+10
+
+12
+
+Figure 1 displays the monthly real federal fund rate from January 1990 to October 2012.7 If we use the
+augmented Dickey-Fuller test or Phillips-Perron test, we fail to reject the null of unit root at any conventional
+level. If we use the KPSS test, on the other hand, we fail to reject the null of stationarity at any conventional
+level. The mixed results are in line with the observation from Bierens (2000).8
+If we are willing to use the linear diffusion model for the real federal fund rate, then based on our exact
+distribution approach, we can construct straightforwardly the exact confidence intervals of the mean reversion
+parameter κ.9 For comparison, we also report the confidence intervals under the infill sampling scheme.
+7 The real federal fund rate is calculated as the effective H-15 federal fund rate adjusted for the core PCE inflation rate. The
+former is retrieved from www.federalreserve.gov and the latter is retrieved from www.bea.gov.
+8 One possibility, as discussed in Bierens (2000), is that the series is nonlinear trend stationary.
+9 The distribution of κ̂ depends on the diffusion and drift parameters. We set them equal to the estimated values from the
+sample. (Recall from Tang and Chen (2009) that estimation biases of the diffusions and drift parameters are virtually zero.) Also,
+we regard the first sample observation as fixed and treat the drift term as unknown.
+
+10
+
+Confidence Intervals of κ for Real Federal Fund Rate
+99%
+
+95%
+
+90%
+
+Exact
+
+[−0.1054, 1.1005]
+
+[−0.0531, 0.7940]
+
+[−0.0213, 0.6607]
+
+Infill
+
+[−0.1032, 1.0799]
+
+[−0.0492, 0.7671]
+
+[−0.0210, 0.6327]
+
+It can be seen that the null value of κ = 0 is contained in the confidence intervals. The exact confidence
+intervals are wider compared with those from the infill asymptotic distribution. Based on the infill confidence
+intervals alone we might not be confident to conclude that κ = 0, since we have already seen in the previous
+section that the asymptotic distribution under the infill domain in general is good but may still provide poor
+approximation to the true distribution in the left tail. (Note that the value of k = 0 lies on the left tail.) With
+the exact confidence intervals, we are more confident to believe the non-mean-reverting hypothesis regarding
+the federal fund rate.
+
+4
+
+Conclusions
+
+We have investigated the exact finite-sample distribution of the estimated mean-reversion parameter in the
+Ornstein-Uhlenbeck diffusion process. We have considered several different set-ups: known or unknown drift
+term, fixed or random start-up value, and zero or positive mean-reversion parameter. In particular, we employ
+numerical integration via analytical evaluation of a joint characteristic function. Our numerical calculations
+demonstrate the remarkably reliable performance of the exact approach. It is found that the true distribution
+of the maximum likelihood estimator of the mean-reversion parameter can be severely skewed in finite samples.
+The asymptotic results under expanding and mixed domains in general perform worse than those under the infill
+domain, though the latter may still perform poorly in the left tails. Our exact approach provides distribution
+results of high accuracy, and thus it could be useful for conducting hypothesis testing and constructing confidence
+intervals.
+We note that the linear diffusion model, although extensively studied in the literature, is simple and restrictive in modeling financial time series. Nonlinear diffusion, diffusion-jump, and self-exiting jump models
+have been proposed in the recent literature to accommodate hectic scenarios with large drops and recurring
+crises. The estimation strategy and inference procedure in these models are more complicated. Typically, no
+closed-form solution might be available for the estimator of interest. Therefore, studying the exact distribution
+theory for such estimators for both Gaussian and non-Gaussian cases are extremely difficult and challenging,
+and they are beyond the scope of this paper. Our efforts in this paper can be regarded as a starting point in
+
+11
+
+studying the exact finite-sample distribution theory in continuous-time models. By no means a simple extension
+of our methodology can deliver finite-sample results in the more general nonlinear and non-Gaussian models.
+However, this paper provides a message that the crude asymptotics (expanding, mixed, or infill) may give misleading inferences in finite or even moderately large samples. Thus this calls for more caution in interpreting
+the existing results, and more need for developing the exact finite-sample results for the more general models.
+When the exact finite-sample results are not available, Edgeworth approximations, see Zhang, Mykland and
+Aı̈t-Sahalia (2011), might provide better approximations than the asymptotics, and they might be regarded as
+standing in between the exact and asymptotic results.
+
+Appendix A: Derivation of ϕ(u, v)
+When µ is known (0) and κ > 0 (with x0 fixed or random), or when there is no intercept in the discrete AR(1)
+model and φ = 1 (κ = 0), ϕ(u, v) can follow from Tsui and Ali (1994) with slight modification. (Recall that we
+have the initial observation x0 included in formulating the LS estimator φ̂, whereas in Tsui and Ali (1994) the
+initial observation was discarded.)
+When µ is unknown, κ > 0, and x0 is fixed,
+
+φ̂ =
+
+z 0n M n An z n + z0 z 0n M n e1,n
+.
+0
+z 0n An M n An z n + 2z0 z 0n A0n M n e1,n + z02 e01,n M n e1,n
+
+The density function of z n (conditional on z0 ) is
+" P
+#
+n
+2
+i=1 (zi − φzi−1 )
+f (z n ) = (2π)
+exp −
+2
+
+
+
+1 0
+2
+2 2
+−n
+0
+2
+= (2π)
+exp − [z n I n + φ B n − 2φAn z n − 2φz0 z n e1,n + φ z0 ] ,
+2
+−n
+2
+
+and the joint CF of the numerator and denominator in defining φ̂ − φ is
+
+ϕ (u, v)
+
+=
+
+ 2 2
+
+n
+φ z0
+(2π)− 2 exp −
+− i(uφ − v)z02 e01,n M n e1,n
+2
+
+
+Z +∞
+1
+·
+exp − z 0n S n z n + z0 z 0n δ n dz n .
+2
+−∞
+
+Note that e01,n M n e1,n = 1 − n−1 . Thus we have
+−1/2
+
+ϕ (u, v) = |S n |
+
+ 2 2
+
+
+
+φ z0
+1
+1 2 0 −1
+2
+exp −
+− i(uφ − v)z0 1 −
++ z0 δ n S n δ n .
+2
+n
+2
+12
+
+(A.1)
+
+If κ = 0 and there is an intercept in the AR(1) model, with x0 fixed, one can inspect that setting φ = 1 in (A.1)
+and replacing z0 with z̃0 yield the corresponding CF.
+When µ is unknown and x0 is random (and κ > 0),
+
+φ̂ =
+
+ζ 0n+1 AM
+n+1 ζ n+1
+ζ 0n+1 B M
+n+1 ζ n+1
+
+,
+
+which is invariant to µ and σ 2ε .10 Without loss of generality, assume µ = 0 and σ 2 = 2κ/(1 − φ2 ), so that
+ζ n+1 ∼ N(0n+1 , V n+1 /(1 − φ2 )).11 Then the density of ζ n+1 is
+− n+1
+2
+
+
+
+f ζ n+1 = (2π)
+
+V n+1
+1 − φ2
+
+−1/2
+
+"
+
+1
+exp − ζ 0n+1
+2
+
+
+
+V n+1
+1 − φ2
+
+#
+
+−1
+
+ζ n+1 ,
+
+and the joint CF of the numerator and denominator in defining φ̂ − φ is
+n+1
+
+ϕ (u, v) = (2π)− 2
+
+V n+1
+1 − φ2
+
+−1/2
+
+Z +∞
+·
+
+
+
+1
+exp − ζ 0n+1 T n+1 ζ n+1 dχn+1 .
+2
+−∞
+
+Therefore,
+q
+−1/2
+ϕ (u, v) = 1 − φ2 |T n+1 |
+.
+
+(A.2)
+
+Appendix B: Analytical Determinants and Inverses
+This appendix first gives the analytical determinants and inverses of various matrices involved in evaluating
+ϕ(u, v) and then verifies that these analytical expressions are valid.
+First we introduce the determinant and inverse of a tridiagonal matrix. Let C n be an n × n tridiagonal
+matrix with c0 on its main diagonal and c1 6= 0 on its super- and sub-diagonals. (When c1 = 0, the results are
+trivial.)
+From Bernstein (2009, page 235), the determinant of |C n | is as follows:
+
+|C n | =
+
+
+n
+
+0
+ (n+1)c
+n
+
+c0
+2c1 = ±1
+
+n
+
+ c1 sin((n+1)θ)
+
+c0
+2c1 6= ±1
+
+2
+
+sin θ
+
+,
+
+(B.1)
+
+(ij)
+
+where θ = arccos(c0 /(2c1 )).12 From Hu and O’Connell (1996), the symmetric C −1
+has elements cn
+n
+
+=
+
+M0
+M
+10 φ̂ is independent of µ because AM 1
+n+1 n+1 = 0n+1 , An+1 1n+1 = 0n+1 and B n+1 1n+1 = 0n+1 .
+11 This is different from the case when no intercept is included in the AR(1) model.
+12 When c
+
+0
+
+6= ±2c1 , Bernstein (2009, page 235) gives |C n | = (bn+1
+− bn+1
+)/(b1 − b2 ), where b1 = (c0 +
+1
+2
+
+13
+
+q
+
+c20 − 4c21 )/2 and
+
+(−1)i+j |C i−1 | |C n−j | /(ci−j
+|C n |) for i ≤ j. Substituting the determinant result (B.1) yields
+1
+
+c(ij)
+=
+n
+
+
+
+i−j
+
+ 2i(n−j+1) − c0
+
+c0
+2c1 = ±1
+
+i+j
+
+ (−1) sin(iθ) sin((n−j+1)θ)
+
+c0
+2c1 6= ±1
+
+(n+1)c0
+
+2c1
+
+c1 sin θ sin((n+1)θ)
+
+, i ≤ j,
+
+(B.2)
+
+(ij)
+
+With the explicit expression of cn , we can derive the follow results:
+
+ι0n C −1
+n ιn
+
+=
+
+e01,n C −1
+n ιn
+
+=
+
+e01,n C −1
+n e1,n
+
+=
+
+e01,n C −1
+n en,n
+
+=
+
+
+
+n(n+1)(n+2)
+
+
+6c0
+
+
+
+c0
+2c1 = −1
+
+2n2 +4n+1−(−1)n
+
+4c0 (n+1)
+
+
+
+
+tan2 (θ/2)[(−1)n +cos((n+1)θ)]
+n+1
+
+4c1 cos2 (θ/2) −
+2c1 sin θ sin((n+1)θ)
+
+
+c0
+n
+
+
+2c1 = −1
+
+ c0
+2n+1−(−1)n
+c0
+,
+2c0 (n+1)
+2c1 = 1
+
+
+
+n
+
+c0
+ sin((2n+1)θ/2)−(−1) sin(θ/2)
+2c1 sin((n+1)θ) cos(θ/2)
+2c1 6= ±1
+
+
+c0
+2n
+
+c0 (n+1)
+2c1 = ±1
+,
+
+sin(nθ)
+c0
+
+=
+6
+±1
+c1 sin((n+1)θ)
+2c1
+
+
+c0
+ 2(−c0 /(2c1 ))n+1
+c0 (n+1)
+2c1 = ±1
+.
+n+1
+
+c0
+ (−1) sin(θ)
+=
+6
+±1
+c1 sin((n+1)θ)
+2c1
+
+c0
+2c1 = 1
+
+,
+
+(B.3)
+
+c0
+2c1 6= ±1
+
+(B.4)
+
+(B.5)
+
+(B.6)
+
+In the sequel, let c0 = 1 + φ2 + 2i(uφ − v), c1 = −(φ + iu), c2 = 2i(u + v − uφ), and c3 = i(2φu − 2v − u).
+Since φ > 0, the case of c0 = 2c1 , corresponding to φ = −1 and v = 0, is ruled out.
+
+Determinant of Rn
+Note that Rn is a tridiagonal matrix with its main diagonal elements rn,ii = c0 , i = 1, · · · n − 1, rn,ii = 1,
+i = n, and sub- and super-diagonal elements c1 . Expanding along the last row of Rn leads to
+|Rn | = |C n−1 | − c21 |C n−2 | ,
+
+(B.7)
+
+where the determinants of C n−1 and C n−2 follow from (B.1).
+q
+b2 = (c0 − c20 − 4c21 )/2. This can be numerically unstable when b1 is close to b2 . Using polar representation, we write b1 =
+c1 (cos θ + i sin θ) , b2 = c1 (cos θ − i sin θ). Then it follows that when c0 6= ±2c1 , |C n | = [cn
+1 sin((n + 1)θ)]/ sin θ. We thank
+Raymond Kan for pointing out this result and the results (B.3)–(B.6) to follow.
+
+14
+
+Determinant of S n
+Note that
+
+
+
+A0n ιn ι0n An = 
+
+ιn−1 ι0n−1
+00n−1
+
+
+
+
+
+0n−1 
+
+0
+ , ιn ιn An = 
+0
+
+ιn−1 ι0n−1
+ι0n−1
+
+
+0n−1 
+.
+0
+
+So
+
+Sn
+
+
+= I n + φ2 B n − φ An + A0n − iu(M n An + A0n M n ) + 2i(uφ − v)A0n M n An
+
+= I n + φ2 B n − φ An + A0n − iu(An + A0n ) + 2i(uφ − v)A0n An
++n−1 iuιn ι0n An + n−1 iuA0n ιn ι0n − 2n−1 i(uφ − v)A0n ιn ι0n An
+
+i 
+= Rn +
+uιn ι0n An + uA0n ιn ι0n − 2(uφ − v)A0n ιn ι0n An
+n
+
+0
+
+= Rn +
+
+i  2(u + v − uφ)ιn−1 ιn−1
+
+n
+uι0
+n−1
+
+
+
+uιn−1 
+
+0
+
+
+
+ ∆n−1
+≡ 
+a0n−1
+
+an−1 
+,
+1
+
+where
+∆n−1 = C n−1 +
+
+c2
+iu
+ιn−1 ι0n−1 , an−1 = ιn−1 + c1 en−1,n−1 .
+n
+n
+
+Then immediately,
+
+|S n | = |∆n−1 | 1 − a0n−1 ∆−1
+n−1 an−1 ,
+
+(B.8)
+
+
+
+c2
+|∆n−1 | = |C n−1 | 1 + ι0n−1 C −1
+ι
+,
+n−1
+n−1
+n
+
+(B.9)
+
+where
+
+and
+−1
+∆−1
+n−1 = C n−1 −
+
+c2
+−1
+0
+C −1
+n−1 ιn−1 ιn−1 C n−1 .
+n + c2 ι0n−1 C −1
+ι
+n−1 n−1
+
+(B.10)
+
+Keep in mind that (B.8) is valid only if ∆n−1 is nonsingular; (B.9) is valid only if C n−1 is nonsingular; (B.10)
+is valid only if C n−1 is nonsingular and n + c2 ι0n−1 C n−1 ιn−1 6= 0.
+From (B.1), we see that |C n−1 | 6= 0. From (B.3), we also see that n + c2 ι0n−1 C n−1 ιn−1 6= 0 for any positive
+integer n. Further, these two conditions ensure that |∆n−1 | 6= 0 so that the expression for |S n | given by (B.8)
+is valid. With |C n−1 | from (B.1) and ι0n−1 C −1
+n−1 ιn−1 from (B.3), we can easily calculate |∆n−1 | in (B.8) via
+
+15
+
+(B.9). Note that the remaining term
+
+a0n−1 ∆−1
+n−1 an−1
+
+u2 0
+ι
+C −1 ιn−1 + c21 e01,n−1 C −1
+n−1 e1,n−1
+n2 n−1 n−1
+2ic1 u 0
++
+e
+C −1 ιn−1
+n 1,n−1 n−1
+2ic1 c2 u
+−1
+0
+−
+ι0n−1 C −1
+n−1 ιn−1 e1,n−1 C n−1 ιn−1
+ι
+)
+n(n + c2 ι0n−1 C −1
+n−1 n−1
+
+= −
+
++
+
+c2 u2
+2
+(ι0n−1 C −1
+n−1 ιn−1 )
+ι
+)
+n2 (n + c2 ι0n−1 C −1
+n−1
+n−1
+
+−
+
+c21 c2
+2
+(e01,n−1 C −1
+n−1 ιn−1 ) ,
+ι
+n + c2 ι0n−1 C −1
+n−1 n−1
+
+(B.11)
+
+−1
+−1
+0
+0
+where ι0n−1 ∆−1
+n−1 ιn−1 , e1,n−1 C n−1 ιn−1 , and e1,n−1 C n−1 e1,n−1 follow directly from (B.3), (B.4), and (B.5),
+
+respectively.
+
+Inverse of S n
+With ∆−1
+n−1 given by (B.10), the inverse of S n is straightforward:
+
+
+
+−1
+ ∆n−1
+=
+S −1
+
+n
+00n−1
+
+
+0n−1 
++
+0
+
+
+
+
+∆−1
+n−1 an−1
+−1
+
+
+
+
+
+
+a0n−1 ∆−1
+n−1
+
+
+−1
+,
+
+1 − a0n−1 ∆−1
+n−1 an−1
+
+(B.12)
+
+if ∆n−1 is nonsingular and 1 − a0n−1 ∆−1
+n−1 an−1 6= 0. We have already showed that ∆n−1 is nonsingular. From
+(B.11), we can verify that 1 − a0n−1 ∆−1
+n−1 an−1 6= 0 for any positive integer n.
+0
+Note that we need S −1
+as δ 0n S −1
+n δ n appears in the CF (A.1). Given δ n = iu(I n − 2φAn )M n e1,n +
+n
+
+2ivA0n M n e1,n + φe1,n , we partition it as follows:
+
+δn
+
+=
+
+
+
+
+
+≡
+
+iu(e1,n−1 − n1 ιn−1 ) + 2i(φu−v)
+ιn−1 + φe1,n−1
+n
+− iu
+n
+
+
+ δ 1:n−1,n 
+
+.
+− iu
+n
+
+16
+
+
+
+
+
+So
+
+−1
+0
+∆
+n−1 
+ n−1
+= δ 0n 
+ δn
+0
+0n−1
+0
+
+
+
+−1
+∆n−1 an−1 
+0 
+δn 
+ a0n−1 ∆−1
+n−1
+−1
++
+1 − a0n−1 ∆−1
+n−1 an−1
+
+
+δ 0n S −1
+n δn
+
+=
+
+
+−1
+
+δn
+
+δ 01:n−1,n ∆−1
+n−1 δ 1:n−1,n
+2
+
++
+
+−1
+2iu 0
+u
+2
+(δ 01:n−1,n ∆−1
+n−1 an−1 ) + n δ 1:n−1,n ∆n−1 an−1 − n2
+
+1 − a0n−1 ∆−1
+n−1 an−1
+
+,
+
+(B.13)
+
+where a0n−1 ∆−1
+n−1 an−1 follows from (B.11) and
+δ 01:n−1,n ∆−1
+n−1 δ 1:n−1,n
+
+=
+
+c23 0
+2c1 c3 0
+ι
+C −1 ιn−1 +
+e1,n−1 C −1
+n−1 ιn−1
+n2 n−1 n−1
+n
++c21 e01,n−1 C −1
+n−1 e1,n−1
+−
+
+2
+c2 c23
+ι0n−1 C −1
+n−1 ιn−1
+−1
+0
+2
+n (n + c2 ιn−1 C n−1 ιn−1 )
+
+c21 c2
+2
+(e01,n−1 C −1
+n−1 ιn−1 )
+n + c2 ι0n−1 C −1
+ι
+n−1 n−1
+2c1 c2 c3
+−1
+0
+−
+e01,n−1 C −1
+n−1 ιn−1 ιn−1 C n−1 ιn−1 ,
+n(n + c2 ι0n−1 C −1
+n−1 ιn−1 )
+iuc3 0
+ι
+C −1 ιn−1 − c21 e01,n−1 C −1
+=
+n−1 en−1,n−1
+n2 n−1 n−1
+c1 c2 0
+e
+C −1 ιn−1
+−
+n 1,n−1 n−1
+c21 c2
+2
++
+(e01,n−1 C −1
+n−1 ιn−1 )
+n + c2 ι0n−1 C −1
+n−1 ιn−1
+iuc2 c3
+2
+(ι0n−1 C −1
+− 2
+n−1 ιn−1 )
+n (n + c2 ι0n−1 C −1
+ι
+)
+n−1
+n−1
+−
+
+δ 01:n−1,n ∆−1
+n−1 an−1
+
++
+
+c1 c22
+−1
+0
+e01,n−1 C −1
+n−1 ιn−1 ιn−1 C n−1 ιn−1 .
+n(n + c2 ι0n−1 C −1
+n−1 ιn−1 )
+
+which can be calculated by substituting (B.3)–(B.6).
+
+Determinant of T n+1
+Note that
+
+T n+1
+
+=
+
+M
+M0
+M
+(1 − φ2 )V −1
+n+1 − iu(An+1 + An+1 ) + 2i(uφ − v)B n+1
+
+17
+
+(B.14)
+
+(B.15)
+
+=
+
+0
+(1 − φ2 )V −1
+n+1 − iu(An+1 + An+1 ) + 2i(uφ − v)B n+1
+
+
+ 
+
+0
+0
+0   0n ιn ιn  2i(uφ − v)  ιn ι0n
+iu  0n
++ 
+ −
++
+
+n
+n
+ιn ι0n 0n
+0
+00n
+00n
+
+= Rn+1 − φ2 e1,n+1 e01,n+1
+
+2(v − uφ)
+(u + 2v − 2uφ)ι0n−1
+
+i 
++ 
+(u + 2v − 2uφ)ιn−1 2(v + u − uφ)ιn−1 ι0n−1
+n
+
+u
+uι0n−1
+
+
+2i(uφ−v)
+0
+iu
+1
++
+2i(uφ
+−
+v)
+−
+b
+n−1
+n
+n
+
+
+
+
+
+= 
+bn−1
+∆n−1 an−1 
+
+
+
+iu
+0
+a
+1
+n−1
+n
+
+
+∗
+∗
+ ∆n an 
+≡ 
+,
+a∗0
+1
+n
+
+
+0n 
+
+0
+
+
+u
+
+
+uιn−1 
+
+
+0
+
+where
+
+
+∆∗n
+
+2i(uφ−v)
+ 1 + 2i(uφ − v) −
+n
+= 
+bn−1
+
+a∗n
+
+=
+
+bn−1
+
+
+b0n−1 
+,
+∆n−1
+
+iu
+, a0n−1 )0 ,
+n
+c3
+= c1 e1,n−1 − ιn−1 .
+n
+(
+
+Following the same strategy as before,
+
+
+∗−1 ∗
+|T n+1 | = |∆∗n | 1 − a∗0
+n ∆n an ,
+
+(B.16)
+
+
+
+2i(uφ − v)
+0
+−1
+1 + 2i(uφ − v) −
+− bn−1 ∆n−1 bn−1 ,
+n
+
+(B.17)
+
+where
+|∆∗n | = |∆n−1 |
+and
+
+∆∗−1
+n
+
+
+= 
+
+
+
+0
+
+00n−1
+
+0n−1
+
+∆−1
+n−1
+
+
+
+
+18
+
+
+
+
+−1
+
+
+
++
+
+
+
+∆−1
+n−1 bn−1
+
+
+
+
+−1
+
+b0n−1 ∆−1
+n−1
+
+
+
+− b0n−1 ∆−1
+1 + 2i(uφ − v) − 2i(uφ−v)
+n−1 bn−1
+n
+
+.
+
+(B.18)
+
+For (B.16) to be valid, ∆∗n needs to be nonsingular; for (B.17) to be valid, ∆n−1 needs to be nonsingular;
+for (B.18) to be valid, ∆n−1 needs to be nonsingular and 1 + 2i(uφ − v) − 2i(uφ − v)/n − b0n−1 ∆−1
+n−1 bn−1 6= 0.
+We have already shown that ∆n−1 is nonsingular. Note that
+b0n−1 ∆−1
+n−1 bn−1
+
+=
+
+c23 0
+2c1 c3 0
+ι
+C −1 ιn−1 −
+e1,n−1 C −1
+n−1 ιn−1
+n2 n−1 n−1
+n
++c21 e01,n−1 C −1
+n−1 e1,n−1
+−
+
+c2 c23
+2
+(ι0n−1 C −1
+n−1 ιn−1 )
+0
+2
+n (n + c2 ιn−1 C −1
+ι
+)
+n−1
+n−1
+
+c21 c2
+2
+(e01,n−1 C −1
+n−1 ιn−1 )
+n + c2 ι0n−1 C −1
+n−1 ιn−1
+2c1 c2 c3
+−1
+0
+e01,n−1 C −1
++
+n−1 ιn−1 ιn−1 C n−1 ιn−1 ,
+n(n + c2 ι0n−1 C −1
+n−1 ιn−1 )
+−
+
+(B.19)
+
+which can be evaluated with analytical expressions from (B.3)–(B.5), and we can verify that 1 + 2i(uφ − v) −
+2i(uφ − v)/n − b0n−1 ∆−1
+n−1 bn−1 6= 0 for any positive integer n.
+∗−1 ∗
+For us to use (B.16), we still need expression for a∗0
+n ∆n an . By substitution,
+
+∗−1 ∗
+a∗0
+n ∆n an
+
+=
+
+a0n−1 ∆−1
+n−1 an−1
++
+
+−1
+2
+0
+2
+−u2 − 2inua0n−1 ∆−1
+n−1 bn−1 + n (an−1 ∆n−1 bn−1 )
+
+n2 + 2in2 (uφ − v) − 2in(uφ − v) − n2 b0n−1 ∆−1
+n−1 bn−1
+
+,
+
+(B.20)
+
+0
+−1
+where a0n−1 ∆−1
+n−1 an−1 is given by (B.11), bn−1 ∆n−1 bn−1 is given by (B.19), and
+
+a0n−1 ∆−1
+n−1 bn−1
+
+= −
+
+c1 c2 0
+iuc3 0
+ι
+C −1 ιn−1 +
+e
+C −1 ιn−1
+n2 n−1 n−1
+n 1,n−1 n−1
+
++c21 e01,n−1 C −1
+n−1 en−1,n−1
++
+
+iuc2 c3
+2
+(ι0n−1 C −1
+n−1 ιn−1 )
+2
+n (n + c2 ι0n−1 C −1
+n−1 ιn−1 )
+
+c21 c2
+2
+(e01,n−1 C −1
+n−1 ιn−1 )
+0
+n + c2 ιn−1 C −1
+ι
+n−1 n−1
+c1 c22
+−1
+0
+e01,n−1 C −1
+−
+n−1 ιn−1 ιn−1 C n−1 ιn−1 ,
+n(n + c2 ι0n−1 C −1
+n−1 ιn−1 )
+
+−
+
+which can be evaluated with analytical expressions from (B.3)–(B.6).
+
+19
+
+(B.21)
+
+Appendix C: Numerical Integration
+Given the characteristic functions in Section 2.1, we need to implement numerical integration to calculate (2.6)
+via (2.7). This can be straightforwardly implemented using Matlab’s quadgk command. One caveat to note
+is that the square root function in the complex domain is not continuous. One choice is to follow Perron
+(1989) to identify explicitly the discontinuous points by grid search and then integrate by parts. The search,
+however, might be inefficient and time-consuming. Instead, we use the following algorithm so that the integrand
+p
+function for quadgk is always continuous. Let g (t) = a(t) + ib(t) denote the integrand function in question
+with t ∈ [l, u] . quadgk requires the integrand function to accept a vector (t1 , t2 , · · · , tn ) and returns a vector of
+output. Let θi = arg (a(ti ) + ib(ti )) ∈ [−π, π] and denote ai = a (ti ) , bi = b (ti ) , and gi = g (ti ) .
+1. Start with t1 and set g1 = sqrt (a1 + ib1 ) . Set k = 0.
+2. Beginning with t2 , if ai < 0, ai−1 < 0, and bi bi−1 <= 0, set k = k + 1; otherwise, k is unchanged. Set
+p
+gi = a2i + b2i (cos (θ∗i /2) + i sin (θ∗i /2)) , where θ∗i = θi + 2kπ.
+
+20
+
+21
+
+-5
+-3
+-2
+-1.5
+-1
+-0.8
+-0.6
+-0.4
+-0.2
+-0.1
+-0.01
+-0.001
+0
+0.001
+0.01
+0.1
+0.2
+0.4
+0.6
+0.8
+1
+1.5
+2
+3
+5
+8
+20
+50
+100
+
+w
+0.0002
+0.0037
+0.0201
+0.0487
+0.1126
+0.1511
+0.1958
+0.2439
+0.2928
+0.3169
+0.3380
+0.3401
+0.3403
+0.3406
+0.3427
+0.3632
+0.3853
+0.4271
+0.4660
+0.5024
+0.5366
+0.6111
+0.6711
+0.7592
+0.8617
+0.9318
+0.9906
+0.9995
+1.0000
+
+p
+0.0002
+0.0036
+0.0202
+0.0485
+0.1129
+0.1515
+0.1963
+0.2444
+0.2931
+0.3174
+0.3384
+0.3405
+0.3408
+0.3410
+0.3432
+0.3638
+0.3856
+0.4271
+0.4660
+0.5026
+0.5372
+0.6115
+0.6713
+0.7594
+0.8618
+0.9318
+0.9904
+0.9995
+1.0000
+
+pedf
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7602
+0.9213
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+Monthly
+pexp
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0786
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7602
+0.9214
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+pmix
+0.0000
+0.0013
+0.0109
+0.0317
+0.0884
+0.1249
+0.1679
+0.2173
+0.2682
+0.2933
+0.3153
+0.3175
+0.3177
+0.3180
+0.3202
+0.3411
+0.3644
+0.4081
+0.4492
+0.4889
+0.5255
+0.6050
+0.6700
+0.7628
+0.8757
+0.9490
+0.9980
+1.0000
+1.0000
+
+pinf
+0.0001
+0.0013
+0.0110
+0.0323
+0.0892
+0.1261
+0.1691
+0.2190
+0.2688
+0.2946
+0.3154
+0.3180
+0.3183
+0.3185
+0.3207
+0.3421
+0.3651
+0.4095
+0.4512
+0.4904
+0.5267
+0.6053
+0.6691
+0.7638
+0.8746
+0.9485
+0.9980
+1.0000
+1.0000
+
+p
+0.0000
+0.0013
+0.0112
+0.0326
+0.0888
+0.1253
+0.1697
+0.2186
+0.2686
+0.2932
+0.3153
+0.3175
+0.3177
+0.3180
+0.3202
+0.3414
+0.3644
+0.4088
+0.4507
+0.4899
+0.5263
+0.6051
+0.6687
+0.7634
+0.8742
+0.9484
+0.9981
+1.0000
+1.0000
+
+pedf
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7602
+0.9213
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+Daily
+pexp
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0786
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7602
+0.9214
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+pmix
+
+Table 1, Panel A (T = 1): Pr(T (κ̂ − κ) ≤ w), Fixed x0 , κ = 0.01, x0 = µ = 0, σ = 0.1
+
+0.0000
+0.0014
+0.0105
+0.0310
+0.0876
+0.1245
+0.1688
+0.2171
+0.2682
+0.2934
+0.3157
+0.3179
+0.3181
+0.3184
+0.3203
+0.3414
+0.3649
+0.4086
+0.4516
+0.4907
+0.5273
+0.6055
+0.6695
+0.7647
+0.8755
+0.9498
+0.9982
+1.0000
+1.0000
+
+pinf
+
+22
+
+-5
+-3
+-2
+-1.5
+-1
+-0.8
+-0.6
+-0.4
+-0.2
+-0.1
+-0.01
+-0.001
+0
+0.001
+0.01
+0.1
+0.2
+0.4
+0.6
+0.8
+1
+1.5
+2
+3
+5
+8
+20
+50
+100
+
+w
+0.0000
+0.0015
+0.0124
+0.0355
+0.0940
+0.1310
+0.1749
+0.2226
+0.2715
+0.2957
+0.3171
+0.3192
+0.3194
+0.3197
+0.3218
+0.3427
+0.3654
+0.4107
+0.4505
+0.4892
+0.5204
+0.6030
+0.6663
+0.7607
+0.8720
+0.9467
+0.9977
+1.0000
+1.0000
+
+p
+0.0000
+0.0015
+0.0124
+0.0356
+0.0938
+0.1308
+0.1745
+0.2221
+0.2710
+0.2952
+0.3166
+0.3188
+0.3190
+0.3193
+0.3213
+0.3422
+0.3647
+0.4082
+0.4494
+0.4882
+0.5239
+0.6017
+0.6653
+0.7602
+0.8717
+0.9468
+0.9977
+1.0000
+1.0000
+
+pedf
+0.1319
+0.2513
+0.3274
+0.3687
+0.4116
+0.4290
+0.4467
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5533
+0.5710
+0.5884
+0.6313
+0.6726
+0.7487
+0.8681
+0.9631
+1.0000
+1.0000
+1.0000
+
+Monthly
+pexp
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+pmix
+0.0000
+0.0014
+0.0114
+0.0347
+0.0924
+0.1291
+0.1734
+0.2207
+0.2703
+0.2958
+0.3169
+0.3191
+0.3194
+0.3195
+0.3216
+0.3424
+0.3655
+0.4101
+0.4518
+0.4904
+0.5264
+0.6059
+0.6683
+0.7636
+0.8735
+0.9484
+0.9981
+1.0000
+1.0000
+
+pinf
+0.0000
+0.0013
+0.0116
+0.0341
+0.0918
+0.1288
+0.1725
+0.2194
+0.2677
+0.2928
+0.3152
+0.3163
+0.3166
+0.3168
+0.3190
+0.3404
+0.3637
+0.4077
+0.4493
+0.4883
+0.5244
+0.6027
+0.6664
+0.7616
+0.8735
+0.9484
+0.9982
+1.0000
+1.0000
+
+p
+0.0000
+0.0013
+0.0115
+0.0342
+0.0919
+0.1289
+0.1729
+0.2206
+0.2698
+0.2941
+0.3155
+0.3176
+0.3178
+0.3181
+0.3201
+0.3410
+0.3639
+0.4077
+0.4493
+0.4882
+0.5244
+0.6033
+0.6674
+0.7627
+0.8740
+0.9487
+0.9981
+1.0000
+1.0000
+
+pedf
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+Daily
+pexp
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+pmix
+
+Table 1, Panel B (T = 10): Pr(T (κ̂ − κ) ≤ w), Fixed x0 , κ = 0.01, x0 = µ = 0, σ = 0.1
+
+0.0000
+0.0014
+0.0120
+0.0348
+0.0929
+0.1284
+0.1715
+0.2192
+0.2694
+0.2935
+0.3153
+0.3175
+0.3177
+0.3179
+0.3199
+0.3415
+0.3641
+0.4077
+0.4500
+0.4891
+0.5252
+0.6044
+0.6681
+0.7629
+0.8739
+0.9489
+0.9982
+1.0000
+1.0000
+
+pinf
+
+23
+
+-5
+-3
+-2
+-1.5
+-1
+-0.8
+-0.6
+-0.4
+-0.2
+-0.1
+-0.01
+-0.001
+0
+0.001
+0.01
+0.1
+0.2
+0.4
+0.6
+0.8
+1
+1.5
+2
+3
+5
+8
+20
+50
+100
+
+w
+0.0001
+0.0016
+0.0060
+0.0114
+0.0209
+0.0263
+0.0329
+0.0408
+0.0501
+0.0553
+0.0603
+0.0609
+0.0609
+0.0610
+0.0615
+0.0669
+0.0732
+0.0871
+0.1023
+0.1190
+0.1368
+0.1854
+0.2380
+0.3477
+0.5460
+0.7392
+0.9562
+0.9977
+1.0000
+
+p
+0.0001
+0.0016
+0.0060
+0.0114
+0.0209
+0.0264
+0.0330
+0.0409
+0.0501
+0.0554
+0.0603
+0.0608
+0.0609
+0.0609
+0.0615
+0.0669
+0.0732
+0.0869
+0.1021
+0.1187
+0.1366
+0.1851
+0.2380
+0.3475
+0.5456
+0.7386
+0.9562
+0.9977
+1.0000
+
+pedf
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7602
+0.9213
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+Monthly
+pexp
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7603
+0.9214
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+pmix
+0.0000
+0.0003
+0.0021
+0.0049
+0.0108
+0.0146
+0.0194
+0.0258
+0.0332
+0.0373
+0.0417
+0.0421
+0.0422
+0.0423
+0.0427
+0.0474
+0.0532
+0.0655
+0.0798
+0.0952
+0.1130
+0.1620
+0.2187
+0.3423
+0.5641
+0.7840
+0.9879
+1.0000
+1.0000
+
+pinf
+0.0001
+0.0004
+0.0020
+0.0045
+0.0113
+0.0152
+0.0188
+0.0263
+0.0339
+0.0379
+0.0425
+0.0429
+0.0430
+0.0430
+0.0435
+0.0484
+0.0541
+0.0665
+0.0809
+0.0399
+0.1145
+0.1643
+0.2207
+0.3423
+0.5634
+0.7792
+0.9873
+1.0000
+1.0000
+
+p
+0.0000
+0.0004
+0.0022
+0.0051
+0.0112
+0.0151
+0.0199
+0.0262
+0.0339
+0.0383
+0.0425
+0.0430
+0.0430
+0.0431
+0.0436
+0.0483
+0.0539
+0.0665
+0.0809
+0.0967
+0.1143
+0.1641
+0.2206
+0.3419
+0.5629
+0.7787
+0.9872
+1.0000
+1.0000
+
+pedf
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7603
+0.9214
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+Daily
+pexp
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7603
+0.9214
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+pmix
+
+Table 2, Panel A (T = 1): Pr(T (κ̂ − κ) ≤ w), Fixed x0 , κ = 0.01, x0 = µ = 0.1, σ = 0.1
+
+0.0000
+0.0004
+0.0021
+0.0049
+0.0108
+0.0144
+0.0192
+0.0251
+0.0324
+0.0369
+0.0412
+0.0418
+0.0418
+0.0419
+0.0423
+0.0470
+0.0525
+0.0649
+0.0791
+0.0950
+0.1125
+0.1635
+0.2186
+0.3410
+0.5658
+0.7812
+0.9877
+1.0000
+1.0000
+
+pinf
+
+24
+
+-5
+-3
+-2
+-1.5
+-1
+-0.8
+-0.6
+-0.4
+-0.2
+-0.1
+-0.01
+-0.001
+0
+0.001
+0.01
+0.1
+0.2
+0.4
+0.6
+0.8
+1
+1.5
+2
+3
+5
+8
+20
+50
+100
+
+w
+0.0000
+0.0005
+0.0025
+0.0056
+0.0121
+0.0160
+0.0213
+0.0276
+0.0354
+0.0398
+0.0441
+0.0446
+0.0446
+0.0447
+0.0451
+0.0499
+0.0555
+0.0680
+0.0822
+0.0979
+0.1151
+0.1640
+0.2195
+0.3394
+0.5585
+0.7740
+0.9857
+1.0000
+1.0000
+
+p
+0.0000
+0.0005
+0.0026
+0.0058
+0.0124
+0.0165
+0.0215
+0.0279
+0.0357
+0.0401
+0.0445
+0.0449
+0.0450
+0.0450
+0.0455
+0.0503
+0.0560
+0.0685
+0.0829
+0.0988
+0.1162
+0.1651
+0.2207
+0.3406
+0.5597
+0.7742
+0.9856
+1.0000
+1.0000
+
+pedf
+0.1319
+0.2513
+0.3274
+0.3687
+0.4116
+0.4290
+0.4467
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5533
+0.5710
+0.5884
+0.6313
+0.6726
+0.7487
+0.8681
+0.9631
+1.0000
+1.0000
+1.0000
+
+Monthly
+pexp
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+pmix
+0.0000
+0.0004
+0.0023
+0.0052
+0.0115
+0.0152
+0.0199
+0.0260
+0.0333
+0.0376
+0.0420
+0.0424
+0.0425
+0.0426
+0.0430
+0.0475
+0.0534
+0.0662
+0.0797
+0.0954
+0.1123
+0.1613
+0.2175
+0.3393
+0.5624
+0.7822
+0.9884
+1.0000
+1.0000
+
+pinf
+0.0000
+0.0004
+0.0022
+0.0052
+0.0114
+0.0153
+0.0202
+0.0257
+0.0341
+0.0384
+0.0425
+0.0430
+0.0430
+0.0431
+0.0434
+0.0484
+0.0540
+0.0664
+0.0805
+0.0962
+0.1135
+0.1627
+0.2186
+0.3398
+0.5613
+0.7789
+0.9880
+1.0000
+1.0000
+
+p
+0.0000
+0.0004
+0.0022
+0.0051
+0.0114
+0.0152
+0.0203
+0.0265
+0.0341
+0.0385
+0.0426
+0.0431
+0.0432
+0.0432
+0.0437
+0.0484
+0.0540
+0.0665
+0.0807
+0.0965
+0.1137
+0.1629
+0.2190
+0.3398
+0.5613
+0.7796
+0.9881
+1.0000
+1.0000
+
+pedf
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+Daily
+pexp
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+pmix
+
+Table 2, Panel B (T = 10): Pr(T (κ̂ − κ) ≤ w), Fixed x0 , κ = 0.01, x0 = µ = 0.1, σ = 0.1
+
+0.0000
+0.0004
+0.0024
+0.0054
+0.0120
+0.0158
+0.0210
+0.0274
+0.0351
+0.0393
+0.0436
+0.0442
+0.0443
+0.0444
+0.0447
+0.0492
+0.0547
+0.0671
+0.0819
+0.0978
+0.1148
+0.1632
+0.2172
+0.3383
+0.5584
+0.7781
+0.9885
+1.0000
+1.0000
+
+pinf
+
+25
+
+-5
+-3
+-2
+-1.5
+-1
+-0.8
+-0.6
+-0.4
+-0.2
+-0.1
+-0.01
+-0.001
+0
+0.001
+0.01
+0.1
+0.2
+0.4
+0.6
+0.8
+1
+1.5
+2
+3
+5
+8
+20
+50
+100
+
+w
+0.0000
+0.0001
+0.0008
+0.0025
+0.0084
+0.0144
+0.0264
+0.0536
+0.1343
+0.2430
+0.4202
+0.4406
+0.4428
+0.4451
+0.4653
+0.6361
+0.7445
+0.8390
+0.8803
+0.9041
+0.9200
+0.9446
+0.9590
+0.9750
+0.9886
+0.9954
+0.9995
+1.0000
+1.0000
+
+p
+0.0000
+0.0001
+0.0009
+0.0025
+0.0084
+0.0145
+0.0265
+0.0536
+0.1340
+0.2432
+0.4208
+0.4411
+0.4434
+0.4456
+0.4658
+0.6365
+0.7454
+0.8394
+0.8807
+0.9045
+0.9205
+0.9451
+0.9593
+0.9751
+0.9886
+0.9952
+0.9995
+1.0000
+1.0000
+
+pedf
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7602
+0.9213
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+Monthly
+pexp
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7603
+0.9214
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+pmix
+0.0099
+0.0158
+0.0210
+0.0250
+0.0339
+0.0423
+0.0581
+0.0919
+0.1715
+0.2658
+0.4232
+0.4427
+0.4449
+0.4471
+0.4669
+0.6472
+0.7733
+0.8816
+0.9218
+0.9414
+0.9530
+0.9684
+0.9760
+0.9837
+0.9901
+0.9937
+0.9975
+0.9990
+0.9995
+
+pinf
+0.0000
+0.0001
+0.0005
+0.0018
+0.0071
+0.0127
+0.0241
+0.0506
+0.1302
+0.2382
+0.4152
+0.4355
+0.4377
+0.4400
+0.4602
+0.6315
+0.7404
+0.8360
+0.8781
+0.9025
+0.9189
+0.9441
+0.9590
+0.9756
+0.9897
+0.9966
+0.9999
+1.0000
+1.0000
+
+p
+0.0000
+0.0001
+0.0005
+0.0018
+0.0070
+0.0127
+0.0242
+0.0508
+0.1297
+0.2378
+0.4145
+0.4348
+0.4370
+0.4393
+0.4596
+0.6310
+0.7403
+0.8360
+0.8780
+0.9024
+0.9189
+0.9443
+0.9591
+0.9757
+0.9897
+0.9965
+0.9999
+1.0000
+1.0000
+
+pedf
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7603
+0.9214
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+Daily
+pexp
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7603
+0.9214
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+pmix
+
+Table 3, Panel A (T = 1): Pr(T (κ̂ − κ) ≤ w), Random x0 , κ = 0.01, µ = 0, σ = 0.1
+
+0.0099
+0.0155
+0.0203
+0.0242
+0.0328
+0.0412
+0.0580
+0.0892
+0.1651
+0.2613
+0.4227
+0.4427
+0.4450
+0.4472
+0.4676
+0.6526
+0.7814
+0.8822
+0.9199
+0.9405
+0.9526
+0.9676
+0.9748
+0.9826
+0.9895
+0.9935
+0.9974
+0.9990
+0.9995
+
+pinf
+
+26
+
+-5
+-3
+-2
+-1.5
+-1
+-0.8
+-0.6
+-0.4
+-0.2
+-0.1
+-0.01
+-0.001
+0
+0.001
+0.01
+0.1
+0.2
+0.4
+0.6
+0.8
+1
+1.5
+2
+3
+5
+8
+20
+50
+100
+
+w
+0.0000
+0.0002
+0.0019
+0.0063
+0.0235
+0.0411
+0.0736
+0.1342
+0.2394
+0.3102
+0.3760
+0.3805
+0.3812
+0.3819
+0.3885
+0.4512
+0.5135
+0.6113
+0.6804
+0.7309
+0.7694
+0.8349
+0.8763
+0.9249
+0.9677
+0.9891
+0.9997
+1.0000
+1.0000
+
+p
+0.0000
+0.0002
+0.0019
+0.0065
+0.0237
+0.0410
+0.0731
+0.1338
+0.2393
+0.3084
+0.3740
+0.3804
+0.3812
+0.3819
+0.3884
+0.4510
+0.5134
+0.6108
+0.6803
+0.7308
+0.7693
+0.8349
+0.8759
+0.9249
+0.9676
+0.9890
+0.9997
+1.0000
+1.0000
+
+pedf
+0.1319
+0.2513
+0.3274
+0.3687
+0.4116
+0.4290
+0.4467
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5533
+0.5710
+0.5884
+0.6313
+0.6726
+0.7487
+0.8681
+0.9631
+1.0000
+1.0000
+1.0000
+
+Monthly
+pexp
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+pmix
+0.0265
+0.0418
+0.0548
+0.0639
+0.0850
+0.1053
+0.1432
+0.2081
+0.2931
+0.3441
+0.3991
+0.4052
+0.4059
+0.4065
+0.4127
+0.4779
+0.5553
+0.7052
+0.7949
+0.8479
+0.8805
+0.9208
+0.9393
+0.9585
+0.9744
+0.9838
+0.9934
+0.9973
+0.9987
+
+pinf
+0.0000
+0.0002
+0.0019
+0.0062
+0.0231
+0.0405
+0.0729
+0.1334
+0.2385
+0.3073
+0.3730
+0.3795
+0.3803
+0.3810
+0.3875
+0.4502
+0.5126
+0.6106
+0.6799
+0.7305
+0.7691
+0.8348
+0.8763
+0.9251
+0.9680
+0.9894
+0.9998
+1.0000
+1.0000
+
+p
+0.0000
+0.0001
+0.0017
+0.0062
+0.0230
+0.0406
+0.0729
+0.1332
+0.2385
+0.3076
+0.3730
+0.3797
+0.3804
+0.3811
+0.3878
+0.4505
+0.5132
+0.6111
+0.6801
+0.7311
+0.7695
+0.8349
+0.8765
+0.9251
+0.9680
+0.9896
+0.9998
+1.0000
+1.0000
+
+pedf
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+Daily
+pexp
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+pmix
+
+Table 3, Panel B (T = 10): Pr(T (κ̂ − κ) ≤ w), Random x0 , κ = 0.01, µ = 0, σ = 0.1
+
+0.0260
+0.0407
+0.0527
+0.0611
+0.0811
+0.1013
+0.1404
+0.2077
+0.2944
+0.3458
+0.4016
+0.4077
+0.4084
+0.4091
+0.4153
+0.4813
+0.5588
+0.7094
+0.7980
+0.8509
+0.8821
+0.9206
+0.9389
+0.9576
+0.9738
+0.9834
+0.9933
+0.9973
+0.9987
+
+pinf
+
+27
+
+-5
+-3
+-2
+-1.5
+-1
+-0.8
+-0.6
+-0.4
+-0.2
+-0.1
+-0.01
+-0.001
+0
+0.001
+0.01
+0.1
+0.2
+0.4
+0.6
+0.8
+1
+1.5
+2
+3
+5
+8
+20
+50
+100
+
+w
+0.0001
+0.0016
+0.0061
+0.0114
+0.0210
+0.0264
+0.0331
+0.0410
+0.0503
+0.0556
+0.0606
+0.0611
+0.0612
+0.0612
+0.0618
+0.0672
+0.0735
+0.0874
+0.1028
+0.1194
+0.1373
+0.1861
+0.2387
+0.3485
+0.5467
+0.7397
+0.9562
+0.9977
+1.0000
+
+p
+0.0001
+0.0016
+0.0060
+0.0114
+0.0210
+0.0264
+0.0330
+0.0410
+0.0504
+0.0556
+0.0605
+0.0610
+0.0611
+0.0611
+0.0617
+0.0671
+0.0736
+0.0873
+0.1026
+0.1194
+0.1374
+0.1862
+0.2388
+0.3485
+0.5463
+0.7395
+0.9561
+0.9977
+1.0000
+
+pedf
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7602
+0.9213
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+Monthly
+pexp
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7603
+0.9214
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+pmix
+0.0000
+0.0003
+0.0021
+0.0049
+0.0109
+0.0148
+0.0197
+0.0258
+0.0334
+0.0378
+0.0421
+0.0426
+0.0426
+0.0427
+0.0432
+0.0479
+0.0535
+0.0661
+0.0805
+0.0965
+0.1141
+0.1642
+0.2210
+0.3433
+0.5658
+0.7825
+0.9885
+1.0000
+1.0000
+
+pinf
+0.0001
+0.0004
+0.0020
+0.0045
+0.0113
+0.0152
+0.0189
+0.0265
+0.0341
+0.0384
+0.0427
+0.0432
+0.0434
+0.0435
+0.0437
+0.0487
+0.0544
+0.0668
+0.0813
+0.0974
+0.1150
+0.1649
+0.2214
+0.3430
+0.5641
+0.7796
+0.9873
+1.0000
+1.0000
+
+p
+0.0000
+0.0004
+0.0023
+0.0053
+0.0115
+0.0155
+0.0205
+0.0269
+0.0344
+0.0389
+0.0433
+0.0437
+0.0438
+0.0438
+0.0443
+0.0491
+0.0548
+0.0674
+0.0818
+0.0979
+0.1154
+0.1653
+0.2217
+0.3436
+0.5648
+0.7800
+0.9872
+1.0000
+1.0000
+
+pedf
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7603
+0.9214
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+Daily
+pexp
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0000
+0.0023
+0.0787
+0.2398
+0.4718
+0.4972
+0.5000
+0.5028
+0.5282
+0.7603
+0.9214
+0.9977
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+1.0000
+
+pmix
+
+Table 4, Panel A (T = 1): Pr(T (κ̂ − κ) ≤ w), Random x0 , κ = 0.01, µ = 0.1, σ = 0.1
+
+0.0000
+0.0003
+0.0021
+0.0049
+0.0109
+0.0147
+0.0197
+0.0258
+0.0335
+0.0379
+0.0422
+0.0426
+0.0427
+0.0427
+0.0432
+0.0479
+0.0536
+0.0662
+0.0805
+0.0966
+0.1142
+0.1643
+0.2211
+0.3434
+0.5659
+0.7826
+0.9885
+1.0000
+1.0000
+
+pinf
+
+28
+
+-5
+-3
+-2
+-1.5
+-1
+-0.8
+-0.6
+-0.4
+-0.2
+-0.1
+-0.01
+-0.001
+0
+0.001
+0.01
+0.1
+0.2
+0.4
+0.6
+0.8
+1
+1.5
+2
+3
+5
+8
+20
+50
+100
+
+w
+0.0000
+0.0005
+0.0026
+0.0076
+0.0127
+0.0168
+0.0223
+0.0290
+0.0371
+0.0417
+0.0462
+0.0467
+0.0467
+0.0468
+0.0473
+0.0522
+0.0580
+0.0710
+0.0857
+0.1019
+0.1196
+0.1697
+0.2260
+0.3466
+0.5649
+0.7778
+0.9860
+1.0000
+1.0000
+
+p
+0.0000
+0.0005
+0.0026
+0.0060
+0.0129
+0.0172
+0.0226
+0.0292
+0.0373
+0.0419
+0.0465
+0.0470
+0.0470
+0.0471
+0.0475
+0.0525
+0.0584
+0.0712
+0.0859
+0.1022
+0.1200
+0.1704
+0.2267
+0.3468
+0.5644
+0.7774
+0.9859
+1.0000
+1.0000
+
+pedf
+0.1319
+0.2513
+0.3274
+0.3687
+0.4116
+0.4290
+0.4467
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5533
+0.5710
+0.5884
+0.6313
+0.6726
+0.7487
+0.8681
+0.9631
+1.0000
+1.0000
+1.0000
+
+Monthly
+pexp
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+pmix
+0.0000
+0.0004
+0.0023
+0.0054
+0.0118
+0.0159
+0.0211
+0.0276
+0.0355
+0.0401
+0.0445
+0.0450
+0.0450
+0.0451
+0.0456
+0.0504
+0.0562
+0.0691
+0.0837
+0.0999
+0.1176
+0.1679
+0.2248
+0.3468
+0.5678
+0.7833
+0.9885
+1.0000
+1.0000
+
+pinf
+0.0000
+0.0004
+0.0023
+0.0055
+0.0120
+0.0161
+0.0213
+0.0271
+0.0358
+0.0403
+0.0335
+0.0450
+0.0341
+0.0451
+0.0455
+0.0411
+0.0524
+0.0799
+0.0840
+0.1003
+0.1180
+0.1683
+0.2251
+0.3470
+0.5677
+0.7827
+0.9883
+1.0000
+1.0000
+
+p
+0.0000
+0.0004
+0.0024
+0.0054
+0.0118
+0.0158
+0.0210
+0.0275
+0.0353
+0.0398
+0.0443
+0.0447
+0.0448
+0.0448
+0.0453
+0.0501
+0.0559
+0.0689
+0.0834
+0.0994
+0.1172
+0.1674
+0.2244
+0.3459
+0.5670
+0.7818
+0.9882
+1.0000
+1.0000
+
+pedf
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+Daily
+pexp
+0.1318
+0.2512
+0.3274
+0.3687
+0.4115
+0.4290
+0.4466
+0.4644
+0.4822
+0.4911
+0.4991
+0.4999
+0.5000
+0.5001
+0.5009
+0.5089
+0.5178
+0.5356
+0.5534
+0.5710
+0.5885
+0.6313
+0.6726
+0.7488
+0.8682
+0.9632
+1.0000
+1.0000
+1.0000
+
+pmix
+
+Table 4, Panel B (T = 10): Pr(T (κ̂ − κ) ≤ w), Random x0 , κ = 0.01, µ = 0.1, σ = 0.1
+
+0.0000
+0.0004
+0.0023
+0.0054
+0.0119
+0.0160
+0.0212
+0.0277
+0.0357
+0.0402
+0.0447
+0.0452
+0.0452
+0.0453
+0.0457
+0.0506
+0.0564
+0.0694
+0.0840
+0.1002
+0.1180
+0.1684
+0.2253
+0.3473
+0.5683
+0.7835
+0.9885
+1.0000
+1.0000
+
+pinf
+
+References
+Aı̈t-Sahalia, Y., 2002, Maximum likelihood estimation of discretely sampled diffusion: A closed-form approximation approach. Econometrica 70, 223–262.
+Ali, M.M., 2002, Distribution of the least squares estimator in a first-order autoregressive model. Econometric
+Reviews 21, 89–119.
+Ansley, C.F., R. Kohn, and T.S. Shively, 1992, Computing p-values for the Generalized Durbin-Watson and
+other invariant test statistics. Journal of Econometrics 54, 277–300.
+Bandi, F.M. and P.C.B. Phillips, 2003, Fully nonparametric estimation of scalar diffusion models. Econometrica
+71, 241–283.
+Bandi, F.M. and P.C.B. Phillips, 2007, A simple approach to the parametric estimation of potentially nonstationary diffusions. Journal of Econometrics 137, 354–395.
+Bernstein, D.S., 2009, Matrix Mathematics: Theory, Facts, and Formulas (Second Edition). Princeton University Press, New Jersey.
+Bierens, H., 2000, Nonparametric nonlinear co-trending analysis, with an application to inflation and interest
+in the U.S. Journal of Business & Economic Statistics 18, 323–337.
+Black, F. and M. Scholes, 1973, The pricing of options and corporate liabilities. Journal of Political Economy
+81, 637–654.
+Brown, B.W. and J.T. Hewitt, 1975, Asymptotic likelihood theory for diffusion processes. Journal of Applied
+Probability 12, 228–238.
+Davies, R.B., 1973, Numerical inversion of a characteristic function. Biometrika 60, 416.
+Davies, R.B., 1980, Algorithm AS 155: The distribution of a linear combination of χ2 random variables. The
+American Statistician 29, 323–333.
+Elliott, G. and U.K. Müller, 2006, Minimizing the impact of the initial condition on testing for unit roots.
+Journal of Econometrics 135, 285–310.
+Fulop, A., J. Li, and J. Yu, 2011, Bayesian learning of impacts of self-exciting jumps in returns and volatility.
+Working paper, Singapore Management University.
+Gil-Pelaez, J., 1951, Note on the inversion theorem. Biometrika 38, 481–482.
+Gurland, J., 1948, Inversion formula for the distribution of ratios. Annals of Mathematical Statistics 19,
+228–237.
+Hillier, G., 2001, The density of a quadratic form in a vector uniformly distributed on the n-sphere. Econometric
+Theory 17, 1–28.
+Hong, Y., and H. Li, 2005, Nonparametric specification testing for continuous time model with application to
+spot interest rates. Review of Financial Studies 18, 37–84.
+Hurwicz, L., 1950, Least squares bias in time series, in: T.C. Koopmans (Ed.), Statistical Inference in Dynamic
+Models, Wiley, New York, pp. 365–383.
+Imhof, J.P., 1961, Computing the distribution of quadratic forms in normal variables. Biometrika 48, 419–426.
+Lu, Z.-H. and M.L. King, 2002, Improving the numerical technique for computing the accumulated distribution
+of a quadratic form in normal variables. Econometric Reviews 21, 149–165.
+29
+
+Merton, R.C., 1971, Optimum consumption and portfolio rules in a continuous time model. Journal of Economic Theory 3, 373–413.
+Müller, U.K. and G. Elliott, 2003, Tests for unit roots and the initial condition. Econometrica 71, 1269–1286.
+Perron, P., 1989, The calculation of the limiting distribution of the least-squares estimator in a near-integrated
+model. Econometric Theory 5, 241–255.
+Phillips, P.C.B. and J. Yu, 2005, Jackknifing bond option prices. Review of Financial Studies 18, 707–742.
+Phillips, P.C.B. and J. Yu, 2009a, Simulation-based estimation of contingent-claims prices. Review of Financial
+Studies 22, 3669–3705.
+Phillips, P.C.B. and J. Yu, 2009b, A two-stage realized volatility approach to estimation of diffusion processes
+with discrete data. Journal of Econometrics, 150, 139–150.
+Phillips, P.C.B. and J. Yu, 2009c, Maximum likelihood and Gaussian estimation of continuous time models in
+finance, in: T. G. Andersen, R.A. Davis, J.-P. Kreiß, and T. Mikosch (Eds.), Handbook of Financial Time
+Series, Springer-Verlag, New York, pp. 497–530.
+Singleton, K., 2001, Estimation of affine pricing models using the empirical characteristic function. Journal of
+Econometrics 102, 111–141.
+Sundaresan, S.M., 2000, Continuous-time methods in finance: A review and an assessment. Journal of Finance
+55, 1569–1622.
+Tang, C.Y. and S.X. Chen, 2009, Parameter estimation and bias correction for diffusion processes. Journal of
+Econometrics, 149, 65–81.
+Tsui, A.K. and M.M. Ali, 1992, Approximations to the distribution of the least squares estimator in a first-order
+stationary autoregressive model. Communications in Statistics-Simulation 21, 463–484.
+Tsui, A.K. and M.M. Ali, 1994, Exact distributions, density functions and moments of the least squares
+estimator in a first-order autoregressive model. Computational Statistics and Data Analysis 17, 433–454.
+Ullah, A., 2004, Finite Sample Econometrics. Oxford University Press, New York.
+Vasicek, O., 1977, An equilibrium characterization of the term structure. Journal of Financial Economics 5,
+177–188.
+Yu, J., 2012, Bias in the estimation of the mean reversion parameter in continuous time models. Journal of
+Econometrics 169, 114–122.
+Zhang, L., P.A. Mykland, and Y. Aı̈t-Sahalia, 2011, Edgeworth expansions for realized volatility and related
+estimators. Journal of Econometrics 160, 190–203.
+Zhou, Q. and J. Yu, 2010, Asymptotic distributions of the least square estimator for diffusion processes.
+Working Paper, Singapore Management University.
+
+30
+
+

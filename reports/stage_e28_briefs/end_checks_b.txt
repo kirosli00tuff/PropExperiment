@@ -1,0 +1,38 @@
+# E.28b checks: end
+$ date
+Wed Oct 21 22:00:34 PDT 2026
+$ git status --short | wc -l (tracked changes: git status --short -uno)
+1417
+ M docs/STAGES.md
+$ git log --oneline -3
+54f07ab docs: V47 (QM research, pilot on hold) and the Stage E.30 prompt (QM volume check)
+84704b4 docs: V46 (user decisions of 2026-10-21, Pro plan) and the Stage E.29 prompt
+9402789 docs: Stage E.28b prompt (E.28 continued on the Pro plan)
+$ uv run python -m data.holdout status (keys)
+top all_ok True unlocks_logged 0 unlock_log_ok True
+holdout_2 all_ok True unlocks_logged 0 unlock_log_ok True
+MCL all_ok True unlocks_logged 0 unlock_log_ok True
+MGC all_ok True unlocks_logged 0 unlock_log_ok True
+MHG all_ok True unlocks_logged 0 unlock_log_ok True
+NG all_ok True unlocks_logged 0 unlock_log_ok True
+$ wc -c REGISTRATION.md
+0 REGISTRATION.md
+$ uv run python -m screening.harness_freeze verify --expected 2e908c81e01d0aad835b30ab7b95f628182666dd8d76301cdd4ea465bb41edd1
+preflight OK: 2e908c81e01d0aad835b30ab7b95f628182666dd8d76301cdd4ea465bb41edd1
+$ ledger
+36402 ledger/databento_spend.jsonl
+034a454b49f2d9c93f3ff8872a5fb322cd351de57a7d73842d08f5d07d94c700
+$ ledger total per account (SpendGate.account_spent_usd)
+acct-1: spent 118.390020 cap 120.00 headroom 1.609980
+acct-2: spent 353.455228 cap 355.38 headroom 1.924772
+acct-3: spent 0.000000 cap 125.00 headroom 125.000000
+$ uv run python -m screening.trial_registry status (N)
+r005-E20S: E20S ['E20S-01', 'E20S-02', 'E20S-03', 'E20S-04', 'E20S-05', 'E20S-06', 'E20S-07', 'E20S-08', 'E20S-09', 'E20S-10', 'E20S-11', 'E20S-12', 'E20S-13', 'E20S-14', 'E20S-15', 'E20S-16', 'E20S-17', 'E20S-18', 'E20S-19', 'E20S-20', 'E20S-21', 'E20S-22', 'E20S-23', 'E20S-24', 'E20S-25', 'E20S-26', 'E20S-27', 'E20S-28', 'E20S-29', 'E20S-30', 'E20S-31', 'E20S-32', 'E20S-33', 'E20S-34', 'E20S-35', 'E20S-36', 'E20S-37', 'E20S-38', 'E20S-39', 'E20S-40', 'E20S-41', 'E20S-42', 'E20S-43', 'E20S-44', 'E20S-45'] N 483 -> 528 at 2026-10-11T17:43:59-07:00
+r006-E21: E21 ['E21-T1', 'E21-T2', 'E21-T3', 'E21-T4'] N 528 -> 532 at 2026-10-14T04:12:12-07:00
+r007-E22: E22 ['E22-F1'] N 532 -> 533 at 2026-10-16T02:12:01-07:00
+r008-E23: E23 ['E23-MEZFh5', 'E23-MEZNh5', 'E23-MEZBh5', 'E23-H6NQh5', 'E23-H6NQh20'] N 533 -> 538 at 2026-10-17T03:33:45-07:00
+$ DATABENTO_API_KEY3 by name (.env and environment)
+.env DATABENTO_API_KEY3: absent
+env DATABENTO_API_KEY3: empty or unset
+$ DATABENTO_API_KEY3 by name via data.config._read_env_file (value never read into output)
+KEY3 absent or empty

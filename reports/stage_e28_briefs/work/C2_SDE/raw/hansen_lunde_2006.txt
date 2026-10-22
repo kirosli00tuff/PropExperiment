@@ -1,0 +1,4810 @@
+Realized Variance and Market Microstructure Noise
+Peter R. Hansena ∗, Asger Lundeb
+a Stanford University, Department of Economics, 579 Serra Mall,
+
+Stanford, CA 94305-6072, USA
+b Aarhus School of Business, Department of Marketing, Informatics and Statistics,
+
+Fuglesangs Alle 4, 8210 Aarhus V, Denmark
+First version: January 2004. This version: September, 2004
+Abstract
+We examine a simple bias correction of the realized variance (RV) in the situation where observed prices
+are contaminated with market microstructure noise. The bias correction can greatly reduce the mean squared
+error of the RV , and we show that the bias corrected estimator can be utilized to uncover important characteristics of market microstructure noise. An empirical analysis of the 30 stocks that comprise the Dow Jones
+Industrial Average reveals that market microstructure noise is time-dependent and correlated with increments
+in the efficient price. These properties are found in both transaction and quotation data. Both characteristics
+have important implications for volatility estimation based on high-frequency data.
+Keywords: Realized Variance; Realized Volatility; Integrated Variance; Market Microstructure Noise; Bias
+Correction; High-Frequency Data; Sampling Schemes.
+JEL Classification: C10; C22; C80.
+
+1. Introduction
+The realized variance (RV) has become a popular empirical measure of volatility, and the RV yields
+a perfect estimate of volatility in the hypothetical situation where prices are observed in continuous
+time and without measurement error. This result suggests that the RV, which is a sum-of-squared
+returns, should be based on returns that are sampled at the highest possible frequency (tick-by-tick
+data). However, in practice this leads to a well-known bias problem due to market microstructure
+noise, see e.g. Zhou (1996), Andreou & Ghysels (2002), and Oomen (2002). The bias is particularly
+evident from volatility signature plots that were introduced by Andersen, Bollerslev, Diebold &
+Labys (2000), and the presence of noise has recently been documented with formal hypothesis
+tests by Awartani, Corradi & Distaso (2004). So there is a trade-off between bias and variance
+when choosing the sampling frequency, and this is the reason that returns are typically sampled at
+a moderate frequency, such as 5-minute sampling. An alternative way to handle the bias problem
+∗ Corresponding author, email: peter.hansen@stanford.edu
+
+1
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+is to use bias correction techniques, such as the filtering techniques that were used by Ebens (1999)
+and Andersen, Bollerslev, Diebold & Ebens (2001) (moving average filter) and Bollen & Inder
+(2002) (autoregressive filter). Other bias corrections were recently introduced by Zhang, Mykland
+& Aı̈t-Sahalia (2002) (subsample approach) who consider time-independent noise, and by Hansen
+& Lunde (2003) (kernel-based approach) who allow for time-dependence in the noise process.
+In this paper, we analyze an estimator that was introduced in this context by Zhou (1996).1
+We denote this estimator by RVAC1 , because it utilize the first-order autocorrelation to bias-correct
+the RV. We make four contributions in this paper. First, we derive the properties of RVAC1 in a
+slightly more general setting than did Zhou (1996), as we allow for non-constant volatility and nonGaussian market microstructure noise. Further, we benchmark RVAC1 to the standard measure of RV
+and show that the former is superior to the latter in terms of the mean squared error (MSE) criterion.
+When their respective ‘optimal’ sampling frequencies are employed, we find that the RVAC1 may
+reduce the MSE by 50% or more, compared to the standard RV. Second, we evaluate the distortions
+from neglecting the market microstructure noise. Interestingly we find that the asymptotic results
+of Barndorff-Nielsen & Shephard (2002) provide reasonably accurate confidence intervals (for the
+integrated variance) at low sampling frequencies, such as 20-minute sampling. This finding is somewhat remarkably since Barndorff-Nielsen & Shephard (2002) derive their results in the absence of
+market microstructure effects. However, at five-minute sampling we find the “true” confidence interval to be 7%-30% larger than the confidence interval that is based on an assumed absence of noise.
+Third, we propose a simple test of the hypothesis of ‘no time-dependence in the noise process’.
+The construction of this test exploits the bias corrected estimator’s ability to uncover features of the
+latent noise process. This test is interesting because the absence of time-dependence in the noise
+process is commonly assumed when the effects of market microstructure noise are analyzed, see
+e.g. Corsi, Zumbach, Müller & Dacorogna (2001), Bandi & Russell (2003)2 , and Zhang, Mykland
+& Aı̈t-Sahalia (2003). Fourth, we uncover some interesting features of market microstructure noise
+in an empirical analysis of returns for the equities that comprise the Dow Jones Industrial Average
+(DJIA). We find evidence that the noise process is both time-dependent and correlated with the returns of the efficient price. This finding is robust to the choice of sampling method (calendar-time
+or tick-time) and the type of price data (transaction prices or quotation prices). These two find-
+
+1 This estimator has previously been applied to daily return series by French, Schwert & Stambaugh (1987).
+2 A later version of the working paper by Bandi and Russell (which appeared after the first version of the present
+
+paper) relax the iid assumption and allow for a mild form of time-dependence. The new version of their paper also argues
+in favor of bias correcting the standard measure of RV.
+
+2
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+ings have important implications for sampling intraday returns at ultra high frequencies, such as
+every few ticks or every few seconds. The dependence between the noise process and the efficient
+price process has important implications for some of the bias corrections that have been used in the
+literature.
+The paper is organized as follows. We formulate assumptions and present theoretical results
+in Section 2 where we compare RV and RVAC1 and evaluate the accuracy of ‘no-noise’ confidence
+intervals for the integrated variance. Section 3 contains our empirical analysis and presents a test for
+time-independence in market microstructure noise. Section 4 contains a summary and concluding
+remarks. All proofs are presented in the appendix.
+
+2. Definitions and Theoretical Results
+Let { p ∗ (t)} be a latent log-price process in continuous time and let { p(t)} be the observable log-
+
+prices process, such that the measurement error (noise) process is given by u(t) ≡ p(t) − p ∗ (t).
+
+The noise process, u, may be due to market microstructure effects such as bid-ask bounces, but
+the discrepancy between p and p ∗ can also be induced by the technique that is used to construct
+p(t). For example, p is often constructed artificially from observed trades and quotes using the
+previous-tick method or the linear interpolation method.3
+We shall work under the following specification for the efficient price process, p ∗ .
+Assumption 1 The efficient price process satisfies dp ∗ (t) = σ (t)dw(t), where w(t) is a standard
+Brownian motion, σ (t) is a time-varying (random) function that is independent of w, and σ 2 (t) is
+Lipschitz (almost surely).
+In our analysis we shall condition on the volatility path, {σ 2 (t)}, because our object of interest
+is the integrated variance,
+Z b
+IV ≡
+σ 2 (t)dt.
+a
+
+So we can treat {σ 2 (t)} as deterministic even though the volatility path is considered to be random.
+The Lipschitz condition is a smoothness condition that requires |σ 2 (t) − σ 2 (t + δ)| < ǫδ for some
+ǫ and all t and δ (with probability one).
+Next we formulate assumptions about the noise process, where “⊥” refers to stochastic independence.
+3 The former was proposed by Wasserfallen & Zimmermann (1985) and the latter was used by Andersen & Bollerslev (1997). For
+
+a discussion of the two, see Dacorogna, Gencay, Müller, Olsen & Pictet (2001, sec. 3.2.1).
+
+3
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+Assumption 2 The noise process satisfies:
+(i) p ∗ ⊥ u; u(s) ⊥ u(t) for all s 6= t; and E[u(t)] = 0 for all t;
+(ii) ω2 ≡ E|u(t)|2 < ∞ for all t;
+(iii) µ4 ≡ E|u(t)|4 < ∞ for all t.
+Assumption 2.i will be maintained throughout our analysis, whereas (ii) and (iii) will only
+be made when necessary. To simplify some of our subsequent expressions we define the “excess
+kurtosis ratio”, κ ≡ µ4 /(3ω4 ). Assumption 2 is clearly satisfied if u is a Gaussian ‘white noise’
+process, u(t) ∼ N (0, ω2 ), in which case κ = 1.
+The existence of a noise process, u, that satisfies Assumption 2, follows directly from Kolmogorov’s existence theorem, see Billingsley (1995, chapter 7). It is worthwhile to note that ‘white
+noise processes in continuous time’ are very erratic processes. In fact, the quadratic variation of an
+white noise process is unbounded (as is the r -tic variation for any other integer). So the ‘realized
+variance’ of an white process diverges to infinity as the sampling frequency is increased. This is in
+stark contrast to the situation for Brownian motion type processes that have finite r -tic variation for
+r ≥ 2, see Barndorff-Nielsen & Shephard (2003).
+2.1. Sampling Scheme
+We partition the interval [a, b] into m subintervals, and the number of subintervals, m, plays a central
+role in our analysis. For example we shall derive asymptotic distributions of quantities, as m → ∞,
+and discuss optimal choices for m. For a fixed m the ith subinterval is given by [ti−1,m , ti,m ], where
+a = t0,m < t1,m < · · · < tm,m = b. The length of the ith subinterval is given by δ i,m ≡ ti,m − ti−1,m
+
+and we assume that supi=1,...,m δ i,m = O( m1 ), such that the length of each subinterval shrinks to zero
+as m increases. The intraday returns are now defined by,
+∗
+≡ p ∗ (ti,m ) − p ∗ (ti−1,m ),
+yi,m
+
+i = 1, . . . , m,
+
+and the increments in p and u are defined similarly and denoted by yi,m and ei,m , respectively. Note
+∗
+that the observed intraday returns decomposes into yi,m = yi,m
++ ei,m . Next we define the integrated
+
+variance over each of the subintervals,
+Z ti,m
+2
+σ i,m
+≡
+σ 2 (s)ds,
+i = 1, . . . , m,
+ti−1,m
+
+2
+∗2
+∗
+.
+) = σ i,m
+) = E(yi,m
+and note that var(yi,m
+
+4
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+≡
+The realized variance of p ∗ is defined by RV (m)
+∗
+
+Pm
+
+(m)
+∗2
+is
+i=1 yi,m , and it follows that RV ∗
+
+consistent for the IV, as m → ∞, see e.g. Meddahi (2002). An asymptotic distribution theory of
+realized variance (in relation to integrated variance) is established in Barndorff-Nielsen & Shephard
+is an ideal estimator – it is not a feasible estimator – because p ∗ is latent.
+(2002). While RV (m)
+∗
+Pm 2
+The realized variance of p, which is given by RV (m) ≡ i=1
+yi,m , is observable but suffers from a
+
+well-known bias problem and is inconsistent for the IV.
+
+The literature has been concerned with different forms of sampling schemes. The special case
+where ti,m , i = 1, . . . , m are equidistant in time, i.e. δ i,m = (b − a)/m for all i, is referred to as
+calendar time sampling (CTS). The widely used exchange rates data from Olsen and Associates,
+see Müller, Dacorogna, Olsen, Pictet, Schwarz & Morgenegg (1990) are equidistant in time, and
+five-minute sampling (δ i,m = 5 min) has commonly been used in this context. The case where
+2
+= IV/m for all i = 1, . . . , m, is referred
+the sampling times, t0,m , . . . , tm,m , are such that σ i,m
+
+to as business time sampling (BTS), see Oomen (2004b). Whereas, the case where ti,m refers to
+the time of a transaction/quotation, will be referred to as tick time sampling (TTS). An example of
+TTS is when ti,m , i = 1, . . . , n, are chosen to be the time of every fifth transaction, say. While
+ti,m , i = 0, . . . , m, are observable under CTS and TTS, they are latent under BTS, because the
+sampling times are defined from the unobserved volatility path. Yet empirical results by Andersen
+& Bollerslev (1997) and Curci & Corsi (2004) suggest that BTS can be approximated by TTS. This
+feature is nicely captured in the framework of Oomen (2004b), where the (random) tick times are
+generated with an intensity that is directly related to a quantity that corresponds to σ 2 (t) in the
+present context. Under CTS we will sometimes write RV (x sec) , where x seconds is the period in
+time spanned by each of the intraday returns (i.e. δ i,m = x seconds). Similarly, we write RV (y ticks)
+under TTS when each intraday return spans y ticks (transactions or quotations).
+The bias-variance properties of the RV (m) have been analyzed by Bandi & Russell (2003) and
+Zhang et al. (2003) under an white noise assumption. The following lemma summarizes these results
+d
+
+in our notation, where we use ‘→’ to denote convergence in distribution.
+Lemma 1 Conditional on {σ 2 (s)} and given Assumptions 1 and 2.i-ii it holds that E(RV (m) ) =
+IV + 2mω2 ; if Assumption 2.iii also holds, then
+var(RV (m) ) = κ12ω4 m + 8ω2
+
+m
+X
+i=1
+
+2
+− (6κ − 2)ω4 + 2
+σ i,m
+
+m
+X
+
+4
+,
+σ i,m
+
+i=1
+
+and
+RV (m) − 2mω2
+=
+√
+κ12ω4 m
+
+r
+
+m RV (m)
+d
+(
+− 1) → N (0, 1),
+3κ 2mω2
+5
+
+as m → ∞.
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+In the absence of market microstructure noise and under CTS (ω2 = 0 and δ i,m = (b − a)/m),
+we obtain a result of Barndorff-Nielsen & Shephard (2002), that
+var(RV
+
+(m)
+
+)=2
+
+m
+X
+i=1
+
+4
+σ i,m
+= m2
+
+Z b
+a
+
+σ 4 (s)ds + o( m1 ),
+
+Rb
+where a σ 4 (s)ds is known as the integrated quarticity that was introduced by Barndorff-Nielsen &
+Shephard (2002).
+
+Next, we consider the estimator of Zhou (1996) that is given by
+(m)
+RVAC
+≡
+1
+
+m
+X
+i=1
+
+2
+yi,m
++
+
+m
+X
+i=1
+
+yi,m yi−1,m +
+
+m
+X
+
+yi,m yi+1,m .
+
+(1)
+
+i=1
+
+This estimator incorporates the empirical first-order autocorrelation, which amounts to a bias correction that ‘works’ the same way that robust covariance estimators, such as that of Newey &
+West (1987), achieve their consistency. Note that (1) involves y0,m and ym+1,m that are intraday returns outside the interval [a, b]. We choose this formulation because it simplifies several
+expressions (by avoiding m/(m − 1) terms). If these two intraday returns are unavailable, one
+Pm−1 2
+Pm
+Pm−1
+could simply use the estimator i=2
+yi,m + i=2
+yi,m yi−1,m + i=1
+yi,m yi+1,m that estimates
+R b−δm,m 2
+1
+a+δ 1,m σ (s)ds = IV + O( m ).
+(m)
+In the following lemma we establish results for RVAC
+that are similar to those for RV (m) in
+1
+
+Lemma 1.
+(m)
+Lemma 2 Conditional on {σ 2 (s)} and given Assumptions 1 and 2.i it holds that E(RVAC
+) = IV; if
+1
+
+Assumption 2.ii also holds then
+(m)
+var(RVAC
+) = 8ω4 m + 8ω2
+1
+
+m
+X
+i=1
+
+2
+− 6ω4 + 6
+σ i,m
+
+m
+X
+i=1
+
+4
++ rm ,
+σ i,m
+
+where rm = O(m −2 ) under CTS and BTS, and
+(m)
+RVAC
+− IV d
+→ N (0, 1),
+√ 1
+8ω4 m
+
+as
+
+m → ∞.
+
+(m)
+An important result of Lemma 2 is that RVAC
+is unbiased for the IV at any sampling frequency,
+1
+
+m, and that this result is established under relatively weak assumptions about the noise process.
+Also note that Lemma 2 requires weaker assumptions that those needed for RV (m) in Lemma 1. This
+(m)
+is achieved because the expression for RVAC
+can be rewritten such that it does not involve squared
+1
+
+noise terms, [u i,m ]2 , i = 1, . . . , m, as do RV (m) , where u i,m ≡ u(ti,m ). A somewhat remarkable
+
+(m)
+result of Lemma 2 is that the bias corrected estimator, RVAC
+, has a smaller asymptotic variance than
+1
+
+6
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+the unadjusted estimator, RV (m) . Usually a bias correction is accompanied by a larger asymptotic
+variance. Also note that the asymptotic results of Lemma 2 is more useful than that of Lemma 1 (in
+terms of estimating IV), because the result of Lemma 1 does not involve the object of interest, IV,
+but only shed light on aspects of the noise process. However, it is also important to note that the
+(m)
+asymptotic result of Lemma 2 does not suggest that RVAC
+should be based on intraday returns that
+1
+
+are sampled at the highest possible frequency, since the asymptotic variance is increasing in m! In
+(m)
+other words: While RVAC
+is centered about the object of interest, IV, it is unlikely to be close to IV
+1
+
+as m → ∞.
+With CTS (δ i,m = (b − a)/m) our expression for the variance is approximately given by
+Z b
+Z b
+1
+(m)
+4
+2
+2
+4
+var[RVAC1 ] ≈ 8ω m + 8ω
+σ (s) − 6ω + 6
+σ 4 (s)ds .
+m
+a
+a
+(m)
+This shows that the variance of RVAC
+is about three times larger than that of RV (m) in the absence
+1
+
+of market microstructure noise (ω2 = 0), for a given m. This shortcoming can be compensated
+
+(m 1 )
+for by using a sampling frequency for RVAC
+that is three times higher than that of RV (m 0 ) (i.e.
+1
+(m)
+m 1 = 3m 0 ). Our empirical results suggest that RVAC
+should be based on intraday returns that are
+1
+
+sampled ten times more frequently than those for RV (m 1 ) , such that this component of the total
+variance is reduced.
+
+(m)
+Next, we compare RVAC
+to RV (m) in terms of their mean square error (MSE) and their respective
+1
+
+optimal sampling frequencies for a special case that illustrates key features of the two estimators.
+2
+=
+Corollary 3 Define λ ≡ ω2 /IV, suppose that κ = 1, and let t0,m , . . . , tm,m be such that σ i,m
+
+IV/m (BTS). The mean squared errors are given by4
+MSE(RV (m) ) = IV 2 [4λ2 m 2 + 12λ2 m + 8λ − 4λ2 + m2
+(m)
+MSE(RVAC
+) = IV 2 [
+1
+
+],
+
+(2)
+
+8λ2 m + 8λ − 6λ2 + m6 − m22 ].
+
+(3)
+
+(m)
+The optimal sampling frequencies for RV (m) and RVAC
+are given implicitly as the real (positive)
+1
+
+solutions to 4λ2 m 3 + 6λ2 m 2 − 1 = 0 and 4λ2 m 3 − 3m + 2 = 0, respectively.
+(m)
+We denote the optimal sampling frequencies for RV (m) and RVAC
+by m ∗0 and m ∗1 , respectively,
+1
+√
+and these are approximately given by, m ∗0 ≈ (2λ)−2/3 and m ∗1 ≈ 3(2λ)−1 . In our empirical analysis
+
+we find λ−1 to be larger than 1, 000 for most equities, such that m ∗1 /m ∗0 ≈ 31/2 2−1/3 (λ−1 )1/3 ≥ 10,
+4 Equation (3) was derived in Zhou (1996) under the assumption that the noise process is Gaussian. However, his
+
+expression contains a minor error as “−6λ2 ” is incorrectly written as “−4λ2 ” (using our notation).
+
+7
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+and this shows that m ∗1 is several times larger than m ∗0 in practice. In other words, the optimal
+(m)
+RVAC
+requires a more frequent sampling than does the ‘optimal’ RV. This is quite intuitive, because
+1
+(m)
+RVAC
+can utilize more information in the data without being affected by a severe bias. Naturally,
+1
+
+when using TTS, the number of intraday returns, m, cannot exceed the total number of transactions/quotations, so in practice it might not be possible to sample as frequently as prescribed by
+m ∗1 .
+2
+= IV/m) it
+Although Corollary 3 is based on somewhat restrictive assumptions (such as σ i,m
+
+nevertheless captures the salient features of this problem, and the MSE properties (in relation to the
+noise process) are characterized by a single parameter, λ. So Corollary 3 provide a very attractive
+(m)
+framework for comparing RV (m) and RVAC
+, and for evaluating how sensitive these estimators are to
+1
+
+market microstructure noise.
+
+[FIGURE 1 ABOUT HERE]
+
+(m)
+From Corollary 3 we note that the root mean squared errors (RMSEs) of RV (m) and RVAC
+are
+1
+
+proportional to the IV and given by γ 0 (λ, m)IV and γ 1 (λ, m)IV, respectively, where
+q
+γ 0 (λ, m) ≡
+4λ2 m 2 + 12λ2 m + 8λ − 4λ2 + m2
+,
+γ 1 (λ, m) ≡
+
+q
+
+8λ2 m + 8λ − 6λ2 + m6 − m22 .
+
+In Figure 1 we have plotted γ 0 (λ, m) and γ 1 (λ, m) using two empirical estimates of λ. The estimates
+are based on high-frequency stock returns of AA:Alcoa Inc. (upper panels) and Microsoft:MSFT
+(lower panels). The details regarding the estimation of λ is deferred to the empirical section of this
+paper. The left panels present γ 0 (λ̂, m) and γ 1 (λ̂, m), where the the x-axis is δ i,m = (b − a)/m
+
+(m)
+in units of seconds. For both equities, we note that the RVAC
+dominate the RV (m) except at the
+1
+
+very lowest frequencies. The minimum of γ 0 (λ̂, m) and γ 1 (λ̂, m) identify their respective optimal
+sampling frequencies, m ∗0 and m ∗1 . For the AA returns we find the optimal sampling frequencies to
+be m ∗0,A A = 77 and m ∗1,A A = 1190 and the theoretical reduction of the MSE is 64.5%. The curvature
+
+(m)
+of γ 0 (λ̂, m) and γ 1 (λ̂, m) in the neighborhood of m ∗0 and m ∗1 , respectively, show that RVAC
+is less
+1
+
+sensitive to the choice of m than is RV (m) .
+∗
+
+(m)
+The right panels of Figure 1 display the relative MSE of RVAC
+to that of (the optimal) RV (m 0 )
+1
+(m ∗ )
+
+(m)
+and the relative MSE of RV (m) to that of (the optimal) RVAC11 . These panels show that the RVAC
+1
+∗
+
+continue to dominate the ‘optimal’ RV (m 0 ) for a wide ranges of frequencies, and not just in a small
+8
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+neighborhood of the optimal value, m ∗1 . This robustness of RVAC1 is quite useful in practice where
+λ and (hence) m ∗1 are not known with certainty, because the result shows that a reasonably precise
+estimate of λ (and hence m ∗1 ) will lead to an RVAC1 that dominates the ‘optimal’ RV.
+
+[FIGURE 2 ABOUT HERE]
+A second very interesting aspect that can be analyzed from the results of Corollary 3, is the
+accuracy of theoretical results that are derived under the assumption that λ = 0 (no market microstructure noise). For example, the accuracy of a confidence interval for IV, which is based on
+the asymptotic results of Barndorff-Nielsen & Shephard (2002), will depend on λ and m, and the
+expressions of Corollary 3 provide a simple way to quantify the accuracy of such confidence intervals. Figure 2 provide valuable information about this question. The left panels of Figure 2
+(m)
+present the RMSEs of RV (m) and RVAC
+, using both an estimate λ̂ > 0 (the case with noise) and
+1
+
+λ = 0 (the case without noise). For small values of m we see that γ 0 (λ̂, m) ≈ γ 0 (0, m) and
+γ 1 (λ̂, m) ≈ γ 1 (0, m), whereas the effects of market microstructure noise are pronounced at the
+higher sampling frequencies. The right panels of Figure 2 quantify the discrepancy between the two
+‘types’ of confidence intervals (about RV (m) ) as a function of the sampling frequency. These plots
+present 100[γ 0 (λ̂, m) − γ 0 (0, m)]/γ 0 (0, m) and 100[γ 1 (λ̂, m) − γ 1 (0, m)]/γ 1 (0, m) as a function
+
+of m. So the former reveals the percentage widening of a confidence intervals for IV (about RV (m) )
+
+due to market microstructure noise, and the second line shows the corresponding widening of the
+(m)
+confidence interval that is constructed about RVAC
+. The vertical lines in the right panels mark the
+1
+
+sampling frequency that corresponds to five-minute sampling under CTS, and these show that the
+‘actual’ confidence interval (based on RV (m) ) is 31.47% larger than the ‘no-noise’ confidence interval for AA, whereas the enlargement is 7.57% for MSFT. At 20-minute sampling the discrepancy
+is less than a couple of percent, so in this case the sized distortion from being oblivious to market
+(m)
+microstructure noise is quite small. The corresponding increases in the RMSE of RVAC
+are 3.88%
+1
+(m)
+and 1.44%, respectively. So a ‘no-noise’ confidence interval (about RVAC
+) could, in principle, be
+1
+
+used as a reasonable approximation at moderate sampling frequencies (if a better alternative is not
+available).
+
+3. Empirical Analysis
+We analyze stock returns for the 30 equities of the Dow Jones Industrial Average (DJIA). The sample
+period spans three years, from January 3, 2000 to December 31, 2002, which delivers a total of 750
+9
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+trading days. The data are transaction prices and quotations from the two exchanges NYSE and
+NASDAQ, and all data were extracted from the Trade and Quote (TAQ) database.
+The raw data were filtered for outliers and we discarded transactions outside the period from
+9:30am to 4:00pm, and days with less than five hours of trading were removed from the sample,
+which reduced the sample to the number of days reported in the last column of Table 1. The average
+number of transactions/quotations per day are labelled (All) in Table 1. Our analysis of quotation
+data is based on mid-quotes (average of bid and ask prices). When sampling in calendar time we
+used the previous-tick method to construct intraday returns, and when sampling in tick-time we
+remove price observations that did not result in a ‘price change’.5 The average number of ‘new’
+transaction/quotation prices per day is labelled (#1pti 6= 0) in Table 1. The RVs are calculated for
+the hours that the market is open, approximately 390 minutes per day (6.5 hours for most days), and
+(m)
+we denote the RVs on day t, by RV (m)
+and RVAC
+, t = 1, . . . , n. We present result for all 30 equities
+t
+1 ,t
+
+in our tables, whereas the figures present results for two equities: Alcoa Inc. (AA) and Microsoft
+(MSFT), that represent equities of the DJIA with low and high trading activities, respectively. The
+corresponding figures for the other 28 DJIA equities are available upon request.
+[TABLE 1 ABOUT HERE: Data Description]
+
+3.1. Estimation of Market Microstructure Noise Parameters
+(m̃)
+From Lemmas 1 and 2 it follows that 2mω2 = E[RV (m) − RVAC
+], where m̃ is arbitrary. Under the
+1
+
+assumption that ω2 is constant across days, it can be estimated by
+ω̂2 ≡ n −1
+
+n
+X
+
+1
+(m̃ t )
+t)
+),
+(RV (m
+− RVAC
+t
+1 ,t
+2m
+t
+t=1
+
+(4)
+
+where m t and m̃ t need not be constant across days. It the special case where the same frequencies
+P
+(m)
+(m̃)
+(m)
+1
+are used for all days, (4) simplifies to ω̂2 = 2m
+≡ n −1 nt=1 RV (m)
+(RV − RVAC1 ), where RV
+t
+Pn
+(m̃)
+(m̃)
+−1
+and RVAC1 ≡ n
+t=1 RVAC1 ,t .
+
+(m̃ t )
+In order to obtain a precise estimate of ω2 it is important that RVAC
+is indeed unbiased for IV.
+1 ,t
+
+For this reason, we calculate RVAC1 ,t using tick-time sampling, where each of the intraday returns
+spans 60 transactions (or quotations for the mid-quote data). Thus m̃ t will (approximately) equal
+5 The same price is often observed in several consecutive transaction/quotations, because a large trade is divided into
+
+smaller transactions (transaction data) and because the market maker issues a new quote with a different ‘depth’ while the
+bid and ask prices are unchanged (quotation data). This censoring does not affect RV but is important for RVAC1 , because
+it effectively removes all the zero-intraday returns which influence the autocovariances of intraday returns.
+
+10
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+the number of transactions (or quotations) on day t divided by 60. The higher the frequency that is
+used for RV (m) , the more dominating is the bias term, so we choose a much higher frequency in this
+ticks)
+t)
+case. Specifically we use one-tick sampling, such that our results are based on RV (m
+= RV (1
+t
+t
+(m̃ t )
+(60 ticks)
+and RVAC
+= RVAC
+.
+1 ,t
+1 ,t
+
+(m̃)
+1
+1
+Under our assumptions it follows that plimm→∞ 2m
+(RV (m) − RVAC
+RV (m) , and
+) = plimm→∞ 2m
+1
+
+1
+RV (m) is used (as a consistent estimator of ω2 ) in Zhang et al. (2003) to bias correct their subsam2m
+(m̃)
+ple estimator. In our empirical analysis we do not find RVAC
+to be negligible, even when sampling
+1
+
+at the highest possible frequency, 1-tick sampling. We observed a substantial difference between the
+(m̃)
+1
+1
+two estimates, 2m
+(RV (m) − RVAC
+RV (m) , so even though both are consistent for ω2 , the latter
+) and 2m
+1
+
+is quite biased for at the sampling frequency, m, that one can use in practice. So we argue that it is
+important to incorporate RVAC1 , or some other unbiased estimator of IV, whenever ω2 is estimated
+in this way.
+(m̃)
+Since RVAC
+is unbiased for IV, it follows that IV ≡ n −1
+1
+
+daily IV over the sample t = 1, . . . , n. So we define
+λ̂ ≡ ω̂2
+
+
+
+(m̃ t )
+t=1 RVAC1 ,t estimates the average
+
+Pn
+
+IV ,
+
+which is an estimator of ‘average noise’ divided by ‘average integrated variance’. If both ω2 and IV
+are constant across days, such that λ is the same for all days, then λ̂ is consistent for λ under mild
+regularity conditions. In practice, λ is unlikely to be constant across days, so λ̂ should be viewed
+as a reasonable approximation of λ, for a typical trading day. Fortunately, Figure 1 showed that
+(m)
+RVAC
+is relatively insensitive to small deviations from m ∗1 , such that an m̂ ∗1 based on a reasonable
+1
+
+approximation for λ, leads to a more accurate estimator than RV (m) (for any m).
+
+[TABLE 2 ABOUT HERE]
+
+Table 2 contains empirical results for all 30 equities using both transaction and quotation data.
+The are several interesting observations to be made from Table 2. For the transaction data we
+note that λ̂ is typically found to be smaller than 0.1%, and the theoretical reduction of the MSE,
+100[γ 20 (λ̂, m ∗0 ) − γ 21 (λ̂, m ∗1 )]/γ 20 (λ̂, m ∗0 ), is always found to be 50% or more. For example for Alcoa
+
+Inc. we find that ω̂2A A = 0.4217% and λ̂ A A = 0.4217%/5.797 = 0.0727%, that leads to the optimal
+
+sampling frequencies: m ∗0 = 77 and m ∗1 = 1190. For a typical trading day that is 6.5 hours long
+
+this corresponds to intraday returns that (on average) spans 5 minutes and 20 seconds, respectively.
+Bandi & Russell (2003) and Oomen (2004b, 2004a) report ‘optimal’ sampling frequencies for RV (m)
+11
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+that are similar to our estimates of m ∗0 . By plugging these numbers into the formulae of Corollary
+(m ∗ )
+
+∗
+
+3 we find the reduction of the MSE (from using RVAC11 rather than RV (m 0 ) ) to be 64.5%, which
+(m ∗ )
+
+∗
+
+suggests that RVAC11 is about three time more efficient than RV (m 0 ) , provided that Assumptions 1
+and 2 hold.
+The noise-to-signal ratio, λ, is likely to differ across days, in which case the optimal sampling
+frequencies, m ∗0 and m ∗1 , will also differ across days. So our estimates above should be viewed as
+approximations for ‘daily average values’, in the sense that m 0 = 148 and m 1 = 3139 appear to be
+a sensible sampling frequencies to use for the MSFT transaction data.
+For the quotation data all our estimates of ω2 are negative, a phenomenon that also occurs for
+transaction data for three equities. A negative estimate occurs when the sample average of RV (1 tick)
+(60 ticks)
+is smaller than the sample average of RVAC
+. This is obviously in conflict with the results of
+1
+(60 ticks)
+Lemmas 1 and 2 that dictate the population difference, E[RV (1 tick) − RVAC
+], to be positive.
+1
+
+The expected difference is 2ω2 times a number that is proportional to the average number of transactions/quotations per day. One explanation for observing ω̂2 < 0 is that ω2 ≃ 0, such that the
+‘wrong’ sign simply occurs by chance. However, this is highly improbable because all estimates of
+ω2 (and not just about half of them) are found to be negative for the quotation data. Our subsequent
+analysis will also show that the negative estimates are caused by a violation of Assumption 2.
+
+3.2. A Hausman-Type Test for Time-Independence of the Noise Process
+(m)
+From Lemma 2 we know that RVAC
+is unbiased for IV at any frequency under Assumption 2.i.
+1
+
+This followed from the fact that the innovations of the noise process, ei,m , have a non-zero firstorder autocovariance whereas higher-order autocovariances are all zero. This property is inherited
+by the observed intraday returns, yi,m , given our assumptions about the efficient price process. The
+(m)
+estimator, RVAC
+, is unbiased because it properly corrects for the first-order autocorrelation in yi,m .
+1
+(m)
+However, RVAC
+may be biased if higher-order autocovariances are non-zero, which would be the
+1
+
+case (for large m) if the noise process, u(t), was dependent across time (a violation of Assumption
+2.i.)
+
+[FIGURE 3 ABOUT HERE]
+
+An graphical way to investigate the bias properties of RV-type estimators is through the socalled volatility signature plots of Andersen et al. (2000). In Figure 3 we present volatility signature
+12
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+plots for AA and MSFT using both CTS and TTS, and based on both transaction data and quotation
+data. The upper four panels of Figure 3 are based on CTS and these reveal a pronounced bias when
+(m)
+RVAC
+is based on intraday returns that are sampled more frequently than every 30 seconds. The
+1
+
+main explanation for this is that CTS will sample the same price multiple times when m is large,
+which induces (artificial) autocorrelation in intraday returns. Thus, when intraday returns are based
+on CTS, it is necessary to incorporate higher-order autocovariances of yi,m , when m becomes large,
+see Hansen & Lunde (2004). The lower four plots are signature plots for TTS and these also reveal
+(x ticks)
+a pronounced bias in RVAC
+at the highest frequencies. Yet, a comparison of the CTS and TTS
+1
+
+signature plots suggests that TTS dominates CTS, as it allows from a more frequent sampling of
+intraday returns. This observation is in line with the results of Oomen (2004b, 2004a), who showed
+this to be the case in a jump-process framework.
+Another very important result of Figure 3, is that the volatility signature plots drops (rather than
+increases) as the sampling frequency increases (as δ i,m → 0). This holds for both CTS and TTS,
+
+(m)
+and both RV (m) and RVAC
+. This phenomenon was first documented by Hansen & Lunde (2004), and
+1
+
+their theoretical results show that the negative bias of RV (m) cannot be explained by time-dependence
+in the noise process alone. As easy way to see this is to note that the quadratic variation of p is the
+sum of the quadratic variations of p ∗ and u whenever u ⊥ p ∗ . So the bias of (a nontrivial) market
+
+microstructure noise is always positive if u ⊥ p ∗ holds. However, the volatility signature plots
+
+reveal a negative bias, and this strongly suggest that the innovations in the noise process, ei,m , are
+∗
+, see Hansen & Lunde (2004, theorem 2).
+negatively correlated with the true returns, yi,m
+(m)
+Because the unbiasness of RVAC
+crucially relies on Assumption 2.i, we consider tests of the
+1
+
+hypothesis,
+H0 : u ⊥ p ∗
+
+and u(s) ⊥ u(t)
+
+for all s 6= t.
+
+As is almost evident from Figure 3, there is an overwhelming empirical evidence against H0 . So
+there is not need for a very powerful (or an optimal) test in order to conclude that H0 is false. Instead
+we apply significance tests that can identify the reasons that H0 does not hold. For this purpose we
+employ simple t-tests that have power against particular alternatives, and this will help us uncover
+the properties of market microstructure noise, and allow us to characterize the specific violation of
+Assumption 2.i that is found in these data.
+(m)
+For the construction of the tests we observe that RVAC
+is unbiased for the IV for any m, under
+1
+(m)
+the null hypothesis, such that RVAC
+= IV + error(m) where E(error(m) ) = 0. It follows that
+1
+(m)
+(m̃)
+dt ≡ RVAC
+− RVAC
+= error(m)
+− error(t m̃) ,
+t
+1 ,t
+1 ,t
+
+13
+
+m 6= m̃,
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+is the difference between two measurement errors, each having expected value zero, such that
+P
+√
+E[dt ] = 0. The variance of the sample average, d̄ ≡ n −1 nt=1 dt (normalized by n) is con1 Pn
+2
+sistently estimated by n−1
+t=1 (dt − d̄) , because the measurements errors (and hence dt ) can be
+
+assumed to be uncorrelated across days. Thus a simple test of H0 , can be based on the following
+t-statistic,
+t(m,m̃) ≡
+
+√
+
+n d̄
+
+q
+
+1 Pn
+2
+t=1 (dt − d̄) ,
+n−1
+d
+
+and under the null hypothesis we have that t(m,m̃) → N (0, 1), as n → ∞, under standard regularity
+conditions that are quite plausible to hold in this context.
+The power of the test that compares t(m,m̃) to a critical value of a standard Gaussian distribution,
+(m)
+will depend on m and m̃. This can be seen from the decomposition of RVAC
+into:
+1
+(m)
+RVAC
+=
+1
+
+m
+X
+i=1
+
+yi,m (yi−1,m + yi,m + yi+1,m ) =
+
+m
+X
+yu
+yy
+uu
++ ζ i,m ),
+(ζ i,m + ζ i,m
+i=1
+
+where
+yy
+
+ζ i,m
+
+∗
+∗
+∗
+∗
+= yi,m
+(yi−1,m
++ yi,m
++ yi+1,m
+)
+
+uu
+ζ i,m
+
+= (u i,m − u i−1,m )(u i+1,m − u i−2,m )
+
+yu
+
+ζ i,m
+
+∗
+∗
+∗
+∗
+).
++ yi+1,m
++ yi,m
+(u i+1,m − u i−2,m ) + (u i,m − u i−1,m )(yi−1,m
+= yi,m
+
+2
+, whereas the last two terms both have expected value
+The expected value of the first term is σ i,m
+
+zero under the null hypothesis. The decomposition also shows that autocorrelation in u(t) may
+uu
+cause E(ζ i,m
+) 6= 0 and correlation between increments in the efficient price and the noise process,
+yu
+
+can cause the expected value of the third term to be non-zero, E(ζ i,m ) 6= 0. So we see that the
+
+(m)
+test that is based on t(m,m̃) will have power against alternatives for which the bias of RVAC
+differs
+1
+(m̃)
+from that of RVAC
+, So the test will not have power against alternatives where both estimators are
+1
+∗
+is short
+unbiased. This will occur if the time-dependence in u and the correlation between u and yi,m
+
+lived. For example, if the time-dependence in the noise process is less than one minute, then it is
+(m)
+easy to verify that RVAC
+is unbiased if m corresponds to intraday returns that each spans a period of
+1
+
+time that is one minute or more. A similar example can be given for the case with TTS.
+
+[TABLE 3 ABOUT HERE:]
+
+[TABLE 4 ABOUT HERE:]
+14
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+Tables 3 and 4 contain t(m,m̃) -statistics for pairs of (m, m̃). We chose m̃ = 60 in most cases,
+
+(60 ticks)
+because RVAC
+is unlikely to be biased, such that a rejection of H0 based on t(m,m̃) must be
+1
+(m)
+attributed to RVAC
+being biased (for m < m̃). Thus our test is a Hausman-type test, because the
+1
+(x ticks)
+(60 ticks)
+sample averages of RVAC
+and RVAC
+are both consistent for IV under the null hypothesis,
+1 ,t
+1 ,t
+
+whereas only the latter is consistent under a particular class of alternatives. From Tables 3 and 4
+we see that the pairs, (25,60), (30,60) and (60,180), result in very few rejections (some rejections
+(x ticks)
+are to be expected by pure chance). So there is little evidence that RVAC
+is biased for x ≥ 25,
+1
+
+however at the high frequencies, where x ≤ 10, we see a large number of rejections. This shows
+that the implications of H0 (Assumption 2.i) do not hold when sampling at a high frequency for both
+transaction and quotation.
+In Figure 4, we present (signature) plots of the t(m,60 ticks) -statistics for two equities: AA and
+MSFT. These plots are representative for most of the 30 equities, where t(m,m̃) is typically positive
+at the medium-high frequencies, whereas t(m,m̃) < 0 at the ultra-high frequencies. One possible
+explanation for this phenomenon is that autocorrelation in u creates the upwards bias at the mediumhigh frequencies, while a short-lived negative correlation between u and y ∗ results in a negative bias
+that dominates the other effect at the ultra-high frequencies. Rounding errors may explain part
+of these findings, but further analysis of this aspect, which is beyond the scope of this paper, is
+necessary to verify this explanation.
+
+[FIGURE 4 ABOUT HERE]
+
+4. Summary and Concluding Remarks
+We have analyzed the properties of market microstructure noise and its influence on empirical mea(m)
+sures of volatility. Our comparison of the bias corrected estimator, RVAC
+, of Zhou (1996) to the
+1
+
+standard measure of realized variance revealed a substantial improvement in the precision, as the
+theoretical reduction of the MSE is about 50%-75%. These gains were achieved with a simple bias
+correction that incorporates the first-order autocovariance, and additional improvements are possible
+with more sophisticated corrections of the realized variance. For example, the subsample estimator
+(m)
+of Zhang et al. (2003) is an estimator that has better asymptotic properties than RVAC
+under As1
+(m)
+sumptions 1 and 2. Yet, RVAC
+has some attractive properties that are useful for studying market
+1
+
+microstructure noise. For example, if there is a short-lived time-dependence in the noise process,
+
+15
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+(m)
+then RVAC
+is biased if m is above a certain threshold, but remains unbiased for small m (when the
+1
+
+intraday returns span a period of time that is longer than the time-dependence in the noise process).
+We have also evaluation of the accuracy of distributional results that are based on an assumption
+that there is no market microstructure noise. We showed that a ‘no-noise’ confidence interval based
+on the results of Barndorff-Nielsen & Shephard (2002) provide a reasonable accurate approximation when intraday returns are sampled at low frequencies, such as 20-minute sampling. However,
+when intraday returns are sampled at higher frequencies the ‘no-noise’ approximation are likely to
+(m)
+be quite poor. The analogous ‘no-noise’ confidence interval about RVAC
+yields a more accurate
+1
+
+approximation than that of RV (m) , but both are very misleading when intraday returns are sampled
+at high frequencies.
+More importantly. Our empirical analysis uncovered several characteristics of market microstructure noise, where the most notably features are: (1) the noise process is time-dependent and (2) the
+noise process is correlated with the innovations in the efficient price process. These results were
+established for both transaction data and quotation data and were found to hold for intraday returns
+that are based on both calendar-time sampling and tick-time sampling.
+Several results in the existing literature that analyze volatility estimation from high-frequency
+data that are contaminated with market microstructure noise, including our theoretical results in
+Section 2, have assumed that the noise process is independent of the efficient price and uncorrelated
+in time. Our empirical results suggest that the implications of these assumptions may hold (at least
+approximately) when intraday returns are sampled at relatively low frequencies. So the conclusions
+of these papers may hold as long as intraday returns are not sampled more frequently than every 15
+ticks, say.
+Our empirical results have shown that the sampling of intraday returns at ultra high frequencies,
+such as every few ticks, necessitate more general assumptions about the dependence structure of
+market microstructure noise. Some results are established in Hansen & Lunde (2004) who use a
+general specification for the noise process that can accommodate both types of dependencies that
+we found to be empirically relevant. We believe that interesting future research topics include: (1)
+deriving estimators that are robust to the various forms of dependencies; (2) a study of the robustness
+of existing estimators (to these forms of dependencies), such as the moving-average based estimator
+of Ebens (1999) and Andersen et al. (2001), and the subsample based estimator of Zhang et al.
+(2003). We leave this for future research.
+
+16
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+Acknowledgements
+We thank seminar participants at University of Copenhagen, University of Aarhus, Nuffield College,
+Carnegie Mellon University and the Econometric Forecasting and High-Frequency Data Analysis
+Symposium, jointly organized by Institute for Mathematical Sciences, National University of Singapore and School of Economics and Social Sciences, Singapore Management University for many
+valuable comments. We are particularly grateful to Per Mykland, Neil Shephard, two anonymous
+referees, and Torben Andersen (the editor) for their suggestions that improved this manuscript. All
+errors remain our responsibility. Financial support from the Danish Research Agency, grant no.
+24-00-0363 is gratefully acknowledged.
+Appendix of Proofs
+As stated earlier, we condition on {σ 2 (t)} in our analysis, thus without loss of generality we treat σ 2 (t) as a
+
+deterministic function in our derivations.
+
+2 = y ∗2 + e2 + 2y ∗ e , since
+Proof of Lemma 1. The bias follows directly from the decomposition yi,m
+i,m
+i,m
+i,m i,m
+2 ) = E(u
+2
+2
+2
+2
+E(ei,m
+i,m − u i−1,m ) = E(u i,m ) + E(u i−1,m ) − 2E(u i,m u i−1,m ) = 2ω , where we have used
+Assumption 2.i -ii. Similarly, we see that
+
+var(RV (m) ) = var(
+
+m
+X
+i=1
+
+∗2
+) + var(
+yi,m
+
+m
+X
+i=1
+
+2
+) + 4 var(
+ei,m
+
+m
+X
+
+∗
+ei,m )
+yi,m
+
+i=1
+
+Pm ∗2
+because the three sums are uncorrelated. The first sum involves uncorrelated terms such that var( i=1
+yi,m ) =
+Pm
+P
+m
+∗2 ) = 2
+4 , where the last equality follows from the Gaussian assumption. For the secvar(y
+σ
+i=1
+i=1 i,m
+i,m
+
+ond sum we find
+
+4
+E(ei,m
+)
+
+2
+2
+E(ei,m
+ei+1,m
+)
+
+=
+=
+=
+=
+=
+
+2
+2
+E(u i,m − u i−1,m )4 = E(u i,m
++ u i−1,m
+− 2u i,m u i−1,m )2
+
+2
+2
+2
+4
+2
+4
++ u i−1,m
++ 4u i,m
+u i−1,m
++ 2u i,m
+u i−1,m
+) + 0 = 2µ4 + 6ω4 ,
+E(u i,m
+
+E(u i,m − u i−1,m )2 (u i+1,m − u i,m )2
+
+2
+2
+2
+2
+E(u i,m
++ u i−1,m
+− 2u i,m u i−1,m )(u i+1,m
++ u i,m
+− 2u i+1,m u i,m )
+2
+2
+2
+2
+E(u i,m
++ u i−1,m
+)(u i+1,m
++ u i,m
+) + 0 = µ4 + 3ω4 ,
+
+2 ) = 2µ + 6ω4 − [E(e2 )]2 =2µ + 2ω4 and
+where we have used Assumption 2.i -iii . Thus var(ei,m
+4
+4
+i,m
+
+2
+2
+2 , e2
+4
+cov(ei,m
+i+1,m ) = µ4 − ω . Since cov(ei,m , ei+h,m ) = 0 for |h| ≥ 2 it follows that
+
+var(
+
+Xm
+
+e2 )
+i=1 i,m
+
+=
+=
+
+Xm
+
+2
+var(ei,m
+)+
+
+Xm
+
+2
+2
+i, j=1 cov(ei,m , ei+h,m )
+i6= j
+m(2µ4 + 2ω4 ) + 2(m − 1)(µ4 − ω4 ) = 4m µ4 − 2(µ4 − ω4 ).
+i=1
+
+The last sum involves uncorrelated terms such that
+m
+m
+m
+X
+X
+X
+∗
+2
+∗
+var(
+ei,m yi,m
+)=
+σ i,m
+.
+var(ei,m yi,m
+) = 2ω2
+i=1
+
+i=1
+
+i=1
+
+17
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+By the substitution 3κ = µ4 we obtain the expression for the variance. The asymptotic normality is proven
+(m)
+
+by Zhang et al. (2003) with an argument that is similar to that we use for RVAC1 in our proof of Lemma 2, and
+Pm
+Pm
+4 + 2ω2
+2
+4
+using that 2 i=1
+σ i,m
+i=1 σ i,m − 4ω = O(1).
+(m)
+
+Proof of Lemma 2. First we note that RVAC1 =
+
+Pm
+
+i=1 Yi,m + Ui,m + Vi,m + Wi,m , where
+
+Yi,m
+
+≡
+
+∗
+∗
+∗
+∗
+yi,m
+(yi−1,m
++ yi,m
++ yi+1,m
+),
+
+Ui,m
+
+≡
+
+(u i,m − u i−1,m )(u i+1,m − u i−2,m ),
+
+Vi,m
+
+≡
+
+Wi,m
+
+≡
+
+∗
+yi,m
+(u i+1,m − u i−2,m ),
+
+∗
+∗
+∗
+(u i,m − u i−1,m )(yi−1,m
++ yi,m
++ yi+1,m
+),
+
+∗
+∗
+∗
+∗
++ u i+1,m − u i−2,m )
++ yi,m
++ yi+1,m
+since yi,m (yi−1,m + yi,m + yi+1,m ) = (yi,m
++ u i,m − u i−1,m )(yi−1,m
+(m)
+=Yi,m +Ui,m + Vi,m + Wi,m . Thus the properties of RVAC1 are given from those of Yi,m , Ui,m , Vi,m , and Wi,m .
+
+2 , and E(U ) = E(V ) = E(W ) =
+Given Assumptions 1 and 2.i, it follows directly that E(Yi,m ) = σ i,m
+i,m
+i,m
+i,m
+Pm
+(m)
+2 . Note that E(U ) consists of terms E(u
+0, which shows that E[RVAC1 ] = i=1 σ i,m
+u
+)
+where
+i 6= j
+i,m
+i,m j,m
+
+so Assumption 2.i suffices to establish that the expected value is zero. Given Assumptions 1 and 2.i -ii , the
+(m)
+variance of RVAC1 is given by
+(m)
+
+var[RVAC1 ] = var[
+
+m
+X
+i=1
+
+Yi,m + Ui,m + Vi,m + Wi,m ] = (1) + (2) + (3) + (4) + (5),
+
+Pm
+Pm
+Pm
+Pm
+where (1) = var( i=1
+Yi,m ), (2) = var( i=1
+Ui,m ), (3) = var( i=1
+Vi,m ), (4) = var( i=1
+Wi,m ), (5) =
+Pm
+Pm
+2cov( i=1 Vi,m , i=1 Wi,m ), since all other sums are uncorrelated. Next, we derive the expressions of each
+
+of these five terms.
+
+∗ (y ∗
+∗
+∗
+∗2 ∗2
+2
+2
+1. Yi,m = yi,m
+i−1,m + yi,m + yi+1,m ) and given Assumption 1 it follows that E[yi,m y j,m ] = σ i,m σ j,m for
+∗2
+∗2
+∗4
+4
+i 6= j, and E[yi,m y j,m ] = E[yi,m ] = 3σ i,m for i = j, such that
+4
+2
+2
+2
+2
+2 2
+4
+2
+2
+2
+2
+var(Yi,m ) = 3σ i,m
++ σ i,m
+σ i−1,m
++ σ i,m
+σ i+1,m
+− [σ i,m
+] = 2σ i,m
++ σ i,m
+σ i−1,m
++ σ i,m
+σ i+1,m
+.
+
+The first-order autocorrelation of Yi,m is
+E[Yi,m Yi+1,m ] =
+=
+=
+
+∗
+∗
+∗
+∗
+∗
+∗
+∗
+∗
+E[yi,m
+(yi−1,m
++ yi,m
++ yi+1,m
+)yi+1,m
+(yi,m
++ yi+1,m
++ yi+2,m
+)]
+∗
+∗
+∗
+∗
+∗
+∗
+)] + 0
+E[yi,m
+(yi,m
++ yi+1,m
+)yi+1,m
+(yi,m
++ yi+1,m
+
+∗2 ∗2
+2
+2
+2E[yi,m
+yi+1,m ] = 2σ i,m
+σ i+1,m
+,
+
+2 σ2
+such that cov(Yi,m , Yi+1,m ) = σ i,m
+i+1,m , whereas cov(Yi,m , Yi+h,m ) = 0 for |h| ≥ 2. Thus
+
+(1)
+
+=
+=
+=
+
+m
+X
+
+4
+2
+2
+2
+2
+(2σ i,m
++ σ i,m
+σ i−1,m
++ σ i,m
+σ i+1,m
+)+
+
+i=1
+m
+X
+
+2
+
+i=1
+
+6
+
+m
+X
+
+m
+X
+i=2
+
+4
+σ i,m
++2
+
+m
+X
+
+2
+2
+σ i,m
+σ i−1,m
++2
+
+4
+σ i,m
+−2
+
+m
+X
+
+2
+2
+2
+σ i,m
+(σ i,m
+− σ i−1,m
+)+2
+
+i=1
+
+m
+X
+i=1
+
+i=1
+i=1
+2
+2
+−σ 1,m σ 0,m − σ 2m,m σ 2m+1,m
+
+18
+
+2
+2
+σ i,m
+σ i−1,m
++
+
+m−1
+X
+
+2
+2
+σ i,m
+σ i+1,m
+
+i=1
+
+2
+2
+σ i,m
+σ i+1,m
+− σ 21,m σ 20,m − σ 2m,m σ 2m+1,m
+m
+X
+i=1
+
+2
+2
+2
+σ i,m
+(σ i+1,m
+− σ i,m
+)
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+=
+
+6
+
+m
+X
+i=1
+
+4
+σ i,m
+−2
+
+m
+X
+i=2
+
+2
+2
+2
+σ i,m
+(σ i,m
+− σ i−1,m
+)+2
+
+m−1
+X
+i=1
+
+2
+2
+2
+σ i,m
+(σ i+1,m
+− σ i,m
+)
+
+−σ 21,m σ 20,m − σ 2m,m σ 2m+1,m − 2σ 21,m (σ 21,m − σ 20,m ) + 2σ 2m,m (σ 2m+1,m − σ 2m,m )
+=
+
+6
+
+m
+X
+i=1
+
+4
+σ i,m
+−2
+
+m−1
+X
+i=1
+
+2
+2 2
+(σ i+1,m
+− σ i,m
+) − 2(σ 41,m + σ 4m,m ) + σ 21,m σ 20,m + σ 2m,m σ 2m+1,m
+
+2 ) = E(u
+2
+2
+2. Ui,m = (u i,m − u i−1,m )(u i+1,m − u i−2,m ) and from E(Ui,m
+i,m − u i−1,m ) E(u i+1,m − u i−2,m ) it
+follows that var(Ui,m ) = 4ω4 . The first and second order autocovariance are given by
+
+E(Ui,m Ui+1,m ) =
+=
+E(Ui,m Ui+2,m ) =
+=
+
+E[(u i,m − u i−1,m )(u i+1,m − u i−2,m )(u i+1,m − u i,m )(u i+2,m − u i−1,m )]
+E[u i−1,m u i+1,m u i+1,m u i−1,m ] + 0 = ω4 ,
+
+and
+
+E[(u i,m − u i−1,m )(u i+1,m − u i−2,m )(u i+2,m − u i+1,m )(u i+3,m − u i,m )]
+E[u i,m u i+1,m u i+1,m u i,m ] + 0 = ω4 ,
+
+whereas E(Ui,m Ui+h,m ) = 0 for |h| ≥ 3. Thus, (2) = m4ω4 + 2(m − 1)ω4 + 2(m − 2)ω4 = 8ω4 m − 6ω4 .
+∗ (u
+2
+2
+2
+3. Vi,m = yi,m
+i+1,m − u i−2,m ) such that var(Vi,m ) = σ i,m 2ω and E[Vi,m Vi+h,m ] = 0 for all h 6 = 0. Thus
+Pm
+P
+m
+2 .
+(3) = var( i=1 Vi,m ) = 2ω2 i=1
+σ i,m
+
+∗
+∗ + y∗
+2
+2
+2
+2 2
+4. Wi,m = (u i,m − u i−1,m )(yi−1,m
++ yi,m
+i+1,m ) such that var(Wi,m ) = 2ω (σ i−1,m + σ i,m + σ i+1,m ).
+The first order autocovariance equals
+2
+∗2
+∗2
+2
+2
+cov(Wi,m , Wi+1,m ) = E[−u i,m
+(yi,m
++ yi+1,m
+)] = −ω2 (σ i,m
++ σ i+1,m
+),
+
+while cov(Wi,m , Wi+h,m ) = 0 for |h| ≥ 2. Thus
+(4) =
+
+m
+X
+i=1
+
+= ω2
+= 2ω
+
+2
+2
+2
+[2ω2 (σ i−1,m
++ σ i,m
++ σ i+1,m
+)−
+
+m
+X
+
+i=2
+
+2
+2
+ω2 (σ i,m
++ σ i−1,m
+)−
+
+m−1
+X
+i=1
+
+2
+2
+ω2 (σ i,m
++ σ i+1,m
+)]
+
+2
+2
+(σ i−1,m
++ σ i+1,m
+) + ω2 [σ 21,m + σ 20,m + σ 2m,m + σ 2m+1,m ]
+
+i=1
+m
+X
+2
+
+= 2ω2
+
+m
+X
+
+i=1
+m
+X
+i=1
+
+2
+σ i,m
++ ω2 [σ 20,m − σ 2m,m + σ 2m+1,m − σ 21,m ] + ω2 [σ 21,m + σ 20,m + σ 2m,m + σ 2m+1,m ]
+2
+σ i,m
++ 2ω2 [σ 20,m + σ 2m+1,m ].
+
+5. The autocovariances between the last two terms are given by
+∗
+∗
+∗
+∗
+E[Vi,m Wi+h,m ] = E[yi,m
+(u i+1,m − u i−2,m )(u i+h,m − u i−1+h,m )(yi−1+h,m
++ yi+h,m
++ yi+1+h,m
+)],
+2 , while all other covariances are zero. From this we conclude that
+showing that cov(Vi,m , Wi±1,m ) = ω2 σ i,m
+Pm
+Pm
+2 − ω2 (σ 2 + σ 2 )] = 4ω2
+2
+2
+2 2
+(5) = 2[2 i=1
+ω2 σ i,m
+m,m
+i=1 σ i,m − 2ω (σ 1,m + σ m,m ).
+1,m
+
+By adding up the five terms we find
+6
+
+m
+X
+i=1
+
+4
+σ i,m
+−2
+
+m−1
+X
+i=1
+
+2
+2 2
+(σ i+1,m
+− σ i,m
+) − 2(σ 41,m + σ 4m,m ) + σ 21,m σ 20,m + σ 2m,m σ 2m+1,m + 8ω4 m − 6ω4
+
+19
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
++ 2ω2
+
+m
+X
+i=1
+
+2
+σ i,m
++ 2ω2
+
+= 8ω4 m + 8ω2
+
+m
+X
+i=1
+
+m
+X
+i=1
+
+2
+σ i,m
++ 2ω2 [σ 20,m + σ 2m+1,m ] + 4ω2
+
+2
+σ i,m
+− 6ω4 + 6
+
+m
+X
+i=1
+
+m
+X
+i=1
+
+2
+σ i,m
+− 2ω2 [σ 21,m + σ 2m,m ]
+
+4
+σ i,m
++ rm ,
+
+where
+≡ −2
+
+rm
+
+m
+X
+2
+2 2
+(σ i+1,m
+− σ i,m
+) − 2(σ 41,m + σ 4m,m ) + σ 21,m σ 20,m + σ 2m,m σ 2m+1,m
+
+i=1
++2ω2 (σ 20,m − σ 21,m + σ 2m+1,m − σ 2m,m ).
+
+Under BTS it follows immediately that rm = O(m −2 ). Under CTS we use the Lipschitz condition, which
+2 | =
+states that ∃ǫ > 0 such that |σ 2 (t) − σ 2 (t + h)| ≤ ǫh for all t and all h. This shows that |σ i,m
+R ti,m
+| ti−1,m σ 2 (s)ds| ≤ δ supti−1,m ≤s≤ti,m σ 2 (s) = O(m −1 ), since δ = δ i,m = (b − a)/m = O(m −1 ) under
+CTS, and
+Z ti,m
+Z ti,m
+2
+2
+2
+2
+|σ i,m − σ i−1,m | = |
+σ (s) − σ (s − δ)ds| ≤
+|σ 2 (s) − σ 2 (s − δ)|ds
+ti−1,m
+
+≤
+
+sup
+
+δ
+
+ti−1,m ≤s≤ti,m
+
+ti−1,m
+2
+
+|σ (s) − σ (s − δ)| ≤ δ ǫ = O(m −2 ).
+2
+
+2
+
+Pm
+
+ǫ 2
+2
+2 2
+−3
+−2
+i=1 (σ i+1,m − σ i,m ) ≤ m · (δ m ) = O(m ), which proves that rm = O(m ), under CTS.
+(m)
+The asymptotic normality is established by expressing RVAC1 as a sum of a martingale difference se∗ , y∗
+quence. Let u i,m = u(t i,m ) and define the sigma algebra Fi,m = σ (yi,m
+i−1,m , . . . , u i,m , u i−1,m , . . .). First
+(3)
+(2)
+(1)
+2
+note that yi,m (y i−1,m +y i,m +y i+1,m )=σ i,m + ξ i−1,m + ξ i,m + ξ i+1,m , where
+
+Thus
+
+(1)
+ξ i−1,m
+(2)
+ξ i,m
+(3)
+ξ i+1,m
+
+∗
++u i−1,m u i−2,m ,
+≡ −u i−1,m yi−1,m
+
+∗
+∗
+∗
+∗
+∗
+∗
+2
+∗
+∗
+,
+−u i,m u i−2,m −u i−1,m yi,m
++u i,m yi,m
+u i−2,m +u i,m yi−1,m
+−y i,m
+yi−1,m
++y i,m
+−σ i,m
+yi,m
+≡ yi,m
+∗
+∗
+∗
+∗
+∗
+−u i−1,m u i+1,m .
++u i,m u i+1,m −u i−1,m yi+1,m
+u i+1,m +u i,m yi+1,m
++y i,m
+yi+1,m
+≡ yi,m
+(1)
+
+(2)
+
+(3)
+
+(2)
+
+(3)
+
+(3)
+
+(1)
+
+(2)
+
+So if we define ξ i,m ≡ (ξ i,m +ξ i,m +ξ i,m ) (using the conventions ξ 0,m = ξ 0,m = ξ 1,m = ξ (1)
+m,m = ξ m+1,m = ξ m+1,m = 0),
+(m)
+
+it follows that [RVAC1 − IV] =
+is squared integrable, since
+
+2
+)=
+E(ξ i,m
+
+Pm+1
+i=0
+
+m+1
+ξ i,m , where {ξ i,m , Fi,m }i=0
+is a martingale difference sequence that
+
+
+
+ω2 σ 20 + ω4 < ∞,
+
+
+
+
+2 2
+4
+4
+2 2
+2 2
+
+
+ 2ω + σ 0 σ 1 + ω σ 0 + 2ω σ 1 + σ 1 < ∞,
+
+2
+2
+4
+2
+2
++4σ i,m
+ω2 +4σ i−1,m
+ω2 + 8ω4 < ∞,
+2σ i,m
++4σ i,m
+σ i−1,m
+
+
+
+
+σ 4m + 4σ 2m σ 2m−1 + 6ω2 σ 2m + 4ω2 σ 2m−1 + 5ω4 < ∞,
+
+
+
+ σ 2 σ 2 + 2ω2 σ 2 + 2ω4 < ∞,
+m m+1
+m+1
+(m)
+
+Since m −1/2 [RVAC1 − IV] = m −1/2
+
+Pm+1
+i=0
+
+for i = 0,
+
+for i = 1,
+
+for 1 < i < m,
+for i = m,
+
+for i = m + 1,
+
+ξ i,m , we can apply the central limit theorem for squared
+
+integrable martingales, see Shiryaev (1995, p. 543, theorem 4), where the only remaining condition to be
+verified, is the conditional Lindeberg condition:
+m+1
+X
+i=0
+
+h
+i p
+2
+1{|m −1/2 ξ i,m |>ε} |Fi−1,m → 0,
+E m −1 ξ i,m
+20
+
+as m → ∞.
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+2
+2
+Since E[ξ i,m
+1{|m −1/2 ξ i,m |>ε} ] is bounded by E[ξ i,m
+] ≤ ∞ and supi P(1{|ξ i,m |>ε√m } = 0) → 0, for all
+
+ε > 0, it follows that
+E m
+
+−1
+
+m+1
+X
+i=0
+
+2
+1{|m −1/2 ξ i,m |>ε} −0
+ξ i,m
+
+≤m
+
+−1
+
+m+1
+X
+i=0
+
+2
+1{|m −1/2 ξ i,m |>ε} ] − 0 → 0, as m → ∞.
+E[ξ i,m
+
+The Lindeberg condition now follows because convergence in L1 implies convergence in probability.
+Proof of Corollary 3. The MSE’s are given from Lemmas 1 and 2, since BTS implies that
+
+rm = 0 − 2(IV 2 /m 2 + IV 2 /m 2 ) + IV 2 /m 2 + IV 2 /m 2 + 0 = −2IV 2 /m 2 .
+Equating ∂MSE(RV (m) )/∂m ∝ 4λ2 m + 6λ2 − m −2 with zero yields the first order condition of the corollary,
+(m)
+
+and the second result follows similarly from ∂MSE(RVAC1 )/∂m ∝ 4λ2 − 3m −2 + 2m −3 .
+
+References
+Andersen, T. G. & Bollerslev, T. (1997), ‘Intraday periodicity and volatility persistence in financial
+markets’, Journal of Empirical Finance 4, 115–158.
+Andersen, T. G., Bollerslev, T., Diebold, F. X. & Ebens, H. (2001), ‘The distribution of realized
+stock return volatility’, Journal of Financial Economics 61(1), 43–76.
+Andersen, T. G., Bollerslev, T., Diebold, F. X. & Labys, P. (2000), ‘Great realizations’, Risk
+13(3), 105–108.
+Andreou, E. & Ghysels, E. (2002), ‘Rolling-sample volatility estimators: Some new theoretical,
+simulation, and empirical results’, Journal of Business & Economic Statistics 20(3), 363–376.
+Awartani, B., Corradi, V. & Distaso, W. (2004), Testing and modelling market microstructure effects
+with an application to the dow jones industrial average. Unpublished Manuscript, Queen Mary,
+University of London and University of Exeter.
+Bandi, F. M. & Russell, J. R. (2003), Microstructure noise, realized volatility, and optimal sampling,
+Working paper, Graduate School of Business, The University of Chicago.
+Barndorff-Nielsen, O. E. & Shephard, N. (2002), ‘Econometric analysis of realised volatility and
+its use in estimating stochastic volatility models’, Journal of the Royal Statistical Society B
+64, 253–280.
+Barndorff-Nielsen, O. E. & Shephard, N. (2003), ‘Realized power variation and stochastic volatility’, Bernoulli 9, 243–265.
+Billingsley, P. (1995), Probability and Measure, 3nd edn, John Wiley and Sons, New York.
+Bollen, B. & Inder, B. (2002), ‘Estimating daily volatility in financial markets utilizing intraday
+data’, Journal of Empirical Finance 9, 551–562.
+Corsi, F., Zumbach, G., Müller, U. & Dacorogna, M. (2001), ‘Consistent high-precision volatility
+from high-frequency data’, Economic Notes 30(2), 183–204.
+Curci, G. & Corsi, F. (2004), Discrete sine transform approach for realized volatility measurement.
+Unpublished Manuscript, Research Paper, University of Southern Switzerland.
+21
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+Dacorogna, M. M., Gencay, R., Müller, U., Olsen, R. B. & Pictet, O. V. (2001), An Introduction to
+High-Frequency Finance, Academic Press, London.
+Ebens, H. (1999), Realized stock volatility, Working paper 420, Johns Hopkins University.
+French, K. R., Schwert, G. W. & Stambaugh, R. F. (1987), ‘Expected stock returns and volatility’,
+Journal of Financial Economics 19(1), 3–29.
+Hansen, P. R. & Lunde, A. (2003), ‘An optimal and unbiased measure of realized variance based
+on intermittent high-frequency data’. Mimeo prepared for the CIREQ-CIRANO Conference:
+Realized Volatility. Montreal, November 2003.
+Hansen, P. R. & Lunde, A. (2004), ‘An unbiased measure of realized variance’. Brown University
+Working Paper, 2004
+http://www.econ.brown.edu/fac/Peter Hansen.
+Meddahi, N. (2002), ‘A theoretical comparison between integrated and realized volatility’, Journal
+of Applied Econometrics 17, 479–508.
+Müller, U. A., Dacorogna, M. M., Olsen, R. B., Pictet, O. V., Schwarz, M. & Morgenegg, C. (1990),
+‘Statistical study of foreign exchange rates, empirical evidence of a price change scaling law,
+and intraday analysis’, Journal of Banking and Finance 14, 1189–1208.
+Newey, W. & West, K. (1987), ‘A simple positive semi-definite, heteroskedasticity and autocorrelation consistent covariance matrix’, Econometrica 55, 703–708.
+Oomen, R. A. C. (2002), ‘Modelling realized variance when returns are serially correlated’.
+manuscript, Warwick Business School, The University of Warwick.
+Oomen, R. A. C. (2004a), ‘Properties of bias corrected realized variance in calendar time and business time’. manuscript, Warwick Business School, The University of Warwick.
+Oomen, R. A. C. (2004b), ‘Properties of realized variance for a pure jump process: Calendar time
+sampling versus business time sampling’. manuscript, Warwick Business School, The University of Warwick.
+Shiryaev, A. N. (1995), Probability, 2nd edn, Springer-Verlag, New York.
+Wasserfallen, W. & Zimmermann, H. (1985), ‘The behavior of intraday exchange rates’, Journal of
+Banking and Finance 9, 55–72.
+Zhang, L., Mykland, P. A. & Aı̈t-Sahalia, Y. (2002), A tale of two time scales: Determining integrated volatility with noisy high frequency data?, Tech. rep. university of chicago.
+Zhang, L., Mykland, P. A. & Aı̈t-Sahalia, Y. (2003), A tale of two time scales: Determining integrated volatility with noisy high frequency data, Working Paper w10111, NBER.
+Zhou, B. (1996), ‘High-frequency data and volatility in foreign-exchange rates’, Journal of Business
+& Economic Statistics 14(1), 45–52.
+
+22
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+Table 1: Equities included in our empirical analysis.
+
+Symbol Name
+AA
+AXP
+BA
+C
+CAT
+DD
+DIS
+EK
+GE
+GM
+HD
+HON
+HPQ
+IBM
+INTC
+IP
+JNJ
+JPM
+KO
+MCD
+MMM
+MO
+MRK
+MSFT
+PG
+SBC
+T
+UTX
+WMT
+XOM
+
+Exchange
+
+Trans./day
+All #1p 6= 0
+
+1454
+AMERICAN EXPRESS
+NYSE
+2267
+BOEING COMPANY
+NYSE
+1687
+CITIGROUP
+NYSE
+3236
+CATERPILLAR INC
+NYSE
+1218
+DU PONT DE NEMOURS
+NYSE
+1727
+WALT DISNEY
+NYSE
+2049
+EASTMAN KODAK
+NYSE
+1089
+GENERAL ELECTRIC
+NYSE
+3690
+GENERAL MOTORS
+NYSE
+1591
+HOME DEPOT INC
+NYSE
+2710
+HONEYWELL
+NYSE
+1477
+HEWLETT-PACKARD
+NYSE
+2246
+INT. BUSINESS MACHINES
+NYSE
+3138
+INTEL CORP
+NASDAQ 15907
+INTERNATIONAL PAPER
+NYSE
+1489
+JOHNSON AND JOHNSON
+NYSE
+2023
+J.P. MORGAN
+NYSE
+2280
+COCA-COLA
+NYSE
+1788
+MCDONALDS
+NYSE
+1690
+MINNESOTA MNG MFG
+NYSE
+1487
+PHILIP MORRIS
+NYSE
+2080
+MERCK
+NYSE
+2117
+MICROSOFT
+NASDAQ 15324
+PROCTER & GAMBLE
+NYSE
+2004
+SBC COMMUNICATIONS
+NYSE
+2293
+AT & T CORP
+NYSE
+2104
+UNITED TECHNOLOGIES
+NYSE
+1360
+WAL-MART STORES
+NYSE
+2380
+EXXON MOBIL
+NYSE
+2463
+ALCOA INC
+
+NYSE
+
+699
+1179
+817
+1578
+601
+905
+1047
+501
+1859
+755
+1337
+677
+1053
+1901
+12388
+710
+1139
+1188
+904
+797
+803
+1055
+1032
+11947
+1017
+1108
+789
+687
+1261
+1253
+
+Quotes/day
+All #1p 6= 0 #Days
+2007
+2938
+2529
+4032
+1955
+2716
+3026
+1800
+4014
+2603
+3086
+2292
+2918
+4883
+13579
+2269
+2377
+3091
+2298
+2313
+2267
+3254
+2549
+13257
+3409
+2902
+2267
+2112
+3084
+3104
+
+770
+1267
+1040
+1495
+781
+1030
+1087
+702
+1655
+991
+1289
+930
+1194
+2249
+4566
+836
+998
+1364
+948
+807
+1094
+1009
+1064
+6246
+1299
+1106
+734
+953
+1226
+1176
+
+742
+741
+741
+742
+742
+741
+742
+741
+742
+742
+742
+741
+742
+741
+750
+742
+742
+742
+742
+742
+741
+741
+742
+747
+742
+741
+742
+741
+742
+741
+
+The table lists the equities used in our empirical analysis. For each equity, we extract data from the
+exchange where it is most actively traded (third column). The average number of transactions and
+quotes per day are given in columns 4-7. The final columns report the number of trading day for
+each asset.
+
+23
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+Table 2: Noise-to-signal ratio, optimal sampling.
+Trades
+
+Quotes
+
+Asset
+
+ω̂2 · 100
+
+IV
+
+λ̂ · 100
+
+m ∗0
+
+m ∗1
+
+1MSE
+
+ω̂2 · 100
+
+IV
+
+AA
+AXP
+BA
+C
+CAT
+DD
+DIS
+EK
+GE
+GM
+HD
+HON
+HPQ
+IBM
+INTC
+IP
+JNJ
+JPM
+KO
+MCD
+MMM
+MO
+MRK
+MSFT
+PG
+SBC
+T
+UTX
+WMT
+XOM
+
+0.4217
+0.1182
+0.2356
+0.1814
+0.2238
+0.2697
+0.6089
+0.0838
+0.1964
+-0.0169
+0.2728
+0.2304
+0.2949
+0.0679
+0.2455
+0.4114
+0.1088
+0.1008
+0.1847
+0.6553
+-0.0087
+0.8021
+0.0964
+0.1688
+0.1423
+0.2865
+0.7740
+-0.0038
+0.1755
+0.0979
+
+5.797
+5.944
+5.238
+5.138
+4.909
+4.716
+5.770
+5.125
+4.619
+4.700
+5.788
+6.926
+10.08
+4.515
+10.91
+5.463
+2.465
+7.389
+3.203
+3.862
+3.389
+3.962
+3.446
+6.120
+3.063
+4.881
+5.531
+4.875
+4.946
+2.588
+
+0.0727
+0.0199
+0.0450
+0.0353
+0.0456
+0.0572
+0.1055
+0.0164
+0.0425
+-0.0036
+0.0471
+0.0333
+0.0292
+0.0150
+0.0225
+0.0753
+0.0441
+0.0136
+0.0577
+0.1697
+-0.0026
+0.2025
+0.0280
+0.0276
+0.0465
+0.0587
+0.1399
+-0.0008
+0.0355
+0.0378
+
+77
+184
+107
+126
+106
+91
+60
+210
+111
+n/a
+104
+131
+142
+222
+170
+76
+108
+237
+90
+44
+n/a
+39
+147
+148
+105
+89
+50
+n/a
+125
+120
+
+1190
+4354
+1924
+2453
+1899
+1514
+820
+5294
+2036
+n/a
+1837
+2603
+2961
+5759
+3847
+1149
+1961
+6348
+1501
+510
+n/a
+427
+3094
+3139
+1863
+1475
+618
+n/a
+2440
+2289
+
+64.5%
+75.7%
+69.1%
+71.2%
+69.0%
+66.9%
+60.7%
+77.1%
+69.6%
+n/a
+68.7%
+71.7%
+72.8%
+77.7%
+74.8%
+64.2%
+69.3%
+78.3%
+66.8%
+55.3%
+n/a
+53.1%
+73.1%
+73.2%
+68.8%
+66.6%
+57.5%
+n/a
+71.2%
+70.6%
+
+-0.0966
+-0.0870
+-0.0690
+-0.0471
+-0.1156
+-0.0778
+-0.0511
+-0.1047
+-0.0347
+-0.1346
+-0.0906
+-0.1215
+-0.1132
+-0.0305
+-0.1843
+-0.1256
+-0.0393
+-0.1018
+-0.0656
+-0.0168
+-0.0814
+-0.0648
+-0.0580
+-0.0888
+-0.0202
+-0.0734
+-0.1365
+-0.1070
+-0.0995
+-0.0341
+
+5.855
+5.953
+5.011
+5.172
+4.818
+4.735
+5.614
+5.121
+4.484
+4.694
+5.689
+7.037
+9.455
+4.456
+10.77
+5.559
+2.341
+7.077
+3.280
+3.952
+3.320
+4.169
+3.550
+5.872
+2.995
+5.007
+5.842
+4.977
+5.024
+2.532
+
+The table presents empirical estimates of ω2 , the average IV, the noise-to-signal ratio, the opti(m)
+mal sampling frequencies for RV (m) and RVAC
+, and the reduction of the MSE, 100[γ 20 (λ̂, m ∗0 ) −
+1
+γ 21 (λ̂, m ∗1 )]/γ 20 (λ̂, m ∗0 ) based on transaction data. For quotation data we observe negative estimates
+of ω2 which is evidence of a negative correlation between the noise process and true returns.
+
+24
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+Table 3: Test for time-independent noise (transaction data).
+Asset
+
+t(1,60)
+
+t(2,60)
+
+t(5,60)
+
+t(10,60)
+
+t(15,60)
+
+t(20,60)
+
+t(25,60)
+
+t(30,60)
+
+t(60,180)
+
+AA
+AXP
+BA
+C
+CAT
+DD
+DIS
+EK
+GE
+GM
+HD
+HON
+HPQ
+IBM
+INTC
+IP
+JNJ
+JPM
+KO
+MCD
+MMM
+MO
+MRK
+MSFT
+PG
+SBC
+T
+UTX
+WMT
+XOM
+
+-10.3
+-7.49
+-7.12
+-4.79
+-9.84
+-11.1
+-15.1
+-5.59
+-13.2
+-11.0
+-14.0
+-5.30
+-5.02
+-3.97
+-21.0
+-9.58
+-7.87
+-2.42
+-10.3
+-12.9
+-1.79
+-15.6
+-9.17
+-19.4
+-5.82
+-9.88
+-13.6
+-2.19
+-12.5
+-3.16
+
+1.07
+3.57
+1.86
+8.65
+-1.32
+1.19
+5.87
+-0.72
+4.29
+-4.18
+3.06
+1.33
+2.23
+1.81
+-13.2
+1.34
+6.74
+0.60
+3.99
+5.75
+2.10
+2.16
+3.47
+-8.13
+3.20
+7.71
+7.84
+1.35
+3.71
+9.65
+
+2.54
+5.94
+2.41
+7.88
+0.62
+2.84
+4.16
+1.28
+5.25
+-0.79
+4.22
+1.92
+2.64
+4.01
+-14.9
+2.28
+7.12
+0.26
+4.43
+4.35
+2.77
+-0.25
+5.17
+-12.8
+3.58
+9.08
+2.13
+3.43
+4.14
+10.4
+
+2.31
+3.60
+0.30
+5.19
+0.00
+2.20
+3.73
+1.59
+5.19
+-1.05
+3.55
+1.51
+0.95
+1.90
+-9.78
+1.87
+5.38
+-0.46
+2.79
+3.51
+1.41
+0.95
+4.35
+-10.1
+1.62
+7.55
+4.07
+2.73
+2.79
+6.62
+
+1.00
+1.88
+-1.01
+3.32
+-1.04
+1.04
+2.09
+1.42
+3.19
+-1.49
+2.15
+0.52
+0.16
+0.20
+-6.15
+1.31
+3.59
+-1.42
+1.52
+2.13
+0.43
+-0.48
+2.61
+-7.11
+0.26
+5.26
+1.68
+1.65
+1.42
+3.88
+
+0.11
+1.04
+-1.00
+2.69
+-0.66
+-0.17
+1.03
+0.91
+2.57
+-2.07
+1.29
+0.90
+0.03
+-0.31
+-4.79
+0.88
+2.91
+-1.71
+1.30
+0.64
+-0.07
+-0.21
+1.94
+-5.39
+-0.44
+3.34
+0.70
+1.03
+-0.08
+2.04
+
+-0.67
+0.84
+-1.06
+1.31
+-0.94
+-0.28
+0.53
+0.64
+1.05
+-1.62
+-0.21
+0.91
+-1.18
+-0.63
+-2.72
+0.85
+2.78
+-2.05
+1.33
+0.67
+-1.08
+-0.31
+1.51
+-3.65
+-1.57
+2.19
+-0.09
+0.17
+-0.80
+0.37
+
+-0.49
+0.26
+-1.21
+0.74
+-0.40
+-1.08
+0.18
+1.48
+1.07
+-2.06
+0.36
+1.15
+-1.43
+-0.82
+-1.36
+0.78
+1.95
+-2.24
+1.21
+1.21
+-0.86
+-0.54
+1.43
+-3.25
+-0.71
+1.53
+0.00
+0.21
+-1.33
+-0.06
+
+-1.10
+-0.78
+-0.64
+0.43
+2.29
+0.32
+1.70
+1.45
+-0.12
+-0.27
+-1.22
+-0.03
+0.53
+-1.07
+-1.03
+0.71
+-0.56
+0.45
+-0.73
+-1.10
+1.88
+-1.92
+0.37
+-1.55
+-0.32
+-1.72
+-3.12
+-0.28
+-1.06
+-1.48
+
+This table reports t-statistics for the hypothesis that the pricing errors are independent. Bold font
+is identifies the statistics that are significant at the 5%-significance level. The statistic t(x,60) , which
+(x ticks)
+(60 ticks)
+compares RVAC
+to RVAC
+, has power against alternatives for which the dependence endures
+1
+1
+for more that x ticks.
+
+25
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+Table 4: Test for time-independent noise (quotation data).
+Asset
+
+t(1,60)
+
+t(2,60)
+
+t(5,60)
+
+t(10,60)
+
+t(15,60)
+
+t(20,60)
+
+t(25,60)
+
+t(30,60)
+
+t(60,180)
+
+AA
+AXP
+BA
+C
+CAT
+DD
+DIS
+EK
+GE
+GM
+HD
+HON
+HPQ
+IBM
+INTC
+IP
+JNJ
+JPM
+KO
+MCD
+MMM
+MO
+MRK
+MSFT
+PG
+SBC
+T
+UTX
+WMT
+XOM
+
+-5.02
+-7.34
+-4.08
+-0.01
+-7.32
+-5.67
+-1.65
+-5.28
+-3.59
+-12.5
+-6.36
+-3.95
+-3.73
+-7.53
+-19.5
+-5.96
+-1.63
+-3.69
+-5.37
+-1.33
+-5.13
+-6.43
+-6.50
+-18.4
+-2.62
+-4.01
+-4.27
+-5.37
+-6.38
+1.09
+
+-1.99
+-1.28
+0.09
+4.81
+-3.70
+-2.12
+2.46
+-2.97
+1.17
+-8.92
+-1.07
+-1.30
+-0.22
+-2.49
+-13.3
+-2.88
+2.95
+-0.63
+-1.17
+1.13
+-0.49
+-3.42
+-1.83
+-12.0
+0.29
+1.83
+0.74
+-1.90
+-1.05
+5.98
+
+1.29
+5.08
+3.70
+7.48
+0.25
+2.19
+5.83
+0.20
+6.39
+-2.91
+4.56
+1.52
+4.01
+4.40
+-3.34
+0.70
+5.87
+1.79
+2.83
+3.42
+3.36
+-0.81
+3.02
+-1.21
+3.81
+7.84
+3.92
+2.11
+3.37
+8.84
+
+1.32
+3.75
+2.55
+5.60
+0.28
+1.87
+4.51
+1.08
+5.76
+-1.28
+3.73
+1.28
+3.28
+3.91
+1.25
+1.14
+4.31
+1.40
+1.79
+1.96
+2.47
+-1.13
+3.06
+3.54
+3.04
+7.52
+1.64
+3.08
+2.09
+5.81
+
+0.08
+1.96
+0.99
+3.72
+-0.33
+0.68
+2.99
+0.71
+3.88
+-1.39
+2.48
+0.95
+1.61
+1.79
+2.05
+0.55
+3.00
+0.67
+1.17
+0.72
+1.30
+-1.79
+2.04
+4.69
+1.96
+4.90
+-0.25
+2.49
+-0.05
+3.09
+
+-0.49
+1.16
+0.39
+2.30
+-1.01
+0.04
+2.06
+0.34
+2.57
+-2.12
+1.14
+0.38
+0.65
+-0.12
+1.90
+-0.61
+2.47
+0.35
+0.44
+0.10
+0.83
+-1.98
+0.72
+4.85
+0.48
+3.21
+-0.79
+1.89
+-1.18
+1.20
+
+-1.15
+0.07
+-0.07
+1.48
+-0.57
+-1.12
+1.38
+0.60
+2.49
+-1.62
+-0.21
+0.01
+1.19
+-0.30
+1.81
+-0.36
+1.86
+-0.67
+0.43
+-0.21
+-0.10
+-1.98
+0.11
+4.76
+0.18
+1.38
+-1.27
+1.15
+-2.24
+0.37
+
+-1.29
+0.01
+-0.32
+0.88
+-0.41
+-1.27
+1.65
+0.48
+2.11
+-1.71
+0.25
+0.42
+0.45
+-0.87
+1.62
+-0.57
+1.69
+-1.04
+-0.06
+-0.80
+-0.23
+-2.08
+-0.38
+4.31
+-0.50
+1.01
+-1.10
+0.05
+-2.92
+-0.46
+
+-0.50
+0.08
+-1.49
+-0.04
+1.21
+0.07
+-0.14
+0.86
+-0.19
+-1.80
+-2.06
+-0.09
+-0.45
+-1.90
+2.46
+0.24
+-0.76
+-1.44
+0.08
+0.03
+-0.38
+-0.29
+0.83
+1.26
+-0.57
+-1.18
+-2.77
+-0.37
+-0.75
+-0.54
+
+This table reports t-statistics for the hypothesis that the pricing errors are independent. Bold font
+is identifies the statistics that are significant at the 5%-significance level. The statistic t(x,60) , which
+(x ticks)
+(60 ticks)
+compares RVAC
+to RVAC
+, has power against alternatives for which the dependence endures
+1
+1
+for more that x ticks.
+
+26
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+γ 0 (λ̂, m)
+
+γ 1 (λ̂, m)
+
+100
+
+
+
+γ 0 (λ̂,m)
+γ 1 (λ̂,m ∗1 )
+
+2
+
+100
+
+
+
+γ 1 (λ̂,m)
+γ 0 (λ̂,m ∗0 )
+
+2
+
+2000
+
+RMSE ratio = 1.68
+10.0
+
+800
+600
+
+5.0
+
+AA
+
+AA
+
+400
+300
+
+282.04
+
+200
+
+1.0
+0.5
+
+80
+60
+
+304
+
+40
+30
+
+20
+0.1
+
+35.45
+
+20
+1800
+
+1200
+900
+
+480
+360
+
+240
+180
+
+120
+90
+
+Sampling Frequency in Seconds
+
+γ 1 (λ̂, m)
+
+10.00
+
+55
+40
+30
+
+γ 0 (λ̂, m)
+
+20
+15
+
+8
+6
+
+4
+3
+
+2
+
+1
+
+1800
+
+1200
+900
+
+480
+360
+
+240
+180
+
+120
+90
+
+55
+40
+30
+
+20
+15
+
+8
+6
+
+4
+3
+
+2
+
+1
+
+Sampling Frequency in Seconds
+
+100
+
+
+
+γ 0 (λ̂,m)
+γ 1 (λ̂,m ∗1 )
+
+2
+
+100
+
+
+
+γ 1 (λ̂,m)
+γ 0 (λ̂,m ∗0 )
+
+2
+
+2000
+
+RMSE ratio = 1.93
+
+5.00
+
+400
+300
+
+1.00
+
+MSFT
+
+MSFT
+
+800
+600
+
+0.50
+
+80
+60
+
+159
+0.10
+
+373.6
+
+200
+
+40
+30
+
+8
+
+26.77
+
+20
+
+0.05
+
+1800
+
+1200
+900
+
+480
+360
+
+240
+180
+
+120
+90
+
+55
+40
+30
+
+20
+15
+
+8
+6
+
+4
+3
+
+2
+
+1
+
+1800
+
+1200
+900
+
+480
+360
+
+240
+180
+
+120
+90
+
+55
+40
+30
+
+20
+15
+
+8
+6
+
+4
+3
+
+2
+
+1
+
+Sampling Frequency in Seconds
+
+Sampling Frequency in Seconds
+
+Figure 1: Absolute and relative RMSEs for RV and RVAC1 . The upper panels are results for AA and the lower
+panels are results for MSFT. The left panels shows γ 0 (λ̂, m) and γ 1 (λ̂, m) using empirical estimates for λ.
+The right panels show γ 0 (λ̂, m)/γ 1 (λ̂, m ∗1 ) and γ 1 (λ̂, m)/γ 0 (λ̂, m ∗0 ) that represent the relative efficiencies of
+(m ∗ )
+
+∗
+
+(m)
+RV (m) and RVAC
+(relative to RVAC11 and RV (m 0 ) , respectively). The x-axis refers to δ i,m = (b − a)/m in
+1
+units of seconds, where b − a = 6.5 hours (a trading day).
+
+27
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+γ 0 (λ̂, m)
+
+γ 1 (λ̂, m)
+
+γ 0 (0, m)
+
+
+
+γ (λ̂,m)
+100 γ 0(0,m ∗ ) − 1
+0
+1
+
+γ 1 (0, m)
+
+
+
+γ (λ̂,m)
+100 γ 1(0,m ∗ ) − 1
+1
+0
+
+350
+10.0
+5.0
+
+AA
+
+AA
+
+100
+35.0
+
+31.38
+
+1.0
+10.0
+
+0.5
+
+3.88
+
+3.50
+0.1
+
+1.00
+1800
+
+1200
+900
+
+480
+360
+
+240
+180
+
+120
+90
+
+55
+40
+30
+
+γ 1 (λ̂, m)
+
+20
+15
+
+γ 0 (λ̂, m)
+
+8
+6
+
+4
+3
+
+2
+
+1
+
+1800
+
+1200
+900
+
+480
+360
+
+240
+180
+
+120
+90
+
+55
+40
+30
+
+20
+15
+
+8
+6
+
+4
+3
+
+2
+
+1
+
+Sampling Frequency in Seconds
+
+Sampling Frequency in Seconds
+
+γ 0 (0, m)
+
+
+
+γ (λ̂,m)
+100 γ 0(0,m ∗ ) − 1
+0
+1
+
+γ 1 (0, m)
+
+
+
+γ (λ̂,m)
+100 γ 1(0,m ∗ ) − 1
+1
+0
+
+10.00
+350
+
+5.00
+
+35.0
+
+1.00
+
+MSFT
+
+MSFT
+
+100
+
+0.50
+
+10.0
+
+7.57
+
+3.50
+
+1.44
+
+1.00
+
+0.10
+0.05
+
+1800
+
+1200
+900
+
+480
+360
+
+240
+180
+
+120
+90
+
+55
+40
+30
+
+20
+15
+
+8
+6
+
+4
+3
+
+2
+
+1
+
+1800
+
+1200
+900
+
+480
+360
+
+240
+180
+
+120
+90
+
+55
+40
+30
+
+20
+15
+
+8
+6
+
+4
+3
+
+2
+
+1
+
+Sampling Frequency in Seconds
+
+0.25
+
+Sampling Frequency in Seconds
+
+Figure 2: This figure illustrates the effects of market microstructure noise on the RMSE. The left panels
+contains γ 0 (λ̂, m) and γ 1 (λ̂, m) (wide light lines) and γ 0 (0, m) and γ 1 (0, m) (thin dark lines), where the thin
+(m)
+dark lines represent the RMSEs of RV (m) and RVAC
+in the absence of noise (ω2 = 0). The right panels show
+1
+the percentage increase of the RMSE that is due to noise as a function of the sampling frequency, m. The
+x-axis refers to δ i,m = (b − a)/m in units of seconds, where b − a = 6.5 hours (a trading day).
+
+28
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+λ̂,
+(m)
+
+RVAC
+
+1
+
+RV
+
+(m)
+
+(m)
+
+RVAC
+
+39.2 secs between trades on average
+
+RV
+
+(m)
+
+36.1 secs between quotes on average
+
+10
+
+15
+14
+13
+
+9
+
+12
+
+8
+
+11
+
+Average RV (AA)
+
+Average RV (AA)
+
+1
+
+10
+9
+8
+7
+
+7
+
+6
+
+5
+6
+5
+
+4
+
+Sampling Frequency in Seconds
+
+(m)
+
+RVAC
+
+2.1 secs between trades on average
+
+43
+38
+33
+29
+25
+22
+19
+16
+14
+12
+
+1
+
+RV
+
+(m)
+
+11.5 secs between quotes on average
+
+9
+8
+7
+6
+
+Average RV (MSFT)
+
+Average RV (MSFT)
+
+3300
+2400
+1800
+
+1200
+900
+
+(m)
+
+540
+420
+300
+225
+165
+120
+90
+
+RV
+
+60
+45
+
+1
+
+30
+
+(m)
+
+RVAC
+
+20
+15
+11
+8
+6
+
+4
+3
+
+2
+
+1
+
+3300
+2400
+1800
+
+1200
+900
+
+540
+420
+300
+225
+165
+120
+90
+
+60
+45
+
+30
+
+20
+15
+11
+8
+6
+
+4
+3
+
+2
+
+1
+
+Sampling Frequency in Seconds
+
+10
+8
+7
+6
+
+5
+4
+3
+
+2
+
+5
+4
+
+1
+
+Sampling Frequency in Seconds
+
+(m)
+
+RVAC
+
+39.2 secs between trades
+
+1
+
+RV
+
+(m)
+
+36.1 secs between quotes on average
+
+10
+
+14
+
+9
+
+12
+11
+10
+9
+
+8
+
+Average RV (AA)
+
+Average RV (AA)
+
+3300
+2400
+1800
+
+1200
+900
+
+(m)
+
+540
+420
+300
+225
+165
+120
+90
+
+RV
+
+60
+45
+
+1
+
+30
+
+(m)
+
+RVAC
+
+20
+15
+11
+8
+6
+
+4
+3
+
+2
+
+1
+
+3300
+2400
+1800
+
+1200
+900
+
+540
+420
+300
+225
+165
+120
+90
+
+60
+45
+
+30
+
+20
+15
+11
+8
+6
+
+4
+3
+
+2
+
+1
+
+Sampling Frequency in Seconds
+
+8
+7
+6
+5
+
+7
+
+6
+
+5
+4
+
+3
+
+4
+
+Sampling Frequency in ticks
+
+(m)
+
+RVAC
+
+2.1 secs between trades
+
+39
+34
+29
+25
+21
+18
+15
+13
+11
+
+1
+
+RV
+
+(m)
+
+11.5 secs between quotes on average
+
+9
+8
+7
+6
+
+Average RV (MSFT)
+
+Average RV (MSFT)
+
+3300
+2400
+1800
+
+1200
+900
+
+(m)
+
+540
+420
+300
+225
+165
+120
+90
+
+RV
+
+60
+45
+
+1
+
+30
+
+(m)
+
+RVAC
+
+20
+15
+11
+8
+6
+
+4
+3
+
+2
+
+1
+
+3300
+2400
+1800
+
+1200
+900
+
+540
+420
+300
+225
+165
+120
+90
+
+60
+45
+
+30
+
+20
+15
+11
+8
+6
+
+4
+3
+
+2
+
+1
+
+Sampling Frequency in ticks
+
+9
+7
+6
+5
+
+5
+4
+3
+
+2
+
+4
+3
+
+1
+
+3300
+2400
+1800
+
+1200
+900
+
+540
+420
+300
+225
+165
+120
+90
+
+60
+45
+
+30
+
+20
+15
+11
+8
+6
+
+4
+3
+
+2
+
+1
+
+3300
+2400
+1800
+
+1200
+900
+
+540
+420
+300
+225
+165
+120
+90
+
+60
+45
+
+30
+
+20
+15
+11
+8
+6
+
+4
+3
+
+2
+
+1
+
+Sampling Frequency in ticks
+
+Sampling Frequency in ticks
+
+Figure 3: Volatility signature plots for AA and MSFT using transaction data (left panels) and quotation data
+(right panels). The first two rows of panels are volatility signature plots based on calendar time sampling,
+whereas the lower two rows are based on transaction time sampling.
+
+29
+
+Hansen, P. R. and A. Lunde: Realized Variance and MMS Noise
+
+replacements
+t(x,60)
+
+99%
+
+95%
+
+t(x,60)
+
+39.2 secs between trades
+
+3
+
+99%
+
+95%
+
+36.1 secs between quotes
+
+3
+
+2
+2
+
+1
+0
+
+1
+
+-1
+0
+
+-3
+
+AA
+
+AA
+
+-2
+-4
+-5
+
+-1
+-2
+
+-6
+-3
+
+-7
+-8
+
+-4
+
+-9
+-10
+
+-5
+
+Sampling Frequency in ticks
+
+t(x,60)
+
+2.1 secs between trades
+
+2
+
+4
+
+0
+
+2
+
+-2
+
+0
+
+-4
+
+-2
+
+-6
+
+-4
+MSFT
+
+MSFT
+
+45
+
+30
+
+20
+17
+15
+13
+
+11
+
+9
+8
+7
+6
+
+95%
+
+5
+
+99%
+
+4
+
+t(x,60)
+
+3
+
+2
+
+1
+
+45
+
+30
+
+20
+17
+15
+13
+
+11
+
+9
+8
+7
+6
+
+5
+
+4
+
+3
+
+2
+
+1
+
+Sampling Frequency in ticks
+
+-8
+-10
+
+99%
+
+95%
+
+11.5 secs between quotes
+
+-6
+-8
+-10
+
+-12
+
+-12
+
+-14
+
+-14
+
+-16
+
+-16
+
+-18
+
+-18
+
+-20
+
+45
+
+30
+
+20
+17
+15
+13
+
+11
+
+9
+8
+7
+6
+
+5
+
+4
+
+3
+
+2
+
+1
+
+45
+
+30
+
+20
+17
+15
+13
+
+11
+
+9
+8
+7
+6
+
+5
+
+4
+
+3
+
+2
+
+1
+
+Sampling Frequency in ticks
+
+Sampling Frequency in ticks
+
+Figure 4: The figure shows the t-statistics, t(x,60) , of the hypothesis that the noise process, u, is timeindependent. The t(x,60) -test has power against alternative for which the time-dependence endures for more
+than x ticks, so the figure is informative about the time-dependence in u.
+
+30
+
+

@@ -1,0 +1,46 @@
+## A-S 3.5(a): s=100, T=1, sigma=2, gamma=0.1, k=1.5, t=0
+inventory term 0.4000, constant term 1.29077, spread 1.69077
+q=0: r=100.0000 bid=99.1546 ask=100.8454
+q=1: r=99.6000 bid=98.7546 ask=100.4454
+Table spreads: gamma=0.01 -> 1.3289; gamma=0.5 -> 1.1507
+## A-S 3.5(b): sigma=1, k=1.5, gamma=0.01, tau=600 (ticks)
+inventory 6.000, constant 1.3289, spread 7.329; q=+1 delta_a = -2.3355
+## A-S 3.6 sample size: sd = sigma*sqrt(10), edge 0.25, t=3
+sd exact 3.1623: n = 1440.0;  sd rounded 3.2: n = 1474.6
+## GLFT 4.5(a): sigma=0.3, A=0.9, k=0.3, gamma=0.01, T=600, Q=10
+alpha=0.000135 eta=0.32568 (reader: 0.000135, 0.3257)
+q=0: exact db=3.324 da=3.324; approx db=3.313 da=3.313; c1=3.279 root=0.0679
+q=5: exact db=3.848 da=2.840; approx db=3.652 da=2.974; c1=3.279 root=0.0679
+  Q=5: exact q=0 db=3.398; q=5 (db,da)=(nan,1.070)
+  Q=10: exact q=0 db=3.324; q=5 (db,da)=(3.848,2.840)
+  Q=20: exact q=0 db=3.313; q=5 (db,da)=(3.654,2.972)
+  Q=30: exact q=0 db=3.313; q=5 (db,da)=(3.653,2.973)
+## GLFT 4.5(b): sigma=1, A=0.5, k=1.5, gamma=0.01, T=600
+Q=1: alpha=0.0075 eta=0.1833 q=+0:(0.905,0.905) q=+1:(nan,0.424)
+Q=3: alpha=0.0075 eta=0.1833 q=+0:(0.746,0.746) q=+1:(0.920,0.583) q=+2:(1.171,0.409) q=+3:(nan,0.158)
+approx q=0: 0.732; c1=0.6645; 1/k=0.6667
+## GLFT 4.5(c) threshold: gamma at which the flat quote crosses 1.0 tick
+reader used the asymptotic approximation c1 + root/2 (C2_threshold.py); here also the EXACT bounded solution
+A=0.5 k=1.5 sigma=1.0: approx gamma*=0.3112 | exact Q=1: gamma*=0.1301 | exact Q=2: gamma*=0.1912 | exact Q=3: gamma*=0.1925
+A=0.5 k=1.5 sigma=0.5: approx gamma*=1.7837 | exact Q=1: gamma*=0.7907 | exact Q=2: gamma*=0.9505 | exact Q=3: gamma*=0.9523
+A=0.1 k=1.5 sigma=1.0: approx gamma*=0.0515 | exact Q=1: gamma*=0.0222 | exact Q=2: gamma*=0.0347 | exact Q=3: gamma*=0.0350
+  gamma=0.01, Q=1: exact flat quote 0.905 (rounds to 0.5 (touch))
+  gamma=0.01, Q=2: exact flat quote 0.778 (rounds to 0.5 (touch))
+  gamma=0.01, Q=3: exact flat quote 0.746 (rounds to 0.5 (touch))
+## 4.6 arithmetic
+3/sqrt(80) = 0.3354; x sqrt(252) = 5.324
+MES: net per fill $0.0150 = 0.0120 tick; RT/tick = 0.9760
+ES: net per fill $4.3600 = 0.3488 tick; RT/tick = 0.3024
+ES/MES margin ratio in ticks: 29.1
+## A-C 7.5: kappa and trajectory
+lambda=0.1 eta=0.05: kappa=1.4142/s, 1/kappa=0.71s, ln2/kappa (true half-life)=0.49s
+lambda=0.0001 eta=0.05: kappa=0.0447/s, 1/kappa=22.36s, ln2/kappa (true half-life)=15.50s
+lambda=0.0001 eta=5.0: kappa=0.0045/s, 1/kappa=223.61s, ln2/kappa (true half-life)=154.99s
+kappa=0.01413; holdings [20.0, 16.09, 12.5, 9.16, 6.01, 2.97, 0.0]; trades [3.91, 3.59, 3.34, 3.15, 3.03, 2.97]
+continuous-time kappa sqrt(lam sig^2/eta)=0.01414
+## 9.3 toy calibration: counts (1800,400,90,20) at d=(0.5,1.5,2.5,3.5), T=3600
+lambda=[0.5     0.11111 0.025   0.00556] se=[0.01179 0.00556 0.00264 0.00124]
+WLS: A=1.0585 k=1.5007 se(k)=0.0362
+Poisson MLE: A=1.0585 k=1.5007
+check: with A=1, k=1.5 expected counts = [1700.5  379.4   84.7   18.9]
+Poisson MLE se(k) = 0.0362

@@ -1,0 +1,4831 @@
+Fact or friction: Jumps at ultra high frequency∗
+Kim Christensen†
+
+Roel C. A. Oomen‡
+
+Mark Podolskij§
+
+arXiv:2602.10925v1 [econ.EM] 11 Feb 2026
+
+November 6, 2014
+
+Abstract
+This paper shows that jumps in ﬁnancial asset prices are often erroneously identiﬁed and
+are, in fact, rare events accounting for a very small proportion of the total price variation. We
+apply new econometric techniques to a comprehensive set of ultra high-frequency equity and
+foreign exchange tick data recorded at millisecond precision, allowing us to examine the price
+evolution at the individual order level. We show that in both theory and practice, traditional
+measures of jump variation based on lower-frequency data tend to spuriously assign a burst
+of volatility to the jump component. As a result, the true price variation coming from jumps
+is overstated. Our estimates based on tick data suggest that the jump variation is an order of
+magnitude smaller than typical estimates found in the existing literature.
+JEL classiﬁcation: C14; C80.
+Keywords: Jump variation; high-frequency data; microstructure noise; pre-averaging; realized variation.
+∗
+
+We would like to thank Bjørn Eraker (the referee), David Bates, Tim Bollerslev, Michael Brennan, Alvaro Cartea,
+Frank Diebold, Dobrislav Dobrev, David Leigh, Richard Louth, Andrew Patton, Kevin Sheppard, George Tauchen,
+Valeri Voev and the participants at the Fourth CSDA (Computational Statistics & Data Analysis) International
+Conference on Computational and Financial Econometrics, the Sixth Nordic Econometric Meeting, the Marie Curie
+High Frequency Research Training Workshop, the SITE workshop on Measuring and Modeling Risk with High
+Frequency Data, the 65th European Meeting of the Econometric Society, the 2012 North American Winter Meeting
+of the Econometric Society, and at seminars at CREATES, University of Aarhus, Cambridge University, Deutsche
+Bank, Queen Mary University of London, London School of Economics, Imperial College London, Duke University,
+Erasmus University Rotterdam, and Universidad Carlos III for helpful comments and insightful suggestions that
+greatly improved the paper. We are grateful to ICAP and the CME for giving permission to use the EBS foreign
+exchange and CME futures market data in this study. Kim Christensen and Mark Podolskij acknowledge ﬁnancial
+support from CREATES, which is funded by the Danish National Research Foundation.
+†
+CREATES, Aarhus University, Department of Economics and Business, Fuglesangs Allé 4, 8210 Aarhus V,
+Denmark. Corresponding author. E-mail: kchristensen@creates.au.dk. Tel.: +45 8716 5367.
+‡
+Deutsche Bank, 1 Great Winchester Street, London EC2N 2DB, United Kingdom and aﬃliated with University of
+Amsterdam, Department of Quantitative Economics, Valckenierstraat 65-67, 1018 XE Amsterdam, The Netherlands.
+E-mail: roel.ca.oomen@gmail.com
+§
+Aarhus University, Department of Mathematics, Ny Munkegade 118, 8000 Aarhus C, Denmark. E-mail: mpodolskij@math.au.dk
+
+1
+
+Introduction
+
+A long-standing consensus in the literature on asset pricing is that a realistic dynamic model should
+incorporate several, if not all, of the following stylized facts: random walk behavior (e.g., Fama,
+1965) at a macroscopic level, market microstructure eﬀects (e.g., Niederhoﬀer and Osborne, 1966)
+at a microscopic level, stochastic volatility (e.g., Mandelbrot, 1963), leverage (e.g., Black, 1976),
+and jumps (e.g., Press, 1967). Extensive support for these factors can be found both in the theory
+of ﬁnance and in the abundantly available ﬁnancial market data. In this paper, we examine the
+role of the jump component by applying new econometric techniques to a comprehensive set of
+the ﬁnest resolution equity and foreign exchange tick data. The use of individual order-level tick
+data in the context of jump identiﬁcation is novel to this paper and necessary to arrive at our
+main ﬁnding that the jump component is substantially smaller than currently thought. Speciﬁcally,
+we show that jumps account for about 1% of total price variability (i.e., quadratic variation) in
+contrast to accepted estimates from lower-frequency data, which are an order of magnitude larger.
+Our microscopic view at the tick data provides the intuition for this result: A burst of volatility is
+often spuriously identiﬁed as a jump at the lower frequencies commonly used in the literature. No
+doubt exists that, in times of stress, asset prices do move sharply over short periods of time, and
+while occasionally genuine price jumps do occur, we ﬁnd that more often than not price continuity
+is preserved even when accompanied with a severe deterioration of liquidity.
+The foundations of most asset pricing models can be cast in the class of arbitrage-free Itô
+semimartingales. These processes are naturally decomposed into a continuous diﬀusive Brownian
+component and a discontinuous jump part. The importance of being able to distinguish between
+these two fundamentally diﬀerent sources of risk is emphasized in Aı̈t-Sahalia (2004). Speciﬁcally,
+jumps have a profoundly distinct impact on option pricing (e.g., Cox and Ross, 1976; Merton,
+1976; Duﬃe, Pan, and Singleton, 2000), risk management (e.g., Duﬃe and Pan, 2001; Bakshi and
+Panayotov, 2010), and asset allocation (e.g., Jarrow and Rosenfeld, 1984; Liu, Longstaﬀ, and Pan,
+2003). Empirical work on identifying and modeling the jump component now spans nearly half a
+century. Table 1 provides a representative but necessarily incomplete overview. Starting with the
+inﬂuential paper of Press (1967), and continuing up to Jorion (1988), a number of papers estimate
+a (constant volatility) jump-diﬀusion model and report levels of jump variation (JV, expressed as a
+fraction of total return variation) in excess of 20%. An important shortcoming of the Press (1967)or Merton (1976)-style jump-diﬀusion model is that the jump component is the only mechanism that
+can account for fat tails of the empirical return distribution so that—in the presence of stochastic
+volatility—the JV measurements are potentially inﬂated. From the 1990s onwards, a large body
+of work considers numerous generalizations of the jump-diﬀusion model to include one or several
+stochastic volatility factors as well as state-dependent jump components. Estimation methods
+for such models are often highly complex and numerically intensive (e.g., Eraker, Johannes, and
+Polson, 2003) but have the nice feature that they can exploit the information in the spot price (e.g.,
+Andersen, Benzoni, and Lund, 2002), its associated derivative prices (e.g., Bates, 1996), or both
+(e.g., Pan, 2002). The majority of this literature concentrates on the US large-cap Standard & Poor’s
+1
+
+Table 1: Selection of literature reporting estimates of the jump variation component.
+Article
+Press (1967)
+Beckers (1981)
+Ball and Torous (1983)
+Ball and Torous (1985)
+Jorion (1988)
+
+Data
+Period
+Frequency
+Model Jump variation
+Ten DJIA constituents
+1926 – 1960 Monthly
+JD
+20%a
+47 US large-cap stocks
+1975 – 1977 Daily
+JD
+25%b
+47 US large-cap stocks
+1975 – 1977 Daily
+JD
+50%c
+30 US large-cap stocks
+1981 – 1982 Daily
+JD
+47%d
+DM/$ spot
+1974 – 1985 Weekly
+JD
+96%
+CRSP index
+1974 – 1985 Weekly
+JD
+36%
+Bates (1996)
+DM/$ options
+1984 – 1991 Weekly
+SVJ
+20%
+Bakshi, Cao, and Chen (1997)
+S&P 500 options
+1988 – 1991 Daily
+SVJ
+18.9%
+Bates (2000)
+S&P 500 options
+1988 – 1993 Weekly
+SVJ
+30.3% − 38.5%
+Andersen, Benzoni, and Lund (2002)
+S&P 500 spot
+1953 – 1996 Daily
+SVJ
+5.5%
+Bollerslev and Zhou (2002)
+DM/$
+1986 – 1996 Five minutes
+SVJ
+7.4%
+Pan (2002)
+S&P 500 spot and options 1989 – 1996 Weekly
+SVJ
+55.7%
+Chernov et al. (2003)
+DJIA spot
+1953 – 1999 Daily
+SVJ
+9.4%
+Eraker, Johannes, and Polson (2003)
+S&P 500 spot
+1980 – 1999 Daily
+SVJ
+8.2% − 14.7%
+Nasdaq 100 spot
+1985 – 1999 Daily
+SVJ
+6.0% − 17.0%
+Eraker (2004)
+S&P 500 spot and options 1987 – 1990 Daily
+SVJ
+17.1%
+Johannes (2004)
+US Treasury bills
+1965 – 1999 Daily
+SVJ
+50%
+Maheu and McCurdy (2004)
+11 US large-cap stocks
+1962 – 2001 Daily
+GARCH 29%e
+DJIA spot
+1960 – 2001 Daily
+GARCH 16.6%
+Nasdaq 100 spot
+1985 – 2001 Daily
+GARCH 14.4%
+TXX spot
+1995 – 2001 Daily
+GARCH 22.8%
+Barndorﬀ-Nielsen and Shephard (2004) DM/$
+1986 – 1996 Five minutes
+RV
+3.1%
+Huang and Tauchen (2005)
+S&P 500 futures
+1982 – 2002 Five minutes
+RV
+4.4%
+S&P 500 spot
+1997 – 2002 Five minutes
+RV
+7.3%
+Barndorﬀ-Nielsen and Shephard (2006) DM/$, USDJPY
+1986 – 1996 Five to 120 minutes RV
+5.0% − 21.9%
+Bates (2006)
+S&P 500 spot
+1953 – 1996 Daily
+SVJ
+12.7%
+Andersen, Bollerslev, and Diebold (2007) DM/$
+1986 – 1999 Five minutes
+RV
+7.2%
+S&P 500 spot
+1990 – 2002 Five minutes
+RV
+14.4%
+US Treasury bonds
+1990 – 2002 Five minutes
+RV
+12.6%
+Bollerslev, Law, and Tauchen (2008)
+40 US large-cap stocks
+2001 – 2005 17.5 minutes
+RV
+12%
+Equally weighted index
+2001 – 2005 17.5 minutes
+RV
+9%
+Jiang and Oomen (2007)
+S&P 500 spot
+1987 – 1995 Five minutes
+SVJ
+18.6% − 19.5%
+Aı̈t-Sahalia and Jacod (2009b)
+INTC and MSFT
+2006
+Five to 120 seconds RV
+25%f
+Bollerslev et al. (2009)
+S&P 500 futures
+1985 – 2004 Five minutes
+RV
+6.8%
+Todorov (2009)
+S&P 500 futures
+1990 – 2002 Five minutes
+RV
+15%
+Tauchen and Zhou (2011)
+S&P 500 spot
+1986 – 2005 Five minutes
+RV
+5.4%
+US Treasury bonds
+1991 – 2005 Five minutes
+RV
+19.1%
+USDJPY
+1997 – 2004 Five minutes
+RV
+6.5%
+Andersen, Bollerslev, and Huang (2011) S&P 500 futures
+1990 – 2005 Five minutes
+RV
+4.9%
+US Treasury bonds
+1990 – 2005 Five minutes
+RV
+14.6%
+Bates (2012)
+CRSP index, S&P 500
+1926 – 2006 Daily
+SVJ
+6.4% − 7.2%
+Corsi and Renò (2012)
+S&P 500 futures
+1990 – 2007 Five minutes
+RV
+6%g
+Patton and Sheppard (2015)
+S&P 500 ETF
+1997 – 2008 Five minutesh
+RV
+15%
+Note. “JD,” “SVJ,” and “GARCH” refer to the Press (1967)- and Merton (1976)-type jump-diﬀusion model, the class of stochastic
+volatility plus jump models, and GARCH-type models, respectively. “RV” refers to the class of model-free measures of variation,
+including realized variance and (bi-) power variation.
+a. Individual JV between 0% − 100%; b. Individual JV between 10% − 55%; c. Individual JV between 10% − 80%; d. Individual JV
+between 8% − 93%; e. Individual JV between 20% − 41%. Two stocks have shorter sample from 1980s – 2001; f. Includes an inﬁnite
+activity jump component; g. Smoothed JV between 2% − 20%; h. Five-minute sampling frequency equivalent in trade time.
+
+2
+
+(S&P) 500 equity index and typically ﬁnds that the JV is around 10% − 20%. The corresponding
+ﬁgure for foreign exchange rates is comparable and that of Treasury bills and individual stocks is
+higher still.
+The most recent work on jumps has seen a shift away from model-based inference on lowfrequency data to model-free inference based on intraday data. In an inﬂuential series of papers,
+Barndorﬀ-Nielsen and Shephard (2004, 2006) and Barndorﬀ-Nielsen, Shephard, and Winkel (2006)
+introduce the concept of (bi-) power variation—a simple but eﬀective technique to identify and
+measure the variation of jumps from intraday data [see Aı̈t-Sahalia and Jacod (2009b,a) and Mancini
+(2004, 2009) for a related jump-robust threshold estimator]. Using this, or variations thereof, a
+number of recent articles report model-free JV estimates of around 10% for the S&P 500 index
+and thus reinforce the earlier literature that the jump component is important (e.g., Huang and
+Tauchen, 2005; Andersen, Bollerslev, and Diebold, 2007).
+Figure 1: The S&P 500 ﬂash-crash: Jump or burst in volatility?
+Panel A: Five-minute data
+
+Panel B: Trade-by-trade
+1140
+
+1130
+
+1120
+
+1110
+
+Price
+
+1100
+
+1090
+
+1080
+
+1070
+
+1060
+
+1050
+18:30
+
+18:35
+
+18:40
+
+18:45
+Time
+
+18:50
+
+18:55
+
+19:00
+
+Note. This ﬁgure draws the price evolution of the Chicago Mercantile Exchange’s E-mini S&P 500 futures contract on May 6, 2010.
+Panel A displays the data for the whole day at a ﬁve-minute frequency, while Panel B is at the trade frequency over the ﬂash-crash
+episode. The reported time is Greenwich Mean Time, while local time in the US (EDT) is four hours earlier.
+
+By their nature, jumps are instantaneous and discrete moves in the price. Therefore, not surprisingly, identiﬁcation is aided by the ﬁnest resolution price data. This is precisely what motivates
+the recent literature to use intraday data. However, the consensus ﬁve-minute frequency at which
+returns are typically sampled, instead of at the ﬁnest tick-by-tick resolution, reﬂects a compromise
+to ensure that the market microstructure eﬀects are suﬃciently benign for the theory to remain
+valid. Figure 1 illustrates the cost of doing so: a diminished ability to distinguish jumps from
+bursts in volatility. From Panel A, in which returns are sampled at a ﬁve-minute frequency, one
+would probably conclude that the notorious ﬂash-crash episode contains a number of very large
+3
+
+jumps [see, e.g., Easley, de Prado, and O’Hara (2011) for a discussion of the event]. The widely
+used bi-power variation (BV) jump measure is highly signiﬁcant indicating the presence of jumps
+on formal statistical grounds. Yet, when focusing on the relevant subperiod in Panel B, one can see
+that at tick frequency jumps are elusive. In fact, in a recent study using audit trail data, Kirilenko,
+Kyle, Samadi, and Tuzun (2017) characterize the ﬂash-crash as a “brief period of extreme market
+volatility.” The March 2011 earthquake in Japan led to similar scenarios in the US dollar-Japanese
+yen (USDJPY) exchange rate, which experienced a ﬂash-crash-type episode on March 16 and a
+rapid depreciation following a coordinated intervention by the Bank of Japan and other G7 central
+banks on March 18. Again, both events would be classiﬁed as exhibiting large jumps by conventional realized measures based on ﬁve-minute data, while the tick data reveal a period of heightened
+volatility instead of discrete price jumps (see Figure 6).
+This paper provides a comprehensive study into the magnitude of the jump component based
+on the highest resolution data available. To the best of our knowledge, we are the ﬁrst to do so,
+and we ﬁnd that the tick data have a fundamentally diﬀerent story to tell. Our analysis employs
+the pre-averaging theory of Podolskij and Vetter (2009a) and Jacod, Li, Mykland, Podolskij, and
+Vetter (2009) to construct noise-robust jump measures from tick data. We apply these to a representative data set composed of US large-cap stocks (the 30 Dow Jones Industrial Average (DJIA)
+constituents), equity indexes (the S&P 500 and Nasdaq 100), and currency pairs (the Euro-US dollar
+(EURUSD), US dollar-Japanese yen (USDJPY), and US dollar-Swiss franc (USDCHF)). We start
+by conﬁrming that when sampling at low frequencies the jump component appears substantial and
+in line with the extant literature at around 10%. In passing, we observe a near-perfect relation in
+which the jump component decreases in magnitude as the sampling frequency is increased from 15
+minutes to ﬁve minutes. Next, we obtain our main result, in which most of the previously identiﬁed
+jumps vanish as we move to the tick frequency and we are left with highly volatile episodes instead.
+The overall JV measured across all instruments we consider is just over 1%.
+The ﬁnding of a much-diminished role for jumps clearly carries important implications for asset
+pricing models and their associated ﬁnance applications. The observational equivalence—at lower
+frequencies—between a sharp but continuous move in the price and a sudden discontinuous jump
+highlights an important point. When market participants view prices at periodic but infrequent
+intervals (e.g., every hour, or at the end of each trading day), they could be exposed to price moves
+that they experience as genuine jumps when a period of extreme volatility unfolds in between
+observation points. For instance, an options trader that follows the market on an hourly basis
+for the purpose of hedging can experience jumps and could incur a profoundly diﬀerent pay-oﬀ
+pattern compared with an automated hedging algorithm operating in tick-time. Similarly, traders
+that require a certain capacity (e.g., a derivatives dealer that is hedging a large book of options,
+or a pension fund managing a large portfolio) can also experience price jumps as it takes time
+and price discovery to execute large trades, particularly in times of stress. So even when the
+underlying price process is free of jumps, the trader’s pay-oﬀ and execution costs can be impacted
+in a manner consistent with the presence of genuine price jumps. As such, models with jumps still
+
+4
+
+have an important role to play in scenarios such as these. This does not, however, contradict the
+ﬁndings in this paper. In fact, we discuss in some detail the intimate link between price continuity,
+liquidity, volatility dynamics, and observation frequency as it provides the intuition for our results
+and reconciles their relation to the extant literature.
+The rest of the paper is organized as follows. Section 2 describes the theoretical model and
+presents the required estimators and asymptotic theory needed to measure the jump component.
+Section 3 summarizes the empirical ﬁndings and Section 4 concludes. The proofs and more theoretical discussions are contained in the Appendices. Additional empirical results and case studies
+are collected in an online Appendix (see Christensen, Oomen, and Podolskij, 2013).
+
+2
+
+Jump measurement from noisy tick data
+
+To study the role of jumps in ﬁnancial asset prices and develop the necessary theory, we need a
+model that captures the salient and hypothesized aspects of tick data: stochastic volatility, jumps
+in the price, market microstructure noise, and outliers. We model the ﬁrst two components as
+a latent continuous-time process that represents the unobserved eﬃcient price process. The last
+two features are modeled on top of the discretely sampled eﬃcient price to represent the observed
+tick data process. Within this setting, the econometric challenge we address is how to infer the
+magnitude of the jump component from noisy and discretely sampled measurements of the eﬃcient
+price process. What is novel to this paper is the consideration for microstructure noise and outliers.
+
+2.1
+
+A model for noisy tick data
+
+Starting with the formulation of the eﬃcient price process, let X = (Xt )t≥0 denote the logarithmic
+
+price of a ﬁnancial asset that is deﬁned on a ﬁltered probability space Ω, F , (Ft )t≥0 , P and is
+adapted to the ﬁltration Ft that represents the information available to market participants at time
+t, t ≥ 0. We assume that X operates in an arbitrage-free frictionless market, which implies that
+X belongs to the class of semimartingale processes (e.g., Back, 1991; Delbaen and Schachermayer,
+1994). To allow for stochastic volatility and (ﬁnite activity) price jumps, we further assume that
+X can be represented by a jump-diﬀusion model of the form
+Xt = X0 +
+
+Z t
+0
+
+as ds +
+
+Z t
+
+J
+
+σs dWs +
+
+0
+
+Nt
+X
+i=1
+
+Ji ,
+
+t ≥ 0,
+
+(1)
+
+where Xt is the log-price at time t, a = (at )t≥0 is a locally bounded and predictable drift term,
+σ = (σt )t≥0 is an adapted càdlàg volatility process, W = (Wt )t≥0 is a standard Brownian motion,
+
+N J = NtJ t≥0 is a counting process, and J = (Ji )i=1,...,NtJ is a sequence of nonzero random variables.
+Here, N J represents the total number of jumps in X that have occurred up to time t and J denotes
+the corresponding jump sizes.
+The above jump-diﬀusion model is completely nonparametric and, apart from a regularity condition imposed on the variance process to facilitate the proof of the central limit theorem, we do not
+5
+
+require the driving processes to be speciﬁed. As such, it nests many well-known continuous-time
+models as special cases: for example, the geometric Brownian motion with an Ornstein-Uhlenbeck
+process for log-volatility as in Alizadeh, Brandt, and Diebold (2002), the stochastic volatility model
+with log-normal jumps generated by a non-homogeneous Poisson process as in Andersen, Benzoni,
+and Lund (2002), and the aﬃne class of models as in Duﬃe, Pan, and Singleton (2000). Moreover,
+as discussed in more detail in A, the model and our theory allow for leverage eﬀects (e.g., Christie,
+1982) and the proofs can be extended to incorporate jumps in the volatility process as in, e.g.,
+Eraker, Johannes, and Polson (2003).
+Figure 2: An illustration of noisy tick data.
+Panel A: Microstructure noise
+1301.4
+
+1301.2
+
+Panel B: Outliers
+1308
+
+Trade
+Bid
+Ask
+
+1306
+
+1304
+
+1300.8
+
+1302
+Price
+
+Price
+
+1301
+
+Trade
+Clear outlier
+Ambiguous observation
+
+1300.6
+
+1300
+
+1300.4
+
+1298
+
+1300.2
+
+1296
+
+1300
+10:18:00
+
+1294
+10:18:15
+
+10:18:30
+Time
+
+10:18:45
+
+10:19:00
+
+09:30
+
+10:00
+
+10:30
+
+11:00
+Time
+
+11:30
+
+12:00
+
+12:30
+
+Note. Panel A plots one minute of National Best Bid and Oﬀer (NBBO) quote data overlaid with trades for SPY on March 11, 2011.
+It serves to illustrate the microstructure noise eﬀects such as price discreteness and bid-ask bounce. Panel B plots SPY trades for the
+full morning session of the same day and highlights clear and suspected outliers. Amongst the clear outliers, four out of ﬁve are trades
+for 100,000 shares or more (and therefore qualify for delayed reporting of block trades). The ﬁrst outlier is a trade for only two hundred
+shares or about half the average trade size for this period.
+
+In practice we do not observe the eﬃcient price process in continuous time but instead have
+discretely sampled measurements available that—at an individual order level—can contain a substantial amount of noise. One source of noise is microstructure eﬀects that arise from market
+imperfections such as bid-ask spreads and price discreteness (e.g., Niederhoﬀer and Osborne, 1966;
+Roll, 1984; Black, 1986). Outliers are another source of noise but have received little attention
+in the literature thus far. These short-lived oﬀ-market prices often corrupt tick data and can be
+attributed to delayed trade reporting on block trades, fat-ﬁnger errors, bugs in the data feed, misprints, decimal misplacement, incorrect ordering of data, etc.1 Figure 2 provides an illustration of
+1
+
+Pre-ﬁltering tick data for outliers is standard practice. In some instances, most if not all the outliers can be
+ﬁltered based on exchange-provided information such as a trade condition. In cases in which this is unreliable or
+
+6
+
+both types of noise. With this in mind, and restricting attention to the unit time interval t ∈ [0, 1],
+we model the observed tick data process as
+Yi/N = Xi/N + ui/N + Oi/N ,
+
+i = 0, 1, . . . , N
+
+(2)
+
+where u is an identically and independently distributed or i.i.d. (microstructure) noise process with
+E(u) = 0 and E(u2 ) = ω 2 , and u is independent of X, or u ⊥
+⊥ X. Further, Oi/N = 1I{i/N ∈AN } Si
+where AN is a random set holding the appearance times of the outliers and their sizes are given by
+(Si )i=1,...,N1O . We assume that AN is a.s. ﬁnite and model it by
+AN =
+
+
+
+
+[NTi ]
+: 0 ≤ Ti ≤ 1 ,
+N
+
+(3)
+
+
+where (Ti )i=1,...,N O are the arrival times of another counting process N O = NtO t≥0 . We assume
+1
+that O is mutually independent of X and u, O ⊥
+⊥ (X, u). This implies that N J ⊥
+⊥ N O , i.e., the two
+counting processes generating jumps and outliers, are also independent, which further means that
+the probability of observing both a jump and an outlier in a small time interval is asymptotically
+negligible.
+The formulation of the microstructure component is standard in the literature on high-frequency
+data [see Andersen, Bollerslev, and Diebold (2010) and Barndorﬀ-Nielsen and Shephard (2007) for
+comprehensive reviews]. It provides analytic convenience and also has some empirical support (see,
+e.g., Hansen and Lunde, 2006; Diebold and Strasser, 2013) because it captures the empirically
+observed negative ﬁrst-order autocorrelation in tick returns [e.g., induced by bid-ask bouncing, see
+Roll (1984)]. The i.i.d. assumption, however, is not binding [Jacod, Li, Mykland, Podolskij, and
+Vetter (2009) provide a more general treatment of the noise. Our results extend along those lines
+as well.] The outlier process is novel to this paper. It is suﬃciently general for our purposes and
+can capture the ﬁrst-order eﬀects of the observed oﬀ-market prices.
+
+2.2
+
+Measurement of the jump component
+
+Within the above setup, the magnitude of the jump component expressed as a fraction of total
+(quadratic) price variation is given by
+R1
+[X]1 − 0 σs2 ds
+,
+JV =
+[X]1
+
+where
+
+[X]1 =
+
+Z 1
+0
+
+J
+
+σs2 ds +
+
+N1
+X
+
+Ji2 .
+
+(4)
+
+i=1
+
+Measurement of these components based on discretely sampled observations of the eﬃcient price
+process X has been widely studied and is well understood. Speciﬁcally, a consistent estimator of
+not available, data-driven techniques as in Barndorﬀ-Nielsen, Hansen, Lunde, and Shephard (2009) can be used. A
+drawback of such an approach is that the ﬁltering rules typically rely on ad hoc tuning parameters that control the
+tolerance levels to outliers and the user consequently risks over- or under-cleaning the data. The method for jump
+measurement we present here is robust to (residual) outliers and can thus be used in conjunction with or instead of
+a pre-ﬁltering method.
+
+7
+
+[X]1 is given by the realized variance (RV), see, e.g., Andersen, Bollerslev, Diebold, and Labys
+(2001)
+N
+X
+p
+RV =
+|ri |2 → [X]1
+as
+N → ∞,
+(5)
+i=1
+
+where ri = Xi/N − X(i−1)/N are logarithmic returns of the eﬃcient price process.2 An intuitive and
+elegant way to separate the diﬀusive- and jump-variation components from [X]1 is via the use of the
+Barndorﬀ-Nielsen and Shephard (2004) bi-power variation measure: a jump-robust and consistent
+estimator of the integrated variance3
+Z 1
+N
+N πX
+p
+BV =
+|ri−1 ||ri | →
+σs2 ds
+N − 1 2 i=2
+0
+
+as
+
+N → ∞.
+
+(6)
+
+The adjustment factor N/(N − 1) applied to BV is used to improve its ﬁnite sample properties.
+Using Eqs. (5) and (6), the diﬀerence between realized variance and bi-power variation can be used
+to isolate the JV, i.e.,
+N1J
+X
+p
+RV − BV →
+Ji2 .
+(7)
+i=1
+
+This result has been widely used in the literature cited in Table 1 that studies the role of the jump
+component using intraday ﬁve-minute data.
+An inherent limitation associated with discretely sampled data is that the ability to distinguish a
+jump from a diﬀusive movement diminishes as the sampling frequency decreases. An illustration of
+this was given in Figure 1. In this paper we therefore set out to utilize the ﬁnest resolution tick data
+available to study the jump component. At this level of granularity, however, microstructure eﬀects
+invalidate the standard RV and BV measures described above. So to make inference about [X]1
+and its components using noisy tick data, we make use of the pre-averaging approach introduced by
+Jacod, Li, Mykland, Podolskij, and Vetter (2009) and Podolskij and Vetter (2009a,b).4 Intuitively,
+this method locally smooths the observed price series Y so that the microstructure component u
+2
+
+Consistency follows as a direct consequence from the deﬁnition of the quadratic variation process
+[X]t = p-lim
+
+N
+X
+
+N →∞ i=1
+
+Xti − Xti−1
+
+2
+
+,
+
+for any sequence of partitions 0 = t0 < t1 < ... < tN = t with supi {ti − ti−1 } → 0 as N → ∞ (e.g., Protter, 2004).
+It is this fundamental result from stochastic calculus that has motivated the increasing use of high-frequency data
+to estimate ﬁnancial volatility.
+3
+Alternative ways of estimating the integrated variance in the presence of jumps include the threshold estimators
+of Aı̈t-Sahalia and Jacod (2009b,a) and Mancini (2004, 2009), and the quantile-based estimators of Christensen,
+Oomen, and Podolskij (2010) and Andersen, Dobrev, and Schaumburg (2012). Recent developments also show how
+to improve the ﬁnite sample jump robustness of the BV or make it more eﬃcient; see Corsi, Pirino, and Renò (2010)
+and Mykland, Shephard, and Sheppard (2012).
+4
+When the object to be estimated is quadratic variation, the pre-averaging approach is to ﬁrst-order equivalent
+to the realized kernel-based estimator of Barndorﬀ-Nielsen, Hansen, Lunde, and Shephard (2008) and the two-scale
+or multi-scale subsampler of Zhang, Mykland, and Aı̈t-Sahalia (2005) and Zhang (2006).
+
+8
+
+(almost) disappears under averaging. The outlier component O is dealt with via the same mechanism. Returns on this pre-averaged price series can then be used to construct consistent measures
+of the diﬀusive- and jump-variation components.
+To implement pre-averaging, we calculate returns on a price series that is pre-averaged in a local
+neighborhood of K observations, i.e.,
+
+
+K/2−1
+K−1
+X
+X
+1 
+∗
+Y(i+j)/N −
+Y(i+j)/N  ,
+(8)
+ri,K
+=
+K
+j=0
+j=K/2
+
+√
+where K ≥ 2 and even. For the asymptotics to work, it is required that K = θ N + o(N −1/4 ), i.e.,
+the pre-averaging horizon grows as the sampling frequency increases, but at a slower rate. We can
+then construct noise- and outlier-robust versions of RV and BV as
+RV ∗ =
+
+N −K+1
+X
+N
+ω
+b2
+1
+∗
+|ri,K
+|2 − 2 ,
+N − K + 2 KψK i=0
+θ ψK
+
+1 π
+N
+BV =
+N − 2K + 2 KψK 2
+∗
+
+N −2K+1
+X
+i=0
+
+∗
+∗
+|ri,K
+||ri+K,K
+|−
+
+(9)
+ω
+b2
+,
+θ2 ψK
+
+(10)
+
+where ψK = (1 + 2K −2 )/12.
+2
+The term θ2ωbψK is a bias-correction, which compensates for the residual microstructure noise
+that remains after pre-averaging. It drops out when we compute RV ∗ − BV ∗ and so it is of limited
+importance. ω
+b 2 is an estimator of the noise variance ω 2 . It can be estimated in a number of ways
+[see, e.g., Gatheral and Oomen (2010) for a comparison of estimators]. Here, we use the estimator
+proposed by Oomen (2006), which is deﬁned as
+2
+ω̂AC
+=−
+
+N
+1 X ∗ ∗
+r r ,
+N − 1 i=2 i i−1
+
+(11)
+
+where ri∗ = Yi/N − Y(i−1)/N .
+Proposition 1 generalizes the results of Podolskij and Vetter (2009a) to allow for outliers. It
+gives the probability limit of the pre-averaging estimators and their joint asymptotic distribution
+under the null hypothesis of no jumps.
+Proposition 1. Assume that Y follows Eq. (2) and that E(u4 ) < ∞. As N → ∞, it holds that
+Z 1
+∗ p
+∗ p
+RV → [X]1 ,
+BV →
+σs2 ds.
+(12)
+0
+
+Moreover, suppose that E(u8 ) < ∞, and that X is a continuous semimartingale, i.e., X follows Eq.
+(1) but with NtJ ≡ 0 for all t, and with condition (V) as listed in the proof fulﬁlled. As N → ∞, it
+then further holds that
+
+
+R1
+RV ∗ − 0 σs2 ds
+ds
+→
+N 1/4 
+MN(0, Σ∗ ),
+(13)
+R
+1
+∗
+2
+BV − 0 σs ds
+9
+
+a mixed normal distribution with conditional covariance matrix Σ∗ , where Σ∗ is deﬁned in B.5
+Proof. See A.
+The consistency result in Eq. (12) implies that in the presence of noise and outliers, we can
+consistently estimate the magnitude of the jump component as
+J
+
+∗
+
+∗ p
+
+RV − BV →
+
+N1
+X
+
+Ji2 .
+
+(14)
+
+i=1
+
+Eq. (13) supplies the basis for constructing a nonparametric noise-robust jump test. The online
+Appendix (Christensen, Oomen, and Podolskij, 2013) provides the derivation and proposes a consistent jump-robust estimator of Σ∗ , such that the test can be implemented in practice. Moreover,
+it highlights the ﬁnite sample properties of the test using simulations and applies it to the empirical
+data that are analyzed below. Because the test is not required to arrive at our main result, we leave
+it out of the paper.
+
+2.3
+
+Simulation study
+
+We now perform a small Monte Carlo study to gauge the ﬁnite sample performance of the noiseand outlier-robust pre-averaging theory and focus speciﬁcally on its ability to back out the diﬀusiveand jump-variation components.
+We simulate the logarithm of the eﬃcient price X from four distinct models, namely (1) a
+Brownian motion (BM) model where dXt = σt dWt with σt2 = 0.0391 corresponding to a return
+volatility of about 20% annualized, (2) a Heston (1993)-type stochastic volatility (SV) model, using
+parameter values as in Bakshi, Ju, and Ou-Yang (2006), (3) a two-factor stochastic volatility model
+with leverage (SV2F-LEV) proposed by Chernov, Gallant, Ghysels, and Tauchen (2003), using
+calibrated parameter values reported in Huang and Tauchen (2005), (4) a Brownian motion plus
+jump (BMJ) model, in which we position a jump of random size at a random point in the series,
+ensuring that, on average, it accounts for 20% of total variation. To study the impact of outliers,
+we also consider a ﬁfth Brownian motion plus outlier (BMO) model, in which we insert an outlier
+of random size at a random point in the series, ensuring that, on average, it accounts for 20% of
+total variation.
+We simulate ten thousand independent price paths for each model using an Euler discretisation
+scheme with N = 40, 000 and
+microstructure noise where we select ω 2 by ﬁxing the noise
+q add i.i.d.
+R1
+ratio (Oomen, 2006) γ = Nω 2 / 0 σs2 ds = 0.50. This ensures that the magnitude of the noise
+5
+
+d
+
+s
+is used to denote convergence in law stably. We refer to BarndorﬀThroughout the paper, the symbol “→”
+Nielsen, Hansen, Lunde, and Shephard (2008) for a formal deﬁnition of stable convergence in law and the motivation
+for using this type of convergence in the high-frequency volatility setting. The N −1/4 rate of convergence is slow
+compared to the noiseless case, but it is the fastest possible that can be achieved in noisy diﬀusion models (see Gloter
+and Jacod, 2001a,b).
+
+10
+
+is in proportion to the eﬃcient price variation. The values of N and γ are representative of the
+tick data in the empirical section (see Table 3). While the i.i.d. noise assumption is standard in
+the literature, some evidence exists that noise at tick frequency can be dependent. We therefore
+consider an additional scenario
+ui = βui−1 + εi ,
+(15)
+i.i.d.
+
+where εi ∼ N(0, ω 2 (1 − β 2 )). We set β using an ad hoc approach by matching it to the coeﬃcient
+of an AR(1) model calibrated to the trade sign of the S&P 500 futures contract on the day of
+the ﬂash-crash (see Figure 1).6 This gives β = 0.77.7 The setup allows us to gauge the ability of
+the pre-averaged estimators to isolate the jump component in the presence of stochastic volatility,
+microstructure noise, and outliers.
+Table 2 reports the mean of the pre-averaging estimators RV ∗ and BV ∗ , normalized by the
+R1
+diﬀusive variation component 0 σs2 ds, for ﬁve choices of pre-averaging horizon θ = {0.1; 0.5; 1; 2; 5}.8
+As desired, the (normalized) estimates of RV ∗ and BV ∗ are close to unity for all models without
+R1
+jumps. For the BMJ model, E(RV ∗ ) = 1.25 0 σs2 ds and we note that this is closely matched by
+the simulated values irrespective of the choice of θ. None of these results change qualitatively for
+the dependent noise scenario. The jump-robust BV ∗ estimates, however, are biased upward and
+this bias increases with θ.
+To reduce the ﬁnite sample bias in the ordinary BV estimator deﬁned by Eq. (6), Corsi, Pirino,
+and Renò (2010) propose to augment the estimator with a threshold ﬁlter. The idea is to remove
+any large jumps ﬁrst (by removing returns that exceed some predeﬁned threshold) before calculating
+BV. It is natural to use such an approach for the pre-averaged BV estimator as well. To set a good
+threshold in our setup, under a scaled Brownian motion with i.i.d. noise, as in model BM, the
+∗
+asymptotic distribution of ri,K
+is given by:
+
+
+θσ 2 ω 2
+a
+1/4 ∗
+.
+(16)
++
+N ri,K | Fi/N ∼ N 0,
+12
+θ
+Thus, we can deﬁne a threshold by taking
+qα
+τ= ̟
+N
+
+r
+
+ψK θσ 2 +
+
+ω2
+,
+θ
+
+(17)
+
+where qα is the α-quantile from the N(0, 1) distribution and ̟ ∈ (0, 0.25).
+2
+To implement the threshold, we set α = 0.999, ̟ = 0.20, and replace ω 2 and σ 2 by ω
+bAC
+and
+∗
+BV , respectively. Because the returns are calculated on pre-averaged prices, the data truncation
+6
+
+The Chicago Mercantile Exchange (CME) E-mini S&P 500 futures contract data have signed trade sizes to
+indicate if the trade was the result of a buy or sell order.
+7
+If we aggregate trades by millisecond timestamp—a sensible approach for the market data distribution mechanism
+of the CME in which a collection of individual passive orders that get ﬁlled instantaneously against a single aggressor
+trade all get reported separately—the estimate is substantially lower at β = 0.41. Thus, the value used in the
+simulations is conservative and, if anything, overstates the actual dependence in microstructure noise.
+8
+Christensen, Oomen, and Podolskij (2013) provide additional simulation results for sample sizes of N = 10, 000
+and N = 100, 000.
+
+11
+
+Table 2: Properties of the pre-averaging estimators using simulated data.
+RV ∗
+θ = 0.1 0.5 1.0 2.0 5.0
+Panel A : i.i.d. noise (β = 0)
+BM
+1.00 1.00 1.00 1.00 1.01
+SV
+1.00 1.00 1.01 1.01 1.01
+SV2F-LEV
+1.00 1.00 1.00 1.00 1.00
+BMJ
+1.25 1.25 1.25 1.25 1.25
+BMO
+1.00 1.00 1.00 1.00 1.01
+
+BV ∗
+0.1 0.5 1.0 2.0 5.0
+
+BVτ∗
+0.1 0.5 1.0 2.0 5.0
+
+1.00 1.00 1.00 1.01 1.01
+1.00 1.00 1.00 1.00 1.00
+1.00 1.00 1.00 1.00 1.00
+1.02 1.04 1.05 1.08 1.11
+1.00 1.00 1.00 1.01 1.01
+
+1.00 1.00 1.00 1.01 1.01
+1.00 1.00 1.00 1.00 1.00
+1.00 1.00 1.00 1.00 1.00
+1.00 1.00 1.01 1.02 1.04
+1.00 1.00 1.00 1.01 1.01
+
+Panel B : Dependent noise (β = 0.77)
+BM
+1.02 1.00 1.00 1.00 1.01
+SV
+1.02 1.00 1.01 1.01 1.01
+SV2F-LEV
+1.03 1.00 1.00 1.00 1.00
+BMJ
+1.26 1.25 1.25 1.25 1.25
+BMO
+1.02 1.00 1.00 1.00 1.01
+
+1.03 1.00 1.00 1.01 1.01
+1.03 1.00 1.00 1.00 1.00
+1.03 1.00 1.00 1.00 1.00
+1.05 1.04 1.06 1.08 1.11
+1.02 1.00 1.00 1.01 1.01
+
+1.03 1.00 1.00 1.01 1.01
+1.03 1.00 1.00 1.00 1.00
+1.03 1.00 1.00 1.00 1.00
+1.03 1.00 1.01 1.02 1.04
+1.03 1.00 1.00 1.01 1.01
+
+Note. The table reports the sample average of the pre-averaging estimators RV ∗ , BV ∗ , and BVτ∗ across 10, 000 independent simulation
+runs and for ﬁve choices of pre-averaging horizon θ = {0.1; 0.5; 1; 2; 5}. RV ∗ and BV ∗ are deﬁned in Eqs. (9) – (10), while BVτ∗ is a
+truncated version of BV ∗ . Truncation details are in the simulation study. We simulate Eq. (2) using ﬁve models: (1) a Brownian motion
+(BM), where dXt = σt dWt with σt2 = 0.0391 (i.e., about 20% volatility pro anno (p.a.)), (2) a Heston (1993)-type stochastic volatility
+(SV) model, (3) a two-factor SV model with leverage (SV2F-LEV), (4) a Brownian motion plus jump (BMJ) model, and (5) a Brownian
+motion plus outlier (BMO) model. In model BMJ (BMO), a single jump (outlier) is placed at random in the data and it accounts for
+i.i.d.
+
+2
+2
+20% of total variation. To add microstructure noise we use ui = βui−1 + εi , where εi ∼ N
+q(0, ω (1R− β )). We consider i.i.d. noise
+1 2
+2
+2
+(β = 0) and dependent noise (β = 0.77). ω is determined via the noise ratio parameter γ = N ω / 0 σs ds. We set γ = 0.50 and let
+the total number of observations be N = 40, 000, which matches our empirical data. In each simulation, all estimates are normalized by
+R1 2
+∗
+0 σs ds. An unbiased estimator should therefore be close to one on average. The only exception is model BMJ, where E(RV ) = 1.25.
+
+12
+
+∗
+needs some care. Simply removing all observations in which |ri,K
+| > τ would be ineﬃcient as a single
+jump in the tick data inﬂates a whole sequence of returns due to the averaging. As an alternative,
+we adopt a simple algorithm in which for every breach of τ we compute noisy tick returns from all
+the prices used in the pre-averaging calculations for that sequence of breaches and we then remove
+the largest one. After removing the largest noisy tick return, we compute a reconnected price series
+and repeat the pre-cleaning until all extreme observations are gone. BVτ∗ is then calculated from
+the price path of the remaining data. A graphical illustration of the procedure can be found in the
+online Appendix.
+The third panel in Table 2 shows that this thresholding procedure works well and that BVτ∗
+largely removes the ﬁnite sample bias. Regarding the choice of θ, setting it to large values lowers
+the eﬀective sampling frequency and slowly reintroduces the ﬁnite sample bias. However, setting it
+to small values exposes it to the dependent noise that operates at high sampling frequencies. Given
+these trade-oﬀs, we settle on θ ∈ [0.5, 2] as a reasonable choice.
+
+3
+
+The role of the jump component in currency and US
+equity data
+
+In this section, we use the pre-averaged RV and BV measures to provide an in-depth study into the
+role of the jump component for a representative set of US equity and foreign exchange rate data. To
+the best of our knowledge this is the ﬁrst study to take a comprehensive look at the magnitude of
+the jump variation component as measured from noisy tick data sampled at ultra-high frequencies.
+We also report results based on ﬁve- and 15-minute sampling frequencies as these are widely used
+in the literature and provide a natural reference point.
+
+3.1
+
+Data description
+
+We have available a large set of tick data covering a representative set of foreign exchange rate,
+large-cap US equity, and US equity index data. The sample period is from January 2007 through
+March 2011 (or 1,170 trading days) and includes several episodes of exceptional turbulence such as
+the global housing and credit crisis, the S&P 500 ﬂash-crash, the European sovereign debt crisis,
+the bail-out of Greece, and the Japanese earthquake.
+For the equities, we consider all 30 DJIA index constituents as of October 2010, as well as two
+market-wide indexes traded as highly liquid exchange traded funds (ETFs), namely QQQ tracking
+the Nasdaq 100 index and SPY tracking the S&P 500 index. The latter is included because it is
+used by many other studies (see Table 1) and thus provides a good benchmark. The equity data
+are extracted from the NYSE Trade and Quote (TAQ) database and include both quote and trade
+data with millisecond precision timestamps allowing for a detailed view of the price evolution. We
+restrict attention to the oﬃcial trading hours from 9:30 to 16:00 local New York time.
+For the foreign currency data, we have the three major rates of euro, Japanese yen, and Swiss
+13
+
+franc all traded against the US dollar, i.e., EURUSD, USDJPY, and USDCHF, respectively. The
+data are taken from the EBSLive feed that also provides both trade and quote data with millisecond
+timestamps. We restrict attention to the most liquid London and New York trading hours from
+7:00 to 19:00 Greenwich Mean Time.
+While the foreign exchange rate data are exceptionally clean, the equity data require some
+pre-ﬁltering. For the quote data we adopt the routine proposed in Barndorﬀ-Nielsen, Hansen,
+Lunde, and Shephard (2009, hereafter BNHLS).9 That paper also suggests removing trades that
+when synchronized to the quote data are well above (below) the most recent best oﬀer (bid) price.
+While this procedure works well in most cases, we did come across a few scenarios in which it leads
+to excessive removal of data. Over a volatile episode, the trade data appear to lag the quote data
+signiﬁcantly and, as a direct consequence, the BNHLS ﬁlter removes most data (see Figure D1 in D).
+To address such a situation, we introduce a simple backward-forward matching (BFM) algorithm
+that seeks to match trades that fall outside the bid-oﬀer to quotes over a short forward-looking
+window and, if not successful, over a longer backward-looking window. We set the forward-looking
+window to one second as it merely aims to account for small inaccuracies in the timestamps and
+relative ordering of the quotes and trades. The backward-looking window is set to 20 minutes so
+that block trades qualifying for delayed trade reporting are covered by the ﬁlter procedure. Table
+D1 in D reports detailed summary statistics for the BFM ﬁlter. After cleaning, we have a total
+sample size of well over four billion observations.
+The results we present are based on trade data sampled at every tick, i.e., N is equal to the
+number of trades for a given security on a particular day.10 This sampling is standard in the
+literature and tends to homogenize the data in the common scenario in which the frequency of trade
+arrivals is correlated with volatility, i.e., heteroskedasticity is reduced through time deformation
+(Ane and Geman, 2000). This has the advantage—as made explicit in Eq. (18) below—that
+it reduces the ﬁnite sample bias in the BV ∗ measure. Furthermore, the consistency result in
+Proposition 1 is robust to irregular sampling (see C).
+
+3.2
+
+The magnitude of the jump component
+
+To start our investigation into the magnitude of the jump component, Table 3 reports the average
+daily quadratic variation and integrated variance, together with the implied jump variation, as
+estimated by RV ∗ and BVτ∗ from tick data. For comparison, we also report the results using RV
+and BV applied to the conventional ﬁve- and 15-minute sampled data. The single most important
+observation to be made is that the jump component inferred from tick data is small. Much smaller
+than what is computed from the ﬁve- and 15-minute data and much smaller than what is reported
+by the extant literature as summarized in Table 1. The cross-sectional averages by category convey
+9
+
+In particular, we remove quotes with irregular quote condition, with bid or ask equal to zero, with negative
+spreads, with spreads larger than ten times the median spread for the day, and when the mid-quote is outside ﬁve
+mean absolute deviations from a centered mean of 50 observations (excluding the quote under investigation).
+10
+Results based on quote data are qualitatively very similar and are not reported to conserve space.
+
+14
+
+Table 3: Jump variation estimates for equity and foreign exchange rate high-frequency data.
+
+N
+b
+γ
+Panel A : Equity indexes
+QQQ
+48,333
+0.37
+SPY
+113,770
+0.34
+Average
+81,052
+0.36
+Panel B : Foreign exchange rates
+EURUSD
+17,703
+0.36
+USDCHF
+4,629
+0.19
+USDJPY
+9,079
+0.31
+Average
+10,470
+0.29
+
+Tick frequency
+RV ∗
+BVτ∗
+JV
+
+Five-minute frequency
+RV
+BV
+JV
+
+15-minute frequency
+RV
+BV
+JV
+
+22.8
+21.1
+22.0
+
+23.0
+21.2
+22.1
+
+-1.7
+-0.8
+-1.3
+
+22.8
+20.9
+21.9
+
+22.4
+20.5
+21.5
+
+3.7
+4.1
+3.9
+
+22.7
+20.7
+21.7
+
+21.6
+19.8
+20.7
+
+8.9
+8.1
+8.5
+
+9.9
+10.4
+10.8
+10.4
+
+9.9
+10.3
+10.8
+10.3
+
+-0.7
+1.8
+0.1
+0.4
+
+9.8
+10.7
+10.8
+10.4
+
+9.4
+10.2
+10.3
+10.0
+
+7.1
+8.8
+9.0
+8.3
+
+9.6
+10.4
+10.4
+10.1
+
+9.2
+9.8
+9.8
+9.6
+
+7.5
+10.3
+9.7
+9.2
+
+Panel C : DJIA constituents
+AA
+31,361
+0.50
+48.4
+48.0
+1.5
+48.9
+47.6
+5.2
+47.2
+44.8
+10.0
+AXP
+31,371
+0.27
+46.7
+46.4
+1.3
+46.6
+45.0
+6.9
+45.8
+43.2
+11.2
+BA
+21,122
+0.26
+30.5
+30.3
+1.5
+30.6
+29.5
+7.0
+30.4
+28.5
+12.0
+BAC
+82,628
+0.81
+59.0
+59.3
+-1.0
+58.9
+56.2
+8.9
+58.2
+54.7
+11.7
+CAT
+27,422
+0.26
+36.7
+36.6
+0.2
+36.7
+35.7
+5.4
+36.3
+34.7
+8.8
+CSCO
+54,129
+0.63
+31.9
+31.7
+1.3
+32.2
+31.2
+5.9
+31.4
+30.0
+9.1
+CVX
+35,064
+0.26
+30.0
+30.2
+-1.1
+29.7
+29.0
+4.6
+28.7
+27.4
+8.9
+DD
+20,302
+0.28
+32.3
+32.2
+0.6
+32.8
+31.7
+6.8
+31.9
+30.3
+9.9
+DIS
+24,914
+0.36
+29.9
+29.6
+1.7
+30.3
+29.1
+7.6
+29.6
+28.0
+10.5
+GE
+56,193
+0.76
+38.2
+38.1
+0.9
+38.2
+36.6
+8.0
+38.1
+35.4
+13.7
+HD
+30,111
+0.37
+34.5
+34.4
+1.0
+34.4
+33.3
+6.4
+33.6
+31.6
+12.0
+HPQ
+35,631
+0.33
+29.8
+29.4
+2.8
+29.9
+28.9
+6.3
+29.1
+27.2
+12.5
+IBM
+25,483
+0.27
+26.0
+25.9
+0.8
+25.4
+24.6
+6.3
+24.7
+23.2
+11.9
+INTC
+54,657
+0.64
+32.2
+32.1
+0.6
+32.4
+31.2
+7.4
+31.3
+29.3
+12.4
+JNJ
+29,929
+0.37
+18.8
+18.6
+1.4
+18.9
+18.1
+8.2
+18.3
+16.9
+14.0
+JPM
+67,858
+0.33
+48.7
+48.8
+-0.4
+48.5
+47.2
+5.3
+47.8
+45.2
+10.7
+KFT
+20,494
+0.44
+22.8
+22.3
+4.2
+23.3
+22.0
+10.6
+22.2
+20.5
+14.3
+KO
+24,862
+0.33
+21.2
+21.0
+1.3
+21.5
+20.3
+10.9
+20.5
+18.9
+14.9
+MCD
+23,610
+0.29
+23.7
+23.6
+0.9
+23.8
+22.7
+8.8
+22.7
+21.2
+12.6
+MMM
+17,005
+0.27
+26.2
+26.0
+1.4
+25.9
+25.1
+6.6
+24.7
+23.3
+11.5
+MRK
+30,107
+0.37
+30.1
+29.7
+2.7
+31.4
+29.8
+10.0
+29.8
+27.5
+14.4
+MSFT
+59,937
+0.58
+28.3
+28.2
+0.7
+28.3
+27.4
+5.8
+27.5
+25.8
+12.0
+PFE
+37,409
+0.81
+26.5
+26.2
+2.2
+26.7
+25.6
+8.5
+25.5
+24.0
+11.1
+PG
+30,271
+0.33
+23.0
+22.5
+3.6
+21.2
+20.4
+8.1
+20.1
+18.8
+13.1
+T
+38,131
+0.55
+29.0
+28.6
+2.4
+29.8
+28.9
+5.8
+28.0
+26.4
+10.8
+TRV
+15,961
+0.26
+37.6
+36.6
+5.0
+38.9
+36.9
+9.9
+37.4
+33.8
+18.6
+UTX
+18,727
+0.26
+27.1
+26.9
+1.2
+26.8
+25.9
+6.5
+25.9
+24.6
+10.1
+VZ
+30,053
+0.45
+27.5
+27.3
+1.7
+28.1
+27.0
+7.7
+27.1
+25.5
+11.5
+WMT
+35,785
+0.35
+23.5
+23.4
+0.3
+23.6
+22.7
+7.7
+22.6
+21.2
+11.9
+XOM
+55,702
+0.30
+28.1
+28.2
+-0.7
+27.8
+27.0
+5.2
+26.8
+25.5
+9.8
+Average
+35,541
+0.41
+31.6
+31.4
+1.3
+31.7
+30.6
+7.3
+30.8
+28.9
+11.9
+Note. This table reports the average daily quadratic variation (QV) and integrated variance (IV) estimates together with the implied
+jump variation (JV) at diﬀerent sampling frequencies for the sample period January 2007 through March 2011. At the tick (ﬁve- and
+15-minute) frequency, QV is estimated by RV ∗ in Eq. (9) (RV in Eq. (5)) and IV is estimated by BVτ∗ (BV in Eq. (6)). BVτ∗ is a
+truncated version of BV ∗ in Eq. (10). Truncation details are in the simulation study. The JV from Eq. (4) is expressed in percentages,
+while the realized variation measures are expressed as percentage annualized standard deviations. N is the average daily number of
+observations (after millisecond aggregation) and γ
+b the estimated noise ratio given by Eq. (11).
+
+15
+
+Figure 3: θ-signature plot of average annualized volatility and jump proportion.
+Panel A: Equity data
+
+Panel B: Foreign exchange rate data
+
+31.5
+
+¯ ∗
+RV
+
+11
+
+¯ ∗
+BV
+τ
+
+¯ ∗
+RV
+
+¯ ∗
+BV
+τ
+
+Standard deviation
+
+Standard deviation
+
+¯
+RV
+
+30.5
+
+¯
+BV
+
+29.5
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+1.2
+
+1.4
+
+1.6
+
+1.8
+
+10.5
+
+¯
+RV
+
+10
+
+¯
+BV
+
+9.5
+
+9
+
+2
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+θ
+
+Panel C: Equity data
+¯ τ /RV
+¯
+1 − BV
+∗
+
+∗
+
+1.4
+
+0.1
+
+¯ /RV
+¯
+1 − BV
+
+1.6
+
+1.8
+
+∗
+
+∗
+
+¯ /RV
+¯
+1 − BV
+
+1.2
+
+1.4
+
+1.6
+
+¯ τ /RV
+¯
+1 − BV
+
+2
+
+0.08
+
+Jump proportion
+
+0.08
+
+Jump proportion
+
+1.2
+
+Panel D: Foreign exchange rate data
+
+0.1
+
+0.06
+
+0.04
+
+0.02
+
+0
+
+1
+
+θ
+
+0.06
+
+0.04
+
+0.02
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+1.2
+
+1.4
+
+1.6
+
+1.8
+
+0
+
+2
+
+θ
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+1.8
+
+2
+
+θ
+
+Note. Panels A and B report the annualized volatility of the noise-robust RV ∗ deﬁned in Eq. (9) and BVτ∗ , which is a truncated version
+of BV ∗ from Eq. (10). Truncation details are in the simulation study. We ﬁrst average the time series of estimates for individual assets
+in our sample and then average over the cross-section of stocks and foreign exchange rate pairs. To explore the sensitivity of our results
+to pre-averaging, we compute the estimates for many diﬀerent values of pre-averaging horizon θ. As a comparison, the corresponding
+average values of the realized variance and bi-power variation from Eqs. (5) – (6) based on ﬁve-minute data are indicated with a solid
+thick line. In Panels C and D, the numbers are converted into an estimate of the jump proportion using Eq. (4).
+
+the message most clearly: Using tick data, we ﬁnd that jumps account for a mere 1.3% of total
+return variation for the DJIA constituents, 0.4% for the currency pairs, and -1.3% for the equity
+indexes (under the null of no jumps, the distribution of RV ∗ − BVτ∗ is symmetric around zero, so
+16
+
+small negative numbers can occur due to measurement error). The corresponding ﬁgures for the
+widely used ﬁve- (and 15-) minute data are in line with the literature at a much more substantial
+7.3% (11.9%), 8.3% (9.2%), and 3.9% (8.5%) for individual equity, currency, and equity index data,
+respectively. Also, for each asset there is a strict ordering in JV by sampling frequency in which the
+tick data give the lowest (and arguably most accurate) value and the 15-minute data the highest.
+The results in Table 3 use a pre-averaging parameter of θ = 1. Regarding the robustness of our
+results, Figure 3 draws RV ∗ and BVτ∗ as a function of θ together with the implied jump proportion
+for equity and currency data separately. This so-called θ-signature plot shows that for values of
+above 0.5 (the lower bound also identiﬁed in the simulation study above), the results are remarkably
+insensitive to the choice of θ. Only when θ is set to very small values, the pre-averaging is insuﬃcient
+to mitigate the impact of microstructure noise and a pronounced downward bias results [see Hautsch
+and Podolskij (2013) for a more detailed study].
+Figure 4: Jump proportion, quarter-by-quarter.
+Panel A: Equity data
+
+Panel B: Foreign exchange rate data
+
+20
+18
+
+Tick
+5−minute
+15−minute
+
+18
+16
+
+14
+
+14
+
+12
+
+12
+Jump proportion
+
+Jump proportion
+
+16
+
+20
+
+10
+8
+
+10
+8
+
+6
+
+6
+
+4
+
+4
+
+2
+
+2
+
+0
+
+0
+
+−2
+2007
+
+2008
+
+2009
+Time
+
+2010
+
+−2
+2007
+
+2011
+
+Tick
+5−minute
+15−minute
+
+2008
+
+2009
+Time
+
+2010
+
+2011
+
+Note. This ﬁgure draws the quarterly jump variation in percent as implied by tick data (tick) using the noise-robust RV ∗ deﬁned in Eq.
+(9) and BVτ∗ , which is a truncated version of BV ∗ from Eq. (10). Truncation details are in the simulation study. We also report the
+jump variation as measured by the RV and BV from Eqs. (5) – (6) based on ﬁve- and 15-minute data. The dashed line is the average
+across the full sample 2007:Q1 – 2011:Q1.
+
+Next, regarding the robustness of our ﬁnding over time, Figure 4 plots the quarterly jump
+variation estimates over the full four-year sample period. Again, the results appear stable and
+the JV calculated from tick data is small and consistently below the JV estimates calculated from
+lower-frequency data.
+To conclude, an alternative way to summarize and visualize our main ﬁnding is via a scatter
+plot of daily estimates of the integrated variance versus the quadratic variation (Figure 5). In
+the absence of jumps, the integrated variance equals the quadratic variation and the estimates are
+17
+
+expected to center around a 45-degree line through the origin. Panels A and B show the results
+for the RV ∗ and BVτ∗ estimates based on tick data. A standard linear regression indicates that
+the slope coeﬃcient is insigniﬁcantly diﬀerent from one for both the equity and the currency data.
+By comparison, Panels C and D report the results based on ﬁve-minute data. Consistent with the
+results in Table 3, the slope coeﬃcient is signiﬁcantly smaller than one.
+
+3.3
+
+The burst of volatility hypothesis
+
+The results above point towards a much-reduced role for jumps in explaining the total return
+variation for equity and currency data. We ﬁnd that the jump variation computed from tick data
+is an order of magnitude smaller than the consensus view in the literature that uses ﬁve-minute or
+lower-frequency data. How can these ﬁndings be reconciled?
+One explanation is that our ability to distinguish true discrete jumps from continuous diﬀusive
+variation diminishes as we lower the sampling frequency N. Speciﬁcally, a short-lived burst of
+volatility is likely to be mistakenly identiﬁed as a jump with less frequent sampling. The ﬂash-crash
+episode is a prominent example of such a scenario. The Japanese earthquake provides another for
+the currency data. Figure 6 plots the evolution of the USDJPY rate in Panels A and B for the
+period in question. From the ﬁve-minute data, two very substantial jumps are evident. One on
+March 16 when the USDJPY experienced a ﬂash-crash type drop in the rate and another on March
+18 following a coordinated central bank intervention aimed at devaluing the JPY. Panels C and D
+draw the tick data for the respective episodes and tell a very diﬀerent story in which price jumps
+remain elusive.
+3.3.1
+
+A burst of volatility simulation
+
+To provide support for the burst of volatility hypothesis, we start by considering the simplest of
+simulation studies. We draw noise-free prices from a scaled Brownian motion, dXt = σt dWt for
+t ∈ [0, 1], where σt = 3σ ∗ for t ∈ [16/32, 17/32] and σt = σ ∗ otherwise. σ ∗ is ﬁxed at a level
+corresponding to 40% in annualized terms. In this scenario, σt is piecewise constant and increases
+three-fold over a short interval of the day (equivalent to a 15-minute interval based on an eighthour trading session). However, because the price path is still continuous, the true JV is zero. We
+simulate noisy log-prices as above, Y = X + u, using i.i.d. noise with a noise ratio parameter of
+γ = 0.5 and then round Y to the nearest cent to induce price discreteness, based on a starting price
+of $50 in levels. Finally, we calculate RV and BV across a range of sampling frequencies and report
+the average implied JV over 10,000 independent simulation runs. Panel A of Figure 7 plots the
+result on a log-log scale. While the true JV is zero, the estimated JV from low-frequency data is
+positive and increases with a decrease in the sampling frequency. When applied to noisy data, i.e.,
+Y , the eﬀects of microstructure noise invalidate the traditional variation measures at the highest
+sampling frequencies. For comparison, Panel B plots the corresponding results for the equity data
+(averaged across all instruments over the full sample) and a pattern similar to that of the simulation
+
+18
+
+Panel A: Equity tick data
+
+Panel B: Foreign exchange rate tick data
+
+BVτ∗ = 0.012 + 0.987 RV ∗
+(0.442)
+(−1.737)
+
+BVτ∗ = 0.001 + 0.994 RV ∗
+(0.132)
+
+50
+
+2
+
+45
+
+1.8
+
+40
+
+1.6
+
+35
+
+1.4
+
+30
+
+1.2
+
+BVτ∗
+
+BVτ∗
+
+Figure 5: Regression analysis of bi-power variation against realized variance.
+
+25
+
+1
+
+20
+
+0.8
+
+15
+
+0.6
+
+10
+
+0.4
+
+5
+
+0.2
+
+0
+
+0
+
+5
+
+10
+
+15
+
+20
+
+25
+
+30
+
+35
+
+40
+
+45
+
+0
+
+50
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+RV ∗
+
+1.6
+
+1.8
+
+BV = 0.014 + 0.890 RV
+
+(−5.194)
+
+(1.225)
+
+45
+
+1.8
+
+40
+
+1.6
+
+35
+
+1.4
+
+30
+
+1.2
+
+BV
+
+BV
+
+1.4
+
+BV = 0.067 + 0.913 RV
+2
+
+25
+
+0.8
+
+15
+
+0.6
+
+10
+
+0.4
+
+5
+
+0.2
+
+10
+
+15
+
+20
+
+25
+
+2
+
+30
+
+35
+
+40
+
+45
+
+0
+
+50
+
+RV
+
+(−3.498)
+
+1
+
+20
+
+5
+
+1.2
+
+Panel D: Foreign exchange rate ﬁve-minute data
+
+50
+
+0
+
+1
+
+RV ∗
+
+Panel C: Equity ﬁve-minute data
+(1.075)
+
+0
+
+(−0.354)
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+1.2
+
+1.4
+
+1.6
+
+1.8
+
+2
+
+RV
+
+Note. Panels A and B plot the pairwise values of RV ∗ and BVτ∗ based on equity and currency pair tick data, respectively. RV ∗ is
+deﬁned in Eq. (9), while BVτ∗ is a truncated version of BV ∗ from Eq. (10). Truncation details are in the simulation study. Panels C
+and D plot the corresponding results for RV and BV from Eqs. (5) – (6) based on ﬁve-minute data. A plus (+) indicates an observation
+for a given day and instrument. We ﬁt a linear regression to the data and conduct a test for the hypothesis that the intercept is zero
+and the slope is one. The estimated regression equation is reported in subpanels along with t-statistics (in parenthesis) based on White’s
+heteroskedasticity-consistent standard errors. The dashed line is based on the estimated regression, while the solid 45-degree line oﬀers
+a reference point to the null hypothesis.
+
+19
+
+Figure 6: USDJPY earthquake episode: Jump or burst in volatility?
+Panel A: Time around earthquake
+
+Panel B: Closeup March 16 – 18
+
+Panel C: “Flash-crash” (trade-by-trade)
+
+Panel D: Intervention (trade-by-trade)
+
+79.5
+
+81.5
+Paid
+Given
+
+Paid
+Given
+
+79
+81
+78.5
+
+80.5
+Price
+
+Price
+
+78
+
+77.5
+80
+
+77
+79.5
+76.5
+
+76
+21:1021:12
+
+21:14
+
+21:16
+21:18
+Time
+
+21:20
+
+21:22
+
+79
+00:00
+
+21:24
+
+00:02
+
+00:04
+Time
+
+00:06
+
+00:08
+
+00:10
+
+Note. We draw USDJPY spot data for March 7 – 18, 2011 with time reported in Greenwich Mean Time. The data were collected from
+EBSLive. The upper panels are based on ﬁve-minute data, while the lower panels use tick-by-tick data. The day of the Fukushima
+earthquake (March 11) is highlighted in Panel A, as are the two ﬁve-minute intervals covering the “ﬂash-crash” episode on March 16 and
+the central bank intervention on March 18 that we discuss in the main text. In Panels C and D, “Paid” and “Given” denote aggressive
+buy- and sell-orders, respectively.
+
+emerges thereby providing support for the burst of volatility hypothesis.
+The approximately linear relation between the implied JV and the sampling frequency on a
+log-log scale has some theoretical foundation. In A, we derive the expression for the unconditional
+
+20
+
+Figure 7: Jump variation signature plot.
+Panel A: Simulated data (true JV = 0)
+0.50
+0.40
+
+Panel B: Equity data (true JV unknown)
+0.50
+
+1 - BV[X]/RV[X]
+1 - BV[Y]/RV[Y]
+
+0.30
+
+1 − BVτ∗ /RV ∗
+1 − BV /RV
+
+0.40
+0.30
+
+0.20
+0.15
+
+0.20
+
+0.10
+
+0.15
+
+Jump proportion
+
+Jump proportion
+
+0.05
+0.10
+
+0.05
+
+0.01
+
+0.00
+
+1s
+
+5s
+
+15s
+1m
+Sampling frequency
+
+5m
+
+15m
+
+0.01
+1s
+
+30m
+
+5s
+
+15s
+
+1m
+Sampling frequency
+
+5m
+
+15m
+
+30m
+
+60m
+
+Note. The graph displays average jump proportion estimates as a function of the sampling frequency. The left panel is based on simulated
+data with a true JV of zero, while the right panel covers the full sample of equity instruments (both cross-sectionally and over time). In
+both panels, the plus marks (+) denote estimates based on noisy prices by comparing the standard RV and BV measures deﬁned in Eqs.
+(5) – (6). These are not valid in the presence of noise. In Panel A, the circles (o) denote the JV computed with RV and BV by using
+the simulated “unobserved” noise-free prices. In Panel B, the circle indicates our noise-robust JV estimate based on the real equity tick
+data using RV ∗ and BVτ∗ . RV ∗ is deﬁned in Eq. (9), while BVτ∗ is a truncated version of BV ∗ from Eq. (10). Truncation details are
+in the simulation study. The latter are both valid in the presence of noise.
+
+bias of BV:
+
+
+
+E BV −
+
+Z 1
+0
+
+σs2 ds
+
+
+
+1
+=− E
+N
+
+
+
+1
+12
+
+Z 1
+0
+
+
+υs2
+ds + o(N −1 ),
+2
+σs
+
+(18)
+
+where υ is the volatility of volatility. From here, with time-varying volatility, and in the absence of
+noise, BV is downward biased in ﬁnite samples, translating into an inﬂated JV measure, the eﬀect
+is stronger with a high volatility of volatility υ or a lowering of the sampling frequency N, and the
+log bias is approximately linear in the log sampling frequency. Consequently, Eq. (18) formally
+illustrates the point that a short-lived burst of volatility can be spuriously attributed to the jump
+variation component and that its magnitude grows as the sampling frequency of the data is lowered.
+This line of thought is also consistent with Aı̈t-Sahalia and Jacod (2009a) who emphasize that jumps
+can be identiﬁed only by increasing the sampling frequency to the limit. This is precisely what our
+paper does and leads us to argue for a much-reduced role of jumps and by implication, an elevated
+role for the volatility process.
+3.3.2
+
+Further empirical results
+
+The realised measures discussed in this paper can be used to gauge the magnitude of the jump
+component but they are not able to identify actual jumps. So to complement the empirical results
+21
+
+above and the discussion surrounding the burst of volatility hypothesis, we conduct some further
+analysis that allows us to study the properties of the jumps in more detail.
+To locate jumps from ﬁve-minute data, we employ the nonparametric test of Lee and Mykland
+(2008), i.e.,
+i−1
+X
+π 1
+ri
+|rj ||rj−1|.
+(19)
+with
+σ
+bi2 =
+Li =
+σ
+bi
+2 M − 2 j=i−M +2
+
+Intuitively, Li compares each ﬁve-minute return to a local estimate of the instantaneous volatility
+and identiﬁes a jump when the ratio is “large”.11 We should note that σ
+bi2 is robust to jumps. Lee
+and Mykland (2008) show that the distribution of Li is asymptotically standard normal in the
+absence of jumps and they specify a threshold, say c, for the jump detection statistic based on
+Gaussian extreme value theory. In addition, they assume that when a jump occurs, the size of it
+dominates ri , i.e., when |Li | > c, a jump Ji is established at time i with size ri . We follow that
+route here.
+The ﬁrst column of Table 4 reports the results of the test for every security in our universe.
+It shows that the number of jumps identiﬁed by this approach (J# ) translates to an average of
+roughly one and a half jumps per month for the equity indexes, slightly less than two jumps per
+week for the foreign exchange rates, and about one jump per week for the DJIA constituents.
+The average absolute jump size (Javg ) is around 1% for individual equities with the largest jumps
+(Jmax ) measured at over 10% (e.g., AA = Alcoa, MRK = Merck, and TRV = Travelers). The
+jumps in currencies and equity indexes are smaller in magnitude. With jump sizes at hand, it is
+straightforward to calculate the implied jump variation (JV) and interestingly, we ﬁnd that the Lee
+and Mykland (2008) procedure yields estimates that are broadly in line with those obtained from
+the low-frequency realised measures reported in Table 3.
+To apply this test to tick data, we need to modify it to correctly account for microstructure
+noise. To see this, note that as we move to tick frequency, the noise process starts to dominate ri
+and, asymptotically,
+ui − ui−1
+.
+Li ≃ v
+u
+i−1
+X
+uπ 1
+t
+|uj − uj−1||uj−1 − uj−2|
+2 M − 2 j=i−M +2
+
+(20)
+
+The random variables (Li ) are 1-dependent and identically distributed. In general, it is not clear
+how the rule |Li | > c works here. If the distribution of ui − ui−1 is close to Gaussian, the test has
+little power and will fail to identify jumps. On the other hand, if ui − ui−1 has heavier tails than a
+normal, the statistic will be oversized and identify more jumps than expected under the null. The
+bottom line is that the test only depends on the distribution of the noise and not on the physical
+absence or presence of jumps.12
+11
+
+Throughout this section, we use a 1% level of signiﬁcance to deﬁne “large.” Moreover, we set the parameter M
+in Eq. (19) equal to the value suggested by Lee and Mykland (2008).
+12
+We veriﬁed this empirically by computing the above test on tick data and indeed found its behavior to be very
+erratic.
+
+22
+
+We can, however, apply the Lee and Mykland (2008) test to tick data after pre-averaging, i.e.,
+L∗i =
+
+∗
+ri,K
+∗
+σ
+bi,K
+
+where
+
+∗2
+σ
+bi,K
+=
+
+i−1
+X
+π 1
+|r ∗ ||r ∗
+|,
+2 M − 2 j=i−M +2 j,K j−K,K
+
+(21)
+
+for i = M − 2 + K, M − 2 + 2K, . . .. The constant M is again chosen as recommended by Lee
+and Mykland (2008), but here with respect to the number of non-overlapping returns following
+pre-averaging. The sequence (L∗i ) is asymptotically i.i.d. standard normal if there are no jumps in
+the data and we can therefore apply the above critical value to identify jumps, i.e., |L∗i | > c.
+The second column of Table 4 reports the results of the pre-averaged Lee and Mykland (2008)
+test applied to tick data. It conﬁrms our main ﬁnding: both the number and magnitude of identiﬁed
+jumps are substantially diminished. This leads to implied jump variation estimates of just below 1%
+across the board, which agrees with the results reported in Table 3. The close alignment between
+the (implied) JV estimates calculated using bi-power variation and the Lee and Mykland (2008)
+jump test on ﬁve-minute as well as tick data conﬁrms that the conclusions we draw in this paper
+are robust to the choice of test statistic.
+To verify that our ﬁndings are also robust to the use of pre-averaging, we conduct a ﬁnal piece
+of analysis that takes a closer look at the raw tick data. Speciﬁcally, for every jump identiﬁed
+by the Lee and Mykland (2008) procedure using ﬁve-minute data, we search the tick data over
+the corresponding time interval and compare the identiﬁed jump (Ji ) to the maximum increment
+(in percent) of any two consecutive prices observed at this level of granularity. We refer to this
+maximum tick increment as the “maxgap” measure and denote it by Gi .13 If an identiﬁed jump
+is genuine, we would expect to observe a discontinuity of similar magnitude in the tick data, i.e.,
+Ji ≃ Gi . If, on the other hand, a jump is spuriously identiﬁed as a result of a burst in volatility,
+then we expect to observe a continuous, albeit volatile, price evolution at the tick frequency, i.e.,
+|Gi | ≪ |Ji |.
+The third column of Table 4 reports the maxgap results. The magnitude of the price discontinuity observed at the ﬁnest resolution is an order of magnitude smaller than the jumps identiﬁed from
+low-frequency data. The average absolute maxgap measure (Gavg ) implies that price discontinuities
+observed at tick frequency are in the region of 0.1% for individual equities, whereas the ﬁve-minute
+jumps average about 1%. The maximum maxgaps at tick frequency (Gmax ) are also substantially
+smaller than the maximum ﬁve-minute jumps (Jmax ). Figure 8 illustrates this further by drawing
+the size of every jump identiﬁed by the Lee and Mykland (2008) procedure using ﬁve-minute data
+against the corresponding maxgap measure. For both the equity and foreign exchange rate data, the
+slope coeﬃcient of a linear regression of G on J is estimated at less than 0.1. Figure 9 provides some
+further illustrations of this point by highlighting a few representative examples of jumps identiﬁed
+using low-frequency data that vanish (to a large extent) at high frequency. All taken together, these
+results reaﬃrm our earlier ﬁnding that jumps tend to dissipate as the sampling frequency increases.
+13
+
+To reduce the impact of microstructure noise, we measure price discontinuity at the tick level using a maxgap
+measure deﬁned in D, where we set the buﬀer size δ such that it covers ﬁve observations on each side. The reported
+results are fairly insensitive to variations in δ.
+
+23
+
+Table 4: Jump and maxgap summary statistics
+L on ﬁve-minute data
+J# Javg Jmax JV
+
+L∗ on tick data
+J# Javg Jmax JV
+
+maxgap
+Gavg Gmax
+
+2.35
+3.80
+3.07
+
+73 0.30 1.13 0.43
+91 0.22 0.87 0.87
+82 0.26 1.00 0.65
+
+0.02 0.22
+0.05 1.20
+0.04 0.71
+
+Panel B : Foreign exchange rates
+EURUSD 281 0.27 1.13 6.33
+USDCHF 311 0.32 1.94 9.09
+USDJPY 354 0.36 1.77 12.23
+Average 315 0.32 1.61 9.21
+
+55
+70
+65
+63
+
+0.13
+0.15
+0.14
+0.14
+
+0.66
+0.48
+0.39
+0.51
+
+0.40
+0.93
+0.43
+0.59
+
+0.01 0.15
+0.03 0.25
+0.03 0.39
+0.03 0.26
+
+Panel C : DJIA constituents
+AA
+184 1.67 11.19 7.44
+AXP
+148 1.59 7.95 6.82
+BA
+216 1.10 4.22 8.42
+BAC
+173 1.94 9.89 8.37
+CAT
+161 1.28 4.76 6.25
+CSCO
+122 1.08 4.94 4.40
+CVX
+107 0.86 4.67 2.91
+DD
+217 1.20 4.16 9.15
+DIS
+174 1.04 4.67 6.63
+GE
+149 1.35 7.68 7.58
+
+70
+54
+71
+78
+86
+90
+77
+95
+79
+69
+
+0.52
+0.46
+0.42
+0.55
+0.40
+0.31
+0.28
+0.37
+0.31
+0.41
+
+1.74
+1.44
+1.68
+3.45
+2.08
+1.44
+1.09
+1.78
+1.18
+2.29
+
+2.53
+0.68
+1.76
+0.05
+0.79
+0.20
+0.12
+1.30
+0.51
+0.85
+
+0.10 0.99
+0.11 1.04
+0.09 0.91
+0.08 1.76
+0.07 0.56
+0.04 0.92
+0.05 0.48
+0.11 0.95
+0.09 0.68
+0.07 0.70
+
+Panel A : Equity indexes
+QQQQ
+80 0.69 2.53
+SPY
+78 0.71 3.76
+Average
+79 0.70 3.15
+
+L on ﬁve-minute data
+J# Javg Jmax JV
+
+24
+
+Panel C (cont’d)
+HD
+191 1.15 4.27 6.65
+HPQ
+194 1.08 5.45 8.66
+IBM
+152 0.84 3.87 5.69
+INTC
+118 1.21 4.82 5.56
+JNJ
+221 0.67 4.24 9.39
+JPM
+142 1.56 7.57 5.69
+KFT
+238 0.94 6.21 12.72
+KO
+214 0.84 6.17 12.56
+MCD
+206 0.88 5.29 10.64
+MMM 174 0.90 4.52 7.61
+MRK
+250 1.28 12.07 17.40
+MSFT 130 1.00 4.18 4.81
+PFE
+162 0.97 3.56 6.47
+PG
+205 0.81 3.39 10.33
+T
+181 1.04 5.87 7.58
+TRV
+223 1.47 10.14 14.67
+UTX
+195 0.85 3.44 6.34
+VZ
+200 1.06 3.47 8.58
+WMT 198 0.82 4.20 7.85
+XOM
+89 0.96 5.30 4.13
+Average 178 1.11 5.74 8.04
+
+L∗ on tick data
+J# Javg Jmax JV
+
+maxgap
+Gavg Gmax
+
+63
+84
+73
+88
+70
+85
+81
+64
+74
+64
+75
+71
+73
+89
+80
+88
+90
+90
+84
+89
+78
+
+0.09
+0.08
+0.06
+0.04
+0.07
+0.05
+0.14
+0.08
+0.09
+0.09
+0.11
+0.03
+0.07
+0.07
+0.10
+0.22
+0.09
+0.10
+0.06
+0.06
+0.08
+
+0.38
+0.31
+0.29
+0.33
+0.21
+0.48
+0.31
+0.29
+0.29
+0.29
+0.33
+0.33
+0.32
+0.26
+0.26
+0.35
+0.29
+0.31
+0.25
+0.26
+0.34
+
+2.66
+1.07
+1.08
+1.74
+0.88
+2.13
+0.97
+1.37
+1.02
+0.83
+1.09
+1.41
+1.01
+1.44
+1.16
+1.88
+1.61
+1.63
+0.96
+1.03
+1.51
+
+1.24
+0.77
+2.16
+0.79
+0.23
+1.00
+1.12
+0.93
+0.59
+0.43
+0.02
+1.16
+1.04
+0.64
+0.08
+1.01
+1.25
+1.49
+0.05
+0.45
+0.84
+
+0.64
+0.89
+1.92
+0.46
+1.24
+0.62
+1.66
+1.80
+1.96
+0.79
+1.27
+0.20
+0.78
+1.63
+1.14
+5.39
+2.15
+1.37
+0.70
+1.11
+1.22
+
+Note. We report the number of jumps (J# ), the average absolute jump size (Javg ), the maximum absolute jump size (Jmax ), and the implied jump variation (JV) for the jumps
+identiﬁed using the non-parametric test of Lee and Mykland (2008), L in Eq. (19), on ﬁve-minute data and its pre-averaged counterpart, L∗ in Eq. (21), applied to tick data. The table
+also shows the average absolute maxgap (Gavg ) and the maximum absolute maxgap (Gmax ) for the maxgap measure calculated from tick data over the ﬁve-minute window corresponding
+to a signiﬁcant jump. The maxgap measure is deﬁned in D.
+
+Figure 8: Jumps at ﬁve-minute frequency vs. maxgap at tick frequency.
+Panel A: Equity data
+
+Panel B: Foreign exchange rate data
+
+15
+
+2
+
+10
+1
+
+maxgap
+
+maxgap
+
+5
+
+0
+
+0
+
+−5
+−1
+−10
+
+−15
+−15
+
+−10
+
+−5
+
+0
+Five−minute jump return
+
+5
+
+10
+
+15
+
+−2
+−2
+
+−1
+
+0
+Five−minute jump return
+
+1
+
+2
+
+Note. This ﬁgure reports a cross-plot of the jumps identiﬁed at the ﬁve-minute frequency using the nonparametric test of Lee and
+Mykland (2008) in Eq. (19) (on the x-axis) versus the maxgap measure calculated from tick data over the corresponding time interval
+(on the y-axis). The maxgap measure is formally deﬁned in D. All numbers are in percentages. The solid 45-degree line is for visual
+reference only.
+
+4
+
+Concluding remarks
+
+This paper uses new econometric techniques for separating the diﬀusive variation component from
+the jump variation component, and it applies these to a comprehensive set of tick data covering
+both equity and foreign exchange rate data to ﬁnd evidence of a much-reduced role for the jump
+component in explaining total return variation. Speciﬁcally, we ﬁnd that the jump variation is an
+order of magnitude smaller than what is widely reported in the literature over the past four decades.
+The explanation for this can be found in the sampling frequency. The inability of the leading jump
+variation measures to account for market microstructure noise or market friction has prevented
+the literature from using tick data. Thus, in recent years a compromise ﬁve-minute sampling
+frequency has been used. However, at this frequency, bursts of volatility are easily mistaken for
+jumps, thereby obscuring the fact that jumps are not nearly as common as generally thought. A
+reduced role for jumps, and by implication, an increased role for the volatility process, has many
+important implications for empirical ﬁnance applications such as option pricing, risk management,
+and portfolio allocation.
+To conclude, we emphasize that price continuity as focused on in this paper is a rather narrow
+concept and that one could instead focus on liquidity as a more meaningful and insightful measure
+of market state. It is indisputable that markets are often subject to tremendous amounts of stress.
+But we ﬁnd this rarely leads to a substantial discontinuity in the price path at a millisecond tick
+
+25
+
+Figure 9: Illustrations of jumps at ﬁve-minute frequency compared to the associated maxgap.
+INTC 06 May 10: 5-minute jump J = 4.8%
+22.5
+
+MRK 25 Jan 08: 5-minute jump J = −12.1%
+50
+
+KFT 19 Sep 08: 5-minute jump J = −6.2%
+35
+
+49
+22
+
+34.5
+48
+
+47
+
+21
+
+34
+Price
+
+Price
+
+Price
+
+21.5
+
+46
+
+33.5
+
+45
+
+44
+20.5
+
+33
+43
+
+20
+
+10:00
+
+11:00
+
+12:00
+
+13:00
+Time
+
+14:00
+
+15:00
+
+42
+
+16:00
+
+10:00
+
+11:00
+
+12:00
+
+13:00
+Time
+
+14:00
+
+15:00
+
+32.5
+
+16:00
+
+10:00
+
+11:00
+
+12:00
+
+13:00
+Time
+
+14:00
+
+15:00
+
+16:00
+
+49
+
+35
+
+21.8
+48
+
+21.6
+
+34.5
+47
+
+21.4
+34
+
+Price
+
+Price
+
+46
+Price
+
+26
+
+INTC 06 May 10: tick-frequency gap G = 0.1% MRK 25 Jan 08: tick-frequency gap G = 0.1% KFT 19 Sep 08: tick-frequency gap G = −1.7%
+
+21.2
+
+45
+
+33.5
+
+21
+44
+
+33
+
+20.8
+43
+
+20.6
+14:49
+
+14:50
+
+14:51
+
+14:52
+
+14:53
+Time
+
+14:54
+
+14:55
+
+42
+14:14
+
+32.5
+14:15
+
+14:16
+
+14:17
+
+14:18
+Time
+
+14:19
+
+14:20
+
+09:30
+
+09:31
+
+09:32
+
+09:33
+
+09:34
+
+09:35
+
+Time
+
+Note. We give three examples of large jumps identiﬁed with the Lee and Mykland (2008) test from Eq. (19). The title of each subﬁgure shows the ticker and date of the event (INTC
+= Intel, MRK = Merck, KFT = Kraft Foods). The upper half shows high-frequency data for the whole day using ﬁve-minute intervals along with the jump size in percent. A shaded
+area is used to highlight the time of the jump. We zoom in on the jump episode in the bottom row, where the associated maxgap measure (deﬁned in D) calculated from tick data is
+reported. The circles pin down the location of the maxgap. We only look at a single jump per day, although both the INTC and MRK examples possess multiple jumps according to the
+Lee and Mykland (2008) criterion.
+
+Figure 10: USDJPY liquidity shock over the March 16, 2011 sell-oﬀ.
+Panel A: USDJPY spread
+
+Panel B: Regular bid/oﬀer quotes
+
+120
+
+80.5
+Bid
+Offer
+80
+
+100
+
+79.5
+
+80
+
+79
+
+60
+
+Price
+
+Spread
+
+78.5
+
+40
+
+78
+
+20
+77.5
+
+0
+77
+
+−20
+
+−40
+20:00
+
+76.5
+
+20:30
+
+21:00
+Time
+
+21:30
+
+76
+20:00
+
+22:00
+
+20:30
+
+21:00
+Time
+
+21:30
+
+22:00
+
+Note. We plot USDJPY tick-by-tick data on March 16, 2011 with time reported in Greenwich Mean Time. The data were provided by
+EBSLive. In Panel A, we report the inside spread in pips over the course of the two-hour period from 20:00 – 22:00. Panel B draws the
+regular quotes during this time, i.e., the best bid and ask price good for up to $50 million.
+
+resolution. Instead, what we do ﬁnd are severe shocks to liquidity, a ﬁnding that is consistent
+with recent work by Jiang, Lo, and Verdelhan (2011). They show that jumps identiﬁed at the
+ﬁve-minute frequency are often preceded by a drop in liquidity provision. Figure 10 illustrates this
+point using USDJPY data over the March 16, 2011 sell-oﬀ. Looking at the price path in Figure 6,
+we found little evidence of a price jump. Yet, Panel A in Figure 10 shows that the inside spread
+that normally is around one or two pips, becomes highly volatile and reaches levels in excess of a
+hundred pips in the midst of the sell-oﬀ.14 Panel B plots the regular quote (i.e., the best bid and
+oﬀer available for a ﬁxed amount of $50 million) over the same period. From here it is clear that the
+book is very sparse over the sell-oﬀ and that the ability to quickly trade out of large positions was
+severely impaired. Both these observations highlight that while price continuity was preserved over
+this episode of extreme volatility, liquidity was severely deteriorated. This is a point also recently
+emphasized in O’Hara (2010) and we believe it indicates an important avenue for future research.
+
+14
+
+The spread also turns substantially negative at times. In the over-the-counter foreign exchange rate market
+(where counterparties need to provide credit to each other), a negative spread can be observed if the participant that
+aggresses the market does not have credit against the counterparties providing liquidity at the top of book. Over the
+sell-oﬀ, several participants were forced to pay for liquidity by hitting deep into the opposite side of the order book
+reﬂecting their lack of credit. So in this instance, a large spread of either sign can indicate market turbulence. On a
+centrally cleared market, one would not expect to see this behavior.
+
+27
+
+A
+
+Proofs
+
+Proof of Proposition 1. The proof for the case without outliers is given in Podolskij and Vetter
+(2009a), conditioned by Assumption (V).
+Assumption (V). σ does not vanish (V1 ) and it satisﬁes the equation:
+Z t
+Z t
+Z t
+′
+′
+σt = σ0 +
+as ds +
+σs dWs +
+vs′ dBs′ , t ≥ 0,
+0
+
+0
+
+(V2 )
+
+0
+
+where a′ = (a′t )t≥0 , σ ′ = (σt′ )t≥0 and v ′ = (vt′ )t≥0 are adapted càdlàg, B ′ = (Bt′ )t≥0 is a Brownian
+motion, and W ⊥
+⊥ B ′ (here, A ⊥
+⊥ B means that A and B are stochastically independent).15
+Thus, what remains to be shown is that Proposition 1 is robust to the presence of outliers.
+For consistency with Podolskij and Vetter (2009a), we provide the proof for a more general case of
+pre-averaging, namely,
+K−1
+X
+∗
+∗
+ri,K
+=
+g(j/K)ri+j
+,
+j=1
+
+where ri∗ = Yi/N − Y(i−1)/N , and g : [0, 1] → R is a weighting function assumed to be continuous,
+′
+
+piecewise continuously diﬀerentiable such that its derivative g is piecewise Lipschitz, and g(0) =
+R1
+g(1) = 0 and 0 g 2(u)du > 0. We deﬁne the following constants that are associated with g:
+ψ1 =
+
+Z 1
+
+′
+
+2
+
+(g (s)) ds,
+
+ψ2 =
+
+0
+
+Z 1
+
+g 2 (s) ds.
+
+0
+
+The noise-robust variation measures are now deﬁned as follows:
+N −K+1
+X
+ω
+b 2 ψ1K
+1
+N
+∗
+2
+|r
+|
+−
+,
+RV =
+i,K
+N − K + 2 Kψ2K i=0
+θ2 ψ2K
+∗
+
+1 π
+N
+BV =
+N − 2K + 2 Kψ2K 2
+∗
+
+N −2K+1
+X
+i=0
+
+15
+
+∗
+∗
+|ri,K
+||ri+K,K
+|−
+
+ω
+b 2 ψ1K
+,
+θ2 ψ2K
+
+This assumption says that σ is of continuous semimartingale form. Note the appearance of W in σ, which is
+the Brownian motion from the price equation in Eq. (1). This allows for leverage eﬀects (e.g., Christie, 1982). If
+X itself is a continuous process, then Assumption (V) is a weak regularity condition, which is fulﬁlled for many
+ﬁnancial models. For example, if X is a unique, strong solution of a stochastic diﬀerential equation, then under
+some smoothness conditions on the volatility function σ = σ(t, Xt ), Assumption (V2 ) (with vs′ = 0 for all s) is a
+direct consequence of Itô’s Lemma. If X is not continuous, as in Eq. (1), then σ is potentially discontinuous as
+well. In fact, there is some empirical support for allowing σ to jump, e.g., Eraker, Johannes, and Polson (2003).
+We could include that case here at the cost of substantial extra technical rigor. Thus, even though Assumption (V)
+is not a necessary condition, it simpliﬁes some of our proofs considerably. A more general treatment in the highfrequency setting, including the case where σ jumps, is covered by Barndorﬀ-Nielsen, Graversen, Jacod, Podolskij,
+and Shephard (2006). We rule out these technical details here, as they are not important to our exposition.
+
+28
+
+where ψ1K and ψ2K are Riemann approximations to ψ1 and ψ2 that improve ﬁnite sample accuracy:
+ψ1K = K
+
+
+
+2
+K  
+X
+j
+j−1
+−g
+g
+,
+K
+K
+j=1
+
+K−1
+
+ψ2K =
+
+1 X 2
+g
+K j=1
+
+
+
+j
+K
+
+
+
+.
+
+In the main text we have simpliﬁed the above setup by selecting a speciﬁc choice of weight function
+g(x) = min(x, 1 − x) and assumed that K is even. In that case, ψ1K = 1 and ψ2K = ψK .
+To show robustness of the result to outliers, we ﬁrst recall that the deﬁnition in Eq. (3) implies
+that there are only ﬁnitely many i’s such that Oi/N 6= 0. Here, we conﬁne attention to proving
+the outlier robustness of the RV ∗ estimator. The robustness property of BV ∗ can be proved using
+almost identical tools.
+First, we note that the suggested estimator for ω 2 is robust to (ﬁnite activity) outliers, i.e.,
+2
+ω̂AC
+=−
+
+N
+1 X
+(ui − ui−1 )(ui−1 − ui−2 ) + Op (N −1 ).
+N − 1 i=2
+
+Next, we know that with probability converging to one, any interval of the form [i/N, (i+ K)/N]
+contains at most a single outlier. Using that g(0) = g(1) = 0, we can re-express the return on preaveraged prices as follows:
+∗
+=
+ri,K
+
+K h 
+ j i
+X
+j − 1
+−g
+Y(i+j−1)/N .
+g
+K
+K
+j=1
+
+h   
+i
+l−i
+l−i+1
+This shows that an outlier Ol/N in [i/N, (i+K)/N] induces a bias of the form g K −g K
+Ol/N
+∗
+and, as there are ﬁnitely many outliers, only O(K) of the returns ri,K are aﬀected by these. Putting
+the parts together, we conclude that
+RV ∗ [Y ] = RV ∗ [Z] + Op (K −1 )
+where Z = X + u. Thus, the law of large numbers and central limit theorem for RV ∗ are robust to
+the presence of outliers.
+
+Derivation of Eq. (18). In a simple model, it is possible to work out an approximate expression
+for the ﬁnite sample bias of the BV deﬁned by Eq. (6) in the main text in the paper. To this end,
+consider the model
+Z t
+Xt =
+
+σs dWs ,
+
+0
+
+where σ ⊥
+⊥ W . Moreover, we assume that the variance process σ 2 is bounded away from zero and
+has the form
+Z
+Z
+t
+
+σt2 = σ02 +
+
+t
+
+ηs ds +
+
+0
+
+υs dBs ,
+
+0
+
+where B is another Brownian motion with B ⊥
+⊥ W . Let
+N
+
+πX
+|ri−1 ||ri |.
+BV =
+2 i=2
+29
+
+Here, we initially leave out the correction N/(N − 1) used to deﬁne BV in the main text. We add
+it back later.
+Then, the conditional bias of BV is given as
+
+
+!1/2 Z i+1
+!1/2 Z i
+
+ N
+Z 1
+−1  Z i
+ Z 1
+X
+N
+N
+N
+2
+2
+2
+2
+E BV −
+σs ds | σ =
+σs ds
+σs ds
+σs ds −
+σs2 ds.
+−
+N−1
+i−1
+i−1
+i
+
+
+0
+i=1
+
+N
+
+To simplify notation, we deﬁne f (x) =
+
+√
+
+N
+
+N
+
+x and set
+
+ai = N
+Hence,
+
+N
+
+
+
+Z 1
+1
+2
+E BV −
+σs ds | σ =
+N
+0
+
+Z i
+
+N
+
+i−1
+N
+
+σs2 ds.
+
+aN +
+
+N
+−1
+X
+i=1
+
+By Burkholder’s inequality, we get
+
+!
+
+f (ai )(f (ai+1 ) − f (ai )) .
+
+E(|ai+1 − ai |p ) ≤ CN −p/2
+for any p > 0. Thus,
+!
+
+
+Z 1
+N
+−1
+′′
+X
+f
+(a
+)
+1
+i
+aN +
+f (ai ){f ′ (ai )(ai+1 − ai ) +
+(ai+1 − ai )2 } + op (N −1 ).
+E BV −
+σs2 ds | σ =
+N
+2
+0
+i=1
+Note that f ′ (x) = 12 x−1/2 and f ′′ (x) = − 41 x−3/2 . Using this, we deduce that
+N −1
+
+1 X
+1
+1
+f (ai )f ′ (ai )(ai+1 − ai ) =
+(aN − a1 ) =
+(σ 2 − σ02 ) + op (N −1 ).
+N i=1
+2N
+2N 1
+On the other hand,
+N −1
+N −1
+f ′′ (ai )
+1 X 1 (ai+1 − ai )2
+1 X
+2
+f (ai )
+(ai+1 − ai ) = −
+.
+N i=1
+2
+N i=1 8
+ai
+
+Because σ 2 is a continuous semimartingale, a standard approximation scheme yields
+!2
+Z i
+Z i+1
+N
+−1 υ 2i−1
+N −1
+X
+N
+N
+1 X 1 (ai+1 − ai )2
+1 N
+Bs ds −
+Bs ds + op (N −1 ).
+−
+= −N
+2
+i−1
+i
+N i=1 8
+ai
+8
+σ
+i−1
+i=1
+N
+N
+N
+
+Moreover, as
+E
+
+" Z i+1
+N
+
+i
+N
+
+we conclude that
+
+Bs ds −
+
+Z
+
+i
+N
+i−1
+N
+
+N −1
+
+Bs ds
+
+1 1
+1 X 1 (ai+1 − ai )2
+=−
+−
+N i=1 8
+ai
+N 12
+30
+
+#2 !
+
+Z 1
+0
+
+=
+
+2
+,
+3N 3
+
+υs2
+ds + op (N −1 ).
+2
+σs
+
+Putting everything together, we ﬁnd that
+ Z 1 2
+
+
+
+Z 1
+1 2
+1
+υs
+1
+2
+2
+ds + (σ1 + σ0 ) + op (N −1 ).
+E BV −
+σs ds | σ = −
+2
+N
+12
+σ
+2
+0
+0
+s
+Now, applying the ﬁnite sample correction N/(N −1) cancels out the eﬀect of the missing summand
+R1
+and adds an additional 0 σs2 ds/N term to the conditional bias:
+
+ Z 1 2
+
+
+Z 1
+Z 1
+N
+1 2
+1
+1
+υs
+2
+2
+2
+E
+ds + (σ1 + σ0 ) −
+BV −
+σs ds | σ = −
+σs ds + op (N −1 ).
+N −1
+N 12 0 σs2
+2
+0
+0
+
+Note that this expression is not negative in general, but that the sign and magnitude of the dependence on υ are unaﬀected by the adjustment. Finally, taking unconditional expectations and
+assuming that σ 2 is a stationary process, we ﬁnd that
+ Z 1 2 
+
+
+Z 1
+1
+N
+1
+υs
+2
+ds + o(N −1 ).
+E
+BV −
+σs ds = − E
+2
+N −1
+N
+12
+σ
+0
+0
+s
+This is the expression given in the main text, which is negative up to terms of order o(N −1 ).
+
+B
+
+
+
+The explicit form of Σ∗
+
+Proposition 1 does not specify the exact form of the asymptotic covariance matrix Σ∗ . Here, a
+formula for it is provided. We set fi : R2 → R, i = 1, 2, equal to
+f1 (x) = x21 ,
+
+f2 (x) =
+
+|x1 ||x2 |
+.
+µ2
+
+Then, for x ∈ R, u ∈ [0, 1] and l = −1, . . . , 2, we deﬁne
+(ij)
+
+Fl,x,u = cov(fi (S), fj (T ))
+
+1 ≤ i, j ≤ 2,
+
+where S = (S1 , S2 )′ , T = (T1 , T2 )′ are centered and jointly normal with
+(i) Si ⊥Sj , Ti ⊥Tj for all i 6= j.
+(ii) var(Si ) = var(Ti ) = θψ2 x2 + ψθ1 ω 2 for all i.
+(iii) cov(Si+l−1 , Ti ) = θwg (u)x2 + θ1 wg′ (u)ω 2 for all i.
+(iv) cov(Si+l , Ti ) = θwg (1 − u)x2 + θ1 wg′ (1 − u)ω 2 for all i.
+(v) cov(Si , Tj ) = 0 for all |i + l − j − 1| > 1.
+Here, the function wg (u) is given by
+wg (u) =
+
+Z 1−u
+
+g (y) g (y + u) dy.
+
+0
+
+Finally, we get that
+
+Z
+2 Z
+1 X 1 1
+Fl,σs ,u dsdu.
+Σ =
+θψ22 l=−1 0 0
+∗
+
+31
+
+C
+
+Consistency with irregular sampling
+
+We show robustness of the BV ∗ estimator to irregular sampling (the corresponding result for RV ∗
+is almost identical) of the following type: The sampling times are given by 0 = t0 < . . . < tN = 1
+with ti = f (i/N) for a strictly increasing continuously diﬀerentiable function f : [0, 1] → [0, 1] such
+that f (0) = 0 and f (1) = 1.
+∗
+The pre-averaged returns ri,K
+are deﬁned as in the equidistant setting. Following the proofs in
+∗
+∗
+Podolskij and Vetter (2009a), we know that (a) ri,K
+and ri+K,K
+are asymptotically uncorrelated
+∗
+and (b) conditionally on Fti , ri,K is asymptotically distributed according to
+!
+K
+K h 
+j
+
+
+i
+X
+X
+2
+j
+j −1
+N 0, σt2i
+g2
+(ti+j − ti+j−1) + ω 2K
+g
+−g
+.
+K
+K
+K
+j=1
+j=1
+As in Podolskij and Vetter (2009a), we conclude that
+BV ∗ −
+
+1 π
+KψK 2
+
+N −2K+1
+X
+i=0
+
+
+
+ω̂ 2
+∗
+∗
+E |ri,K ||ri+K,K | | Fti − 2
+θ ψK
+
+!
+
+p
+
+→ 0.
+
+Applying the mean value theorem tj − tj−1 ∼ N1 f ′ (j/N) and using the continuity of f ′ and σ, we
+ﬁnd that
+1 π
+KψK 2
+
+N −2K+1
+X
+i=0
+
+N −2K+1
+
+
+1 X
+ω̂ 2
+∗
+∗
+=
+E |ri,K ||ri+K,K | | Fti − 2
+f ′ (i/N)σt2i + op (1).
+θ ψK
+N i=0
+
+Thus,
+∗ p
+
+BV →
+
+Z 1
+0
+
+fs′ σf2s ds =
+
+Z 1
+0
+
+σs2 ds,
+
+where we have used integration by parts and the fact that f (0) = 0, f (1) = 1.
+
+D
+
+BFM ﬁlter and the maxgap measure
+
+Figure D1 provides an illustration in which the quote and trade feed go temporarily out of sync and
+shows the distinct ways in which the data cleaning ﬁlters operate.16 The BNHLS procedure ends
+up removing large chunks of data, leaving a large but spurious ﬁltering-induced jump in the cleaned
+price process. In contrast, the BFM ﬁlter matches most of the trades over the backward-looking
+window and the resulting ﬁltered trade price series is relatively smooth. Table D1 reports summary
+statistics by instrument on the number of outliers identiﬁed, matched, and removed by the BFM
+ﬁlter.
+In Section 3.3.2 we use the “maxgap” Gi to measure the price discontinuity observed in tick
+data over every ﬁve-minute episode where the Lee and Mykland (2008) test identiﬁes a jump. The
+16
+
+While in recent data sets this phenomenon in which trades lag quotes is rare and restricted to short periods of
+heightened market activity when the exchange networks are at maximum capacity, it is routinely observed in the
+earlier high-frequency data sets (see, e.g., Lee and Ready, 1991).
+
+32
+
+construction is as follows. For a jump Ji identiﬁed at the ith ﬁve-minute interval, we take the tick
+data series {Ytj } for all j where tj ∈ [(i − 1)/78, i/78] and use this to compute:
+Gi = gj ∗
+where
+
+where j ∗ = argmax |gj |
+j
+
+
+max(0, min
+k∈Fj Ytk − maxk∈Bj Ytk ) for Ytj+1 > Ytj
+gj =
+min(0, maxk∈F Yt − mink∈B Yt ) for Yt < Yt
+j
+j
+j+1
+j
+k
+k
+
+and Bj = {k : tk ∈ [tj − δ, tj ]}, Fj = {k : tk ∈ [tj+1 , tj+1 + δ]} for δ ≥ 0. In words, for a candidate
+jump from Ytj to Ytj+1 ≫ Ytj , gj is deﬁned as the diﬀerence between the lowest price observed in
+a local window Fj of length δ just after the candidate jump and the highest price observed in a
+local window Bj just before the candidate jump. As such, the gap measure gj identiﬁes the largest
+range of price points that are jumped over in a short timespan around the j th observation. Based
+on this, the maxgap measure Gi then simply identiﬁes the largest tick price gap over the interval.
+Compared to simply calculating tick returns (a special case with δ = 0), the maxgap measure
+reduces the impact of noise (see below for an illustration) and while |gj | ≤ |Ytj+1 − Ytj |, in a genuine
+jump scenario the diﬀerence is negligible and they can be interpreted alike.
+Figure D2 provides an illustration of the maxgap calculation for four diﬀerent scenarios. In
+Scenario I, the maxgap and max return identify the same jump location. The diﬀerence in their
+value is attributable to microstructure noise (maxgap is largely robust to this) but it should be
+negligible for genuine jumps. In Scenario II, the max return selects a diﬀerent location and takes
+the value -4 while maxgap is +3. In Scenario III, maxgap is zero whereas the max return is +3.
+In Scenario IV, maxgap and max return both identify the same two jumps. The genuine jumps in
+Scenarios I, II, and IV are identiﬁed correctly by maxgap, as is the no-jump in Scenario III. On the
+other hand, the max return only works well in Scenarios I and IV but picks up noise in the other
+two scenarios resulting in the incorrect identiﬁcation of the jump in Scenario II and a false positive
+in Scenario III.
+
+33
+
+Table D1: BFM trade ﬁlter statistics
+raw
+nobs
+
+cand.
+outliers
+
+frwd match
+nobs τ (s)
+
+bwrd match
+nobs τ (m)
+
+outliers
+
+34
+
+Panel A : Equity indexes
+QQQ
+137,007
+1,720
+SPY
+434,809 18,705
+Average 285,908
+10212
+
+233
+7,657
+3945
+
+0.21
+0.15
+0.18
+
+817
+10,005
+5,411
+
+2.18
+0.80
+1.49
+
+670
+1,043
+856
+
+Panel B : DJIA constituents
+AA
+71,173
+606
+AXP
+57,510
+623
+BA
+31,515
+284
+BAC
+250,433
+1,985
+CAT
+43,157
+408
+CSCO
+129,261
+852
+CVX
+59,509
+846
+DD
+33,857
+273
+DIS
+48,352
+317
+GE
+153,779
+1,031
+HD
+64,837
+491
+HPQ
+70,454
+808
+IBM
+37,931
+474
+
+118
+165
+52
+474
+95
+161
+226
+66
+65
+210
+88
+209
+94
+
+0.20
+0.18
+0.17
+0.21
+0.17
+0.19
+0.18
+0.17
+0.20
+0.23
+0.19
+0.18
+0.18
+
+422
+400
+192
+1,265
+267
+461
+546
+178
+201
+654
+339
+526
+321
+
+1.54
+1.46
+1.76
+1.66
+1.64
+2.29
+1.57
+1.65
+2.11
+2.17
+2.08
+1.57
+1.81
+
+67
+58
+41
+247
+46
+229
+75
+29
+51
+167
+64
+73
+59
+
+raw
+nobs
+
+cand.
+outliers
+
+Panel B (cont’d)
+INTC
+137,138
+JNJ
+53,799
+JPM
+166,702
+KFT
+40,369
+KO
+44,270
+MCD
+38,217
+MMM
+23,767
+MRK
+58,191
+MSFT
+148,724
+PFE
+96,037
+PG
+54,424
+T
+84,676
+TRV
+21,815
+UTX
+28,421
+VZ
+59,018
+WMT
+72,407
+XOM
+116,572
+Average
+76,544
+
+667
+632
+2,673
+249
+445
+433
+175
+588
+1,209
+312
+679
+818
+114
+210
+456
+870
+2,996
+751
+
+frwd match
+nobs τ (s)
+
+bwrd match
+nobs τ (m)
+
+109
+154
+895
+44
+104
+95
+38
+112
+226
+44
+175
+122
+24
+46
+90
+223
+926
+182
+
+336
+421
+1,621
+165
+294
+294
+113
+421
+620
+204
+447
+585
+71
+135
+300
+564
+1,882
+475
+
+0.17
+0.20
+0.19
+0.19
+0.20
+0.17
+0.18
+0.19
+0.19
+0.17
+0.18
+0.21
+0.15
+0.17
+0.19
+0.19
+0.19
+0.19
+
+3.08
+1.72
+1.17
+1.70
+1.75
+1.48
+1.92
+1.36
+2.46
+3.02
+1.57
+1.50
+1.95
+1.86
+1.70
+1.40
+1.08
+1.80
+
+outliers
+223
+57
+157
+39
+47
+44
+24
+55
+363
+64
+57
+111
+19
+29
+67
+84
+188
+94
+
+Note. This table reports the average daily unﬁltered number of observations (“raw nobs”), the number of candidate outliers as identiﬁed by the ﬁltering procedure (“cand. outliers”), the
+number of candidate outliers matched forwards (“frwd match”) and backwards (“bwrd match”) in time together with the average displacement in seconds (“τ (s)”) and minutes (“τ (m)”),
+and the number of remaining outliers that are removed from the sample (“outliers”). Because the ﬁltering step is applied to the data before aggregation by millisecond timestamp, the
+number of observations here is substantially higher than what is reported in Table 3 of the paper. Also note that the ﬁlter is not applied to the currency pair data and hence, these are
+omitted from this table.
+
+Figure D1: Trade ﬁlter illustration (SPY, 18 Sep 2007).
+Panel A: Full trading day
+
+Panel B: Episode where trades lag quotes
+
+152.5
+
+152.0
+
+152.0
+
+Mid−quote
+Trade
+
+Mid−quote
+Trade
+151.5
+
+151.5
+151.0
+151.0
+150.5
+Price
+
+Price
+
+150.5
+
+150.0
+
+150.0
+
+149.5
+149.5
+149.0
+149.0
+148.5
+
+148.0
+09:00
+
+10:00
+
+11:00
+
+12:00
+
+13:00
+
+14:00
+
+15:00
+
+148.5
+14:14
+
+16:00
+
+14:15
+
+Time
+
+Panel C: Trades post BNHLS ﬁlter
+151.5
+
+Mid−quote
+Trade
+
+Mid−quote
+Trade
+
+151.0
+
+151.0
+
+150.5
+
+150.5
+
+Price
+
+Price
+
+14:17
+
+Panel D: Trades post BFM ﬁlter
+
+151.5
+
+150.0
+
+150.0
+
+149.5
+
+149.5
+
+149.0
+
+149.0
+
+148.5
+14:14
+
+14:16
+Time
+
+14:15
+
+14:16
+
+148.5
+14:14
+
+14:17
+
+Time
+
+14:15
+
+14:16
+
+14:17
+
+Time
+
+Note. Panel A draws the mid-quote and unﬁltered trades for SPY on September 18, 2007. Panel B zooms in on the volatile episode
+beginning at 14:15 following an unexpected interest rate cut by the FED. Panel C (D) plots the mid-quote and remaining trades over
+this period after ﬁltering the data with the BNHLS (BFM) procedure.
+
+35
+
+Figure D2: An illustration of the maxgap calculation based on simulated data.
+Scenario I
+
+Scenario II
+1003
+
+1008
+
+1002
+
+1006
+
+1001
+
+1004
+
+1000
+Price
+
+Price
+
+max
+gap
+
+max
+gap
+
+1010
+
+1002
+
+999
+
+1000
+
+998
+
+998
+
+997
+
+996
+09:23:26
+
+09:23:27
+
+09:23:28
+Time
+
+09:23:29
+
+996
+11:57:11
+
+09:23:30
+
+11:57:12
+
+11:57:13
+
+11:57:14
+
+11:57:15
+
+11:57:16
+
+14:07:39
+
+14:07:40
+
+Time
+
+Scenario III
+
+Scenario IV
+
+1002
+
+1002
+
+1001
+
+1001
+
+1000
+
+999
+
+999
+
+998
+13:10:59
+
+13:11:00
+
+13:11:01
+
+13:11:02
+
+13:11:03
+
+13:11:04
+
+998
+14:07:35
+
+max
+gap
+
+maxgap = 0
+1000
+
+14:07:36
+
+max
+gap
+
+Price
+
+1003
+
+Price
+
+1003
+
+14:07:37
+
+14:07:38
+Time
+
+Time
+
+Note. The crosses represent tick price observations, the circles identify the maximum price increment, the horizontal lines indicate the
+local window width used by the maxgap procedure. The vertical line segment is the actual maxgap (not shown in Panel C, because the
+maxgap is zero).
+
+36
+
+References
+Aı̈t-Sahalia, Y., 2004, “Disentangling diﬀusion from jumps,” Journal of Financial Economics, 74(3), 487–
+528.
+Aı̈t-Sahalia, Y., and J. Jacod, 2009a, “Estimating the degree of activity of jumps in high frequency data,”
+Annals of Statistics, 37(5), 2202–2244.
+, 2009b, “Testing for jumps in a discretely observed process,” Annals of Statistics, 37(1), 184–222.
+Alizadeh, S., M. W. Brandt, and F. X. Diebold, 2002, “Range-based estimation of stochastic volatility
+models,” Journal of Finance, 57(3), 1047–1092.
+Andersen, T. G., L. Benzoni, and J. Lund, 2002, “An empirical investigation of continuous-time equity
+return models,” Journal of Finance, 57(4), 1239–1284.
+Andersen, T. G., T. Bollerslev, and F. X. Diebold, 2007, “Roughing it up: Including jump components in
+the measurement, modeling and forecasting of return volatility,” Review of Economics and Statistics,
+89(4), 701–720.
+, 2010, “Parametric and nonparametric volatility measurement,” in Handbook of Financial Econometrics, ed. by L. P. Hansen, and Y. Ait-Sahalia. North-Holland, Amsterdam, pp. 67–138.
+Andersen, T. G., T. Bollerslev, F. X. Diebold, and P. Labys, 2001, “The distribution of realized exchange
+rate volatility,” Journal of the American Statistical Association, 96(453), 42–55.
+Andersen, T. G., T. Bollerslev, and X. Huang, 2011, “A reduced form framework for modeling volatility
+of speculative prices based on realized variation measures,” Journal of Econometrics, 160(1), 176–189.
+Andersen, T. G., D. Dobrev, and E. Schaumburg, 2012, “Jump-robust volatility estimation using nearest
+neighbour truncation,” Journal of Econometrics, 169(1), 75–93.
+Ane, T., and H. Geman, 2000, “Order ﬂow, transaction clock, and normality of asset returns,” Journal of
+Finance, 55(5), 2259–2284.
+Back, K., 1991, “Asset prices for general processes,” Journal of Mathematical Economics, 20(4), 371–395.
+Bakshi, G. S., C. Cao, and Z. Chen, 1997, “Empirical performance of alternative option pricing models,”
+Journal of Finance, 52(2), 2003–2049.
+Bakshi, G. S., N. Ju, and H. Ou-Yang, 2006, “Estimation of continuous-time models with an application
+to equity volatility,” Journal of Financial Economics, 82(1), 227–249.
+Bakshi, G. S., and G. Panayotov, 2010, “First-passage probability, jump models, and intra-horizon risk,”
+Journal of Financial Economics, 95(1), 20–40.
+Ball, C. A., and W. N. Torous, 1983, “A simpliﬁed jump process for common stock returns,” Journal of
+Financial and Quantitative Analysis, 18(1), 53–65.
+
+37
+
+, 1985, “On jumps in common stock prices and their impact on call option pricing,” Journal of
+Finance, 40(1), 155–173.
+Barndorﬀ-Nielsen, O. E., S. E. Graversen, J. Jacod, M. Podolskij, and N. Shephard, 2006, “A central limit
+theorem for realized power and bipower variations of continuous semimartingales,” in From Stochastic Calculus to Mathematical Finance: The Shiryaev Festschrift, ed. by Y. Kabanov, R. Lipster, and
+J. Stoyanov. Springer, Heidelberg, pp. 33–68.
+Barndorﬀ-Nielsen, O. E., P. R. Hansen, A. Lunde, and N. Shephard, 2008, “Designing realized kernels to
+measure the ex post variation of equity prices in the presence of noise,” Econometrica, 76(6), 1481–1536.
+, 2009, “Realized kernels in practice: trades and quotes,” Econometrics Journal, 12(3), 1–32.
+Barndorﬀ-Nielsen, O. E., and N. Shephard, 2004, “Power and bipower variation with stochastic volatility
+and jumps,” Journal of Financial Econometrics, 2(1), 1–48.
+, 2006, “Econometrics of testing for jumps in ﬁnancial economics using bipower variation,” Journal
+of Financial Econometrics, 4(1), 1–30.
+, 2007, “Variation, jumps, market frictions and high frequency data in ﬁnancial econometrics,” in
+Advances in Economics and Econometrics: Theory and Applications, Ninth World Congress, Volume
+III, ed. by R. Blundell, P. Torsten, and W. K. Newey. Cambridge University Press, Cambridge, pp.
+328–372.
+Barndorﬀ-Nielsen, O. E., N. Shephard, and M. Winkel, 2006, “Limit theorems for multipower variation in
+the presence of jumps,” Stochastic Processes and their Applications, 116(5), 796–806.
+Bates, D. S., 1996, “Jumps and stochastic volatility: Exchange rate processes implicit in Deutsche Mark
+options,” Review of Financial Studies, 9(1), 69–107.
+, 2000, “Post-‘87 crash fears in the S&P500 futures option market,” Journal of Econometrics, 94,
+181–238.
+, 2006, “Maximum likelihood estimation of latent aﬃne processes,” Review of Financial Studies,
+19(3), 909–965.
+, 2012, “U.S. stock market crash risk, 1926 – 2010,” Journal of Financial Economics, 105(2),
+229–259.
+Beckers, S., 1981, “A note on estimating the parameters of the diﬀusion-jump model of stock returns,”
+Journal of Financial and Quantitative Analysis, 16(1), 127–140.
+Black, F., 1976, “Studies of stock market volatility changes,” in Proceedings of the American Statistical
+Association, pp. 177–181.
+, 1986, “Noise,” Journal of Finance, 41(3), 529–543.
+
+38
+
+Bollerslev, T., U. Kretschmer, C. Pigorsch, and G. Tauchen, 2009, “A discrete-time model for daily S&P500
+returns and realized variations: jumps and leverage eﬀects,” Journal of Econometrics, 150(2), 151–166.
+Bollerslev, T., T. H. Law, and G. Tauchen, 2008, “Risk, jumps, and diversiﬁcation,” Journal of Econometrics, 144(1), 234–256.
+Bollerslev, T., and H. Zhou, 2002, “Estimating stochastic volatility diﬀusion using conditional moments of
+integrated volatility,” Journal of Econometrics, 109(1), 33–65.
+Chernov, M., A. R. Gallant, E. Ghysels, and G. Tauchen, 2003, “Alternative models for stock price
+dynamics,” Journal of Econometrics, 116(1–2), 225–257.
+Christensen, K., R. C. A. Oomen, and M. Podolskij, 2010, “Realised quantile-based estimation of the
+integrated variance,” Journal of Econometrics, 159(1), 74–98.
+, 2013, “Appendix to Fact or friction: Jumps at ultra high frequency,” Working paper, University
+of Aarhus, Deutsche Bank, and University of Aarhus.
+Christie, A. A., 1982, “The stochastic behavior of common stock variances: Value, leverage and interest
+rate eﬀects,” Journal of Financial Economics, 10(4), 407–432.
+Corsi, F., D. E. Pirino, and R. Renò, 2010, “Threshold bipower variation and the impact of jumps on
+volatility forecasting,” Journal of Econometrics, 159(2), 276–288.
+Corsi, F., and R. Renò, 2012, “Discrete-time volatility forecasting with persistent leverage eﬀect and the
+link with continuous-time volatility modeling,” Journal of Business and Economic Statistics, 30(3),
+368–380.
+Cox, J. C., and S. A. Ross, 1976, “The valuation of options for alternative stochastic processes,” Journal
+of Financial Economics, 3(1–2), 145–166.
+Delbaen, F., and W. Schachermayer, 1994, “A general version of the fundamental theorem of asset pricing,”
+Mathematische Annalen, 300(1), 463–520.
+Diebold, F. X., and G. H. Strasser, 2013, “On the correlation structure of microstructure noise: A ﬁnancial
+economic approach,” Review of Economic Studies, 80(4), 1304–1337.
+Duﬃe, D., and J. Pan, 2001, “Analytical value-at-risk with jumps and credit risk,” Finance and Stochastics,
+5(2), 155–180.
+Duﬃe, D., J. Pan, and K. J. Singleton, 2000, “Transform analysis and asset pricing for aﬃne jumpdiﬀusions,” Econometrica, 68(6), 1343–1376.
+Easley, D., M. M. L. de Prado, and M. O’Hara, 2011, “The microstructure of the “ﬂash crash”: Flow
+toxicity, liquidity crashes and the probability of informed trading,” Journal of Portfolio Management,
+37(2), 118–128.
+
+39
+
+Eraker, B., 2004, “Do stock prices and volatility jump? Reconciling evidence from spot and option prices,”
+Journal of Finance, 59(3), 1367–1403.
+Eraker, B., M. Johannes, and N. Polson, 2003, “The impact of jumps in volatility and returns,” Journal
+of Finance, 58(3), 1269–1300.
+Fama, E. F., 1965, “The behavior of stock-market prices,” Journal of Business, 38(1), 34–105.
+Gatheral, J., and R. C. A. Oomen, 2010, “Zero-intelligence realized variance estimation,” Finance and
+Stochastics, 14(2), 249–283.
+Gloter, A., and J. Jacod, 2001a, “Diﬀusions with measurement errors. I - local asymptotic normality,”
+ESAIM: Probability and Statistics, 5, 225–242.
+, 2001b, “Diﬀusions with measurement errors. II - measurement errors,” ESAIM: Probability and
+Statistics, 5, 243–260.
+Hansen, P. R., and A. Lunde, 2006, “Consistent ranking of volatility models,” Journal of Econometrics,
+131(1–2), 97–121.
+Hautsch, N., and M. Podolskij, 2013, “Pre-averaging based estimation of quadratic variation in the presence
+of noise and jumps: Theory, implementation, and empirical evidence,” Journal of Business and Economic
+Statistics, 31(2), 165–183.
+Heston, S. L., 1993, “A closed-form solution for options with stochastic volatility with applications to bond
+and currency options,” Review of Financial Studies, 6(2), 327–343.
+Huang, X., and G. Tauchen, 2005, “The relative contribution of jumps to total price variance,” Journal of
+Financial Econometrics, 3(4), 456–499.
+Jacod, J., Y. Li, P. A. Mykland, M. Podolskij, and M. Vetter, 2009, “Microstructure noise in the continuous
+case: The pre-averaging approach,” Stochastic Processes and their Applications, 119(7), 2249–2276.
+Jarrow, R. A., and E. R. Rosenfeld, 1984, “Jump risks and the intertemporal capital asset pricing model,”
+Journal of Business, 57(3), 337–351.
+Jiang, G. J., I. Lo, and A. Verdelhan, 2011, “Information shocks, liquidity shocks, jumps, and price
+discovery: Evidence from the U.S. Treasury market,” Journal of Financial and Quantitative Analysis,
+46(2), 527–551.
+Jiang, G. J., and R. C. A. Oomen, 2007, “Estimating latent variables and jump diﬀusion models using
+high-frequency data,” Journal of Financial Econometrics, 5(1), 1–30.
+Johannes, M., 2004, “The statistical and economic role of jumps in continuous-time interest rate models,”
+Journal of Finance, 59(1), 227–260.
+Jorion, P., 1988, “On jump processes in the foreign exchange and stock markets,” Review of Financial
+Studies, 1(4), 427–445.
+
+40
+
+Kirilenko, A., A. S. Kyle, M. Samadi, and T. Tuzun, 2017, “The Flash Crash: High frequency trading in
+an electronic market,” Journal of Finance, 72(3), 967–998.
+Lee, C. M. C., and M. J. Ready, 1991, “Inferring trade direction from intraday data,” Journal of Finance,
+46(2), 733–746.
+Lee, S. S., and P. A. Mykland, 2008, “Jumps in ﬁnancial markets: A new nonparametric test and jump
+dynamics,” Review of Financial Studies, 21(6), 2535–2563.
+Liu, J., F. Longstaﬀ, and J. Pan, 2003, “Dynamic asset allocation with event risk,” Journal of Finance,
+58(1), 231–259.
+Maheu, J. M., and T. H. McCurdy, 2004, “News arrival, jump dynamics, and volatility components for
+individual stock returns,” Journal of Finance, 59(2), 755–793.
+Mancini, C., 2004, “Estimation of the characteristics of jump of a general Poisson-diﬀusion model,” Scandinavian Actuarial Journal, 2004(1), 42–52.
+, 2009, “Non-parametric threshold estimation for models with stochastic diﬀusion coeﬃcient and
+jumps,” Scandinavian Journal of Statistics, 36(2), 270–296.
+Mandelbrot, B. B., 1963, “The variation of certain speculative prices,” Journal of Business, 36(4), 394–419.
+Merton, R. C., 1976, “Option pricing when underlying stock returns are discontinuous,” Journal of Financial Economics, 3(1–2), 125–144.
+Mykland, P. A., N. Shephard, and K. Sheppard, 2012, “Eﬃcient and feasible inference for the components
+of ﬁnancial variation using blocked multipower variation,” Working paper, University of Chicago.
+Niederhoﬀer, V., and M. F. M. Osborne, 1966, “Market making and reversal on the stock exchange,”
+Journal of the American Statistical Association, 61(316), 897–916.
+O’Hara, M., 2010, “What is a quote?,” Journal of Trading, 5(2), 10–16.
+Oomen, R. C. A., 2006, “Properties of realized variance under alternative sampling schemes,” Journal of
+Business and Economic Statistics, 24(2), 219–237.
+Pan, J., 2002, “The jump-risk premia implicit in options: Evidence from an integrated time-series study,”
+Journal of Financial Economics, 63(1), 3–50.
+Patton, A. J., and K. Sheppard, 2015, “Good volatility, bad volatility: Signed jumps and the persistence
+of volatility,” Review of Economics and Statistics, 97(3), 683–697.
+Podolskij, M., and M. Vetter, 2009a, “Bipower-type estimation in a noisy diﬀusion setting,” Stochastic
+Processes and their Applications, 119(9), 2803–2831.
+, 2009b, “Estimation of volatility functionals in the simultaneous presence of microstructure noise
+and jumps,” Bernoulli, 15(3), 634–658.
+
+41
+
+Press, S. J., 1967, “A compound events model for security prices,” Journal of Business, 40(3), 317–335.
+Protter, P. E., 2004, Stochastic Integration and Diﬀerential Equations. Springer, Berlin, 1st edn.
+Roll, R., 1984, “A simple implicit measure of the eﬀective bid-ask spread in an eﬃcient market,” Journal
+of Finance, 39(4), 1127–1139.
+Tauchen, G. E., and H. Zhou, 2011, “Realized jumps on ﬁnancial markets and predicting credit spreads,”
+Journal of Econometrics, 160(1), 102–118.
+Todorov, V., 2009, “Estimation of continuous-time stochastic volatility models with jumps using highfrequency data,” Journal of Econometrics, 148(2), 131–148.
+Zhang, L., 2006, “Eﬃcient estimation of stochastic volatility using noisy observations: A multi-scale approach,” Bernoulli, 12(6), 1019–1043.
+Zhang, L., P. A. Mykland, and Y. Aı̈t-Sahalia, 2005, “A tale of two time scales: determining integrated
+volatility with noisy high-frequency data,” Journal of the American Statistical Association, 100(472),
+1394–1411.
+
+42
+
+

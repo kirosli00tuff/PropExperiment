@@ -1,0 +1,58 @@
+## A. MP edges (1 -/+ sqrt q)^2
+laloux: q=0.3102 lam-=0.1963 lam+=2.4240
+45roots: q=0.045 lam-=0.6207 lam+=1.4693
+538trials: q=0.4304 lam-=0.1183 lam+=2.7425
+book40: q=2.035e-05 lam-=0.9910 lam+=1.0090
+exact E[max of 200 iid N(0,1)] by quadrature vs BLdP formula: 2.7460 vs 2.7655
+## B. effective number of trials: 200 null trials, 5 clusters of 40, rho_in 0.6, rho_all 0.1, T=750
+true top eigenvalues: [40.4 20.4 20.4 20.4 20.4  0.4]  (analytic: 1+39*0.6+160*0.1=40.4, 1+39*0.6-40*0.1=20.4)
+MC mean max SR = 0.0835 (reader 0.0849); mean cross-sectional var = 0.001043; sqrt = 0.0323 (marginal 1/sqrt(T) = 0.0365)
+formula N=M=200: 0.0893 (reader 0.0913, +7.6%); here +7.0%
+N implied by MC: 117 (reader 112)
+MP edge 2.299; n above edge 5.0; entropy eff rank 37.2; participation 11.8; rho_bar 0.2016; N_hat 159.9
+  E[max] with N=5.0: 0.0385
+  E[max] with N=37.2: 0.0698
+  E[max] with N=11.8: 0.0535
+  E[max] with N=159.9: 0.0869
+theory check: (1-rho_bar)/T = 0.001069 vs measured 0.001043
+## C. cleaning race p=100, n=200, population eigs 80x1, 15x3, 5x10, GMV OOS var / oracle
+sample    : 1.953 (se 0.036)
+clip      : 1.192 (se 0.004)
+lw_linear : 1.208 (se 0.007)
+rie       : 1.162 (se 0.007)
+nls       : 1.098 (se 0.003)
+reader: sample 1.967, clip 1.283, LW 1.228, RIE 1.181, NLS 1.127; theory sample ~ (n-1)/(n-p-1) = 2.010
+## D. James-Stein / EB on 12 annualized Sharpe ratios
+zbar=0.0083 S=10.869
+T=84: se^2=3.000 B=1.0000 JS winner=0.0083 | tau2=0.0000 kappa=0.0000 EB winner=0.0083 | E[max] K=12 = 2.8835
+T=1000: se^2=0.252 B=0.2087 JS winner=1.5053 | tau2=0.7361 kappa=0.7450 EB winner=1.4176 | E[max] K=12 = 0.8357
+PhiInv(1-1/12)=1.3830, PhiInv(1-1/(12e))=1.8712; (K-1)s^2 at T=84 = 33
+## D2. two-level MoM: 3 families x 4, se 0.08
+within SS=0.0457, /9=0.0051 < se^2=0.0064 -> tau_w2=0.0; family means [ 0.2    -0.0125 -0.1675]
+reader's tau_b2 (about grand mean, ddof=1) = 0.0324, kappa_b=0.953, posteriors toward 0: [ 0.1906 -0.0119 -0.1596]
+prior-mean-0 MoM tau_b2 = mean(zbar_i^2)-se_f^2 = 0.0211, kappa_b=0.930, posteriors: [ 0.1859 -0.0116 -0.1557]
+grand-mean-centred posteriors (shrink toward 0.0067): [ 0.1909 -0.0116 -0.1593]
+## E. BIC weights from the reader's BIC values
+dBIC=[3.069 0.    7.601] raw w=[0.2156 1.     0.0224] sum=1.2379 weights=[0.174 0.808 0.018]; BMA beta = -0.1606
+## F. entropy of the bounce chain
+iid H = 0.9219 bits; log2 3 = 1.585
+stationary [0.1053 0.7895 0.1053]; marginal H 0.9530; rate 0.9366; gap 0.0164
+n=2000: block rate k=4 0.8950 (bias +0.0416), k=8 0.6663, LZ 0.8911; MM scale (3^5-1)/(2n ln2)=0.0873, (3^5-3^4)/(2n ln2)=0.0584
+n=20000: block rate k=4 0.9384 (bias -0.0018), k=8 0.8522, LZ 0.9100; MM scale (3^5-1)/(2n ln2)=0.0087, (3^5-3^4)/(2n ln2)=0.0058
+3^9 = 19683
+theory SampEn iid Gaussian r=0.2sd: 2.1851 (reader measured 2.17-2.19)
+## G. TE null bias and power; Gaussian MI
+nu for k=l=1, alphabet 3: (3-1)*3*(3-1)=12; null E[TE] ~ nu/(2n): n=20000 -> 0.000300
+  nu=2 TE=0.0001: n for 80% power = 48174
+  nu=2 TE=0.001: n for 80% power = 4818
+  nu=2 TE=0.01: n for 80% power = 482
+  nu=12 TE=0.0001: n for 80% power = 86680
+  nu=12 TE=0.001: n for 80% power = 8668
+  nu=12 TE=0.01: n for 80% power = 867
+Gaussian MI rho=0.3: 0.04716 nats
+## H. fills needed for a 0.1-tick effect, sd 1.5, two-sided, power 0.8
+K=1: n = 1766 (z_a=1.9600)
+K=12: n = 3092 (z_a=2.8653)
+K=50: n = 3842 (z_a=3.2905)
+I1 two-sample: 2*(2.8016*1.5/0.1)^2 = 3532 per tercile
+cloud: 4*0.89=3.56, 4*1.79=7.16, 4*1.99=7.96

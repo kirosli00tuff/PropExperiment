@@ -1,0 +1,42 @@
+== 1. A-S paper parameters (s=100,T=1,sigma=2,gamma=0.1,k=1.5,A=140), t=0
+q=+0 r=100.0000 spread=1.6908 bid=99.1546 ask=100.8454
+q=+1 r=99.6000 spread=1.6908 bid=98.7546 ask=100.4454
+q=-2 r=100.8000 spread=1.6908 bid=99.9546 ask=101.6454
+spread terms: gamma*sigma^2*tau=0.4000 ; (2/g)ln(1+g/k)=1.2908
+== 2. MES-like illustration (ticks, seconds): sigma=1.0 tick/sqrt(s), k=1.5 /tick, A=0.5 /s, gamma=0.01 /tick, tau=600 s
+q=+0 r-s=0.000 spread=7.329 delta_b=3.664 delta_a=3.664
+q=+1 r-s=-6.000 spread=7.329 delta_b=9.664 delta_a=-2.336
+q=-1 r-s=6.000 spread=7.329 delta_b=-2.336 delta_a=9.664
+1/k=0.6667  (1/g)ln(1+g/k)=0.6645
+== 3. GLFT paper Fig.1 params: sigma=0.3 tick/sqrt(s), A=0.9/s, k=0.3/tick, gamma=0.01/tick, T=600 s, Q=10 (paper does not state Q in caption read)
+alpha=0.000135 eta=0.325678
+q=0 exact(t=0) db=3.324 da=3.324 | approx db=3.313 da=3.313 c1=3.279 c2=0.068
+q=1 exact(t=0) db=3.414 da=3.234 | approx db=3.381 da=3.245 c1=3.279 c2=0.068
+q=5 exact(t=0) db=3.848 da=2.840 | approx db=3.652 da=2.974 c1=3.279 c2=0.068
+== 4. GLFT with MES-like params, 1-lot limit Q=1 and Q=3, tau=600 s
+Q=1 alpha=0.00750 eta=0.18333 q=-1:(db=0.424,da=nan) q=+0:(db=0.905,da=0.905) q=+1:(db=nan,da=0.424)
+Q=3 alpha=0.00750 eta=0.18333 q=-3:(db=0.158,da=nan) q=-2:(db=0.409,da=1.171) q=-1:(db=0.583,da=0.920) q=+0:(db=0.746,da=0.746) q=+1:(db=0.920,da=0.583) q=+2:(db=1.171,da=0.409) q=+3:(db=nan,da=0.158)
+approx q=0: db=0.732 da=0.732 c1=0.664 c2=0.135; half-spread at touch on 1-tick book = 0.5
+== 5. Fee arithmetic (program table rules/products.py: MES 1.25 $/tick, RT 1.22 $; ES 12.50 $/tick, RT 3.78 $)
+MES: half-spread $0.625, fee/side $0.610, net per fill before markout $0.015 = 0.0120 tick; RT fee/tick = 0.976
+ES: half-spread $6.250, fee/side $1.890, net per fill before markout $4.360 = 0.3488 tick; RT fee/tick = 0.302
+== 6. Calibration of A,k from toy counts over T=3600 s
+lambda: [0.5     0.11111 0.025   0.00556] se: [0.01179 0.00556 0.00264 0.00124]
+WLS logA=0.0568 A=1.0585/s k=1.5007/tick se(k)=0.0362
+OLS slope=-1.4991 -> k=1.4991, A=1.0567
+== 7. Sample size for mean net markout test, t>3 target
+sd=1.0 tick, edge=0.02 tick -> n=22,500 fills
+sd=1.0 tick, edge=0.05 tick -> n=3,600 fills
+sd=1.0 tick, edge=0.1 tick -> n=900 fills
+sd=2.0 tick, edge=0.02 tick -> n=90,000 fills
+sd=2.0 tick, edge=0.05 tick -> n=14,400 fills
+sd=2.0 tick, edge=0.1 tick -> n=3,600 fills
+sd=3.2 tick, edge=0.02 tick -> n=230,400 fills
+sd=3.2 tick, edge=0.05 tick -> n=36,864 fills
+sd=3.2 tick, edge=0.1 tick -> n=9,216 fills
+== 8. Almgren-Chriss example (ticks, seconds)
+lambda=0.1 sigma=1.0 eta=0.05 -> kappa=1.4142/s half-life theta=0.71s
+lambda=0.0001 sigma=1.0 eta=0.05 -> kappa=0.0447/s half-life theta=22.36s
+lambda=0.0001 sigma=1.0 eta=5.0 -> kappa=0.0045/s half-life theta=223.61s
+X=20, T=60.0s, N=6, lambda=0.001, eta=5.0: kappa=0.0141; holdings: [20.0, 16.09, 12.5, 9.16, 6.01, 2.97, 0.0]
+trades: [3.91, 3.59, 3.34, 3.15, 3.03, 2.97]

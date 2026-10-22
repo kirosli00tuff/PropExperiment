@@ -1,0 +1,3078 @@
+Latency and Liquidity Risk
+Álvaro Carteaa,b , Sebastian Jaimungalc , Leandro Sánchez-Betancourta
+a
+
+Mathematical Institute, University of Oxford
+Oxford-Man Institute of Quantitative Finance
+c
+Department of Statistical Sciences, University of Toronto
+b
+
+arXiv:1908.03281v1 [q-fin.TR] 8 Aug 2019
+
+Abstract
+Latency (i.e., time delay) in electronic markets affects the efficacy of liquidity taking strategies.
+During the time liquidity takers process information and send marketable limit orders (MLOs) to
+the exchange, the limit order book (LOB) might undergo updates, so there is no guarantee that
+MLOs are filled. We develop a latency-optimal trading strategy that improves the marksmanship
+of liquidity takers. The interaction between the LOB and MLOs is modelled as a marked point
+process. Each MLO specifies a price limit so the order can receive worse prices and quantities than
+those the liquidity taker targets if the updates in the LOB are against the interest of the trader.
+In our model, the liquidity taker balances the tradeoff between missing trades and the costs of
+walking the book. We employ techniques of variational analysis to obtain the optimal price limit
+of each MLO the agent sends. The price limit of a MLO is characterized as the solution to a new
+class of forward-backward stochastic differential equations (FBSDEs) driven by random measures.
+We prove the existence and uniqueness of the solution to the FBSDE and numerically solve it to
+illustrate the performance of the latency-optimal strategies.
+Keywords: Marked point processes, high-frequency trading, algorithmic trading, latency,
+forward-backward stochastic differential equations.
+
+1. Introduction
+Speed to make decisions and to access the market is a key element in the success of trading
+strategies in electronic markets. Liquidity providers monitor and update their limit orders (LOs)
+resting in the limit order book (LOB), and liquidity takers send orders that target LOs. The efficacy
+of the strategies of the makers and takers of liquidity depends on their latency in the marketplace.
+Latency is the time delay between an exchange streaming market data to a trader, the trader
+processing information and making a decision, and the exchange receiving the instruction from
+the trader. Thus, due to latency, there is no guarantee that liquidity providers can place a LO in
+a desired queue position in the book or withdraw a stale quote before it is picked off by another
+trader.
+I
+
+SJ would like to acknowledge support from the Natural Sciences and Engineering Research Council of Canada
+(grants RGPIN-2018-05705 and RGPAS-2018-522715). LSB acknowledges support from CONACyT, México and the
+Mathematical Institute, University of Oxford.
+Email addresses: alvaro.cartea@maths.ox.ac.uk (Álvaro Cartea), sebastian.jaimungal@utoronto.ca
+(Sebastian Jaimungal), leandro.sanchezbetancourt@maths.ox.ac.uk (Leandro Sánchez-Betancourt)
+Preprint submitted to TBA
+
+August 12, 2019
+
+Furthermore, there are no assurances that marketable limit orders (MLOs) from liquidity takers,
+which aim at a quantity and price they observed in the LOB, hit the desired target. A MLO is
+a liquidity taking order for immediate execution against the LOs resting in the book, and each
+MLO specifies the quantity of the security (e.g., equity, currency pairs, futures, etc.) and a price
+limit to execute against LOs.1 Due to latency, by the time the exchange processes a MLO, prices
+and quantities could have improved, so the order is filled at a better price, or prices and quantities
+could have worsened, so the order is filled if the limit price allows, otherwise the order is rejected.
+In this paper, we focus on how latency affects the marksmanship of liquidity takers and we
+develop a latency-optimal trading strategy that accounts for the time delays in the marketplace.
+We frame the interaction between the LOB and MLOs as a marked point process (MPP). In our
+model, the agent sends buy/sell MLOs at random times to partly camouflage her order flow, and
+before the order reaches the exchange, the LOB undergoes quantity and price updates. We assume
+the agent sends fill-or-kill MLOs, that is, the orders are either filled in full or rejected.2 The price
+limit of the MLO consists of the best quote the agent observes at the time she decides to trade
+and a discretion to walk the LOB.
+The LOB is a moving target, so liquidity takers hit or miss the LOs they are attempting to
+execute. Everything else being the same, the chances of filling a MLO increase if the agent is willing
+to receive quantities and prices that are worse than those of the best quotes the agent observes in
+the LOB when she decides to trade. If the discretion to walk the book is unlimited, the MLO will
+be filled, but potentially at much worse prices than those of the best quotes the agent observed.
+On the other hand, if the updates in the LOB are in the interest of the agent, the MLO will be
+filled at better prices than those of the LOs that the agent targeted.
+In our model, the agent balances the tradeoff between missing trades and the costs from walking
+the LOB over a trading window (e.g., minutes, hours, days, etc.). For each liquidity taking order,
+the strategy optimizes the discretion of the MLO, while it penalizes both the number of missed
+trades and the costs accrued to the strategy over the trading horizon. We employ techniques
+of variational analysis to obtain the optimal discretion for each MLO the agent sends, which we
+characterize as the solution to a forward-backward stochastic differential equation (FBSDE). We
+show existence and uniqueness of the solution to the forward and backward parts of the FBSDE and
+show existence and uniqueness of the solution to the full FBSDE. To the best of our knowledge,
+uniqueness and existence of the resulting random-measure driven FBSDE is not covered in the
+extant literature, and the particular form itself appears to be new.
+In the agent’s performance criterion, when the penalty for missing trades is linear in the expected number of rejected trades, we obtain the optimal strategy in closed-form – the latencyoptimal strategy consists of sending all MLOs with a fixed discretion. When the penalty for missing
+trades is quadratic in the expected number of rejected trades, we solve the FBSDE numerically. We
+illustrate the performance of the latency-optimal strategies for a range of model parameters and
+examine the tradeoff between costs from walking the book and number of missed trades. Finally,
+we discuss strategies that are cost-neutral to the agent. That is, the latency-optimal strategy is
+devised so the expected costs from walking the book to fill MLOs when the LOB moves against the
+agent’s interests is the same as the expected benefits (i.e., negative costs) from executing trades at
+1
+
+A marketable order and a market order differ in that the marketable limit order walks the LOB until it reaches
+the limit price specified by the trader, while a market order walks the LOB until it is filled in full.
+2
+This is in contrast to an immediate-or-cancel order, which has the property that the order can be partially filled
+if there is liquidity in the LOB that meets the requirements of the MLO. The unfilled portion of the order is rejected.
+
+2
+
+better prices than the ones the agent targets.
+Several authors address various aspects of latency in electronic markets. Moallemi and Saĝlam
+(2013) look at the cost of latency for liquidity takers in equity markets. They compare the costs
+of liquidating one stock with and without time delays in the marketplace to compute the cost of
+latency. The work of Stoikov and Waeber (2016) shows how to execute a large order in electronic
+markets by employing the volume imbalance of the LOB to predict price changes and study the
+effect of latency in the efficacy of the execution strategy. Lehalle and Mounjid (2017) employ data
+from Nasdaq-Omx and also find that as latency increases, the informational content in the volumes
+of the LOB diminishes.
+Cartea and Sánchez-Betancourt (2018) employ proprietary foreign exchange data to show how
+latency and volatility of the midprice of the security affect the fill ratio of liquidity taking strategies.
+The authors show how traders could employ latency-optimal strategies to improve fill ratios, while
+minimizing costs, and they show how to compute the shadow price of latency in foreign exchange
+markets. Gao and Wang (2018) use Markov decision processes to model the problem of a market
+maker with latency who trades in a LOB, where the size of the quoted spread is always one tick.
+The authors find that as latency increases, the profits from making markets decrease.
+Recent literature on high-frequency trading and algorithmic trading discusses various characteristics of trading and how traders use speed to obtain informational advantages, see e.g., Lehalle
+and Laruelle (2013). Other strands of the literature discuss the relationship of market quality, the
+speed of market participants, and stochastic liquidity, see for example Almgren (2012) and Guéant
+(2016) for trading in illiquid markets. Barger and Lorig (2019) model the rapid updates of the best
+quotes in the LOB to propose a model of stochastic price impact.
+The remainder of the paper proceeds as follows. Section 2 proposes the agent’s performance
+criterion and characterizes the latency-optimal strategy as the solution to a FBSDE. Section 3
+shows existence and uniqueness of the solution of the forward and backward part of the FBSDE,
+and existence and uniqueness of the solution to the full FBSDE. Section 4 shows that the candidate
+control we find is the global optimum and Section 5 discusses the performance of the strategy for
+various scenarios. We conclude in Section 6 and collect some proofs in the Appendix.
+
+2. Optimal discretion to walk the book
+2.1. Latency: the LOB as a moving target
+Liquidity takers in electronic markets face a moving target problem. Traders send orders that
+target a price and quantity they observe in the LOB, but due to latency, when the order arrives
+in the exchange, the target could have moved. If prices and quantities worsen, the agent’s order is
+rejected, and if prices and quantities improve or do not worsen, the order is filled.
+We frame the moving target problem as a MPP N = {(Tn , Zn )}(n≥1) in
+S the probability space
+(Ω, F, P). Here, (Tn ) is an increasing sequence of random points in (0, T ] {∞}, which represent
+the times when the agent sends MLOs to the exchange, and (Zn ) is a sequence of marks, which
+represent the shock to the average price per share due to changes in prices and quantities.
+We assume that each order is for one unit of the security or for a lot of securities, where the lots
+have a fixed size throughout the trading horizon. When the volume of the MLO is in lots of the
+security, the mark Z represents a shock to the LOB commensurate with the S
+volume of the MLO.
+As in Confortola et al. (2016), we define the sample space to be Ω = n {Tn > T }, where
+T ∈ (0, ∞) denotes a fixed time horizon. The filtration (Ft )t≥0 is generated by N and is the
+3
+
+smallest filtration such that for each n, the point Tn is a stopping time and the mark Zn is FTn measurable. We use predictable processes to mean the left-continuous version of a process, see
+Theorem 7.2.4 in Cohen and Elliott (2015).
+The random measure associated with N is
+X
+p(dt, dz) =
+D(Tn ,Zn ) (dt, dz) ,
+n≥1:Tn ≤T
+
+where D denotes the Dirac measure, and we assume that
+Z T Z
+
+h
+i
+2
+E (p ([0, T ], R)) < ∞
+and
+E
+|z| p(dz, dt) < ∞ .
+0
+
+(1)
+
+R
+
+We denote by p̃ the predictable compensator of the random measure p, which admits the
+following decomposition
+p̃(dz, dt) = φt (dz) dAt .
+(2)
+Here, the compensator has the property that
+R t Rfor q := p − p̃ and any integrable and predictable process H, the stochastic integral (H ? q)t = 0 R Hs q(ds, dz) is a martingale. In (2), the predictable
+process (At )t∈T , where T := [0, T ], is the compensator of the counting process of the MLOs, which
+we denote by Nt := p([0, t] × R).
+Assumption
+1. The process A admits a bounded stochastic intensity so that we may write At =
+Rt
+λ
+du
+for
+a
+predictable
+process (λt )t∈T and ∃ λ̄ ∈ R, such that ∀ (t, ω) ∈ [0, T ] × Ω, λt (ω) ≤ λ̄.
+0 u
+The density function of the marks is φt , which has support in R and is bounded, and its
+cumulative distribution function is Φt , which we assume is uniformly Lipchitz in [0, T ] × Ω with
+Lipschitz constant k.
+Let (δt )t∈T be a predictable process that specifies the cash per unit of the security (or lots of
+the security) the agent is willing to walk the LOB to increase the chances of filling her liquidity
+taking order, i.e., δ is the discretion of the MLO. For example, in equity markets, if the agent sends
+a buy order to lift the offer at the best ask at , the discretionary amount δt is the extra cash per
+share the order may walk the book, i.e., at + δt is the highest price the agent is willing to pay for
+one share of equity. Similarly, if the agent sends a sell order to hit the best bid bt , the amount δt is
+the cash discount per share the order may walk the book, i.e., bt − δt is the lowest price the agent
+is willing to accept to sell one share of equity.
+In the examples above, the best bid and best ask prices (bt and at ) refer to those the agent
+‘observes’ when she decides to trade, but due to latency, these prices could be stale. In addition,
+by the time the exchange processes the order of the agent, prices and quantities in the LOB could
+have borne further updates. Price changes could be against or in favour of the agent’s interest.
+When the price per unit of the security moves against the interest of the agent, the order is filled
+only if the discretion δ of the MLO is enough to cover the adverse change in price and quantity;
+we refer to this as a price deterioration. On the other hand, if the price per unit of the security
+moves in favour of the agent’s trade interest, the order is filled at a better price; we refer to this
+as a price improvement
+
+4
+
+2.2. Tradeoff: cost of walking the LOB and missed trades
+The agent must balance the costs of walking the LOB against the number of missed trades as
+a consequence of her latency in the marketplace. Clearly, if the agent sends orders with infinite
+discretion to walk the LOB, all orders are filled (we rule out cases in which the LOB is empty) and
+the costs accrued from walking the LOB are expected to be highest. On the other hand, everything
+else being equal, lowering discretion, lowers the strategy’s cost but increases the number of missed
+trades.
+We discuss the cost for MLOs with volume equal to one unit of the security – the costs for
+MLOs where volume is in lots of the security are computed in a similar way. For buy orders, the
+cost of the strategy is the cash the agent pays for the security minus the price on the offer side
+of the LOB that the agent targets. Similarly, for sell orders, the cost of the strategy is the target
+price in the bid side of the LOB minus the cash received for the security. That is, the cost of the
+strategy is the extra cash paid to walk the LOB, which is zero if the order is not executed. We
+denote the controlled cost process by C δ = (C δ )t∈T and
+Ctδ =
+
+Z tZ
+z Ĝ(δs − z) p(dz, ds) ,
+0
+
+(3)
+
+R
+
+where Ĝ(x) = 1 if x ≥ 0 and Ĝ(x) = 0 otherwise.
+The extra cost for each filled trade is z Ĝ(δs − z), which can be negative (price improvement),
+positive (price deterioration), or zero. This cost is negative when the shock to the LOB is negative
+(z < 0), in which case the order is filled at a better price than that targeted by the agent – the price
+improvement is |z|. On the other hand, this cost is positive when the shock to the LOB is positive
+(z > 0), in which case the order is filled (because δ ≥ z) at a worse price than that targeted by
+the agent – the price deterioration is z. Finally, when the shock to the LOB is zero (z = 0) or the
+trade is missed, the cost is zero.
+The process Dδ = (Dtδ )t∈T denotes the controlled number of misses and
+Dtδ =
+
+Z tZ
+G (δs − z) p(dz, ds) ,
+0
+
+(4)
+
+R
+
+where G(x) = 1 − Ĝ(x). Recall that the MLO is for one unit of the security or for lots of the
+security, which are of fixed size throughout the trading horizon. In the latter case, the number of
+misses is in lots of the security.
+
+2.3. Performance criterion
+The agent’s performance criterion is
+
+ 2 
+,
+J(δ) = E CTδ + α DTδ + γ DTδ
+
+(5)
+
+where both α ≥ 0 and γ ≥ 0 are penalty parameters for the total number of missed trades, and
+the set of admissible strategies is
+
+
+
+
+2
+A := δ = (δt )t∈T δ is F − predictable and E sup (δt ) < ∞ .
+(6)
+t∈T
+
+5
+
+The agent wishes to find a control δ ∗ ∈ A that minimizes the performance criterion (5), that is,
+the agent solves the problem
+δ ∗ = argmin J(δ) .
+δ∈A
+
+Note that J(δ) < ∞ because G ≤ 1 and (1) holds. We choose the units of the parameters α, γ, so
+that the performance criterion has the same units as those of the costs C.
+In the performance criterion, the penalties for missing trades are not financial costs. Everything
+else being equal, an increase in the value of the penalty parameters makes the strategy post orders
+with higher discretion to walk the LOB. In the extreme case where one of the penalty parameters
+is arbitrarily large, the optimal strategy is to post orders with discretion to walk the LOB as deep
+as necessary to fill the trades, i.e., the MLO with infinite discretion is a market order.
+
+2.4. Variational Analysis Approach
+We employ techniques of variational analysis to obtain the optimal discretion strategy. For
+ease of presentation, we write
+J(δ) = J C (δ) + α J LP (δ) + γ J QP (δ) ,
+h
+ 
+ 
+2 i
+where J C (δ) = E CTδ , J LP (δ) = E DTδ , and J QP (δ) = E DTδ
+.
+Next, note that
+Z T Z
+
+Z T Z
+
+C
+J (δ) = E
+z Ĝ(δt − z) p(dz, ds) = E
+z Ĝ(δt − z) φt (dz) dAt ,
+0
+
+0
+
+R
+
+(7)
+
+(8)
+
+R
+
+and the next proposition provides expressions for J LP (δ) and J QP (δ).
+Proposition 1. The following equations hold
+
+Z T Z
+LP
+G(δt − z) p̃(dz, dt) ,
+J (δ) = E
+0
+R
+Z T Z 
+
+
+QP
+δ
+J (δ) = E
+2 Dt− G(δt − z) + G(δt − z) p̃(dz, dt) .
+0
+
+(9)
+(10)
+
+R
+
+Proof. Equation (9) follows from the predictability of the integrand. Next, we show (10). The
+number of missed trades Dtδ satisfy the SDE
+Z
+δ
+dDt =
+G(δt − z) p(dz, dt) .
+R
+
+Let h(x) = x2 and use an integration formula (see Jeanblanc et al. (2009)) to write
+Z  
+
+
+
+δ
+dh(Dt ) =
+h Dtδ− + G (δt − z) − h Dtδ−
+p(dz, dt) .
+R
+
+Then,
+d
+
+
+
+Dtδ
+
+2
+
+=
+=
+
+Z 
+ZR 
+
+
+2 Dtδ− G(δt − z) + G2 (δt − z) p(dz, dt)
+
+2 Dtδ− G(δt − z) + G(δt − z) p(dz, dt) ,
+
+R
+
+6
+
+where the second equality holds because G2 = G. Integrate from zero to T , take expectations, and
+because the integrand 2 Dtδ− G(δt − z) + G(δt − z) is predictable, obtain
+
+E
+
+DTδ
+
+2 
+
+Z T Z 
+
+
+=E
+p(dz, dt)
+0
+R
+Z T Z 
+
+
+δ
+=E
+2 Dt− G(δt − z) + G(δt − z) p̃(dz, dt) .
+0
+
+2 Dtδ− G(δt − z) + G(δt − z)
+
+
+
+R
+
+2.4.1. Optimal discretion to walk the LOB
+We employ Gâteaux derivatives to obtain the latency-optimal strategy that minimizes the
+performance criterion of the agent. Let w, δ ∈ A. The directional derivative of J at δ in the
+direction of w is given by
+hD J(δ), wi = lim 1 [J(δ +  w) − J(δ)] ,
+→0
+
+(11)
+
+when the limit exists. Now, let A0 be the dual space of A. If there is A0 ∈ A0 such that hD J(δ), wi =
+A0 (w) for all w ∈ A, then A0 is called the Gâteaux derivative of J at δ. In this paper, the directional
+derivatives are elements of the dual of A, hence we refer to the directional derivatives as Gâteaux
+derivatives. Note that it is trivial to show that A is a linear space over R.
+Lemma 1. The Gâteaux derivative at δ ∈ A in the direction w ∈ A of the:
+(a) cost functional J C is
+hD J C (δ), wi = E
+
+Z T
+
+
+wt φt (δt ) δt dAt ;
+
+0
+
+(b) linear penalty functional J LP is
+hD J LP (δ), wi = −E
+
+Z T
+
+
+wt φt (δt ) dAt ;
+
+0
+
+(c) quadratic penalty functional J QP is
+Z T
+
+Z T Z
+
+
+
+G(δs − z 0 ) p̃(dz 0 , ds) dAt
+0
+t
+R
+Z T
+
+Z T
+
+δ
+− 2E
+wt φt (δt ) Dt− dAt − E
+wt φt (δt ) dAt .
+
+hD J QP (δ), wi = −2 E
+
+wt φt (δt ) Et−
+
+0
+
+0
+
+Proof. See Appendix A.
+The next theorem provides the Gâteaux derivative of the performance criterion of the agent
+and provides a characterization of the optimal discretion to walk the LOB.
+
+7
+
+Theorem 1. The Gâteaux derivative of the functional J at δ ∈ A in the direction of w ∈ A is
+
+Z T
+
+Z T Z
+
+δ
+0
+0
+hD J(δ), wi = E
+wt φt (δt ) δt − 2 γ Dt− − γ − α − 2 γ Et−
+G(δs − z ) p̃(dz , ds)
+dAt ,
+t
+
+0
+
+R
+
+and vanishes in every direction w ∈ A if and only if there is a process δ ∗ ∈ A such that
+h ∗i
+δt∗ = 2 γ Et− DTδ + γ + α ,
+
+(12)
+
+almost everywhere in T × Ω.
+Proof. By Lemma 1 and the performance criterion (7), the Gâteaux derivative of J vanishes at
+Z T Z
+
+ ∗
+
+δt∗ = 2 γ Et−
+G(δs∗ − z 0 ) p̃(dz 0 , ds) + 2 γ Dtδ− + 12 + α
+t
+R
+Z T Z
+
+ ∗
+
+∗
+0
+0
+= 2 γ Et−
+G(δs − z ) p(dz , ds) + 2 γ Dtδ− + 12 + α
+ ∗
+h t ∗ R ∗i
+
+= 2 γ Et− DTδ − Dtδ− + 2 γ Dtδ− + 12 + α
+h ∗i
+= 2 γ Et− DTδ + γ + α .
+(13)
+Now we show that if the Gâteaux derivative at δ vanishes in every direction w, the control δ satisfies
+(13). We proceed by contradiction. Suppose there exists δ̂ ∈ A such that hD J(δ̂), wi = 0 for all
+w ∈ A and there is (T, O) ∈ B(T) × FT with L(T) P(O) > 0 such that δ̂t (ω) 6= δt∗ (ω) for t ∈ T, and
+ω ∈ O, where L(T) denote the Lebesgue measure of T ∈ B(T), and B(T) is the Borel sigma-algebra
+of T. Thus, on T × O we have
+h i
+δ̂t (ω) − 2 γ Et− DTδ̂ (ω) − γ − α 6= 0 .
+Hence, wt = δ̂t − 2 γ Et− [DTδ̂ ] − γ − α is predictable and E[supt∈T (wt )2 ] < ∞. Furthermore, the
+Gâteaux derivative of δ̂ in the direction of w satisfies the inequality hD J(δ̂), wi > 0, which is a
+contradiction. Therefore, there is no (T, O) ∈ B(T)×F with L(T) P(O) > 0 such that δ̂t (ω) 6= δt∗ (ω)
+for t ∈ T and ω ∈ O.
+If the value of the quadratic penalty parameter γ is zero, the candidate optimal control in (12)
+has the simple closed-form expression
+δt∗ = α ,
+
+(14)
+
+which is independent of the number of missed trades. Thus, for γ = 0 the agent sends all MLOs
+with discretion α to walk the LOB.
+
+3. Existence and Uniqueness of the FBSDE
+To the best of our knowledge, the FBSDE in (12) is a new class of random measure driven
+FBSDEs, and there are no uniqueness or existence results in the extant literature. Therefore, in
+this section we prove existence and uniqueness of the solution of the FBSDE. For FBSDEs in a
+8
+
+semimartingale setting see Antonelli (1993). For fully coupled FBSDEs in the Brownian motion case
+see Peng and Wu (1999). For an account of Brownian motion and Poisson processes in FBSDEs,
+see Zhen (1999). Jianming (2000), Confortola and Fuhrman (2013), Confortola et al. (2016), and
+Bandini (2016) study the framework of BSDEs and MPPs. For the study of FBSDEs that arise from
+vanishing Gâteaux derivatives in stochastic games stemming from algorithmic trading problems,
+see Casgrain and Jaimungal (2018b) and Casgrain and Jaimungal (2018a).
+To streamline the results in this section, we start with a lemma that is useful to prove existence
+and uniqueness of the solution to the FBSDE (12).
+Lemma 2. Let
+
+C :=
+
+
+U = (Ut )t∈T U is F − adapted & E sup (Ut )
+
+2
+
+
+
+
+< ∞
+
+.
+
+t∈T
+
+The spaces (A, k·k∞ ), (A, k·k), (C, k·k∞ ), and (C, k·k) are Banach spaces, where
+
+
+Z T
+
+kδk∞ = E sup |δt |
+and
+kδk = E
+|δt | dt .
+t∈T
+
+0
+
+Proof. We prove the results for the set A – the proof for the set C is similar.
+The predictable class of processes is closed in the space of finite processes with norm k·k∞
+(resp. k·k), which we denote by L∞ (resp. L1 ). Then the space (A, k·k∞ ) (resp. (A, k·k)) is a
+linear closed subspace of L∞ (resp. L1 ), which is a Banach space and (A, k·k∞ ) (resp. (A, k·k)) is
+also a Banach space.
+Corollary 1. The space C × C with norm
+Z T
+k(U, V )kC×C = kU kC + kV kC ,
+
+kU kC = E
+
+where
+
+
+|Us | ds
+
+0
+
+and (U, V ) ∈ C × C, is a Banach space.
+∗
+
+By means of the change of variables δ̃t = δt∗ + 2 γ Dtδ , we have that a solution to the FBSDE
+h i
+δt = 2 γ Et− DTδ + γ + α ,
+(15)
+Z tZ
+Dtδ =
+G(δs − z) p(dz, ds) ,
+D0δ = 0 ,
+0
+
+R
+
+with δ ∈ A and D ∈ C, exists and is unique, if and only if a solution to the FBSDE
+h
+i
+δ̃t = 2 γ Et DTδ̃ − Dtδ̃ + γ + α ,
+Z tZ
+δ̃
+Dt =
+G(δ̃s− + 2 γ Dsδ̃− − z) p(dz, ds) ,
+D0δ̃ = 0 ,
+0
+
+R
+
+with δ̃, Dδ̃ ∈ C, exists and is unique. We write (16) as
+Z T Z
+
+δ̃
+G(δ̃s− + 2 γ Ds− − z) p(dz, ds) + γ + α ,
+δ̃t = 2 γ Et
+t
+R
+Z tZ
+δ̃
+Dt =
+G(δ̃s− + 2 γ Dsδ̃− − z) p(dz, ds) ,
+0
+
+(16)
+
+R
+
+9
+
+(17)
+D0δ̃ = 0 .
+
+To analyse solutions to the FBSDE (17), we study the fixed points of the functional
+hR R
+i
+!
+
+
+T
+2 γ Et t R G(Us− + 2 γ Vs− − z) p(dz, ds) + γ + α
+H(U, V )t
+Υ(U, V )t =
+=
+,
+RtR
+I(U, V ))t
+0 R G(Us− + 2 γ Vs− − z) p(dz, ds)
+
+(18)
+
+and, for completeness, prove existence and uniqueness of the solution of: (i) the backward part
+of the FBSDE; (ii) the forward part of the FBSDE; and (iii) the full FBSDE – a result which we
+derive independently from the existence of the backward and forward parts of the FBSDE.
+The following theorem shows the existence and uniqueness of the solution to the backward part
+of the FBSDE (17).
+Theorem 2. Fix V ∈ C. Let the cumulative distribution function Φ be Lipschitz with constant
+k, and let λ̄ be the upper bound of the stochastic intensity λ in Assumption 1. The functional
+Ψ : C → C given by
+Z T Z
+
+G(Us− + 2 γ Vs− − z) p(dz, ds) + γ + α ,
+V ∈C,
+Ψ(U )t = 2 γ Et
+t
+
+R
+
+has a unique fixed point.
+Proof. We proceed as in Proposition A1 in Duffie and Epstein (1992). Define Z = supt∈T |Xt − Yt |
+and Zt = Et [Z] for any X and Y in C. Let Ψ(1) = Ψ and Ψ(n) = Ψ(Ψ(n−1) ). Then
+Z T
+
+|Ψ(X)t − Ψ(Y )t | = 2 γ Et
+(Φ(Ys− + 2 γ Vs− ) − Φ(Xs− + 2 γ Vs− )) λs ds
+t
+Z T
+
+≤ 2 γ k Et
+|Xs− − Ys− | λs ds
+t
+
+≤ 2 γ k λ̄ (T − t) Et [Z] .
+Use Fubini’s theorem for conditional expectations to write
+Z T
+
+(2)
+(2)
+Ψ (X)t − Ψ (Y )t ≤ 2 γ k λ̄ Et
+|Ψ(Xs ) − Ψ(Ys )| ds
+t
+Z T
+
+≤ 2 γ k λ̄ Et
+2 γ k λ̄ (T − s) Es [Z] ds
+t
+Z T
+
+2
+≤ 2 γ k λ̄ Et
+(T − s) Es [Z] ds
+t
+
+2 (T − t)2
+≤ 2 γ k λ̄
+Et [Z] ,
+2!
+which after n iterations becomes
+Ψ(n) (X)t − Ψ(n) (Y )t ≤ 2 γ k λ̄
+
+n (T − t)n
+Et [Z] .
+n!
+
+Finally,
+
+
+(n)
+
+E sup Ψ
+t∈T
+
+(n)
+
+(X)t − Ψ
+
+
+(Y )t
+
+2 γ k λ̄ T
+≤
+n!
+
+n
+
+2 γ k λ̄ T
+≤4
+n!
+10
+
+
+
+
+E sup Et [Z]
+t∈T
+
+n
+
+
+
+E sup |Xt − Yt | .
+t∈T
+
+Therefore, for n sufficiently large, the function Ψ(n) is a contraction mapping in the Banach space
+C equipped with the supremum norm (C, k·k∞ ). Thus, there exists a unique3 process U ∈ C such
+that Ψ(n) (U ) = U and because Ψ(n) (Ψ(U )) = Ψ Ψ(n) ((U )) = Ψ(U ) and by uniqueness of the
+fixed point, we have Ψ(U ) = U , which proves the existence of the fixed point for Ψ. Uniqueness
+of this fixed point for Ψ follows from uniqueness of the fixed point in Ψ(n) , which concludes the
+proof.
+The next theorem shows the existence and uniqueness of the solution to the forward part of
+the FBSDE (17).
+Theorem 3. Fix U ∈ C. Let the distribution function Φ be Lipschitz with constant k, and let λ̄ be
+the upper bound of the stochastic intensity λ in Assumption 1. The functional Θ : C → C given by
+Z tZ
+G(Us− + 2 γ Vs− − z) p(dz, ds) ,
+U ∈ C,
+Θ(V )t =
+0
+
+R
+
+has a unique fixed point.
+Proof. First we prove that Θ is a functional from C to C. Let U, V ∈ C. By definition, the function
+Θ(V ) is adapted and because G ≤ 1 we have
+
+
+E sup |Θ(V )t | ≤ E [p ([0, T ], R)] < ∞ .
+t∈T
+
+Thus, Θ(V ) ∈ C. Next, denote Θn = Θ(Θn−1 ) with Θ0 = Θ(0) and define hn : [0, T ] → R as
+
+
+(n+1)
+(n)
+hn (t) = E sup Θs
+− Θs
+.
+0≤s≤t
+
+We find an upper bound for hn (t) as follows:
+
+
+(n+1)
+(n)
+hn (t) = E sup Θs
+− Θs
+0≤s≤t
+
+
+Z sZ  
+
+
+
+(n)
+(n−1)
+= E sup
+p(dz, du)
+G Uu− + 2 γ Θu− − z − G Uu− + 2 γ Θu− − z
+0≤s≤t
+
+0
+
+Z t Z
+≤E
+
+G
+0
+
+R
+
+
+
+(n)
+Uu− + 2 γ Θu− − z
+
+
+
+−G
+
+(n−1)
+Uu− + 2 γ Θu− − z
+
+R
+
+Z t
+
+
+
+(n)
+Uu− + 2 γ Θu−
+
+
+
+
+
+Φ
+−Φ
+
+Z t
+(n)
+(n−1)
+dt
+≤ 2 γ k λ̄ E
+Θu− − Θu−
+0
+Z t
+≤ 2 γ k λ̄
+hn (s) ds .
+=E
+
+0
+
+(n−1)
+Uu− + 2 γ Θu−
+
+0
+
+3
+
+
+
+Unique in the sense of indistinguishability.
+
+11
+
+
+
+
+λt dt
+
+
+
+
+p̃(dz, du)
+
+The above inequality, together with the observation that h0 (T ) = M < ∞, implies
+n
+M 2 γ k λ̄ T n
+0 ≤ hn (T ) ≤
+,
+n!
+and use Markov’s inequality to obtain the bound:
+n
+
+
+M 2 γ k λ̄ T n 22 n n→∞
+(n+1)
+(n)
+−n
+≤
+P sup Θt
+− Θt ≥ 2
+−−−→ 0.
+n!
+t∈T
+(n)
+
+By Borel-Cantelli arguments, there is O ⊂ Ω such that for all ω ∈ O the functions t → Θt (w)
+form a Cauchy sequence in the supremum norm of C with probability one. Thus, ∀ ω ∈ O there is
+(n)
+a function Θ∗t (ω) such that Θt (ω) converges uniformly to Θ∗t (ω) in T. Furthermore, there is an
+adapted modification of Θ∗ in Ω.
+Thus, the process Θ∗ is a fixed point of the mapping defined by Θ, and therefore satisfies the
+forward part of the FBSDE.
+Finally, the next theorem shows the existence and uniqueness of the solution to the FBSDE
+(17).
+Theorem 4. Let the cumulative distribution function Φ be Lipchitz with parameter k such that
+k T λ̄ (max{1 , 2 γ})2 < 1 ,
+where λ̄ is the upper bound of the stochastic intensity λ in Assumption 1. There exists a unique
+solution to the FBSDE
+Z T Z
+
+δ̃
+δ̃t = 2 γ Et
+G(δ̃s− + 2 γ Ds− − z) p(dz, ds) + γ + α ,
+(19a)
+t
+R
+Z tZ
+δ̃
+Dt =
+G(δ̃s− + 2 γ Dsδ̃− − z) p(dz, ds) ,
+D0δ̃ = 0 .
+(19b)
+0
+
+R
+
+Proof. Consider the functional Υ : C × C → C × C defined in (18). By Corollary 1, C × C is a Banach
+space when equipped with the norm
+Z T
+
+kΥ(U, V )kC×C = kH(U, V )kC + kI(U, V )kC , where kU kC = E
+|Us | ds .
+0
+
+Let (U, V ) and (X, Y ) be in C × C and write
+Z T
+
+kΥ(U, V ) − Υ(X, Y )kC×C = E
+|H(U, V )t − H(X, Y )t | dt
+0
+Z T
+
++E
+|I(U, V )t − I(X, Y )t | dt .
+0
+
+The first term on the right-hand side of (20) satisfies the bound
+Z T
+
+|H(U, V )t − H(X, Y )t | dt
+E
+0
+Z T
+Z T
+ 
+≤E
+2 γ Et
+|Φ(Us− + 2 γ Vs− ) − Φ(Xs− + 2 γ Ys− )| dAs dt
+0
+t
+
+Z T Z T
+≤ 2 k γ λ̄
+E
+|Us− + 2 γ Vs− − Xs− − 2 γ Ys− | ds dt .
+0
+
+t
+
+12
+
+(20)
+
+The second term on the right-hand side of (20) satisfies the bound
+Z T
+
+
+E
+|I(U, V )t − I(X, Y )t | dt
+0
+
+Z T Z t Z
+≤
+E
+| G(Us− + 2 γ Vs− − z) − G(Xs− + 2 γ Ys− − z) | p̃(dz, ds) dt
+0
+0
+R
+
+Z T Z t
+E
+| Φ(Us− + 2 γ Vs− ) − Φ(Xs− + 2 γ Ys− ) | λs ds dt
+=
+0
+0
+
+Z T Z t
+E
+| Us− + 2 γ Vs− − Xs− − 2 γ Ys− | ds dt .
+≤ k λ̄
+0
+
+0
+
+Now, let k1 = k λ̄ max{2 γ, 1} and k2 = k1 max{2 γ, 1}, and write
+Z T
+
+Z T
+
+E
+|Us− + 2 γ Vs− − Xs− − 2 γ Ys− | ds dt
+0
+0
+Z T
+
+≤ k1 T E
+|Ut− + 2 γ Vt− − Xt− − 2 γ Yt− | dt
+0
+Z T
+
+Z T
+
+≤ k2 T E
+|Ut− − Xt− | dt + k2 T E
+|Vt− − Yt− | dt
+
+kΥ(U, V ) − Υ(X, Y )kC×C ≤ k1
+
+0
+
+0
+
+< k(U, V ) − (X, Y )kC×C .
+Thus, Υ is a contraction mapping in the Banach space C × C (see Corollary 1), so there exists a
+unique pair of processes U ∗ and V ∗ such that Υ(U ∗ , V ∗ ) = (U ∗ , V ∗ ).
+In all, we have shown that the candidate optimal control in (12) exists and is unique. Finally,
+it is straightforward to see that δ ∗ ∈ A. By definition, the control δ ∗ is predictable. A short
+calculation shows
+"
+#
+"
+#
+E
+
+sup (δt∗ )2 ≤ E
+
+sup (Et [NT ])2
+
+0≤t≤T
+
+0≤t≤T
+
+"
+=E
+
+sup
+0≤t≤T
+
+2 #
+
+Z T
+
+
+Nt +
+
+λs ds
+
+ 
+≤ 2 E NT2 + 2 T λ̄2 < ∞ .
+
+t
+
+Therefore the control δ ∗ satisfying (12) is an element of A.
+
+4. Optimality
+In this section we prove that the discretion δ ∗ satisfying (12) is the global minimizer of the
+agent’s performance criterion J(δ). We prove this in several steps. First, Theorem 5 shows that
+the control δ ∗ is a local minimum of J(δ). Then, after proving two auxiliary lemmas, Theorem 6
+shows that δ ∗ is the global minimizer of the performance criterion.
+Theorem 5. The control δ ∗ satisfying (12) is a local minimum of the agent’s performance criterion
+J(δ).
+13
+
+Proof. Recall that the Gâteaux derivative hD J(δ ∗ ), wi vanishes in every direction w ∈ A. The
+second Gâteaux derivative4 at δ ∈ A in the directions ν, w ∈ A is
+Z T
+
+
+h i
+
+2
+0
+δ
+hD J(δ), w, νi = E
+wt νt φt (δt ) δt − 2 γ Et− DT − γ − α dAt
+(21a)
+0
+
+
+Z T
+
+Z T
+(21b)
++E
+wt φt (δt ) νt + 2 γ Et−
+φs (δs ) νs dAs dAt .
+0
+
+0
+
+This Gâteaux derivative is non-negative at δ = δ ∗ because the expression on the right-hand side of
+(21a) is zero at δ = δ ∗ and the expression in (21b) is non-negative for every ν, w ∈ A. Therefore,
+δ ∗ is a local minimum.
+Lemma 3. Let δ ∈ A and J(δ) = y0 < ∞. Let λ̄ < ∞ be the bound for the stochastic intensity
+λ in Assumption 1, and let N̄ < ∞ be a bound for the number of trade attempts. Assume the
+function
+Z
+x
+
+rt (x) =
+
+z φt (dz)
+−∞
+
+is Lipschitz in x uniformly on [0, T ] × Ω, with Lipschitz constant k̃.
+Given  > 0, define
+−1
+
+η=
+(k̃ + 4 N̄ k) λ̄ T + 2 λ̄2 k T 2
+> 0,
+2
+
+(22)
+
+then, for all w ∈ A such that kδ − wk∞ < η, we have |y0 − J(w)| < .
+Proof. Consider w ∈ A s.t. kδ − wk∞ < η. Recall, J = J C + α J LP + γ J QP and observe that
+|J(δ) − J(w)| ≤ J C (δ) − J C (w) + α J LP (δ) − J LP (w) + γ J QP (δ) − J QP (w) .
+Next, we bound each term on the right-hand side of the inequality. Firstly,
+Z T Z
+
+
+
+J C (δ) − J C (w) = E
+z Ĝ(δt − z) − Ĝ(wt − z) φt (dz) λt dt
+0
+R
+Z T
+
+≤ k̃ E
+|δt − wt | dAt
+0
+
+
+≤ k̃ λ̄ T E sup |δt − wt | .
+t∈T
+
+Secondly,
+J
+
+LP
+
+(δ) − J
+
+LP
+
+Z T
+(w) ≤ E
+
+
+
+
+
+
+
+|Φ(δt ) − Φ(wt )| dAt ≤ λ̄ k T E sup |δt − wt | .
+t∈T
+
+0
+
+Finally,
+J
+
+QP
+
+(δ) − J
+
+QP
+
+δ,w
+
+(w) ≤ A
+
+Z T
+
+
+|δt − wt | dAt ≤ A
+
++kE
+
+δ,w
+
+
++ k λ̄ T E sup |δt − wt | ,
+t∈T
+
+0
+
+4
+
+
+
+See Appendix Appendix C for details of the second Gâteaux derivative.
+
+14
+
+(23)
+
+where
+δ,w
+
+A
+
+:= E
+
+Z T Z 
+0
+
+2 G(δt − z) Dtδ− − 2 G(wt − z) Dtw−
+
+
+
+
+φt (dz) dAt
+
+Next, we bound the first term on the right-hand side of inequality (23):
+
+Z T Z
+
+
+δ,w
+δ
+w
+A ≤ E
+2 G(δt − z) Dt− − Dt− φt (dz) dAt
+0
+R
+
+Z T Z
+w
++ E
+2 Dt− (G(δt − z) − G(wt − z)) φt (dz) dAt
+0
+R
+Z T
+
+Z T
+
+δ
+w
+≤ 2 λ̄ E
+Dt− − Dt− dt + 2 N̄ k λ̄ E
+|δt − wt | dt
+0
+0
+"Z
+#
+Z −Z
+T
+
+.
+
+R
+
+t
+
+≤ 2 λ̄ E
+
+
+
+
+
+G(δs − z) − G(ws − z) p(dz, ds) dt + 2 N̄ k T λ̄ E sup |δt − wt |
+0
+
+0
+
+"Z −
+t
+
+Z T
+≤ 2 λ̄ k
+
+E
+0
+
+t∈T
+
+R
+
+#
+
+
+
+
+|δs − ws | λt ds dt + 2 N̄ k T λ̄ E sup |δt − wt |
+t∈T
+
+0
+
+
+
+
+
+2
+2
+≤ 2 λ̄ k T E sup |δt − wt | + 2 N̄ k T λ̄ E sup |δt − wt |
+t∈T
+t∈T
+
+
+= (2 λ̄2 k T 2 + 2 N̄ k T λ̄) E sup |δt − wt | .
+t∈T
+
+Hence,
+
+
+
+J QP (δ) − J QP (w) ≤ 2 λ̄2 k T 2 + 2 N̄ k T λ̄ + k T λ̄ E sup |δt − wt | ,
+t∈T
+
+and since kδ − wk∞ ≤ η, we have
+|J(δ) − J(w)| ≤ J C (δ) − J C (w) + α J LP (δ) − J LP (w) + γ J QP (δ) − J QP (w)
+
+
+ 
+2
+2
+≤ k̃ λ̄ T + α k λ̄ T + 2 γ λ̄ k T + k γ T λ̄ + 2 γ N̄ k T λ̄ E sup |δt − wt |
+t∈T
+
+2
+2
+≤ z̄ k T λ̄ + 2 λ̄ k T + 4 k T λ̄ η
+
+= < ,
+2
+where the last equality follows from the choice of η in (22), and the proof is complete.
+Before proving the main result of this section, which shows that our candidate control is the
+global minimum of the performance criterion J(δ), we prove the following auxiliary lemma.
+Lemma 4. If the functional J(δ) has a global minimum δ̂ ∈ A, then
+hD J(δ̂), wi ≥ 0 ,
+
+∀w ∈ A .
+
+(24)
+
+Proof. The proof is by contradiction. Suppose there is ŵ ∈ A such that hD J(δ̂), ŵi = η̂ < 0. Set
+ = |η̂/2| > 0, and because
+J(δ̂ +  ŵ) − J(δ̂)
+η̂ = lim
+,
+(25)
+→0
+
+15
+
+there exists ρ > 0 such that if || < ρ, then
+J(δ̂ +  ŵ) − J(δ̂)
+− η̂ < |η̂/2| .
+
+
+(26)
+
+Now, fix ˆ such that 0 < ˆ < ρ, then
+J(δ̂ + ˆ ŵ) − J(δ̂)
+< |η̂/2| + η̂ = η̂/2 < 0 .
+ˆ
+
+(27)
+
+Therefore,
+J(δ̂ + ˆ ŵ) < ˆ
+
+η̂
++ J(δ̂) < J(δ̂) ,
+2
+
+(28)
+
+and because δ̂, ŵ ∈ A, the control δ̂ + ˆ ŵ is in the set A, and by (28), we have the inequality
+J(δ̂ + ˆ ŵ) < J(δ̂), which contradicts δ̂ being a global minimizer.
+Theorem 6. Global optimality. If J has a global minimum at δ̂ ∈ A, then δ̂ = δ ∗ a.e. in T × Ω,
+with δ ∗ solving (12).
+Proof. The proof is by contradiction. Suppose the global minimum δ̂ ∈ A, but it is not true that
+δ̂ = δ ∗ a.e. in T × Ω, with δ ∗ solving (12), i.e., there exists (T, O) ∈ B(T) × FT with L(T) P(O) > 0
+such that δ̂ 6= δ ∗ on T × O. First, by Lemma 4
+hD J(δ̂), wi ≥ 0 ,
+
+∀w ∈ A ,
+
+(29)
+
+and because δ̂ 6= δ ∗ on T×O, there exists ŵ ∈ A such that hD J(δ̂), ŵi > 0. Now, take w̃ = −ŵ ∈ A,
+then
+Z T
+
+
+h i
+
+δ̂
+hD J(δ̂), w̃i = E
+w̃t φt (δ̂t ) δ̂t − 2 γ Et− DT − α − γ dAt
+0
+Z T
+
+
+h i
+
+δ̂
+= −E
+ŵt φt (δ̂t ) δ̂t − 2 γ Et− DT − α − γ dAt
+0
+
+= −hD J(δ̂), ŵi
+< 0,
+which contradicts Lemma 4. Therefore, if there is a global minimum at δ̂ ∈ A, then δ̂ = δ ∗ a.e. in
+T × Ω.
+
+5. Performance of strategy
+The expectation that appears in (12) is conditional on the information Ft− , therefore the
+process δ ∗ is a sub-martingale. Here, we study a slight variation of the FBSDE in (12) and derive
+a partial-integro differential equation for the optimal control.
+To this end, fix the optimal control δ ∗ ∈ A and define the process (δ̌t )t∈T , where
+h ∗i
+δ̌t = 2 γ Et DTδ + γ + α .
+16
+
+Observe that δ ∗ in (12) is the càglàd (LCRL) version of the càdlàg (RCLL) process δ̌, and δt∗ = δ̌t− .
+∗
+Define the dynamics of the missed trades Dδ as a function of the process δ̌:
+Z tZ
+Z tZ
+δ̌
+Dt =
+G(δ̌s− − z) p̃(dz, ds) +
+G(δ̌s− − z) q(dz, ds) ,
+0
+
+0
+
+R
+
+R
+
+and recall that q = p − p̃ is the compensated random measure of N .
+Assumption 2. The stochastic intensity (λt )t∈T has the Markov property, furthermore, the quadratic
+co-variation between the process λ and Dδ̌ is zero.
+By Assumption 2, we derive the Markov property of δ̌, which we use to write δ̌t = h(t, Dtδ̌ , λt )
+for a differentiable function h with respect to the first argument. Then the process Dδ̌ is given by
+Z tZ
+Z tZ
+δ̌
+δ̌
+G(h(s, Dsδ̌− , λt ) − z) q(dz, ds) ,
+G(h(s, Ds− , λt ) − z) p̃(dz, ds) +
+Dt =
+0
+
+0
+
+R
+
+R
+
+and because δ̌ is a martingale, the function h is the solution of a PIDE that we characterize in the
+following theorem.
+Theorem 7. Let δ̌t = h(t, Dtδ̌ , λt ). Under Assumptions 1 and 2, the function h satisfies the PIDE
+!
+Z
+∞
+
+0 = ∂t h(t, D, λ) + Lλt h(t, D, λ) +
+
+λ φt (z) dz
+
+(h(t, D + 1, λ) − h(t, D, λ)) ,
+
+(30)
+
+h(t,D,λ)
+
+with boundary and terminal conditions
+lim h(t, D, λ) = ∞
+
+D→∞
+
+and
+
+h(T, D, λ) = 2 γ D + γ + α .
+
+Here, Lλt h(t, D, λ) is the infinitesimal generator of the arrival intensity process λ acting on the
+function h.
+Proof. Apply Itô’s formula to δ̌t = h(t, Dtδ̌ , λt ) and note that the drift term (i.e., the dt-term)
+vanishes because δ̌ is a martingale. Existence and uniqueness of a solution to this PIDE follow
+from a comparison principle. Specifically, we have
+!
+Z
+∞
+
+0 = ∂t h(t, D, λ) + Lλt h(t, D, λ) +
+
+≤ ∂t h(t, D, λ) + Lλt h(t, D, λ) +
+
+λt φt (z) dz
+h(t,D,λ)
+Z ∞
+
+λt φt (z) dz
+
+(h(t, D + 1, λ) − h(t, D, λ))
+
+
+(h(t, D + 1, λ) − h(t, D, λ))
+
+−∞
+
+= ∂t h(t, D, λ) + Lλt h(t, D, λ) + λt (h(t, D + 1, λ) − h(t, D, λ))
+≤ ∂t h(t, D, λ) + Lλt h(t, D, λ) + λ̄ (h(t, D + 1, λ) − h(t, D, λ)) .
+
+We use the continuity of h in t to write δt∗ = h(t, Dtδ̌− , λt− ), see characterization for h in (30)
+to compute δt∗ = δ̌t− .
+17
+
+2.5
+
+2
+
+1.5
+
+1
+
+0.5
+
+0
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+Figure 1: Left panel: Optimal strategy δ ∗ as a function of time and the number of missed trades for γ = 0.01 (bottom
+surface), γ = 0.03 (middle surface), and γ = 0.1 (top surface). The remaining parameters are: λ = 100, α = 0, and
+Zn ∼ N(0.2, 1) for every n. Right panel: Optimal strategy for various values of missed trades; blue curves are for
+D = 4, green curves are for D = 8, and red curves are for D = 12.
+
+5.1. Poisson arrival of trades
+We solve the PIDE in (30) numerically to illustrate the performance of the latency-optimal
+strategy. Assume the agent sends MLOs according to a homogeneous Poisson process with intensity
+λ = 100, the linear penalty parameter is α = 0, the quadratic penalty parameter γ takes values in
+{0.01, 0.03, 0.1}, the marks (price and quantity shocks to the LOB) are iid normal Zn ∼ N(0.2, 1),
+n = 1, 2, . . . , and the trading horizon is T = 1.
+Figure 1 shows the discretion δ ∗ as a function of the number of missed trades. The left panel
+shows three surfaces, one for each value of the quadratic penalty parameter γ. The higher the
+value of the quadratic penalty parameter for missing trades, the higher is the optimal discretion
+employed in the strategy. The right panel shows the optimal discretion when the number of missed
+∗
+trades is Dδ ∈ {4, 8, 12}, and the quadratic penalty parameter is γ ∈ {0.01, 0.03, 0.1}. Blue
+∗
+denotes cases with γ = 0.01, green for γ = 0.03, and red for γ = 0.1. Solid lines are for Dδ = 4,
+∗
+∗
+dashed lines are for Dδ = 8, and dash-dotted lines are for Dδ = 12.
+We perform 10,000 simulations of the agent’s trading activity and Figure 2 shows three sample
+paths. The top panel shows the optimal discretion of the agent’s orders and the cumulative costs
+accrued from walking the book and from receiving price improvements. The bottom panel shows
+the number of missed trades and the number of trade attempts. Clearly, as the number of missed
+trades increases (decreases), the optimal strategy is to increase (decrease) the discretion of the
+MLOs to walk the LOB.
+
+18
+
+1.6
+
+15
+
+1.5
+10
+
+1.4
+1.3
+
+5
+1.2
+1.1
+
+0
+
+1
+0.9
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+-5
+
+1
+
+10
+
+100
+
+8
+
+80
+
+6
+
+60
+
+4
+
+40
+
+2
+
+20
+
+0
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+0
+
+1
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+∗
+
+Figure 2: Sample paths for the optimal discretion δ ∗ (top left panel), number of missed trades Dδ (lower left panel),
+∗
+cost of strategy C δ (top right panel), and number of trade attempts N (lower right panel) for three simulations of
+the MPP. Parameters: α = 0, γ = 0.07, λ = 100, T = 1.
+
+Figure 3 reports various cost metrics of the optimal strategy for three values of the quadratic
+penalty parameter γ. The top panel shows histograms of the cost incurred by the strategy to fill
+∗
+∗
+∗
+trades, i.e., CTδ , and the average cost of walking the LOB to fill trades, i.e., CTδ /(NT − DTδ ).
+Recall that the cost is negative (positive) when the trade is executed with price improvement
+(deterioration). The Figure shows that as the value of the quadratic penalty parameter increases:
+(i) the average cost of walking the book to fill trades increases, the total cost increases, and the
+average number of misses decreases, see bottom panels; (ii) the costs of walking the LOB increase
+because the strategy fills more orders (i.e., misses fewer trades), see the bottom-left panel. The
+bottom-right panel shows that the average ratio of missed trades to trade attempts decreases when
+the penalty for missing trades increases.
+
+19
+
+2500
+
+2000
+
+2000
+1500
+1500
+1000
+1000
+500
+500
+
+0
+
+-40
+
+-20
+
+0
+
+0
+
+20
+
+5000
+
+5000
+
+4000
+
+4000
+
+3000
+
+3000
+
+2000
+
+2000
+
+1000
+
+1000
+
+0
+
+0
+
+10
+
+20
+
+30
+
+40
+
+0
+
+50
+
+-0.6
+
+0
+
+-0.4
+
+0.1
+
+-0.2
+
+0.2
+
+0
+
+0.2
+
+0.4
+
+0.3
+
+0.4
+
+0.5
+
+∗
+
+Figure 3: Top left panel: Histogram of the cost CTδ of the strategy. Top right panel: Histogram of the extra cost
+∗
+∗
+∗
+per filled trade CTδ /(NT − DTδ ). Bottom left panel: Histogram of the number of misses DTδ . Bottom right panel:
+δ∗
+Histogram of percentage of misses DT /NT .
+
+The tradeoff between higher fill ratios and costs of walking the book are clear. An agent who
+∗
+seeks very high fill ratios, i.e., high values of (NT −DTδ )/NT , employs very high values of the penalty
+parameters in the performance criterion. Other agents may prefer to swap price improvements for
+price deteriorations in their overall trading strategy. For example, in the 10,000 simulations we
+∗
+∗
+discuss, when γ ≈ 0.0693 the average cost of filled trades, CTδ /(NT − DTδ ), is zero and the average
+∗
+rate of missed trades, DTδ /NT is 0.1048.
+Finally, a naive strategy employed by liquidity takers is to send MLOs with no discretion to
+walk the LOB, see Cartea and Sánchez-Betancourt (2018). Here, the expected ratio of missed
+trades to number of attempts and the expected cost of the strategy for an agent who sends all
+MLOs with no discretion to walk the LOB is E[DT0 /NT ] = 0.5797 and E[CT0 ] = −29.25, respectively.
+The expected cost is negative because the strategy does not accrue costs from walking the book,
+but may receive price improvements.
+5.1.1. Optimal vs fixed discretion to walk the LOB
+We compare the results of a strategy with α = 0 and γ > 0 with those of a fixed discretion
+latency-optimal strategy (i.e., α > 0 and γ = 0). Recall that when γ = 0 the optimal strategy is
+independent of the number of misses, so the agent sends all MLOs with discretion δ ∗ = α, see (14).
+The top panels in Figure 4 show the probability that the number of missed trades is less than
+∗
+∗
+10% of trade attempts, i.e., P[DTδ < 0.1 NT ], and the expected cost of the strategy, i.e., E[CTδ ],
+when the agent sends orders with a fixed discretion to walk the LOB, i.e., γ = 0 and α ∈ [0, 2.5].
+Similarly, the bottom panels show the probability that the number of missed trades is less than
+∗
+∗
+10% of trade attempts, i.e., P[DTδ < 0.1 NT ] and the expected cost of the strategy, i.e., E[CTδ ] for
+20
+
+γ ∈ [0.02, 0.16] and α = 0. The orange circle in each picture shows the lowest expected terminal
+∗
+∗
+cost E[CTδ ] for which P[DTδ < 0.1 NT ] ≥ 0.95. The expected terminal cost of the fixed discretion
+latency-optimal strategy with α = 1.91 is approximately 9.52, and the expected cost obtained with
+the latency-optimal strategy, with γ = 0.127, is approximately 5.93.
+Also, the expected
+ ∗  number of misses when γ = 0 and α = 1.9125 (orange circle point in the
+top panels) is E DTδ  = 6.39, and when α = 0 and γ = 0.1220 (orange circle point in the bottom
+∗
+panels) we obtain E DTδ = 5.41.
+Thus, an agent who does not expect to miss more than 10% of the trades with high probability
+may prefer a latency-optimal optimal strategy with γ > 0 and α = 0 than a strategy that sends
+MLOs with a fixed discretion during the entire trading window.
+1
+
+20
+
+0.8
+
+10
+
+0.6
+
+0
+
+0.4
+
+-10
+
+0.2
+
+-20
+
+0
+
+-30
+0
+
+0.5
+
+1
+
+1.5
+
+2
+
+2.5
+
+0
+
+1
+
+10
+
+0.8
+
+5
+
+0.6
+
+0
+
+0.4
+
+-5
+
+0.2
+
+-10
+
+0
+0.02
+
+0.04
+
+0.06
+
+0.08
+
+0.1
+
+0.12
+
+0.14
+
+-15
+0.02
+
+0.16
+
+∗
+
+0.5
+
+0.04
+
+1
+
+0.06
+
+0.08
+
+1.5
+
+0.1
+
+0.12
+
+2
+
+2.5
+
+0.14
+
+0.16
+
+∗
+
+Figure 4: Top panel shows P(DTδ < 0.1 NT ) and E[CTδ ] when γ = 0 and for α ∈ [0, 2.5], recall that δ ∗ = α when
+∗
+∗
+γ = 0, see (14). Similarly, bottom panel shows P(DTδ < 0.1 NT ) and E[CTδ ] when α = 0 and γ ∈ [0.02, 0.16]. In all
+pictures, the orange circle marks the lowest value of E [CT ] when P (DT < 0.1 NT ) ≥ 0.99. Other model parameters:
+λ = 100, α = 0, and Z ∼ N(0.2, 1) for all trades.
+
+5.2. Pinned arrival rates
+In this section, we assume the arrival intensity of the agent’s MLOs is
+λ?t =
+
+M − Nt−
+,
+T −t+
+
+(31)
+
+where M > 0 is a positive integer,  > 0 and recall that Nt denotes the number of trade attempts.
+The intensity λ?t is bounded by λ̄ = M/, which is a condition we require in the latency-optimal
+strategy we derived above, and if  = 0, the intensity guarantees that NT = M , see Conforti (2016)
+and Hoyle (2010).
+21
+
+Now, use the Markov property of δ ∗ to write δ ∗ = h(t, Dt− , Nt− ), where the function h satisfies
+the PIDE
+!
+Z ∞
+M −N
+0 = ∂t h(t, D, N ) +
+φt (z) dz (h(t, D + 1, N + 1) − h(t, D, N ))
+h(t,D,N ) T − t + 
+!
+Z h(t,D,N )
+M −N
++
+φt (z) dz (h(t, D, N + 1) − h(t, D, N )) ,
+T −t+
+−∞
+with
+h(t, D, M ) = 2 γ D + γ + α
+
+and
+
+h(T, D, N ) = 2 γ D + γ + α .
+
+Figure 5 shows the optimal discretion to walk the LOB for various values of missed trades and
+target number of trades M = 100. The interpretation is similar to that of Figure 1.
+2.5
+
+2.5
+
+2.5
+
+2
+
+2
+
+2
+
+1.5
+
+1.5
+
+1.5
+
+1
+
+1
+
+1
+
+0.5
+
+0.5
+
+0.5
+
+0
+
+0
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+0
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+Figure 5: Optimal strategy δ ∗ for various values of γ, number of misses, and number of attempts. From left to right,
+penalty parameter is γ = 0.01, γ = 0.03, and γ = 0.1. Dotted line Nt = 30, solid line Nt = 60, and dot-dash line
+∗
+∗
+∗
+Nt = 90. Blue lines Dtδ = 4, green lines Dtδ = 8, red lines Dtδ = 12. The remaining parameters are: M = 100,
+α = 0,  = 0.1, Z ∼ N(0.2, 1).
+
+We perform 10,000 simulations with the same parameters as above and use the arrival rate
+of the MLOs as in (31) with  = 0.1. Figures 6 and 7 report the results, which have a similar
+interpretation to that of Figures 2 and 3, respectively.
+
+22
+
+15
+
+1.8
+1.6
+
+10
+
+1.4
+5
+1.2
+0
+
+1
+0.8
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+-5
+
+1
+
+10
+
+100
+
+8
+
+80
+
+6
+
+60
+
+4
+
+40
+
+2
+
+20
+
+0
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+0
+
+1
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+∗
+
+Figure 6: Sample paths for the optimal discretion δ ∗ (top left panel), number of missed trades Dδ (lower left panel),
+∗
+cost of strategy C δ (top right panel), and number of trade attempts N (lower right panel) for three simulations of
+the MPP. Parameters: α = 0, γ = 0.07,  = 0.1, M = 100, T = 1.
+
+23
+
+2500
+
+2500
+
+2000
+
+2000
+
+1500
+
+1500
+
+1000
+
+1000
+
+500
+
+500
+
+0
+
+-40
+
+-20
+
+0
+
+0
+
+20
+
+6000
+
+6000
+
+5000
+
+5000
+
+4000
+
+4000
+
+3000
+
+3000
+
+2000
+
+2000
+
+1000
+
+1000
+
+0
+
+0
+
+10
+
+20
+
+30
+
+40
+
+0
+
+50
+
+-0.6
+
+0
+
+-0.4
+
+0.1
+
+-0.2
+
+0.2
+
+0
+
+0.3
+
+0.2
+
+0.4
+
+0.4
+
+0.5
+
+∗
+
+Figure 7: Top left panel: Histogram of the cost CTδ of the strategy. Top right panel: Histogram of the extra cost
+∗
+∗
+∗
+per filled trade CTδ /(NT − DTδ ). Bottom left panel: Histogram of the number of misses DTδ . Bottom right panel:
+δ∗
+Histogram of percentage of misses DT /NT .
+
+6. Conclusions
+With few exceptions, the literature on algorithmic trading assumes that latency in the marketplace is zero. This is not accurate, and the effects of latency on the efficacy of liquidity making
+and taking strategies are economically significant. In this paper we proposed a model to improve
+the marksmanship of the orders sent by liquidity takers when, due to latency, the limit order book
+is a moving target.
+We showed how a liquidity taker chooses the price limit of marketable orders when there
+is latency in the marketplace. The optimal strategy balances the tradeoff between the costs of
+walking the book and the number of missed trades over a trading horizon. We modelled the effects
+of latency as a marked point process that captures the interaction between liquidity taking orders
+and the limit orders resting in the book. We characterized the optimal price limit of marketable
+orders as a solution to a FBSDE, which, to the best of our knowledge, is new and, as the extant
+literature does not have uniqueness and existence results, we prove both.
+The strategy developed here may be implemented as another layer of any liquidity taking
+strategy (especially those that follow a stochastic trading schedule) that incorrectly assumes zero
+latency. Our framework can be applied in other contexts too. In its most general form, we solve a
+problem in which the agent decides how much she is willing to pay to absorb a stochastic shock to
+achieve an objective or complete a task. For example, market makers in foreign exchange markets
+with ‘last look’ can employ the framework developed in this paper. The last look feature allows
+liquidity makers to reject trades, so they are not picked off by faster liquidity taking traders,
+24
+
+see Oomen (2017) and Cartea et al. (2018). Specifically, with our framework, a foreign exchange
+market maker can obtain the optimal tolerance that maximizes the number of incoming marketable
+orders she is willing to fill while minimizing losses to the fast traders who snipe her stale quotes in
+the LOB.
+
+References
+Almgren, R. (2012). Optimal trading with stochastic liquidity and volatility. SIAM Journal on Financial Mathematics, 3(1):163–181.
+Antonelli, F. (1993). Backward-forward stochastic differential equations. The Annals of Applied Probability, 3(3):777–
+793.
+Bandini, E. (2016). Probabilistic representation of HJB equations for optimal control of jump processes, BSDEs and
+related stochastic calculus. PhD Thesis.
+Barger, W. and Lorig, M. (2019). Optimal liquidation under stochastic price impact. International Journal of
+Theoretical and Applied Finance, 22(02):1850059.
+Cartea, Á., Jaimungal, S., and Walton, J. (2018). Foreign exchange markets with Last Look. Mathematics and
+Financial Economics (forthcoming).
+Cartea, Á. and Sánchez-Betancourt, L. (2018). The shadow price of latency: Improving intraday fill ratios in foreign
+exchange markets. Available at SSRN 3190961.
+Casgrain, P. and Jaimungal, S. (2018a). Mean-field games with differing beliefs for algorithmic trading. arXiv
+preprint arXiv:1810.06101.
+Casgrain, P. and Jaimungal, S. (2018b). Mean-field games with partial information for algorithmic trading. arXiv
+preprint arXiv:1803.04094.
+Cohen, S. N. and Elliott, R. J. (2015). Stochastic calculus and applications, volume 2. Springer.
+Conforti, G. (2016). Bridges of Markov counting processes: quantitative estimates. Electronic Communications in
+Probability, 21.
+Confortola, F. and Fuhrman, M. (2013). Backward stochastic differential equations and optimal control of marked
+point processes. SIAM Journal on Control and Optimization, 51(5):3592–3623.
+Confortola, F., Fuhrman, M., and Jacod, J. (2016). Backward stochastic differential equation driven by a marked
+point process: An elementary approach with an application to optimal control. The Annals of Applied Probability,
+26(3):1743–1773.
+Duffie, D. and Epstein, L. G. (1992). Stochastic differential utility. Econometrica: Journal of the Econometric
+Society, pages 353–394.
+Gao, X. and Wang, Y. (2018). Electronic market making and latency. arXiv preprint arXiv:1806.05849.
+Guéant, O. (2016). The financial mathematics of market liquidity: From optimal execution to market making,
+volume 33. CRC Press.
+Hoyle, E. (2010). Information-based models for finance and insurance. PhD Thesis.
+Jeanblanc, M., Yor, M., and Chesney, M. (2009). Mathematical methods for financial markets. Springer Science &
+Business Media.
+Jianming, X. (2000). Backward stochastic differential equation with random measures. Acta Mathematicae Applicatae
+Sinica, 16(3):225–234.
+Lehalle, C.-A. and Laruelle, S. (2013). Market Microstructure in Practice. World Scientific.
+Lehalle, C.-A. and Mounjid, O. (2017). Limit order strategic placement with adverse selection risk and the role of
+latency. Market Microstructure and Liquidity, 03(01):1750009.
+Moallemi, C. C. and Saĝlam, M. (2013). The cost of latency in high-frequency trading. Operations Research,
+61(5):1070–1086.
+Oomen, R. (2017). Last Look. Quantitative Finance, 17:1057–1070.
+Peng, S. and Wu, Z. (1999). Fully coupled forward-backward stochastic differential equations and applications to
+optimal control. SIAM Journal on Control and Optimization, 37(3):825–843.
+Stoikov, S. and Waeber, R. (2016). Reducing transaction costs with low-latency trading algorithms. Quantitative
+Finance, 16(9):1445–1451.
+Zhen, W. (1999). Forward-backward stochastic differential equations with brownian motion and poisson process.
+Acta Mathematicae Applicatae Sinica, 15(4):433–443.
+
+25
+
+Appendix A. Proof of Lemma 1
+We prove the lemma in three parts. First we work out the Gâteaux derivative of the cost function. We
+use (8) to write
+#)
+( "Z Z
+T
+
+
+ δ
+1
+1   δ+ w 
+z Ĝ(δt +  wt − z) − Ĝ(δt − z) φt (dz) dAt
+E CT
+− E CT =
+E
+
+
+0
+R
+#)
+( "Z Z
+δt + wt
+T
+1
+=
+z φt (dz) dAt
+E
+
+δt
+0
+"Z
+)
+(Z
+#
+T
+δt + wt
+1
+=E
+z φt (dz) dAt .
+0 
+δt
+Then, by the dominated convergence theorem and the fundamental theorem of calculus, we have
+J C (δ +  w) − J C (δ)
+→0
+
+"Z
+#
+T
+
+
+
+ δ
+1
+δ+ w
+= lim
+E CT
+− E CT = E
+δt wt φt (δt ) dAt .
+→0 
+0
+
+hD J C (δ), wi = lim
+
+Next we work out the Gâteaux derivative of the linear penalty. Note that
+( "Z Z
+#)
+T
+ δ
+1
+1   δ+ w 
+E DT
+− E DT =
+E
+(G(δt +  wt − z) − G(δt − z)) p̃(dz, dt)
+
+
+0
+R
+"Z
+(Z
+)
+#
+T
+δt
+1
+=E
+φt (dz) dAt ,
+0 
+δt + wt
+therefore, we have
+1
+lim
+→0 
+
+
+
+
+
+ 
+E DTδ+ w − E DTδ
+
+"Z
+
+
+= −E
+
+#
+
+T
+
+wt φt (δt ) dAt .
+0
+
+Finally, we work out the Gâteaux derivative of the quadratic penalty. We write
+)
+(
+( "Z Z
+#
+T
+h
+h
+ i
+ i
+2
+1
+δ+ w 2
+δ+ w
+δ 2
+=
+E DT
+− E DT
+E
+Dt− G(δt +  wt − z) p̃(dz, dt)
+
+
+0
+R
+"Z Z
+#)
+T
+
+Dtδ− G(δt − z) p̃(dz, dt)
+
+−E
+0
+
+1
++
+
+Subtract and add
+2
+
+
+R
+
+( "Z Z
+#)
+T
+E
+G(δt +  wt − z) − G(δt − z) p̃(dz, dt)
+.
+0
+
+R
+
+#
+ "Z T Z
+δ+ w
+E
+Dt− G(δt − z) p̃(dz, dt)
+0
+
+R
+
+26
+
+to the right-hand side of the equation above and write
+(
+)
+h
+i
+h
+i
+
+
+1
+2
+2
+E DTδ+ w
+− E DTδ
+
+( "Z Z
+#
+T
+
+2
+δ+ w
+δ+ w
+Dt− G(δt +  wt − z) − Dt− G(δt − z) p̃(dz, dt)
+E
+=
+
+0
+R
+"Z Z
+#)
+T
+
+δ+ w
++E
+Dt− G(δt − z) − Dtδ− G(δt − z) p̃(dz, dt)
+0
+
+R
+
+#)
+( "Z Z
+T
+1
+(G(δt +  wt − z) − G(δt − z)) p̃(dz, dt)
++
+E
+
+0
+R
+( "Z Z 
+#
+
+T
+δ+ w G(δt +  wt − z) − G(δt − z)
+=2 E
+Dt−
+p̃(dz, dt)
+
+0
+R
+!
+#)
+"Z Z
+w
+T
+Dtδ+
+− Dtδ−
+−
+G(δt − z) p̃(dz, dt)
++E
+
+R
+0
+"Z Z 
+#
+
+T
+G(δt +  wt − z) − G(δt − z)
++E
+p̃(dz, dt) .
+
+0
+R
+
+(QP1)
+
+(QP2)
+
+(QP3)
+
+Next, take the limit of QP1, QP2, and QP3 as  approaches zero. The limit of QP1 is given by
+#
+"Z Z
+T
+G(δ
++
+
+w
+−
+z)
+−
+G(δ
+−
+z)
+t
+t
+t
+w
+p̃(dz, dt)
+lim QP1 = lim E
+Dtδ+
+−
+→0
+→0
+
+0
+R
+"Z
+(Z
+)
+#
+T
+δt
+δ+ w 1
+= lim E
+Dt−
+φt (dz) dAt
+→0
+
+0
+δt + wt
+"Z
+#
+T
+δ
+= −E
+Dt− wt φt (δt ) dAt .
+0
+w
+The last equality follows from the dominated convergence theorem and because lim→0 Dtδ+
+= Dtδ− almost
+−
+surely.
+
+27
+
+The limit of QP2 is given by
+lim QP2
+
+→0
+
+"Z
+
+#
+w
+Dtδ+
+− Dtδ−
+−
+G(δt − z) p̃(dz, dt)
+= lim E
+→0
+
+0
+R
+!
+#
+"Z Z
+Z t− Z
+T
+G(δs +  ws − z 0 ) − G(δs − z 0 )
+0
+G(δt − z)
+p(dz , ds) p̃(dz, dt)
+= lim E
+→0
+
+0
+R
+0
+R
+"Z Z
+!
+#
+Z TZ
+T
+G(δt +  wt − z) − G(δt − z)
+= lim E
+G(δs − z) p̃(dz 0 , ds) p(dz, dt)
+→0
+
+0
+R
+t
+R
+"Z Z
+"Z Z
+#
+#
+T
+T
+G(δt +  wt − z) − G(δt − z)
+0
+= lim E
+G(δs − z) p̃(dz , ds) p(dz, dt)
+Et−
+→0
+
+0
+R
+t
+R
+#
+#
+"Z Z
+"Z Z
+T
+T
+G(δt +  wt − z) − G(δt − z)
+0
+G(δs − z) p̃(dz , ds) p̃(dz, dt)
+= lim E
+Et−
+→0
+
+0
+R
+t
+R
+"Z
+"Z Z
+#
+#
+Z
+T
+T
+1 δt
+0
+= lim E
+φt (dz) Et−
+G(δs − z) p̃(dz , ds) dAt
+→0
+ δt + wt
+0
+R
+t
+"Z
+"Z Z
+#
+#
+T
+T
+0
+= −E
+wt φt (δt ) Et−
+G(δs − z) p̃(dz , ds) dAt .
+T Z
+
+0
+
+t
+
+R
+
+Finally, the limit of QP3 is given by
+"Z
+
+#
+G(δt +  wt − z) − G(δt − z)
+p̃(dz, dt)
+lim QP3 = lim E
+→0
+→0
+
+0
+R
+"Z
+#
+Z
+T
+1 δt
+= lim E
+φt (dz) dAt
+→0
+ δt + wt
+0
+"Z
+#
+T
+= −E
+wt φt (δt ) dAt ,
+T Z
+
+0
+
+which concludes the proof.
+
+Appendix B. Bounded Gâteaux derivative
+Let S = max{1, {φt (z)}0≤t≤T ,z∈R } < ∞ and δ, w ∈ A. Let
+
+ ηt = max{δt , wt , Nt− }, which is predictable because each process is predictable, and note that E sup0≤t≤T (ηt )2 ≤ 4 E sup0≤t≤T (δt )2 +
+
+28
+
+
+
+
+
+4 E sup0≤t≤T (wt )2 + 4 E sup0≤t≤T (Nt− )2 < ∞. Then
+"Z
+T
+|hD J(δ), wi|
+
+≤
+
+"Z
+T
+
+#
+
+2γ E
+
+t
+
+"Z
+
+#
+φt (δt ) wt Dtδ− dAt
+
+
+S λ̄ T E
+
+R
+
+#
+
+T
+
+φt (δt ) wt dAt
+
++ (γ + α) E
+0
+
+0
+
+≤
+
+#
+
+0
+
+G(δs − z )p̃(dz , ds) dAt
+
+0
+
+0
+
+"Z
+T
+
+0
+
+φt (δt ) wt
+
++ 2γ E
+
+δt wt φt (δt ) dAt
+
+E
+
+!
+
+Z TZ
+
+
+
+
+sup (ηt )2 + 2 γ S T 2 λ̄E sup |ηt |
+0≤t≤T
+
+0≤t≤T
+
+
++2 γ S T λ̄ E
+
+2
+
+sup (ηt )
+
+
+
+
+
+
+sup |ηt |
+
++ (γ + λ) S T E
+
+0≤t≤T
+
+0≤t≤T
+
+< ∞.
+
+Appendix C. Second Gâteaux derivative
+The first Gâteaux derivative of the functional J is given by
+"Z
+Z Z
+T
+
+hD J(δ), wi = E
+
+!
+
+T
+
+wt φt (δt )
+
+G(δs − z 0 ) p̃(dz 0 , ds)
+
+δt − 2 γ
+
+0
+
+t
+
+"Z
+T
+
+#
+ δ
+
+wt φt (δt ) δt − 2 γ Et− DT − (γ + α) dAt .
+
+=E
+
+!
+− 2 γ Dtδ− − (γ + α)
+
+R
+
+0
+
+Let δ, w, ν ∈ A. The second Gâteaux derivative of J(δ) in the directions w and ν, is defined as
+hD2 J(δ), w, νi = lim
+
+→0
+
+hD J(δ +  ν), wi − hD J(δ), wi
+,
+
+
+which converges to
+hD2 J(δ), w, νi = E
+
+"Z
+T
+
+#
+ 
+
+wt νt φ0t (δt ) δt − 2 γ Et− DTδ − γ − α dAt
+
+0
+
+"Z
++E
+
+"Z
+T
+
+T
+
+wt φt (δt )
+
+νt + 2 γ Et−
+
+0
+
+φs (δs ) νs dAs
+0
+
+29
+
+#!
+
+#
+dAt .
+
+#
+dAt
+
+

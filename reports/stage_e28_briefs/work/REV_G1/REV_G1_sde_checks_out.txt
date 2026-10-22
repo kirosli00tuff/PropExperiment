@@ -1,0 +1,43 @@
+S0 daily sd 47.246 pts; per-sqrt-second 0.3089 pts = 1.2354 ticks; 10s 0.977 pts (3.91 t); 60s 2.392 pts (9.57 t)
+S1 Ito drift of log S for GBM: mu - sigma**2/2  (expect mu - sigma^2/2)
+   GBM mean gap zero log-drift h=60s: 0.000572 pts = 0.00229 ticks
+   GBM mean gap zero log-drift h=3600s: 0.034341 pts = 0.13736 ticks
+S2 Roll Cov(dp_t, dp_t-1) = -s**2/4; with s=0.25: -0.01562 pts^2
+   eta_hat=0.2143; implicit spread 0.1071 pts = 0.429 tick; X_hat after up-tick to 5000.25: 5000.1786 (0.286 tick below)
+S3 Kou E[Y]=-0.00100 E[Y^2]=1.400e-05 RMS=0.00374 -> 18.71 pts
+   share 1%: jump var 22.32 (2232=total) or 22.55 (2232=continuous); RMS lambda=1: 4.725 / 4.748 pts; lambda=5: 2.124 pts
+   share 20%: jump var 446.43 (2232=total) or 558.04 (2232=continuous); RMS lambda=1: 21.129 / 23.623 pts; lambda=5: 10.564 pts
+   19 ticks x $1.25 = $23.75; / $0.03 margin = 792 round turns
+S4 n=23400: Cn=5.1395 Sn=0.2794 crit=6.425
+S4 n=390: Cn=3.7977 Sn=0.3628 crit=5.467
+S4 n=1872000: Cn=6.2911 Sn=0.2332 crit=7.364
+   beta*=4.6001; K_min(23400/day)=2428.3; mu1^2=0.6366; vartheta=0.6090; 5% x 23400 = 1170
+S5 d(e^kt x) dt-part minus e^kt dx = kappa*x(t)*exp(kappa*t) (expect kappa e^kt x); adding e^kt*kappa(mu-x) gives kappa*mu*exp(kappa*t)
+   Var of one-step stochastic integral = sigma**2/(2*kappa) - sigma**2*exp(-2*h*kappa)/(2*kappa) (expect sigma^2(1-e^-2kh)/(2k))
+   d kappa/d phi = -1/(h*phi); Delta kappa for Delta phi = -(1+3phi)/n: (3*phi + 1)/(h*n*phi)
+   relative bias 4/(kappa T) = 4 HL/(ln2 T) -> factor 5.771; 10% needs T/HL = 57.7
+   phi=0.95 n=600: kappa=0.05129 HL=13.5s bias_phi=-0.00642 kappa_b=0.05807 x1.13 HL_b=11.9s
+   phi=0.999 n=600: kappa=0.00100 HL=692.8s bias_phi=-0.00666 kappa_b=0.00769 x7.69 HL_b=90.1s
+   phi=0.999 n=23400: kappa=0.00100 HL=692.8s bias_phi=-0.00017 kappa_b=0.00117 x1.17 HL_b=591.7s
+   asymptotic sd sqrt(2 kappa/T) at kappa=0.05, T=2e6: 0.00022
+   MC seed 7 phi=0.95 n=600: bias -0.00648 (formula -0.00642); median kappa_hat 0.05649 (x1.10)
+   MC seed 7 phi=0.999 n=600: bias -0.00881 (formula -0.00666); median kappa_hat 0.00800 (x7.99)
+S6 K=60: nbar=389.0; E[TSRV]/IV under iid noise = 1 - nbar/n = 0.9834; n^(2/3)=818.1
+S6 K=300: nbar=77.0; E[TSRV]/IV under iid noise = 1 - nbar/n = 0.9967; n^(2/3)=818.1
+S6 K=818: nbar=27.6; E[TSRV]/IV under iid noise = 1 - nbar/n = 0.9988; n^(2/3)=818.1
+   RV1s bias 2nEe2: iid 0.1^2 -> 468 (0.210); rounding var 0.125^2/12=0.001302 -> 60.9 (0.0273)
+   noise estimator at 1s: (IV+468)/(2n) = 0.0577; 0.978/(1-1/60) = 0.9946
+   E5b replicate seed 99 iid: RV1=1.208(0.011)  RV60=1.005(0.070)  TSRV60=0.977(0.052)  TSRV300=0.975(0.114)  TSRV818=0.954(0.193)
+   E5b replicate seed 99 round: RV1=1.027(0.010)  RV60=1.000(0.070)  TSRV60=0.977(0.052)  TSRV300=0.975(0.114)  TSRV818=0.954(0.193)
+S7 margin $0.03/RT = 0.0120 tick per fill; comm per fill 0.488 tick
+   adverse 0.05: net $-0.095
+   adverse 0.1: net $-0.220
+   adverse 0.25: net $-0.595
+   touch a=1: t=1:0.418  t=10:0.798  t=60:0.917
+   touch a=2: t=1:0.105  t=10:0.609  t=60:0.834
+   touch a=4: t=1:0.001  t=10:0.306  t=60:0.676
+   n fills h=1: d=0.05:3,774  d=0.1:944  d=0.25:151
+   n fills h=10: d=0.05:37,745  d=0.1:9,436  d=0.25:1,510
+   n fills h=60: d=0.05:226,467  d=0.1:56,617  d=0.25:9,059
+   fills 50..200 x 85 = 4,250..17,000; 0.25/0.012 = 20.8
+S8 listed fields 47 + levels 320 = 367; +1 (DBN hd.length) = 368; 2e6 recs -> 0.74 GB; 10e6 -> 3.68 GB; x85 -> 63..313 GB

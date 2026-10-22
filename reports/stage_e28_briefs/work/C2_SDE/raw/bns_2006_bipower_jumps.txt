@@ -1,0 +1,2659 @@
+Econometrics of testing for jumps in financial economics
+using bipower variation
+Ole E. Barndorff-Nielsen
+The Centre for Mathematical Physics and Stochastics (MaPhySto),
+University of Aarhus, Ny Munkegade, DK-8000 Aarhus C, Denmark
+oebn@imf.au.dk
+Neil Shephard
+Nuffield College, University of Oxford, Oxford OX1 1NF, UK
+neil.shephard@nuf.ox.ac.uk
+September 2, 2004
+
+Abstract
+In this paper we provide an asymptotic distribution theory for some non-parametric tests
+of the hypothesis that asset prices have continuous sample paths. We study the behaviour
+of the tests using simulated data and see that certain versions of the tests have good finite
+sample behaviour. We also apply the tests to exchange rate data and show that the null of a
+continuous sample path is frequently rejected. Most of the jumps the statistics identify are
+associated with governmental macroeconomic announcements.
+
+Keywords: Bipower variation; Jump process; Quadratic variation; Realized variance; Semimartingales; Stochastic volatility.
+
+1
+
+Introduction
+
+In this paper we will show how to use a time series of prices recorded at short time intervals to
+estimate the contribution of jumps to the variation of asset prices and form robust tests of the
+hypothesis that it is statistically satisfactory to regard the data as if it had a continuous sample
+path. Being able to distinguish between jumps and continuous sample path price movements is
+important as it has implications for risk management and asset allocation. A stream of recent
+papers in financial econometrics has addressed this issue using low frequency return data (e.g.
+the parametric models of Eraker, Johannes, and Polson (2003), Andersen, Benzoni, and Lund
+(2002), Chernov, Gallant, Ghysels, and Tauchen (2003) and the Markovian, non-parametric
+analysis of Aı̈t-Sahalia (2002), Johannes (2004) and Bandi and Nguyen (2003)) and options
+data (e.g. Bates (1996) and the review by Garcia, Ghysels, and Renault (2004)). Our approach
+will be non-parametric and exploit high frequency data. Monte Carlo results suggest that it
+performs well when based on empirically relevant sample sizes. Furthermore, empirical work
+points us to the conclusion that jumps are common.
+1
+
+Traditionally in the theory of financial economics the variation of asset prices is measured by
+looking at sums of products of returns calculated over very small time periods. The mathematics
+of this is based on the quadratic variation process (e.g. Back (1991)). Asset pricing theory links
+the dynamics of increments of quadratic variation to the increments of the risk premium. The recent econometric work on this topic, estimating quadratic variation using discrete returns, under
+the general heading of realized quadratic variation, realized volatility and realized variances, was
+discussed in independent and concurrent work by Andersen and Bollerslev (1998), BarndorffNielsen and Shephard (2001) and Comte and Renault (1998). It was later developed in the
+context of the methodology of forecasting by Andersen, Bollerslev, Diebold, and Labys (2001),
+while central limit theorems for realized variances were developed by Jacod (1994), BarndorffNielsen and Shephard (2002) and Mykland and Zhang (2005). Multivariate generalizations to
+realized covariation are discussed by, for example, Barndorff-Nielsen and Shephard (2004a) and
+Andersen, Bollerslev, Diebold, and Labys (2003). See Andersen, Bollerslev, and Diebold (2004)
+for an incisive survey of this area and references to related work.
+Recently Barndorff-Nielsen and Shephard (2004b) introduced a partial generalisation of
+quadratic variation called bipower variation (BPV). They showed that in some cases relevant
+to financial economics BPV can be used, in theory, to split up the individual components of
+quadratic variation into that due to the continuous part of prices and that due to jumps. In
+turn the bipower variation process can be consistently estimated using an equally spaced discretisation of financial data. This estimator is called the realized bipower variation process.
+In this paper we study the difference or ratio of realized BPV and realized quadratic variation.
+We show we can use these statistics to construct non-parametric tests for the presence of jumps.
+We derive the asymptotic distributional theory for these Hausman (1978) type tests under quite
+weak conditions. This is the main contribution of the paper. We will also illustrate the jump tests
+using both simulations and exchange rate data. We relate some of the jumps to macroeconomic
+announcements by Government agencies.
+A by-product of our research is an Appendix which records a proof of the consistency of
+realized BPV under substantially weaker conditions than those used by Barndorff-Nielsen and
+Shephard (2004b) and a joint limiting distribution for realized BPV and the corresponding
+realized quadratic variation process under the assumption that there are no jumps in the price
+process. The latter result demonstrates the expected conclusion that realized BPV is slightly
+less efficient than realized quadratic variation as an estimator of quadratic variation in the case
+where prices have a continuous sample path.
+In the next Section we will set out our notation and recall the definitions of quadratic
+
+2
+
+variation and BPV. In Section 3 we will give the main Theorem of the paper, which is the
+asymptotic distribution of the proposed tests. In Section 4 we will extend the analysis to cover
+the case of a time series of daily statistics for testing for jumps. In Section 5 we study how the
+jump tests behave in simulation studies, while in Section 6 we apply the theory to two exchange
+rate series. In Section 7 we discuss various additional issues, while Section 8 concludes. The
+proofs of the main results in the paper are given in the Appendix.
+
+2
+
+Definitions and previous work
+
+2.1
+
+Notation & quadratic variation
+
+Let the log-price of a single asset be written as Y t for continuous time t ≥ 0. Y is assumed to
+
+be a semimartingale. For a discussion of economic aspects of this see Back (1991). Further, Y d
+will denote the purely discontinuous component of Y , while Y c will be the continuous part of
+the local martingale component of Y .
+The quadratic variation (QV) process of Y can be defined as
+[Y ]t = p− lim
+n→∞
+
+n−1
+X
+j=0
+
+Ytj+1 − Ytj
+
+2
+
+,
+
+(1)
+
+(e.g. Jacod and Shiryaev (1987, p. 55)) for any sequence of partitions t 0 = 0 < t1 < ... < tn = t
+with supj {tj+1 − tj } → 0 for n → ∞. It is well known that
+[Y ]t = [Y c ]t + [Y d ]t ,
+
+where [Y d ]t =
+
+X
+
+∆Yu2
+
+(2)
+
+0≤u≤t
+
+where ∆Yt = Yt − Yt− are the jumps in Y . We will test for jumps by asking if [Y ] = [Y c ].
+We estimate [Y ] using a discretised version of Y based on intervals of time of length δ > 0.
+The resulting process, which we write as Y δ, is Yδbt/δc , for t ≥ 0, recalling that bxc is the integer
+part of x. This allows us to construct δ-returns
+yj = Yjδ − Y(j−1)δ ,
+
+j = 1, 2, ..., bt/δc ,
+
+which are used in the realized quadratic variation process
+bt/δc
+
+[Yδ ]t =
+
+X
+
+yj2 ,
+
+j=1
+
+p
+
+the QV of Yδ . Clearly the QV theory means that, as δ ↓ 0, [Y δ ]t → [Y ]t .
+Our analysis of jumps will often be based on the special case where Y is a member of the
+Brownian semimartingale plus jump (BSMJ ) class:
+Yt =
+
+Z t
+0
+
+as ds +
+
+Z t
+0
+
+3
+
+σ s dWs +
+
+Nt
+X
+j=1
+
+cj ,
+
+(3)
+
+where a is càdlàg, the volatility σ is càdlàg, W is a standard Brownian motion, N is a simple
+counting process (which is assumed finite for all t) and the c j are non-zero random variables.
+When N ≡ 0 we write Y ∈ BSM, which is a stochastic volatility plus drift model (e.g. Ghysels,
+Rt
+ 
+P t 2
+Harvey, and Renault (1996)). In this case [Y c ]t = 0 σ 2s ds and Y d t = N
+j=1 cj , so
+[Y ]t =
+
+2.2
+
+Z t
+0
+
+σ 2s ds +
+
+Nt
+X
+
+c2j .
+
+j=1
+
+Bipower variation
+
+The 1, 1-order bipower variation (BPV) process is defined, when it exists, as
+bt/δc
+X
+[1,1]
+|yj−1 | |yj | .
+{Y }t = p− lim
+δ↓0
+j=2
+
+(4)
+
+Barndorff-Nielsen and Shephard (2004b) showed that if Y ∈ BSMJ , a ≡ 0 and σ is independent
+from W then
+[1,1]
+
+{Y }t
+
+= µ21
+
+Z t
+
+where
+µ1 = E |u| =
+
+0
+
+σ 2s ds = µ21 [Y c ]t ,
+
+√ √
+2/ π ≃ 0.79788
+
+(5)
+
+[1,1]
+and u ∼ N (0, 1). Hence µ−2
+= [Y c ]. This result is quite robust as it does not depend
+1 {Y }
+
+on any other assumptions concerning the structure of N , the distribution of the jumps or the
+relationship between the jump process and the SV component. The reason for this is that only
+a finite number of terms in the sum (4) are affected by jumps, while each return which does not
+have a jump goes to zero in probability. Therefore, since the probability of jumps in contiguous
+time intervals goes to zero as δ ↓ 0, those terms do not impact the probability limit.
+[1,1]
+
+Clearly, {Y }t
+
+can be consistently estimated by the realized BPV process
+bt/δc
+[1,1]
+{Yδ }t =
+
+X
+j=2
+
+|yj−1 | |yj | ,
+
+as δ ↓ 0. One would expect these results on BPV to continue to hold when we extend the
+analysis to allow a 6= 0. This is indeed the case, as will be discussed in the next section.
+Barndorff-Nielsen and Shephard (2004b) point out that
+[1,1]
+
+[Y ]t − µ−2
+1 {Y }t
+
+=
+
+N
+t
+X
+
+c2j = [Y d ]t .
+
+j=1
+
+[1,1]
+
+This can be consistently estimated by [Y δ ]t − µ−2
+1 {Yδ }t
+
+. Hence, in theory, the realized BPV
+
+process can be used to consistently estimate the continuous and discontinuous components of
+4
+
+QV or, if augmented with the appropriate asymptotic distribution theory, as a basis for testing
+the hypothesis that prices have continuous sample paths.
+The only other work we know which tries to split QV into that due to the continuous
+and the jump components is Mancini (2003). She does this via the introduction of a jump
+threshold whose absolute value goes to zero as the number of observations within each day goes
+to infinity. Related work includes Coulin (1994). Following Barndorff-Nielsen and Shephard
+Pbt/δc
+(2004b), Woerner (2004) has studied the robustness of realized power variation δ 1−r/2 j=1 |yj |r
+to an infinite number of jumps in finite time periods showing that the robustness property of
+realized power variation goes through in that case. A related paper is Aı̈t-Sahalia (2004),
+which shows that maximum likelihood estimation can disentangle a homoskedastic diffusive
+component from a purely discontinuous infinite activity Lévy component of prices. Outside the
+likelihood framework, the paper also studies the optimal combinations of moment functions for
+the generalized method of moment estimation of homoskedastic jump-diffusions.
+
+3
+
+A theory for testing for jumps
+
+3.1
+
+Infeasible tests
+
+In this Section we give the main contribution of the paper, Theorem 1. It gives the asymptotic
+[1,1]
+
+distribution for a linear jump statistic, G, based on µ −2
+1 {Yδ }t
+
+−[Yδ ]t and a ratio jump statistic,
+
+[1,1]
+/[Yδ ]t . Their distributions, under the null of Y ∈ BSM, will be seen
+H, based on1 µ−2
+1 {Yδ }t
+Rt
+to depend upon the unknown integrated quarticity 0 σ 4u du and so we will say the results of the
+
+Theorem are statistically infeasible. We will overcome this problem in the next subsection.
+√ √
+Recall the definition µ1 = 2/ π in (5) and let
+
+ϑ = π 2 /4 + π − 5 ≃ 0.6090.
+
+(6)
+
+Theorem 1 Let Y ∈ BSM and let t be a fixed, arbitrary time. Suppose the following conditions
+are satisfied:
+(a) The volatility process σ 2 is pathwise bounded away from 0.
+(b) The joint process (a, σ) is independent of the Brownian motion W .
+Then as δ ↓ 0
+
+
+
+[1,1]
+δ −1/2 µ−2
+{Y
+}
+−
+[Y
+]
+δ t
+δ t
+1
+L
+sZ
+G=
+→ N (0, ϑ) ,
+t
+σ 4u du
+
+(7)
+
+0
+
+1
+Following Barndorff-Nielsen and Shephard (2004b), Huang and Tauchen (2003) have independently and concurrently used simulations to study the behaviour of this type of ratio, although they do not provide the corresponding asymptotic theory.
+
+5
+
+and
+
+[1,1]
+
+δ
+
+−1/2
+
+H=
+
+µ−2
+1 {Yδ }t
+−1
+[Yδ ]t
+v R
+u
+u 0t σ 4s ds
+un
+o2
+t Rt
+2 ds
+σ
+s
+0
+
+Further, if Y ∈ BSMJ and (a)-(b) hold, then
+[1,1]
+
+{Y }t
+
+= µ21
+
+Z t
+0
+
+!
+
+L
+
+(8)
+
+σ 2s ds.
+
+(9)
+
+→ N (0, ϑ) .
+
+Remark 1 (i) Condition (a) in Theorem 1 holds, for instance, for the square root process
+(due to it having a reflecting barrier at zero) and the Ornstein-Uhlenbeck volatility processes
+considered in Barndorff-Nielsen and Shephard (2001). More generally (a) does not rule out
+jumps, diurnal effects, long-memory or breaks in the volatility process.
+(ii) Result (9) is a generalisation of Barndorff-Nielsen and Shephard (2004b) which showed
+this result in the case where a ≡ 0.
+(iii) It is clear from the proof of Theorem 1 that in realized BPV we can replace the subscript
+j − 1 with j − q where q is any positive but finite integer.
+(iv) Condition (b) rules out leverage effects (e.g. Black (1976), Nelson (1991) and Ghysels,
+Harvey, and Renault (1996)) and feedback between previous innovations in W and the risk
+premium in a. This is an unfortunate important limitation of the result. This is empirically
+reasonable with exchange rates but clashes with what we observe for equity data. Simulation
+results in Huang and Tauchen (2003) suggests the behaviour of the test statistic is not affected
+by leverage effects.
+(v) Result (9) means that under the alternative hypothesis of jumps
+Nt
+X
+p
+[1,1]
+−2
+c2j ≤ 0
+µ1 {Yδ }t − [Yδ ]t → −
+j=1
+
+and
+
+[1,1]
+
+µ−2
+1 {Yδ }t
+[Yδ ]t
+
+p
+
+P Nt
+
+2
+j=1 cj
+PNt 2 ≤ 0.
+2 ds +
+σ
+s
+j=1 cj
+0
+
+− 1 → −R t
+
+This implies the linear and ratio tests will be consistent.
+
+(vi) A by-product of the Proof of Theorem 1 is Theorem 3, given in the Appendix, which is
+a joint central limit theorem for scaled realized BPV and QV processes. This is proved under
+Rt
+the assumption that Y ∈ BSM and shows that they, of course, both estimate 0 σ 2s ds with the
+
+efficient realized QV having a slightly smaller asymptotic variance. Thus we can think of (7)
+
+as a Hausman (1978) type test, a point first made by Huang and Tauchen (2003) following the
+initial draft of this paper.
+6
+
+3.2
+
+Feasible tests
+
+To construct computable linear and ratio jump tests we need to estimate the integrated quarticity
+Rt 4
+0 σ u du under the null hypothesis of Y ∈ BSM. However, in order to ensure the test has power
+
+under the alternative it is preferable to have an estimator of integrated quarticity which is
+also consistent under the alternative BSMJ . This is straightforward using realized quadpower
+variation
+
+bt/δc
+[1,1,1,1]
+{Yδ }t
+= δ −1
+
+X
+j=4
+
+p
+
+|yj−3 | |yj−2 | |yj−1 | |yj | → µ41
+
+Z t
+0
+
+σ 4s ds.
+
+The above discussion allows us to define the feasible linear jump test statistic, b
+G, which has
+
+the asymptotic distribution
+
+
+
+[1,1]
+δ −1/2 µ−2
+{Y
+}
+−
+[Y
+]
+t
+δ
+δ
+t
+1
+L
+b=
+q
+G
+→ N (0, ϑ) ,
+[1,1,1,1]
+µ−4
+1 {Yδ }t
+
+(10)
+
+where we would reject the null of a continuous sample path if (10) is significantly negative.
+Likewise, the ratio jump test statistic, b
+H, defined as
+b=r
+H
+
+δ −1/2
+.n
+
+[1,1,1,1]
+{Yδ }t
+
+[1,1]
+{Yδ }t
+
+rejects the null if significantly negative.
+[1,1]
+
+The ratio {Yδ }t
+
+o2
+
+[1,1]
+
+µ−2
+1 {Yδ }t
+[Yδ ]t
+
+−1
+
+!
+
+L
+
+→ N (0, ϑ) ,
+
+(11)
+
+/ [Yδ ]t is asymptotically equivalent to the realized correlation between
+
+|yj−1 | and |yj |. It converges to µ21 ≃ 0.6366 under BSM. Estimates below µ 21 provide evidence
+for jumps. Its asymptotic distribution under the null follows trivially from (11). Further, in (8)
+. R
+2
+Rt
+t 2
+clearly the ratio 0 σ 4s ds
+σ
+ds
+≥ 1/t, with equality obtained in the homoskedastic case.
+s
+0
+b by the adjusted ratio jump test
+This suggests replacing H
+Jb = s
+
+
+
+δ −1/2
+
+[1,1,1,1]
+
+max t−1 , {Yδ }t
+
+4
+
+.n
+
+[1,1]
+
+{Yδ }t
+
+o2 
+
+[1,1]
+
+µ−2
+1 {Yδ }t
+[Yδ ]t
+
+−1
+
+!
+
+L
+
+→ N (0, ϑ) .
+
+Time series of realized quantities
+
+To ease the exposition we will use t = 1 to denote the period of a day. Then we define
+b1/δc
+
+vbi =
+
+X
+j=1
+
+Yδj+(i−1) − Yδ(j−1)+(i−1)
+
+2
+
+= [Yδ ]i − [Yδ ](i−1) ,
+p
+
+i = 1, 2, ..., T,
+
+the daily increments of realised QV, so as δ ↓ 0 then vbi → [Y ]i − [Y ](i−1) . The vbi and
+
+√
+vbi are
+
+called the daily realized variance and volatility in financial economics, respectively. Here we give
+7
+
+the corresponding results for realized BPV and then discuss the asymptotic theory for a time
+series of such sequences. These results follow straightforwardly from our previous theoretical
+results.
+Clearly we can define a sequence of T daily realized bipower variations
+b1/δc
+
+vei =
+
+X
+j=2
+
+|yj−1,i | |yj,i | ,
+
+i = 1, 2, ..., T,
+
+where we assume δ satisfies δ b1/δc = 1 for ease of exposition and
+yj,i = Yδj+(i−1) − Yδ(j−1)+(i−1) .
+p
+
+Clearly µ−2
+ei → [Y c ]i −[Y c ](i−1) . In order to develop a feasible limit theory it will be convenient
+1 v
+
+to introduce a sequence of daily realized quadpower variations
+b1/δc
+
+qei = δ −1
+
+X
+j=4
+
+|yj−3,i | |yj−2,i | |yj−1,i | |yj,i | ,
+
+i = 1, 2, ..., T.
+
+The above sequences of realized quantities suggest constructing a sequence of non-overlapping,
+feasible daily jump test statistics
+bδi = δ
+G
+b δi = q
+H
+
+
+µ−2
+ei − vbi
+1 v
+q
+,
+µ−4
+q
+e
+i
+1
+
+−1/2
+
+δ −1/2
+
+qei / {e
+vi }
+
+2
+
+
+
+(12)
+
+
+µ−2
+ei
+1 v
+−1 ,
+vbi
+
+δ −1/2
+Jbδi = r
+
+
+max 1, qei / {e
+v i }2
+
+
+
+(13)
+
+
+µ−2
+ei
+1 v
+−1 .
+vbi
+
+(14)
+
+By inspecting the proof of Theorem 1 it is clear that as well as each of these individual tests
+converging to N (0, ϑ) as δ ↓ 0, they converge as a sequence in time jointly to a multivariate
+
+b δ = (H
+b δ1 , ..., H
+bδT )0 ,
+normal distribution. For example, define a sequence of feasible ratio tests H
+L
+
+L
+
+L
+
+b δ → N (0, ϑIT ). Likewise G
+bδ → N (0, ϑIT ) and Jbδ → N (0, ϑIT ). Thus each of
+then as δ ↓ 0 so H
+
+these tests have the property that they are asymptotically serially independent through time,
+under the null hypothesis that there are no jumps.
+
+5
+
+Simulation study
+
+5.1
+
+Simulation design
+
+In this section we document some Monte Carlo experiments which assess the finite sample
+performance of our asymptotic theory for the feasible tests for jumps. Throughout we assume
+8
+
+Y ∈ BSMJ , but set a ≡ 0 and the component processes σ, W , N and c to be independent.
+Before we start we should mention that in independent and concurrent work Huang and Tauchen
+(2003) have also studied the finite sample behaviour of our central limit theory using an extensive
+simulation experiment. Their conclusions are broadly in line with the ones we reach here 2 .
+Our model for σ is derived from some empirical work reported in Barndorff-Nielsen and
+Shephard (2002) who used realized variances to fit the spot variance of the DM/Dollar rate
+from 1986 to 1996 by the sum of two uncorrelated, stationary processes σ 2 = σ 21 + σ 22 . Their
+results are compatible with using CIR processes for the σ 21 and σ 22 processes. In particular we
+will write these, for s = 1, 2, as the solutions to
+
+dσ 2t,s = −λs σ 2t,s − ξ s dt + ω s σ t,s dBλs t,s ,
+
+ξ s ≥ ω 2s /2,
+
+(15)
+
+where B = (B1 , B2 )0 is a vector standard Brownian motion, independent from W . The process
+(15) has a gamma marginal distribution
+−2
+σ 2t,s ∼ Ga(2ω −2
+s ξ s , 2ω s ) = Ga (ν s , as ) ,
+
+ν s ≥ 1,
+
+with a mean of ν s /as and a variance of ν s /a2s (Cox, Ingersoll, and Ross (1985)). The parameters
+ω s , λs and ξ s were calibrated by Barndorff-Nielsen and Shephard (2002) as follows. Setting
+p1 + p2 = 1, they estimated
+E(σ 2s ) = ps 0.509,
+
+Var(σ 2s ) = ps 0.461,
+
+s = 1, 2,
+
+with p1 = 0.218, p2 = 0.782, λ1 = 0.0429 and λ2 = 3.74, which means the first, smaller
+component of the variance process is slowly reverting with a half-life of around 16 days while
+the second has a half-life of around 4 hours.
+All jumps will be generated by taking N as a stratified Poisson process so that there are
+K jumps uniformly scattered in each unit of time. This setup means that when K > 0 we
+can view power conditionally, as the probability of rejection in time units where there actually
+i.i.d.
+
+were jumps. We specify cj ∼ N (0, σ 2c ), so the variance of Ytd and Ytc are tKσ 2c and t0.509,
+
+respectively. We will vary K and σ 2c , which allows us to see the impact of the frequency of jumps
+
+and their size on the behaviour of the realized bipower variation process. To start off we will
+fix K = 2 and σ 2c = 0.2 × 0.509, which means that the jump process will account for 28% of the
+variation of the process. Clearly this is a high proportion. Later we will study the cases when
+K = 1 and σ 2c = 0.1 × 0.509 and 0.05 × 0.509.
+Finally, the results will be indexed by n = 1/δ, the number of observations per unit of time.
+2
+
+Huang and Tauchen (2003) also report results on the finite sample behaviour of the test when it is carried
+out over long stretches of data, such as a year or ten years. In this case the results differ from the ones given
+here with significant size distortions. As Huang and Tauchen (2003) explain this is not surprising and this effect
+is also present when we look at the behaviour of the asymptotic theory for realised quadratic variation. See also
+the work of Corradi and Distaso (2004).
+
+9
+
+5.2
+
+Null distribution
+
+We will use 5,000 simulated days to assess the finite sample behaviour of the jump tests given
+in (12), (13) and (14). We start with looking at their null distributions when N ≡ 0.
+The left hand side of Figure 1 shows the results from the first 300 days in the sample. The
+crosses depict the linear jump test, µ −2
+ei − vbi , while the feasible 95% one sided critical values
+1 v
+(using (12)) of the statistics are given by the solid line. As we go down the graph n increases
+
+and so, as the null hypothesis is true, the magnitude of µ −2
+ei − vbi and corresponding critical
+1 v
+values tend to fall towards zero. The most important aspect of these graphs is that the critical
+
+values of the tests change dramatically through time, reflecting the volatility clustering in the
+data.
+
+n=12. Linear jump test
+0.5
+
+Ratio jump test
+
+0.5
+
+10
+
+QQ plot
+
+95% one−sided critical value
+
+0
+0.0
+
+0.0
+
+−10
+−0.5
+
+−0.5
+0
+
+n=72
+
+100
+
+200
+
+300
+
+−20
+0
+
+0.2
+
+0.25
+
+0.0
+
+0.00
+
+Linear t test
+Ratio t test
+45 degrees
+
+100
+
+200
+
+300
+
+−2.5
+2.5
+
+0.0
+
+2.5
+
+0.0
+
+2.5
+
+0.0
+
+2.5
+
+Linear t test
+Ratio t test
+45 degrees
+
+0.0
+−2.5
+
+−0.2
+
+−0.25
+0
+
+0.1
+
+100
+
+n=288.
+
+200
+
+300
+
+0.0
+
+−5.0
+0
+
+100
+
+200
+
+300
+
+−2.5
+
+0.1
+
+2.5
+
+0.0
+
+0.0
+
+−0.1
+
+−2.5
+
+Linear t test
+Ratio t test
+45 degrees
+
+−0.1
+0
+
+100
+
+200
+
+300
+
+Days
+
+0
+
+100
+
+200
+
+300
+
+Days
+
+−2.5
+
+Figure 1: Simulation from the null distribution of the feasible limit theory for the linear and ratio
+jump tests for a variety of values of n. Right hand side gives the QQ plots of the t-statistics.
+The middle column of Figure 1 repeats this analysis, but now using the ratio jump test,
+µ−2
+ei /b
+vi − 1, which tends to fall as n increases. The feasible critical values of this test are more
+1 v
+10
+
+stable through time, reflecting the natural scaling of the denominator for the ratio jump test.
+The right hand part of Figure 1 shows the QQ plots of the two t-tests. On the y-axis are the
+ranked values of the simulated t-tests, while on the x-axis are the corresponding expected values
+under Gaussian sampling. We see a very poor QQ plot for the linear test even when n = 72.
+For larger values of n the asymptotics seem to have some substantial bite. The ratio test has
+quite good QQ plots for n equal to 72 or above.
+Standard setup
+ratio test
+bias
+S.D. Accept
+-.102 1.41 .877
+-.053 1.07 .919
+-.029 1.02 .935
+-.035 0.99 .943
+
+n
+12
+72
+288
+1152
+
+linear test
+bias
+S.D. Accept
+-.597 2.68 .813
+-.169 1.18 .891
+-.084 1.05 .918
+-.059 1.00 .935
+
+adjusted ratio test
+bias
+S.D. Accept
+-.017 0.99 .929
+-.033 1.01 .933
+-.025 1.01 .938
+-.035 0.99 .944
+
+n
+12
+72
+288
+1152
+
+Robustness check λ2 = 5 × 3.74
+linear test
+ratio test
+adjusted ratio test
+bias
+S.D. Accept bias
+S.D. Accept bias
+S.D. Accept
+-.637 2.61 .804
+-.151 1.41 .865
+-.056 0.99 .926
+-.257 1.23 .875
+-.133 1.09 .906
+-.108 1.03 .922
+-.132 1.06 .908
+-.077 1.03 .926
+-.073 1.02 .929
+-.098 1.00 .932
+-.073 0.99 .939
+-.073 0.99 .939
+
+Table 1: Finite sample behaviour of the feasible linear, ratio and adjusted ratio tests based on
+5, 000 seperate days under the null hypothesis. Accept denotes acceptance rate, designed level is
+0.95. Top block: standard setup with λ 2 = 3.74. Bottom block: changes λ2 to 5 × 3.74.
+In the upper part of Table 1 we show the biases, standard deviations and acceptance rates
+(defined as the probability of not rejecting the null hypothesis) of (12), (13) and (14). All three
+statistics have a negative mean, leading to overrejection of the null due to the one sided nature
+of the test. Even when n = 288 the linear test rejects the null around 8% of the time. The small
+sample performance of the adjusted ratio test is better for a range of values of n.
+As a final check on the null distribution of the jump tests, we repeat the above analysis but
+increasing λ2 , the mean reversion parameter of the fast decaying volatility process, by a factor
+of five. This reduces its half life down to 20 minutes. This case of an extremely short half-life is
+quite a challenge as a number of econometricians view very short memory SV models as being
+good proxies for processes with jumps. Table 1 shows the results. The linear test has a negative
+bias which reduces as n becomes very large. The ratio test has a smaller negative bias and
+over reject less than the linear test. The degree of overrejection is modest but more important
+than in the first simulation design. Hence this testing procedure can be challenged by very fast
+reverting volatility components.
+
+11
+
+5.3
+
+Impact of jumps: the alternative distribution
+
+We now introduce some jumps into the process and see how the tests react. The stratified
+Poisson process is setup to have either 1 or 2 jumps per day, while the variance of the jumps is
+
+either 5%, 10% or 20% of E σ 2t .
+The results are given in Table 2 and they are in line with expectations. There is little
+
+difference in the nominal power of the linear and adjusted ratio tests. As the number of jumps
+or the variance of the jumps increases, so the rate of accepting the null falls. In the case where
+there is a single jump a day and the jump is 5% of the variability of the continuous component
+of prices, we reject the null 20% of the time when n = 288.
+20%
+n
+12
+72
+288
+10%
+12
+72
+288
+5%
+12
+72
+288
+
+N1 = 1
+linear test
+adjusted ratio test
+mean
+S.D. Accept mean S.D. Accept
+-1.05
+3.93 .760
+-.156
+1.07 .894
+-1.61
+3.53 .676
+-.891
+1.64 .735
+-3.63
+6.60 .526
+-2.27
+3.06 .546
+
+N1 = 2
+linear test
+adjusted ratio test
+bias
+S.D. Accept mean
+S.D. Accept
+-1.31 4.54 .730
+-.251
+1.10 .881
+-2.84 4.33 .521
+-1.55
+1.88 .573
+-6.76 8.58 .292
+-4.00
+3.55 .310
+
+-0.772
+-0.797
+-1.73
+
+3.22
+2.07
+3.43
+
+.790
+.781
+.654
+
+-.073
+-.465
+-1.25
+
+1.02
+1.30
+2.14
+
+.916
+.837
+.679
+
+-.893
+-1.35
+-3.21
+
+3.41
+2.45
+4.43
+
+.774
+.673
+.457
+
+-.110
+-.835
+-2.29
+
+1.04
+1.46
+2.55
+
+.911
+.739
+.484
+
+-0.642
+-0.423
+-0.820
+
+2.84
+1.46
+1.94
+
+.802
+.842
+.776
+
+-.035
+-.226
+-.640
+
+0.99
+1.11
+1.52
+
+.926
+.895
+.799
+
+-.723
+-.657
+-1.49
+
+2.97
+1.62
+2.39
+
+.797
+.789
+.646
+
+-.0566
+-.405
+-1.18
+
+1.01
+1.19
+1.76
+
+.920
+.847
+.677
+
+Table 2: Effect of jumps on the linear and adjusted ratio tests. On the right hand side we show
+results for the case where there are 2 jumps per day. On the left hand side, there is a single
+jump per day. The variance of the jumps are 20%, 10% and 5% respectively of the expectation
+of σ 2 , with the results for the 20% case given at the top of the Table.
+One of the interesting features of Table 2 is that the probability of accepting the null is
+roughly similar if N = 2 and each jump is 10% of the variation of σ 2 compared to the case
+where N = 1 and we look at the 20% example. This is repeated when we move to the N = 2
+and 5% case and compare it to the N = 1 and 10% case. This suggests the rejection rate is
+heavily influenced by the variance of the jump process, not just the frequency of the jumps or
+the size of the individual jumps.
+
+6
+
+Testing for jumps empirically
+
+6.1
+
+Dataset
+
+We now turn our attention to using the adjusted ratio jump test (14) on economic data. We use
+the bivariate United States Dollar/ German Deutsche Mark and Dollar/ Japanese Yen exchange
+rate series, which covers the ten year period from 1st December 1986 until 30th November 1996.
+12
+
+The original dataset records every 5 minutes the most recent mid-quote to appear on the Reuters
+screen. We have multiplied all returns by 100 in order to make them easier to present. The
+database has been kindly supplied to us by Olsen and Associates in Zurich, who document their
+pathbreaking work in this area in Dacorogna, Gencay, Müller, Olsen, and Pictet (2001).
+
+6.2
+
+Ratio jump test
+
+Figure 2 plots the ratio test µ−2
+ei /b
+vi and its corresponding 99% critical values, computed under
+1 v
+
+the assumption of no jump using the adjusted theory given in (14), for each of the first 250
+working days in the sample for n = 12 and n = 72. We reject the null if the ratio is significantly
+
+below one. The values of n are quite small, corresponding to 2 hour and 20 minute returns,
+respectively. Results for larger values of n will be reported in a moment. Importantly the critical
+values do not change very much between different days.
+
+n=12. Dollar/DM
+
+1.5
+
+Dollar/Yen
+Ratio statistic
+Critical value
+
+1.25
+1.00
+
+1.0
+0.75
+0.50
+0.5
+0.25
+0
+
+n=72.
+
+50
+
+100
+
+150
+
+1.25
+
+200
+
+250
+0
+1.25
+
+50
+
+100
+
+150
+
+200
+
+250
+
+50
+
+100
+
+150
+
+200
+
+Days 250
+
+1.00
+
+1.00
+
+0.75
+0.75
+0.50
+0.50
+
+0
+
+50
+
+100
+
+150
+
+0.25
+200 Days 250
+0
+
+Figure 2: Based on the 1st year of the sample for the Dollar/DM (left hand side) and Dollar/Yen
+(right hand side) using n = 12 and n = 72. Index plot shows the ratio statistic computed each
+day, which should be around 1 if the null of no jumps is true. The corresponding 99% adjusted
+asymptotic critical value is also shown.
+13
+
+Figure 2 shows quite a lot of rejections of the null of no jumps, although the times when the
+rejections happen change sometimes change with n. When n is small the rejections are marginal
+(note the Monte Carlo results suggest one should not trust the decisions based on the test with
+such small samples unless the test is absolutely overwhelming, which is not the case here), but
+by the time n = 72 there is strong evidence for the presence of some specific jumps. In both
+cases and for both series, the average ratio is below one. When n is 12 the percentage of ratios
+below 1 is 70% and 73%, while when n increases to 72 these percentages become 71% in both
+cases.
+Table 3 reports the corresponding results for the whole 10 year sample. This Table, which
+provides a warning of the use of too high a value of n, shows the sum, denoted r . , of the first
+to fifth serial correlation coefficients of the high frequency data. We see that in the Dollar/DM
+series as n increases this correlation builds up, probably due to bid/ask bounce effects. By
+the time n has reached 288 the summed correlation has reached nearly −0.1, which means
+the realized variance overestimates the variability of prices by around 20%. Of course this
+effect could be removed by using a further level of pre-filtering before we analyse the data. The
+situation is worse for the Dollar/Yen series which has a moderate amount of negative correlation
+amongst the high frequency returns even when n is quite small. We will ignore these market
+microstructure effects here.
+n
+12
+48
+72
+144
+288
+
+r.
+.001
+.012
+-.001
+-.056
+-.092
+
+BPV
+.355
+.408
+.437
+.471
+.502
+
+Dollar/DM
+QV jump %
+.452
+21.5
+.467
+12.6
+.487
+10.2
+.510
+7.6
+.531
+5.4
+
+5% rej
+.202
+.219
+.225
+.220
+.181
+
+1% rej
+.090
+.114
+.120
+.116
+.092
+
+r.
+-.041
+-.032
+-.032
+-.077
+-.100
+
+BPV
+.328
+.409
+.429
+.473
+.512
+
+Dollar/Yen
+QV jump %
+.420
+21.9
+.458
+10.7
+.471
+8.9
+.506
+6.5
+.539
+5.0
+
+5% rej
+.201
+.209
+.195
+.223
+.187
+
+1% rej
+.086
+.101
+.095
+.107
+.095
+
+Table 3: r. denotes the sum of the first five serial correlation coefficients of the high frequency
+[1,1]
+data. BPV denotes the average value of µ −2
+over the sample. QV gives the correspond1 {Yδ }i
+ing result for [Yδ ]i . jump % is the percentage of the quadratic variation due to jumps in the
+sample. 5% rej and 1% rej shows the proportion of rejections at the 5% and 1% levels.
+Table 3 shows the average value of µ−2
+ei and vbi as well as the proportion of times the null
+1 v
+
+is rejected using 95% and 99% asymptotic tests. These values are given for a variety of values
+of n and for both exchange rates. The results are reasonably stable with respect to n, although
+the percentage due to jumps does drift as n changes.
+The Table shows that for the Dollar/DM series the variation of the jumps is estimated to
+
+contribute between around 5% and 20% of the QV. On 20% of days the hypothesis of no jumps
+is rejected at the 5% asymptotic level, while at the 1% asymptotic level this falls to 10%. The
+results for the Dollar/Yen are rather similar. These results should be viewed tentatively as the
+14
+
+Monte Carlo results suggest there are finite sample biases in the critical values, even when we
+ignore market microstructure effects. However, the statistical evidence does push us towards
+believing there are jumps in the price processes. Interestingly the percentage of rejections and
+proportions due to jumps seem rather stable as we move between the two exchange rates.
+
+6.3
+
+Case studies
+
+In this subsection we will look at some specific days in the sample which have large realized
+variances to see if we can link together the outcomes from the formal statistical analysis with
+more informal discussions. Throughout we focus on the Dollar/DM rate. To start we will give
+a detailed discussion of an extreme day, which we will put in context by analysing it together
+with a few days each side of the extreme events. We plot Y δ for a variety of values of n using
+dots, rather than the more standard time series lines, as well as giving the adjusted ratio jump
+statistics with their corresponding 99% critical values.
+In Figure 3 there is a large uptick in the Dollar against the D-mark, with a movement of
+nearly two percent in a five minute period. This occurred on January 15th 1988. The Financial
+Times reported on its front page the next day
+“The dollar and share prices soared in hectic trading on world financial markets yesterday
+after the release of official figures showing that the US trade deficit had fallen to $13.22 bn
+in November from October’s record level of $17.63 bn. The US currency surged 4 pfennigs
+and 4 yen within 10 minutes of the release of the figures and maintained the day’s highest
+levels in late New York business ... .”
+
+The data for January 15th had a large realized variance but a much smaller estimate of
+the integrated variance. Hence the statistics are attributing a large component of the realized
+variance to the jump, with the adjusted ratio statistic being larger than the corresponding 99%
+critical value. When n is small the statistic is on the borderline of being significant, while the
+situation becomes much clearer as n becomes large.
+An important question is whether this day is typical of extreme days on the foreign exchange
+market. Here the focus will be on days where the ratio statistic is small and the realized variance
+is quite large. Throughout n = 288 is used.
+[1,1]
+
+Figure 4 plots results for all the 8 days when the ratio statistic µ −2
+1 {Yδ }i
+
+/ [Yδ ]i is less than
+
+0.6, suggesting a jump, and where the realized variance is above 1.2. On each day the Figure
+shows a single big movement which is much larger in magnitude than the others on that day.
+These large changes are listed below.
+
+15
+
+4
+
+n=12. Sample path of Yδ −Y240
+
+1.25
+
+Adjusted ratio jump test & 99% critical values
+
+1.00
+2
+
+0.75
+0.50
+
+0
+240
+
+n=72.
+
+242
+
+244
+
+246
+
+248
+
+4
+
+240
+
+242
+
+244
+
+246
+
+248
+
+240
+
+242
+
+244
+
+246
+
+248
+
+240
+
+242
+
+244
+
+246 Days 248
+
+1.00
+
+2
+
+0.75
+
+0
+
+0.50
+240
+
+n=288
+
+242
+
+244
+
+246
+
+248
+
+4
+
+1.00
+0.75
+
+2
+
+0.50
+0
+240
+
+242
+
+244
+
+246
+
+Days 248
+
+Figure 3: Example of small stretch of data with a day on which we see a large realised variance.
+Left: Yδ −Y240 for t ∈ [240, 249] for a variety of values of n. Right: adjusted ratio jump statistic,
+together with 99% critical values. The large step change in the prices, occurred on 15th January
+1988 when surprising U.S. balance of payment figures were announced.
+Sequence
+Day
+GMT move
+173th
+Friday 11th September, 1987
+12.35 −.967
+234th
+Thursday, 10th December, 1987
+13.35 −1.44
+253th
+Friday, 15th January, 1988
+13.35
+2.03
+273th
+Friday, 12th February, 1988
+13.35
+1.16
+312th
+Thursday, 14th April, 1988
+12.35 −1.65
+333th
+Tuesday, 17th May, 1988
+12.35
+1.14
+416th
+Wednesday, 14th September, 1988 12.35 0.955
+683th
+Tuesday, 17th October, 1989
+12.35 −0.714
+Most U.S. macroeconomic announcements are made at 8.30 EST, which is 12.30 GMT from
+early April to late October and 13.30 otherwise. This means that all the jumps observed in Figure
+4 correspond to macroeconomic announcements. There is a substantial economic literature
+trying to relate movements in exchange rates to macroeconomic announcements (e.g. Ederington
+and Lee (1993) and Andersen, Bollerslev, Diebold, and Vega (2003)). Generally this concludes
+that such news is quickly absorbed into the market, moving the rates vigourously, but with little
+16
+
+0.5
+
+1.00
+
+1.00
+
+0
+
+0.0
+
+0.75
+
+−1
+
+−0.5
+
+0.50
+
+171
+4
+
+172
+
+173
+
+0.75
+0.50
+−2
+171
+
+172
+
+173
+
+1.00
+
+232
+2
+
+233
+
+234
+
+0.75
+
+1
+
+0.8
+
+0
+
+0.50
+
+0
+
+0.6
+
+252
+
+253
+
+0
+−1
+310
+2
+
+311
+
+251
+
+252
+
+253
+
+1.00
+
+0.75
+
+0.5
+
+0.75
+
+0.50
+
+0.0
+
+0.50
+
+310
+
+311
+
+312 331
+
+0.50
+415 Days 416
+
+332
+
+333
+
+414
+
+415
+
+416
+
+Days
+
+234
+
+271
+
+272
+
+273
+
+331
+
+332
+
+333
+
+681
+
+682
+
+Days683
+
+1.0
+
+1.5
+1.0
+0.5
+0.0
+
+0.75
+
+414
+
+273
+
+1.0
+
+1.00
+
+0
+
+272
+
+1.00
+
+312
+
+1
+
+271
+
+233
+
+1.0
+
+2
+
+251
+
+232
+
+0.8
+0.6
+681
+
+682
+
+Days
+
+683
+
+Figure 4: Days on which [Yδ ]i is high & the adjusted ratio jump test found a jump using n = 288.
+[1,1]
+Depicted is Yδ − Yi , the corresponding jump test µ−2
+/ [Yδ ]i & 99% critical values.
+1 {Yδ }i
+long term impact on the subsequent volatility of the rates.
+
+7
+
+Conclusions
+
+In this paper we provide a test to ask, for a given a time series of prices recorded every δ time
+periods, if it is statistically satisfactory to regard the data as if it had a continuous sample path.
+We derive the asymptotic distribution of the testing procedure as δ ↓ 0 under the null of no
+jumps and ignoring the possible impact of market microstructure effects. Monte Carlo results
+suggest an adjusted ratio jump statistic can be reliably used to test for jumps if δ is moderately
+small and the test is carried out over relatively short periods such as a day. We applied this test
+to some exchange rate data and found many rejections of the null of no jumps. In some case
+studies we related the rejections to macroeconomic news.
+The paper opens up a number of technical questions. Can the assumptions used in Theorem
+1 be relaxed so the test can be applied when there are leverage effects? Can an asymptotic theory
+17
+
+be developed for bipower variation under the alternative of there being jumps? Can multivariate
+versions of these ideas be developed, so one can detect common jumps across assets? How robust
+is bipower variation to market microstructure effects and can these effects be moderated in some
+way? We are currently researching on these topics with various coauthors and hope to report
+results on them soon.
+
+The paper also naturally points to a number of economic issues. Can
+
+specific types of economic news be formally linked to the jumps indicated by these tests? Can
+the tests for jumps be used to improve volatility forecasts? Research on the second of these
+points has been recently reported by Andersen, Bollerslev, and Diebold (2003) and Forsberg
+and Ghysels (2004).
+
+8
+
+Acknowledgments
+
+Ole Barndorff-Nielsen’s work is supported by CAF, funded by the Danish Social Science Research
+Council. Neil Shephard’s research is supported by the UK’s ESRC. The Ox language of Doornik
+(2001) was used to perform the calculations reported here. We have benefited from comments
+from Tim Bollerslev, Clive Bowsher, Xin Huang, Jean Jacod, Jeremy Large, Bent Nielsen and
+three anonymous referees on an earlier draft of this paper.
+
+A
+
+Proof of theorem 1
+
+A.1
+
+Assumptions and statement of two theorems
+
+In this Appendix we prove two results we state in this subsection: (i) Theorem 2 which shows
+consistency of realized BPV, (ii) Theorem 3 which gives a joint central limit theory for realized
+BPV and QV under BSM. These two results then deliver Theorem 1 immediately.
+We will derive the limit results for a fixed value of t, and without loss of generality we assume
+that bt/δc is integer, writing t = δn. So as δ ↓ 0 then necessarily n → ∞. The general approach
+in our proofs is to study the limit theory conditionally on (α, σ). The unconditional limit results
+then follow trivially as, in the present circumstances, conditional convergence implies global
+convergence.
+Recall the two assumptions we use in Theorem 1.
+(a) The volatility process σ is pathwise bounded away from 0.
+(b) The joint process (a, σ) is independent of the Brownian motion W .
+Note also that our general precondition that σ is càdlàg implies that σ is pathwise bounded
+away from ∞.
+
+18
+
+Theorem 2 Let Y ∈ BSMJ and suppose conditions (a) and (b) hold, then
+Z t
+[1,1]
+{Y }t = µ21
+σ 2s ds.
+
+(16)
+
+0
+
+Theorem 3 Let Y ∈ BSM and suppose conditions (a) and (b) hold. Then conditionally on
+(a, σ), the realized BPV and QV processes
+[Yδ ]t
+
+[1,1]
+
+µ−2
+1 {Yδ }t
+
+and
+
+follow asymptotically, as δ ↓ 0, a bivariate normal law with common mean
+totic covariance of
+δ −1/2
+
+(
+
+!
+
+[Yδ ]t
+[1,1]
+µ−2
+1 {Yδ }t
+
+is
+Π
+
+Z t
+0
+
+where
+
+−
+
+!)
+Rt 2
+σ
+ds
+R0t s2
+0 σ s ds
+
+(17)
+Rt
+
+2
+0 σ s ds. The asymp-
+
+σ 4s ds
+
+(18)
+
+
+
+Var(u2 )
+2µ−2
+Cov u2 , |u||u0 |
+1
+
+Π =
+2
+0
+0
+0
+0
+00
+µ−4
+2µ−2
+1 Cov u , |u||u |
+1 {Var (|u||u |) + 2Cov (|u||u |, |u | |u |)}
+
+ 
+
+2 2
+2 2
+
+=
+≃
+2 π 2 /4 + π − 3
+2 2.6090
+
+
+with u, u0 , u00 being independent standard normals.
+
+A.2
+
+Consistency of realized bipower variation: Theorem 2
+
+Once the theorem is proved in the no jumps case the general result follows trivially using
+the argument given in Barndorff-Nielsen and Shephard (2004b). Here we therefore assume
+Y ∈ BSM. The proof goes in three stages. We provide some preliminary results on discretisation
+of integrated variance. Then we prove consistency of bipower variation when a = 0, and finally
+we show that allowing a 6= 0 has negligible impact.
+For the latter conclusion we only need to establish that the impact of a is of order o p (1).
+However, for the proof of Theorem 3 we require order o p (δ 1/2 ). That this holds is verified
+separately in the next subsection.
+We first recall a result, which is obtained in the course of the proof of Theorem 2 of BarndorffNielsen and Shephard (2004b, cf. equation (13)).
+Proposition 1 (Barndorff-Nielsen and Shephard (2004b)). Under (a) we have for any
+R jδ
+r > 0 and σ 2j = (j−1)δ σ 2s ds that
+
+
+n
+n
+X
+
+X
+1−r
+r
+r
+2r
+δ
+σ j−1 σ j −
+σj
+= Op (δ).
+
+
+j=2
+
+j=1
+
+19
+
+Corollary 1 Under (a) we have that
+n
+X
+j=2
+
+σ j−1 σ j −
+
+Z t
+0
+
+σ 2s ds = Op (δ).
+
+This Corollary is a special case of the previous Proposition and follows from the fact that
+Rt 2
+2
+j=1 σ j = 0 σ s ds.
+
+Pn
+
+The following is a restatement of Theorem 2 in Barndorff-Nielsen and Shephard (2004b) in
+
+the case where r = s = 1.
+Theorem 4 Suppose Y ∈ BSM and additionally (a), (b) and a = 0, then
+
+
+Z t
+n
+X
+2
+
+
+|yj−1 ||yj | − µ1
+σ 2s ds = op (1).
+0
+
+j=2
+
+To complete the Proof of Theorem 2 we need to show that the impact of the drift is negligible.
+
+As already mentioned, this follows from the stronger result, Proposition 2, which we derive in
+the next subsection.
+
+A.3
+
+Neglibility of drift
+
+Rt
+For simplicity of notation we now write M t = 0 σ s dWs which, conditional on σ, has a Gaussian
+Rt
+law with a zero mean and variance of 0 σ 2s ds. To establish that the effect of the drift is negligible
+in the contexts of Theorems 2 and 3 it suffices to show that, under conditions (a) and (b),
+[1,1]
+
+[Yδ ]t
+
+[1,1]
+
+− [Mδ ]t
+
+= op (δ 1/2 ).
+
+We shall in fact prove the following stronger result, which covers a variety of versions of
+realised bipower variation. To do this we will use the notation
+hr (u; ρ) = |ρδ 1/2 + u|r − |u|r ,
+hr,s (u, v; ρ1 , ρ2 ) = |ρ1 δ 1/2 + u|r |ρ2 δ 1/2 + v|s − |u|r |v|s .
+Proposition 2 Under conditions (a) and (b), for any r, s > 0 and for every ε ∈ 0, 14
+[Yδ ][r,s] − [Mδ ][r,s] = Op (δ (r+s−1)/2+ε ).
+Proof. Let σ 2 = inf 0≤s≤t σ 2s and σ 2 = sup0≤s≤t σ 2s , mj = Mjδ − M(j−1)δ and σ 2j =
+γj = δ
+
+−1
+
+aj ,
+
+aj =
+
+Z δj
+
+δ(j−1)
+
+20
+
+as ds,
+
+j = 1, 2, ..., n.
+
+R δj
+
+
+
+2
+δ(j−1) σ s ds,
+
+Note that (pathwise for (a, σ)), by assumption (a), 0 < σ 2 ≤ σ 2 < ∞, implying if θ j δ = σ 2j that
+0 < minj θj ≤ maxj θj < ∞, while, due to a being càdlàg, there exists (pathwise) a constant c
+for which maxj |γ j | ≤ cδ, whatever the value of n.
+L
+
+i.i.d.
+
+We have, using (b) and writing now mj = σ j |uj | where the uj ∼ N (0, 1), that
+[r,s]
+[r,s]
+[Yδ ]t − [Mδ ]t
+
+=
+=
+
+n
+X
+j=2
+n
+X
+j=2
+
+(|aj−1 + mj−1 |s |aj + mj |r − |mj−1 |s |mj |r )
+1/2
+
+1/2
+
+{|δγ j−1 + δ 1/2 θj−1 uj−1 |s |δγ j + δ 1/2 θj uj |r
+1/2
+
+1/2
+
+−|δ 1/2 θj−1 uj−1 |s |δ 1/2 θj uj |r }
+= δ
+
+r/2 s/2
+
+δ
+
+n
+X
+s/2 r/2
+1/2
+θ j−1 θj {|(γ j−1 /θ j−1 )δ 1/2 + uj−1 |s
+j=2
+
+1/2
+·|(γ j /θj )δ 1/2 + uj |r − |uj−1 |s |uj |r }
+
+and hence
+n
+n
+o X
+
+
+[r,s]
+[r,s]
+s/2 r/2
+1/2
+1/2
+=
+θj−1 θ j hr,s uj−1 , uj ; γ j−1 /θ j−1 , γ j /θj
+.
+δ −(r+s)/2 [Yδ ]t − [Mδ ]t
+j=2
+
+1/2
+
+As γ j /θj
+
+is bounded for all j, the conclusion of Proposition 2 now follows from Corollary
+
+2, below. 
+
+To obtain that Corollary we establish three Lemmas, 1, 2 and 3. Lemma 1 collates several
+results from Barndorff-Nielsen and Shephard (2003) which are used to prove Lemmas 2 and 3.
+Lemma 1 (Barndorff-Nielsen and Shephard (2003)) For any r > 0 and ρ ≥ 0, we have
+E{hr (u; ρ)} = O(δ),
+
+E{|u|r hr (u; ρ)} = O(δ (1+1∧r)/2 ),
+
+E{h2r (u; ρ)} = O(δ (1+1∧r)/2 ),
+
+Var{hr (u; ρ} = O(δ (1+1∧r)/2 ).
+
+The results given in Lemma 1 are derived in the course of the proof of Proposition 3.3 in
+Barndorff-Nielsen and Shephard (2003), so a separate proof will not be given here.
+We proceed to state and prove Lemmas 2 and 3.
+Lemma 2
+
+i.i.d.
+
+For any r, s > 0, u, v ∼ N (0, 1) and ρ1 and ρ2 nonnegative constants, we have
+E{hr,s (u, v; ρ1 , ρ2 )} = O(δ).
+
+21
+
+Proof. The independence of u, v together with the first equation in Lemma 1 implies
+n
+o n
+o
+E {hr,s (u, v; ρ)} = E |ρ1 δ 1/2 + u|r E |ρ2 δ 1/2 + v|s − E {|u|r } E {|v|s }
+
+= E{hr (u; ρ1 )}E{hr (v; ρ2 )} + E{hr (u; ρ1 )}E {|v|s } + E {|u|s } E{hs (v; ρ2 )}
+= O(δ).
+
+Lemma 3
+
+
+
+For u, v independent standard normal random variables and ρ 1 and ρ2 nonnegative
+
+constants, we have
+
+
+
+E{h2r,s (u, v; ρ1 , ρ2 )} = O δ (1+1∧r∧s)/2 .
+
+Proof. Clearly
+h2r,s (u, v; ρ) = |ρ1 δ 1/2 + u|2r |ρ2 δ 1/2 + v|2s + |u|2r |v|2s − 2|ρ1 δ 1/2 + u|r |ρ2 δ 1/2 + v|s |u|r |v|s
+= h2r,2s (u, v; ρ) + 2|u|2r |v|2s − 2|ρ1 δ 1/2 + u|r |ρ2 δ 1/2 + v|s |u|r |v|s ,
+so, by Lemma 2 and the independence of u and v,
+
+
+E{h2r,s (u, v; ρ)} = E{h2r,2s (u, v; ρ)} + 2E |u|2r E |u|2s
+n
+o n
+o
+−2E |u|r |ρ1 δ 1/2 + u|r E |u|s |ρ2 δ 1/2 + u|s
+o n
+o
+
+ n
+
+
+= O(δ) − 2 E |u|r |ρ1 δ 1/2 + u|r E |u|s |ρ2 δ 1/2 + u|s − E |u|2r E |u|2s .
+
+Furthermore,
+
+n
+o n
+o
+
+
+E |u|r |ρ1 δ 1/2 + u|r E |u|s |ρ2 δ 1/2 + u|s − E |u|2r E |u|2s
+n
+o n
+o
+= E |u|r |ρ1 δ 1/2 + u|r − |u|2r E |u|s |ρ2 δ 1/2 + u|s
+n
+o
+
+
+
++E |u|2r E |u|s |ρ2 δ 1/2 + u|s − E |u|2r E |u|2s
+o n
+o
+n
+= E |u|r |ρ1 δ 1/2 + u|r − |u|2r E |u|s |ρ2 δ 1/2 + u|s − |u|2s
+n
+o
+
++E |u|2s E |u|r |ρ1 δ 1/2 + u|r − |u|2r
+n
+o
+
+
+
++E |u|2r E |u|s |ρ2 δ 1/2 + u|s − E |u|2r E |u|2s
+= E{|u|r hr (u; ρ1 )}E{|u|s hs (u; ρ2 )}
+
+
++E |u|2s E{|u|r hr (u; ρ1 )} + E |u|2r E{|u|s hs (u; ρ2 )}.
+
+All in all, on account of Lemma 1, this means that
+
+E{h2r,s (u, v; ρ1 , ρ2 )} = O(δ) + O(δ (1+1∧r)/2 )O(δ (1+1∧s)/2 ) + O(δ (1+1∧r)/2 ) + O(δ (1+1∧s)/2 )
+= O(δ (1+1∧r∧s)/2 ).
+
+
+
+Lemmas 2 and 3 and the Cauchy-Schwarz inequality together imply
+22
+
+Corollary 2 For u, v, u0 , v 0 independent standard normal random variables and ρ 1 , ρ2 , ρ01 , ρ02
+nonnegative constants, we have
+
+
+Var{hr,s (u, v; ρ1 , ρ2 ))} = O δ (1+1∧r∧s)/2
+
+and
+
+
+
+Cov{hr,s (u, v; ρ1 , ρ2 ))hr,s (u0 , v 0 ; ρ01 , ρ02 ))} = O δ (1+1∧r∧s)/2 .
+
+As already mentioned, the conclusion of Proposition 2 follows from Corollary 2.
+Remark 2 From the final equation in the proof of Lemma 3 one sees that in the special case
+when r = s = 1 then Var{hr (u; ρ)} = O(δ) and hence the conclusion of Proposition 2 may be
+sharpened to [Yδ ][1,1] − [Mδ ][1,1] = Op (δ).
+
+A.4
+
+Asymptotic distribution of bipower variation: Theorem 3
+
+Given Proposition 2, what remains is to prove Theorem 3 when Y ∈ BSM and the additional
+conditions (a), (b) and a = 0 hold. The key feature is that, ignoring the asymptotically negligible
+y12 and conditioning on the σ process, we have that
+ Pn
+
+yj2
+Pj=2
+−
+n
+j=2 |yj−1 | |yj |
+
+Rt
+
+2 ds
+s
+0 σ
+R
+t
+µ21 0 σ 2s ds
+
+is asymptotically equivalent in law to
+
+n 
+X
+j=2
+
+σ 2j vj
+σ j−1 σ j wj
+
+!
+
+
+
+i.i.d.
+
+where vj = u2j − 1, wj = |uj−1 ||uj | − µ21 and the uj ∼ N (0, 1). The sequences {vj } and {wj }
+have zero means, with the former being i.i.d., while the latter satisfy w j ⊥⊥ wj+s for |s| > 1.
+Then the Theorem follows if we can show that
+
+ Z t
+
+
+n 
+X
+σ 2j vj
+Var(v1 )
+2Cov (v1 , w1 )
+L
+−1/2
+4
+δ
+.
+→ N 0,
+σ s ds
+2Cov (v1 , w1 ) Var (w1 ) + 2Cov (w1 , w2 )
+σ j−1 σ j wj
+0
+j=2
+
+(19)
+
+Our strategy for proving this is to show 3 the limiting Gaussian result that using any real constants c1 and c2 ,
+δ −1/2
+
+n
+X
+
+c1 σ 2j vj + c2 σ j−1 σ j wj
+
+j=2
+
+
+
+ Z t
+
+ 2
+
+L
+4
+2
+→ N 0,
+σ s ds c1 Var(v1 ) + 4c1 c2 Cov (v1 , w1 ) + c2 {Var (w1 ) + 2Cov (w1 , w2 )} .
+0
+
+3
+
+L
+
+Recall that if zn = (zn1 , ..., znq ) is a sequence of random vectors having mean 0 then to prove that zn →
+Nq (0, Ψ) for some nonnegative definite matrix Ψ it suffices to show that for arbitrary real constants c 1 , ..., cq we
+L
+have c0 zn → Nq (0, c0 Ψc), where c = (c1 , ..., cq )0 . (This follows directly from the characterisation of convergence in
+law in terms of convergence of the characteristic functions.)
+
+23
+
+The asymptotic Gaussianity follows from standard calculations from the classical central limit
+theorem for martingale sequences due to Lipster and Shiryaev (e.g. Shiryayev (1981, p. 216)).
+What remains is to derive the asymptotic variance of this sum. Clearly
+
+
+n
+n
+
+ X
+X
+
+
+−1/2
+2
+−1/2
+2
+c1 σ j vj + c2 σ j−1 σ j wj = δ
+c1 ψ j vj + c2 ψ j−1 ψ j wj
+δ
+δ
+
+
+j=2
+
+j=2
+
+has the variance
+δ
+
+n
+X
+j=2
+
+n
+X
+
+
+Var c1 ψ 2j vj + c2 ψ j−1 ψ j wj + 2δ
+Cov c2 ψ j−1 ψ j wj , c2 ψ j−2 ψ j−1 wj−1 .
+j=2
+
+Now using Riemann integrability
+δ
+
+n
+X
+
+Var c1 ψ 2j vj + c2 ψ j−1 ψ j wj
+
+j=2
+
+=
+
+Var (v1 ) c21 δ
+
+n
+X
+
+
+
+ψ 4j + Var (w1 ) c22 δ
+
+j=2
+
+n
+X
+
+ψ 2j−1 ψ 2j
+
+j=2
+
++2c1 c2 {Cov(v1 , w1 ) + Cov(v2 , w1 )} δ
+→
+Likewise
+
+Z t
+0
+
+n
+X
+
+ψ j−1 ψ 3j
+
+j=2
+
+
+σ 4s ds c21 Var (v1 ) + c22 Var (w1 ) + 4c1 c2 Cov(v1 , w1 ) .
+
+δ
+
+n
+X
+
+Cov c2 ψ j−1 ψ j wj , c2 ψ j−1 ψ j−2 wj−1
+
+j=3
+
+=
+
+c22 Cov (w1 , w2 ) δ
+
+n
+X
+
+
+
+ψ j−2 ψ 2j−1 ψ j
+
+j=3
+
+→ c22 Cov (w1 , w2 )
+
+Z t
+0
+
+σ 4s ds.
+
+This confirms the required covariance pattern stated in (19).
+
+References
+Aı̈t-Sahalia, Y. (2002). Telling from discrete data whether the underlying continuous-time
+model is a diffusion. Journal of Finance 57, 2075–2112.
+Aı̈t-Sahalia, Y. (2004). Disentangling diffusion from jumps. Journal of Financial Economics.
+Forthcoming.
+Andersen, T. G., L. Benzoni, and J. Lund (2002). An empirical investigation of continuoustime equity return models. Journal of Finance 57, 1239–1284.
+
+24
+
+Andersen, T. G. and T. Bollerslev (1998). Answering the skeptics: yes, standard volatility
+models do provide accurate forecasts. International Economic Review 39, 885–905.
+Andersen, T. G., T. Bollerslev, and F. X. Diebold (2003). Some like it smooth, and some
+like it rough: untangling continuous and jump components in measuring, modeling and
+forecasting asset return volatility. Unpublished paper: Economics Dept, Duke University.
+Andersen, T. G., T. Bollerslev, and F. X. Diebold (2004). Parametric and nonparametric measurement of volatility. In Y. Ait-Sahalia and L. P. Hansen (Eds.), Handbook of Financial
+Econometrics. Amsterdam: North Holland. Forthcoming.
+Andersen, T. G., T. Bollerslev, F. X. Diebold, and P. Labys (2001). The distribution of
+exchange rate volatility. Journal of the American Statistical Association 96, 42–55. Correction published in 2003, volume 98, page 501.
+Andersen, T. G., T. Bollerslev, F. X. Diebold, and P. Labys (2003). Modeling and forecasting
+realized volatility. Econometrica 71, 579–625.
+Andersen, T. G., T. Bollerslev, F. X. Diebold, and C. Vega (2003). Micro effects of macro
+announcements: Real-time price discovery in foreign exchange. American Economic Review 93, 38–62.
+Back, K. (1991). Asset pricing for general processes. Journal of Mathematical Economics 20,
+371–395.
+Bandi, F. M. and T. H. Nguyen (2003). On the functional estimation of jump-diffusion models.
+Journal of Econometrics 116, 293–328.
+Barndorff-Nielsen, O. E. and N. Shephard (2001). Non-Gaussian Ornstein–Uhlenbeck-based
+models and some of their uses in financial economics (with discussion). Journal of the
+Royal Statistical Society, Series B 63, 167–241.
+Barndorff-Nielsen, O. E. and N. Shephard (2002). Econometric analysis of realised volatility
+and its use in estimating stochastic volatility models. Journal of the Royal Statistical
+Society, Series B 64, 253–280.
+Barndorff-Nielsen, O. E. and N. Shephard (2003). Realised power variation and stochastic
+volatility. Bernoulli 9, 243–265. Correction published in pages 1109–1111.
+Barndorff-Nielsen, O. E. and N. Shephard (2004a). Econometric analysis of realised covariation: high frequency covariance, regression and correlation in financial economics. Econometrica 72, 885–925.
+
+25
+
+Barndorff-Nielsen, O. E. and N. Shephard (2004b). Power and bipower variation with stochastic volatility and jumps (with discussion). Journal of Financial Econometrics 2, 1–48.
+Bates, D. (1996). Jumps and stochastic volatility: Exchange rate processes implicit in deutsche
+mark options. Review of Financial Studies 9, 69–107.
+Black, F. (1976). Studies of stock price volatility changes. Proceedings of the Business and
+Economic Statistics Section, American Statistical Association, 177–181.
+Chernov, M., A. R. Gallant, E. Ghysels, and G. Tauchen (2003). Alternative models of stock
+price dynamics. Journal of Econometrics 116, 225–257.
+Comte, F. and E. Renault (1998). Long memory in continuous-time stochastic volatility models. Mathematical Finance 8, 291–323.
+Corradi, V. and W. Distaso (2004). Specification tests for daily integrated volatility, in the
+presence of possible jumps. Unpublished paper: Queen Mary College, London.
+Coulin, L. (1994). Estimation des coefficients d’un processus cadlag observe a des temps
+discrets. Pub Inst Stat University of Paris 38, 87–109.
+Cox, J. C., J. E. Ingersoll, and S. A. Ross (1985). A theory of the term structure of interest
+rates. Econometrica 53, 385–407.
+Dacorogna, M. M., R. Gencay, U. A. Müller, R. B. Olsen, and O. V. Pictet (2001). An
+Introduction to High-Frequency Finance. San Diego: Academic Press.
+Doornik, J. A. (2001). Ox: Object Oriented Matrix Programming, 3.0. London: Timberlake
+Consultants Press.
+Ederington, L. and J. H. Lee (1993). How markets process information: News releases and
+volatility. Journal of Finance 48, 1161–1191.
+Eraker, B., M. Johannes, and N. G. Polson (2003). The impact of jumps in returns and
+volatility. Journal of Finance 53, 1269–1300.
+Forsberg, L. and E. Ghysels (2004). Why do absolute returns predict volatility so well. Unpublished paper: Economics Department, UNC, Chapel Hill.
+Garcia, R., E. Ghysels, and E. Renault (2004). The econometrics of option pricing. In Y. AitSahalia and L. P. Hansen (Eds.), Handbook of Financial Econometrics. North Holland.
+Forthcoming.
+Ghysels, E., A. C. Harvey, and E. Renault (1996). Stochastic volatility. In C. R. Rao and G. S.
+Maddala (Eds.), Statistical Methods in Finance, pp. 119–191. Amsterdam: North-Holland.
+
+26
+
+Hausman, J. A. (1978). Specification tests in econometrics. Econometrica 46, 1251–1271.
+Huang, X. and G. Tauchen (2003). The relative contribution of jumps to total price variation.
+Unpublished paper: Department of Economics, Duke University.
+Jacod, J. (1994). Limit of random measures associated with the increments of a Brownian
+semimartingale. Unpublished paper: Laboratorie de Probabilities, Universite P and M
+Curie, Paris.
+Jacod, J. and A. N. Shiryaev (1987). Limit Theorems for Stochastic Processes. Springer-Verlag:
+Berlin.
+Johannes, M. (2004). The statistical and economic role of jumps in continuous-time interest
+rate models. Journal of Finance 59, 227–260.
+Mancini, C. (2003). Estimation of the characteristics of jump of a general Poisson-diffusion
+process. Dipartimento di Matematica per le Decisioni, Universita di Firenze.
+Mykland, P. and L. Zhang (2005). ANOVA for diffusions. Annals of Statistics 33. Forthcoming.
+Nelson, D. B. (1991). Conditional heteroskedasticity in asset pricing: a new approach. Econometrica 59, 347–370.
+Shiryayev, A. N. (1981). Martingales: recent developments, results and applications. International Statistical Review 49, 199–233.
+Woerner, J. (2004). Estimation of integrated volatility in stochastic volatility models. Applied
+Stochastic Models in Business and Industry 21. Forthcoming.
+
+27
+
+

@@ -928,3 +928,26 @@
      either side of CPI, FOMC, NFP and PPI; existing positions may be
      held, so R040's "flatten not required" stands with a new source).
      E.19's simulator was not rerun. N stays 538.
+- 2026-10-21 (user, planning chat, 11:04 and 16:49-19:20 PDT): V46.
+  1. Harness v14 (2e908c81...) kept (E.26 return section 7 item 1).
+  2. V45 item 2 confirmed: the pilot's spend bound on acct-3 is all of
+     its funds under the USD 125 cap, superseding V43's USD 100 for this
+     account only.
+  3. No mount check added for /mnt/large-storage (internal SSD; the user
+     judged the risk low). The holdout status still fails closed on a
+     dangling link (E.26).
+  4. E.26 decisions 2 (trigger_hold's v13 pin), 4 (data/processed stays)
+     and 7 (/mnt/... paths in new records) stay open for the user. Item 6
+     stands as the user said on 2026-10-20: he wipes acct-3 after
+     "ACCOUNT_3 SAFE TO WIPE", then removes DATABENTO_API_KEY3 from .env.
+  5. Pro plan from about 16:45: E.28 continues as E.28b (fresh session,
+     opus high, Ultracode off, at most 2 workers). Fable needs usage
+     credits on Pro, so E.28b's remaining review is an Opus 5.5 xhigh
+     reviewer in a fresh context that sees only the files it checks. This
+     substitution holds only while Fable is unavailable; on Max, Fable
+     xhigh reviews return.
+  6. Stage E.29 (prompt docs/prompts/STAGE_E.29.md): a simulation-only
+     study of combining the ranked contracts in one prop account, launched
+     after E.28b's purchase is verified. No outcome read, nothing
+     registered, N stays 538. A cross-market lead-lag test (K8 style, CL
+     order flow leading QM) waits for the QM pilot's fill results.

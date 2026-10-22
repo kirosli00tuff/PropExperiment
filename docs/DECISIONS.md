@@ -977,3 +977,31 @@
      if its median daily volume over the last 12 months is below 1,000.
   4. External research on ZM and MGC as the runners-up across the five
      firms is run in the planning chat. No program data is read for it.
+- 2026-10-22 (user, planning chat, 07:41-07:50 PDT): V48.
+  1. Keys in .env:
+     - The user removed the DATABENTO_API_KEY1 and DATABENTO_API_KEY2
+       lines, so acct-1 and acct-2 are unusable until he adds them back.
+     - The temporary account's key arrived on the old single line
+       DATABENTO_API_KEY. With the user's approval, the planner renamed
+       that line to DATABENTO_API_KEY3. Only the name changed; the value
+       was never read.
+     - Stage E.30 (acct-2 volume check) is superseded: it stopped at a
+       usage limit before any quote, and nothing was bought.
+  2. E.28's frozen QM pilot spec is not bought (research in V47). The
+     $125 on acct-3 goes to Stage E.31:
+     - first a QM and ZM daily volume check for cents (QM fails below
+       1,000 a day, ZM below 5,000);
+     - then a newly frozen ZM pilot: ZM MBO for the front two months,
+       plus ZS and ZL MBP-1, all before 2024-03-01, as many whole months
+       as the funds allow (at least 2);
+     - three fill models (CBOT K algorithm, FIFO back of queue,
+       trade-through only), with trade-through as the gate;
+     - a kill rule fixed before any data;
+     - review before purchase.
+     This replaces V44's "one contract, one schema" for acct-3: the user
+     approved ZM MBO plus ZS and ZL top of book. acct-3 is wiped only
+     after "ACCOUNT_3 SAFE TO WIPE".
+  3. E.28 (60eb6b6) and E.29 (d485f34) returns accepted and pushed. E.29
+     D1 (single-contract pilot) accepted. D2 (rerun the basket model
+     around ZM) waits for E.31's volume verdict. D3 and D4 follow the
+     recommendations.

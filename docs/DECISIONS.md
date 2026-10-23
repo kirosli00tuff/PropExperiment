@@ -1026,3 +1026,30 @@
        no new data spend.
      YM and RTY (Lucid 0.70, Topstep 0.86 to 0.88) are not dropped and
      not scheduled.
+- 2026-10-23 (user, planning chat, 13:47 PDT): V50. E.31 (97ce7f0) accepted
+  and pushed.
+  1. ZM fails the passive pilot. Under trade-through fills, the mean 10 s
+     edge net of Topstep's fee is -1.234 ticks per fill, 95% interval
+     [-1.252, -1.214]. It is -0.970 gross, and the K-algorithm and FIFO
+     models are -0.29 and -0.25 gross. Passive spread capture at the touch
+     with a one-lot at prop-firm simulators is closed. This covers ZM, QM
+     (E.28's frozen QM pilot is closed, never bought) and the ZL
+     follow-up of V49 (skipped). E.29 D2 (baskets around ZM) is not run.
+  2. Limit orders stay allowed as an execution method for a directional
+     signal. They are not a source of edge in themselves. Any later stage
+     prices its fills under the trade-through rule unless a firm documents
+     otherwise.
+  3. acct-3 is safe to wipe ("ACCOUNT_3 SAFE TO WIPE", 2026-10-23 12:35:57
+     PDT). 122.37 USD was spent; the ledger leaves 2.63 USD. The user wipes
+     the account and removes DATABENTO_API_KEY3 from .env. No Databento
+     key is then left in .env.
+  4. The 24.2 GB of ZM MBO plus ZS and ZL MBP-1 (2020-12 to 2024-02) is
+     kept for order-flow work, which needs its own pre-registration. E.31
+     already read these dates for passive-fill markouts, including splits
+     by queue imbalance at entry. Any test of an order-flow signal on
+     these dates is therefore not a clean holdout.
+  5. Reviewer routing: in E.31 the "fable" model alias silently ran
+     Sonnet 5.5. Its FAIL verdict is accepted on the Opus 5.5
+     fresh-context check, given the margin. From now on, every stage
+     confirms each reviewer's model from its transcript, not from a
+     self-report. Sonnet never reviews.

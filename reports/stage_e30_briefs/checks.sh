@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Stage E.30 start and end checks (adapted from reports/stage_e29_briefs/checks.sh). Usage: checks.sh <label>.
+set -u
+cd "$(dirname "$0")/../.."
+H=2e908c81e01d0aad835b30ab7b95f628182666dd8d76301cdd4ea465bb41edd1
+SCR=/tmp/claude-1000/-home-kiros-li-Documents-GitHub-PropExperiment/794321d8-e43b-4fe4-b6a2-44b1070a7aaa/scratchpad
+mkdir -p "$SCR"
+echo "# E.30 checks: ${1:-?}"
+echo "\$ date"; TZ=America/Vancouver date
+echo "\$ git status --short"; git status --short
+echo "\$ git status --short | wc -l"; git status --short | wc -l
+echo "\$ git log --oneline -3"; git log --oneline -3
+echo "\$ uv run python -m data.holdout status (keys)"
+uv run python -m data.holdout status 2>/dev/null | python3 -c '
+import json,sys
+d=json.load(sys.stdin)
+def walk(o,p=""):
+    if isinstance(o,dict):
+        if "all_ok" in o and "unlocks_logged" in o:
+            print(p or "top", "all_ok", o["all_ok"], "unlocks_logged", o["unlocks_logged"], "unlock_log_ok", o.get("unlock_log_ok"))
+        for k,v in o.items(): walk(v,k)
+walk(d)'
+echo "\$ wc -c REGISTRATION.md"; wc -c REGISTRATION.md
+P=$(mktemp -d "$SCR/pyc.XXXXXX")
+echo "\$ uv run python -m screening.harness_freeze verify --expected $H"
+PYTHONPYCACHEPREFIX=$P uv run python -m screening.harness_freeze verify --expected "$H" 2>&1 | tail -3
+echo "\$ ledger"; wc -l < ledger/databento_spend.jsonl | sed 's/$/ ledger\/databento_spend.jsonl/'; sha256sum ledger/databento_spend.jsonl | cut -d' ' -f1
+echo "\$ ledger total per account (SpendGate.account_spent_usd)"
+PYTHONPYCACHEPREFIX=$P uv run python -c '
+from data.config import ACCOUNTS
+from data.spend_gate import SpendGate
+for a in sorted(ACCOUNTS):
+    g=SpendGate(session_id="e30-checks-readonly", account=a)
+    s=g.account_spent_usd()
+    print(f"{a}: spent {s:.6f} cap {g.account_cap_usd:.2f} headroom {g.account_cap_usd-s:.6f}")
+'
+echo "\$ uv run python -m screening.trial_registry status (N)"
+PYTHONPYCACHEPREFIX=$P uv run python -m screening.trial_registry status 2>&1 | tail -4
+if grep -q '^DATABENTO_API_KEY2=..*' .env 2>/dev/null; then echo ".env DATABENTO_API_KEY2: non-empty"; elif grep -q '^DATABENTO_API_KEY2=' .env 2>/dev/null; then echo ".env DATABENTO_API_KEY2: empty"; else echo ".env DATABENTO_API_KEY2: absent"; fi

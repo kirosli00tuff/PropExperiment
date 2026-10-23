@@ -228,6 +228,11 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     on the combined account's daily P&L; B0 equals E.28's QM exactly; all 470 thresholds were grid-confirmed. With a
     QM-only edge no basket beats QM alone (0 of 80 cells). The setting-(i) wins (27 of 76) come from MGC's inflated
     alone break-even, not diversification, and rho barely matters. E.28's firm order stands; N 538.
+  - Stage E.31 — Volume check, then a ZM order-book pilot (V48): QM (median 4,480.5 a day) and ZM (78,281.5) pass the
+    volume check; 39 months of ZM MBO with ZS and ZL top of book (2020-12..2024-02) bought on acct-3 for 121.65 USD, run
+    2026-10-22/23 (see reports/E.31_RETURN.md), three usage-limit pauses and a reboot. Under the trade-through gate the
+    front-month DAY 10 s edge net of fee is -1.234 ticks [-1.252, -1.214]: ZM FAILS (also at zero fee; K and FIFO models
+    negative too). acct-3 safe to wipe; nothing registered; N 538.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

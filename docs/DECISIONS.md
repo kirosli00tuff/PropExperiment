@@ -1005,3 +1005,24 @@
      D1 (single-contract pilot) accepted. D2 (rerun the basket model
      around ZM) waits for E.31's volume verdict. D3 and D4 follow the
      recommendations.
+- 2026-10-23 (user, planning chat, 01:03 PDT): V49. For the passive
+  limit-order direction (V43, E.28):
+  1. NQ is dropped as a candidate at every firm (E.28 ranks 33, 45, 52,
+     54 and 62), despite Topstep's 0.44-tick break-even. Reasons:
+     - very long queues and HFT competition, so a one-lot at the back of
+       the queue rarely fills, and adverse fills dominate;
+     - Topstep's Tier 1 news windows block NQ.
+     NQ is not used as a pilot or comparison contract.
+  2. MGC stays out of passive spread capture: its fee is 1.5 to 2.2 ticks
+     against a 1-tick maximum capture. MGC at Lucid (break-even 1.78) is
+     kept only as a possible directional test, if a later stage finds an
+     order-flow signal.
+  3. The candidate order stands:
+     - ZM is the pilot (E.31);
+     - QM stays on hold: E.31's volume check passed it (median 4,480 a
+       day, 2025-10..2026-09), but its prices are derived from CL;
+     - ZL at Topstep (0.99) is a follow-up. It gets a trade-through-only
+       measurement on the ZL MBP-1 data E.31 buys for conditioning, with
+       no new data spend.
+     YM and RTY (Lucid 0.70, Topstep 0.86 to 0.88) are not dropped and
+     not scheduled.

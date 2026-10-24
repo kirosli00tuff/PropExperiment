@@ -1053,3 +1053,25 @@
      fresh-context check, given the margin. From now on, every stage
      confirms each reviewer's model from its transcript, not from a
      self-report. Sonnet never reviews.
+- 2026-10-23 (user, planning chat, 14:34-22:36 PDT): V51. The ZM
+  directional signal program.
+  1. Thesis (the user's): any capturable directional edge is most likely
+     in a lesser-known product such as ZM, on an unpublished idea the
+     program must find itself. ML is a core tool, under V43.
+  2. Data roles, fixed now:
+     - discovery uses the owned ZM MBO and ZS and ZL MBP-1, 2020-12 to
+       2024-02 (E.31);
+     - the one-shot test uses ZM, ZS and ZL from 2017-05-01 to
+       2020-11-30. It is sealed by Stage E.32 Part 0 and covers every
+       schema, including the program's own one-minute bars;
+     - 2024-03 onward stays closed unless the user approves it later, as
+       a possible second confirmation.
+  3. The program runs part by part:
+     - E.32 writes the methods brief (how professionals build such
+       strategies, plus the mathematics and ML) and freezes the discovery
+       protocol. Nothing is trained, and N stays 538.
+     - E.33 runs the frozen search. Every configuration counts into N.
+     - A later registered stage buys and reads the test window once.
+  4. E.32 launches only after the user moves to Max (the user was at 90%
+     of his weekly Pro usage on 2026-10-23). No Databento call is made
+     until a funded account exists and a fresh quote is approved.

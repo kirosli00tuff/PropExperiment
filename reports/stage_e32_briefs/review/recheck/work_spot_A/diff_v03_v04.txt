@@ -1,0 +1,325 @@
+3c3
+< Status: DRAFT v0.3 (2026-10-27, lead Opus 5.5 xhigh; ProtocolReviewer findings applied). Not frozen. The frozen version carries its sha256 in
+---
+> Status: DRAFT v0.4 (2026-10-27, lead Opus 5.5 xhigh; ProtocolReviewer findings and the FixVerifier re-check applied). Not frozen. The frozen version carries its sha256 in
+35,38c35,41
+<   way and logged (E.33 prompt). Every such reading is written into one file and hashed into the pipeline freeze
+<   before the C1 registration; none may be made after the first real-outcome fit (ProtocolReview DO-1). P8 is coded
+<   and unit-tested on synthetic series before that fit. Details that cannot affect an outcome (file layout, names,
+<   logging) are E.33's.
+---
+>   way and logged (E.33 prompt). Every such reading is written by E.33's lead, before the C1 registration, into
+>   reports/stage_e33_protocol_readings.md (per entry: the protocol line, the readings considered, the one chosen and
+>   why it is the conservative one); that file's sha256 is a line of the B7 pipeline freeze list and is quoted in the
+>   C1 registration note. No reading is made after C1: a question that arises later is answered by that file, and if
+>   it is not answered there, that part of E.33 stops and reports (second bullet; ProtocolReview DO-1, FixVerifier
+>   R-W2-2, R-W2-7). P8 is coded and unit-tested on synthetic series before the first real-outcome fit. Details that
+>   cannot affect an outcome (file layout, names, logging) are E.33's.
+65,66c68,71
+<   tests (P3.4), locked-book checks (P3.6 rule 5) and OFI sums (F2.8, F3.1, F3.4) step through book updates; "as of
+<   u" means the last book update with ts_recv <= u (ProtocolReview DO-9).
+---
+>   tests (P3.4), locked-book checks (P3.6 rule 5) and OFI sums (F2.8-F2.11, F3.1-F3.4) step through book updates;
+>   "as of
+>   u" means the last book update with ts_recv <= u (ProtocolReview DO-9). A book update's time is the ts_recv of its
+>   F_LAST record (FixVerifier R-W2-6).
+96,97c101,104
+< The list governs market data and measured outcomes; the program's code, docs, prompts and the E.32 briefs are
+< readable.
+---
+> The list governs market data and measured outcomes; the program's code, docs, prompts, this protocol, E.32's reports
+> (reports/E.32_RETURN.md, reports/stage_e32_*.md) and the E.32 briefs are readable, except the files named in the
+> third bullet. Where the E.33 prompt's reading list and this section differ, this section applies (FixVerifier
+> R-W4-6).
+101c108,109
+<   stats31_core, and kalgo31 with E.31's fill code for the P6.4 (iii) passive-fill simulation only: F 6.1-6.2).
+---
+>   stats31_core, and kalgo31, with measure31_core's fill logic as the reference for E.33's P6.4 (iii) port only:
+>   F 6.1-6.2; FixVerifier FE-6).
+106c114,115
+<   (reports/stage_e31_briefs/work/pilot/runs/, stats31.md, stats31.json, the measure31 output tables).
+---
+>   (reports/stage_e31_briefs/work/pilot/runs/, which holds the measure31 output folder runs/measure31/ and every
+>   stats31.md and stats31.json; FixVerifier R-W1-8).
+108,110c117,120
+<   reports/E.31_RETURN.md section 3.5, reports/stage_e32_briefs/X1_exposure.md Table C,
+<   reports/stage_e32_briefs/X1_verify.md's Table C verdicts and work/X1_exposure/X1_tableC_appendix.md. The E.33
+<   lead may read them: every choice is frozen and P8 is mechanical.
+---
+>   reports/E.31_RETURN.md section 3.5 (read by grep, never that section), and the whole files
+>   reports/stage_e32_briefs/X1_exposure.md, reports/stage_e32_briefs/X1_verify.md and
+>   reports/stage_e32_briefs/work/X1_exposure/X1_tableC_appendix.md. The E.33 lead may read them: every choice is
+>   frozen and P8 is mechanical.
+253,254c263,268
+<   high limit for a short's exit, per P3.6 rule 5's definitions) and flagged. E.33 reports the counts of fallback
+<   fills, entries not made and limit marks per configuration.
+---
+>   high limit for a short's exit, per P3.6 rule 5's definitions) and flagged; if D has no limit prices (rule 5's skip
+>   case), the exit is marked at the last valid touch on that side before it emptied, and flagged (FixVerifier
+>   R-W1-7). For a TB trade, m0 of P3.4 is M_ZM as of the entry fill update (equal to M_ZM(t + L) when no fallback
+>   fired); if M_ZM is undefined at that update, the entry is not made and is counted with the entries not made
+>   (FixVerifier R-W1-2). E.33 reports the counts of fallback fills, entries not made and limit marks per
+>   configuration.
+282c296,297
+< At a decision time t at which the simulated account is flat and the span of the label starting at t meets P3.6:
+---
+> At a decision time t at which the simulated account is flat and the entry rules of P3.6 hold at t (P3.6, first
+> paragraph; FixVerifier R-W1-6):
+306,308c321,325
+<    whatever the evidence grade; R = 11:00:00 CT on that date. A calendar month with no valid NOPA row (2022-11 and
+<    2022-12 among them) gets its rule date: the 15th, or the next trade date if the 15th is not one, at 11:00 CT.
+<    E.33 asserts the counts per report type and prints them before any label. Export Sales (07:30 CT), Crop
+---
+>    whatever the evidence grade; R = 11:00:00 CT on that date. A calendar month with no valid NOPA row (exactly
+>    2022-11 and 2022-12 in these files) gets its rule date: the 15th, or the next trade date if the 15th is not one,
+>    at 11:00 CT. E.33 asserts, before any label, 39 USDA WASDE, 39 NASS Crop Production, 4 NASS Crop Production
+>    Annual, 13 NASS Grain Stocks, 3 NASS Prospective Plantings, 3 NASS Acreage and 37 NOPA counting rows plus 2 NOPA
+>    rule dates, prints them, and stops on any other count (FixVerifier LE-3, R-W1-5). Export Sales (07:30 CT), Crop
+315,316c332,334
+<    LE-2, FE-8) and c = (HL + LL)/2 (Topstep and MFFU forbid trading within 2% of a price limit; M6 4.1). If that
+<    record's limit prices are UNDEF_PRICE or 0, the limit-proximity part is skipped for D and the date is counted.
+---
+>    LE-2, FE-8) and c = (HL + LL)/2 (Topstep and MFFU forbid trading within 2% of a price limit; M6 4.1). If no such
+>    record exists, or either limit field of it is UNDEF_PRICE (mbo_book31.UNDEF_PRICE, 2^63 - 1) or 0, the
+>    limit-proximity part is skipped for D and the date is counted (FixVerifier R-W4-8, R-W1-11).
+325c343,344
+<   [t, tau + L]); u_i = the mean over the intervals m covered by span_i of 1/c_m. Weights are computed per date over
+---
+>   [t, tau + L]); u_i = the mean of 1/c_m over the intervals m that span_i intersects by more than one second (the
+>   same intervals that count span_i in c_m; FixVerifier DO-15). Weights are computed per date over
+393c412
+< | F1.3 | zR = e(t)/sd_e. Before D's open: OLS on the 1-minute samples (08:35-13:13, minutes clear of P3.6 rule 3) of the 10 trade dates before D inside the current segment, M_ZM = a + b_S M_ZS + b_L M_ZL + eps in natural units; at least 3 such dates or invalid. e(t) = (M_ZM(t) - a - b_S M_ZS(t) - b_L M_ZL(t))/0.10 in ZM ticks; sd_e = the fit's residual SD in ZM ticks. Coefficients fixed for D |
+---
+> | F1.3 | zR = e(t)/sd_e. Before D's open: OLS on the 1-minute samples (08:35-13:13, minutes clear of P3.6 rule 3) of the 10 trade dates before D inside the current segment, M_ZM = a + b_S M_ZS + b_L M_ZL + eps in natural units (a is the natural-scale intercept recovered from the means, a = mean M_ZM - b_S mean M_ZS - b_L mean M_ZL, after the centred fit of 0.3; FixVerifier R-W3-13); at least 3 such dates or invalid. e(t) = (M_ZM(t) - a - b_S M_ZS(t) - b_L M_ZL(t))/0.10 in ZM ticks; sd_e = the fit's residual SD in ZM ticks. Coefficients fixed for D |
+439c458
+< ### P4.1 Leakage and pipeline tests (before any model is fitted on real outcomes)
+---
+> ### P4.1 Leakage and pipeline tests (before any model is fitted on real outcomes; LT7 is repeated after the test list is hashed)
+443,445d461
+< - LT7 Simulator causality (ProtocolReview LE-5): for the same 200 times, the entry decision recomputed from streams
+<   truncated at t equals the production decision, and the entry fill recomputed from streams truncated at t + L
+<   equals the production fill.
+451c467,468
+<   reference= the training Dataset; ProtocolReview DO-17), and that each row's weight depends only on rows of its own
+---
+>   reference= the inner-training Dataset; ProtocolReview DO-17, FixVerifier R-W3-12), and that each row's weight
+>   depends only on rows of its own
+457c474,483
+< - LT6 Data guard: tests that the guard refuses every path and date class of P1.2.
+---
+> - LT6 Data guard: tests that the guard refuses every path and date class of P1.2's Refused list (FixVerifier
+>   R-W1-8).
+> - LT7 Simulator causality (ProtocolReview LE-5; FixVerifier LE-5, R-W1-3, R-W3-6, R-W3-14): before the first
+>   real-outcome fit, the fold models of the P4.2 null search of seed 1 (its 20 configurations, S5 x {FH15, TB30} x
+>   the 10 grid points; trained on synthetic rows, so no real outcome enters) are applied to the real streams at the 200
+>   times of LT1 restricted to each configuration's grid G_h(D): the entry decision (side or no trade) recomputed
+>   from all streams truncated at t equals the production decision, and the entry fill recomputed from streams
+>   truncated at the production fill time (t + L, or the fallback fill update of P3.2) equals the production fill.
+>   LT7 is repeated on the Tier A and Tier B fold models after the test list is hashed. A mismatch at either time
+>   stops E.33 until fixed (P10).
+466,469c492,499
+<   synthetic minute rows (mids, touch prices, labels and the 59 S5 feature columns generated to match the data
+<   facts' rates) through folds, models, the EV rule, the simulation, G1-G5 with the production thresholds (N 838)
+<   and the Tier A walk. Seeds 1-20 for null searches and 101-120 for planted searches, each run exactly once (no
+<   reruns; 4,800 fits in all).
+---
+>   synthetic minute rows on the real decision grid G_h(D), the 796 OOF dates and the P3.6 exclusion calendar (the 20
+>   burn-in dates as history; mids, touch prices, labels and the 59 S5 feature columns generated to match the data
+>   facts' rates) through the P6.1 folds and embargo, models, the EV rule, the simulation, G1-G5 with the production
+>   thresholds and the Tier A walk (FixVerifier FE-2, R-W3-3). The thresholds are those at the expected N 838; if the
+>   registered N differs, the proofs are not rerun and E.33's return says at which N they ran (FixVerifier R-W3-15).
+>   Seeds 1-20 for null searches and 101-120 for planted searches, each run exactly once per pipeline hash (4,800
+>   fits); after a logged code fix (0.2) all 40 are rerun with the same seeds, every run before and after the fix is
+>   reported, and no seed is added, replaced or rerun on its own (FixVerifier R-W3-5).
+475,480c505,512
+<   each centred on its configuration's mean) against 1/sqrt(796) = 0.0355.
+< - Planted: one F3 feature carries a signal whose oracle strategy (it knows the planted signal exactly) has a daily
+<   Sharpe of 0.35 net under the selection variant; E.33 reports the realised OOF Sharpe of the best planted
+<   configuration per seed beside the oracle. The proof passes if at least one S5 configuration at FH15 or TB30
+<   enters Tier A in at least 14 of the 20 planted seeds (P(at least 14 of 20) = 0.91 at a per-seed power of 0.8;
+<   P7.2 gives a selection power of 0.91 at a realised daily Sharpe of 0.25).
+---
+>   each centred on its configuration's mean) against 1/sqrt(796) = 0.0354 (FixVerifier R-W3-9).
+> - Planted: one F3 feature carries a signal whose size is set so that the oracle strategy (the P3.5 rule applied
+>   with the generator's true class probabilities, with the P3.8 costs and the dead zone) has a daily Sharpe of 0.35
+>   net under the selection variant at FH15 on the synthetic series; the same plant serves the TB30 configurations
+>   (FixVerifier FE-7, R-W3-4). E.33 reports the realised OOF Sharpe of the best planted configuration per seed
+>   beside the oracle. The proof passes if at least one S5 configuration at FH15 or TB30 enters Tier A in at least 14
+>   of the 20 planted seeds (P(at least 14 of 20) = 0.91 at a per-seed power of 0.8; P7.2's joint select-and-pass
+>   probability is 0.91 at a realised daily Sharpe of 0.25, and selection alone about 0.92; FixVerifier R-W3-10).
+506,507c538,540
+< - Calibration: a multinomial logistic regression (C = 1e4, lbfgs, max_iter 1000, tol 1e-6; ProtocolReview FE-9) of
+<   y on the booster's three raw scores, fitted on the inner validation block with weights w; its probabilities feed
+---
+> - Calibration: a multinomial logistic regression (C = 1e4, lbfgs, max_iter 1000, tol 1e-6; ProtocolReview FE-9;
+>   non-convergence logged and the fit used as is, FixVerifier R-W4-7) of y on the booster's three raw scores, fitted
+>   on the inner validation block with weights w; its probabilities feed
+513c546,549
+< has no OOF series, fails G1, is recorded with the error, and stays in N.
+---
+> has no OOF series, fails G1, is recorded with the error, and stays in N. A fold interrupted before it writes its
+> result (a killed process, an out-of-memory kill, a reboot, a usage-limit pause) is not failed: it is rerun once
+> from the DONE markers with identical settings (E.33 prompt C3); a second interruption of the same fold fails the
+> configuration. Every out-of-memory kill counts toward P10's two-failure stop (FixVerifier R-W3-7).
+530,535c566,584
+<   (1,080 fits: 3-18 CPU-hours); LGBM 5-30 s a fit (720 fits: 1-6 CPU-hours). With 7 worker processes at nice 10,
+<   about 1-4 hours of wall time. The FeasibilityReviewer's synthetic probes gave 2.4-3.5 s a LOGIT fit in a balanced
+<   class regime and 1.9-65.6 s when 99% of rows are class 0, and 8-13 s an LGBM fit.
+< - Probe and compute stop (ProtocolReview FE-4, DO-18): before the first real-outcome fit, E.33 times the feature
+<   builder on 3 dates and one fold of the two slowest grid points (E33-S5F15L100E and E33-S5F15G3050), writes the
+<   projected total to its STATE file, and that projection is the reference for P10's 3x stop.
+---
+>   (1,080 fits: 3-18 CPU-hours); LGBM 5-30 s a fit (720 fits: 1-6 CPU-hours). With up to 8 single-thread LOGIT
+>   processes (OMP_NUM_THREADS = OPENBLAS_NUM_THREADS = MKL_NUM_THREADS = 1) or 2 x 4-thread LGBM processes at nice
+>   10, about 1-4 hours of wall time (FixVerifier R-W4-3). The FeasibilityReviewer's synthetic probes gave 2.4-3.5 s a
+>   LOGIT fit in a balanced class regime and 1.9-65.6 s when 99% of rows are class 0, and 8-13 s an LGBM fit.
+> - Synthetic search proofs (P4.2): 4,800 fits (2,880 LOGIT, 1,920 LGBM) on production-size tables, 2.67 times the
+>   search's 1,800 fits: 11-64 CPU-hours at the guesses above (1.5-9 hours of wall time at 7 processes), 6-10
+>   CPU-hours at the FeasibilityReviewer's balanced probes (0.9-1.4 hours). They run before the pipeline freeze,
+>   their measured wall time is reported, and it counts against E.33's deadlines (P10; FixVerifier FE-2, R-W3-2).
+> - Probe and compute stop (ProtocolReview FE-4, DO-18; FixVerifier FE-4, DO-18): before the first real-outcome fit,
+>   E.33 times the feature builder on 3 dates (the median, p90 and maximum ZM message-count dates of F 5) and fold 6
+>   (the largest training set, 664 dates) of the two slowest grid points (E33-S5F15L100E and E33-S5F15G3050). The
+>   projected wall time of the search is 796 x the mean per-date builder seconds / P_b + 1,080 x the L100E fold
+>   seconds / P_L + 720 x the G3050 fold seconds / P_G, where P_b, P_L and P_G are the process counts the thread cap
+>   of this section allows for the builder, LOGIT and LGBM. E.33 writes that projected wall time, with the probe
+>   times and this formula, to its STATE file before the first real-outcome fit; the written value is the reference
+>   for P10's 3x stop.
+> - Every long job (the split, the feature build, the P4.2 proofs, the 1,800 fits, P6.4 and P6.5) runs at nice 10,
+>   writes a DONE marker per trade date or per configuration and fold, and skips finished pieces on restart (E.33
+>   prompt C3; FixVerifier R-W4-4).
+581,582c630,633
+<   E.31's model (a) K-algorithm and (b) FIFO back of queue (kalgo31 and E.31's fill code, reused for this report
+<   only), under the alternative reading of Rithmic's rule; under the joint reading (ii) applies (M6 E3).
+---
+>   E.31's model (a) K-algorithm and (b) FIFO back of queue (kalgo31 as is, and a port of E.31's queue state machine,
+>   measure31_core's VOrder, Placement and fill logic, to the signal times, written and tested by E.33; reported as
+>   not done if it is not ready by the P10 cut; F 6.2, FixVerifier FE-6), under the alternative reading of Rithmic's
+>   rule; under the joint reading (ii) applies (M6 E3).
+616c667,671
+< real-outcome fit. The N of every DSR, threshold and test in P7.2, P8 and P9 is trial_registry.current_n()
+---
+> real-outcome fit. The freeze file holds, per ID, the set, label, h, model, hyperparameters, pipeline sha256 and
+> protocol sha256 (the prompt's C1 fields; the registry line carries none). The registry refuses a second
+> registration under E33, so after any stop or restart E.33 re-uses the one registration and re-checks it with
+> trial_registry.require_registered(the 300 IDs, test="E33") (FixVerifier R-W4-5). The N of every DSR, threshold and
+> test in P7.2, P8 and P9 is trial_registry.current_n()
+623c678
+< - Discovery (T_disc = 796): SR0 = E[max SR] = 0.1137 daily; G3 (DSR >= 0.95, V = 1/(T_disc - 1)) needs SR_d >=
+---
+> - Discovery (T_disc = 796): SR0 = E[max SR] = 0.1137 daily; G3 (DSR > 0.95, V = 1/(T_disc - 1)) needs SR_d >=
+625c680
+< - The test (T_test = 870, P9): daily t > 3.0 is SR 0.1017; the protocol-added DSR >= 0.95 at N 838 with
+---
+> - The test (T_test = 870, P9): daily t > 3.0 is SR 0.1017; the protocol-added DSR > 0.95 at N 838 with
+639,642c694,699
+< - b_test is pinned at 0.1649 (N 838, T_test 870). The user may drop the protocol-added test DSR only by a decision
+<   recorded before E.33's C1 registration; then b_test = 0.1017 and the selection threshold is G3's 0.1724. After the
+<   registration b_test does not change (ProtocolReview DO-2). If the registered N differs from 838, p7_final.py
+<   recomputes every threshold at that N before any real-outcome fit.
+---
+> - b_test is pinned at p7_final.py's unrounded value at the registered N (0.164882 at N 838, T_test 870; displayed
+>   0.1649), and G4 compares against that value (FixVerifier AR-2, R-W1-4). The user may drop the protocol-added test
+>   DSR only by a decision recorded before E.33's C1 registration, as an amendment under 0.2: a new protocol version
+>   hashed before C1, whose P7.2 states b_test = 0.1017, G4 = 0.1373 and the binding selection threshold 0.1724 (G3)
+>   (FixVerifier DO-2, R-W2-2). After the registration b_test does not change (ProtocolReview DO-2). If the
+>   registered N differs from 838, p7_final.py recomputes every threshold at that N before any real-outcome fit.
+644,647c701,708
+<   as coded (V14 c) takes V = the population variance of the 2-3 tested Sharpes; with any companion whose test
+<   Sharpe is null or weaker, its SR0 is 1.51-1.60 times the strong candidate's Sharpe, so a true daily Sharpe of 0.25
+<   or 0.30 then fails with probability near 1 (ProtocolReview AR-1, its a3_out.txt). Under V14 (c) as coded these
+<   powers are upper bounds that depend on the list's composition. P9 reserves the remedy to the user.
+---
+>   as coded (V14 c) takes V = the population variance of the 2-3 tested Sharpes, so its SR0 = 3.2045 x the population
+>   SD of those Sharpes (the E[max] multiplier at N 838): with one null companion SR0 = 1.60 x the strong member's
+>   Sharpe (two nulls: 1.51 x), and no true Sharpe passes; with a weaker but real companion SR0 = 3.2045 x half the
+>   gap between them (two members), so a true 0.25 beside a true 0.15 needs 0.216 and passes with about 0.84, and
+>   beside 0.10 it needs 0.296 and passes with about 0.09 (ProtocolReview AR-1, its a3_out.txt; FixVerifier AR-1,
+>   R-W1-1). Under V14 (c) as coded these powers are upper bounds that depend on the list's composition; amending
+>   V14 (c) as P9 reserves makes the DSR part of check (1) identical to check (2), so it can only loosen the combined
+>   bar, and only to the bar whose power is tabulated. P9 reserves the remedy to the user.
+659,661c720,723
+< - G3 Significance: DSR >= 0.95 with the program's function (funnel.multiple_comparisons.deflated_sharpe_ratio) at
+<   N = the registered N after E.33's registration, V = 1/(T_disc - 1), T = T_disc, and the configuration's own
+<   sample skewness and raw kurtosis.
+---
+> - G3 Significance: DSR > 0.95 (the program's sign; FixVerifier R-W1-12) with the program's function
+>   (funnel.multiple_comparisons.deflated_sharpe_ratio) at N = the registered N after E.33's registration,
+>   V = 1/(T_disc - 1), T = T_disc, and the configuration's own skewness and raw kurtosis (moments(), 0.3;
+>   FixVerifier R-W3-8, R-W2-3). A DSR that cannot be computed fails G3.
+663c725,726
+<   configuration's moments (g3 skewness, g4 raw kurtosis) and b_test from P7.2 at the registered N.
+---
+>   configuration's moments (g3 skewness, g4 raw kurtosis) and b_test = the unrounded value P7.2 pins in the protocol
+>   version whose sha256 E.33 verified at A1, recomputed by p7_final.py only if N differs from 838 (FixVerifier DO-2).
+666c729,730
+<   the total; (c) for each of the 39 months, the daily t of the series without that month (mean/SD x sqrt(n)) >= 2.5;
+---
+>   the total; (c) for each of the 39 months, the daily t of the series without that month (mean/SD x sqrt(n), the
+>   population SD of t_stat(); 0.3; FixVerifier R-W3-11) >= 2.5;
+669,670c733,735
+< - Ranking of the configurations that pass G1-G5 (a total order; ProtocolReview DO-7): SR_d rounded to 4 decimals,
+<   descending; then fewer trades per date; then LOGIT before LGBM; then the lower set index; then the shorter horizon
+---
+> - Ranking of the configurations that pass G1-G5 (a total order; ProtocolReview DO-7): SR_d rounded to 4 decimals
+>   with Python's round() (half to even; FixVerifier R-W2-4), descending; then fewer trades per date; then LOGIT
+>   before LGBM; then the lower set index; then the shorter horizon
+677,679c742,747
+<   <= 0.70 with every configuration already taken (Tier A and Tier B). Near-duplicates are excluded because they
+<   would make the verdict's variance collapse (DO-5's simulation: a true daily Sharpe of 0.12 would pass the
+<   program's DSR 93% of the time).
+---
+>   <= 0.70 with every configuration already taken (Tier A and Tier B). A configuration with no OOF series (failed,
+>   P5) or a constant OOF series (no trade) is skipped. If fewer than two qualify, Tier B is filled by the
+>   highest-ranked remaining configurations with a defined series, and E.33 reports their correlations (FixVerifier
+>   DO-5, R-W2-1). Near-duplicates are excluded because they would make the verdict's variance collapse (DO-5's
+>   simulation: a true daily Sharpe of 0.12 would pass the program's DSR 93% of the time at rho 0.98 between the
+>   series, 43% at rho 0.70; FixVerifier R-W2-5).
+702c770,772
+<   OCE WASDE release-date pages, NASS calendar list views, NOPA reporting-date PDFs), hashed, never edited after.
+---
+>   OCE WASDE release-date pages, NASS calendar list views, NOPA reporting-date PDFs), parse rule included, hashed,
+>   never edited after; the test stage asserts one USDA WASDE, one NASS Crop Production and one NOPA date (row or rule
+>   date) per calendar month of the window, 43 each, and stops on any other count (FixVerifier LE-3).
+705,707c775,779
+<   Holm at K = 9 per V14 b; DSR > 0.95 at the list's program N with the population variance of the Tier A Sharpes if
+<   two or more, else of Tier A and Tier B, V14 c; daily t > 3.0; CSCV PBO < 0.5) and (2) the protocol-added DSR >= 0.95
+<   at the same N with V = 1/(T_test - 1). A Tier A configuration passes only if both pass; it then reads "edge
+---
+>   Holm at K = 9 per V14 b; DSR > 0.95 at the list's program N (= the N of P7.1, 838, unless trials were registered
+>   after E.33, in which case the registry's N at the test registration, recorded beside it; FixVerifier R-W1-9) with
+>   the population variance of the Tier A Sharpes if two or more, else of Tier A and Tier B, V14 c; daily t > 3.0;
+>   CSCV PBO < 0.5) and (2) the protocol-added DSR > 0.95 (the program's sign; FixVerifier R-W1-12) at the same N
+>   with V = 1/(T_test - 1). A Tier A configuration passes only if both pass; it then reads "edge
+712,713c784,789
+<   coded, V14 (c) takes the population variance of the 2-3 tested Sharpes, which makes a real edge fail whenever a
+<   companion's test Sharpe is null or weaker (P7.2). E.32 does not amend a user decision; it states the consequence.
+---
+>   coded, V14 (c) takes the population variance of the 2-3 tested Sharpes, which makes a real edge fail with near
+>   certainty beside a null companion and with a probability that rises with the gap between the members' true
+>   Sharpes (P7.2; FixVerifier R-W1-1). Amending can only loosen the combined bar, and only to the point where its
+>   DSR part equals check (2), whose power P7.2 tabulates (Holm, t and PBO unchanged); the discovery outcomes cannot
+>   steer it further (FixVerifier R-W1-10). E.32 does not amend a user
+>   decision; it states the consequence.
+724,729c800,813
+<   declared choice that cannot be implemented as written (0.2); measured compute above 3 times the probe-based
+<   projection written to the STATE file before the first real-outcome fit (P5), or two out-of-memory failures.
+< - E.33's deadlines (its prompt: the search is cut at 00:00 PDT on 2026-10-28 and work stops at 01:00): the cut unit
+<   is a whole feature set in the P5 order (S5, S1, S3, S2, S4), which is the "family" of the prompt's C3 (ProtocolReview
+<   DO-19); unrun configurations stay registered and count in N, and P8 runs on the configurations that ran, with the
+<   registered N. A features-only store may be built before the pipeline freeze. When time is short, reports are cut
+---
+>   declared choice of P1-P5, P6.1-P6.2, P7 or P8 that cannot be implemented as written (0.2; a P6.3-P6.5 item that
+>   cannot be implemented is reported as not done and is not a stop; FixVerifier R-W4-2); a measured wall time of the
+>   search above 3 times the projected wall time written to the STATE file before the first real-outcome fit (P5;
+>   FixVerifier DO-18), or two out-of-memory failures.
+> - E.33's deadlines (its prompt as last amended before E.33 starts; at this writing, user 2026-10-27 08:16: no new
+>   configuration starts after 07:00 PDT on 2026-10-28, running ones finish or are recorded as failed by 08:00, the
+>   return is written by 08:45 and nothing runs after 09:00; these times are feasibility limits, not declared choices,
+>   so the prompt's current times govern and an amendment of them does not amend this protocol; FixVerifier DO-19,
+>   R-W3-1, R-W4-1): the cut unit is a whole feature set in the P5 order (S5, S1, S3, S2, S4), which is the "family"
+>   of the prompt's C3 (ProtocolReview DO-19); unrun configurations stay registered and count in N, and P8 runs on the
+>   configurations that ran, with the registered N. A features-only store (P4 features at every minute mark; no
+>   label, no return) may be built as soon as B3 passes and before the pipeline freeze, keyed by the sha256 of the
+>   feature code that built it, and is rebuilt if the frozen feature code differs; labels, fits and simulations wait
+>   for the freeze and the C1 registration (FixVerifier FE-11). When time is short, reports are cut

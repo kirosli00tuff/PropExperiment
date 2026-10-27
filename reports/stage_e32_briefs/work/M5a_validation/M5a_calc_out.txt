@@ -1,0 +1,197 @@
+
+=== calendar
+discovery weekdays 848, assumed closures 32, trade dates ~816
+test window weekdays 936, trade dates ~899 (assumed 37 closures)
+minutes per trade date: overnight 765 + day 290 = 1055
+1-min bar slots over discovery ~860880; AFML 0.01T = 8609 bars = 8.16 trade dates; 0.01 x 816 days = 8.16
+
+=== (a) sigma_h and purge overhead
+h=  5 min sigma_h = 3.15 x sqrt(5) = 7.04 ticks
+h= 15 min sigma_h = 3.15 x sqrt(15) = 12.20 ticks
+h= 30 min sigma_h = 3.15 x sqrt(30) = 17.25 ticks
+h= 60 min sigma_h = 3.15 x sqrt(60) = 24.40 ticks
+h=120 min sigma_h = 3.15 x sqrt(120) = 34.51 ticks
+h=240 min sigma_h = 3.15 x sqrt(240) = 48.80 ticks
+k=5 H=15: bar-level purge share k*2H/T = 0.0174%; 1-date embargo share k*1/T_days = 0.6127%; Li k(2H+h)/T with h=1 date: 0.6302%
+k=5 H=60: bar-level purge share k*2H/T = 0.0697%; 1-date embargo share k*1/T_days = 0.6127%; Li k(2H+h)/T with h=1 date: 0.6824%
+k=5 H=240: bar-level purge share k*2H/T = 0.2788%; 1-date embargo share k*1/T_days = 0.6127%; Li k(2H+h)/T with h=1 date: 0.8915%
+k=10 H=15: bar-level purge share k*2H/T = 0.0348%; 1-date embargo share k*1/T_days = 1.2255%; Li k(2H+h)/T with h=1 date: 1.2603%
+k=10 H=60: bar-level purge share k*2H/T = 0.1394%; 1-date embargo share k*1/T_days = 1.2255%; Li k(2H+h)/T with h=1 date: 1.3649%
+k=10 H=240: bar-level purge share k*2H/T = 0.5576%; 1-date embargo share k*1/T_days = 1.2255%; Li k(2H+h)/T with h=1 date: 1.7831%
+
+=== (b) CPCV splits/paths
+N=6 k=2: splits 15, paths 5 (=C(5,1)=5), train frac 0.667, group ~136.0 dates
+N=8 k=2: splits 28, paths 7 (=C(7,1)=7), train frac 0.750, group ~102.0 dates
+N=10 k=2: splits 45, paths 9 (=C(9,1)=9), train frac 0.800, group ~81.6 dates
+N=10 k=3: splits 120, paths 36 (=C(9,2)=36), train frac 0.700, group ~81.6 dates
+N=12 k=2: splits 66, paths 11 (=C(11,1)=11), train frac 0.833, group ~68.0 dates
+N=16 k=2: splits 120, paths 15 (=C(15,1)=15), train frac 0.875, group ~51.0 dates
+configs 200 N=6,k=2: fits 3000; at 6 s = 5.0 h; at 0.5 s = 0.42 h
+configs 200 N=10,k=2: fits 9000; at 6 s = 15.0 h; at 0.5 s = 1.25 h
+configs 1000 N=6,k=2: fits 15000; at 6 s = 25.0 h; at 0.5 s = 2.08 h
+configs 1000 N=10,k=2: fits 45000; at 6 s = 75.0 h; at 0.5 s = 6.25 h
+configs 5000 N=6,k=2: fits 75000; at 6 s = 125.0 h; at 0.5 s = 10.42 h
+configs 5000 N=10,k=2: fits 225000; at 6 s = 375.0 h; at 0.5 s = 31.25 h
+null path-SR sd (daily basis) ~ 1/sqrt(816) = 0.0350; annualised x sqrt(252) = 0.556
+
+=== (c) walk-forward fold counts (39 months)
+anchored/rolling train 12 m, step 3 m: 9 test folds, OOS months 27, OOS share 0.69
+anchored/rolling train 18 m, step 3 m: 7 test folds, OOS months 21, OOS share 0.54
+anchored/rolling train 24 m, step 3 m: 5 test folds, OOS months 15, OOS share 0.38
+anchored/rolling train 12 m, step 6 m: 4 test folds, OOS months 24, OOS share 0.62
+
+=== (d) BLdP 2014 numerical example replication
+N=100: SR0 daily 0.1132 (annual 1.7894), DSR 0.9004
+N=46: SR0 daily 0.1004 (annual 1.5869), DSR 0.9505
+normal returns N=87: DSR 0.9511
+normal returns N=88: DSR 0.9505
+normal returns N=89: DSR 0.9498
+
+=== (d) e(N) factor and Monte Carlo check
+N=200: e(N)=2.7655  sqrt(2 ln N)=3.2552  MC=2.7392
+N=538: e(N)=3.0745  sqrt(2 ln N)=3.5462  MC=3.0533
+N=738: e(N)=3.1677  sqrt(2 ln N)=3.6343  MC=3.1543
+N=1000: e(N)=3.2551  sqrt(2 ln N)=3.7169  MC=3.2302
+N=1538: e(N)=3.3756  sqrt(2 ln N)=3.8310  MC=3.3596
+N=5000: e(N)=3.6877  sqrt(2 ln N)=4.1273  MC=nan
+N=5538: e(N)=3.7137  sqrt(2 ln N)=4.1520  MC=nan
+
+=== (d) ZM per-trade DSR thresholds (V = 1/T null calibration)
+h=15 sig=12.20 T=408 N=738 g3=0.0 g4=3.0: SR0=0.1568 SR*=0.2395 t*=4.84 gross edge*=4.51 ticks (net 2.92); annualised SR* = 2.68 at 126 trades/yr
+h=15 sig=12.20 T=408 N=738 g3=0.0 g4=8.0: SR0=0.1568 SR*=0.2424 t*=4.90 gross edge*=4.55 ticks (net 2.96); annualised SR* = 2.72 at 126 trades/yr
+h=15 sig=12.20 T=408 N=738 g3=-0.5 g4=8.0: SR0=0.1568 SR*=0.2473 t*=4.99 gross edge*=4.61 ticks (net 3.02); annualised SR* = 2.77 at 126 trades/yr
+h=15 sig=12.20 T=408 N=1538 g3=0.0 g4=3.0: SR0=0.1671 SR*=0.2499 t*=5.05 gross edge*=4.64 ticks (net 3.05); annualised SR* = 2.80 at 126 trades/yr
+h=15 sig=12.20 T=408 N=1538 g3=0.0 g4=8.0: SR0=0.1671 SR*=0.2531 t*=5.11 gross edge*=4.68 ticks (net 3.09); annualised SR* = 2.84 at 126 trades/yr
+h=15 sig=12.20 T=408 N=1538 g3=-0.5 g4=8.0: SR0=0.1671 SR*=0.2581 t*=5.21 gross edge*=4.74 ticks (net 3.15); annualised SR* = 2.89 at 126 trades/yr
+h=15 sig=12.20 T=408 N=5538 g3=0.0 g4=3.0: SR0=0.1839 SR*=0.2668 t*=5.39 gross edge*=4.85 ticks (net 3.26); annualised SR* = 2.99 at 126 trades/yr
+h=15 sig=12.20 T=408 N=5538 g3=0.0 g4=8.0: SR0=0.1839 SR*=0.2704 t*=5.46 gross edge*=4.89 ticks (net 3.30); annualised SR* = 3.03 at 126 trades/yr
+h=15 sig=12.20 T=408 N=5538 g3=-0.5 g4=8.0: SR0=0.1839 SR*=0.2758 t*=5.57 gross edge*=4.95 ticks (net 3.36); annualised SR* = 3.09 at 126 trades/yr
+h=15 sig=12.20 T=816 N=738 g3=0.0 g4=3.0: SR0=0.1109 SR*=0.1689 t*=4.83 gross edge*=3.65 ticks (net 2.06); annualised SR* = 2.68 at 251 trades/yr
+h=15 sig=12.20 T=816 N=738 g3=0.0 g4=8.0: SR0=0.1109 SR*=0.1699 t*=4.85 gross edge*=3.66 ticks (net 2.07); annualised SR* = 2.69 at 251 trades/yr
+h=15 sig=12.20 T=816 N=738 g3=-0.5 g4=8.0: SR0=0.1109 SR*=0.1724 t*=4.92 gross edge*=3.69 ticks (net 2.10); annualised SR* = 2.73 at 251 trades/yr
+h=15 sig=12.20 T=816 N=1538 g3=0.0 g4=3.0: SR0=0.1182 SR*=0.1762 t*=5.03 gross edge*=3.74 ticks (net 2.15); annualised SR* = 2.79 at 251 trades/yr
+h=15 sig=12.20 T=816 N=1538 g3=0.0 g4=8.0: SR0=0.1182 SR*=0.1774 t*=5.07 gross edge*=3.75 ticks (net 2.16); annualised SR* = 2.81 at 251 trades/yr
+h=15 sig=12.20 T=816 N=1538 g3=-0.5 g4=8.0: SR0=0.1182 SR*=0.1799 t*=5.14 gross edge*=3.78 ticks (net 2.19); annualised SR* = 2.85 at 251 trades/yr
+h=15 sig=12.20 T=816 N=5538 g3=0.0 g4=3.0: SR0=0.1300 SR*=0.1881 t*=5.37 gross edge*=3.89 ticks (net 2.30); annualised SR* = 2.98 at 251 trades/yr
+h=15 sig=12.20 T=816 N=5538 g3=0.0 g4=8.0: SR0=0.1300 SR*=0.1894 t*=5.41 gross edge*=3.90 ticks (net 2.31); annualised SR* = 3.00 at 251 trades/yr
+h=15 sig=12.20 T=816 N=5538 g3=-0.5 g4=8.0: SR0=0.1300 SR*=0.1921 t*=5.49 gross edge*=3.93 ticks (net 2.34); annualised SR* = 3.04 at 251 trades/yr
+h=15 sig=12.20 T=3264 N=738 g3=0.0 g4=3.0: SR0=0.0554 SR*=0.0843 t*=4.82 gross edge*=2.62 ticks (net 1.03); annualised SR* = 2.67 at 1004 trades/yr
+h=15 sig=12.20 T=3264 N=738 g3=0.0 g4=8.0: SR0=0.0554 SR*=0.0844 t*=4.82 gross edge*=2.62 ticks (net 1.03); annualised SR* = 2.68 at 1004 trades/yr
+h=15 sig=12.20 T=3264 N=738 g3=-0.5 g4=8.0: SR0=0.0554 SR*=0.0850 t*=4.86 gross edge*=2.63 ticks (net 1.04); annualised SR* = 2.69 at 1004 trades/yr
+h=15 sig=12.20 T=3264 N=1538 g3=0.0 g4=3.0: SR0=0.0591 SR*=0.0879 t*=5.02 gross edge*=2.66 ticks (net 1.07); annualised SR* = 2.79 at 1004 trades/yr
+h=15 sig=12.20 T=3264 N=1538 g3=0.0 g4=8.0: SR0=0.0591 SR*=0.0881 t*=5.03 gross edge*=2.66 ticks (net 1.07); annualised SR* = 2.79 at 1004 trades/yr
+h=15 sig=12.20 T=3264 N=1538 g3=-0.5 g4=8.0: SR0=0.0591 SR*=0.0887 t*=5.07 gross edge*=2.67 ticks (net 1.08); annualised SR* = 2.81 at 1004 trades/yr
+h=15 sig=12.20 T=3264 N=5538 g3=0.0 g4=3.0: SR0=0.0650 SR*=0.0939 t*=5.36 gross edge*=2.74 ticks (net 1.15); annualised SR* = 2.97 at 1004 trades/yr
+h=15 sig=12.20 T=3264 N=5538 g3=0.0 g4=8.0: SR0=0.0650 SR*=0.0940 t*=5.37 gross edge*=2.74 ticks (net 1.15); annualised SR* = 2.98 at 1004 trades/yr
+h=15 sig=12.20 T=3264 N=5538 g3=-0.5 g4=8.0: SR0=0.0650 SR*=0.0947 t*=5.41 gross edge*=2.75 ticks (net 1.16); annualised SR* = 3.00 at 1004 trades/yr
+h=60 sig=24.40 T=408 N=738 g3=0.0 g4=3.0: SR0=0.1568 SR*=0.2395 t*=4.84 gross edge*=7.43 ticks (net 5.84); annualised SR* = 2.68 at 126 trades/yr
+h=60 sig=24.40 T=408 N=738 g3=0.0 g4=8.0: SR0=0.1568 SR*=0.2424 t*=4.90 gross edge*=7.51 ticks (net 5.92); annualised SR* = 2.72 at 126 trades/yr
+h=60 sig=24.40 T=408 N=738 g3=-0.5 g4=8.0: SR0=0.1568 SR*=0.2473 t*=4.99 gross edge*=7.62 ticks (net 6.03); annualised SR* = 2.77 at 126 trades/yr
+h=60 sig=24.40 T=408 N=1538 g3=0.0 g4=3.0: SR0=0.1671 SR*=0.2499 t*=5.05 gross edge*=7.69 ticks (net 6.10); annualised SR* = 2.80 at 126 trades/yr
+h=60 sig=24.40 T=408 N=1538 g3=0.0 g4=8.0: SR0=0.1671 SR*=0.2531 t*=5.11 gross edge*=7.77 ticks (net 6.18); annualised SR* = 2.84 at 126 trades/yr
+h=60 sig=24.40 T=408 N=1538 g3=-0.5 g4=8.0: SR0=0.1671 SR*=0.2581 t*=5.21 gross edge*=7.89 ticks (net 6.30); annualised SR* = 2.89 at 126 trades/yr
+h=60 sig=24.40 T=408 N=5538 g3=0.0 g4=3.0: SR0=0.1839 SR*=0.2668 t*=5.39 gross edge*=8.10 ticks (net 6.51); annualised SR* = 2.99 at 126 trades/yr
+h=60 sig=24.40 T=408 N=5538 g3=0.0 g4=8.0: SR0=0.1839 SR*=0.2704 t*=5.46 gross edge*=8.19 ticks (net 6.60); annualised SR* = 3.03 at 126 trades/yr
+h=60 sig=24.40 T=408 N=5538 g3=-0.5 g4=8.0: SR0=0.1839 SR*=0.2758 t*=5.57 gross edge*=8.32 ticks (net 6.73); annualised SR* = 3.09 at 126 trades/yr
+h=60 sig=24.40 T=816 N=738 g3=0.0 g4=3.0: SR0=0.1109 SR*=0.1689 t*=4.83 gross edge*=5.71 ticks (net 4.12); annualised SR* = 2.68 at 251 trades/yr
+h=60 sig=24.40 T=816 N=738 g3=0.0 g4=8.0: SR0=0.1109 SR*=0.1699 t*=4.85 gross edge*=5.74 ticks (net 4.15); annualised SR* = 2.69 at 251 trades/yr
+h=60 sig=24.40 T=816 N=738 g3=-0.5 g4=8.0: SR0=0.1109 SR*=0.1724 t*=4.92 gross edge*=5.80 ticks (net 4.21); annualised SR* = 2.73 at 251 trades/yr
+h=60 sig=24.40 T=816 N=1538 g3=0.0 g4=3.0: SR0=0.1182 SR*=0.1762 t*=5.03 gross edge*=5.89 ticks (net 4.30); annualised SR* = 2.79 at 251 trades/yr
+h=60 sig=24.40 T=816 N=1538 g3=0.0 g4=8.0: SR0=0.1182 SR*=0.1774 t*=5.07 gross edge*=5.92 ticks (net 4.33); annualised SR* = 2.81 at 251 trades/yr
+h=60 sig=24.40 T=816 N=1538 g3=-0.5 g4=8.0: SR0=0.1182 SR*=0.1799 t*=5.14 gross edge*=5.98 ticks (net 4.39); annualised SR* = 2.85 at 251 trades/yr
+h=60 sig=24.40 T=816 N=5538 g3=0.0 g4=3.0: SR0=0.1300 SR*=0.1881 t*=5.37 gross edge*=6.18 ticks (net 4.59); annualised SR* = 2.98 at 251 trades/yr
+h=60 sig=24.40 T=816 N=5538 g3=0.0 g4=8.0: SR0=0.1300 SR*=0.1894 t*=5.41 gross edge*=6.21 ticks (net 4.62); annualised SR* = 3.00 at 251 trades/yr
+h=60 sig=24.40 T=816 N=5538 g3=-0.5 g4=8.0: SR0=0.1300 SR*=0.1921 t*=5.49 gross edge*=6.28 ticks (net 4.69); annualised SR* = 3.04 at 251 trades/yr
+h=60 sig=24.40 T=3264 N=738 g3=0.0 g4=3.0: SR0=0.0554 SR*=0.0843 t*=4.82 gross edge*=3.65 ticks (net 2.06); annualised SR* = 2.67 at 1004 trades/yr
+h=60 sig=24.40 T=3264 N=738 g3=0.0 g4=8.0: SR0=0.0554 SR*=0.0844 t*=4.82 gross edge*=3.65 ticks (net 2.06); annualised SR* = 2.68 at 1004 trades/yr
+h=60 sig=24.40 T=3264 N=738 g3=-0.5 g4=8.0: SR0=0.0554 SR*=0.0850 t*=4.86 gross edge*=3.66 ticks (net 2.07); annualised SR* = 2.69 at 1004 trades/yr
+h=60 sig=24.40 T=3264 N=1538 g3=0.0 g4=3.0: SR0=0.0591 SR*=0.0879 t*=5.02 gross edge*=3.74 ticks (net 2.15); annualised SR* = 2.79 at 1004 trades/yr
+h=60 sig=24.40 T=3264 N=1538 g3=0.0 g4=8.0: SR0=0.0591 SR*=0.0881 t*=5.03 gross edge*=3.74 ticks (net 2.15); annualised SR* = 2.79 at 1004 trades/yr
+h=60 sig=24.40 T=3264 N=1538 g3=-0.5 g4=8.0: SR0=0.0591 SR*=0.0887 t*=5.07 gross edge*=3.75 ticks (net 2.16); annualised SR* = 2.81 at 1004 trades/yr
+h=60 sig=24.40 T=3264 N=5538 g3=0.0 g4=3.0: SR0=0.0650 SR*=0.0939 t*=5.36 gross edge*=3.88 ticks (net 2.29); annualised SR* = 2.97 at 1004 trades/yr
+h=60 sig=24.40 T=3264 N=5538 g3=0.0 g4=8.0: SR0=0.0650 SR*=0.0940 t*=5.37 gross edge*=3.88 ticks (net 2.29); annualised SR* = 2.98 at 1004 trades/yr
+h=60 sig=24.40 T=3264 N=5538 g3=-0.5 g4=8.0: SR0=0.0650 SR*=0.0947 t*=5.41 gross edge*=3.90 ticks (net 2.31); annualised SR* = 3.00 at 1004 trades/yr
+
+=== (d) DSR of a fixed candidate at the three N
+gross 2.6 net SR/trade 0.0828 t=2.36: N=538 SR0=0.1076 DSR=0.2404
+gross 2.6 net SR/trade 0.0828 t=2.36: N=738 SR0=0.1109 DSR=0.2126
+gross 2.6 net SR/trade 0.0828 t=2.36: N=1538 SR0=0.1182 DSR=0.1577
+gross 2.6 net SR/trade 0.0828 t=2.36: N=5538 SR0=0.1300 DSR=0.0901
+gross 3.0 net SR/trade 0.1156 t=3.30: N=538 SR0=0.1076 DSR=0.5887
+gross 3.0 net SR/trade 0.1156 t=3.30: N=738 SR0=0.1109 DSR=0.5526
+gross 3.0 net SR/trade 0.1156 t=3.30: N=1538 SR0=0.1182 DSR=0.4708
+gross 3.0 net SR/trade 0.1156 t=3.30: N=5538 SR0=0.1300 DSR=0.3419
+gross 3.5 net SR/trade 0.1566 t=4.47: N=538 SR0=0.1076 DSR=0.9143
+gross 3.5 net SR/trade 0.1566 t=4.47: N=738 SR0=0.1109 DSR=0.8991
+gross 3.5 net SR/trade 0.1566 t=4.47: N=1538 SR0=0.1182 DSR=0.8584
+gross 3.5 net SR/trade 0.1566 t=4.47: N=5538 SR0=0.1300 DSR=0.7711
+
+=== (d) effective N: N_hat = rho + (1 - rho) M (BLdP 2014 eq. 9)
+M=200 rho=0.3: N_hat=140.3; 538+N_hat=678.3; e=3.1431
+M=200 rho=0.5: N_hat=100.5; 538+N_hat=638.5; e=3.1253
+M=200 rho=0.7: N_hat=60.7; 538+N_hat=598.7; e=3.1063
+M=200 rho=0.9: N_hat=20.9; 538+N_hat=558.9; e=3.0858
+M=1000 rho=0.3: N_hat=700.3; 538+N_hat=1238.3; e=3.3154
+M=1000 rho=0.5: N_hat=500.5; 538+N_hat=1038.5; e=3.2658
+M=1000 rho=0.7: N_hat=300.7; 538+N_hat=838.7; e=3.2048
+M=1000 rho=0.9: N_hat=100.9; 538+N_hat=638.9; e=3.1255
+M=5000 rho=0.3: N_hat=3500.3; 538+N_hat=4038.3; e=3.6329
+M=5000 rho=0.5: N_hat=2500.5; 538+N_hat=3038.5; e=3.5588
+M=5000 rho=0.7: N_hat=1500.7; 538+N_hat=2038.7; e=3.4525
+M=5000 rho=0.9: N_hat=500.9; 538+N_hat=1038.9; e=3.2660
+
+=== (d) daily-with-zeros vs per-trade equivalence (synthetic)
+p=0.5, per-trade SR 0.08: mean z per-trade 1.640, mean z daily-with-zeros 1.635, corr 1.0000
+daily SR ~ sqrt(p) x trade SR = 0.0566; kurtosis of zero-inflated series ~ g4/p (t5: g4=9 -> 18.0)
+
+=== (d) MinBTL (BBLZ 2014 eq. 3.2) at E[max]=1 annualised
+N=45: MinBTL ~ 5.00 y; bound 2lnN = 7.61 y
+N=738: MinBTL ~ 10.03 y; bound 2lnN = 13.21 y
+N=1538: MinBTL ~ 11.39 y; bound 2lnN = 14.68 y
+N=5538: MinBTL ~ 13.79 y; bound 2lnN = 17.24 y
+
+=== (e) PBO CSCV
+C(16,8) = 12870 (paper text prints 12,780); C(8,4)=70; C(10,5)=252; C(12,6)=924
+toy 4x8: splits 70; PBO paper (lambda<=0 with w=r/(N+1)) 0.8000; PBO lambda<0 0.8000; program convention 0.8000; P(OOS of IS-best < 0) 0.4571
+first split train (0, 1, 2, 3): IS sums [4. 4. 4. 0.], OOS sums [4. 1. 4. 0.]
+null 10 configs, S=8: splits 70, PBO 0.414, median lambda 0.770
+null 200 configs, S=16: splits 12870, PBO 0.385, median lambda 0.605
+
+=== (f) FWER / FDR thresholds, one-sided alpha 0.05
+m=3: Bonferroni p 1.667e-02 z 2.128; BY first p 9.091e-03 z 2.362 (L_m 1.833); BH at r=3 p 5.000e-02 z 1.645
+m=200: Bonferroni p 2.500e-04 z 3.481; BY first p 4.253e-05 z 3.930 (L_m 5.878); BH at r=3 p 7.500e-04 z 3.175
+m=738: Bonferroni p 6.775e-05 z 3.816; BY first p 9.434e-06 z 4.278 (L_m 7.182); BH at r=3 p 2.033e-04 z 3.536
+m=1000: Bonferroni p 5.000e-05 z 3.891; BY first p 6.680e-06 z 4.354 (L_m 7.485); BH at r=3 p 1.500e-04 z 3.615
+m=1538: Bonferroni p 3.251e-05 z 3.994; BY first p 4.107e-06 z 4.460 (L_m 7.916); BH at r=3 p 9.753e-05 z 3.725
+m=5000: Bonferroni p 1.000e-05 z 4.265; BY first p 1.100e-06 z 4.734 (L_m 9.095); BH at r=3 p 3.000e-05 z 4.013
+m=5538: Bonferroni p 9.029e-06 z 4.288; BY first p 9.817e-07 z 4.757 (L_m 9.197); BH at r=3 p 2.709e-05 z 4.037
+HLZ t>3.0: one-sided p 0.00135, two-sided 0.00270; equivalent Bonferroni m one-sided 37.0, two-sided 18.5
+Holm over 3 (one-sided): p<=0.0167 z>=2.128, p<=0.0250 z>=1.960, p<=0.0500 z>=1.645
+Bonferroni over 3 x K families: K=1: z>=2.128, K=4: z>=2.638, K=5: z>=2.713
+planner: K=4 families, alpha_k=0.0125; within-family Bonferroni over m=50: z 3.481 vs global Bonferroni m=200: z 3.481
+planner: K=4 families, alpha_k=0.0125; within-family Bonferroni over m=250: z 3.891 vs global Bonferroni m=1000: z 3.891
+planner: K=4 families, alpha_k=0.0125; within-family Bonferroni over m=1250: z 4.265 vs global Bonferroni m=5000: z 4.265
+planner: K=5 families, alpha_k=0.0100; within-family Bonferroni over m=40: z 3.481 vs global Bonferroni m=200: z 3.481
+planner: K=5 families, alpha_k=0.0100; within-family Bonferroni over m=200: z 3.891 vs global Bonferroni m=1000: z 3.891
+planner: K=5 families, alpha_k=0.0100; within-family Bonferroni over m=1000: z 4.265 vs global Bonferroni m=5000: z 4.265
+
+=== (f) max-statistic critical values, equicorrelated one-factor normals (RC/RW logic)
+m=738 rho=0.0: 95% quantile of max z = 3.812 (Bonferroni 3.816)
+m=738 rho=0.5: 95% quantile of max z = 3.472 (Bonferroni 3.816)
+m=738 rho=0.8: 95% quantile of max z = 2.903 (Bonferroni 3.816)
+m=1538 rho=0.0: 95% quantile of max z = 3.987 (Bonferroni 3.994)
+m=1538 rho=0.5: 95% quantile of max z = 3.607 (Bonferroni 3.994)
+m=1538 rho=0.8: 95% quantile of max z = 2.995 (Bonferroni 3.994)
+m=5538 rho=0.0: 95% quantile of max z = 4.283 (Bonferroni 4.288)
+m=5538 rho=0.5: 95% quantile of max z = 3.844 (Bonferroni 4.288)
+m=5538 rho=0.8: 95% quantile of max z = 3.152 (Bonferroni 4.288)
+
+=== (f) per-trade SR implied by test thresholds over the test window
+T_test=449: z 1.645 -> SR/trade 0.0776; at sigma_15 12.20: net 0.95 ticks, gross 2.54
+T_test=449: z 1.96 -> SR/trade 0.0925; at sigma_15 12.20: net 1.13 ticks, gross 2.72
+T_test=449: z 2.128 -> SR/trade 0.1004; at sigma_15 12.20: net 1.23 ticks, gross 2.82
+T_test=449: z 3.0 -> SR/trade 0.1416; at sigma_15 12.20: net 1.73 ticks, gross 3.32
+T_test=899: z 1.645 -> SR/trade 0.0549; at sigma_15 12.20: net 0.67 ticks, gross 2.26
+T_test=899: z 1.96 -> SR/trade 0.0654; at sigma_15 12.20: net 0.80 ticks, gross 2.39
+T_test=899: z 2.128 -> SR/trade 0.0710; at sigma_15 12.20: net 0.87 ticks, gross 2.46
+T_test=899: z 3.0 -> SR/trade 0.1001; at sigma_15 12.20: net 1.22 ticks, gross 2.81

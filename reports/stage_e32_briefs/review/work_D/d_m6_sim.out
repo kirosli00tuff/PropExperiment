@@ -1,0 +1,57 @@
+N paths 100000 ; simulated alpha at nominal 2.0: 2.02 (SE 0.039 )
+
+== 2.3 table (constant drift alpha=2): rule tau p E[G|F] E[G|nF] V_L gross V_LC gross E[rem|nF] ==
+TT  0.5 0.571 0.835 3.599 0.763 1.346 1.862  decomp=2.020
+TT  1.0 0.686 0.786 4.718 0.882 1.304 1.844  decomp=2.020
+TT  2.0 0.771 0.774 6.218 0.982 1.254 1.689  decomp=2.020
+TT  5.0 0.848 0.734 9.171 1.046 1.170 1.314  decomp=2.020
+Q   0.5 0.733 1.288 4.033 1.311 1.684 1.898  decomp=2.020
+Q   1.0 0.807 1.272 5.151 1.430 1.689 1.843  decomp=2.020
+Q   2.0 0.861 1.257 6.722 1.512 1.683 1.726  decomp=2.020
+Q   5.0 0.907 1.231 9.749 1.570 1.652 1.385  decomp=2.020
+Market gross alpha-0.5: 1.52
+
+== front-loaded drift, TT: tau p E[G|F] E[G|nF] E[rem|nF] (chase value per unfilled = rem-0.5) alpha_sim ==
+  1 0.644 0.666 4.468 1.403 0.903 2.020
+  5 0.809 0.485 8.536 0.357 -0.143 2.020
+theoretical remaining drift after 5 min (front-loaded): 0.367
+
+== brackets (alpha=2, stop -6 mid, time stop 15): a  E[pnl] TT  E[pnl] Q  P(TP) TT/Q ==
+ 4 -0.589 -0.342 0.580/0.604
+ 6 -0.388 -0.176 0.497/0.517
+10 -0.092 0.061 0.351/0.369
+time stop alone gross (alpha_sim - 1): 1.02
+
+== 5.4a: alpha* (V=0) and alpha(1.0 per executed trade), tau=1, interpolated on alpha grid 0..6 step 0.5 ==
+p(TT,1 min, alpha 2) = 0.686  p(Q) = 0.807
+Topstep: market alpha*=1.528 alpha(1.0)=2.528
+   TT L cal   L: alpha*=2.216 alpha(1.0/trade)=3.233 | LC: alpha*=2.048 alpha(1.0)=3.078 | V/signal at alpha2: L -0.146 LC -0.046 V/trade -0.212
+   TT L BM    L: alpha*=1.739 alpha(1.0/trade)=2.755 | LC: alpha*=1.715 alpha(1.0)=2.748 | V/signal at alpha2: L 0.177 LC 0.276 V/trade 0.258
+   Q K cal    L: alpha*=1.539 alpha(1.0/trade)=2.548 | LC: alpha*=1.560 alpha(1.0)=2.583 | V/signal at alpha2: L 0.369 LC 0.430 V/trade 0.457
+   Q FIFO cal L: alpha*=1.504 alpha(1.0/trade)=2.513 | LC: alpha*=1.531 alpha(1.0)=2.554 | V/signal at alpha2: L 0.397 LC 0.458 V/trade 0.492
+   Q BM       L: alpha*=1.248 alpha(1.0/trade)=2.258 | LC: alpha*=1.322 alpha(1.0)=2.346 | V/signal at alpha2: L 0.601 LC 0.661 V/trade 0.744
+Lucid: market alpha*=1.560 alpha(1.0)=2.560
+   TT L cal   L: alpha*=2.248 alpha(1.0/trade)=3.265 | LC: alpha*=2.081 alpha(1.0)=3.111 | V/signal at alpha2: L -0.167 LC -0.078 V/trade -0.244
+   TT L BM    L: alpha*=1.771 alpha(1.0/trade)=2.787 | LC: alpha*=1.748 alpha(1.0)=2.781 | V/signal at alpha2: L 0.155 LC 0.244 V/trade 0.226
+   Q K cal    L: alpha*=1.572 alpha(1.0/trade)=2.580 | LC: alpha*=1.593 alpha(1.0)=2.616 | V/signal at alpha2: L 0.343 LC 0.398 V/trade 0.425
+   Q FIFO cal L: alpha*=1.536 alpha(1.0/trade)=2.545 | LC: alpha*=1.564 alpha(1.0)=2.587 | V/signal at alpha2: L 0.371 LC 0.426 V/trade 0.460
+   Q BM       L: alpha*=1.281 alpha(1.0/trade)=2.291 | LC: alpha*=1.355 alpha(1.0)=2.379 | V/signal at alpha2: L 0.575 LC 0.629 V/trade 0.712
+Tradeify: market alpha*=1.920 alpha(1.0)=2.920
+   TT L cal   L: alpha*=2.614 alpha(1.0/trade)=3.631 | LC: alpha*=2.452 alpha(1.0)=3.482 | V/signal at alpha2: L -0.415 LC -0.438 V/trade -0.604
+   TT L BM    L: alpha*=2.137 alpha(1.0/trade)=3.153 | LC: alpha*=2.120 alpha(1.0)=3.153 | V/signal at alpha2: L -0.092 LC -0.116 V/trade -0.134
+   Q K cal    L: alpha*=1.935 alpha(1.0/trade)=2.945 | LC: alpha*=1.962 alpha(1.0)=2.984 | V/signal at alpha2: L 0.052 LC 0.038 V/trade 0.065
+   Q FIFO cal L: alpha*=1.899 alpha(1.0/trade)=2.910 | LC: alpha*=1.933 alpha(1.0)=2.955 | V/signal at alpha2: L 0.081 LC 0.066 V/trade 0.100
+   Q BM       L: alpha*=1.645 alpha(1.0/trade)=2.654 | LC: alpha*=1.724 alpha(1.0)=2.747 | V/signal at alpha2: L 0.284 LC 0.269 V/trade 0.352
+MFFU: market alpha*=1.612 alpha(1.0)=2.612
+   TT L cal   L: alpha*=2.301 alpha(1.0/trade)=3.318 | LC: alpha*=2.134 alpha(1.0)=3.165 | V/signal at alpha2: L -0.203 LC -0.130 V/trade -0.296
+   TT L BM    L: alpha*=1.824 alpha(1.0/trade)=2.840 | LC: alpha*=1.802 alpha(1.0)=2.835 | V/signal at alpha2: L 0.119 LC 0.192 V/trade 0.174
+   Q K cal    L: alpha*=1.624 alpha(1.0/trade)=2.633 | LC: alpha*=1.646 alpha(1.0)=2.669 | V/signal at alpha2: L 0.301 LC 0.346 V/trade 0.373
+   Q FIFO cal L: alpha*=1.589 alpha(1.0/trade)=2.598 | LC: alpha*=1.617 alpha(1.0)=2.640 | V/signal at alpha2: L 0.329 LC 0.374 V/trade 0.408
+   Q BM       L: alpha*=1.333 alpha(1.0/trade)=2.343 | LC: alpha*=1.408 alpha(1.0)=2.432 | V/signal at alpha2: L 0.533 LC 0.577 V/trade 0.660
+Bulenox: market alpha*=1.572 alpha(1.0)=2.572
+   TT L cal   L: alpha*=2.260 alpha(1.0/trade)=3.277 | LC: alpha*=2.093 alpha(1.0)=3.123 | V/signal at alpha2: L -0.176 LC -0.090 V/trade -0.256
+   TT L BM    L: alpha*=1.783 alpha(1.0/trade)=2.799 | LC: alpha*=1.760 alpha(1.0)=2.793 | V/signal at alpha2: L 0.147 LC 0.232 V/trade 0.214
+   Q K cal    L: alpha*=1.584 alpha(1.0/trade)=2.593 | LC: alpha*=1.605 alpha(1.0)=2.628 | V/signal at alpha2: L 0.333 LC 0.386 V/trade 0.413
+   Q FIFO cal L: alpha*=1.548 alpha(1.0/trade)=2.557 | LC: alpha*=1.576 alpha(1.0)=2.599 | V/signal at alpha2: L 0.362 LC 0.414 V/trade 0.448
+   Q BM       L: alpha*=1.293 alpha(1.0/trade)=2.303 | LC: alpha*=1.367 alpha(1.0)=2.391 | V/signal at alpha2: L 0.565 LC 0.617 V/trade 0.700
+sim rc=0

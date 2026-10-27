@@ -1,0 +1,109 @@
+3c3
+< Status: DRAFT v0.4 (2026-10-27, lead Opus 5.5 xhigh; ProtocolReviewer findings and the FixVerifier re-check applied). Not frozen. The frozen version carries its sha256 in
+---
+> Status: DRAFT v0.5 (2026-10-27, lead Opus 5.5 xhigh; ProtocolReviewer, FixVerifier and FixSpotCheck findings applied). Not frozen. The frozen version carries its sha256 in
+37,38c37,40
+<   why it is the conservative one); that file's sha256 is a line of the B7 pipeline freeze list and is quoted in the
+<   C1 registration note. No reading is made after C1: a question that arises later is answered by that file, and if
+---
+>   why it is the conservative one), and before the B7 freeze (a reading added between the freeze and C1 re-takes the
+>   freeze list, first bullet); that file's sha256 is a line of the B7 pipeline freeze list, is quoted in
+>   reports/stage_e33_run_marker.md (the prompt's C1) and is carried in the freeze file of P7.1 (FixSpotCheck S-A-3,
+>   S-A-4). No reading is made after C1: a question that arises later is answered by that file, and if
+69,71c71,72
+<   "as of
+<   u" means the last book update with ts_recv <= u (ProtocolReview DO-9). A book update's time is the ts_recv of its
+<   F_LAST record (FixVerifier R-W2-6).
+---
+>   "as of u" means the last book update with ts_recv <= u (ProtocolReview DO-9). A book update's time is the ts_recv
+>   of its F_LAST record (FixVerifier R-W2-6).
+102,103c103,105
+< (reports/E.32_RETURN.md, reports/stage_e32_*.md) and the E.32 briefs are readable, except the files named in the
+< third bullet. Where the E.33 prompt's reading list and this section differ, this section applies (FixVerifier
+---
+> (reports/E.32_RETURN.md, reports/stage_e32_*.md) and the E.32 briefs are readable, except, for E.33's workers,
+> the section and the files named in the third bullet (FixSpotCheck S-A-6). Where the E.33 prompt's reading list and
+> this section differ, this section applies (FixVerifier
+117,119c119,124
+<   reports/E.31_RETURN.md section 3.5 (read by grep, never that section), and the whole files
+<   reports/stage_e32_briefs/X1_exposure.md, reports/stage_e32_briefs/X1_verify.md and
+<   reports/stage_e32_briefs/work/X1_exposure/X1_tableC_appendix.md. The E.33 lead may read them: every choice is
+---
+>   reports/E.31_RETURN.md section 3.5 (lines 175-213 are never read, by grep or otherwise; a grep hit inside them
+>   is discarded; the rest of the file is read by grep), the whole files reports/stage_e32_briefs/X1_exposure.md and
+>   reports/stage_e32_briefs/X1_verify.md, and every file under reports/stage_e32_briefs/work/X1_exposure/ (the
+>   Table C appendix and the X1_part* extraction files). The aggregate E.31 figures quoted in this protocol (P1.3,
+>   P1.5) and in the reader files M2, M3, M6, R3b and R4 are not closed: they are the figures the declared choices
+>   cite (FixSpotCheck S-A-1, S-A-7). The E.33 lead may read them: every choice is
+264c269,270
+<   case), the exit is marked at the last valid touch on that side before it emptied, and flagged (FixVerifier
+---
+>   case), the exit is marked at the last valid touch on that side before it emptied or the book was marked bad, and
+>   flagged (FixSpotCheck S-A-8) (FixVerifier
+331,332c337,339
+<    definition record with ts_recv <= 08:30:00 CT on D (a per-date as-of pass over the Z4 files; ProtocolReview
+<    LE-2, FE-8) and c = (HL + LL)/2 (Topstep and MFFU forbid trading within 2% of a price limit; M6 4.1). If no such
+---
+>    definition record with ts_recv <= 08:30:00 CT on D (a single as-of pass over the Z4 files in ts_recv order,
+>    state carried across files and dates; ProtocolReview LE-2, FE-8; FixSpotCheck S-A-9) and c = (HL + LL)/2
+>    (Topstep and MFFU forbid trading within 2% of a price limit; M6 4.1). If no such
+482,483c489,495
+<   LT7 is repeated on the Tier A and Tier B fold models after the test list is hashed. A mismatch at either time
+<   stops E.33 until fixed (P10).
+---
+>   At each time t the fold model is the one whose OOF block holds t's date, as in production. LT7 is repeated on
+>   the Tier A and Tier B fold models after the test list is hashed. A mismatch at the first run stops E.33 until the
+>   code is fixed under 0.2 (the pipeline hash re-taken before the first real-outcome fit). A mismatch at the second
+>   run is a bug found after the pipeline freeze: E.33 stops the test list, reports the mismatch, and follows its
+>   prompt's B7 rule (a logged amendment; every configuration whose OOF series the fix changes is re-run under a new
+>   ID registered under test "E33A", so N rises by their number; the thresholds are recomputed at that N, P8 is
+>   re-run and the test list re-hashed) (FixSpotCheck S-B-1, lead's choice).
+512c524,525
+<   probability is 0.91 at a realised daily Sharpe of 0.25, and selection alone about 0.92; FixVerifier R-W3-10).
+---
+>   probability is 0.91 at a realised daily Sharpe of 0.25, and selection alone 0.914 (the P7.2 table); FixVerifier
+>   R-W3-10, FixSpotCheck S-B-4).
+571c584,586
+<   search's 1,800 fits: 11-64 CPU-hours at the guesses above (1.5-9 hours of wall time at 7 processes), 6-10
+---
+>   search's 1,800 fits: 11-64 CPU-hours at the guesses above (1.5-9 hours of wall time at 7 single-thread processes,
+>   a rough figure under the thread rule above; FixSpotCheck
+>   S-B-5), 6-10
+581c596,598
+<   for P10's 3x stop.
+---
+>   for P10's 3x stop. The measured wall time compared with it is the sum of the feature build's wall time (from its
+>   first to its last DONE marker, whenever it was built) and the 1,800 fits' wall time (from the first real-outcome
+>   fit to the last DONE marker), the same two parts as the projection (FixSpotCheck S-B-3).
+704,705c721,723
+<   gap between them (two members), so a true 0.25 beside a true 0.15 needs 0.216 and passes with about 0.84, and
+<   beside 0.10 it needs 0.296 and passes with about 0.09 (ProtocolReview AR-1, its a3_out.txt; FixVerifier AR-1,
+---
+>   gap between them (two members), so a true 0.25 beside a true 0.15 needs 0.217 and passes with about 0.83, and
+>   beside 0.10 it needs 0.297 and passes with about 0.09 (FixSpotCheck S-B-6) (ProtocolReview AR-1, its a3_out.txt;
+>   FixVerifier AR-1,
+772c790,792
+<   date) per calendar month of the window, 43 each, and stops on any other count (FixVerifier LE-3).
+---
+>   date) per calendar month of the window, 43 each, and, for the four other P3.6 rule-3 report types, the counts it
+>   derives from the saved sources, recorded and hashed with the calendar before the read; it stops on any other count
+>   (FixVerifier LE-3, FixSpotCheck S-B-7).
+804,806c824,826
+< - E.33's deadlines (its prompt as last amended before E.33 starts; at this writing, user 2026-10-27 08:16: no new
+<   configuration starts after 07:00 PDT on 2026-10-28, running ones finish or are recorded as failed by 08:00, the
+<   return is written by 08:45 and nothing runs after 09:00; these times are feasibility limits, not declared choices,
+---
+> - E.33's deadlines (its prompt as last amended before E.33 starts; at this writing, user 2026-10-27 08:16: if the
+>   full budget cannot finish by 07:00 PDT on 2026-10-28, whole families are finished (C3); work stops at 08:00; the
+>   return is written by 08:45; nothing runs after 09:00; these times are feasibility limits, not declared choices,
+808,810c828,833
+<   R-W3-1, R-W4-1): the cut unit is a whole feature set in the P5 order (S5, S1, S3, S2, S4), which is the "family"
+<   of the prompt's C3 (ProtocolReview DO-19); unrun configurations stay registered and count in N, and P8 runs on the
+<   configurations that ran, with the registered N. A features-only store (P4 features at every minute mark; no
+---
+>   R-W3-1, R-W4-1). The cut unit is a whole feature set in the P5 order (S5, S1, S3, S2, S4), which is the "family"
+>   of the prompt's C3 (ProtocolReview DO-19): a set is started only if the P5 projection, updated with the measured
+>   times, says it finishes by 07:00; a started set runs to completion; a set still running at 08:00 is stopped and
+>   all its configurations are recorded as unrun, so P8 sees whole sets only (FixSpotCheck S-B-2, lead's choice).
+>   Unrun configurations stay registered and count in N, and P8 runs on the configurations that ran, with the
+>   registered N. A features-only store (P4 features at every minute mark; no

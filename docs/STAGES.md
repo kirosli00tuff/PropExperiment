@@ -233,6 +233,11 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     2026-10-22/23 (see reports/E.31_RETURN.md), three usage-limit pauses and a reboot. Under the trade-through gate the
     front-month DAY 10 s edge net of fee is -1.234 ticks [-1.252, -1.214]: ZM FAILS (also at zero fee; K and FIFO models
     negative too). acct-3 safe to wipe; nothing registered; N 538.
+  - Stage E.32 — ZM directional discovery design (V51): the 2017-05..2020-11 ZM/ZS/ZL test window sealed (114
+    files), a methods brief (Parts R and M, 13 reader files, Fable-reviewed) and a frozen discovery protocol for
+    E.33 (4 families, 300 configurations, N 838 after E.33; binding discovery daily Sharpe 0.2007, about 1.22
+    ticks net per 15-minute trade at 4 a day; sha256 c4ffb9d7...), run 2026-10-26/27 (see reports/E.32_RETURN.md),
+    three usage-limit pauses and a planned context wipe. Nothing trained or computed; nothing registered; N 538.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

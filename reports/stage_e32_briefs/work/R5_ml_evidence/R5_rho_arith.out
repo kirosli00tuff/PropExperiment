@@ -1,0 +1,54 @@
+sqrt(2/pi) = 0.79788
+sigma_5 = 7.044
+sigma_15 = 12.200
+sigma_60 = 24.400
+
+== sign-of-forecast, every non-overlapping 15-min bar ==
+G=1.59: rho=0.1633 R2max=0.0267 hit=0.5522
+G=1.6: rho=0.1644 R2max=0.0270 hit=0.5526
+G=2.4: rho=0.2466 R2max=0.0608 hit=0.5793
+G=2.8: rho=0.2876 R2max=0.0827 hit=0.5929
+
+== thresholded, 4 trades/day ==
+day 08:30-13:20 (290 min): bars=19.333 q=0.2069 c=1.2621 E|Z| | trade=1.7389
+   G=1.6: rho=0.0754 R2max=0.00569 hit(all bars)=0.5240
+   G=2.4: rho=0.1131 R2max=0.01280 hit(all bars)=0.5361
+   G=2.8: rho=0.1320 R2max=0.01742 hit(all bars)=0.5421
+full 17h35m (1055 min): bars=70.333 q=0.0569 c=1.9043 E|Z| | trade=2.2887
+   G=1.6: rho=0.0573 R2max=0.00328 hit(all bars)=0.5182
+   G=2.4: rho=0.0860 R2max=0.00739 hit(all bars)=0.5274
+   G=2.8: rho=0.1003 R2max=0.01006 hit(all bars)=0.5320
+
+== 8 trades/day, day session ==
+q=0.4138 c=0.8172 k=1.3808 [0.095, 0.1425, 0.1662]
+
+== what literature R2 implies (rho >= sqrt(R2)), gross edge, ZM ==
+Gao SPY OOS 1.2% (30m): rho=0.1095 sign-every-bar G=1.508 4/day G=2.610 (q=0.4138)
+CRS 1996 5m 3.32%: rho=0.1822 sign-every-bar G=1.024 4/day G=2.841 (q=0.0690)
+CRS 2002 5m 0.54%: rho=0.0735 sign-every-bar G=0.413 4/day G=1.146 (q=0.0690)
+Chinco dR2 1.2pt (1m): rho=0.1095 sign-every-bar G=0.275 4/day G=0.962 (q=0.0138)
+
+== hit rate -> rho ==
+0.51 0.0314
+0.52 0.0628
+0.53 0.0941
+0.55 0.1564
+
+== daily Sharpe check: net 1.0 tick, 4-8 trades ==
+4 0.8 0.1311
+4 1.0 0.1639
+4 1.2 0.1967
+5.5 0.8 0.1538
+5.5 1.0 0.1922
+5.5 1.2 0.2307
+8 0.8 0.1855
+8 1.0 0.2318
+8 1.2 0.2782
+
+== OOS R2 vs rho for overdispersed forecast: R2 = 2 rho k - k^2, k=sd_f/sd_r ==
+0.05 0.05 0.0025
+0.05 0.1 0.0
+0.05 0.15 -0.0075
+0.1 0.1 0.01
+0.1 0.2 0.0
+0.1 0.3 -0.03

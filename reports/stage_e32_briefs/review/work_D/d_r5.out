@@ -1,0 +1,57 @@
+sqrt(2/pi) = 0.7978845608028654
+
+== B2 hit -> rho = sin(pi(hit-1/2)) ==
+0.51 0.0314
+0.52 0.0628
+0.53 0.0941
+0.55 0.1564
+B3 example rho 0.10 k 0.30: R2 = -0.03
+
+== B2 worked example (every bar, h=15): rho = G/(sigma_15 sqrt(2/pi)) ==
+G=1.59: rho=0.1633 R2max=0.0267 hit=0.5522
+G=1.6: rho=0.1644 R2max=0.0270 hit=0.5526
+G=2.8: rho=0.2876 R2max=0.0827 hit=0.5929
+G=1.528: rho=0.1570 R2max=0.0246 hit=0.5502
+check 0.2876 x 12.2 x 0.79788 = 2.7995375136000002 ; 290/15 = 19.333333333333332
+
+== B3 table: h=15, 4 trades/day ==
+day 290: N_bars=19.333 q=0.2069 c=1.2621 factor=1.7389 rho(1.6)=0.0754 rho(2.4)=0.1131 rho(2.8)=0.1320 rho(1.59)=0.0750 rho(1.528)=0.0720
+globex 1055: N_bars=70.333 q=0.0569 c=1.9043 factor=2.2887 rho(1.6)=0.0573 rho(2.4)=0.0860 rho(2.8)=0.1003 rho(1.59)=0.0569 rho(1.528)=0.0547
+hand: phi(1.2621) = 0.17989413532338905  2phi/q = 1.738947658998444  12.2 x 1.7390 = 21.2158
+8 trades/day: q=0.4138 c=0.8172 factor=1.3808 rho: 0.095 0.142 0.166
+ratio every-bar/thresholded rho at 1.6: 2.1793879533779235
+top-4-of-290 one-minute points: q = 0.013793103448275862  c = 2.4626069362500855  factor = 2.788708953298164
+R2 = rho^2 for rho 0.10, 0.13: 0.010000000000000002 0.016900000000000002
+Sharpe: 1.0/12.2*sqrt(5.5) = 0.19223015409112418  0.8/12.2*2 = 0.13114754098360656  1.2/12.2*sqrt(8) = 0.2782059466963466
+
+== B4 ==
+Gao 1.2% 30min: rho=0.1095 gross every bar=1.508
+CRS96 3.32% 5min: rho=0.1822 gross every bar=1.024 top-4-of-58: 2.841
+CRS02 0.54% 5min: rho=0.0735 gross every bar=0.413 top-4-of-58: 1.146
+
+== section E horizon table: 4 trades/day in 290 min ==
+h sigma bars q c factor rho(1.59) rho(2.4) rho(2.8) | gross at rho .03/.05/.08/.10
+  5   7.044 58.00 0.0690 1.8186 2.2136 0.102 0.154 0.180 | 0.47 0.78 1.25 1.56
+ 15  12.200 19.33 0.2069 1.2621 1.7389 0.075 0.113 0.132 | 0.64 1.06 1.70 2.12
+ 30  17.253  9.67 0.4138 0.8172 1.3808 0.067 0.101 0.118 | 0.71 1.19 1.91 2.38
+ 60  24.400  4.83 0.8276 0.2178 0.9415 0.069 0.104 0.122 | 0.69 1.15 1.84 2.30
+fine grid of h for the minimum rho(1.59) at 4 trades/day (q capped at 1):
+  h=  5 q=0.069 factor=2.214 rho=0.1020
+  h= 10 q=0.138 factor=1.925 rho=0.0829
+  h= 15 q=0.207 factor=1.739 rho=0.0750
+  h= 20 q=0.276 factor=1.597 rho=0.0707
+  h= 30 q=0.414 factor=1.381 rho=0.0667
+  h= 40 q=0.552 factor=1.211 rho=0.0659
+  h= 45 q=0.621 factor=1.137 rho=0.0662
+  h= 50 q=0.690 factor=1.068 rho=0.0668
+  h= 60 q=0.828 factor=0.942 rho=0.0692
+  h= 90 q=1.000 factor=0.798 rho=0.0667
+  h=120 q=1.000 factor=0.798 rho=0.0578
+minimum at h = (120, 0.057750518264023526)
+check h=30: 2.8/(17.253 x 1.3808) = 0.1175337602293829
+
+== Monte Carlo check of B1, B2, B5 (rho=0.10, sigma_h=12.2, 4e6 draws) ==
+E[r sign z] MC: 0.9723  formula: 0.9734
+hit MC: 0.5317  formula: 0.5319
+q MC: 0.207  E[r sign z | |z|>c] MC: 2.1133  formula: 2.1214
+per-trade SD given trade (MC): 12.14

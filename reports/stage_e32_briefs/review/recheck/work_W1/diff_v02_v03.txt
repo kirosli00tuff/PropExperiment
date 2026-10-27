@@ -1,0 +1,344 @@
+3c3
+< Status: DRAFT v0.2 (2026-10-27, lead Opus 5.5 xhigh). Not frozen. The frozen version carries its sha256 in
+---
+> Status: DRAFT v0.3 (2026-10-27, lead Opus 5.5 xhigh; ProtocolReviewer findings applied). Not frozen. The frozen version carries its sha256 in
+35,36c35,38
+<   way and logged (E.33 prompt). Details that cannot affect an outcome (file layout, names, parallelism, logging)
+<   are E.33's.
+---
+>   way and logged (E.33 prompt). Every such reading is written into one file and hashed into the pipeline freeze
+>   before the C1 registration; none may be made after the first real-outcome fit (ProtocolReview DO-1). P8 is coded
+>   and unit-tested on synthetic series before that fit. Details that cannot affect an outcome (file layout, names,
+>   logging) are E.33's.
+61a64,71
+> - "Book update": the book state after a record that carries F_LAST (the end of one event batch). First-touch
+>   tests (P3.4), locked-book checks (P3.6 rule 5) and OFI sums (F2.8, F3.1, F3.4) step through book updates; "as of
+>   u" means the last book update with ts_recv <= u (ProtocolReview DO-9).
+> - Statistics conventions (ProtocolReview DO-12, FE-9, FE-10): every SD in a feature, a normaliser or a fit is the
+>   population SD (ddof 0); a weighted mean and SD are m = sum w x / sum w and sqrt(sum w (x - m)^2 / sum w); an OLS
+>   fit is numpy.linalg.lstsq on centred regressors with an intercept, and its residual SD is sqrt(SSR / n).
+>   Statistics of daily series (mean, SD, Sharpe, skewness, raw kurtosis, t) are those of
+>   screening/stage_e_verdict.py moments() and t_stat() (population SD; Sharpe = mean / pstdev).
+85,94c95,110
+< ### P1.2 Data allowlist (anything not listed is refused)
+< E.33 may read: (a) the 156 files; (b) the program calendars (data.calendars.grains, data.cme_calendar,
+< data.hist_calendar); (c) the release calendar of P3.6; (d) E.31's code under reports/stage_e31_briefs/work/pilot/
+< as a library (mbo_book31, measure31, measure31_core, canary_check31, stats31_core, kalgo31: F 6.1), never E.31's
+< outputs (runs/, stats31.md/json, the measure31 tables, the result tables of reports/E.31_RETURN.md,
+< reports/stage_e32_briefs/work/X1_exposure/X1_tableC_appendix.md); (e) this protocol and the E.32 briefs. E.33 may
+< not open: data/sealed/SOY_test_v1 or any ZM, ZS or ZL data dated 2017-05-01..2020-11-30 (seal manifest
+< docs/soy_test/SOY_TEST_MANIFEST.json), anything dated on or after 2024-03-01, any file listed in
+< reports/stage_e32_briefs/seal/derived_unsealed_files.tsv (earlier stages' soy results and ML caches), or any other
+< root's market data. E.33's data guard refuses these paths and dates in code (F 6.3 item 8), with a test for each.
+---
+> ### P1.2 Data allowlist and refusals (market data and measured outcomes; ProtocolReview FE-5, LE-7)
+> The list governs market data and measured outcomes; the program's code, docs, prompts and the E.32 briefs are
+> readable.
+> - Market data E.33 may read: (a) the 156 files; (b) the program calendars (data.calendars.grains,
+>   data.cme_calendar, data.hist_calendar); (c) the release calendar of P3.6; (d) E.31's code under
+>   reports/stage_e31_briefs/work/pilot/ as a library (mbo_book31, measure31, measure31_core, canary_check31,
+>   stats31_core, and kalgo31 with E.31's fill code for the P6.4 (iii) passive-fill simulation only: F 6.1-6.2).
+> - Refused (the data guard refuses these paths and dates in code, F 6.3 item 8, with a test for each):
+>   data/sealed/SOY_test_v1 and any ZM, ZS or ZL data dated 2017-05-01..2020-11-30 (seal manifest
+>   docs/soy_test/SOY_TEST_MANIFEST.json); anything dated on or after 2024-03-01; any file listed in
+>   reports/stage_e32_briefs/seal/derived_unsealed_files.tsv; any other root's market data; E.31's measured outputs
+>   (reports/stage_e31_briefs/work/pilot/runs/, stats31.md, stats31.json, the measure31 output tables).
+> - Not opened by E.33's workers (coders and reviewers), because they reproduce E.31's discovery-date statistics:
+>   reports/E.31_RETURN.md section 3.5, reports/stage_e32_briefs/X1_exposure.md Table C,
+>   reports/stage_e32_briefs/X1_verify.md's Table C verdicts and work/X1_exposure/X1_tableC_appendix.md. The E.33
+>   lead may read them: every choice is frozen and P8 is mechanical.
+233,234c249,254
+< - A label whose span contains an update at which the ZM book lacks a bid or an ask is excluded (P3.6 rule 5); the
+<   trade simulation checks the same rule on the whole span before entry.
+---
+> - Fallback (trade simulation only; ProtocolReview LE-1): if the needed side is empty, or the book is marked bad, at
+>   u + L, the order fills at the first later book update at which that side exists and the book is not marked bad;
+>   an entry with no such update before its planned exit time is not made (counted); an exit with none before
+>   13:20:00 is marked at the front's limit price on the side that blocked it (the low limit for a long's exit, the
+>   high limit for a short's exit, per P3.6 rule 5's definitions) and flagged. E.33 reports the counts of fallback
+>   fills, entries not made and limit marks per configuration.
+251c271,273
+< For b(t) > 0 one update cannot reach both barriers; E.33 asserts it. Barrier exits are market orders triggered by
+---
+> For b(t) > 0 one update cannot reach both barriers; E.33 asserts it. The barrier test steps through book updates
+> (0.3) and ignores updates at which M_ZM is undefined (an empty side or a bad book never triggers a barrier;
+> ProtocolReview LE-6). Barrier exits are market orders triggered by
+266,268c288,293
+< A label span is [t, t + L + h min] (FH) or [t, tau + L] (TB); for the entry decision the whole possible span
+< [t, t + L + h min] is used for both types. A row is kept, and a trade may be entered at t, only if that span lies
+< inside D's day session on one ZM front and meets every rule:
+---
+> A label span is [t, t + L + h min] (FH) or [t, tau + L] (TB). Rules 1-4, 6 and the limit-proximity part of rule 5
+> are known at t (clock, calendar and the book at t) and govern both rows and entries: a trade may be entered at t
+> only if the possible span [t, t + L + h min] meets them and the ZM book at t has both sides and is not marked bad.
+> The locked-book part of rule 5 looks into the span, so it is a row rule only (a label needs defined exit prices);
+> the trade simulation never conditions an entry on it and uses the P3.2 fallback instead (ProtocolReview LE-1). A
+> row is kept only if its whole possible span lies inside D's day session on one ZM front and meets every rule:
+275,278c300,309
+<    02a732861b47ba9feb88), E.31's sourced calendar covering 2020-12-01..2024-02-29, read as reference data. Every
+<    row of those six reports with time 12:00 ET counts whatever its evidence grade; a calendar month with no NOPA row
+<    gets its rule date (the 15th, or the next trade date if the 15th is not one) at 11:00 CT. Export Sales (07:30
+<    CT), Crop Progress (15:00 CT) and Fats & Oils (14:00 CT) fall outside the day session and need no window.
+---
+>    02a732861b47ba9feb88), E.31's sourced calendar, read as reference data: usda_releases_ext.csv covers 2020-12..
+>    2022-10 and usda_releases.csv covers 2022-11..2024-02. Parse rule (ProtocolReview LE-3, DO-8): skip lines that
+>    start with "#"; columns date, time_et, report, source_url, evidence; skip rows whose date is not a valid
+>    YYYY-MM-DD (the "-NORELEASE" rows and the two NOPA placeholders "2022-11-MISSING" and "2022-12-MISSING"); keep
+>    rows with time_et "12:00" and report exactly one of "USDA WASDE", "NASS Crop Production", "NASS Crop Production
+>    Annual", "NASS Grain Stocks", "NASS Prospective Plantings", "NASS Acreage", "NOPA Monthly Crush (not USDA)",
+>    whatever the evidence grade; R = 11:00:00 CT on that date. A calendar month with no valid NOPA row (2022-11 and
+>    2022-12 among them) gets its rule date: the 15th, or the next trade date if the 15th is not one, at 11:00 CT.
+>    E.33 asserts the counts per report type and prints them before any label. Export Sales (07:30 CT), Crop
+>    Progress (15:00 CT) and Fats & Oils (14:00 CT) fall outside the day session and need no window.
+280,284c311,316
+< 5. Locked or halted book, and price limits: no span with an update at which the ZM book lacks a bid or an ask; and
+<    no span that starts while M_ZM(t) >= HL - 0.02 c or M_ZM(t) <= LL + 0.02 c, where HL and LL are the front's high
+<    and low limit prices in the definitions in force on D and c = (HL + LL)/2 (Topstep and MFFU forbid trading within
+<    2% of a price limit; M6 4.1). If the definitions carry no limit prices for D, the second part is skipped for D
+<    and the date is counted.
+---
+> 5. Locked or halted book, and price limits: (row rule) no span with a book update at which the ZM book lacks a bid
+>    or an ask or is marked bad (ProtocolReview LE-6); (row and entry rule) no span that starts while M_ZM(t) >= HL -
+>    0.02 c or M_ZM(t) <= LL + 0.02 c, where HL and LL are the high and low limit prices of the front's last
+>    definition record with ts_recv <= 08:30:00 CT on D (a per-date as-of pass over the Z4 files; ProtocolReview
+>    LE-2, FE-8) and c = (HL + LL)/2 (Topstep and MFFU forbid trading within 2% of a price limit; M6 4.1). If that
+>    record's limit prices are UNDEF_PRICE or 0, the limit-proximity part is skipped for D and the date is counted.
+290,293c322,327
+< - Weights: average uniqueness at 1-minute resolution (Lopez de Prado, AFML ch. 4; M3 d): for minute m, c_m = the
+<   number of rows of the same label type and date whose span covers m (for TB the realised span [t, tau + L]); u_i =
+<   the mean over the minutes m in span_i of 1/c_m. The raw u_i are the sample weights (they sum to about the number
+<   of independent labels; no renormalisation).
+---
+> - Weights: average uniqueness at 1-minute resolution (Lopez de Prado, AFML ch. 4; M3 d): for the one-minute
+>   interval m, c_m = the number of rows of the same label type and date whose span intersects m by more than one
+>   second (so an FH span of h minutes plus L covers h intervals; ProtocolReview DO-15; for TB the realised span
+>   [t, tau + L]); u_i = the mean over the intervals m covered by span_i of 1/c_m. Weights are computed per date over
+>   all rows of that date (labels never cross dates, so no weight depends on another fold). The raw u_i are the sample
+>   weights (they sum to about the number of independent labels; no renormalisation).
+297,301c331,336
+<   stage_e_runner.py 31-39; that runner's 10-minute mean-holding floor is a bar-runner rule and is not adopted: the
+<   firms' hold-time rules are 5-10 s, M6 5.3).
+< - When flat at t in G_h(D), apply P3.5. A trade entered at t exits per its label type (FH at t + h, TB at tau) with
+<   the executable prices of P3.3-P3.4 and the variant's fee. After the exit fill the account is flat; the next decision
+<   is the first grid minute at or after the exit fill time.
+---
+>   stage_e_runner.py 31-39). That runner's 2-minute minimum hold and 10-minute mean-holding floor are bar-runner
+>   rules and are not adopted: the firms' hold-time rules are 5-10 s (M6 5.3; ProtocolReview DO-10).
+> - When flat at t in G_h(D), the entry rules of P3.6 hold at t, and fewer than 20 entries have been made on D, apply
+>   P3.5. The decision uses only records with ts_recv <= t. A trade entered at t exits per its label type (FH at
+>   t + h, TB at tau) with the executable prices of P3.3-P3.4 (with the P3.2 fallback) and the variant's fee. After the
+>   exit fill the account is flat; the next decision is the first grid minute at or after the exit fill time.
+318,319c353,355
+< - G4 Clipping: every z-type and ratio feature is clipped to [-5, 5] after its own normalisation; features bounded by
+<   construction (C.1, C.2, C.7-C.15, F1.5, F3.5-F3.9, F4.6) are not clipped.
+---
+> - G4 Clipping (ProtocolReview DO-11): clipped to [-5, 5] after their own normalisation (38): C.5, F1.1-F1.4,
+>   F1.6-F1.8, F2.1-F2.11, F3.1-F3.4, F3.10-F3.12, F4.1-F4.5, F4.7-F4.13. Not clipped (21): C.1-C.4, C.6-C.15, F1.5,
+>   F3.5-F3.9, F4.6 (bounded by construction or a log of a positive scale).
+342c378
+< | C.7 | min(trade dates from D to the ZM front's expiration in the definitions, 60)/60 |
+---
+> | C.7 | min(trade dates from D to the expiration of the ZM front, from its last definition record with ts_recv <= 08:30:00 CT on D, 60)/60 |
+383c419
+< | F3.9 | CR5 = (Ca_5 - Cb_5)/(Ca_5 + Cb_5): contracts removed by cancels and size-reducing modifies at the price that was the best ask (Ca) or best bid (Cb) at that moment, in the 5-minute window; invalid if the denominator is 0 |
+---
+> | F3.9 | CR5 = (Ca_5 - Cb_5)/(Ca_5 + Cb_5): contracts removed from the price level that was the best ask (Ca) or best bid (Cb) just before the record, by cancels, size-reducing modifies (the reduction) and modifies to another price (the full size), in the 5-minute window; fills are not removals (ProtocolReview DO-16); invalid if the denominator is 0 |
+386c422
+< | F3.12 | lam60 = the OLS slope of dM_ZM (ticks) on signed volume (B - S, contracts) over the 60 one-minute intervals ending at t, divided by the trailing 20-date reference median of the same slope; invalid with fewer than 30 intervals that contain trades |
+---
+> | F3.12 | lam60 = the OLS slope (with an intercept; 0.3) of dM_ZM (ticks) on signed volume (B - S, contracts) over those of the 60 one-minute intervals ending at t that contain trades, divided by the trailing 20-date reference median of the same slope; invalid with fewer than 30 such intervals (ProtocolReview DO-13) |
+405,406c441,445
+<   feature from record streams truncated at ts_recv <= t; every feature equals the production value within G7's
+<   tolerance. Any mismatch stops E.33 until fixed.
+---
+>   feature from ALL input streams (ZM MBO, ZS and ZL MBP-1, and the definitions) truncated at ts_recv <= t; every
+>   feature equals the production value within G7's tolerance. Any mismatch stops E.33 until fixed.
+> - LT7 Simulator causality (ProtocolReview LE-5): for the same 200 times, the entry decision recomputed from streams
+>   truncated at t equals the production decision, and the entry fill recomputed from streams truncated at t + L
+>   equals the production fill.
+410,411c449,452
+<   that the scaler, the calibrator and the mu_k use training rows only, and that early stopping uses the inner block
+<   only; the embargo (20 dates) exceeds every label's span (labels end inside their own session).
+---
+>   that the scaler, the calibrator and the mu_k use training rows only, that early stopping uses the inner block
+>   only, that LightGBM's feature bins come from the inner-training rows only (the inner-validation set is built with
+>   reference= the training Dataset; ProtocolReview DO-17), and that each row's weight depends only on rows of its own
+>   date; the embargo (21 dates) exceeds every label's span and every feature look-back.
+418,427c459,480
+< ### P4.2 Synthetic proofs (E.33 B5; synthetic data only)
+< - Null: on synthetic books with the tick size, volatility and event rates of the data facts and no signal, run the
+<   full pipeline (features, labels, folds, models, EV rule, daily series, gates, Tier A). Stated false-positive
+<   rate of P8: P(Tier A non-empty | no signal) <= 0.05. Analytic expectation far below: under independent
+<   configurations, 300 x P(Z > 4.86) is about 2e-4. E.33 runs at least 20 null searches; more than 1 non-empty
+<   Tier A in 20 fails the proof (P(at least 2 of 20) = 0.26 at a true rate of 0.05).
+< - Planted signal: the minimum planted size is the signal that gives a true OOF daily Sharpe of 0.25 net under the
+<   selection variant (about 1.5 ticks net per trade at 15-minute holds and 4 trades a date). Stated power of
+<   selection for it: 0.91 (P7.2 table, normal days). The proof passes if the planted configuration family enters
+<   Tier A in at least 14 of 20 seeds (P(at least 14 | 0.8) = 0.91).
+---
+> ### P4.2 Synthetic proofs (E.33 B5; synthetic data only; declared scale, ProtocolReview FE-2, FE-7, DO-21)
+> Forty full 300-configuration searches would be 72,000 fits, about 40 times the search, and cannot fit E.33's day.
+> The proofs therefore run at this declared scale:
+> - Feature and label code: a record-level synthetic MBO and MBP-1 stream for 30 trade dates (tick sizes, spreads,
+>   volatility and event rates of the data facts) through the production feature and label builders, with known
+>   answers checked by hand-built cases (E.33 B3-B4).
+> - Search proofs: the subset S5 x {FH15, TB30} x the 10 grid points (20 configurations, 120 fits a search), run from
+>   synthetic minute rows (mids, touch prices, labels and the 59 S5 feature columns generated to match the data
+>   facts' rates) through folds, models, the EV rule, the simulation, G1-G5 with the production thresholds (N 838)
+>   and the Tier A walk. Seeds 1-20 for null searches and 101-120 for planted searches, each run exactly once (no
+>   reruns; 4,800 fits in all).
+> - Null: no feature carries signal. Stated false-positive rate of P8: P(Tier A non-empty | no signal) <= 0.05 per
+>   search. The proof fails if Tier A is non-empty in 2 or more of the 20 null searches (P(at least 2 of 20) = 0.26 at
+>   a true rate of 0.05). For the full 300-configuration search the analytic rate is far below 0.05: under independent
+>   configurations and normal days, 300 x P(Z > 5.66) is about 2e-6 at the binding threshold (and 300 x P(Z > 4.86),
+>   about 2e-4, at G3 alone). E.33 also reports the SD of the 400 null daily Sharpes (20 configurations x 20 seeds,
+>   each centred on its configuration's mean) against 1/sqrt(796) = 0.0355.
+> - Planted: one F3 feature carries a signal whose oracle strategy (it knows the planted signal exactly) has a daily
+>   Sharpe of 0.35 net under the selection variant; E.33 reports the realised OOF Sharpe of the best planted
+>   configuration per seed beside the oracle. The proof passes if at least one S5 configuration at FH15 or TB30
+>   enters Tier A in at least 14 of the 20 planted seeds (P(at least 14 of 20) = 0.91 at a per-seed power of 0.8;
+>   P7.2 gives a selection power of 0.91 at a realised daily Sharpe of 0.25).
+444,445c497,500
+<   seed 20261027 (all derived seeds from it), deterministic true, force_row_wise true, num_threads at most
+<   min(8, os.cpu_count() // 2), sample weights w.
+---
+>   seed 20261027 (all derived seeds from it), deterministic true, force_row_wise true, sample weights w. Threads
+>   (ProtocolReview FE-3; CLAUDE.md: at most half the cores, never more than 8): processes x threads <= 8 at any time
+>   (LOGIT fits one thread each, up to 8 processes; LGBM 2 processes x 4 threads or 1 x 8); with deterministic true the
+>   result does not depend on the thread count.
+451,452c506,508
+< - Calibration: a multinomial logistic regression (C = 1e4, lbfgs) of y on the booster's three raw scores, fitted on
+<   the inner validation block with weights w; its probabilities feed P3.5.
+---
+> - Calibration: a multinomial logistic regression (C = 1e4, lbfgs, max_iter 1000, tol 1e-6; ProtocolReview FE-9) of
+>   y on the booster's three raw scores, fitted on the inner validation block with weights w; its probabilities feed
+>   P3.5. LightGBM's feature bins are built from the inner-training rows only (DO-17).
+454a511,514
+> ### Failed fits (ProtocolReview DO-22)
+> A configuration with any fold whose fit raises an error, or yields probabilities that are not finite, is failed: it
+> has no OOF series, fails G1, is recorded with the error, and stays in N.
+> 
+471,472c531,537
+<   about 1-4 hours of wall time. A timed probe on one fold of one configuration per model family replaces the guess
+<   before the full run.
+---
+>   about 1-4 hours of wall time. The FeasibilityReviewer's synthetic probes gave 2.4-3.5 s a LOGIT fit in a balanced
+>   class regime and 1.9-65.6 s when 99% of rows are class 0, and 8-13 s an LGBM fit.
+> - Probe and compute stop (ProtocolReview FE-4, DO-18): before the first real-outcome fit, E.33 times the feature
+>   builder on 3 dates and one fold of the two slowest grid points (E33-S5F15L100E and E33-S5F15G3050), writes the
+>   projected total to its STATE file, and that projection is the reference for P10's 3x stop.
+> - No package is added after the pipeline freeze (uv.lock is hashed): statsmodels is not installed, so anything that
+>   would need it is written in numpy with tests before the freeze or reported as not done (ProtocolReview FE-6).
+481,484c546,550
+< - For evaluation fold k: training dates = all other blocks' dates minus the embargo, the 20 trade dates immediately
+<   after block k's last date (20 = the longest feature look-back in trade dates: sigma_X, the trailing references,
+<   F1.3's 10 dates, F1.7's and F4.7's 20). No date before block k is removed: labels end inside their own session
+<   (P3.6 rule 2), so no training label overlaps an evaluation label, and features use only the past.
+---
+> - For evaluation fold k: training dates = all other blocks' dates minus the embargo, the 21 trade dates immediately
+>   after block k's last date. 21 covers the longest feature look-back: F1.7's and F4.7's 20-date SDs reach the 13:15
+>   mid of the 21st date back (ProtocolReview LE-4, AR-5). Training dates per fold: 642, 642, 642, 642, 643, 664. No
+>   date before block k is removed: labels end inside their own session (P3.6 rule 2), so no training label overlaps
+>   an evaluation label, and features use only the past.
+489,491c555,557
+< Topstep market orders, L = 1.000 s, f = 0.528. Per configuration: the daily series X_D (796 values); mean, SD, daily
+< Sharpe SR_d = mean/SD (sample SD), skewness and raw kurtosis (as screening/stage_e_verdict.py moments() computes
+< them); trade count, trades per date, mean net per trade, hit rate (share of trades with net > 0), share of dates
+---
+> Topstep market orders, L = 1.000 s, f = 0.528. Per configuration: the daily series X_D (796 values); mean,
+> population SD, daily Sharpe SR_d = mean / population SD, skewness, raw kurtosis and t, exactly as
+> screening/stage_e_verdict.py moments() and t_stat() compute them (ProtocolReview DO-6, AR-2); trade count, trades per date, mean net per trade, hit rate (share of trades with net > 0), share of dates
+526c592,594
+< - Clustered MDA on the folds, permuting whole trade dates (MathReview C-15), and SFI, with noise canaries (M5b a).
+---
+> - Clustered MDA on the folds with the five blocks C, F1, F2, F3, F4 as the clusters, permuting whole trade dates
+>   (MathReview C-15), 5 repeats (seeds 1-5), with one noise canary block (M5b a). SFI (one refit per feature and fold:
+>   up to 59 x 6 = 354 fits per configuration) only if time remains (P10 cut order).
+542,548c610,619
+< 5 feature sets x 6 label types x (6 LOGIT + 4 LGBM grid points) = 300 configurations. ID:
+< E33-<S1..S5>-<FH05|FH15|FH30|FH60|TB15|TB30>-<L-C0.01-r0 | L-C0.01-r0.5 | L-C0.1-r0 | L-C0.1-r0.5 | L-C1-r0 |
+< L-C1-r0.5 | G-d2-m50 | G-d2-m200 | G-d3-m50 | G-d3-m200> (the P7.1 grid order). E.33 registers the 300 in
+< ledger/trial_registrations.jsonl (screening.trial_registry) before any real-outcome fit; N goes from 538 to 838 if
+< no other stage registers trials first, and the registered N at E.33's start is used in every DSR. Nothing else in
+< E.33 is a configuration: P6.4 variants and P6.5 diagnostics run after the test list is hashed and select nothing;
+< the synthetic proofs read no real outcome.
+---
+> 5 feature sets x 6 label types x (6 LOGIT + 4 LGBM grid points) = 300 configurations. Registry ID (the
+> trial registry's pattern [A-Z][A-Za-z0-9]{0,15}-[A-Za-z0-9]{1,16}; ProtocolReview FE-1, DO-3):
+> E33-<set><label><grid>, set S1..S5; label F05, F15, F30, F60, T15, T30; grid, in the P7.1 order: L001A (C 0.01,
+> L2), L001E (C 0.01, elastic net), L010A, L010E, L100A, L100E (C 0.1 and 1.0), G2050, G2200, G3050, G3200 (LGBM depth
+> 2 or 3, min_data_in_leaf 50h or 200h). Example: E33-S5F15L010A. E.33 registers all 300 in one
+> screening.trial_registry.register call (test "E33", freeze = the hashed configuration file) before any
+> real-outcome fit. The N of every DSR, threshold and test in P7.2, P8 and P9 is trial_registry.current_n()
+> immediately after that registration: 838 if no other stage registers first (ProtocolReview DO-4, AR-3). Nothing
+> else in E.33 is a configuration: P6.4 variants and P6.5 diagnostics run after the test list is hashed and select
+> nothing; the synthetic proofs read no real outcome.
+565,569c636,647
+<   1 z 4.042 (c(300) = 6.283); Bonferroni at N 838 z 3.847; the test's Holm step 1 at K = 9 z 2.539; HLZ t > 3.0.
+<   None is a gate: G3 (t about 4.86) is stricter at discovery than each of them.
+< - If the user drops the protocol-added test DSR (return section 7), b_test = 0.1017 and the selection threshold is
+<   G3's 0.1724.
+< - All thresholds are recomputed by p7_final.py at the registered N if it differs from 838.
+---
+>   1 z 4.042 (c(300) = 6.283); Bonferroni at N 838 z 3.847; the test's Holm (holm_tier_a at K = 9 over m tested
+>   candidates, alpha 0.05/(9m)) z 2.539, 2.773, 2.902 for m = 1, 2, 3 (ProtocolReview AR-4); HLZ t > 3.0. None is a
+>   gate: G3 (t about 4.86) is stricter at discovery than each of them, and t > 3.0 is stricter at the test than Holm.
+> - b_test is pinned at 0.1649 (N 838, T_test 870). The user may drop the protocol-added test DSR only by a decision
+>   recorded before E.33's C1 registration; then b_test = 0.1017 and the selection threshold is G3's 0.1724. After the
+>   registration b_test does not change (ProtocolReview DO-2). If the registered N differs from 838, p7_final.py
+>   recomputes every threshold at that N before any real-outcome fit.
+> - The test-power figures above (and P4.2's) assume the test's DSR checks use V = 1/(T_test - 1). The program verdict
+>   as coded (V14 c) takes V = the population variance of the 2-3 tested Sharpes; with any companion whose test
+>   Sharpe is null or weaker, its SR0 is 1.51-1.60 times the strong candidate's Sharpe, so a true daily Sharpe of 0.25
+>   or 0.30 then fails with probability near 1 (ProtocolReview AR-1, its a3_out.txt). Under V14 (c) as coded these
+>   powers are upper bounds that depend on the list's composition. P9 reserves the remedy to the user.
+574c652,654
+< the funnel (the count passing each gate alone and in order G1..G5).
+---
+> the funnel (the count passing each gate alone and in order G1..G5). G1-G5, the ranking and the walks below are the
+> whole selection rule: the per-firm nets, FDR, PBO and session or robustness splits that E.33's prompt (D1-D2) asks
+> for are reports, never gates (ProtocolReview DO-20). A failed configuration (P5) fails G1.
+587,591c667,671
+<   (d) mean daily net > 0 within each tercile of sigma_ZM(D) (cut points from the 796 OOF dates' values; sigma_ZM(D)
+<   is known before D opens).
+< - Ranking of the configurations that pass G1-G5: SR_d descending. Ties (|difference| < 1e-4) go to fewer trades per
+<   date, then LOGIT before LGBM, then the lower set index, then the shorter horizon (FH before TB at equal h), then
+<   the earlier grid point in the P7.1 order.
+---
+>   (d) mean daily net > 0 within each tercile of sigma_ZM(D): the 796 OOF dates sorted by sigma_ZM(D) ascending (ties
+>   by date), ranks 1-265, 266-530 and 531-796 (ProtocolReview DO-14; sigma_ZM(D) is known before D opens).
+> - Ranking of the configurations that pass G1-G5 (a total order; ProtocolReview DO-7): SR_d rounded to 4 decimals,
+>   descending; then fewer trades per date; then LOGIT before LGBM; then the lower set index; then the shorter horizon
+>   (FH before TB at equal h); then the earlier grid point in the P7.1 order.
+595,596c675,679
+<   Tier A has one member; never finalists): the two highest-ranked configurations by SR_d among all 300 that are not
+<   in Tier A, whatever their gates.
+---
+>   Tier A has one member; never finalists; ProtocolReview DO-5): continue the Tier A walk over all 300
+>   configurations ordered by the same key, gates ignored, taking the next two whose OOF daily series has correlation
+>   <= 0.70 with every configuration already taken (Tier A and Tier B). Near-duplicates are excluded because they
+>   would make the verdict's variance collapse (DO-5's simulation: a true daily Sharpe of 0.12 would pass the
+>   program's DSR 93% of the time).
+626a710,713
+> - Reserved decision for the user, before the test is registered (ProtocolReview AR-1): whether to amend V14 (c) for
+>   this test so that the program verdict's DSR uses V = 1/(T_test - 1), the same V as the protocol-added check. As
+>   coded, V14 (c) takes the population variance of the 2-3 tested Sharpes, which makes a real edge fail whenever a
+>   companion's test Sharpe is null or weaker (P7.2). E.32 does not amend a user decision; it states the consequence.
+635,640c722,731
+< - Stop at once on: a hash mismatch (P1.1); a guard refusal or any read outside P1.2; a leakage or synthetic-proof
+<   failure (P4.1, P4.2) that cannot be fixed without changing a declared choice; a declared choice that cannot be
+<   implemented as written (0.2); measured compute above 3 times the P5 estimate, or two out-of-memory failures.
+< - E.33's deadline (its prompt: work stops at 01:00 PDT on 2026-10-28): runs follow the P5 order, so a cut leaves whole
+<   feature sets; unrun configurations stay registered and count in N, and P8 runs on the configurations that ran,
+<   with N unchanged (the registered N).
+---
+> - Stop at once on: a hash mismatch (P1.1); a guard refusal or any read of refused market data or outcomes (P1.2); a
+>   leakage or synthetic-proof failure (P4.1, P4.2) that cannot be fixed without changing a declared choice; a
+>   declared choice that cannot be implemented as written (0.2); measured compute above 3 times the probe-based
+>   projection written to the STATE file before the first real-outcome fit (P5), or two out-of-memory failures.
+> - E.33's deadlines (its prompt: the search is cut at 00:00 PDT on 2026-10-28 and work stops at 01:00): the cut unit
+>   is a whole feature set in the P5 order (S5, S1, S3, S2, S4), which is the "family" of the prompt's C3 (ProtocolReview
+>   DO-19); unrun configurations stay registered and count in N, and P8 runs on the configurations that ran, with the
+>   registered N. A features-only store may be built before the pipeline freeze. When time is short, reports are cut
+>   in this order (first cut first): the VECM diagnostic, SFI, clustered MDA, the P6.4 (iii) queue variants, the prop
+>   simulator, Tier B's variants, the rest of P6.5 (ProtocolReview FE-11). G1-G5 and the test list are never cut.

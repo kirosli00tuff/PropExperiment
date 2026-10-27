@@ -1,0 +1,91 @@
+#!/bin/bash
+# MathReview D: spot-check verbatim quotes against saved pages (grep -c of a distinctive substring; 0 = NOT FOUND)
+R=/home/kiros-li/Documents/GitHub/PropExperiment/reports
+P4=$R/stage_e32_briefs/pages/M4_models
+P6=$R/stage_e32_briefs/pages/M6_prop_strategy
+E28=$R/stage_e28_briefs/pages
+chk() { local f="$1"; shift; local n; n=$(grep -c -F -- "$1" "$f" 2>/dev/null); echo "$n | $(basename "$f") | $1"; }
+echo "=== M4 quotes ==="
+chk $P4/friedman2010_glmnet_pmc.txt "is a compromise between the ridge-regression penalty"
+chk $P4/friedman2010_glmnet_pmc.txt "somewhat indifferent to very correlated predictors"
+chk $P4/friedman2010_glmnet_pmc.txt "apply soft-thresholding to take care of the lasso contribution"
+chk $P4/friedman2010_glmnet_pmc.txt "saturated logistic regression fit is undefined"
+chk $P4/niculescu_caruana2005_calibration.txt "well calibrated initially and post-calibration does not help them on most problems"
+chk $P4/niculescu_caruana2005_calibration.txt "Platt Scaling outperforms Isotonic Regression with all nine learning methods"
+chk $P4/niculescu_caruana2005_calibration.txt "we introduce unwanted bias"
+chk $P4/niculescu_caruana2005_calibration.txt "independent calibration set in order to get good posterior probabilities"
+chk $P4/niculescu_caruana2005_calibration.txt "push probability mass away from 0 and 1"
+chk $P4/niculescu_caruana2005_calibration.txt "Isotonic Regression is more prone to overfitting"
+chk $P4/guo2017_calibration.txt "unlike those from a decade ago, are poorly calibrated"
+chk $P4/guo2017_calibration.txt "is surprisingly effective at calibrating predictions"
+chk $P4/chinco2017_nber_w23933.raw.txt "unexpected, short-lived, and sparse"
+chk $P4/chinco2017_nber_w23933.raw.txt "annualized Sharpe ratio of 1.8 net of trading costs"
+chk $P4/chinco2017_nber_w23933.raw.txt "rolling 30-minute estimation windows"
+chk $P4/lightgbm_parameters.html "Tree still grows leaf-wise"
+chk $P4/lightgbm_parameters.html "but over-constrains the predictions"
+chk $P4/lightgbm_parameters.html "early_stopping_round rounds"
+chk $P4/lightgbm_parameters.html "should ensure the stable results when using the same data and the same parameters"
+chk $P4/lightgbm_parameters.html "1 means increasing, -1 means decreasing, 0 means non-constraint"
+chk $P4/lightgbm_tuning.html "num_leaves = 2^(max_depth)"
+chk $P4/cawley_talbot2010.txt "integral part of the modelling procedure"
+chk $P4/cawley_talbot2010.txt "nested cross-validation"
+chk $P4/bai2018_tcn.txt "accounts for the direction of the past"
+chk $P4/zeng2023_ltsf_linear.txt "in all cases, and often by a large margin"
+chk $P4/zeng2023_ltsf_linear.txt "prone to overfit on noisy financial data"
+chk $P4/mcmahan2013_ftrl.txt "this gradient is all we will need for optimization purposes"
+chk $P4/mcmahan2013_ftrl.txt "non-increasing learning-rate schedule"
+chk $P4/mcmahan2013_ftrl.txt "progressive validation (sometimes called online loss)"
+chk $P4/raftery2010_dma.txt "typically slightly below 1"
+chk $P4/raftery2010_dma.txt "effective window size"
+chk $P4/raftery2010_dma.txt "d samples old because of the time-delay problem"
+chk $P4/statsmodels_markovregression.html "may be switching across regimes"
+chk $R/stage_e28_methods_brief.md "The binding constraint is independence, not sample count"
+chk $E28/C2_DeepLOB/briola_microstructural_guide2024.raw.txt "are more likely to happen in a physical time"
+chk $E28/C2_OFI/afxz2022_hf_predictable.txt "are limited for most cases when compared with LASSO"
+echo "=== M6 quotes ==="
+chk $P6/arxiv_1403.1183v1.txt "forgetting"
+chk $P6/babson_limit_orders_jfqa2002.txt "We attribute the difference in costs to a selection bias"
+chk $P6/arxiv_1610.00261v4.txt "it is better to wait a little more to get a better price"
+chk $P6/arxiv_1610.00261v4.txt "enough time to cancel"
+chk $E28/A2_platforms/ts_8765442_fills.html.txt "not just touch it"
+chk $E28/A2_platforms/ts_8765442_fills.html.txt "Executes at the next available price"
+chk $E28/A2_topstep/ts_10305426.html.txt "hundreds of rapid trades to take advantage of preferential queue position"
+chk $E28/A2_topstep/ts_10305426.html.txt "tight brackets or auto-breakeven"
+chk $E28/A2_topstep/ts_10305426.html.txt "outside the current best bid or offer"
+chk $E28/A2_topstep/ts_10305426.html.txt "measured in seconds, not minute"
+chk $E28/A2_topstep/ts_10305426.html.txt "directly into a scheduled major news event"
+chk $E28/A2_topstep/ts_10657969.html.txt "automated strategies are not possible at this time in the Live Funded Account"
+chk $E28/A2_platforms/optimus_rithmic_paper_2413.json "We report a fill when the market trades through your price"
+chk $E28/A2_platforms/optimus_rithmic_paper_2413.json "This is not pessimistic"
+chk $E28/A2_platforms/tv_community_2279.json "breaking through my limit"
+chk $E28/A2_lucid/sup_microscalping_wb_20260330.html.txt "trades held for 5 seconds or less"
+chk $E28/A2_tradeify/tf_guidelines_wb.html.body.txt "longer than 10 seconds"
+chk $E28/A2_mffu/mffu_art_8444599.html.txt "multiple limit orders at the same price"
+chk $E28/A2_mffu/mffu_art_8444599.html.txt "utilizing tight brackets"
+chk $R/stage_e28_briefs/A2_firm_bulenox.md "DTC Protocol Bridge API"
+chk $R/stage_e13_briefs/pages/PropVenues1/apex_wb_prohibited_old.txt "No Automation or Algorithm Usage"
+chk $R/stage_e13_briefs/pages/PropVenues1/tpt_utp.txt "No Trading Bots or Algos"
+chk $R/E.31_RETURN.md "| 10 s edge E_10, mean | -0.287 [-0.303, -0.273] | -0.252 [-0.267, -0.239] | -0.970 [-0.988, -0.950] |"
+chk $R/E.29_RETURN.md "inflated by payout thresholds a one-lot micro rarely clears"
+chk /home/kiros-li/Documents/GitHub/PropExperiment/docs/DECISIONS.md "prices its fills under the trade-through rule unless a firm documents otherwise"
+chk $R/E.31_RETURN.md "-8.98"
+chk $R/E.31_RETURN.md "5.5%"
+chk $R/E.31_RETURN.md "384 s"
+chk $R/stage_e28_briefs/A3_econ.md "T = 20 round trips per trading day"
+chk $R/stage_e28_briefs/A2_firm_lucid.md "Sim fill rule for resting limit orders: not documented"
+chk $R/stage_e28_briefs/A2_firm_tradeify.md "only on LIVE funded accounts"
+echo "=== context lines ==="
+grep -n "2.7)\|M_{\|τa ≥\|forgetting" $P6/arxiv_1403.1183v1.txt | head -8
+sed -n 226,234p $P6/arxiv_1403.1183v1.txt
+echo "--- E[tau_a] region (after 2.5) ---"
+grep -n "2.5)\|(2.6)\|E\[τ\|E\[\\\\tau\|expected" $P6/arxiv_1403.1183v1.txt | head -10
+echo "--- E.31 lines 203, data_facts 150-151, A3_econ other ZM rows ---"
+sed -n 203p $R/E.31_RETURN.md | cut -c1-220
+sed -n 150,151p $R/stage_e31_briefs/research/data_facts.md | cut -c1-220
+for L in 331 361 390 422 452; do sed -n ${L}p $R/stage_e28_briefs/A3_econ.md | cut -c1-160; done
+echo "--- E.28 A3_econ 2.1 model ---"
+grep -n "sigma_T = sigma_1m\|c_mkt = F_rt" $R/stage_e28_briefs/A3_econ.md | head -3
+echo "--- DECISIONS V50 lines 1038-1041 ---"
+sed -n 1038,1041p /home/kiros-li/Documents/GitHub/PropExperiment/docs/DECISIONS.md | cut -c1-200
+echo "--- M6 log.tsv ---"; cat $P6/log.tsv | cut -c1-200
+echo "--- E.29 line 16 ---"; sed -n 16p $R/E.29_RETURN.md | cut -c1-200

@@ -1,0 +1,69 @@
+
+== P7.2 discovery thresholds, N = 838, T_disc = 796
+SR0 own 0.11365  program 0.11365  (z1 3.0374, z2 3.3270)
+G3 normal: own 0.17242 program 0.17242; t = SR sqrt(T) = 4.865; annualised 2.737
+closed form ignoring the SR^2 term: 0.17199 (shows the denominator adds 0.00043)
+G3 skew -0.5 kurt 6 (raw): own 0.17556 program 0.17556
+  (if 6 were read as EXCESS kurtosis, raw 9: 0.17622)
+DSR of the discovery series at exactly SR = 0.1724: program 0.94994, 0.1723: 0.94965
+
+== P7.2 test bar, T_test = 870
+t > 3.0 bar 0.10171; SR0_test 0.10871; DSR bar own 0.16488 program 0.16488 (t 4.863); b_test 0.16488; annualised 2.617
+80% power true SR at b_test: 0.19363 (se at b_test 0.03415)
+power check: P(SR_hat >= b_test | s = 0.1936) = 0.7992
+
+== G4 power gate
+G4 threshold 0.20070; check SR - se = 0.16488; t 5.663; annualised 3.186; se at G4 0.03582
+if the test DSR is dropped: b_test 0.10171, G4 0.13734, selection max(G3, G4) 0.17242
+G4 with skew -0.5, kurt 6 moments: 0.20296
+binding selection threshold 0.20070
+
+== power tables (normal days)
+true s | P(pass t>3) | P(pass b_test) | P(select) | product
+0.10 | 0.480 | 0.028 | 0.002 | 0.000
+0.12 | 0.704 | 0.094 | 0.012 | 0.001
+0.15 | 0.922 | 0.331 | 0.078 | 0.026
+0.17 | 0.977 | 0.560 | 0.195 | 0.109
+0.20 | 0.998 | 0.847 | 0.492 | 0.417
+0.25 | 1.000 | 0.993 | 0.914 | 0.908
+0.30 | 1.000 | 1.000 | 0.997 | 0.997
+
+== per-trade net edge mu = s sigma_h / sqrt(n), sigma_h = 3.15 sqrt(h)
+h=5 sigma_h 7.04: n=1: 1.41 / 1.36; n=2: 1.00 / 0.96; n=4: 0.71 / 0.68; n=8: 0.50 / 0.48; n=12: 0.41 / 0.39
+h=15 sigma_h 12.20: n=1: 2.45 / 2.36; n=2: 1.73 / 1.67; n=4: 1.22 / 1.18; n=8: 0.87 / 0.84; n=12: 0.71 / 0.68
+h=30 sigma_h 17.25: n=1: 3.46 / 3.34; n=2: 2.45 / 2.36; n=4: 1.73 / 1.67; n=8: 1.22 / 1.18
+h=60 sigma_h 24.40: n=1: 4.90 / 4.72; n=2: 3.46 / 3.34
+P4.2 planted size: s 0.25, h 15, 4 trades: mu = 1.525 ticks
+at the G1 floor (trades on 50% of dates, n on those): mu scales by 1/sqrt(0.5) = 1.414
+
+== reference thresholds over 300 (one-sided 0.05)
+Bonferroni/Holm step 1, m=300: alpha 1.667e-04 z 3.5879
+Bonferroni m=838: alpha 5.967e-05 z 3.8475
+BY rank 1, c(300)=6.2827: alpha 2.653e-05 z 4.0417
+Holm K=9: alpha 5.556e-03 z 2.5392
+HLZ t>3: alpha 1.350e-03 z 3.0000
+
+== P4.2 synthetic-proof numbers
+P(Z > 4.865) = 5.734e-07; x 300 = 1.720e-04; exact null P(DSR >= 0.95) one config = 6.193e-07
+P(>= 2 of 20 | 0.05) = 0.2642; P(>= 14 of 20 | 0.8) = 0.9133; P(>= 14 of 20 | 0.91) = 0.9987
+what the null proof can rule out: P(<= 1 of 20 non-empty | true rate r): r=0.05: 0.736, r=0.1: 0.392, r=0.15: 0.176, r=0.2: 0.069
+exact-binomial 95% upper bound on the rate after 1 of 20: 0.216
+
+== P0.4, P2, P3.1, P8 figures
+1.59 = 0.528 + 1.000 + 0.062: 1.590
+M3 f.3 sign-classifier hit rate at h=1: 0.5 + 1.59/(2 E|dM|) = 0.8163
+M3 f.3 sign-classifier hit rate at h=5: 0.5 + 1.59/(2 E|dM|) = 0.6415
+M3 f.3 sign-classifier hit rate at h=15: 0.5 + 1.59/(2 E|dM|) = 0.5817
+crush: 2.2 = 44/2000 x 100 = 2.1999999999999997; ZM tick 0.10 USD/ton x 2.2 = 0.22 c/bu; 1 c of crush = 4.545 ZM ticks; 70% rule: 1.59 / 4.545 / (1 - 0.5) = 0.700
+G2 margin: 0.920 - 0.528 = 0.392; 0.50 - 0.392 = 0.108
+fees in ticks from USD/10: {'Topstep': 0.528, 'Lucid': 0.5599999999999999, 'Lucid-u': 0.9199999999999999, 'Bulenox': 0.572, 'MFFU': 0.612, 'Tradeify': 0.9199999999999999}
+R4: 24.4/sqrt(24) = 4.98 SE -> 2 SE = 10.0 ticks; R3a: (2 x 24.40 / 1.59)^2 = 942 events
+P6.4 limit timeout min(60 s, h/5 min): h=5: 60 s, h=15: 60 s, h=30: 60 s, h=60: 60 s
+
+== sample vs population SD (P6.2 says sample; moments() uses population)
+SR_sample = SR_pop x sqrt((T-1)/T) = SR_pop x 0.999372; at SR_pop = G4 0.20070: SR_sample = 0.20058 (gap 1.26e-04, against the tie tolerance 1e-4 and G7's 1e-9)
+program t = mean/(pstdev/sqrt(n)) = SR_pop sqrt(n); with the sample SD t = SR_pop sqrt(n-1): 3.0 bar in SR_pop units 3/sqrt(870) = 0.10171 vs 3/sqrt(869) x sqrt(869/870)... (the t > 3.0 bar itself is unchanged; only the SR label moves)
+
+== G4 se versus the DSR denominator (program convention)
+SR 0.2007 skew 0.0 kurt 3.0: program denominator 1.010020; se formula x sqrt(T-1) = 1.010020
+SR 0.2007 skew -0.5 kurt 6.0: program denominator 1.072707; se formula x sqrt(T-1) = 1.072707

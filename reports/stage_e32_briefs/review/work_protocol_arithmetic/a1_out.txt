@@ -1,0 +1,52 @@
+
+== calendar coverage
+hist coverage (datetime.date(2010, 6, 1), datetime.date(2019, 5, 31)) grains coverage (datetime.date(2019, 5, 1), datetime.date(2026, 6, 19))
+overlap month 2019-05-01 2019-05-31 hist closures [datetime.date(2019, 5, 27)] grains closures [datetime.date(2019, 5, 27)] agree True
+
+== discovery 2020-12-01..2024-02-29
+weekdays 848  full closures 32  trade dates 816
+closures: 2020-12-25 (grains), 2021-01-01 (grains), 2021-01-18 (grains), 2021-02-15 (grains), 2021-04-02 (grains), 2021-05-31 (grains), 2021-07-05 (grains), 2021-09-06 (grains), 2021-11-25 (grains), 2021-12-24 (grains), 2022-01-17 (grains), 2022-02-21 (grains), 2022-04-15 (grains), 2022-05-30 (grains), 2022-06-20 (grains), 2022-07-04 (grains), 2022-09-05 (grains), 2022-11-24 (grains), 2022-12-26 (grains), 2023-01-02 (grains), 2023-01-16 (grains), 2023-02-20 (grains), 2023-04-07 (grains), 2023-05-29 (grains), 2023-06-19 (grains), 2023-07-04 (grains), 2023-09-04 (grains), 2023-11-23 (grains), 2023-12-25 (grains), 2024-01-01 (grains), 2024-01-15 (grains), 2024-02-19 (grains)
+
+== test (seal) 2017-05-01..2020-11-30
+weekdays 936  full closures 31  trade dates 905
+closures: 2017-05-29 (hist), 2017-07-04 (hist), 2017-09-04 (hist), 2017-11-23 (hist), 2017-12-25 (hist), 2018-01-01 (hist), 2018-01-15 (hist), 2018-02-19 (hist), 2018-03-30 (hist), 2018-05-28 (hist), 2018-07-04 (hist), 2018-09-03 (hist), 2018-11-22 (hist), 2018-12-25 (hist), 2019-01-01 (hist), 2019-01-21 (hist), 2019-02-18 (hist), 2019-04-19 (hist), 2019-05-27 (grains), 2019-07-04 (grains), 2019-09-02 (grains), 2019-11-28 (grains), 2019-12-25 (grains), 2020-01-01 (grains), 2020-01-20 (grains), 2020-02-17 (grains), 2020-04-10 (grains), 2020-05-25 (grains), 2020-07-03 (grains), 2020-09-07 (grains), 2020-11-26 (grains)
+
+== test (MBO) 2017-05-22..2020-11-30
+weekdays 921  full closures 31  trade dates 890
+closures: 2017-05-29 (hist), 2017-07-04 (hist), 2017-09-04 (hist), 2017-11-23 (hist), 2017-12-25 (hist), 2018-01-01 (hist), 2018-01-15 (hist), 2018-02-19 (hist), 2018-03-30 (hist), 2018-05-28 (hist), 2018-07-04 (hist), 2018-09-03 (hist), 2018-11-22 (hist), 2018-12-25 (hist), 2019-01-01 (hist), 2019-01-21 (hist), 2019-02-18 (hist), 2019-04-19 (hist), 2019-05-27 (grains), 2019-07-04 (grains), 2019-09-02 (grains), 2019-11-28 (grains), 2019-12-25 (grains), 2020-01-01 (grains), 2020-01-20 (grains), 2020-02-17 (grains), 2020-04-10 (grains), 2020-05-25 (grains), 2020-07-03 (grains), 2020-09-07 (grains), 2020-11-26 (grains)
+
+== sealed-untested 2017-05-01..2017-05-19
+weekdays 15  full closures 0  trade dates 15
+closures: 
+
+== burn-in (first 20 trade dates)
+discovery: burn-in 2020-12-01..2020-12-29, first OOF 2020-12-30, last OOF 2024-02-29, T = 796
+test: burn-in 2017-05-22..2017-06-19, first OOF 2017-06-20, last OOF 2020-11-30, T = 870
+OOF dates in 2020-12: 2 ; months with OOF dates: 39
+calendar quarters (Dec-Feb, ...): 13 ; dates per quarter min/max 40 65
+OOF dates in Jun-Aug (C.15 = 1): 193
+
+== P6.1 folds on the 796 OOF dates
+sum of block sizes 796 == T_disc True
+fold 1: 2020-12-30..2021-07-12 (133 dates); embargo 2021-07-13..2021-08-09; training dates 643; rows at 263/date 169,109
+fold 2: 2021-07-13..2022-01-19 (133 dates); embargo 2022-01-20..2022-02-16; training dates 643; rows at 263/date 169,109
+fold 3: 2022-01-20..2022-08-01 (133 dates); embargo 2022-08-02..2022-08-29; training dates 643; rows at 263/date 169,109
+fold 4: 2022-08-02..2023-02-09 (133 dates); embargo 2023-02-10..2023-03-10; training dates 643; rows at 263/date 169,109
+fold 5: 2023-02-10..2023-08-21 (132 dates); embargo 2023-08-22..2023-09-19; training dates 644; rows at 263/date 169,372
+fold 6: 2023-08-22..2024-02-29 (132 dates); embargo none (last block); training dates 664; rows at 263/date 174,632
+gap features F1.7/F4.7 at date D use the 13:15 close of D-1; their sd over the 20 dates before D therefore reaches D-21 -> first clean training date after block k is L+22, not L+21
+
+== decision grid G_h: minute marks 08:35:00 .. 13:12:00 - h
+h=5: 273 marks, last mark 08:07, last span end 13:12:01 <= 13:13:00 True; max non-overlapping trades 54
+h=15: 263 marks, last mark -2:57, last span end 13:12:01 <= 13:13:00 True; max non-overlapping trades 17
+h=30: 248 marks, last mark -17:42, last span end 13:12:01 <= 13:13:00 True; max non-overlapping trades 8
+h=60: 218 marks, last mark -47:12, last span end 13:12:01 <= 13:13:00 True; max non-overlapping trades 3
+
+== P5 compute arithmetic
+ZM.v.0 book rebuild: 9.1 to 17.7 min in one process
+ZS+ZL re-split at 80 B/record: 32.50 GB; decode 56 + 35 s = 91 s
+rows per horizon at 263/date: 209,348; S5 59 features float32: 49.4 MB; h=5 at 273/date: 217,308 rows, 51.3 MB
+fits 1800 = LOGIT 1080 + LGBM 720; CPU-hours LOGIT 3.0-18.0, LGBM 1.0-6.0; total 4.0-24.0; / 7 processes = 0.57-3.43 h wall
+LGBM min_data_in_leaf {50h, 200h}: {5: (250, 1000), 15: (750, 3000), 30: (1500, 6000), 60: (3000, 12000)}
+PBO blocks: 796 // 8 = 99 dates/block, dates used 792 ; test 870 // 8 = 108 used 864
+sessions: day 08:30-13:20 = 290 min; label window 08:35-13:13 = 278 min

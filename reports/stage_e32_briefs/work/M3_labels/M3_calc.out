@@ -1,0 +1,68 @@
+== (e/f) per-horizon break-even table, cost BE=1.590 ticks (alt c_mkt=1.528)
+h | sigma_h | E|dP| | p*_fixed(BE) | p*_fixed(c_mkt) | BE/sigma_h | p*_sym(k=sigma_h) | P(vertical first,k=sigma_h) | p*_sym(k=2sigma_h)
+1 | 3.150 | 2.513 | 0.8163 | 0.8040 | 0.5048 | 0.7524 | 0.3708 | 0.6262
+5 | 7.044 | 5.620 | 0.6415 | 0.6359 | 0.2257 | 0.6129 | 0.3708 | 0.5564
+15 | 12.200 | 9.734 | 0.5817 | 0.5785 | 0.1303 | 0.5652 | 0.3708 | 0.5326
+30 | 17.253 | 13.766 | 0.5578 | 0.5555 | 0.0922 | 0.5461 | 0.3708 | 0.5230
+60 | 24.400 | 19.468 | 0.5408 | 0.5392 | 0.0652 | 0.5326 | 0.3708 | 0.5163
+120 | 34.507 | 27.532 | 0.5289 | 0.5277 | 0.0461 | 0.5230 | 0.3708 | 0.5115
+240 | 48.800 | 38.936 | 0.5204 | 0.5196 | 0.0326 | 0.5163 | 0.3708 | 0.5081
+close, entry 08:30 (290) | 53.643 | 42.801 | 0.5186 | 0.5179 | 0.0296 | 0.5148 | 0.3708 | 0.5074
+close, uniform entry (eff.) | 35.762 | 28.534 | 0.5279 | 0.5268 | 0.0445 | 0.5222 | 0.3708 | 0.5111
+P(vertical first) for k = 2 sigma_h: 0.909
+== fixed +-k tick barriers (planner's +-4-6): break-even hit rate and expected first-exit time
+k=2: p*=0.8975  E[tau]=0.403 min  t95=1.06 min  net win=0.41 net loss=-3.59
+k=3: p*=0.7650  E[tau]=0.907 min  t95=2.38 min  net win=1.41 net loss=-4.59
+k=4: p*=0.6987  E[tau]=1.612 min  t95=4.23 min  net win=2.41 net loss=-5.59
+k=5: p*=0.6590  E[tau]=2.520 min  t95=6.61 min  net win=3.41 net loss=-6.59
+k=6: p*=0.6325  E[tau]=3.628 min  t95=9.52 min  net win=4.41 net loss=-7.59
+k=8: p*=0.5994  E[tau]=6.450 min  t95=16.93 min  net win=6.41 net loss=-9.59
+== hit rate to per-trade Sharpe, symmetric +-5 barriers, cost BE
+p=0.659: mean=0.0000 sd=4.7405 SR/trade=0.0000
+p=0.68: mean=0.2100 sd=4.6648 SR/trade=0.0450
+p=0.7: mean=0.4100 sd=4.5826 SR/trade=0.0895
+== average uniqueness, 15-min labels sampled every minute, one 290-min session
+labels 276 bars covered 290 max c 15
+u_bar first 3: [0.2212, 0.159, 0.1301] interior: 0.0667 last: 0.2212
+mean u_bar 0.07005 n_eff = sum u_bar 19.3333 check covered/h 19.3333
+first label by hand (1/15)*H_15 = 0.2212
+per 816 dates: labels 225216 n_eff 15776.0
+== time-decay weights (AFML 4.7 as implemented in mlfinpy), c=0.5 and c=-0.25, 4 labels with u_bar
+c=0.5: slope=0.1667 const=0.5000 weights=[0.5833, 0.6667, 0.8333, 1.0]
+c=-0.25: slope=0.4444 const=-0.3333 weights=[0.0, 0.1111, 0.5556, 1.0]
+== executable vs mid labels and latency
+latency 0.3s: sd of mid move during latency = 0.223 ticks
+latency 1.0s: sd of mid move during latency = 0.407 ticks
+h=1: fraction of linear-accrual edge lost to 1 s latency = 0.0167
+h=5: fraction of linear-accrual edge lost to 1 s latency = 0.0033
+h=15: fraction of linear-accrual edge lost to 1 s latency = 0.0011
+== dead-zone classification on a fixed horizon, tau = BE
+h=5: P(|dP|<=BE) under N(0,sigma_h) = 0.1786
+h=15: P(|dP|<=BE) under N(0,sigma_h) = 0.1037
+h=60: P(|dP|<=BE) under N(0,sigma_h) = 0.0520
+== symmetric CUSUM toy, threshold 6 ticks, on price changes in ticks
+t=1 y=+2 S+=2 S-=0 
+t=2 y=+1 S+=3 S-=0 
+t=3 y=-1 S+=2 S-=-1 
+t=4 y=+3 S+=5 S-=0 
+t=5 y=+1 S+=6 S-=0 
+t=6 y=-2 S+=4 S-=-2 
+t=7 y=-3 S+=1 S-=-5 
+t=8 y=-2 S+=0 S-=0 EVENT(-)
+t=9 y=+1 S+=1 S-=0 
+t=10 y=-2 S+=0 S-=-2 
+t=11 y=+0 S+=0 S-=-2 
+t=12 y=+4 S+=4 S-=0 
+events at [8]
+thr=6 ticks: one-sided reflected-RW mean time to cross (upper bound on spacing) thr^2/sigma_1m^2 = 3.63 min
+thr=10 ticks: one-sided reflected-RW mean time to cross (upper bound on spacing) thr^2/sigma_1m^2 = 10.08 min
+thr=15 ticks: one-sided reflected-RW mean time to cross (upper bound on spacing) thr^2/sigma_1m^2 = 22.68 min
+== detectability: n_indep = 816 * floor(290/h); se = 0.5/sqrt(n); t at p* = (p*-0.5)/se
+h=1: n=236640 se=0.00103 p*-0.5=0.3163 t_at_p*=307.74 p_needed_for_t3_vs_p*=0.8194
+h=5: n=47328 se=0.00230 p*-0.5=0.1415 t_at_p*=61.55 p_needed_for_t3_vs_p*=0.6484
+h=15: n=15504 se=0.00402 p*-0.5=0.0817 t_at_p*=20.34 p_needed_for_t3_vs_p*=0.5937
+h=30: n=7344 se=0.00583 p*-0.5=0.0578 t_at_p*=9.90 p_needed_for_t3_vs_p*=0.5753
+h=60: n=3264 se=0.00875 p*-0.5=0.0408 t_at_p*=4.67 p_needed_for_t3_vs_p*=0.5671
+h=120: n=1632 se=0.01238 p*-0.5=0.0289 t_at_p*=2.33 p_needed_for_t3_vs_p*=0.5660
+h=240: n=816 se=0.01750 p*-0.5=0.0204 t_at_p*=1.17 p_needed_for_t3_vs_p*=0.5729
+h=close(290): n=816 se=0.01750 p*-0.5=0.0186 t_at_p*=1.06 p_needed_for_t3_vs_p*=0.5711

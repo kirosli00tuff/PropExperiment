@@ -38,10 +38,14 @@ Max).
 - At most 6 workers at once. At most 2 heavy compute jobs at once. Stop
   a job if free memory falls below 2 GB (the ThinkPad has 14 GB).
 
-Time: launched after E.32's return is reviewed, on 2026-10-27. There is
-no fixed end time: work continues until the stage is complete, across
-usage-limit pauses and the weekly reset at 02:00 PDT on 2026-10-28 (user,
-2026-10-27 08:12). Do not cut scope for time; quality comes first.
+Time: launched after E.32's return is reviewed, on 2026-10-27. It
+continues across usage-limit pauses and the weekly reset at 02:00 PDT on
+2026-10-28. Hard deadline (user, 2026-10-27 08:16):
+- work stops at 08:00 PDT on 2026-10-28;
+- the return is written by 08:45;
+- nothing runs after 09:00.
+Quality comes first. If time runs short, finish whole parts and report
+what did not run. Never rush a gate.
 Checkpoint reports/stage_e33_STATE.md after every step, and resume from it
 after any usage limit or reboot. Long jobs are restartable per trade date,
 with a DONE marker per date.
@@ -154,8 +158,10 @@ C2 Run the full budget on the discovery data under the protocol's CV:
 
 C3 Monitor memory and time. Order the runs by family, so that a cut
 still leaves complete families. If a usage limit or reboot interrupts
-the search, resume it from the per-configuration DONE markers. Every
-registered configuration is run.
+the search, resume it from the per-configuration DONE markers. If the
+full budget cannot finish by 07:00 PDT on 2026-10-28, finish whole
+families. Record which ran; unrun configurations stay registered and
+count in N, and the return says so.
 
 ============================================================
 PART D: SELECTION AND STATISTICS

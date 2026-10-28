@@ -1,7 +1,8 @@
 """B4 LT2 span check (protocol P4.1 LT2) on real label tables: for every kept row (row_ok) of every label type and
 every built date, the span lies in [08:35, 13:13] on D, on one ZM front, clear of P3.6 (rules 1-5: open, close,
 releases, P1.4 exclusions, the book in the span has both sides and is not bad, the limit band at t), and M_ZM(t) is
-valid (P3.7). Each implementation's rows are checked against the OTHER implementation's book replay (A's tables
+valid (P3.7). The span checked is the row's whole possible span (R-L10): [t, t + L + h] for FH, [t, t + 2L + h] for
+TB (span_hi). Each implementation's rows are checked against the OTHER implementation's book replay (A's tables
 against implB/labB_book.front_updates, B's against pipeline/lab33.replay) and against cal33's calendar, so no
 check reuses the code it checks. The feature part: every feature row's t_ns is the decision time 08:35 + i min CT
 on D (the cut-off; LT1 checks that nothing after it enters).
@@ -79,6 +80,16 @@ def books(d: str) -> dict:
     }
 
 
+def span_hi(label: str, t: int, end: int) -> int:
+    """End of the span a kept row is checked over. READING T-6 as ruled by R-L10 (lead E.33b, 2026-10-28 09:41):
+    FH: the possible span [t, t + L + h]; TB: every span the label can have, [t, t + 2L + h] (tau <= t + L + h, so
+    tau + L <= t + 2L + h), independent of the realised tau. max(., end) keeps a malformed realised end beyond it
+    inside the checks (tb_end_range / fh_end_exact count it as well)."""
+    h = H[label]
+    poss = t + L + h * MIN if label.startswith("F") else t + 2 * L + h * MIN
+    return max(poss, end)
+
+
 def check_table(df: pd.DataFrame, label: str, d: str, bk: dict | None, book_side: str) -> dict[str, int]:
     v = {r: 0 for r in RULES}
     h = H[label]
@@ -89,8 +100,8 @@ def check_table(df: pd.DataFrame, label: str, d: str, bk: dict | None, book_side
     tick = cal33.tick("ZM")
     rows = df[df["row_ok"]]
     for i, t, end in zip(rows["i"].tolist(), rows["t_ns"].tolist(), rows["span_end_ns"].tolist(), strict=True):
-        poss = t + L + h * MIN
-        hi = max(poss, end)
+        poss = t + L + h * MIN  # FH end; the TB realised end lies in (t + L, poss + L]
+        hi = span_hi(label, t, end)
         v["grid_time"] += int(t != t0 + i * MIN)
         v["open_0835"] += int(t < t0)
         v["close_1313"] += int(hi > close)

@@ -407,9 +407,9 @@ def _zm_loop(ax: Axis, c: dict, set_start: set, k_inst: list, r_inst: list, k083
                 book.mark_bad()
             if book.in_snapshot and not f & SNAP:
                 book.end_snapshot()
-            if act == F:
-                if oid in orders:  # F3.9: fills are not removals (ProtocolReview DO-16)
-                    pending[oid] = pending.get(oid, 0) + sz
+            if act == F:  # F3.9: fills are not removals (ProtocolReview DO-16); ruling R-B3-FD7:
+                # lots attributed by order id within the batch, whether or not the order is booked
+                pending[oid] = pending.get(oid, 0) + sz
             elif act in (A, C, M, R):
                 if act in (A, M) and side != S_B and side != S_A:
                     pass  # E.31: book records with side N are skipped

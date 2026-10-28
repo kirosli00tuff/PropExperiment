@@ -40,3 +40,56 @@ states and record counts only; no label, return or outcome), read through guard3
 | FA-30 | P0.3 line 63: "the last k minutes of time during which X was open, ending at t". | (A) as first coded: the regular schedule on every date. (B) Coder-B: the actual session. | LEAD RULING FD1/FD2 (2026-10-28), verbatim: "build the open-time axis per date from the actual session: on the early-close dates the time after the halt is closed (a closed t maps to the last open minute before the halt, as B does), and on scheduled late-open dates with no overnight session the window reaches back into the previous trade date's day session (F1 level samples still stop at the segment boundary, G2)." Implemented: D's open intervals from data.group_session.session_intervals (grains calendar via cal33: early halts cut the day session at 12:05; scheduled late opens and the post-Thanksgiving dates have no overnight segment); when D has no overnight segment, the previous trade date's last open interval comes first and its records are streamed before D's (D's fronts; equal to the previous date's fronts and segment on all 9 such dates). A decision or reference minute maps to the last axis mark at or before it (after a 12:05 halt: the 12:05 mark). F1.1, F1.2, F1.4, F1.6 are invalid when a sample point is on the previous date and that date is outside D's segment. The 9 dates: early close with overnight 2020-12-24; no overnight and early close 2021-11-26, 2022-11-25, 2023-11-24; no overnight 2021-07-06, 2022-07-05, 2023-07-05, 2023-12-26, 2024-01-02. | The lead's ruling. |
 | FA-31 | P0.3 sigma_X "over all 1-minute intervals inside 08:35-13:13 ... with valid mids at both ends"; F3.4 Dbar "(qb_m + qa_m)/2" at the reference minutes; F1.3 "1-minute samples (08:35-13:13 ...)"; F1.7/F4.7 "08:35:00 on D", "13:15:00 on the previous trade date". | With FA-30, an instant state at a closed minute could be read at the mapped mark (the halt) or as of the wall minute. | Instant states are read as of the wall minute (the last book update with ts_recv <= that instant): sigma's mids, Dbar's depths, F1.3's samples, the 08:35 and 13:15 levels. Only windows and their sample points (and M(t) of a feature row) use the mapped axis mark. | The ruling addresses windows ("the last k minutes ... ending at t"); these definitions name instants on the clock. Measured: after the 12:05 halt every wall-minute state up to 13:13 differs from the 12:05 state (68 of 68 minutes on 2020-12-24 and 2022-11-25; the book is not valid there), so these minutes leave sigma and Dbar instead of entering 68 copies of the halt state; the B3 comparison found sigma, F3.4's Dbar and F1.7 already equal to Coder-B's on the dates whose history holds an early close. |
 | FA-32 | C.1 "(t - 08:35)/(13:13 - 08:35) in minutes", C.9 "1{t >= 11:30}", F1.8/F4.8 "exp(-(t - 08:35)/30 min)", F4.9 "minutes from 08:35 to t", F4.13 "1{t >= 12:15}". | Wall minutes or mapped open minutes for a closed t. | Wall minutes i of the decision time (t = 08:35 + i min). | These are clock positions of the decision time, not windows; they differ from the open-time reading only after an early halt, on excluded dates (no row, no trade, not in any trailing reference). |
+
+## E.33b note (FeatureCoder-OpusXHigh, Coder-A takeover, 2026-10-28 09:19 PDT)
+
+- R-B3-FD7 applied (extends FA-11). Ruling (reports/stage_e33_protocol_readings.md, 09:12 PDT), verbatim: "Fix in
+  Coder-A: drop the book-membership gate on F records, keep the per-batch clear at F_LAST." feat33._zm_loop: an F
+  record now adds its lots to `pending[order id]` whether or not the order is in the book when the F record arrives
+  (the `if oid in orders` condition on F records is removed). Unchanged: the clear at every F_LAST (R-B3-FD5), the
+  clear on R, the pop when an order leaves the book, and the rest of the code. The only edit is in the F branch.
+- R-B3-FD6 ruled for Coder-A's side as coded: a record opens the F3.11 refill window only when its whole reduction is
+  fill lots of its batch (`_removal`: rest == 0) and the level is then empty. Code unchanged; pinned by a new test.
+- New tests in pipeline/tests/test_feat33.py:
+  `test_fd7_fill_of_a_not_yet_booked_order_is_attributed_within_its_batch` (F before A and C in one batch: Ca = 0,
+  no refill; the same lots in a later batch, with F_LAST after the F or after the A: Ca = 3) and
+  `test_fd6_mixed_fill_and_cancel_record_opens_no_refill_window` (fill 1 plus voluntary 2 in one C record: no
+  window, Ca = 2; the all-fill contrast: refill 1, Ca = 0). Red check: on the previous feat33 (66b4e251dce9, git
+  HEAD) the FD7 test fails (Ca 3 instead of 0) and the FD6 test passes.
+- Identity: feat33.py sha256 b216f11ee2df811cdeb857e2db524c37a930b4a843da3b599305b03a4a9ead6a; build_features33.py
+  and mbo_book31.py unchanged; code_sha12 efc132631cc1 (was 6873427a6150). Store:
+  /mnt/large-storage/market_data/PropExperiment/derived/e33/features/efc132631cc1/ (20 B3 dates, R-L5; 328 pass-1
+  dates).
+- Side effect to report: tests_b4/run_synth_features.py fingerprints feat33.py, so its pinned hash (66b4e251dce9)
+  no longer matches.
+- 09:25 PDT lead change (PipelineReview N11): the efc132631cc1 rebuild was stopped at 09:24:22 with 43 of 328
+  pass-1 dates done; that store is superseded and left in place. build_features33.pass1 now writes
+  `order_log` = dict(data33.ORDER_LOG) as it stands after the date's loads into its DONE info, and
+  build_labels33.build_date writes the same into its result and every per-label DONE marker. ORDER_LOG is per
+  process and cumulative, so a worker's later dates also carry earlier dates' entries. Keys are "<feed> <D>", so
+  every entry names its date. New tests: test_feat33 `test_pass1_done_records_the_loader_order_log` and
+  test_lab33 `test_build_date_records_the_loader_order_log` ({} on a well-ordered synthetic day; a planted decrease
+  gives 1 per planted feed; the re-sorted stream equals the well-ordered one). New identity: build_features33.py
+  sha256 5bb65afb1689faf46478c208fc8fd20865a953f9a3e07bd88c15709cc36a196d, feature code_sha12 2b30cb0e953b;
+  build_labels33.py sha256 e0da4cf1996a06608d9c39bf41856e11ee64b747845a8d363aaa74e1932ddab9, label code_sha12
+  4fd0bb31d210. Rebuild restarted at 09:28:48 PDT into features/2b30cb0e953b/.
+- 09:52 PDT lead ruling R-L10 (TB-SPAN), applied in lab33 (Coder-A labels): every P3.6 row rule of a TB row checks
+  the whole possible span [t, t + 2L + h] (lab33.tb_row_end): the locked-book row rule in label_row (also on the
+  m0-undefined branch), and rules 2 and 3 as TB row rules (lab33.tb_row_rule_fail, called from compute_label
+  before label_row). Entry rules stay on [t, t + L + h]; FH unchanged; span_end_ns stays the realised [t, tau + L]
+  (P3.7 weights unchanged). LT2's span_violations re-check uses [t, t + 2L + h] for TB rows. On the whole-minute
+  grid only the locked-book part can differ from the entry span (t + 2L + h <= 13:12:02; release windows start on
+  whole minutes). New tests in tests/test_lab33.py: `test_r_l10_tb_row_rules_check_the_whole_possible_span` and
+  `test_r_l10_tb_rules_2_and_3_on_the_whole_possible_span`. Red check on git HEAD's lab33: the early-hit case is
+  kept there (fail "") and dropped now. lab33.py sha256
+  e1c3c0163fb8d350997340e9e432ae3a0f3d9a2ae96f874b2cceaf8f4d9d2c7b; label code_sha12 b15c4ca10d68 (supersedes
+  4fd0bb31d210, which was never built).
+- Results (times from `date`, PDT). Features 2b30cb0e953b: run 09:28:48-09:54:37 (1 process until the proofs
+  ended at 09:50:35, then 4, resumed from DONE markers), rc 0. 328 pass-1 dates (all DONE, each with `order_log`,
+  all {}), 20 pass-2 dates, 5,460 rows; invalid cells F1_7 1,638, F1_8 1,638, F1_3 546, F3_7 73; manifest shas match
+  the files. Labels b15c4ca10d68 (sigma from features/2b30cb0e953b/_day): run 12:17:12-12:17:20, 2 processes, rc 0;
+  6 labels x 20 dates DONE, each marker with `order_log` {}; LT2 violations 0; r5_locked_span removed 0 rows.
+  Tests: test_feat33 68, test_lab33 45, tests_b4 test_lt3_embargo 3 and test_lt4_labels_handbuilt 32: 148 passed
+  (09:43:56); the label files again at 12:17:02: 77 passed. Logs: work/logs/feat_rebuild_2b30cb0e953b.log,
+  work/logs/lab_rebuild_b15c4ca10d68.log. Superseded partial store features/efc132631cc1/ (43 pass-1 dates) left
+  in place.

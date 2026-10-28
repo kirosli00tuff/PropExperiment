@@ -160,6 +160,7 @@ def build_date(task: dict[str, Any]) -> dict[str, Any]:
             raise
         recs = None
         book_missing = True  # excluded date without E.31 Z1 records: mid_move stays NaN (reported)
+    order_log = dict(data33.ORDER_LOG)  # PipelineReview N11: re-sorts by data33, after the load
     if recs is not None:
         front = int(cal33.fronts(d)["ZM"])
         t0 = time.perf_counter()
@@ -173,6 +174,7 @@ def build_date(task: dict[str, Any]) -> dict[str, Any]:
         "replay_s": round(t_replay, 2),
         "book_stats": dict(hist.stats) if hist is not None else {},
         "book_missing": book_missing,
+        "order_log": order_log,
     }
     for label in labels:
         t1 = time.perf_counter()
@@ -184,6 +186,7 @@ def build_date(task: dict[str, Any]) -> dict[str, Any]:
             "sigma_source": task["sigma_source"] if lb.LABELS[label][0] == "TB" else None,
             "rows_kept": excl["rows_kept"],
             "seconds": round(time.perf_counter() - t1, 3),
+            "order_log": order_log,
         }
         write_outputs(out / label, d, cols, excl, marker)
         res["labels"][label] = {

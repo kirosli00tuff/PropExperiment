@@ -84,7 +84,147 @@ def _entry_ok_from(hist: lab33.BookHistory, day: lab33.DayInputs, label: str, t:
     return not any(lab33.entry_rule_fails(hist, day, h, t).values())
 
 
+REASONS = ("usable", "usable_on_excluded_date", "not_in_grid", "no_production_features", "no_lt1_rebuild",
+           "no_label_table")
+_CTX: dict = {}
+
+
+def _new_cnt(configs: tuple[str, ...]) -> dict:
+    return {"draws": 0, "checks": 0, "decision_equal": 0, "decision_mismatch": [], "decided_trades": 0,
+            "fill_checks": 0, "fill_equal": 0, "fill_mismatch": [], "fill_vs_table_checks": 0,
+            "fill_vs_table_mismatch": [], "both_side_fill_checks": 0, "both_side_fill_equal": 0,
+            "both_side_fill_mismatch": [], "entry_ok_equal": 0, "entry_ok_checks": 0, "entry_ok_mismatch": [],
+            "skipped_not_in_grid": 0, "missing_inputs": [],
+            "per_config": {c: {r: 0 for r in REASONS} for c in configs}}
+
+
+def _merge(a: dict, b: dict) -> None:
+    for k, v in b.items():
+        if k == "per_config":
+            for c, rs in v.items():
+                for r, n in rs.items():
+                    a[k][c][r] += n
+        elif isinstance(v, list):
+            a[k].extend(v)
+        elif isinstance(v, int):
+            a[k] += v
+
+
+def _date_job(job: tuple[str, list[dict]]) -> dict:
+    """LT7 on one date's draws (forked worker; _CTX set before the fork). Counts only."""
+    os.nice(10) if os.getpriority(os.PRIO_PROCESS, 0) < 10 else None
+    d, items = job
+    pdir, seed, configs, labels = _CTX["pdir"], _CTX["seed"], _CTX["configs"], _CTX["labels"]
+    fdir, ldir, fold = _CTX["fdir"], _CTX["ldir"], _CTX["fold"]
+    cnt = _new_cnt(configs)
+    pc = cnt["per_config"]
+    pf = fdir / f"{d}.parquet"
+    if not pf.exists():
+        cnt["missing_inputs"].extend(f"{d} {x['i']}: no production feature table" for x in items)
+        for x in items:
+            for cid in configs:
+                pc[cid]["no_production_features"] += 1
+        return cnt
+    front = int(cal33.fronts(d)["ZM"])
+    stop = cal33.ct_ns(d, "13:20:00")
+    rec = data33.load_zm(d, cutoff_ns=stop - 1)
+    tick = cal33.tick("ZM")
+    day = _day_inputs(d)
+    hist_full = lab33.replay(rec, front, tick, end_ns=stop - 1)
+    prod_feat = pd.read_parquet(g.check_path(pf)).set_index("i")
+    lab_tabs = {}
+    for label in labels:
+        lp = ldir / label / f"{d}.parquet"
+        if lp.exists():
+            lab_tabs[label] = pd.read_parquet(g.check_path(lp), columns=[
+                "i", "entry_ok", "long_entry_ns", "short_entry_ns"]).set_index("i")
+    models: dict[tuple[str, int], dict] = {}
+    for x in items:
+        i, t = int(x["i"]), int(x["t_ns"])
+        lt1 = fdir / "_lt1" / str(t) / f"{d}.parquet"
+        if not lt1.exists():
+            cnt["missing_inputs"].append(f"{d} {i}: no LT1 rebuild")
+            for cid in configs:
+                pc[cid]["no_lt1_rebuild"] += 1
+            continue
+        cnt["draws"] += 1
+        tr_feat = pd.read_parquet(g.check_path(lt1)).set_index("i")
+        hist_t = lab33.replay(rec, front, tick, end_ns=t)
+        trunc_cache: dict[int, lab33.BookHistory] = {}
+        per_label = {}
+        for label in labels:
+            kind, h = lab33.LABELS[label]
+            if i > 277 - h:
+                continue
+            if label not in lab_tabs or i not in lab_tabs[label].index:
+                cnt["missing_inputs"].append(f"{d} i={i} {label}: no production label row")
+                continue
+            ok_prod = bool(lab_tabs[label].loc[i, "entry_ok"])
+            ok_tr = _entry_ok_from(hist_t, day, label, t)
+            cnt["entry_ok_checks"] += 1
+            cnt["entry_ok_equal"] += int(ok_prod == ok_tr)
+            if ok_prod != ok_tr:
+                cnt["entry_ok_mismatch"].append(f"{d} i={i} {label}")
+            fills = {}
+            for side in (lab33.LONG, lab33.SHORT):
+                ef = lab33.entry_fill(hist_full, kind, h, t, side)
+                cut = ef.fill_ns if ef.made else lab33.planned_exit_ns(kind, h, t) - 1
+                if cut not in trunc_cache:
+                    trunc_cache[cut] = lab33.replay(rec, front, tick, end_ns=cut)
+                rf = lab33.entry_fill(trunc_cache[cut], kind, h, t, side)
+                same = (ef.made, ef.fill_ns, ef.price, ef.flags) == (rf.made, rf.fill_ns, rf.price, rf.flags)
+                sname = "long" if side == lab33.LONG else "short"
+                cnt["both_side_fill_checks"] += 1
+                cnt["both_side_fill_equal"] += int(same)
+                if not same:
+                    cnt["both_side_fill_mismatch"].append(f"{d} i={i} {label} {sname}")
+                if ok_prod:
+                    cnt["fill_vs_table_checks"] += 1
+                    if int(lab_tabs[label].loc[i, f"{sname}_entry_ns"]) != (ef.fill_ns if ef.made else -1):
+                        cnt["fill_vs_table_mismatch"].append(f"{d} i={i} {label} {sname}")
+                fills[side] = same
+            per_label[label] = (ok_prod, ok_tr, fills)
+        for cid in configs:
+            label = cid[6:9]
+            if i > 277 - lab33.LABELS[label][1]:
+                cnt["skipped_not_in_grid"] += 1
+                pc[cid]["not_in_grid"] += 1
+                continue
+            if label not in per_label:
+                pc[cid]["no_label_table"] += 1
+                continue
+            pc[cid]["usable_on_excluded_date" if day.excluded else "usable"] += 1
+            ok_prod, ok_tr, fills = per_label[label]
+            k = fold[d]
+            if (cid, k) not in models:
+                models[(cid, k)] = s.load_fold_model(_model_path(pdir, seed, cid, k))
+            m = models[(cid, k)]
+            cols = list(m["columns"])
+            ev = []
+            for frame in (prod_feat, tr_feat):
+                p = s.predict_proba(m, frame.loc[[i], cols].to_numpy(dtype=np.float64))
+                el, es = s.expected_values(p, np.array(m["mu_long"]), np.array(m["mu_short"]))
+                ev.append((float(el[0]), float(es[0])))
+            dec_prod = s.decide(*ev[0]) if ok_prod else 0
+            dec_tr = s.decide(*ev[1]) if ok_tr else 0
+            cnt["checks"] += 1
+            cnt["decision_equal"] += int(dec_prod == dec_tr)
+            if dec_prod != dec_tr:
+                cnt["decision_mismatch"].append(f"{cid} {d} i={i}")
+            if dec_prod != 0:
+                cnt["decided_trades"] += 1
+                cnt["fill_checks"] += 1
+                same = fills[lab33.LONG if dec_prod > 0 else lab33.SHORT]
+                cnt["fill_equal"] += int(same)
+                if not same:
+                    cnt["fill_mismatch"].append(f"{cid} {d} i={i}")
+    return cnt
+
+
 def run(args: argparse.Namespace) -> dict:
+    """Per-configuration accounting (E.33b): every (draw, configuration) pair is counted once under REASONS:
+    usable (a decision check), usable_on_excluded_date (a check on a P1.4-excluded date: no trade on both sides),
+    not_in_grid (i > 277 - h), no_production_features, no_lt1_rebuild, no_label_table (no label row at (D, i))."""
     pdir = Path(args.proofs_dir)
     configs = tuple(args.configs.split(",")) if args.configs else CONFIGS
     have, need = models_ready(pdir, args.seed, configs)
@@ -92,108 +232,26 @@ def run(args: argparse.Namespace) -> dict:
         return {"status": "pending", "models_found": have, "models_needed": need}
     draw = json.loads(Path(args.draw).read_text())["times"]
     oof = [x.isoformat() for x in cal33.oof_dates()]
-    fold = fold_of(oof)
-    fdir, ldir = Path(args.features), Path(args.labels)
-    labels = sorted({c[6:9] for c in configs})
-    cnt = {"draws": 0, "checks": 0, "decision_equal": 0, "decision_mismatch": [], "decided_trades": 0,
-           "fill_checks": 0, "fill_equal": 0, "fill_mismatch": [], "fill_vs_table_checks": 0,
-           "fill_vs_table_mismatch": [], "both_side_fill_checks": 0, "both_side_fill_equal": 0,
-           "both_side_fill_mismatch": [], "entry_ok_equal": 0, "entry_ok_checks": 0, "entry_ok_mismatch": [],
-           "skipped_not_in_grid": 0, "missing_inputs": []}
-    models: dict[tuple[str, int], dict] = {}
     by_date: dict[str, list] = {}
     for x in draw:
         by_date.setdefault(x["date"], []).append(x)
-    for d, items in sorted(by_date.items()):
-        pf = fdir / f"{d}.parquet"
-        if not pf.exists():
-            cnt["missing_inputs"].extend(f"{d} {x['i']}: no production feature table" for x in items)
-            continue
-        front = int(cal33.fronts(d)["ZM"])
-        stop = cal33.ct_ns(d, "13:20:00")
-        rec = data33.load_zm(d, cutoff_ns=stop - 1)
-        tick = cal33.tick("ZM")
-        day = _day_inputs(d)
-        hist_full = lab33.replay(rec, front, tick, end_ns=stop - 1)
-        prod_feat = pd.read_parquet(g.check_path(pf)).set_index("i")
-        lab_tabs = {}
-        for label in labels:
-            lp = ldir / label / f"{d}.parquet"
-            if lp.exists():
-                lab_tabs[label] = pd.read_parquet(g.check_path(lp), columns=[
-                    "i", "entry_ok", "long_entry_ns", "short_entry_ns"]).set_index("i")
-        for x in items:
-            i, t = int(x["i"]), int(x["t_ns"])
-            lt1 = fdir / "_lt1" / str(t) / f"{d}.parquet"
-            if not lt1.exists():
-                cnt["missing_inputs"].append(f"{d} {i}: no LT1 rebuild")
-                continue
-            cnt["draws"] += 1
-            tr_feat = pd.read_parquet(g.check_path(lt1)).set_index("i")
-            hist_t = lab33.replay(rec, front, tick, end_ns=t)
-            trunc_cache: dict[int, lab33.BookHistory] = {}
-            per_label = {}
-            for label in labels:
-                kind, h = lab33.LABELS[label]
-                if i > 277 - h:
-                    continue
-                if label not in lab_tabs:
-                    cnt["missing_inputs"].append(f"{d} {label}: no production label table")
-                    continue
-                ok_prod = bool(lab_tabs[label].loc[i, "entry_ok"])
-                ok_tr = _entry_ok_from(hist_t, day, label, t)
-                cnt["entry_ok_checks"] += 1
-                cnt["entry_ok_equal"] += int(ok_prod == ok_tr)
-                if ok_prod != ok_tr:
-                    cnt["entry_ok_mismatch"].append(f"{d} i={i} {label}")
-                fills = {}
-                for side in (lab33.LONG, lab33.SHORT):
-                    ef = lab33.entry_fill(hist_full, kind, h, t, side)
-                    cut = ef.fill_ns if ef.made else lab33.planned_exit_ns(kind, h, t) - 1
-                    if cut not in trunc_cache:
-                        trunc_cache[cut] = lab33.replay(rec, front, tick, end_ns=cut)
-                    rf = lab33.entry_fill(trunc_cache[cut], kind, h, t, side)
-                    same = (ef.made, ef.fill_ns, ef.price, ef.flags) == (rf.made, rf.fill_ns, rf.price, rf.flags)
-                    sname = "long" if side == lab33.LONG else "short"
-                    cnt["both_side_fill_checks"] += 1
-                    cnt["both_side_fill_equal"] += int(same)
-                    if not same:
-                        cnt["both_side_fill_mismatch"].append(f"{d} i={i} {label} {sname}")
-                    if ok_prod:
-                        cnt["fill_vs_table_checks"] += 1
-                        if int(lab_tabs[label].loc[i, f"{sname}_entry_ns"]) != (ef.fill_ns if ef.made else -1):
-                            cnt["fill_vs_table_mismatch"].append(f"{d} i={i} {label} {sname}")
-                    fills[side] = same
-                per_label[label] = (ok_prod, ok_tr, fills)
-            for cid in configs:
-                label = cid[6:9]
-                if label not in per_label:
-                    cnt["skipped_not_in_grid"] += int(i > 277 - lab33.LABELS[label][1])
-                    continue
-                ok_prod, ok_tr, fills = per_label[label]
-                k = fold[d]
-                if (cid, k) not in models:
-                    models[(cid, k)] = s.load_fold_model(_model_path(pdir, args.seed, cid, k))
-                m = models[(cid, k)]
-                cols = list(m["columns"])
-                ev = []
-                for frame in (prod_feat, tr_feat):
-                    p = s.predict_proba(m, frame.loc[[i], cols].to_numpy(dtype=np.float64))
-                    el, es = s.expected_values(p, np.array(m["mu_long"]), np.array(m["mu_short"]))
-                    ev.append((float(el[0]), float(es[0])))
-                dec_prod = s.decide(*ev[0]) if ok_prod else 0
-                dec_tr = s.decide(*ev[1]) if ok_tr else 0
-                cnt["checks"] += 1
-                cnt["decision_equal"] += int(dec_prod == dec_tr)
-                if dec_prod != dec_tr:
-                    cnt["decision_mismatch"].append(f"{cid} {d} i={i}")
-                if dec_prod != 0:
-                    cnt["decided_trades"] += 1
-                    cnt["fill_checks"] += 1
-                    same = fills[lab33.LONG if dec_prod > 0 else lab33.SHORT]
-                    cnt["fill_equal"] += int(same)
-                    if not same:
-                        cnt["fill_mismatch"].append(f"{cid} {d} i={i}")
+    _CTX.update(pdir=pdir, seed=args.seed, configs=configs, labels=sorted({c[6:9] for c in configs}),
+                fdir=Path(args.features), ldir=Path(args.labels), fold=fold_of(oof))
+    cnt = _new_cnt(configs)
+    jobs = sorted(by_date.items())
+    procs = max(1, min(int(getattr(args, "procs", 1)), 3))
+    if procs == 1:
+        for j in jobs:
+            _merge(cnt, _date_job(j))
+    else:
+        import multiprocessing as mp  # noqa: PLC0415
+        with mp.get_context("fork").Pool(processes=procs) as pool:
+            for part in pool.imap_unordered(_date_job, jobs):
+                _merge(cnt, part)
+    for k in ("decision_mismatch", "fill_mismatch", "fill_vs_table_mismatch", "both_side_fill_mismatch",
+              "entry_ok_mismatch", "missing_inputs"):
+        cnt[k] = sorted(cnt[k])
+    cnt["draws_total"] = len(draw)
     cnt["status"] = "ran"
     return cnt
 
@@ -206,6 +264,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--draw", default=str(PIPE.parent / "LT1_draw.json"))
     ap.add_argument("--configs", default=None, help="comma list (dry runs); default the 20 LT7 configurations")
+    ap.add_argument("--procs", type=int, default=1, help="dates in parallel (at most 3)")
     ap.add_argument("--out", required=True)
     args = ap.parse_args(argv)
     os.nice(10)
@@ -213,7 +272,8 @@ def main(argv: list[str] | None = None) -> int:
     res = run(args)
     res["seconds"] = round(time.time() - t0, 1)
     Path(args.out).write_text(json.dumps(res, indent=1))
-    print(json.dumps({k: (len(v) if isinstance(v, list) else v) for k, v in res.items()}), flush=True)
+    print(json.dumps({k: (len(v) if isinstance(v, list) else v) for k, v in res.items() if k != "per_config"}),
+          flush=True)
     return 0
 
 

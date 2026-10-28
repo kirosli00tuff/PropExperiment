@@ -1,6 +1,7 @@
 # B3 agreement summary (TestCoder-OpusXHigh; INTERIM, updated as comparisons run)
 
-Last update: 2026-10-28 07:05 PDT (FINAL for this session: run full_r2 on the fixed builds; see the first section). Harness: reports/stage_e33_briefs/work/pipeline/tests_b3/compare_b3.py (per-run
+Last update: 2026-10-28 12:23 PDT (E.33b TestCoder: run full_r3 on the ruled builds, PASSED; see the first section;
+full_r2 below is the E.33 record). Harness: reports/stage_e33_briefs/work/pipeline/tests_b3/compare_b3.py (per-run
 tables in reports/stage_e33_briefs/work/b3_runs/<run>.md; mismatching cells with both values in
 DERIVED/b3/mismatches_<run>.parquet, never printed). INTERFACE rule 1: counts and mismatch locations only.
 
@@ -16,6 +17,27 @@ Tolerances (stated): labels, classes (y), entry_ok, row_ok, span_end_ns, n_long,
 |a - b| <= max(1e-9 max(|a|, |b|), 1e-12) (G7), NaN == NaN counted separately; rows joined on i (a row on one side
 only is a mismatch of column `__row__`). Coder-A's `mid_move` column (reported-only, lab33 17934b7b23b1) has no
 Coder-B counterpart and is not compared.
+
+## full_r3 on the ruled builds (E.33b, run 12:21:52-12:21:59 PDT): PASSED
+
+Inputs: features A = DERIVED/features/2b30cb0e953b (feat33 b216f11ee2df, build_features33 5bb65afb1689: FD6 as
+ruled (a) was already A's reading; FD7 gate removed per R-B3-FD7) against features B = implB/features/0485beafebbb
+(featB 33269b3a4b4e, dayB 87a57970fb21, replayB 5910d217000a, calB e54f05169082, build_featB b9fee7234fcb: R-B3-FD6
+(a), R-B3-N10, R-L11); labels A = DERIVED/labels/b15c4ca10d68 (lab33 e1c3c0163fb8, build_labels33 e0da4cf1996a;
+R-L10 TB row span [t, t + 2L + h], N11 order log; TB sigma from features/2b30cb0e953b/_day) against implB/labels
+(efdde5c74ee1). Per-run tables: b3_runs/full_r3.md; cells: DERIVED/b3/mismatches_full_r3.parquet (0 rows).
+Same harness and tolerances as above (compare_b3.py unchanged since 02:03).
+
+| Family | Rows joined | Columns | Disagreeing cells |
+|---|---|---|---|
+| Features | 5,460 (20 dates x 273) | 59 | 0 in every column (each 5,460 agree / 0 disagree); NaN cells A 0, B 0 |
+| F05 / F15 / F30 / F60 | 5,460 / 5,260 / 4,960 / 4,360 | 19 + `__row__` | 0 in every column, every date |
+| T15 / T30 | 5,260 / 4,960 | 19 + `__row__` | 0 in every column, every date (R-L10: A now uses B's span reading (d); 0 rows changed side) |
+| sigma_ZM, sigma_ZS, sigma_ZL | 20 dates | 3 | 0 (A feature = B feature = B label-builder sigma_ZM on all 20; ZS, ZL A = B on all 20) |
+
+Per-column counts for the features (59 rows of the table) and the labels (20 rows x 6 labels) are in
+b3_runs/full_r3.md. The FD6 and FD7 differences of full_r2 are gone (F3_11 5,385 -> 0, F3_9 10 -> 0); no other
+column changed. No diagnosis to route.
 
 ## FINAL rerun on the fixed builds (run full_r2, 07:02 PDT)
 

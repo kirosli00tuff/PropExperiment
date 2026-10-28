@@ -38,3 +38,10 @@ dates (load from other jobs is the likely cause; not examined).
 816 day raws x 4.3-6.1 s mean / 3 workers = about 20-28 min, plus about 6 min of features (816 x 0.43 s, one
 process), so about 26-35 min at 3 workers; peak memory about 0.5 GB per worker (day arrays plus the replay's
 Python objects). Disk: about 190 KB per day raw (155 MB for 816) plus about 130 KB per feature parquet.
+
+## E.33b rebuild (lead rulings R-B3-FD6, R-B3-N10, R-L11; 2026-10-28)
+
+| Run | Code | Dates | Workers | Wall | Per day raw (s) | Features |
+|---|---|---|---|---|---|---|
+| FD6+N10 rebuild, stopped for R-L11 (superseded, no features) | 1570ccd23c76 | 263 of 328 raws | 1 (proof job running) | 09:17:29-09:43:17 (25.8 min) | about 5.9 | - |
+| **R-L11 rebuild, final** | 0485beafebbb | 20 targets, 328 raws | 1 until the proof job ended 09:50:38, then 3 | 09:45:07-09:57:38 (12.5 min) | median 3.9 (3-worker part) | 5.46 s |

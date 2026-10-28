@@ -317,3 +317,91 @@ def test_compute_day_junction_sample_is_0745_state() -> None:
     assert bool(ok[0, 2]) and m2[0, 2] == 803 * P  # t - 2 = 08:33
     assert not bool(ok[0, 4])  # t - 4 = 08:31: the pre-open crossed state
     assert out["zm0830_ok"] is False or not out["zm0830_ok"]
+
+
+# ---------------------------------------------------------- lead rulings, E.33b 2026-10-28 ----
+def _touch_event(fill: int, reduce_rec: tuple) -> np.ndarray:
+    """Ask touch 101 holds one order (id 2, 5 lots). At t + 1 s one event batch trades ``fill``
+    lots of it (T + F) and then ``reduce_rec`` (C or M of order 2) takes the order off 101, which
+    leaves the ask touch at 0. Adds at 101 follow 50 ms (inside 100 ms) and 150 ms later."""
+    t = T0
+    t1 = t + NS
+    return mbo([
+        (t, t, "R", "N", 0, 0, 0, SNAP),
+        (t, t, "A", "B", 100, 10, 1, SNAP),
+        (t, t, "A", "A", 101, 5, 2, SNAP | LAST),                        # update 0
+        (t1, t1, "T", "B", 101, fill, 0, 0),
+        (t1, t1, "F", "A", 101, fill, 2, 0),
+        (t1, t1) + reduce_rec + (LAST,),                                 # update 1
+        (t1 + 50 * MS, t1 + 50 * MS, "A", "A", 101, 3, 4, LAST),         # update 2
+        (t1 + 150 * MS, t1 + 150 * MS, "A", "A", 101, 2, 5, LAST),       # update 3
+    ])
+
+
+@pytest.mark.parametrize("reduce_rec", [
+    ("C", "A", 101, 5, 2),   # 2 lots filled, the remaining 3 cancelled in the same record
+    ("M", "A", 102, 3, 2),   # 2 lots filled, the remaining 3 modified away to 102
+])
+def test_fd6_fill_plus_voluntary_remainder_opens_no_refill_window(reduce_rec: tuple) -> None:
+    """R-B3-FD6: a record whose reduction is partly fill lots of its batch and partly a voluntary
+    remainder does not open a refill window, though the touch reaches 0; its non-fill remainder
+    is a touch removal (F3.9)."""
+    z = rb.replay_zm(_touch_event(2, reduce_rec))
+    assert z.book.aq[1, 0] == (3 if reduce_rec[0] == "M" else 0)  # 101 empty; M rests at 102
+    assert z.book.apx[1, 0] == (102 * P if reduce_rec[0] == "M" else rb.NOPX)
+    assert z.refill_ts.tolist() == [] and z.refill_side.tolist() == []
+    assert z.rem_side.tolist() == [1] and z.rem_qty.tolist() == [3]
+    assert z.rem_ts.tolist() == [T0 + NS]
+
+
+def test_fd6_all_fill_emptying_record_opens_refill_window() -> None:
+    """R-B3-FD6: the same layout with all 5 lots filled: the C is wholly fill lots and empties the
+    touch, so the add 50 ms later is a refill (ask) and the one at 150 ms is not; no removal."""
+    z = rb.replay_zm(_touch_event(5, ("C", "A", 101, 5, 2)))
+    assert z.book.apx[1, 0] == rb.NOPX and not bool(z.book.valid[1])
+    assert z.refill_side.tolist() == [1]
+    assert z.refill_ts.tolist() == [T0 + NS + 50 * MS]
+    assert z.rem_qty.tolist() == []
+
+
+@pytest.mark.parametrize("flag", [BAD, mb.F_TOB, mb.F_MBP])
+def test_n10_flagged_r_record_leaves_the_book_bad_until_the_next_r(flag: int) -> None:
+    """R-B3-N10 (= R-B3-D1): an R record carrying F_MAYBE_BAD_BOOK (or F_TOB/F_MBP) clears the
+    book and then marks it bad, so every update until the next (unflagged) R is invalid."""
+    t = T0
+    rec = mbo([
+        (t, t, "R", "N", 0, 0, 0, SNAP | flag),
+        (t, t, "A", "B", 100, 1, 1, SNAP),
+        (t, t, "A", "A", 102, 1, 2, SNAP | LAST),                       # update 0: bad
+        (t + NS, t + NS, "A", "B", 99, 1, 3, LAST),                      # update 1: still bad
+        (t + 2 * NS, t + 2 * NS, "R", "N", 0, 0, 0, SNAP),
+        (t + 2 * NS, t + 2 * NS, "A", "B", 100, 1, 1, SNAP),
+        (t + 2 * NS, t + 2 * NS, "A", "A", 102, 1, 2, SNAP | LAST),     # update 2: good again
+    ])
+    z = rb.replay_zm(rec)
+    assert z.book.valid.tolist() == [False, False, True]
+    assert z.book.notbad.tolist() == [False, False, True]
+    assert z.book.bpx[1, 0] == 100 * P and z.book.apx[1, 0] == 102 * P  # two-sided, not crossed
+    assert z.counts["clears"] == 2
+
+
+def test_rl11_range_uses_only_the_last_update_of_each_ts_recv() -> None:
+    """R-L11 (F4.6): Hi and Lo run over the as-of function M(u), u in [08:30, t]. Of two book
+    updates sharing one ts_recv only the last is a state as of an instant: the first of each pair
+    below (a new high at 08:40, a new low at 09:00, a valid high followed by a crossed state at
+    09:10) never sets Hi or Lo. Units mid2 = bid + ask."""
+    d = date(2022, 2, 15)
+    g = calB.grid_ns(d)
+    t1, t2, t3 = calB.ct(d, 8, 40), calB.ct(d, 9, 0), calB.ct(d, 9, 10)
+    zm = _zm_arrays([calB.ct(d, 8, 20), t1, t1, t2, t2, t3, t3],
+                    [400 * P, 404 * P, 401 * P, 398 * P, 400 * P, 410 * P, 412 * P],
+                    [401 * P, 405 * P, 402 * P, 399 * P, 401 * P, 411 * P, 411 * P],
+                    [True, True, True, True, True, True, False])
+    out = {"zm0830": 801 * P, "zm0830_ok": True}  # the state as of 08:30:00 (the 08:20 update)
+    dayB._range(out, d, g, zm)
+    i_0835, i_0841, i_0901, i_0911 = 0, 6, 26, 36
+    assert bool(out["rp_ok"][i_0835]) and out["rp_hi"][i_0835] == out["rp_lo"][i_0835] == 801 * P
+    assert out["rp_hi"][i_0841] == 803 * P and out["rp_lo"][i_0841] == 801 * P  # not 809
+    assert out["rp_hi"][i_0901] == 803 * P and out["rp_lo"][i_0901] == 801 * P  # not 797
+    assert out["rp_hi"][i_0911] == 803 * P and out["rp_lo"][i_0911] == 801 * P  # not 821
+    assert bool(out["rp_ok"].all())

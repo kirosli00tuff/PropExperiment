@@ -150,7 +150,11 @@ def replay_zm(rec: np.ndarray, query_ns: np.ndarray | None = None) -> ZMArrays:
             rem_ts.append(ts)
             rem_side.append(side)
             rem_qty.append(rem)
-        if fill > 0 and price == best and book.level_total(side, price) - red <= 0:
+        # READING R-B3-FD6 (lead, 2026-10-28): only a record whose WHOLE reduction is fill lots
+        # of its event batch (rem == 0) and that leaves the touch level at 0 opens a refill
+        # window; a fill plus a voluntary remainder in one record does not (the remainder is
+        # still a removal above)
+        if fill > 0 and rem == 0 and price == best and book.level_total(side, price) - red <= 0:
             dep[(side, price)] = ts  # the touch reached 0 through trades
 
     for i in range(n):
@@ -174,6 +178,8 @@ def replay_zm(rec: np.ndarray, query_ns: np.ndarray | None = None) -> ZMArrays:
                 pending[oid] = pending.get(oid, 0) + sz
             elif act == R:
                 book.clear(bool(fl & SNAP))
+                if fl & (BAD | TOBMBP):  # READING R-B3-N10 (= R-B3-D1): clear, then mark bad
+                    book.mark_bad()
                 cnt["clears"] += 1
                 pending.clear()
                 dep.clear()

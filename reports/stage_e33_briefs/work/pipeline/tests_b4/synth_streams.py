@@ -69,6 +69,11 @@ class Episodes:
     equal_recv_share: float = 0.02  # share of events stamped with the previous event's ts_recv
     second_instrument: bool = True  # interleave ZM.v.1 records (another instrument id)
     side_n_adds: int = 2  # A records with side N (skipped by the book drivers)
+    # B3 FD6 (R-B3-FD6): the touch level emptied by ONE record whose reduction is part fill lots and part a voluntary
+    # remainder (an order partly filled, then its whole displayed size cancelled), refilled 40 ms later
+    mixed_trades: tuple[tuple[int, int, float], ...] = ()
+    # B3 FD7 (R-B3-FD7): an F record naming an order not yet in the book; the same batch then adds and cancels it
+    unbooked_fills: tuple[tuple[int, int, float], ...] = ()
 
 
 @dataclass
@@ -213,8 +218,7 @@ def make_zm_day(day: date, seed: int, prm: ZMParams | None = None, ep: Episodes 
     for ts in times.tolist():
         while nxt is not None and nxt[0] <= ts:
             item = (max(nxt[0], last_ts + 1), nxt[1])
-            fair = _special(out, book, rng, prm, item, fair, tick, ep)
-            last_ts = item[0]
+            fair, last_ts = _special(out, book, rng, prm, item, fair, tick, ep)
             nxt = next(s_iter, None)
         if ts <= last_ts:
             ts = last_ts + 1
@@ -265,13 +269,20 @@ def _special_times(day: date, ep: Episodes) -> list[tuple]:
         (hh, mm, ss), dur = ep.crossed
         t0 = ct_ns(day, hh, mm, ss)
         sp += [(t0, "cross_on"), (t0 + int(dur * NS), "cross_off")]
+    sp += [(ct_ns(day, *x), f"mixed_trade_{j}") for j, x in enumerate(ep.mixed_trades)]
+    sp += [(ct_ns(day, *x), f"unbooked_fill_{j}") for j, x in enumerate(ep.unbooked_fills)]
     return sp
 
 
 def _special(out: _Out, book: _Book, rng: np.random.Generator, prm: ZMParams, item: tuple, fair: int,
-             tick: int, ep: Episodes) -> int:
+             tick: int, ep: Episodes) -> tuple[int, int]:
+    """One episode record set at item's time. Returns (fair, the last ts_recv written)."""
     ts, kind = item
     iid = prm.iid
+    if kind.startswith("mixed_trade_"):
+        return fair, _mixed_trade(out, book, rng, iid, ts, tick, int(kind.rsplit("_", 1)[1]))
+    if kind.startswith("unbooked_fill_"):
+        return fair, _unbooked_fill(out, book, iid, ts, tick, int(kind.rsplit("_", 1)[1]))
     if kind == "empty_ask_on":
         oids = [o for o, (s, _p) in book.owner.items() if s == SA]
         for oid in oids:
@@ -301,7 +312,56 @@ def _special(out: _Out, book: _Book, rng: np.random.Generator, prm: ZMParams, it
         if oid is not None and oid in book.owner:
             _s, px, sz = book.remove(oid)
             out.rec(ts, iid, oid, px * tick, sz, F_LAST, C_, SB)
-    return fair
+    return fair, ts
+
+
+def _mixed_trade(out: _Out, book: _Book, rng: np.random.Generator, iid: int, ts: int, tick: int, j: int) -> int:
+    """FD6 case: an order of 6 lots joins the touch (own event); 1 ms later a trade fills every order of the level
+    fully except that one, which gets 2 lots filled and then a C record for its whole displayed size (2 fill lots
+    and a voluntary remainder of 4) as the level's last record, so ONE mixed record empties the touch; an add at the
+    same price 40 ms later. Under R-B3-FD6 (a) that record opens no refill window. Skipped (nothing written) when
+    the side is thin or blocked."""
+    rest = SA if j % 2 == 0 else SB
+    agg = SB if rest == SA else SA
+    px = book.best(rest)
+    if px is None or rest == book.blocked or len(book.levels[rest]) <= 2:
+        return ts
+    oid_m = book.new(rest, px, 6)
+    out.rec(ts, iid, oid_m, px * tick, 6, F_LAST, A_, rest)
+    t2 = ts + MS
+    lvl = [(o, s) for o, s in book.levels[rest][px]]
+    fills = [(o, 2 if o == oid_m else s) for o, s in lvl]
+    out.rec(t2, iid, 0, px * tick, sum(f for _o, f in fills), 0, T_, agg)
+    for o, f in fills:
+        out.rec(t2, iid, o, px * tick, f, 0, F_, rest)
+    for o, s in lvl:
+        book.remove(o)
+        out.rec(t2, iid, o, px * tick, s, 0, C_, rest)
+    out.close_event()
+    t3 = t2 + 40 * MS
+    oid = book.new(rest, px, int(rng.integers(1, 21)))
+    out.rec(t3, iid, oid, px * tick, book.levels[rest][px][-1][1], F_LAST, A_, rest)
+    return t3
+
+
+def _unbooked_fill(out: _Out, book: _Book, iid: int, ts: int, tick: int, j: int) -> int:
+    """FD7 case (as on 2022-09-01 10:27:10 CT): one batch T, F for a new order id (not in the book), A of that
+    order at the touch price, C of it. Even j: 17 lots filled, 17 added and cancelled (all fill lots, no removal
+    under R-B3-FD7 (b)); odd j: 3 lots filled, 5 added and cancelled (3 fill lots and a removal of 2). The visible
+    book is unchanged. Skipped when the side is empty or blocked."""
+    rest = SB if j % 2 == 0 else SA
+    agg = SA if rest == SB else SB
+    px = book.best(rest)
+    if px is None or rest == book.blocked:
+        return ts
+    oid = book.next_oid
+    book.next_oid += 1
+    q, size = (17, 17) if j % 2 == 0 else (3, 5)
+    out.rec(ts, iid, 0, px * tick, q, 0, T_, agg)
+    out.rec(ts, iid, oid, px * tick, q, 0, F_, rest)
+    out.rec(ts, iid, oid, px * tick, size, 0, A_, rest)
+    out.rec(ts, iid, oid, px * tick, size, F_LAST, C_, rest)
+    return ts
 
 
 def _ev_add(out: _Out, book: _Book, rng: np.random.Generator, prm: ZMParams, ts: int, tick: int) -> None:

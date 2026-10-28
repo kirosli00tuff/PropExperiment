@@ -1,8 +1,45 @@
 # B4 leakage and pipeline tests (protocol P4.1) and record-level synthetic streams (P4.2 first bullet)
 
-TestCoder-OpusXHigh, Stage E.33. FINAL for this session (07:06 PDT 2026-10-28). Times PDT from `date`. Tests live in
+TestCoder-OpusXHigh, Stage E.33 (to 07:06 PDT 2026-10-28) and E.33b (from 10:01 PDT; section "E.33b runs" first). Times PDT from `date`. Tests live in
 reports/stage_e33_briefs/work/pipeline/tests_b4/; run results in reports/stage_e33_briefs/work/b4_runs/.
 INTERFACE rule 1: real-data results below are counts only.
+
+## E.33b runs (TestCoder-OpusXHigh, 2026-10-28; ruled code: features A 2b30cb0e953b, B 0485beafebbb; labels A b15c4ca10d68, B efdde5c74ee1)
+
+Harness edits (test code only; logged here): (1) tests_b4/lt2_span.py: span_hi, the TB row is checked over every
+span it can have, [t, t + 2L + h] (R-L10; reading T-6 updated), FH over [t, t + L + h]; tests_b4/test_lt2_span.py
+(6 tests, 4 of them fail under the old union reading max(t + L + h, realised end)). (2) tests_b4/run_synth_features.py:
+--seed was ignored (SEED stayed 7, so runs 7, 8 and 9 all generated with seed 7; fixed: set before any fork);
+per-date episodes (target k carries the label run's set: k = 11 the R carrying F_MAYBE_BAD_BOOK, 3 and 19 an empty
+ask, 7 a bad book ended by an R, 15 and 23 a locked book at a decision minute); every date carries the B3 plants
+(6 FD6 records: a touch level emptied by one part-fill, part-cancel record, refilled 40 ms later; 4 FD7 batches: an
+F record for an order not yet in the book, added and cancelled in the batch, 17/17 lots or 3 filled of 5); the oracle
+follows R-B3-D1 (clear, then mark bad) and R-L11 (F4.6 over the as-of states, the last update at each distinct
+ts_recv); --expect-a-sha / --expect-b-sha refuse a run on other code, and code_used.json logs every stage's code.
+No stale feat33 pin was found in any harness .py (66b4e251dce9 appears only in report text and the seed-9 log).
+(3) tests_b4/synth_streams.py: Episodes.mixed_trades / unbooked_fills (empty by default; streams of the old episode
+sets byte-identical, checked on 5 dates); tests_b4/test_synth_plants.py (2 tests). (4) tests_b4/lt7_causality.py:
+dates in parallel (--procs), a per-configuration count of every (draw, configuration) pair (usable, usable on an
+excluded date, not in grid, no production features, no LT1 rebuild, no label row); smoke-checked against the 03:12
+partial run (same inputs: identical counts, 50/50 decisions, 11/11 fills). (5) tests_b4/run_lt1_lt7.py: steps in the
+given order (1,2p,3,4,2r), label folder by label code sha (--expect-label-sha), counts of draws without a production
+table.
+
+| Test | Run | Counts | Status |
+|---|---|---|---|
+| B4 record-level synthetic feature run, seed 10 (P4.2 first bullet) | gen + B 10:11:17-10:15:56, A + compare 12:22:19-12:25:25 PDT (2 procs), DERIVED/b4/synthfeat/10/ (features_summary.json, code_used.json: A 2b30cb0e953b and B 0485beafebbb at both stages) | 30 OOF targets up to 2024-01-10, 51 dates generated; plants in the streams: 304 FD6 records, 203 FD7 batches (none after the 2023-11-24 halt, by design), 1 flagged R (2023-12-13 = target 11); 8,190 rows: 0 disagreeing cells in 59/59 columns, NaN 0 / 0; sigma_ZM, ZS, ZL equal on 30/30; oracle (C.1-C.4, C.15, F4.1 i >= 1, F4.6) 0 mismatches for A and for B | PASSED |
+| LT2 span, run r5 (R-L10 span) | 12:22:54-12:23:56 PDT, b4_runs/LT2_r5.json; labels A b15c4ca10d68 and B efdde5c74ee1, features A 2b30cb0e953b and B 0485beafebbb, the 20 B3 dates | 46,886 kept rows (each side F05 4,303, F15 4,113, F30 3,828, F60 3,258, T15 4,113, T30 3,828), 0 violations on every rule, 0 errors; feature rows 5,460 each side, 0 bad t_ns | PASSED |
+| tests_b4 suite | 12:25:56-12:27:18 PDT, logs/pytest_tests_b4_e33b.log | 61 passed (LT3 embargo 3, LT4 handbuilt incl. R-B3-D1/D2 on lab33 b15c4ca10d68 and labB, LT5 canary 3, LT6 guard classes, compare_b3, LT2 span 6, synth plants 2) | PASSED |
+| LT1 production store (step 1) | run_lt1_lt7.py --expect-sha 2b30cb0e953b --expect-label-sha b15c4ca10d68 --steps 1,2p,3,4,2r --recompute-n 200 --procs 3 (one detached job, nice 10, 1 BLAS thread a process; logs/lt1_lt7_2b30cb0e953b.log), step 1 12:21:39-12:44:57 PDT (1,399 s) | DERIVED/b4/lt_features/2b30cb0e953b: 816 pass-1 dates, 178 pass-2 dates (the draw dates) | built |
+| LT1 truncation, prior=production (R-L9 (a)) | step 2p 12:44:57-12:48:16 PDT (199 s), b4_runs/LT1_full_2b30cb0e953b.json; draw LT1_draw.json (seed 20261027, 200 times on 178 dates, 11 on excluded dates) | 200 of 200 checked (0 without a production table): 0 draws with a column outside G7 (59 columns each), 0 rows after t | PASSED |
+| LT7 simulator causality | step 3 (production labels of the 178 dates, lab33 b15c4ca10d68, TB sigma from step 1's _day; DERIVED/b4/lt_labels/b15c4ca10d68) 12:48:16-12:49:23; step 4 12:49:23-12:51:36 PDT (133 s, 3 procs), b4_runs/LT7_2b30cb0e953b.json; seed-1 null proof fold models (20 configurations x 6 folds, read only); rebuilt rows = the prior=production LT1 rebuilds (D re-streamed from all four inputs truncated at t) | 3,620 (draw, configuration) decision checks: 3,620 equal; 259 decided trades: 259 entry fills equal; both-side fills 724 / 724 equal; production fill time vs the label table's entry_ns 622 checks, 0 mismatches; entry_ok (lab33 entry rules on ZM records truncated at t vs the table) 362 / 362 equal. Usable draws per configuration: each F15 configuration 190 of 200 (179 + 11 on excluded dates, where both sides give no trade), 10 unusable because i > 262 (outside G_15); each T30 configuration 172 of 200 (161 + 11), 28 unusable because i > 247 (outside G_30); 0 draws lack features, an LT1 rebuild or a label row | PASSED |
+| LT1 truncation, prior=recompute (R-L9 (b), D and all 21 history dates re-streamed from the truncated inputs) | step 2r 12:51:36-14:15:29 PDT (5,034 s at 3 procs, 75.2 s a draw), b4_runs/LT1_recompute_2b30cb0e953b.json; job rc=0 at 14:15:30 | 200 of 200 draws checked (0 without a production table): 0 draws with a column outside G7, 0 rows after t; each rebuild folder _lt1/<t>/ holds D's and its history dates' pass-1 tables from truncated inputs (4,399 pass-1 tables over the 200 folders: 22 a draw, 21 where the universe start leaves a history date undefined) | PASSED |
+
+## E.33 record (superseded where the E.33b table above reruns it)
+
+The E.33 LT1 and LT7 rows below ("NOT RUN") are superseded by the E.33b rows above: LT1 both priors on all 200
+draws and LT7 at the declared scale, all on features 2b30cb0e953b and labels b15c4ca10d68 (B3 full_r3: 0 cells, so
+no A-side code change follows and no rerun is needed).
 
 | LT | What ran | Counts | Status |
 |---|---|---|---|
@@ -61,6 +98,11 @@ C.4, C.15, F4.1 (i >= 1) and F4.6 on all 30 dates x 273 rows: 0 mismatches for A
   DERIVED/b4/synthfeat/9/code_used.json): 8,190 rows (30 dates x 273), 0 disagreeing cells in all 59 columns, sigma_ZM
   equal on all 30, oracle 0 mismatches on both sides. PASSED. The synthetic streams hold no mixed fill-and-cancel
   record and no fill of a not-yet-booked order, so the two residual real-data differences (B3 FD6, FD7) do not appear.
+- Note added 2026-10-28 12:31 PDT (E.33b TestCoder, PipelineReview N20): all three E.33 runs above ("seed 7",
+  "seed 8", "final run seed 9") generated seed 7's streams, because run_synth_features.py ignored --seed (the
+  module constant SEED = 7 was never set from the flag), so the E.33 evidence was one stream, not three; run 10
+  (seed 10, A 2b30cb0e953b, B 0485beafebbb; table "E.33b runs" above) is the first run on a chosen seed and on
+  the final code.
 
 ## LT1 timing (02:26-02:28 PDT, Coder-A code c22b0a50f4cd, b4_runs/LT1_timing.json)
 

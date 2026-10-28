@@ -11,12 +11,21 @@ Outputs under DERIVED/b4/synthfeat/<seed>/: streams/{zm,zs,zl}/<D>.npy, A/ (buil
 B/ (build_featB day raws and features), the comparison (compare_b3 rules) and independent oracle checks of C.1-C.4,
 C.15, F4.1 and F4.6 from this script's own replay of the synthetic ZM stream. Synthetic data only.
 
-Usage: uv run python .../tests_b4/run_synth_features.py [--seed 7] [--procs 3] [--stage gen,a,b,cmp]
+Episodes (E.33b): target k (0-based) carries the label run's episode set (synth_streams.DEFAULT_EPISODES, with
+run_synth_b4's locked book at a decision minute on k = 15 and 23); k = 11 is the R record carrying F_MAYBE_BAD_BOOK
+(R-B3-D1 / R-B3-N10). Every generated date (targets and history) carries the B3 plants PLANT_FD6 (a touch emptied by
+one part-fill, part-cancel record, refilled 40 ms later: R-B3-FD6) and PLANT_FD7 (an F record for an order not yet in
+the book, added and cancelled in the same batch: R-B3-FD7). The oracle follows R-B3-D1 (clear, then mark bad) and
+R-L11 (F4.6 over the as-of states: the last update at each distinct ts_recv).
+
+Usage: uv run python .../tests_b4/run_synth_features.py [--seed 10] [--procs 3] [--stage gen,a,b,cmp]
+       [--expect-a-sha SHA12] [--expect-b-sha SHA12]
 """
 
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import math
 import multiprocessing as mp
@@ -48,13 +57,29 @@ N_TARGETS = 30
 FAIR0 = {"ZM": 4000, "ZS": 5600, "ZL": 6000}
 RATES = {"ZM": (14.0, 3.0), "ZS": (9.0, 2.5), "ZL": (6.0, 1.5)}
 SIGMA = {"ZS": 2.0, "ZL": 4.0}
-SEED = 7
+SEED = 7  # set from --seed in main() before any fork (E.33b fix: runs 7-9 all generated with 7)
 _ROOT: Path | None = None
+PLANT_FD6 = ((8, 41, 7.3), (9, 23, 11.1), (10, 12, 40.7), (11, 31, 5.9), (12, 17, 33.2), (12, 58, 2.4))
+PLANT_FD7 = ((9, 2, 30.5), (10, 44, 12.2), (11, 52, 48.6), (12, 36, 1.7))
+_TARGETS: list[date] | None = None
 
 
 def targets() -> list[date]:
-    oof = [d for d in cal33.oof_dates() if d <= LAST_TARGET]
-    return oof[-N_TARGETS:]
+    global _TARGETS
+    if _TARGETS is None:
+        oof = [d for d in cal33.oof_dates() if d <= LAST_TARGET]
+        _TARGETS = oof[-N_TARGETS:]
+    return list(_TARGETS)
+
+
+def episodes(d: date) -> ss.Episodes:
+    """D's episodes: the label run's set by target index (k = 11: the flagged R), plus the FD6/FD7 plants."""
+    tg = targets()
+    k = tg.index(d) if d in tg else -1
+    ep = ss.DEFAULT_EPISODES.get(k, ss.Episodes())
+    if k in (15, 23):  # as run_synth_b4: a locked book exactly at a decision minute (R-B3-D2)
+        ep = ss.Episodes(crossed=((9, 14, 59.6), 1.0) if k == 15 else ((11, 29, 59.8), 2.0))
+    return dataclasses.replace(ep, mixed_trades=PLANT_FD6, unbooked_fills=PLANT_FD7)
 
 
 def _fair(root: str, d: date) -> int:
@@ -78,7 +103,7 @@ def generate(d: date) -> None:
     prm = ss.ZMParams(iid=int(fr["ZM"]), iid_back=int(fr["ZM"]) + 1, rate_day=RATES["ZM"][0],
                       rate_night=RATES["ZM"][1])
     k = d.toordinal()
-    zm, _ = ss.make_zm_day(d, SEED * 100_000 + k, prm, ss.Episodes(), fair0=_fair("ZM", d), intervals=iv)
+    zm, _ = ss.make_zm_day(d, SEED * 100_000 + k, prm, episodes(d), fair0=_fair("ZM", d), intervals=iv)
     out = {"zm": zm}
     for j, root in enumerate(("ZS", "ZL")):
         arr, _ = ss.make_mbp1_day(d, root, SEED * 100_000 + k + 7 * (j + 1), int(fr[root]), _fair(root, d),
@@ -200,6 +225,8 @@ def oracle(root: Path, d: date) -> dict:
                                               rec["flags"].tolist(), strict=True):
         if act == ss.R_:
             book.clear(bool(fl & ss.F_SNAP))
+            if fl & ss.F_BAD:  # R-B3-D1: an R carrying the flag leaves the book bad until the next R
+                book.mark_bad()
         elif book.started:
             if fl & ss.F_BAD:
                 book.mark_bad()
@@ -237,10 +264,11 @@ def oracle(root: Path, d: date) -> dict:
     exp["F4_1"] = np.clip(f41, -5, 5)  # checked for i >= 1 (i = 0 samples the 07:45 junction of the open axis)
     t0830 = cal33.ct_ns(d, "08:30:00")
     rp = np.zeros(273)
+    last_at_ts = np.append(upd_t[1:] != upd_t[:-1], True)  # R-L11: the as-of state at each distinct ts_recv
     for j in range(273):
         lo = asof(np.array([t0830]))[0]
         sel = np.arange(max(lo, 0), k[j] + 1)
-        sel = sel[ok[sel] & ((upd_t[sel] > t0830) | (sel == lo))]
+        sel = sel[ok[sel] & last_at_ts[sel] & ((upd_t[sel] > t0830) | (sel == lo))]
         if not ok[k[j]] or len(sel) == 0:
             rp[j] = 0.0
             continue
@@ -279,25 +307,39 @@ def stage_cmp(root: Path) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
+    global SEED
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=SEED)
     ap.add_argument("--procs", type=int, default=3)
     ap.add_argument("--stage", default="gen,a,b,cmp")
+    ap.add_argument("--expect-a-sha", default=None, help="refuse unless build_features33.code_sha12() equals it")
+    ap.add_argument("--expect-b-sha", default=None, help="refuse unless build_featB.code_sha()[0] equals it")
     args = ap.parse_args(argv)
     os.nice(10)
+    SEED = args.seed
     root = OUT / str(args.seed)
     root.mkdir(parents=True, exist_ok=True)
     patch(root)
     # pin the code: import both builders now (forked workers inherit these modules) and record their sha256s
     import hashlib  # noqa: PLC0415
-    import build_featB  # noqa: F401,PLC0415
-    import build_features33  # noqa: F401,PLC0415
+    import build_featB  # noqa: PLC0415
+    import build_features33  # noqa: PLC0415
     files = [PIPE / f for f in ("feat33.py", "build_features33.py", "data33.py", "cal33.py")] + \
-        [IMPLB / f for f in ("featB.py", "dayB.py", "replayB.py", "calB.py", "build_featB.py")]
+        [IMPLB / f for f in ("featB.py", "dayB.py", "replayB.py", "calB.py", "build_featB.py")] + \
+        [HERE / f for f in ("synth_streams.py", "run_synth_features.py")]
     shas = {f.name: hashlib.sha256(f.read_bytes()).hexdigest()[:12] for f in files}
-    (root / "code_used.json").write_text(json.dumps({"time": time.strftime("%Y-%m-%d %H:%M:%S %Z"),
-                                                    "sha256_12": shas}, indent=1))
-    print(json.dumps(shas), flush=True)
+    a_sha, b_sha = build_features33.code_sha12(), build_featB.code_sha()[0]
+    for want, got, who in ((args.expect_a_sha, a_sha, "Coder-A"), (args.expect_b_sha, b_sha, "Coder-B")):
+        if want and want != got:
+            print(f"REFUSED: {who} code_sha12 {got} != expected {want}", flush=True)
+            return 2
+    log = root / "code_used.json"
+    prev = json.loads(log.read_text()) if log.exists() else {}
+    runs = prev.get("runs", [prev] if prev else [])
+    runs.append({"time": time.strftime("%Y-%m-%d %H:%M:%S %Z"), "seed": SEED, "stages": args.stage,
+                 "code_sha12": {"A": a_sha, "B": b_sha}, "sha256_12": shas})
+    log.write_text(json.dumps({"runs": runs}, indent=1))
+    print(json.dumps({"A": a_sha, "B": b_sha, **shas}), flush=True)
     procs = max(1, min(args.procs, 3))
     for st in args.stage.split(","):
         t0 = time.time()

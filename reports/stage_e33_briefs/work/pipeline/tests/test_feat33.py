@@ -9,6 +9,7 @@ answer worked out by hand in a comment. Part C: G2, G3, G4.
 from __future__ import annotations
 
 import inspect
+import json
 import math
 import sys
 from datetime import date, timedelta
@@ -1124,6 +1125,63 @@ def test_fd5_fill_lots_do_not_carry_across_batches():
     assert F.win(c[F.ZI["cra"]], p_of(8, 41), 1) == 7
 
 
+def test_fd7_fill_of_a_not_yet_booked_order_is_attributed_within_its_batch():
+    # ruling R-B3-FD7. Book: bid 4000 x 5 (oid 1), ask 4001 x 7 (oid 2). One event batch at
+    # 08:40:10: a buy of 3 whose F record names oid 20 BEFORE oid 20 is in the book, then the
+    # batch adds oid 20 (ask 4001 x 3) and cancels its 3 lots. The 3 lots traded, so the cancel
+    # is the fill (pending[20] = 3 absorbs x = 3; rest 0): Ca = 0 (the old `if oid in orders`
+    # gate dropped the F record and counted Ca = 3). Level 4001 keeps oid 2's 7 lots, so no
+    # refill window opens (FD4) and the later add at 4001 is not a refill.
+    ts = w(8, 40, 10)
+    rows = opening(w(8, 0)) + [rec(ts, "T", "B", 4001, 3, 0, fl=0),
+                               rec(ts, "F", "A", 4001, 3, 20, fl=0),  # oid 20 not yet booked
+                               rec(ts, "A", "A", 4001, 3, 20, fl=0),
+                               rec(ts, "C", "A", 4001, 3, 20),  # F_LAST: end of the batch
+                               rec(ts + 10_000_000, "A", "A", 4001, 1, 21)]
+    out = zm_out(rows)
+    c = out["zm_cnt"]
+    p = p_of(8, 41)
+    assert F.win(c[F.ZI["cra"]], p, 1) == 0 and F.win(c[F.ZI["crb"]], p, 1) == 0
+    assert F.win(c[F.ZI["rfa"]], p, 1) == 0
+    assert out["zm_touch"][p] == 5 + 7 + 1  # oid 20 left the book; oid 21 rests at 4001
+    # the same lots in a later batch are a removal (R-B3-FD5: the accumulator clears at every
+    # F_LAST). (i) the F record closes its own batch; A and C come 1 s later: Ca = 3
+    rows_i = opening(w(8, 0)) + [rec(ts, "T", "B", 4001, 3, 0, fl=0),
+                                 rec(ts, "F", "A", 4001, 3, 20),  # F_LAST: pending cleared
+                                 rec(ts + 1_000_000_000, "A", "A", 4001, 3, 20, fl=0),
+                                 rec(ts + 1_000_000_000, "C", "A", 4001, 3, 20)]
+    assert F.win(zm_out(rows_i)["zm_cnt"][F.ZI["cra"]], p, 1) == 3
+    # (ii) F and A in one batch, the C 1 s later in another batch: Ca = 3
+    rows_ii = opening(w(8, 0)) + [rec(ts, "T", "B", 4001, 3, 0, fl=0),
+                                  rec(ts, "F", "A", 4001, 3, 20, fl=0),
+                                  rec(ts, "A", "A", 4001, 3, 20),  # F_LAST: pending cleared
+                                  rec(ts + 1_000_000_000, "C", "A", 4001, 3, 20)]
+    assert F.win(zm_out(rows_ii)["zm_cnt"][F.ZI["cra"]], p, 1) == 3
+
+
+def test_fd6_mixed_fill_and_cancel_record_opens_no_refill_window():
+    # ruling R-B3-FD6 (a). Book: bid 4000 x 5 (oid 1); asks 4001 x 3 (oid 2), 4002 x 4 (oid 3).
+    # One batch at 08:40:10: a buy of 1 fills 1 lot of oid 2, then ONE record cancels all 3 lots
+    # of oid 2: reduction x = 3 = fill 1 + voluntary rest 2. Level 4001 (the touch) is then empty,
+    # but not through trades alone (rest 2 != 0), so no window opens: the add at 4001 10 ms
+    # later is not a refill (rfa = 0); the voluntary 2 lots are a removal at the touch (Ca = 2).
+    t0, ts = w(8, 0), w(8, 40, 10)
+    base = [rec(t0, "R", "N", 0, 0, 0, fl=0), rec(t0, "A", "B", 4000, 5, 1, fl=0),
+            rec(t0, "A", "A", 4001, 3, 2, fl=0), rec(t0, "A", "A", 4002, 4, 3)]
+    rows = base + [rec(ts, "T", "B", 4001, 1, 0, fl=0), rec(ts, "F", "A", 4001, 1, 2, fl=0),
+                   rec(ts, "C", "A", 4001, 3, 2), rec(ts + 10_000_000, "A", "A", 4001, 1, 10)]
+    c = zm_out(rows)["zm_cnt"]
+    p = p_of(8, 41)
+    assert F.win(c[F.ZI["rfa"]], p, 1) == 0 and F.win(c[F.ZI["rfb"]], p, 1) == 0
+    assert F.win(c[F.ZI["cra"]], p, 1) == 2 and F.win(c[F.ZI["crb"]], p, 1) == 0
+    # contrast: all 3 lots filled (F of 3), the same C record is all fill lots (rest 0) and
+    # empties the touch: the window opens and the add 10 ms later is a refill (rfa = 1); Ca = 0
+    rows[-4] = rec(ts, "T", "B", 4001, 3, 0, fl=0)
+    rows[-3] = rec(ts, "F", "A", 4001, 3, 2, fl=0)
+    c = zm_out(rows)["zm_cnt"]
+    assert F.win(c[F.ZI["rfa"]], p, 1) == 1 and F.win(c[F.ZI["cra"]], p, 1) == 0
+
+
 def test_d1_r_carrying_bad_flag_leaves_the_book_bad():
     rows = opening(w(8, 0)) + [rec(w(8, 40, 10), "R", "N", 0, 0, 0, fl=BADF),
                                rec(w(8, 40, 10), "A", "B", 4000, 5, 1, fl=0),
@@ -1142,3 +1200,44 @@ def test_builder_decision_times_are_wall_minutes_on_any_axis():
     assert 'cur[0]["wall_ns"][:F.N_GRID]' in src and "GRID_P" not in src
     for ax in (late_open_axis(), early_close_axis(), AX):
         assert ax.wall[0] == w(8, 35) and ax.wall[F.N_GRID - 1] == w(13, 7)
+
+
+def test_pass1_done_records_the_loader_order_log(tmp_path, monkeypatch):
+    # PipelineReview N11: pass 1's DONE info carries dict(data33.ORDER_LOG) as it stands after the
+    # date's loads. Well-ordered synthetic stores: {} (0 decreases). Planted: the ZM 08:40:10 record
+    # stored before the 08:00 opening batch (ts_recv 08:40:10, 08:00 x3: one diff < 0) and the ZL
+    # 08:31 record before its 08:00 one (one diff < 0): the loaders re-sort and log both, 1 each.
+    import build_features33 as B  # noqa: PLC0415
+    import data33  # noqa: PLC0415
+
+    zm_good = opening(w(8, 0)) + [rec(w(8, 40, 10), "A", "B", 3999, 2, 3)]
+    tk_s, tk_l = TICK["ZS"], TICK["ZL"]
+    zs_good = [mbp_rec(w(8, 0), "A", 5600 * tk_s, 5, 5601 * tk_s, 7),
+               mbp_rec(w(8, 31), "A", 5600 * tk_s, 6, 5601 * tk_s, 7)]
+    zl_good = [mbp_rec(w(8, 0), "A", 6000 * tk_l, 5, 6001 * tk_l, 7, iid=IID_L),
+               mbp_rec(w(8, 31), "A", 6000 * tk_l, 5, 6001 * tk_l, 8, iid=IID_L)]
+    monkeypatch.setattr(B.cal33, "fronts", lambda d: {"ZM": IID, "ZS": IID_S, "ZL": IID_L})
+    monkeypatch.setattr(B.cal33, "tick", lambda r: TICK[r])
+    monkeypatch.setattr(B, "day_axis", lambda d: (AX, None))
+    cases = (
+        ({"ZM": zm_good, "ZS": zs_good, "ZL": zl_good}, {}),
+        ({"ZM": zm_good[3:] + zm_good[:3], "ZS": zs_good, "ZL": zl_good[1:] + zl_good[:1]},
+         {f"ZM {D}": 1, f"ZL {D}": 1}),
+    )
+    touch = []
+    for stores, want in cases:
+        arrs = {r: (mbo(v) if r == "ZM" else np.array(v, dtype=MBP)) for r, v in stores.items()}
+        assert {r: data33.ts_recv_decreases(a["ts_recv"]) for r, a in arrs.items() if
+                data33.ts_recv_decreases(a["ts_recv"])} == {k.split()[0]: v for k, v in want.items()}
+        monkeypatch.setattr(data33, "ORDER_LOG", {})  # as in a fresh worker process
+        monkeypatch.setattr(data33, "load_zm", lambda d, c=None, a=arrs: data33._in_ts_recv_order(
+            a["ZM"], "ZM", data33.as_date(d)))
+        monkeypatch.setattr(data33, "load_mbp1", lambda r, d, c=None, a=arrs: data33._in_ts_recv_order(
+            a[r], r, data33.as_date(d)))
+        folder = tmp_path / ("planted" if want else "good")
+        info = B.pass1(D, folder)
+        done = json.loads(B.p1_path(folder, D).with_suffix(".DONE").read_text())
+        assert info["order_log"] == done["order_log"] == want == dict(data33.ORDER_LOG)
+        with np.load(B.p1_path(folder, D)) as z:  # synthetic tmp file (guard33 allowlists DERIVED)
+            touch.append(z["zm_touch"])
+    assert np.array_equal(touch[0], touch[1])  # the re-sorted streams are the well-ordered ones

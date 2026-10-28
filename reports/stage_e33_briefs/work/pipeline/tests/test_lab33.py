@@ -3,6 +3,7 @@ the comments. Synthetic data only (INTERFACE rule 1 does not bind synthetic data
 
 from __future__ import annotations
 
+import json
 import math
 import sys
 from datetime import date, datetime
@@ -526,7 +527,7 @@ def test_rule5_locked_span_row_rule():
     )  # at the span end (closed)
     after = hist([BASE, (t + 15 * MIN + NS + 1, 4000, None), (t + 15 * MIN + 2 * NS, 4000, 4001)])
     assert lb.label_row(after, "FH", 15, t, None).ok
-    # TB: realised span [t, tau + L] can end after t + L + h; READING TB-SPAN checks the union
+    # TB: realised span [t, tau + L] can end after t + L + h; ruling R-L10 checks [t, t + 2L + h]
     end = t + NS + 15 * MIN
     tb = hist(
         [BASE, (end, 4008, 4009), (end + 500_000_000, 4008, None), (end + 2 * NS, 4008, 4009)]
@@ -544,6 +545,55 @@ def test_rule5_locked_span_row_rule():
     )
     # tau + L = t + 5 min + 1 s; the bad update at t + 5 min + 2 s is inside [t, t + L + h] -> removed too
     assert lb.label_row(tb_poss, "TB", 15, t, B15).fail == "r5_locked_span"
+
+
+def test_r_l10_tb_row_rules_check_the_whole_possible_span():
+    """Lead ruling R-L10: a TB row's P3.6 row rules check [t, t + 2L + h] whatever tau is; the entry rules stay
+    on [t, t + L + h]; FH rows unchanged. t = 08:35, h = 15, L = 1 s: t + L + h = 08:50:01 (`end`),
+    t + 2L + h = 08:50:02. A one-sided update (ask missing) at 08:50:01.5 lies in (t + L + h, t + 2L + h]."""
+    t = T0
+    end = t + NS + 15 * MIN
+    one_sided = end + 500_000_000
+    # early up hit at t + 5 min (mid 4000.5 -> 4008.5 = +8 ticks >= B15): tau + L = t + 5 min + 1 s < end. The
+    # realised-span union of the old READING TB-SPAN ([t, end]) would keep the row; R-L10 drops it.
+    early = hist([BASE, (t + 5 * MIN, 4008, 4009), (one_sided, 4008, None), (end + 2 * NS, 4008, 4009)])
+    kh, _ = lb.first_barrier(early, early.asof(t + NS), end, B15)
+    assert int(early.t[kh]) + NS < end  # tau + L before t + L + h
+    assert lb.label_row(early, "TB", 15, t, B15).fail == "r5_locked_span"
+    # no barrier hit (tau = t + L + h, tau + L = t + 2L + h): dropped as well
+    vert = hist([BASE, (one_sided, 4000, None), (end + 2 * NS, 4000, 4001)])
+    assert lb.label_row(vert, "TB", 15, t, B15).fail == "r5_locked_span"
+    # the closed end t + 2L + h itself is in the span: dropped
+    at_end = hist([BASE, (t + 5 * MIN, 4008, 4009), (end + NS, 4008, None), (end + 2 * NS, 4008, 4009)])
+    assert lb.label_row(at_end, "TB", 15, t, B15).fail == "r5_locked_span"
+    # the update 1 ns after t + 2L + h: kept, early hit (y = +1) and vertical (y = 0) alike
+    late_e = hist([BASE, (t + 5 * MIN, 4008, 4009), (end + NS + 1, 4008, None), (end + 2 * NS, 4008, 4009)])
+    r = lb.label_row(late_e, "TB", 15, t, B15)
+    assert r.ok and r.y == 1 and r.span_end_ns == t + 5 * MIN + NS
+    late_v = hist([BASE, (end + NS + 1, 4000, None), (end + 2 * NS, 4000, 4001)])
+    r = lb.label_row(late_v, "TB", 15, t, B15)
+    assert r.ok and r.y == 0 and r.span_end_ns == end + NS
+    # FH unchanged: its possible span is [t, t + L + h], so the update at 08:50:01.5 does not remove the row
+    assert lb.label_row(early, "FH", 15, t, None).ok
+    # through compute_label: row 0 of T15 is an entry (entry rules on [t, t + L + h]) but not a row; LT2 holds
+    cols, excl = lb.compute_label(early, day(), "T15")
+    assert cols["entry_ok"][0] and not cols["row_ok"][0] and excl["lt2_span_violations"] == 0
+    assert cols["long_made"][0] and cols["short_made"][0]  # the trade simulation still runs at t
+
+
+def test_r_l10_tb_rules_2_and_3_on_the_whole_possible_span():
+    """R-L10 rules 2 and 3 as TB row rules on [t, t + 2L + h] (cannot fire on the real grid; see
+    lab33.tb_row_rule_fail). A close or a release window start inside (t + L + h, t + 2L + h] removes the row."""
+    t = T0
+    end = t + NS + 15 * MIN
+    assert lb.tb_row_rule_fail(day(), 15, t) == ""
+    from types import SimpleNamespace  # noqa: PLC0415  (DayInputs pins close_ns to 13:13 when t0 is 08:35)
+
+    early_close = SimpleNamespace(close_ns=end + 500_000_000, releases=())
+    assert lb.tb_row_rule_fail(early_close, 15, t) == "r2_close"  # type: ignore[arg-type]
+    r = end + 500_000_000 + 2 * MIN  # R - 2 min = 08:50:01.5
+    assert lb.tb_row_rule_fail(day(releases=(r,)), 15, t) == "r3_release"
+    assert lb.tb_row_rule_fail(day(releases=(r + NS,)), 15, t) == ""  # R - 2 min = 08:50:02.5: clear
 
 
 def test_rule6_zs_zl_have_no_input_here():
@@ -798,3 +848,52 @@ def test_d2_entry_needs_defined_mid_on_a_date_without_limits():
     # the same with limits on D: also blocked, by the same rule
     cols_l, excl_l = lb.compute_label(h, day(limits=(4100 * TICK, 3900 * TICK)), "F05")
     assert not cols_l["entry_ok"][25] and excl_l["rows_removed_first_rule"]["r5_book_at_t"] == 1
+
+
+# ------------------------------------------------------------------- builder: ORDER_LOG (PipelineReview N11) --
+def _compact(rows: list[tuple]):
+    """A data33 MBO_COMPACT store (the dtype data33.load_zm returns) from Tape rows, in the given order."""
+    import data33  # noqa: PLC0415
+
+    arr = np.zeros(len(rows), dtype=data33.MBO_COMPACT)
+    names = ("ts_recv", "ts_event", "instrument_id", "order_id", "price", "size", "flags", "action", "side")
+    for k, name in enumerate(names):
+        arr[name] = [r[k] for r in rows]
+    return arr
+
+
+def test_build_date_records_the_loader_order_log(tmp_path, monkeypatch):
+    """N11: build_date's result and every DONE marker carry dict(data33.ORDER_LOG) as it stands after the date's
+    load. Well-ordered synthetic store: {} (0 decreases). The same records with one planted decrease (the 09:00
+    batch stored before the 08:00 snapshot: ts_recv 09:00 x4, then 08:00 x3 -> one diff < 0): the loader
+    re-sorts and logs {"ZM 2023-03-15": 1}, and the result and markers say so."""
+    import build_labels33 as B  # noqa: PLC0415
+    import data33  # noqa: PLC0415
+
+    tape = Tape()
+    tape.snapshot(ct(8, 0), 4000, 4001)  # R, A bid, A ask (F_LAST): 3 records
+    tape.quote(ct(9, 0), bid=4001, ask=4002)  # C bid, A bid, C ask, A ask (F_LAST): 4 records
+    good = tape.rows
+    planted = good[3:] + good[:3]  # the 09:00 batch first: ts_recv decreases once (09:00 -> 08:00)
+    monkeypatch.setattr(B, "day_inputs", lambda d, sigma: day())
+    monkeypatch.setattr(B.cal33, "fronts", lambda d: {"ZM": 7, "ZS": 8, "ZL": 9})
+    for rows, want in ((good, {}), (planted, {f"ZM {D.isoformat()}": 1})):
+        store = _compact(rows)
+        assert data33.ts_recv_decreases(store["ts_recv"]) == len(want)  # 0, then 1
+        monkeypatch.setattr(data33, "ORDER_LOG", {})  # as in a fresh worker process
+        monkeypatch.setattr(
+            data33,
+            "load_zm",
+            lambda d, cutoff_ns=None, s=store: data33.truncate(
+                data33._in_ts_recv_order(s, "ZM", data33.as_date(d)), cutoff_ns
+            ),
+        )
+        out = tmp_path / ("planted" if want else "good")
+        task = {"date": D.isoformat(), "out": str(out), "labels": ["F05", "T15"], "sigma": 2.0,
+                "code_sha12": "test", "sigma_source": "test"}
+        res = B.build_date(task)
+        assert res["order_log"] == want == dict(data33.ORDER_LOG)
+        for label in ("F05", "T15"):
+            marker = json.loads((out / label / "_done" / f"{D.isoformat()}.DONE").read_text())
+            assert marker["order_log"] == want
+        assert res["book_stats"]["updates"] == 2  # the re-sorted stream is the well-ordered one

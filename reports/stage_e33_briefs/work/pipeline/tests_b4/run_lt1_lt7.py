@@ -12,7 +12,12 @@ Steps (each resumable through the builders' DONE markers):
 Outputs: reports/stage_e33_briefs/work/b4_runs/LT1_full_<sha>.json, LT1_recompute_<sha>.json, LT7_<sha>.json.
 At most 3 processes; nice 10; counts only.
 
-Usage: uv run python .../tests_b4/run_lt1_lt7.py --expect-sha <sha12> [--steps 1,2,3,4] [--recompute-n 20]
+Step tokens (run in the order given): 1, 2p (LT1 prior=production), 2r (LT1 prior=recompute), 2 (= 2p,2r), 3, 4.
+E.33b order: 1,2p,3,4,2r, so LT7 reads the prior=production rebuilds before the recompute run replaces them (both
+rebuild D from all four streams truncated at t; R-L9 runs both priors on all 200 draws).
+
+Usage: uv run python .../tests_b4/run_lt1_lt7.py --expect-sha <sha12> [--expect-label-sha <sha12>]
+       [--steps 1,2p,3,4,2r] [--recompute-n 200] [--procs 3]
 """
 
 from __future__ import annotations
@@ -65,10 +70,12 @@ def _lt1_one(args: tuple) -> dict:
     return lt.check_one(Path(fdir), x, prior)
 
 
-def step2(fdir: Path, sha: str, procs: int, recompute_n: int) -> None:
+def step2(fdir: Path, sha: str, procs: int, recompute_n: int, priors: tuple[str, ...]) -> None:
     draw = _draw()
     for prior, n, out_name in (("production", len(draw), f"LT1_full_{sha}.json"),
                                ("recompute", recompute_n, f"LT1_recompute_{sha}.json")):
+        if prior not in priors:
+            continue
         out = RUNS / out_name
         done = json.loads(out.read_text()) if out.exists() else {"prior": prior, "results": []}
         seen = {(r["date"], r["i"]) for r in done["results"]}
@@ -80,6 +87,9 @@ def step2(fdir: Path, sha: str, procs: int, recompute_n: int) -> None:
             # a separate copy of the production folder's pass-2 tables is not needed: build_cutoff writes its own
             # rebuilt tables under <fdir>/_lt1/<t>/ and only compares with <fdir>/<D>.parquet
             target = fdir
+        no_prod = [x for x in pick if not (target / f"{x['date']}.parquet").exists()]
+        done["no_production_table"] = [f"{x['date']} {x['i']}" for x in no_prod]
+        done["draws_picked"] = len(pick)
         todo = [(str(target), x, prior) for x in pick if (x["date"], x["i"]) not in seen
                 and (target / f"{x['date']}.parquet").exists()]
         if prior == "recompute":
@@ -91,11 +101,13 @@ def step2(fdir: Path, sha: str, procs: int, recompute_n: int) -> None:
                 done["results"].append(r)
                 out.write_text(json.dumps(done, indent=1))
         res = done["results"]
-        print(f"step2 LT1 {prior}: {len(res)} checked, {sum(1 for r in res if r['bad_cols'])} with a column outside "
-              f"G7, {sum(r['rows_after_t'] for r in res)} rows after t, {time.time() - t0:.0f} s", flush=True)
+        out.write_text(json.dumps(done, indent=1))
+        print(f"step2 LT1 {prior}: {len(res)} checked of {len(pick)} picked ({len(no_prod)} without a production "
+              f"table), {sum(1 for r in res if r['bad_cols'])} with a column outside G7, "
+              f"{sum(r['rows_after_t'] for r in res)} rows after t, {time.time() - t0:.0f} s", flush=True)
 
 
-def step3(fsha: str, procs: int) -> Path:
+def step3(fsha: str, procs: int, lsha: str) -> Path:
     dates = sorted({x["date"] for x in _draw()})
     # TB needs sigma_ZM(D) from DERIVED/features/<sha>/_day: pass step 1's folder relative to DERIVED/features
     rel = os.path.relpath(ROOT_F / fsha, g.DERIVED / "features")
@@ -107,22 +119,25 @@ def step3(fsha: str, procs: int) -> Path:
     print(f"step3 labels rc={p.returncode} {time.time() - t0:.0f} s; {tail}", flush=True)
     if p.returncode:
         raise SystemExit("label build failed")
-    subs = [d for d in ROOT_L.iterdir() if d.is_dir()]
-    return max(subs, key=lambda d: d.stat().st_mtime)
+    ldir = ROOT_L / lsha  # the folder of the label code checked in main (not the newest folder by mtime)
+    if not (ldir / "manifest.json").exists():
+        raise SystemExit(f"label folder {ldir} has no manifest")
+    return ldir
 
 
-def step4(fdir: Path, ldir: Path, sha: str) -> None:
+def step4(fdir: Path, ldir: Path, sha: str, procs: int) -> None:
     import lt7_causality as lt7  # noqa: PLC0415
     out = RUNS / f"LT7_{sha}.json"
     t0 = time.time()
-    lt7.main(["--features", str(fdir), "--labels", str(ldir), "--out", str(out)])
+    lt7.main(["--features", str(fdir), "--labels", str(ldir), "--out", str(out), "--procs", str(procs)])
     print(f"step4 LT7 {time.time() - t0:.0f} s -> {out}", flush=True)
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--expect-sha", required=True)
-    ap.add_argument("--steps", default="1,2,3,4")
+    ap.add_argument("--expect-label-sha", default=None, help="refuse unless build_labels33's code_sha12 equals it")
+    ap.add_argument("--steps", default="1,2p,3,4,2r")
     ap.add_argument("--procs", type=int, default=3)
     ap.add_argument("--recompute-n", type=int, default=20)
     args = ap.parse_args(argv)
@@ -130,21 +145,29 @@ def main(argv: list[str] | None = None) -> int:
     sha = bf.code_sha12()
     if sha != args.expect_sha:
         raise SystemExit(f"Coder-A feature code on disk is {sha}, not {args.expect_sha}")
+    import build_labels33 as bl  # noqa: PLC0415
+    lsha = bl.code_identity()[0]
+    if args.expect_label_sha and lsha != args.expect_label_sha:
+        raise SystemExit(f"Coder-A label code on disk is {lsha}, not {args.expect_label_sha}")
+    print(f"code: features {sha}, labels {lsha}", flush=True)
     procs = max(1, min(args.procs, 3))
-    steps = set(args.steps.split(","))
+    steps = [x for x in args.steps.split(",") if x]
     fdir = ROOT_F / sha
-    if "1" in steps:
-        fdir = step1(procs)
-    if "2" in steps:
-        step2(fdir, sha, procs, args.recompute_n)
-    ldir = None
-    if "3" in steps:
-        ldir = step3(sha, procs)
-    if "4" in steps:
-        if ldir is None:
-            subs = [d for d in ROOT_L.iterdir() if d.is_dir()]
-            ldir = max(subs, key=lambda d: d.stat().st_mtime)
-        step4(fdir, ldir, sha)
+    ldir = ROOT_L / lsha
+    for st in steps:
+        t0 = time.time()
+        if st == "1":
+            fdir = step1(procs)
+        elif st in ("2", "2p", "2r"):
+            priors = {"2": ("production", "recompute"), "2p": ("production",), "2r": ("recompute",)}[st]
+            step2(fdir, sha, procs, args.recompute_n, priors)
+        elif st == "3":
+            ldir = step3(sha, procs, lsha)
+        elif st == "4":
+            step4(fdir, ldir, sha, procs)
+        else:
+            raise SystemExit(f"unknown step {st}")
+        print(f"step {st} done {time.strftime('%H:%M:%S')} ({time.time() - t0:.0f} s)", flush=True)
     return 0
 
 

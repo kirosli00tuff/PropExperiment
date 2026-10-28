@@ -349,8 +349,9 @@ def _lam60(out: dict, axis: calB.OpenAxis, g: np.ndarray, pg: np.ndarray, zm,
 
 
 def _range(out: dict, d: date, g: np.ndarray, zm) -> None:
-    """F4.6: Hi and Lo of M_ZM over [08:30, t] on D: the value as of 08:30:00 and every valid
-    book update with ts_recv in (08:30, t] (READING B-RP-1). mid2 units; ok flags."""
+    """F4.6: Hi and Lo of M_ZM over [08:30, t] on D: the value as of 08:30:00 and, for each
+    distinct ts_recv in (08:30, t], the state after the LAST book update with that ts_recv, if
+    valid (READING B-RP-1, lead ruling R-L11). mid2 units; ok flags."""
     n = len(g)
     hi = np.zeros(n, np.int64)
     lo = np.zeros(n, np.int64)
@@ -360,7 +361,12 @@ def _range(out: dict, d: date, g: np.ndarray, zm) -> None:
         t0 = calB.ct(d, 8, 30)
         sel = (bk.ts > t0) & (bk.ts <= g[-1])
         ts = bk.ts[sel]
-        v = bk.valid[sel]
+        # READING R-L11 (lead, 2026-10-28): M_ZM over [08:30, t] is the as-of function M(u); an
+        # update followed by another with the same ts_recv is never the state as of any instant,
+        # so only the last update of each ts_recv may set Hi or Lo (valid-mid rule unchanged)
+        last_of_ts = np.ones(len(ts), bool)
+        last_of_ts[:-1] = ts[1:] != ts[:-1]
+        v = bk.valid[sel] & last_of_ts
         m2 = (bk.bpx[sel, 0] + bk.apx[sel, 0])
         big = np.iinfo(np.int64).max
         run_hi = np.maximum.accumulate(np.where(v, m2, -big)) if len(ts) else np.zeros(0, np.int64)

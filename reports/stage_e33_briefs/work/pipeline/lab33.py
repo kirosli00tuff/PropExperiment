@@ -579,6 +579,24 @@ def _row_removed(rule: str) -> RowLabel:
     return RowLabel(False, rule, 0, math.nan, math.nan, -1)
 
 
+def tb_row_end(h: int, t: int) -> int:
+    """Lead ruling R-L10: the end of a TB row's whole possible span [t, t + 2L + h min]."""
+    return t + 2 * L_NS + h * MIN_NS
+
+
+def tb_row_rule_fail(day: DayInputs, h: int, t: int) -> str:
+    """Lead ruling R-L10: P3.6 rules 2 and 3 as row rules of a TB row, on its whole possible span
+    [t, t + 2L + h] (their entry part stays on [t, t + L + h]). Returns the failing rule or "". On the
+    whole-minute grid G_h they cannot fail where the entry part holds (t + 2L + h <= 13:12:02 < 13:13:00; the
+    release windows start on whole minutes, t + h is a whole minute); kept for the rule's literal scope."""
+    end = tb_row_end(h, t)
+    if end > day.close_ns:
+        return "r2_close"
+    if _release_hit(t, end, day.releases):
+        return "r3_release"
+    return ""
+
+
 def label_row(hist: BookHistory, kind: str, h: int, t: int, b: float | None) -> RowLabel:
     """P3.3 / P3.4 label at t for a minute that passes the entry rules, with the row-only rules (P3.7 valid
     M_ZM(t); P3.6 rule 5 locked-book row rule over the span)."""
@@ -601,17 +619,19 @@ def label_row(hist: BookHistory, kind: str, h: int, t: int, b: float | None) -> 
         return RowLabel(True, "", y, n_long, n_short, span_end)
     if b is None:
         raise ValueError("TB needs the barrier half-width")
+    # Lead ruling R-L10 (supersedes READING TB-SPAN): every P3.6 row rule of a TB row checks the whole possible
+    # span [t, t + 2L + h] (every span [t, tau + L] the label can have, tau <= t + L + h), so the keep decision
+    # does not depend on the realised tau; the entry rules stay on [t, t + L + h] (entry_rule_fails).
+    row_end = tb_row_end(h, t)
     if not (k1 >= 0 and hist.mid_ok[k1]):
         # READING TB-M0: m0 = M_ZM(t + L) undefined -> no TB label -> the row is removed
-        if hist.any_not_both_ok(t, poss_end):
+        if hist.any_not_both_ok(t, row_end):
             return _row_removed("r5_locked_span")
         return _row_removed("tb_m0")
     kh, direction = first_barrier(hist, k1, poss_end, b)
     tau = int(hist.t[kh]) if kh >= 0 else poss_end
     span_end = tau + L_NS
-    # READING TB-SPAN: the locked-book row rule checks [t, max(t + L + h, tau + L)]: the possible span of P3.6's
-    # first paragraph together with the realised TB span [t, tau + L] (which can end up to L later).
-    if hist.any_not_both_ok(t, max(poss_end, span_end)):
+    if hist.any_not_both_ok(t, row_end):  # R-L10: [t, t + 2L + h] whatever tau is
         return _row_removed("r5_locked_span")
     kx = hist.asof(span_end)
     _check_both(hist, (k1, kx))
@@ -728,7 +748,8 @@ def compute_label(
             cols[f"{s}_entry_ns"][r] = o.entry_ns
             cols[f"{s}_exit_ns"][r] = o.exit_ns
             cols[f"{s}_flags"][r] = o.flags
-        lab = label_row(hist, kind, h, t, b)  # type: ignore[arg-type]
+        row_fail = tb_row_rule_fail(day, h, t) if kind == "TB" else ""  # R-L10
+        lab = _row_removed(row_fail) if row_fail else label_row(hist, kind, h, t, b)  # type: ignore[arg-type]
         if not lab.ok:
             any_fail[lab.fail] += 1
             first_fail[lab.fail] += 1
@@ -775,12 +796,13 @@ def span_violations(
 ) -> int:
     """LT2 (P4.1): re-check every kept row's span from the table's own t_ns and span_end_ns: inside
     [08:35:00, 13:13:00] on D, clear of every release window, no book update in [t, max(t + L + h, span_end)]
-    lacking a side or marked bad, D not excluded. Returns the number of violating rows (must be 0)."""
-    _, h = LABELS[label]
+    (FH) or [t, t + 2L + h] (TB, lead ruling R-L10) lacking a side or marked bad, D not excluded. Returns the
+    number of violating rows (must be 0)."""
+    kind, h = LABELS[label]
     bad = 0
     for r in np.flatnonzero(cols["row_ok"]):
         t, e = int(cols["t_ns"][r]), int(cols["span_end_ns"][r])
-        hi = max(t + L_NS + h * MIN_NS, e)
+        hi = max(tb_row_end(h, t) if kind == "TB" else t + L_NS + h * MIN_NS, e)
         if (
             day.excluded
             or hist is None

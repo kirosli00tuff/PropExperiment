@@ -223,3 +223,40 @@ self-check in the form of LT1 (every stream of the target date cut at ts_recv <=
 
 None found. Column names, order, dtypes and the _day JSON keys follow INTERFACE 4.1; _day JSON also carries the
 fronts and n_hist.
+
+## E.33b, 2026-10-28 09:13-10:01 PDT (FeatureCoder2-OpusXHigh, Coder-B continued): lead rulings R-B3-FD6, R-B3-N10, R-L11
+
+Rulings from reports/stage_e33_protocol_readings.md (09:12 PDT) and the lead's message (R-L11, 09:52 PDT by the lead's
+clock; received 09:43 PDT by `date` here). Nothing else changed. Code 0485beafebbb (was fb69badd4bb9); changed files
+replayB.py (sha256 5910d217000ab92b6452b0263808121374422b5abe445f47849343dbda036c1e) and dayB.py
+(87a57970fb219fa720ef57abd38f3d601a805ef041b3aeebf8fa62699379189c); calB.py, featB.py, build_featB.py unchanged.
+
+- **R-B3-FD6 replaces the depletion rule of B-REFILL-1 (F3.11).** A C/M record opens the 100 ms refill window only if
+  its whole reduction is fill lots of its event batch (fill > 0 and remainder 0) and it leaves the touch level at 0.
+  A record that removes fill lots and a voluntary remainder at once (partial fill, rest cancelled or modified away)
+  opens no window; its remainder is still a touch removal (F3.9, unchanged). Code: replayB.replay_zm `reduce`,
+  `# READING R-B3-FD6`. Effect on the 20 B3 dates (whole streams, counts only): refill events 80,521 -> 80,305 (216
+  dropped; the new set is a subset of the old on each date); removals, sweeps and book states identical.
+- **R-B3-N10 (= R-B3-D1) replaces the order in B-BOOKBAD.** An R record with F_MAYBE_BAD_BOOK (or F_TOB/F_MBP) clears
+  the book, then marks it bad, so it stays bad until the next R (before: the mark preceded the clear and the clear
+  reset it). Code: replayB.replay_zm R branch, `# READING R-B3-N10`. Effect: none on the 20 dates (0 records with
+  those flags).
+- **R-L11 replaces B-RP-1's "every valid book update" (F4.6).** Hi and Lo run over the as-of function M(u),
+  u in [08:30, t]: the state as of 08:30:00 and, for each distinct ts_recv in (08:30, t], the state after the last
+  book update with that ts_recv, if valid (valid-mid rule unchanged). Code: dayB._range, `# READING R-L11`. Effect on
+  the 20 dates (counts only): 58,115 updates in (08:30, 13:13] share their ts_recv with the next update (all valid;
+  155 with a different mid from the next), none of which set a new running Hi or Lo at any mark, so F4.6 is
+  unchanged on all 20 dates (and rp_hi/rp_lo on all 328 day raws).
+
+Tests (hand-built, synthetic; tests/test_replayB.py): test_fd6_fill_plus_voluntary_remainder_opens_no_refill_window
+(C and M-to-another-price cases), test_fd6_all_fill_emptying_record_opens_refill_window,
+test_n10_flagged_r_record_leaves_the_book_bad_until_the_next_r (F_MAYBE_BAD_BOOK, F_TOB, F_MBP),
+test_rl11_range_uses_only_the_last_update_of_each_ts_recv. Run against the HEAD (fb69badd4bb9) files: 6 fail as
+intended (all but the all-fill case, which both versions pass). implB/tests at 0485beafebbb: 96 passed (test_featB
+37, test_labB 33, test_replayB 26).
+
+Store: DERIVED/implB/features/0485beafebbb/ (20 parquets, 20 _day JSON, manifest.json), day raws
+DERIVED/implB/dayraw/0485beafebbb/ (328). Against fb69badd4bb9 (exact, NaN == NaN): only F3_11 differs (5,385 of
+5,460 rows; rbar_15 changes on every date); every other column and every _day JSON identical; day raws differ only
+in rfb15 (129 of 328 dates) and rfa15 (131). Superseded and left on disk: DERIVED/implB/dayraw/1570ccd23c76/ (263
+raws of the FD6+N10 code before R-L11, no features; stopped 09:43 PDT).

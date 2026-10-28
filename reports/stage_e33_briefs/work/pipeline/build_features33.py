@@ -158,6 +158,7 @@ def pass1(day: date, folder: Path, cutoff_ns: int | None = None) -> dict:
     zs = np.concatenate([data33.load_mbp1("ZS", d, cutoff_ns) for d in days])
     zl = np.concatenate([data33.load_mbp1("ZL", d, cutoff_ns) for d in days])
     t_load = time.time() - t0
+    order_log = dict(data33.ORDER_LOG)  # PipelineReview N11: re-sorts by data33, after the loads
     p1 = F.stream_day(day, zm, zs, zl, fr, ticks, ax)
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(f".{path.name}.tmp.npz")
@@ -169,7 +170,7 @@ def pass1(day: date, folder: Path, cutoff_ns: int | None = None) -> dict:
                                                  "ZL": int(len(zl))},
             "load_s": round(t_load, 3), "stream_s": round(time.time() - t0 - t_load, 3),
             "maxrss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1),
-            "cutoff_ns": cutoff_ns}
+            "cutoff_ns": cutoff_ns, "order_log": order_log}
     _atomic_text(done, json.dumps(info))
     return info
 

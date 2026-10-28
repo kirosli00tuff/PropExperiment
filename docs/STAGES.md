@@ -244,6 +244,12 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     partial (see reports/E.33_RETURN.md), B6 cost model matches E.28/E.31, B7 MathReviewer agrees, PipelineReviewer
     provisional NOT YET; stopped by the deadline after two usage limits (14 h 20 min), run 2026-10-27/28. No freeze,
     no registration, no search; N 538. Continuation (E.33b) recommended.
+  - Stage E.33b — continuation of E.33 (V52): B3 0 cells on 59 features, 6 labels and sigma after the F3_11/F3_9
+    rulings; LT1 (200 draws, both priors) and LT2-LT7 pass; proofs 40/40 (null 0/20, plant 20/20); PipelineReview
+    GO; pipeline frozen (eb565a37) and registered (r009-E33, N 538 -> 838); search started 14:29 and stopped at 16:08
+    by the protocol's P10 3x compute rule (synthetic probe 6.6 s vs real LOGIT fold 227 s): 72 of 300 configurations
+    finished (S5 and 12 of S1), outcomes sealed, no selection; rule 5 removes minutes on 95-98 of 796 dates; run
+    2026-10-28 (see reports/E.33b_RETURN.md). N 838. The user decides an amendment of the compute limit (D1).
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

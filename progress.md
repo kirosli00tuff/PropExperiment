@@ -5184,3 +5184,91 @@ Final table (times PDT; tokens by transcript):
 | 21 | Lead: wrap-ups, proof stop, end checks, pytest, return, progress, STAGES, commit | opus (xhigh) | 07:01-08:05 | 1 h 4 min | (lead) | done |
 | - | Lead session 86e80bc3, whole | opus 5.5 (xhigh) | 14:31-08:05 | - | 59,837,014 (to 07:45) | - |
 | total | Stage E.33 | - | 10-27 14:31-10-28 08:05 | work 3 h 14 min (pauses 14 h 20 min) | 358,473,268 (to 07:45) | initial estimate (14:47): return by 07:30 with the full search; revised (02:03): Part B by 06:45, C not run |
+
+## 2026-10-28 — Stage E.33b: ZM discovery continuation: Part B closed, frozen, registered (N 538 -> 838), search stopped by the P10 compute rule after 72 of 300 configurations; no selection; N = 838
+
+Prompt docs/prompts/STAGE_E.33b.md (finish E.33 under the frozen E.32 protocol, sha256 c4ffb9d7...; V52: E.32 D1 =
+KEEP, rule 5 kept, no fixed end). Return: reports/E.33b_RETURN.md. STATE reports/stage_e33_STATE.md ("E.33b"
+heading); readings reports/stage_e33_protocol_readings.md (FINAL, da58c77f); freeze reports/stage_e33_pipeline_freeze.sha256
+(eb565a37); configuration freeze reports/stage_e33_c1_freeze.json (ea002c60); run marker reports/stage_e33_run_marker.md;
+briefs and lead tools under reports/stage_e33b_briefs/. Holdout unlocks_logged 0 at start and end; REGISTRATION.md 0
+bytes; spend ledger unchanged (37,290 lines, 42589d7b); no Databento, TopstepX or broker call; nothing pushed.
+
+**What ran.** One lead session (Opus 5.5 xhigh, b8cfc9d8), 6 workers (5 Opus xhigh coders, 1 Fable xhigh reviewer,
+models confirmed from transcripts). The last 4 proof seeds (40/40: null Tier A empty in 20 of 20, plant in Tier A in
+20 of 20). Rulings FD6, FD7, N10 and the 10 NEEDS LEAD readings (R-L9 to R-L11); fixes in both implementations; B3
+full_r3 0 cells (59 features, 6 labels, sigma); B4 synthetic seed 10 0 cells; LT1 200 draws under both priors, LT2 on
+the new span and LT7 all pass. Feature store (816 dates) built after B3; PipelineReview phase 2 GO (0 BLOCKING, 0
+SHOULD FIX, notes N11-N24); readings FINAL; freeze built and verified (227 files + 4,125 derived inputs, 0
+differences). P5 projection written before the first real fit (2,255.8 s; 3x = 6,767.5 s). C1: N 538 -> 838
+(r009-E33, 14:23:13). Labels for 796 dates; the search started at 14:29:04.
+
+**Result.** The search stopped at 16:08:11 under P10's 3x rule (protocol 0.2: "compute exceeds the P10 limit": stop
+and report). 72 of 300 configurations finished (all 60 of S5, 12 of S1; 440 of 1,800 fits; 0 failed; 3 partial).
+The limit came from a synthetic probe, under-measured about 34x: E33-S5F15L100E's real fold 6 took 227.4 s against
+6.6 s synthetic. No outcome of a finished configuration was read; nothing was selected; no finalist and no clean
+negative. Rule 5's limit part removes minutes on 95-98 of the 796 dates (11,766-15,315 minutes per label). Lead
+errors: a 2-hour wait (10:18-12:16) on a worker that had stopped mid-build, and no warning before C1 that the 3x
+allowance (73 minutes of fits) was below P5's own guess (1-4 hours) and E.33's estimate (2-3 hours).
+
+**Decisions for the user.** D1 amend the compute limit for this run (recommended: a new 3x reference projected from
+the real fold times, then resume r009-E33 from the DONE markers, about 2 more hours of fits, outcome-blind); D2 limit
+bands for the test stage, decided when E.34 is drafted; D3 future protocols time a real-data probe registered as its
+own trial. E.32 D2 stays open.
+
+**Session cost.**
+
+Computed at 16:33 PDT from this session's transcripts (main .jsonl and subagents/*.jsonl of session b8cfc9d8,
+2026-10-28 09:05-16:33 PDT) with reports/stage_e10_briefs/cost.py (output: reports/stage_e33b_briefs/cost_e33b.txt).
+These are token counts, not plan-credit percentages; the commit step after 16:33 is not counted.
+
+Wall clock: 09:05-16:33 PDT, 7 h 28 min. Of that, 1 h 58 min (10:18-12:16) was lead idle time, waiting on a worker
+that had stopped (not a usage limit, not a pause). The search's own collector-window pause (15:34:05-16:00:05,
+26 min) was not lead downtime: the lead drafted the return meanwhile. Usage-limit pauses: none. Work time excluding
+the idle stretch: 5 h 30 min.
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 1,633 | 157,155 | 15,586,332 | 2,011,344 | 17,756,464 |
+| claude-opus-5-5 | 1,782 | 796,316 | 181,758,270 | 3,005,528 | 185,561,896 |
+| all | 3,415 | 953,471 | 197,344,602 | 5,016,872 | 203,318,360 |
+
+Worker spawns (agent file worker-xhigh for all):
+- FeatureCoder-OpusXHigh: opus (claude-opus-5-5), xhigh, 18,776,437 tokens
+- FeatureCoder2-OpusXHigh: opus, xhigh, 10,125,116
+- ReadingsCompiler-OpusXHigh: opus, xhigh, 24,615,678
+- FreezeCoder-OpusXHigh: opus, xhigh, 20,578,518
+- TestCoder-OpusXHigh: opus, xhigh, 34,667,178
+- PipelineReviewer-FableXHigh: fable (claude-fable-5-1), xhigh, 17,756,464
+
+Delegation share: lead 76,798,969 (37.8%), workers 126,519,391 (62.2%). By model: Opus 185,561,896 (91.3%), Fable
+17,756,464 (8.7%). Cache reads are 97.1% of all tokens.
+
+Final table (times PDT, from STATE, logs and transcripts; tokens from the transcripts):
+
+| # | Task / agent | Model (effort) | Start-end | Time | Tokens | Status, deviations |
+|---|---|---|---|---|---|---|
+| 1 | Lead: start checks, gates, reading, plan | opus (xhigh) | 09:05-09:09 | 4 min | (lead) | done; no estimate table printed at launch (deviation) |
+| 2 | Proof seeds 19, 119, 20, 120 (lead-run job, 8 procs) | - | 09:09:18-09:50:18 | 41 min | - | done, rc 0 |
+| 3 | Lead: rulings FD6/FD7/N10, briefs, 4 spawns | opus (xhigh) | 09:10-09:14 | 4 min | (lead) | done |
+| 4 | FeatureCoder-OpusXHigh | opus-5-5 (xhigh) | 09:13-12:18 | about 44 min active | 18,776,437 | done; idle 09:54-12:16, never woken |
+| 5 | FeatureCoder2-OpusXHigh | opus-5-5 (xhigh) | 09:13-10:01 | 48 min | 10,125,116 | done |
+| 6 | ReadingsCompiler-OpusXHigh | opus-5-5 (xhigh) | 09:13-09:39 | 26 min | 24,615,678 | done |
+| 7 | FreezeCoder-OpusXHigh | opus-5-5 (xhigh) | 09:13-10:00 | 47 min | 20,578,518 | done |
+| 8 | PipelineReviewer-FableXHigh | fable-5-1 (xhigh) | 09:13-09:24, 12:20-13:00, 14:16-14:17, 16:11-16:17 | about 1 h active | 17,756,464 | done; GO; post-stop check |
+| 9 | Lead: 10 NEEDS LEAD rulings | opus (xhigh) | 09:39-09:41 | 2 min | (lead) | done |
+| 10 | TestCoder-OpusXHigh | opus-5-5 (xhigh) | 10:01-14:16 | 4 h 15 min (mostly its jobs) | 34,667,178 | done |
+| 11 | Idle: lead waiting on FeatureCoder | - | 10:18-12:16 | 1 h 58 min | - | lost time (section 6, item 25) |
+| 12 | LT1/LT7 job (TestCoder, 3 procs) | - | 12:21:39-14:15:30 | 1 h 54 min | - | rc 0, all pass |
+| 13 | Feature store, 816 dates (lead-run, 4 procs) | - | 12:25:50-12:40:11 | 14 min | - | rc 0 |
+| 14 | Lead: readings appendix, review rounds, Part D briefs, tools | opus (xhigh) | 12:16-14:16 (interleaved) | - | (lead) | done |
+| 15 | P5 probe and projection | lead | 14:16:21-14:18:35 | 2 min | (lead) | written before the first fit |
+| 16 | Readings FINAL; freeze build, verify, check-proofs | lead | 14:18-14:23 | 5 min | (lead) | 0 differences |
+| 17 | C1 registration, run marker | lead | 14:23-14:24 | 1 min | (lead) | N 538 -> 838 |
+| 18 | Labels, 796 dates (lead-run, 3 procs) | - | 14:24:21-14:28:46 | 4 min | - | rc 0 |
+| 19 | Search (lead-run, 8 procs) | - | 14:29:04-16:08:11 | 1 h 39 min (73 min net) | - | stopped by P10 3x rule; 72/300 |
+| 20 | Pause: collector window (search only) | - | 15:34:05-16:00:05 | 26 min | - | pause, netted out |
+| 21 | Lead: rule-5 count, stop watcher, return draft | opus (xhigh) | 14:30-16:08 (interleaved) | - | (lead) | done |
+| 22 | Lead: post-stop count, end checks, return, progress, STAGES, cost | opus (xhigh) | 16:08-16:33 | 25 min | (lead) | done |
+| 23 | Full pytest suite | - | 16:13:01-16:32:22 | 19 min | - | 1 known failure (h6), as E.33 |
+| all | Stage E.33b | lead + 6 workers | 09:05-16:33 | 7 h 28 min (5 h 30 min excluding the idle stretch) | 203,318,360 (lead 76,798,969; workers 126,519,391) | initial estimate (first table 12:17): finish 21:30-00:30 with the full search; actual: stopped at 16:08 by the compute rule, return by 16:40 |

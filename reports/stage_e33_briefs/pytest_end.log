@@ -1,0 +1,27 @@
+start 2026-10-28 07:44:50 PDT available 11740 MB
+        assert "T3_REGISTERED" not in proc.stderr
+>       assert "freeze manifest" in proc.stderr  # review H6R-10: refused at the freeze check
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert 'freeze manifest' in 'REFUSED (HarnessFreezeError): Stage E harness preflight refused: reports/stage_e2b_harness_freeze.json sha256 2e908c81e01d... is not the expected ece91ae8e699...\n'
+E        +  where 'REFUSED (HarnessFreezeError): Stage E harness preflight refused: reports/stage_e2b_harness_freeze.json sha256 2e908c81e01d... is not the expected ece91ae8e699...\n' = CompletedProcess(args=['/home/kiros-li/Documents/GitHub/PropExperiment/.venv/bin/python', '-m', 'h6_rod', 'check', '--...preflight refused: reports/stage_e2b_harness_freeze.json sha256 2e908c81e01d... is not the expected ece91ae8e699...\n').stderr
+
+tests/test_h6_rod_run.py:76: AssertionError
+=============================== warnings summary ===============================
+tests/test_e2a_exposure_gate.py: 34 warnings
+tests/test_funnel_simulator.py: 18 warnings
+  /home/kiros-li/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/multiprocessing/popen_fork.py:66: DeprecationWarning: This process (pid=2222960) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+tests/test_funnel_simulator.py::test_summarize_hand_computed_on_three_run_results
+  /home/kiros-li/Documents/GitHub/PropExperiment/.venv/lib/python3.12/site-packages/numpy/lib/_function_base_impl.py:4609: RuntimeWarning: invalid value encountered in scalar multiply
+    lerp_interpolation = add(a, diff_b_a * t, out=... if out is None else out)
+
+tests/test_stage_e_runner.py::test_an_empty_window_supplies_0_days_and_the_member_is_inconclusive_by_design
+  /home/kiros-li/Documents/GitHub/PropExperiment/screening/stage_e_stats_power.py:218: RuntimeWarning: invalid value encountered in multiply
+    t_stat = np.where(positive, shifted / safe_se, np.inf * np.sign(shifted))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_h6_rod_run.py::test_the_lead_set_constants_and_the_cli_refuses_a_wrong_freeze_sha
+1 failed, 8116 passed, 5 skipped, 3 xfailed, 54 warnings in 1147.87s (0:19:07)
+end 2026-10-28 08:04:01 PDT

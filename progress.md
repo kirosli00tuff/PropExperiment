@@ -5103,3 +5103,84 @@ end):
 | - | Lead session 900dd54a, whole | opus 5.5 (xhigh) | 02:32-08:02 | - | 43,326,750 | - |
 | - | Lead session 89bc0cd0, whole | opus 5.5 (xhigh) | 08:39-13:11 | - | 30,552,147 | - |
 | total | Stage E.32 | - | 10-26 22:21-10-27 13:11 | work 3 h 37 min (pauses 11 h 13 min) | 545,304,733 | initial estimate (10-26 23:01): done by about 11:20 PDT 10-27; this session's estimate (08:41): 10:40 |
+
+## 2026-10-28 — Stage E.33: ZM discovery run stopped at Part B by the deadline; pipeline built twice and checked, proofs 36/40, no search; N = 538
+
+Prompt docs/prompts/STAGE_E.33.md (run the frozen E.32 protocol, sha256 c4ffb9d7...). Return: reports/E.33_RETURN.md.
+STATE reports/stage_e33_STATE.md; readings draft reports/stage_e33_protocol_readings.md; code and evidence under
+reports/stage_e33_briefs/ (pipeline A in work/pipeline/, implementation B in work/implB/, reviews in review/); large
+outputs under /mnt/large-storage/market_data/PropExperiment/derived/e33/. Holdout unlocks_logged 0 at start, at both
+resumes and at the end; REGISTRATION.md 0 bytes; nothing registered (N 538); spend ledger unchanged; no Databento,
+TopstepX or broker call; nothing pushed.
+
+**What ran.** One lead session (Opus 5.5 xhigh, 86e80bc3), 13 workers. Part A: all gates passed (156/156 hashes, seals,
+guard 4/4, harness v14). Part B: Coder-A wrote the production pipeline (guard, loaders, calendar, ZS/ZL re-split of
+406 M records, 59 features, labels with fallbacks and weights, search engine, P8, synthetic proof generator and runner,
+cost model); Coder-B wrote the features and labels independently. B3 on 20 seeded dates: labels and sigma equal in every
+cell; the first feature comparison disagreed in 34 columns, all traced to 5 causes, ruled (R-B3-*) and fixed; the rerun
+agrees in 57 of 59 columns (F3_11 and F3_9 open). B4: LT2-LT6 pass; LT1 and LT7 not at scale. B5 (iii): DSR 0.9004 and
+BH reproduced; AFML only from secondary sources. B5 proofs (synthetic): 36 of 40 seeds; the null put nothing in Tier A in
+18 of 18 seeds, the plant entered Tier A in 18 of 18. B6: fees and fills match E.28 and E.31. Reviews: SearchReview (Opus)
+and ProofReview (Fable) before the proofs, fixes applied; B7 MathReviewer (Fable) agrees with both implementations on
+16 features and 12 labels by hand and reproduces every threshold; B7 PipelineReviewer (Fable) provisional NOT YET (0
+BLOCKING, 3 SHOULD FIX).
+
+**Result.** No freeze, no registration, no search, no finalist and no clean negative: two usage limits took 14 h 20 min
+and the proofs needed about 5.7 hours. Finding: the Z4 definitions refresh price limits only on Sundays, so P3.6 rule 5
+measures a band up to 5 days old (D3).
+
+**Decisions for the user.** D1 launch E.33b to finish this run (last 4 proof seeds, B3 residuals, LT1/LT7, B7, freeze,
+C1 to N 838, the search, D, E); D2 record E.32's D1 (keep the added test DSR) before E.33b's C1; D3 the stale limit band;
+D4 AFML from secondary sources; D5 remove DATABENTO_API_KEY3; D6 the end-of-stage test result (return section 7).
+
+**Session cost.**
+
+Tokens come from this session's transcripts (the lead's .jsonl and all 13 subagent transcripts under
+~/.claude/projects/-home-kiros-li-Documents-GitHub-PropExperiment/86e80bc3-d62a-42e1-b5fd-5c881ccf8b54/subagents/), each
+assistant message counted once at its final usage, by reports/stage_e33_briefs/work/lead/deleg33.py at 07:45:19 PDT
+(output reports/stage_e33_briefs/work/lead/deleg33_final.md); the lead's calls after 07:45 (filling this return, the
+progress entry and the commit) are not counted. Token counts, never estimates; plan-meter percentages are the user's
+reading.
+
+Wall clock: 2026-10-27 14:31 to 2026-10-28 08:05 PDT, 17 h 34 min. Pauses, not work: USAGE LIMIT 1 (weekly)
+15:27-02:01 (10 h 34 min); USAGE LIMIT 2 (5-hour) 03:15-07:01 (3 h 46 min); 14 h 20 min in all. Work: 3 h 14 min
+(14:31-15:27, 02:01-03:15, 07:01-08:05). The detached proof job ran 02:36-07:44 (5 h 8 min), through the second pause.
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-opus-5-5 | 2,552 | 2,054,619 | 328,998,084 | 10,866,262 | 341,921,517 |
+| claude-fable-5-1 | 2,495 | 242,370 | 15,026,681 | 1,280,205 | 16,551,751 |
+| all | 5,047 | 2,296,989 | 344,024,765 | 12,146,467 | 358,473,268 |
+
+Delegation share: lead 59,837,014 (16.7%), workers 298,636,254 (83.3%): Opus workers 282,084,503 (78.7% of all),
+Fable workers 16,551,751 (4.6%). Cache reads are 96.0% of all tokens. Per worker spawn (agent file, model, effort,
+tokens): section 4. No max effort was used. The largest consumer was the TestCoder (74.7 M), whose context held both
+implementations.
+
+Final table (times PDT; tokens by transcript):
+
+| # | Task / agent | Model (effort) | Start-end | Time | Tokens | Status, deviations |
+|---|---|---|---|---|---|---|
+| 1 | Lead: start checks, A1 hashes, reading, plan | opus (xhigh) | 10-27 14:31-14:37 | 6 min | (lead) | done |
+| 2 | Lead: INTERFACE, STATE, 9 briefs, estimate table, readings draft, C1 builder | opus (xhigh) | 14:37-14:56 | 19 min | (lead) | done |
+| 3 | DataCoder-OpusXHigh | opus-5-5 (xhigh) | 14:46-15:08 | 22 min | 13,158,272 | done |
+| 4 | FeatureCoder-OpusXHigh | opus-5-5 (xhigh) | 14:46-07:05 (active about 1 h 57 min) | about 1 h 57 min | 37,931,731 | done; cut twice |
+| 5 | LabelCoder-OpusXHigh | opus-5-5 (xhigh) | 14:46-02:47 (active about 28 min) | about 28 min | 16,739,870 | done |
+| 6 | FeatureCoder2-OpusXHigh | opus-5-5 (xhigh) | 14:46-07:04 (active about 1 h 56 min) | about 1 h 56 min | 39,432,011 | done; cut twice |
+| 7 | LabelCoder2-OpusXHigh | opus-5-5 (xhigh) | 14:46-15:16 | 30 min | 13,659,953 | done |
+| 8 | SearchCoder-OpusXHigh | opus-5-5 (xhigh) | 14:46-02:25 (active about 1 h 4 min) | about 1 h 4 min | 31,622,898 | done; cut once |
+| 9 | Lead: A1 guard dry check, wave-2 spawns, readings review | opus (xhigh) | 15:06-15:27 | 21 min | (lead) | done |
+| 10 | ProofCoder-OpusXHigh | opus-5-5 (xhigh) | 15:06-02:36 (active about 55 min) | about 55 min | 25,938,872 | done; cut once |
+| 11 | StatsCostCoder-OpusXHigh | opus-5-5 (xhigh) | 15:08-02:03 (active about 20 min) | about 20 min | 20,268,814 | done; cut once |
+| 12 | TestCoder-OpusXHigh | opus-5-5 (xhigh) | 15:16-07:05 (active about 1 h 27 min) | about 1 h 27 min | 74,650,269 | done; cut twice |
+| 13 | USAGE LIMIT 1 (weekly) | - | 15:27-02:01 | 10 h 34 min | - | not work |
+| 14 | Lead: resume, estimate table, reviews, B3 rulings, proof launch | opus (xhigh) | 02:01-03:15 | 1 h 14 min | (lead) | done |
+| 15 | SearchReviewer-OpusXHigh | opus-5-5 (xhigh) | 02:03-02:16 | 13 min | 8,681,813 | done |
+| 16 | ProofReviewer-FableXHigh | fable-5-1 (xhigh) | 02:18-02:32 | 14 min | 4,059,346 | done |
+| 17 | MathReviewer-FableXHigh | fable-5-1 (xhigh) | 02:18-02:42 | 24 min | 5,182,542 | done |
+| 18 | Production proofs (detached job, 8 processes) | - | 02:36-07:44 | 5 h 8 min | - | 36 of 40 seeds; stopped for the deadline |
+| 19 | PipelineReviewer-FableXHigh | fable-5-1 (xhigh) | 03:08-03:15; 07:02-07:03 | about 8 min | 7,309,863 | provisional NOT YET |
+| 20 | USAGE LIMIT 2 (5-hour) | - | 03:15-07:01 | 3 h 46 min | - | not work |
+| 21 | Lead: wrap-ups, proof stop, end checks, pytest, return, progress, STAGES, commit | opus (xhigh) | 07:01-08:05 | 1 h 4 min | (lead) | done |
+| - | Lead session 86e80bc3, whole | opus 5.5 (xhigh) | 14:31-08:05 | - | 59,837,014 (to 07:45) | - |
+| total | Stage E.33 | - | 10-27 14:31-10-28 08:05 | work 3 h 14 min (pauses 14 h 20 min) | 358,473,268 (to 07:45) | initial estimate (14:47): return by 07:30 with the full search; revised (02:03): Part B by 06:45, C not run |

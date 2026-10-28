@@ -238,6 +238,12 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     E.33 (4 families, 300 configurations, N 838 after E.33; binding discovery daily Sharpe 0.2007, about 1.22
     ticks net per 15-minute trade at 4 a day; sha256 c4ffb9d7...), run 2026-10-26/27 (see reports/E.32_RETURN.md),
     three usage-limit pauses and a planned context wipe. Nothing trained or computed; nothing registered; N 538.
+  - Stage E.33 — ZM directional discovery, run of the frozen E.32 protocol: Part A gates passed; Part B pipeline built
+    twice (Coder-A production, Coder-B independent), B3 labels and sigma exact on 20 dates and 57 of 59 feature
+    columns after rulings (F3_11, F3_9 open), B4 LT2-LT6 pass, B5 published examples reproduced, synthetic proofs
+    partial (see reports/E.33_RETURN.md), B6 cost model matches E.28/E.31, B7 MathReviewer agrees, PipelineReviewer
+    provisional NOT YET; stopped by the deadline after two usage limits (14 h 20 min), run 2026-10-27/28. No freeze,
+    no registration, no search; N 538. Continuation (E.33b) recommended.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

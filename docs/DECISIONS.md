@@ -1075,3 +1075,19 @@
   4. E.32 launches only after the user moves to Max (the user was at 90%
      of his weekly Pro usage on 2026-10-23). No Databento call is made
      until a funded account exists and a fresh quote is approved.
+- 2026-10-28 (user, planning chat, 09:03 PDT): V52. ZM discovery
+  continuation.
+  1. E.32 D1: KEEP the protocol-added test DSR (DSR > 0.95 at N, with
+     V = 1/(T_test - 1)). The frozen protocol stays unchanged: binding
+     selection threshold daily Sharpe 0.2007 (t 5.66).
+  2. E.33 D3: price-limit rule 5 is kept for discovery as written. E.33b
+     counts the affected dates and minutes on all 796 dates. Whether the
+     test stage uses daily limits from another source is decided before
+     any test registration.
+  3. E.33 (2d5a2ba) is accepted as a partial run. N stays 538, and no
+     real outcome was computed. Stage E.33b (docs/prompts/STAGE_E.33b.md)
+     finishes it. The user lifted the 09:00 Wednesday deadline; E.33b
+     runs until complete, pausing at usage limits. One CLI session at a
+     time; quality before usage.
+  4. E.32 D2 (amend V14 (c) for the test's DSR variance) stays open until
+     the test stage is drafted.

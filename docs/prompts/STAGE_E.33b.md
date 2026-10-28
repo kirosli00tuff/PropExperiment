@@ -51,8 +51,8 @@ records them as a V-entry):
 If no V-entry records E.32 D1 when the lead reaches C1, stop before C1 and
 report. Do not register.
 
-Time: the window is set by the planner at launch. Allow at least 10
-hours. Checkpoint reports/stage_e33_STATE.md (continue the same file,
+Time: launched 2026-10-28 about 09:10 PDT. No fixed end (user, V52): run
+until complete, pausing at usage limits. Checkpoint reports/stage_e33_STATE.md (continue the same file,
 with an "E.33b" heading) after every step. Resume from it after any usage
 limit or reboot. If the window ends before C2 completes, stop after whole
 parts, as E.33's rules require.

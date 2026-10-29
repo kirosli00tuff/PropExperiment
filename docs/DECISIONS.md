@@ -1109,3 +1109,14 @@
      or from the protocol's own guess range.
   4. Workers: Opus (or Fable for reviews) by default. Haiku only for pure
      extraction, as the program's routing allows. Never Sonnet.
+- 2026-10-28 (user, planning chat, 18:08 PDT): V54. Model routing.
+  1. Sonnet and Haiku helper workers are allowed again, per CLAUDE.md
+     routing: Sonnet for mid-tier worker tasks (well-specified coding,
+     reading, summarising), Haiku for pure extraction and counting. This
+     supersedes V50 item 5's "Sonnet never reviews" for workers and V53
+     item 4.
+  2. Unchanged: the lead is always Opus. Independent reviews and
+     verifications stay Fable xhigh, or Opus xhigh in a fresh context,
+     with each model confirmed from the transcript. Checks are never cut
+     to save usage.
+  3. Ultracode may be used (user, 18:08).

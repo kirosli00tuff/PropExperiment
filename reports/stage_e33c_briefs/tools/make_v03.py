@@ -1,0 +1,58 @@
+from pathlib import Path
+src = Path("reports/stage_e32_discovery_protocol.md").read_text()
+OLD_STATUS = """Status: FROZEN v1.0 (2026-10-27, lead Opus 5.5 xhigh; DRAFT v0.6 after the ProtocolReviewer, FixVerifier,
+FixSpotCheck and FinalDiffCheck rounds, plus one consistency edit in P10). The frozen version carries its sha256 in
+reports/stage_e32_discovery_protocol.sha256 and in reports/E.32_RETURN.md; any later edit voids the freeze.
+"""
+NEW_STATUS = """Status: version 0.3 (the name V53 gives it) = FROZEN v1.0 (2026-10-27, lead Opus 5.5 xhigh; DRAFT v0.6 after the
+ProtocolReviewer, FixVerifier, FixSpotCheck and FinalDiffCheck rounds, plus one consistency edit in P10; sha256
+c4ffb9d79af4bbbf10574ac138668aa49a80b22a8f5fba5879184d357d2c7e05, reports/stage_e32_discovery_protocol.md, kept
+unchanged) plus one amendment decided by the user (V53, 2026-10-28) for registration r009-E33: the reference of the
+compute stop (P5, and the P10 clause that names it). Nothing else differs from v1.0. This version carries its sha256
+in reports/stage_e32_discovery_protocol_v0.3.sha256 and in ledger/trial_amendments.jsonl; any later edit voids it.
+"""
+OLD_P5_END = """  fit to the last DONE marker), each net of the pauses the STATE file logs (usage-limit waits, reboots), the same
+  two parts as the projection (FixSpotCheck S-B-3, FinalDiffCheck F-7).
+"""
+NEW_P5_END = OLD_P5_END + """  Version 0.3 (V53; registration r009-E33): the reference above (2,255.8 s, written at 14:18:35 PDT on 2026-10-28;
+  its fold part came from the synthetic seed9000 table of reading R-L1, and the search stopped under it at 16:08:11
+  after 440 of the 1,800 fits) is replaced by R_0.3, projected from the real per-fold wall times; the 3x stop is
+  kept against it. R_0.3 = B + (the sum of t_f over the 1,080 LOGIT folds) / P_L + (the sum of t_f over the 720 LGBM
+  folds) / P_G, over the 6 folds of each of the 300 configurations, where:
+  - B = 796 x the mean of the 3 builder probe times above (3.65, 5.41 and 5.66 s) / P_b = 976.43 s, the builder part
+    of the replaced reference, unchanged;
+  - t_f, for each of the 440 folds that finished before the stop, is the seconds on its "<id> fold k done <s> s" line
+    in reports/stage_e33_briefs/work/logs/search_real.log (sha256
+    63c0a802d0ff34809ebc1d3c1bbe166a7e56fd7e2e7d1da3348d3c4c192ef914);
+  - t_f, for every other fold (the 8 folds cut by the stop and the 1,352 not started), is t_S5(l, g, k) x rho_m x n_s
+    / 23: t_S5(l, g, k) is the measured seconds of the S5 fold with the same label l, grid point g and fold k (all
+    360 S5 folds finished before the stop); n_s is the feature count of the fold's set (S1 23, S2 26, S3 27, S4 28;
+    the cost of a saga epoch and of a LightGBM histogram pass grows linearly with it); rho_m, per model family m, is
+    the sum of the measured seconds of the S1 folds that finished before the stop divided by the sum of the measured
+    seconds of the S5 folds with the same (l, g, k) (LOGIT 56 cells, LGBM 24);
+  - P_b = 4, P_L = 8 and P_G = 2, the process counts of the replaced reference and of the run.
+  Only wall times enter R_0.3; no outcome, fit statistic or iteration count. The method is coded in
+  reports/stage_e33c_briefs/tools/project_ref_v03.py (sha256
+  f10565707b7070d346cfd3b3ba5ef174dc4ab1665b54f7a2fe1ba8c8785a1013), which writes
+  reports/stage_e33c_briefs/ref_v03.json: rho_LOGIT 0.492659, rho_LGBM 0.707670, R_0.3 = 12,014.9 s, 3 x R_0.3 =
+  36,044.7 s. The measured wall time compared with it is the one defined above. The interval from the stop (16:08:11)
+  to the resumed search's first fold start is a pause the STATE file logs. At the stop the measured parts stood at
+  2,387.0 s (feature build) + 4,387.8 s (fits, net of the logged 1,560 s collector-window pause) = 6,774.8 s
+  (reports/stage_e33_briefs/work/logs/p10_stop.json), so the resumed search stops when its own fit time, net of
+  logged pauses, passes 29,269.9 s (the projected part of R_0.3 for the 1,360 folds left is 7,437.3 s). R_0.3 is
+  written to the STATE file before the resumed search's first fit.
+"""
+OLD_P10 = """  cannot be implemented is reported as not done and is not a stop; FixVerifier R-W4-2); a measured wall time of the
+  search above 3 times the projected wall time written to the STATE file before the first real-outcome fit (P5;
+  FixVerifier DO-18), or two out-of-memory failures.
+"""
+NEW_P10 = """  cannot be implemented is reported as not done and is not a stop; FixVerifier R-W4-2); a measured wall time of the
+  search above 3 times the reference of P5's compute stop (in version 0.3, R_0.3, written to the STATE file before
+  the resumed search's first fit; P5; FixVerifier DO-18), or two out-of-memory failures.
+"""
+out = src
+for old, new in ((OLD_STATUS, NEW_STATUS), (OLD_P5_END, NEW_P5_END), (OLD_P10, NEW_P10)):
+    assert out.count(old) == 1, old[:60]
+    out = out.replace(old, new)
+Path("reports/stage_e32_discovery_protocol_v0.3.md").write_text(out)
+print("written", len(out.splitlines()), "lines")

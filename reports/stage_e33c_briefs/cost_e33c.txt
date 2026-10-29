@@ -1,0 +1,48 @@
+# Stage E.33c session cost (python3 reports/stage_e10_briefs/cost.py <lo UTC> <hi UTC> <session>); run 2026-10-28 21:36:38 PDT
+
+## lead session 1: 7c6136a3-16c6-44df-891a-efd174837057 (18:05:23-18:39:10 PDT)
+$ python3 reports/stage_e10_briefs/cost.py 2026-10-29T01:05:00Z 2026-10-29T02:00:00Z 7c6136a3-16c6-44df-891a-efd174837057
+lead claude-opus-5-5 msgs=79 first=2026-10-29T01:05:59.166Z last=2026-10-29T01:39:09.898Z in=162 out=130069 cread=16087673 ccreate=283513 total=16501417
+agent-aadd39ce6b99390fc claude-haiku-5-5 msgs=7 first=2026-10-29T01:17:44.672Z last=2026-10-29T01:18:33.967Z in=16 out=11026 cread=495776 ccreate=94321 total=601139
+agent-aeb4add165385635d claude-fable-5-1 msgs=10 first=2026-10-29T01:22:57.103Z last=2026-10-29T01:34:08.047Z in=291 out=41677 cread=1009268 ccreate=163134 total=1214370
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 291 | 41,677 | 1,009,268 | 163,134 | 1,214,370 |
+| claude-haiku-5-5 | 16 | 11,026 | 495,776 | 94,321 | 601,139 |
+| claude-opus-5-5 | 162 | 130,069 | 16,087,673 | 283,513 | 16,501,417 |
+| all | 469 | 182,772 | 17,592,717 | 540,968 | 18,316,926 |
+
+## lead session 2: fec9a0d1-0594-4d0f-bee3-e7a05a38398a (19:54:16-21:22:19 PDT)
+$ python3 reports/stage_e10_briefs/cost.py 2026-10-29T02:54:00Z 2026-10-29T04:31:00Z fec9a0d1-0594-4d0f-bee3-e7a05a38398a
+lead claude-opus-5-5 msgs=88 first=2026-10-29T02:54:49.086Z last=2026-10-29T04:22:19.123Z in=186 out=130277 cread=18722134 ccreate=304109 total=19156706
+agent-a2c694a068c1c6d05 claude-opus-5-5 msgs=70 first=2026-10-29T03:39:52.036Z last=2026-10-29T03:57:50.188Z in=142 out=102260 cread=12875895 ccreate=291721 total=13270018
+agent-a85ab29845ccedef7 claude-fable-5-1 msgs=24 first=2026-10-29T04:01:37.205Z last=2026-10-29T04:15:38.795Z in=739 out=62832 cread=3145534 ccreate=209811 total=3418916
+agent-afef61b0b1538c543 claude-fable-5-1 msgs=29 first=2026-10-29T03:40:00.954Z last=2026-10-29T03:59:46.435Z in=906 out=91729 cread=4496886 ccreate=259750 total=4849271
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 1,645 | 154,561 | 7,642,420 | 469,561 | 8,268,187 |
+| claude-opus-5-5 | 328 | 232,537 | 31,598,029 | 595,830 | 32,426,724 |
+| all | 1,973 | 387,098 | 39,240,449 | 1,065,391 | 40,694,911 |
+
+## lead session 3: 7ea5755f-a4a7-4902-a9d3-8df2c289a807 (21:31:22 PDT to the cutoff 21:43:15 PDT; the steps after the cutoff are not counted)
+$ python3 reports/stage_e10_briefs/cost.py 2026-10-29T04:31:00Z 2026-10-29T04:43:15Z 7ea5755f-a4a7-4902-a9d3-8df2c289a807
+lead claude-opus-5-5 msgs=45 first=2026-10-29T04:31:57.649Z last=2026-10-29T04:42:54.909Z in=90 out=67076 cread=6468249 ccreate=176984 total=6712399
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-opus-5-5 | 90 | 67,076 | 6,468,249 | 176,984 | 6,712,399 |
+| all | 90 | 67,076 | 6,468,249 | 176,984 | 6,712,399 |
+
+## all three sessions (sum of the per-file lines above; python3 inline, shown)
+$ python3 -c '<sum the "lead"/"agent-" lines of this file by model and by role>'
+files counted: 8
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 1,936 | 196,238 | 8,651,688 | 632,695 | 9,482,557 |
+| claude-haiku-5-5 | 16 | 11,026 | 495,776 | 94,321 | 601,139 |
+| claude-opus-5-5 | 580 | 429,682 | 54,153,951 | 1,056,327 | 55,640,540 |
+| all | 2,532 | 636,946 | 63,301,415 | 1,783,343 | 65,724,236 |
+lead 42,370,522 (64.5%), workers 23,353,714 (35.5%)
+model share claude-fable-5-1: 9,482,557 (14.4%)
+model share claude-haiku-5-5: 601,139 (0.9%)
+model share claude-opus-5-5: 55,640,540 (84.7%)
+cache reads 63,301,415 = 96.3% of all tokens

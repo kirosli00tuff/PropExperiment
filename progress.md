@@ -5272,3 +5272,101 @@ Final table (times PDT, from STATE, logs and transcripts; tokens from the transc
 | 22 | Lead: post-stop count, end checks, return, progress, STAGES, cost | opus (xhigh) | 16:08-16:33 | 25 min | (lead) | done |
 | 23 | Full pytest suite | - | 16:13:01-16:32:22 | 19 min | - | 1 known failure (h6), as E.33 |
 | all | Stage E.33b | lead + 6 workers | 09:05-16:33 | 7 h 28 min (5 h 30 min excluding the idle stretch) | 203,318,360 (lead 76,798,969; workers 126,519,391) | initial estimate (first table 12:17): finish 21:30-00:30 with the full search; actual: stopped at 16:08 by the compute rule, return by 16:40 |
+
+## 2026-10-28 — Stage E.33c: ZM discovery search completed under protocol 0.3: 300 of 300 configurations, nothing passes P8 (Tier A empty), clean negative; N = 838
+
+Prompt docs/prompts/STAGE_E.33c.md (V53: amend only the P5/P10 compute reference, resume r009-E33 from its DONE
+markers, finish the 300, run P8 and Parts D and E; V55 routing). Return: reports/E.33c_RETURN.md. STATE
+reports/stage_e33_STATE.md ("E.33c" heading; three lead sessions). Protocol 0.3
+reports/stage_e32_discovery_protocol_v0.3.md (a2a2856f; diff reports/stage_e33c_briefs/protocol_v0.3.diff; review
+reports/stage_e33c_briefs/review/AmendReview_c.md); amendment line a001-E33 in ledger/trial_amendments.jsonl
+(511ae4c3); selection reports/stage_e33c_briefs/select/P8_select33.json (ee506884); Part D in
+reports/stage_e33c_briefs/work/ (D_stats.md, D4_verify.md) and review/StatsReview_c.md. Holdout unlocks_logged 0 at
+start and end; REGISTRATION.md 0 bytes; spend ledger unchanged (37,290 lines, 42589d7b); freeze eb565a37 with 0
+differences at the start, after the hash and at the end; no Databento, TopstepX or broker call; nothing pushed.
+
+**What ran.** Three lead sessions (Opus 5.5; xhigh at launch, max from 18:10 under V55), split by two planned
+context wipes, and 5 workers, models confirmed from their transcripts: FoldTimes-HaikuMed (haiku),
+AmendReviewer-FableXHigh, VerifyWorker-FableXHigh and StatsReviewer-FableXHigh (fable), StatsCoder-OpusXHigh (opus).
+S1 start gates passed; no outcome had been opened (log and marker contents, a transcript scan, an atime census). S2:
+protocol 0.3 is v1.0 plus one changed section, the P5/P10 compute reference, projected from E.33b's measured fold
+wall times (R_0.3 12,014.9 s; 3x stop 36,044.7 s); AmendReview GO (0 BLOCKING, 0 SHOULD FIX); hashed 18:34:30. S3:
+the search resumed at 18:36:14 from the DONE markers and finished at 20:37:27: 300 of 300 configurations, 1,800 fold
+fits, 0 failed (the 8 cut folds re-ran once); measured 14,047.4 s, 0.39 of the stop; lowest MemAvailable 6,311 MB.
+S4: P8 by the frozen select33.py at 20:38:50; D1 and D3 (StatsCoder); D4 (VerifyWorker re-simulated all 300 from the
+saved predictions: CONFIRMED, 162,189 trades equal row for row); D5 (StatsReviewer: 0 BLOCKING; 4 SHOULD FIX, all
+wording, fixed). Full suite at the end: 1 failed (the known h6 test, v13), 8,116 passed, 5 skipped, 3 xfailed.
+
+**Result.** Clean negative. Gate funnel alone G1 61 / G2 8 / G3 0 / G4 0 / G5 0; in order 61 / 0 / 0 / 0 / 0. All
+61 G1 passers lose more than 1.0 tick a trade after costs (best -1.098); the 8 G2 passers traded 8 to 55 times in 796
+dates. Largest DSR 0.0248, largest daily t 1.348; BH and Holm reject 0 of 300. Best daily Sharpe 0.0478 (binding
+threshold 0.2007), inside the synthetic null's per-seed maxima over 20 configurations (-0.076 to 0.060); PBO 0.14
+(reported). At every firm's fee the median configuration loses 2.2 to 2.6 ticks a trade. At 80% power the search
+could detect a true daily Sharpe of 0.2309, a net edge of 1.57 to 4.37 ticks a trade (median among the G1 passers,
+by label). No finalist and no E.34 registration; the 2017-05 to 2020-11 test window stays sealed; no Databento
+purchase. N stays 838.
+
+**Decisions for the user.** D1 accept the clean negative (recommended): no E.34, the test window stays sealed, N
+stays 838. D2 the next step: (a) the planned Stage E sequence (E.3b onward: K2's confirmation session, then the
+remaining clusters), recommended; (b) another pre-registered search on the same ZM discovery dates; (c) a second
+order-flow search on the owned MBO. D3 E.32 D2 (V14 (c) for a test's DSR variance) stays open until a test
+registration exists.
+
+**Session cost.**
+
+Computed at 21:43:15 PDT (the cutoff) from the transcripts of the three lead sessions and their subagents (main
+.jsonl and subagents/*.jsonl of 7c6136a3, fec9a0d1 and 7ea5755f, 2026-10-28 18:05-21:43 PDT) with
+reports/stage_e10_briefs/cost.py (outputs and the three-session sum: reports/stage_e33c_briefs/cost_e33c.txt). These
+are token counts, not plan-credit percentages; the commit and the last checks after 21:43:15 are not counted.
+
+Wall clock: 18:05-21:43 PDT, 3 h 38 min. Lead wipe 1 (18:39-19:54, 1 h 15 min) was planned lead downtime while the
+search ran, so the stage's work continued and it is counted. Lead wipe 2 (21:22-21:31, 9 min) had nothing running:
+a pause, not counted. Usage-limit pauses: none. Work time: 3 h 29 min.
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 1,936 | 196,238 | 8,651,688 | 632,695 | 9,482,557 |
+| claude-haiku-5-5 | 16 | 11,026 | 495,776 | 94,321 | 601,139 |
+| claude-opus-5-5 | 580 | 429,682 | 54,153,951 | 1,056,327 | 55,640,540 |
+| all | 2,532 | 636,946 | 63,301,415 | 1,783,343 | 65,724,236 |
+
+Worker spawns:
+- FoldTimes-HaikuMed: worker-medium, haiku (claude-haiku-5-5), medium, 601,139 tokens
+- AmendReviewer-FableXHigh: worker-xhigh, fable (claude-fable-5-1), xhigh, 1,214,370
+- StatsCoder-OpusXHigh: worker-xhigh, opus (claude-opus-5-5), xhigh, 13,270,018
+- VerifyWorker-FableXHigh: worker-xhigh, fable (claude-fable-5-1), xhigh, 4,849,271
+- StatsReviewer-FableXHigh: worker-xhigh, fable (claude-fable-5-1), xhigh, 3,418,916
+
+Lead sessions (opus, claude-opus-5-5, max effort from 18:10): 7c6136a3 16,501,417; fec9a0d1 19,156,706; 7ea5755f
+6,712,399 (to the cutoff).
+
+Delegation share: lead 42,370,522 (64.5%), workers 23,353,714 (35.5%). By model: Opus 55,640,540 (84.7%), Fable
+9,482,557 (14.4%), Haiku 601,139 (0.9%). Cache reads are 96.3% of all tokens. The lead at max effort used 42.4M
+tokens over 3 h 29 min of work that was mostly compute and review; E.33b's xhigh lead used 76.8M over 5 h 30 min of
+build work, so the two are not like for like.
+
+Final table (times PDT, from STATE, logs and transcripts; tokens from the transcripts):
+
+| # | Task / agent | Model (effort) | Start-end | Time | Tokens | Status, deviations |
+|---|---|---|---|---|---|---|
+| 1 | Lead session 1: prompt, V53-V55, routing, plan | opus (xhigh; max from 18:10) | 18:05-18:10 | 5 min | (lead) | done |
+| 2 | c1 S1 start gates | lead, opus (max) | 18:10:31-18:16 | 6 min | (lead) | done: all pass; no outcome opened |
+| 3 | c2a FoldTimes-HaikuMed | haiku-5-5 (medium) | 18:17:42-18:18:33 | 1 min | 601,139 | done: 448 rows, equal to the lead's parse |
+| 4 | c2b 0.3 text, method script, R_0.3, diff | lead, opus (max) | 18:19-18:27 | 8 min | (lead) | done |
+| 5 | c2c AmendReviewer-FableXHigh | fable-5-1 (xhigh) | 18:22:52-18:34:08 | 11 min | 1,214,370 | GO: 0 BLOCKING, 0 SHOULD FIX, 9 NOTE |
+| 6 | c2d 0.3 stop watcher | lead, opus (max) | 18:30-18:32 | 2 min | (lead) | done |
+| 7 | c2e hash 0.3, ledger line, freeze verify | lead, opus (max) | 18:34-18:36 | 2 min | (lead) | done; 0 differences |
+| 8 | c3 resumed search (lead-run, detached) | - | 18:36:14-20:37:27 | 2 h 01 min | - | 300/300, 0 failed; 0.39 of the 3x stop |
+| 9 | Lead wipe 1 (planned; the search ran) | - | 18:39-19:54 | 1 h 15 min | - | lead downtime, counted (open choice 13) |
+| 10 | Lead session 2: resume, checks, Part D briefs, end-of-search tool | opus (max) | 19:54-20:37 | 43 min | (lead) | done |
+| 11 | c4 step-5 end-of-search checks | lead, opus (max) | 20:38:15-20:38:26 | under 1 min | (lead) | done: 300/300 DONE, 0 failed; seal lifted |
+| 12 | c5 select33, P8 (frozen script, lead-run) | - | 20:38:50-20:38:54 | 4 s | - | Tier A empty; branch N |
+| 13 | c6 StatsCoder-OpusXHigh | opus-5-5 (xhigh) | 20:39:48-20:57:50 | 18 min | 13,270,018 | done: D1, D3, P10 (i)-(vi); 28 tests pass |
+| 14 | c7 VerifyWorker-FableXHigh | fable-5-1 (xhigh) | 20:39:56-20:59:46 | 20 min | 4,849,271 | CONFIRMED; read a stdout headline first (disclosed) |
+| 15 | Lead: return draft (interleaved) | opus (max) | 20:41-21:20 | - | (lead) | done |
+| 16 | c8 StatsReviewer-FableXHigh | fable-5-1 (xhigh) | 21:01:33-21:15:38 | 14 min | 3,418,916 | 0 BLOCKING, 4 SHOULD FIX (fixed), 8 NOTE |
+| 17 | c8b D5 fixes in the return | lead, opus (max) | 21:16-21:18 | 2 min | (lead) | done |
+| 18 | Full pytest suite | - | 21:02:01-21:21:28 | 19 min | - | 1 known failure (h6, v13), as at E.33b's end |
+| 19 | Lead wipe 2 (planned; nothing ran) | - | 21:22-21:31 | 9 min | - | pause, not counted |
+| 20 | Lead session 3: end checks, return sections 1, 2, 6 and 8, progress, STAGES, cost | opus (max) | 21:31-21:43 (cutoff) | 12 min | (lead) | done; commit and end status after the cutoff |
+| all | Stage E.33c | lead (3 sessions) + 5 workers | 18:05-21:43 | 3 h 38 min (3 h 29 min excluding wipe 2) | 65,724,236 (lead 42,370,522; workers 23,353,714) | initial estimates: 18:17 table "finish about 01:30", 20:03 table "about 01:25", 21:33 table (session 3) "about 22:27"; actual: closing steps done 21:43, commit right after |

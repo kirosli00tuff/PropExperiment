@@ -250,6 +250,13 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     by the protocol's P10 3x compute rule (synthetic probe 6.6 s vs real LOGIT fold 227 s): 72 of 300 configurations
     finished (S5 and 12 of S1), outcomes sealed, no selection; rule 5 removes minutes on 95-98 of 796 dates; run
     2026-10-28 (see reports/E.33b_RETURN.md). N 838. The user decides an amendment of the compute limit (D1).
+  - Stage E.33c — completion of E.33 (V53): protocol 0.3 (a2a2856f; only the P5/P10 compute reference changed, re-set
+    from measured fold times; AmendReview GO; amendment a001-E33) resumed r009-E33 from its DONE markers: 300 of 300
+    configurations, 1,800 fits, 0 failed, at 0.39 of the new 3x stop. P8 on all 300: G1 61 (all lose more than 1.0
+    tick a trade after costs), G2 8 (at most 55 trades each), G3-G5 0; Tier A empty; best daily Sharpe 0.0478 against
+    the binding 0.2007, inside the synthetic null's per-seed maxima; PBO 0.14. Clean negative: no finalist, no E.34
+    registration, the test window stays sealed, no purchase. VerifyWorker (Fable) CONFIRMED all 300 from the raw
+    predictions; StatsReviewer (Fable) 0 BLOCKING; run 2026-10-28 (see reports/E.33c_RETURN.md). N 838.
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

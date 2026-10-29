@@ -180,3 +180,342 @@ reports/stage_e33_briefs/work/pipeline/ (proof code hashes pinned there).
 - STOPPED: the search at 16:08:11 by P10's 3x rule (protocol 0.2): 72/300 configurations finished (all of S5, 12 of S1), 440/1,800 fits, 3 partial, 0 failed. Outcomes sealed (none read). Parts D and E not run.
 - FOR A CONTINUATION (only after the user's decision D1, an amendment hashed before it runs): run_search33 --root DERIVED/e33 --all --registered --feat-sha 2b30cb0e953b --label-sha b15c4ca10d68 --max-procs 8 --lgbm-threads 4 resumes from the DONE markers (the 8 cut folds have one attempt each), under a new compute reference; then select33 on all 300 and Part D with the briefs in reports/stage_e33b_briefs/ (StatsCoder, VerifyWorker, StatsReviewer). Re-run freeze33 verify --remeasure first.
 - End checks 16:11-16:33 pass (the one pytest failure is the known h6 test). No job, worker or shell runs.
+
+# E.33c (completion; prompt docs/prompts/STAGE_E.33c.md; lead session 7c6136a3-16c6-44df-891a-efd174837057, Opus 5.5; effort xhigh at launch, MAX from 18:10 per V55)
+
+Launched 2026-10-28 18:06 PDT (prompt read 18:06:05). No fixed end (V52, V53). Binding: protocol 0.3 (to be hashed in
+S2), docs/prompts/STAGE_E.33.md, the E.33c prompt, DECISIONS V20-V55. Files: reports/stage_e33c_briefs/.
+Routing: V54 (18:08) then V55 (18:10, supersedes V54): reviewers and verifiers (AmendReviewer, VerifyWorker,
+StatsReviewer) on Fable, model confirmed from the transcript (Opus fresh if Fable is unavailable); extraction and
+parsing Haiku; low-to-mid tasks Sonnet; everything else Opus; lead at max effort.
+
+## E.33c task status
+| # | Task | Owner | Status | Start | End | Artifacts |
+|---|---|---|---|---|---|---|
+| c1 | S1 start gates | lead | done: protocol c4ffb9d7 (file says FROZEN v1.0; the prompt's "0.2"); freeze file eb565a37, verify --remeasure 227 files + 4,125 inputs 0 diff rc 0; r009-E33, N 838, require_registered(300) ok; guard 4/4 refused; holdout all_ok, unlocks_logged 0 (6 stores); soy seal 114/114; REG 0 B; harness 2e908c81 preflight OK; ledger 37,290 / 42589d7b (= E.33b end); no outcome opened (transcript scan + stat census, below) | 18:10:31 | 18:16 | stage_e33c_briefs/checks_start.txt, freeze_verify_start.txt, atime_census_start.txt |
+| c2a | Fold-time table from search_real.log (pure extraction) | FoldTimes-HaikuMed (worker-medium; claude-haiku-5-5, 19 msgs) | done: 448 rows, 440 done, 8 cut; 72 finalized ok, 0 failed; 0 unmatched lines | 18:17:42 | 18:18:33 | stage_e33c_briefs/fold_times/ (csv 00ff98e0) |
+| c2b | Protocol 0.3 text, method script, R_0.3, diff | lead | done (pending review): R_0.3 12,014.9 s, stop 36,044.7 s; rho LOGIT 0.492659 (56 cells), LGBM 0.707670 (24); B 976.43; remaining projected 7,437.3 s; allowance for the resumed run 29,269.9 s; Haiku CSV equal fold for fold; diff 3 hunks (status, P5 bullet append, P10 clause), 5 lines removed | 18:19 | 18:27 | stage_e32_discovery_protocol_v0.3.md, stage_e33c_briefs/protocol_v0.3.diff, tools/project_ref_v03.py (f1056570), ref_v03.json, tools/make_v03.py |
+| c2c | AmendReview of 0.3 | AmendReviewer-FableXHigh (worker-xhigh; claude-fable-5-1, 51 msgs) | done: GO, 0 BLOCKING, 0 SHOULD FIX, 9 NOTE (no text change needed); every number recomputed identically | 18:22:52 | 18:34:08 | stage_e33c_briefs/review/AmendReview_c.md |
+| c2d | Watcher for the 0.3 stop + 2 GB rule (lead tool) | lead | written, smoke-tested on synthetic lines | 18:30 | 18:32 | stage_e33c_briefs/tools/p10_watch_v03.py |
+| c2e | Hash 0.3; ledger line; R_0.3 to STATE; freeze verify --remeasure | lead | done: 0.3 a2a2856f (18:34:30); a001-E33 appended (ledger/trial_amendments.jsonl 511ae4c3); N 838; verify 227 files + 4,125 inputs 0 diff (18:34:53-18:36:04) | 18:34 | 18:36 | stage_e32_discovery_protocol_v0.3.sha256, ledger/trial_amendments.jsonl |
+| c3 | Resumed search (1,360 folds, 228 configs) + 0.3 watcher | lead-run (setsid nohup; pgid 2835340, runner pid 2835353; watcher pid 2835431) | RUNNING: launched 18:36:14; registration checked 300; first fold start 18:36:15.199 | 18:36:14 | | work/logs/search_real_c.log; stage_e33c_briefs/p10_watch_v03.log |
+
+## E.33c decisions log
+- 18:12 V54 then V55 routing read (DECISIONS.md:1112, 1123). Memory note never-sonnet-workers updated to V54/V55.
+- 18:16 S1 "no outcome file opened", how it is known: (1) code: run_search33 logs only times, status and errors; the
+  config DONE marker holds config, status, time, output sha256s, pipeline sha and table fingerprint; fold*.DONE holds
+  sha256s, seconds and time; fold*.attempts holds start, pid, pipeline sha (search33.py 843-849, 894-897, 992-996).
+  (2) Every transcript written since the first fit (E.33b lead b8cfc9d8 main, its PostStop reviewer
+  agent-a679547f985c9313b, this session) was scanned for tool-call inputs naming an outcome file (inputs only):
+  18 hits, all DONE status reads, fold DONE/attempts counts, log fold times, names, or seal text; no
+  stats/daily/trades/not_made/npz/model.json read. (3) stat-only census (atime_census_start.txt): every outcome file's
+  atime lies within 0.03 s of its write (the finalizer hashes its outputs); only the 72 config DONE markers were read
+  after the stop (16:09:24, the E.33b status count). Limit: under relatime a read after the finalizer's hash would not
+  move atime within 24 h, so (3) supports but does not prove; (1) and (2) are the evidence.
+- 18:16 Naming (open choice): the protocol file calls itself FROZEN v1.0; "protocol 0.2" in E.33b's return meant its
+  section 0.2 (change control). V53 and the E.33c prompt call the frozen text "0.2" and the amendment "0.3". The lead
+  keeps the user's name "0.3" for the amended file and states its lineage (v1.0 + V53 amendment) in its header.
+- 18:27 S2 method decision (lead, before any resumed fit; wall times only). Kept P5's measured-time definition as written
+  (build + all 1,800 fits, net of logged pauses) and replaced only the reference: R_0.3 = B + sum(t_f LOGIT)/8 +
+  sum(t_f LGBM)/2 over all 1,800 folds; t_f measured for the 440 finished folds, else t_S5(l,g,k) x rho_m x n_s/23.
+  Alternatives rejected: (i) 0.2's formula with the real fold-6 probe times (32,611.4 s; every fit at the slowest
+  cell, so 3x would be near-inert, and it ignores the per-fold times the prompt names); (ii) a reference for the
+  resumed run alone (changes the measured definition too; V53: nothing else changes); (iii) S2-S4 at S5's cell times
+  unscaled (ignores the measured S1/S5 ratio); (iv) no feature-count factor (S2-S4 have 26-28 features vs S1's 23).
+  The stop-to-resume interval is a logged pause (written into 0.3). Status paragraph keeps v1.0's provenance.
+- 18:27 Ledger: screening.trial_registry refuses any amendment of a registration (trial_registry.py:219-221) and the
+  program has no amendment line type, so the amendment goes into a separate append-only file beside it,
+  ledger/trial_amendments.jsonl (nothing in the repo enumerates ledger/), written once after the review and the hash.
+- 18:30 Resume plan: the resumed run logs to a NEW file, reports/stage_e33_briefs/work/logs/search_real_c.log, so the
+  0.3 input (search_real.log, sha256 63c0a802) never changes. Command = E.33b's argv and env (manifest line 2):
+  OMP/OPENBLAS/MKL_NUM_THREADS=1, run_search33.py --root /mnt/large-storage/market_data/PropExperiment/derived/e33
+  --all --registered --feat-sha 2b30cb0e953b --label-sha b15c4ca10d68 --max-procs 8 --lgbm-threads 4 (the runner
+  renices to 10). Memory: the frozen runner stops submissions below 2,048 MB; the watcher stops the group if
+  MemAvailable stays below 2,048 MB for 60 s.
+
+## P5 REFERENCE, PROTOCOL 0.3 (written 2026-10-28 18:35 PDT, before the resumed search's first fit; reference for P10's 3x stop)
+- Protocol 0.3: reports/stage_e32_discovery_protocol_v0.3.md, sha256 a2a2856f49723f97319a4db2819ba4d1b5c4b8a1dc86a596e7c48110dbb48246
+  (hashed 18:34:30; .sha256 file beside it); amendment line a001-E33 in ledger/trial_amendments.jsonl (18:34:30;
+  file sha256 511ae4c3); AmendReview GO, 0 BLOCKING, 0 SHOULD FIX, 9 NOTE (review/AmendReview_c.md; claude-fable-5-1,
+  51 messages). N 838 unchanged.
+- Formula (0.3, P5): R_0.3 = B + sum_LOGIT t_f / P_L + sum_LGBM t_f / P_G over all 1,800 folds; t_f = the fold's
+  "done" seconds in search_real.log (sha256 63c0a802) for the 440 folds finished before the 0.2 stop, else
+  t_S5(l,g,k) x rho_m x n_s / 23 (n: S1 23, S2 26, S3 27, S4 28); rho_m = sum t_S1 / sum t_S5 on the cells finished in
+  both (LOGIT 2,124.0 / 4,311.3 s over 56 cells = 0.492659; LGBM 48.9 / 69.1 s over 24 cells = 0.707670).
+- Probe times: builder 3.65, 5.41, 5.66 s (unchanged) -> B = 796 x 4.90667 / 4 = 976.43 s; P_b 4, P_L 8, P_G 2.
+- Sums: LOGIT 76,181.8 s (50,455.1 projected), LGBM 3,031.5 s (2,260.8 projected). R_0.3 = 976.43 + 9,522.7 +
+  1,515.8 = 12,014.9 s; 3 x R_0.3 = 36,044.7 s. Spent at the 0.2 stop: 2,387.0 + 4,387.8 = 6,774.8 s. The resumed
+  run's fits, net of logged pauses, may take 29,269.9 s before the stop; its projected part is 7,437.3 s (2.07 h).
+  Method script reports/stage_e33c_briefs/tools/project_ref_v03.py (f1056570); output ref_v03.json (f0f7d76a).
+- LOGGED PAUSE (0.3, P5): from the 0.2 stop, 16:08:11 PDT, to the resumed run's first fold start (filled in at
+  launch below). This interval is not fit time.
+- 18:36 LOGGED PAUSE closed: 0.2 stop 16:08:11 -> resumed first fold start 18:36:15.199 = 8,884.2 s (not fit time;
+  protocol 0.3 P5). Launch 18:36:14: same argv/env as E.33b; the runner reported "1360 fold tasks to run (228
+  configs)" and started the 8 cut folds first; no stale-marker refusal. Watcher heartbeat 18:36:17 measured 6,777.0 s.
+
+## RESUME HERE (E.33c; written 2026-10-28 18:38 PDT by lead session 7c6136a3-16c6-44df-891a-efd174837057)
+Why stopped: the lead's context passed about 300k tokens; the prompt says to write this block and stop at a quiet point
+(the search runs about 2-2.5 h, detached). Nothing of this stage is half-written. No worker is live.
+1. Read first: the "# E.33c" section of this file (task table c1-c3, decisions log, the "P5 REFERENCE, PROTOCOL 0.3"
+   block); docs/prompts/STAGE_E.33c.md; docs/prompts/STAGE_E.33.md Parts D and E, GUARDRAILS, DELIVERABLE; DECISIONS
+   V53-V55 (lines 1094-1136); CLAUDE.md. Lead at MAX effort (V55).
+2. Running (detached, setsid nohup, nice 10): run_search33 resume, process group 2835340 (runner pid 2835353), log
+   reports/stage_e33_briefs/work/logs/search_real_c.log, which ends with a line "rc=N" from the wrapper. Watcher pid
+   2835431: heartbeat JSON every 60 s in reports/stage_e33c_briefs/p10_watch_v03.log, and a "search ended" line when the
+   run ends; reports/stage_e33c_briefs/p10_stop_v03.json exists only if the 0.3 stop or the memory stop fired.
+   Expected end about 20:45-21:10 PDT (projected 7,437 s by formula; the 0.2 run took 1.22x its formula). The 0.3 stop
+   is at measured 36,044.7 s = resumed net 29,269.9 s (about 02:44 PDT on 10-29 if nothing pauses). No collector window
+   before 15:30 tomorrow.
+3. Monitor without reading outcomes: `tail -1 reports/stage_e33c_briefs/p10_watch_v03.log`; in search_real_c.log count
+   " fold [0-9] done ", "finalized (ok)", "finalized (failed)", "FAILED", "died", "raised"; `ls
+   /mnt/large-storage/market_data/PropExperiment/derived/e33/search/*/DONE | wc -l` (300 at the end); the config DONE
+   key "status" only (DONE holds no outcome). OUTCOME SEAL (V53 item 2): open no stats.json, daily/trades/not_made
+   parquet, fold*.npz or fold*.model.json until all 300 configurations are DONE.
+4. If the 0.3 stop fires: stop and report; do not amend again (prompt S3). If the memory stop fires, the run dies or
+   the machine reboots: log the pause here; take the resumed net so far from search_real_c.log (first start to last
+   line); relaunch the same command into a NEW log (search_real_c2.log) and a watcher copy whose SO_FAR_S is raised by
+   that resumed net (constants only, logged); pending folds rerun, and a fold's second interruption fails its
+   configuration (P5).
+5. When the run ends: confirm rc=0, the runner's "finished: 300/300 configs DONE (k failed ...)" line, 300 DONE
+   markers, statuses ok/failed (a failed configuration fails G1, P8), fold counts (1,800 fold DONE or FAILED), and the
+   0.3 measured total (6,774.8 + resumed net) against 36,044.7 s. Write these to STATE. Then the seal lifts.
+6. S4 Part D exactly as STAGE_E.33.md D1-D5: briefs drafted in E.33b (reports/stage_e33b_briefs/brief_StatsCoder_b.md,
+   brief_VerifyWorker_b.md, brief_StatsReviewer_b.md); copy them to reports/stage_e33c_briefs/ with E.33c paths, the
+   protocol 0.3 sha a2a2856f, N 838, and the branch (Tier A empty or not) once select33 (frozen pipeline) has run.
+   Routing (V55; state model and effort before each spawn): StatsCoder Opus xhigh (worker-xhigh, model opus);
+   VerifyWorker Fable xhigh (worker-xhigh, model fable; Opus fresh if Fable is unavailable); StatsReviewer Fable xhigh;
+   each Fable model confirmed from transcript message.model. Haiku only for pure extraction; Sonnet for low-to-mid
+   tasks. Option: D4 can recompute the P8 decision on all 300 independently, in parallel with D1-D3, then compare.
+7. S5 Part E: at most 3 finalists into reports/stage_e33_finalists.md, hashed before any P6.4/P6.5 computation, plus
+   the E.34 test-registration draft; or the clean negative with P10's null report (i)-(vii).
+8. Deliverable: reports/E.33c_RETURN.md in STAGE_E.33.md's 8 sections (section 1 covers E.33, E.33b and E.33c: N, the
+   null comparison, finalists with net ticks per trade per firm or the clean negative, what E.34 would buy); one
+   progress.md entry; one docs/STAGES.md line; end checks: `bash reports/stage_e33c_briefs/checks.sh end >
+   reports/stage_e33c_briefs/checks_end.txt` (its guard rc line now uses PIPESTATUS), freeze verify --remeasure, the
+   full suite `uv run pytest -q -p no:cacheprovider` at nice 10 with at least 8 GB free and no PYTHONPYCACHEPREFIX (the
+   known h6 failure is expected); session cost from the transcripts of BOTH lead sessions (7c6136a3 main + its
+   subagents, and the new session) with reports/stage_e10_briefs/cost.py; the final ETA table; one commit "Stage
+   E.33c ZM discovery search (completion)" (this stage's files plus ledger/trial_amendments.jsonl; no push). Confirm no
+   worker, job or shell runs before ending. The last thing: list every open choice in section 6.
+9. Open choices so far (carry into section 6, in order):
+   (1) Naming: the file says FROZEN v1.0; the prompt's "0.2" is v1.0 (E.33b's "protocol 0.2" was its section 0.2);
+       the amended file is called 0.3 as V53 does, its header gives the lineage and keeps v1.0's provenance.
+   (2) S1 outcome evidence: code (what the log and markers hold), a scan of tool-call inputs in every transcript
+       since the first fit, and a stat-only atime census, with the relatime limit stated.
+   (3) checks.sh printed tail's rc for the guard dry check at the start (the guard printed "4 of 4 refused");
+       fixed to PIPESTATUS for the end run.
+   (4) Routing: extraction to Haiku (V55); the lead's method script parses the log itself (the declaration reads
+       the primary source) and the Haiku CSV is an equality cross-check (equal fold for fold).
+   (5) The R_0.3 method (decisions log 18:27): measured definition kept, reference replaced; rejected (i) 0.2's
+       formula with real fold-6 times, (ii) a reference for the resumed run alone, (iii) S5 cells unscaled for
+       S2-S4, (iv) no feature-count factor.
+   (6) The status paragraph changes (version line). v0.3 line 10 ("E.33 runs this protocol unchanged") is left as is
+       (AmendReview NOTE 7) to keep the diff to the compute reference.
+   (7) The interval from the 0.2 stop to the resumed first fold start (8,884.2 s) is a logged pause, written into 0.3.
+   (8) Ledger: the registry refuses amendments, so a separate append-only ledger/trial_amendments.jsonl beside it,
+       written once after the review and the hash (the prompt lists the ledger record before the review).
+   (9) The build part stays 2,387.0 s as the 0.2 watcher and p10_stop.json applied it, not the PostStop's exact
+       2,387.7 s (AmendReview NOTE 8; 0.7 s).
+   (10) The resumed run logs to a new file so the 0.3 input stays unchanged.
+   (11) Memory: the frozen runner stops submissions below 2,048 MB; the watcher stops the job if MemAvailable stays
+        below 2,048 MB for 60 s.
+   (12) AmendReview NOTEs 1-9 accepted without a text change (none affects R_0.3; review/AmendReview_c.md).
+   (13) The lead stopped for a context wipe at 18:38 during the search, as the prompt directs.
+10. Delegation so far: FoldTimes-HaikuMed (worker-medium, haiku = claude-haiku-5-5, 19 msgs, 18:17:42-18:18:33, done);
+    AmendReviewer-FableXHigh (worker-xhigh, fable = claude-fable-5-1, 51 msgs, 18:22:52-18:34:08, GO). Tokens: from
+    the transcripts at the end (session 7c6136a3, subagents agent-aadd39ce6b99390fc and agent-aeb4add165385635d).
+11. Timeline so far: prompt read 18:06:05; S1 18:10-18:16; S2 18:17-18:36; search launched 18:36:14. Initial estimate
+    table (chat, 18:17): finish about 01:30.
+READY FOR WIPE 18:38 PDT 2026-10-28
+
+## E.33c session 2 (lead session fec9a0d1-0594-4d0f-bee3-e7a05a38398a, Opus 5.5 at MAX effort per V55; resumed from RESUME HERE)
+- 19:55:33 Resumed (fresh context after the 18:38 wipe). Read: docs/prompts/STAGE_E.33c.md in full; DECISIONS V53-V55
+  (1094-1136); STATE "# E.33c" and RESUME HERE; STAGE_E.33.md Parts D-E, SCOPE, GUARDRAILS, DELEGATION, DELIVERABLE
+  (166-319); protocol 0.3 P6-P10 (646-895); the three E.33b Part D briefs; readings R-L1..R-L12 (lead rulings).
+  The earlier lead 7c6136a3 is closed (its transcript ends with close-out metadata records only).
+- 19:55:33 Search check (no outcome opened): runner pid 2835353 alive (12 processes in group 2835340, nice 10),
+  watcher 2835431 alive; heartbeat 19:55:18 resumed_net 4,743.8 s, measured 11,518.6 s (stop 36,044.7 s), folds done
+  905 of 1,360, finalized 152 of 228; log counts: "finalized (ok)" 152, "finalized (failed)" 0, FAILED 0, died 0,
+  raised 0; config DONE markers 224 of 300; no p10_stop_v03.json; MemAvailable 6,343 MB.
+- 19:58:08 Planning note (Part D briefs): B5's null is 20 seeds x 20 configurations (S5 x {F15, T30} x 10 grid; 400
+  series; per-seed maxima over 20 configurations, not 300; B5_proofs.md:3, 38-41). E.33b's StatsCoder brief said
+  "all 300 x 20 null-seed Sharpes"; the E.33c brief corrects it and asks for the like-for-like comparison.
+- 20:02:28 Written (lead): tools/end_search_check.py (step 5; opens no outcome: log lines, DONE "status" key, marker
+  names, attempts line counts, registry N); briefs brief_StatsCoder_c.md, brief_VerifyWorker_c.md,
+  brief_StatsReviewer_c.md from the E.33b drafts by tools/make_briefs_c.py (asserted replacements: protocol 0.3
+  path and sha, E.33c output paths, VerifyWorker on Fable, D3 null corrected; plus an E.33c addendum). Background
+  waiter (shell bv15ieuwc) returns when the wrapper's rc= line or a watcher stop event appears.
+
+### E.33c session-2 task status
+| # | Task | Owner | Model / effort | Status | Start | End | Artifacts |
+|---|---|---|---|---|---|---|---|
+| c3 | Resumed search | lead-run (detached) | - | running | 18:36:14 | | work/logs/search_real_c.log |
+| c4 | Step 5 end-of-search checks | lead | opus max | next | | | stage_e33c_briefs/search_end.txt |
+| c5 | select33 (P8) on all 300 | lead-run frozen script | - | next | | | stage_e33c_briefs/select/P8_select33.json |
+| c6 | D1-D3 (+ P10 items or D2) | StatsCoder-OpusXHigh | opus xhigh | next (after c5) | | | stage_e33c_briefs/work/D_stats.* |
+| c7 | D4 independent recomputation | VerifyWorker-FableXHigh | fable xhigh | next (after c5, parallel with c6) | | | stage_e33c_briefs/work/D4_verify.md |
+| c8 | D5 review | StatsReviewer-FableXHigh | fable xhigh | after c6, c7 | | | stage_e33c_briefs/review/StatsReview_c.md |
+| c9 | Part E + return + progress + STAGES + end checks + cost + commit | lead | opus max | last | | | reports/E.33c_RETURN.md |
+- 20:37:27 SEARCH FINISHED (c3 done): runner "finished: 300/300 configs DONE (0 failed: []); not done: []"; wrapper
+  rc=0; watcher "search ended" 20:37:30 (min MemAvailable 6,311 MB; no p10_stop_v03.json); process group empty.
+- 20:38 STEP 5 (c4 done; reports/stage_e33c_briefs/search_end.txt): config DONE 300/300, status ok 300, failed 0;
+  fold markers DONE 1,800, FAILED 0 (both 0, neither 0); the 8 cut folds have 2 attempt records each and finished on
+  the second; resumed log: 1,360 fold-done lines (fit seconds summed 43,496.3), finalized ok 228, failed 0, FAILED/
+  died/raised/WARNING/ERROR 0, pauses 0. Protocol 0.3 measured = 6,774.8 + 7,272.6 (resumed: first fold start
+  18:36:15.199 to the finished line 20:37:27.786) = 14,047.4 s, 0.390 of the 3x stop 36,044.7 s (below). Registry:
+  require_registered(300, test=E33) ok, current_n 838 (last r009-E33, 538 -> 838). search_real.log still 63c0a802.
+  (The script's own registry import failed because sys.path[0] is its folder; the check was rerun from the repo
+  root, rc 0, appended to the same file.) THE OUTCOME SEAL LIFTS NOW (all 300 DONE, 0 failed; V53 item 2).
+- 20:38:50-20:38:54 P8 SELECTION (c5 done; lead ran the frozen select33.py, sha256 9b992806 = freeze list): output
+  reports/stage_e33c_briefs/select/P8_select33.json (505,123 B, sha256 ee506884263d712e), stdout P8_select33.out.
+  N 838, b_test 0.164882, T 796. Funnel alone G1 61, G2 8, G3 0, G4 0, G5 0; in order G1 61, G1..G2 0, G1..G3 0,
+  G1..G4 0, G1..G5 0; failed 0. TIER A EMPTY. Tier B (continue): E33-S2F30G2200, E33-S1F15G3200 (moot: no test
+  list). Best (P8 order, non-constant): E33-S2F30G2200, SR_d 0.0478. BRANCH N: P10 null report; no test list, no
+  purchase; D2 has no candidate.
+- 20:40 Spawning in parallel (free 11 GB): StatsCoder-OpusXHigh (worker-xhigh, model opus, effort xhigh; D1, D3, P10
+  (i)-(vi)) and VerifyWorker-FableXHigh (worker-xhigh, model fable, effort xhigh, fresh; D4; model to be confirmed
+  from its transcript). The VerifyWorker is told only the branch, not the funnel numbers (no anchoring).
+- 20:41 Models confirmed from transcripts (assistant message.model): VerifyWorker-FableXHigh = claude-fable-5-1;
+  StatsCoder-OpusXHigh = claude-opus-5-5. c6 and c7 RUNNING (started 20:40).
+- 20:58 c6 DONE: StatsCoder-OpusXHigh (claude-opus-5-5) returned (D_stats.md written 20:57:28; 83 tool uses). Outputs
+  reports/stage_e33c_briefs/work/D_stats.md, D_stats.json, work/stats/ (6 code files, 28 tests pass),
+  stats/fig/D3_sharpe_hist.png, derived/e33/stats_c/per_config_full.json. Its own gate code agrees with select33 on
+  every number (funnel, the order of all 300, 0 flag differences, max diff 1.8e-15 vs stats.json). G1 61 (all with
+  negative mean net, best -1.098), G2 8 (none with more than 55 trades), max DSR 0.0248, max daily t 1.348, BH and
+  Holm reject 0, PBO 0.1429 (10 of 70; IS winner's OOS net mean -57.18 ticks), 78 never trade, 10 SR_d > 0, best
+  0.0478 (inside the null per-seed maxima over 20 configurations, -0.0757..0.0602; above the null 400's max: 0).
+  e80 (binding) 0.2309 daily Sharpe; null statement "no statement" for all five sets. Not done (by scope): P6.4,
+  P6.5, D2; reported-only stats quoted from stats.json; Tier B not recomputed. Note: B5 line 41's "368 non-constant"
+  is 369 (368 is the count in configurations with at least 2 non-constant seeds; 0.0434 reproduces either way).
+  c7 VerifyWorker still running.
+- 21:00 c7 DONE: VerifyWorker-FableXHigh (claude-fable-5-1, 85 assistant records, 20:39:56-20:59:46): CONFIRMED (no
+  configuration passes G1-G5; Tier A empty); all 300 re-simulated from npz + labels, 162,189 trades equal row for
+  row; funnel, ranking, Tier A/B, b_test equal; 3 non-gate convention differences (D4_verify.md section 6).
+  Disclosed: read P8_select33.out's headline before computing. Its D_stats comparison (20:53) used an earlier write
+  of D_stats.json (fac9aea9); final is cdaa33b8 (20:57:27): handed to D5. StatsCoder final confirmation:
+  claude-opus-5-5, 147 assistant records, 20:39:48-20:57:50.
+- 21:02 Return draft sections 2-5 and 3.8 (clean negative) written (sections 1, 6, 7, 8 pending). Spawning
+  StatsReviewer-FableXHigh (worker-xhigh, model fable, effort xhigh, fresh) for D5.
+- 21:15 c8 DONE: StatsReviewer-FableXHigh (claude-fable-5-1, 76 assistant records, 21:01:33-21:15:38):
+  review/StatsReview_c.md 0 BLOCKING, 4 SHOULD FIX, 8 NOTE; check (a): final D_stats.json (cdaa33b8) equals the
+  VerifyWorker's gates_own.json on every gate-relevant number; its own third recomputation agrees; D4 independence
+  confirmed. 21:16 c8b DONE (lead): SF1-SF4 and NOTEs 1-5, 7 fixed in reports/E.33c_RETURN.md (all
+  wording: overclaim in 3.8, -1.098 not "at least 1.1", "no configuration passes two gates", S5 x {F15,T30}
+  like-for-like line 0.0426 rank 3 of 21; E[max] 0.1230/0.1262 with zero-edge wording; session split named as
+  P6.5 not computed). NOTE 6 (a D_stats.md phrase, not quoted) and NOTE 8 (no change) left. Full suite running
+  (shell b8wrxwiko, started about 21:05).
+
+## RESUME HERE (E.33c, session 3; written 2026-10-28 by lead session fec9a0d1-0594-4d0f-bee3-e7a05a38398a)
+Why stopped: the lead's context passed about 300k tokens (about 312k at 21:18); the prompt says to write this block
+and stop at a quiet point. Everything through Part D, the D5 fixes and Part E is done; only the closing steps remain.
+No worker is live. The full test suite ran in this session's shell (result in the line under this block).
+1. Read first: this file's "# E.33c" section, "## E.33c session 2" (its log and task table), and this block;
+   docs/prompts/STAGE_E.33c.md (DELIVERABLE); docs/prompts/STAGE_E.33.md GUARDRAILS (240-259) and DELIVERABLE
+   (292-317); CLAUDE.md (ETA tables, Session cost). Lead at MAX effort (V55). The outcome seal is lifted (all 300 DONE).
+2. DONE (do not redo): search 300/300 ok (20:37:27, rc 0; search_end.txt); select33 P8 (20:38:50-54;
+   select/P8_select33.json ee506884): Tier A EMPTY, branch N, clean negative; D1+D3+P10 (i)-(vi) StatsCoder
+   (work/D_stats.md e005ff95, D_stats.json cdaa33b8); D4 VerifyWorker CONFIRMED (work/D4_verify.md); D5
+   StatsReviewer 0 BLOCKING, 4 SHOULD FIX + NOTEs 1-5, 7 fixed in the return (review/StatsReview_c.md); Part E =
+   the clean negative, return section 3.8; no finalists file, no E.34 draft (P8: Tier A empty -> no test list).
+3. reports/E.33c_RETURN.md is written except: section 2's "End: PENDING" and section 8 "PENDING". Sections 1, 3-7
+   are final (re-read section 6 at the very end: the last thing is to list every open choice; add item 26 below).
+4. Remaining steps, in order:
+   a. End checks (no worker running): `bash reports/stage_e33c_briefs/checks.sh end >
+      reports/stage_e33c_briefs/checks_end.txt 2>&1`; then `PYTHONPYCACHEPREFIX=<scratch>/pyc nice -n 10 uv run python
+      reports/stage_e33_briefs/work/lead/freeze33.py verify --freeze reports/stage_e33_pipeline_freeze.sha256
+      --remeasure > reports/stage_e33c_briefs/freeze_verify_end.txt 2>&1` (about 2 min; expect 227 files + 4,125
+      inputs, 0 differences). Quote in section 2 "End": holdout all_ok/unlocks_logged 0 (6 stores), soy seal 114/114,
+      REGISTRATION.md 0 B, harness 2e908c81 OK, ledger 37,290 / 42589d7b unchanged, N 838 (r009-E33 last), protocol
+      v1.0 c4ffb9d7 and 0.3 a2a2856f, freeze eb565a37, guard 4/4 refused (rc via PIPESTATUS),
+      ledger/trial_amendments.jsonl 1 line 511ae4c3, the pytest line below, search_real.log 63c0a802.
+   b. docs/STAGES.md: one line after line 252 (the E.33b line), format "  - Stage E.33c — completion of E.33
+      (V53): ...". progress.md: one entry appended at the end, format as the E.33b entry at progress.md:5188
+      ("## 2026-10-28 — Stage E.33c: ...; N = 838"; Prompt/Return/STATE paragraph; **What ran.**; **Result.**;
+      **Decisions for the user.**; **Session cost.** with the final ETA table).
+   c. Session cost (never estimated): `python3 reports/stage_e10_briefs/cost.py <lo UTC> <hi UTC> <session>` for
+      session 7c6136a3-16c6-44df-891a-efd174837057 (lo 2026-10-29T01:05:00Z, hi 2026-10-29T02:00:00Z; subagents
+      FoldTimes agent-aadd39ce6b99390fc haiku, AmendReviewer agent-aeb4add165385635d fable), session
+      fec9a0d1-0594-4d0f-bee3-e7a05a38398a (lo 2026-10-29T02:54:00Z, hi its end; subagents StatsCoder
+      agent-a2c694a068c1c6d05 opus, VerifyWorker agent-afef61b0b1538c543 fable, StatsReviewer
+      agent-a85ab29845ccedef7 fable) and the new session; save outputs to reports/stage_e33c_briefs/cost_e33c.txt;
+      one table per model, one line per worker, the lead/worker split; write section 8 and the progress entry's
+      Session cost.
+   d. Final ETA table (chat and progress entry), actuals from this file: c1 18:10:31-18:16; c2a FoldTimes
+      18:17:42-18:18:33; c2b 18:19-18:27; c2c AmendReviewer 18:22:52-18:34:08; c2d 18:30-18:32; c2e 18:34-18:36;
+      c3 search 18:36:14-20:37:27; lead wipe 1 18:38-19:55 (lead idle, search running); c4 20:38:15-20:38:26; c5
+      20:38:50-20:38:54; c6 StatsCoder 20:39:48-20:57:50; c7 VerifyWorker 20:39:56-20:59:46; c8 StatsReviewer
+      21:01:33-21:15:38; c8b fixes 21:16-21:18; return drafting 20:41-21:20 (lead, interleaved); full suite (line
+      below); lead wipe 2 from the READY FOR WIPE time to session 3's start; session 3's steps. Initial estimates:
+      18:17 table "finish about 01:30"; 20:03 table "about 01:25".
+   e. Commit "Stage E.33c ZM discovery search (completion)" with ONLY this stage's files: reports/E.33c_RETURN.md,
+      reports/stage_e33c_briefs/ (exclude __pycache__), reports/stage_e32_discovery_protocol_v0.3.md and its .sha256,
+      ledger/trial_amendments.jsonl, reports/stage_e33_STATE.md, progress.md, docs/STAGES.md, and
+      reports/stage_e33_briefs/work/logs/search_real_c.log only if search_real.log is tracked (check git ls-files).
+      Leave the other untracked files of earlier stages alone. No push. Commit trailer per the session's attribution
+      reminder.
+   f. Confirm no worker, job or shell runs; holdout status at the end (unlocks_logged).
+5. Open choice to add to section 6: (26) the lead stopped a second time for a context wipe (about 312k tokens,
+   after D5 and its fixes), as the prompt directs; session 3 ran the closing steps.
+- Full suite (session 2; reports/stage_e33c_briefs/pytest_end.txt, pytest_memguard.txt): `nice -n 10 uv run pytest
+  -q -p no:cacheprovider`, no PYTHONPYCACHEPREFIX, 21:02:01-21:21:28 (1,160.30 s), started with 10,945 MB available,
+  lowest 4,037 MB, 2 GB guard never fired: 1 failed, 8,116 passed, 5 skipped, 3 xfailed, 54 warnings. The one failure
+  is the known tests/test_h6_rod_run.py::test_the_lead_set_constants_and_the_cli_refuses_a_wrong_freeze_sha (v13; the
+  same counts as E.33b's end run). Do not rerun it in session 3.
+- 21:21 Quiet point: no worker, job or shell of this stage runs (pytest 0, search/select 0 processes).
+READY FOR WIPE 21:21 PDT 2026-10-28
+- 21:22 Holdout status at the end of lead session 2 (reports/stage_e33c_briefs/holdout_session2_end.txt): see file;
+  not run at session 2's start (19:55; a lead miss): covered by session 1's end check (18:38,
+  holdout_session1_end.txt) and the VerifyWorker's end check (about 20:57, unlocks_logged 0). Session 3: add this as
+  open choice 27 and run the status at its own start and end.
+
+## E.33c session 3 (lead session 7ea5755f-a4a7-4902-a9d3-8df2c289a807, Opus 5.5 at MAX effort per V55; resumed from RESUME HERE, session 3)
+- 21:31:22 Resumed (fresh context after the 21:21 wipe; the transcript's first record). Read: docs/prompts/STAGE_E.33c.md
+  in full; DECISIONS V53-V55 (1094-1136); this file 331-469 (session-2 log, task table, RESUME HERE); STAGE_E.33.md
+  GUARDRAILS (240-259) and DELIVERABLE (292-317); E.33c_RETURN.md sections 1, 2 and 4-8. No worker planned: closing
+  steps only (Parts D and E and their checks are DONE).
+- 21:32:51 Holdout status at session 3's start (stage_e33c_briefs/holdout_session3_start.txt): all_ok True,
+  unlocks_logged 0, unlock_log_ok True on all 6 stores (top, holdout_2, MCL, MGC, MHG, NG), rc 0. No search, select,
+  pytest or freeze process; MemAvailable 10,941 MB.
+- 21:35:18-21:35:23 End checks (stage_e33c_briefs/checks_end.txt, rc 0): holdout 0 unlocks on 6 stores; soy seal sealed
+  114/114, unlocks 0; REGISTRATION.md 0 B; harness preflight OK 2e908c81; spend ledger 37,290 lines, sha256 42589d7b
+  (unchanged); N 838, last r009-E33 538 -> 838 (14:23:13), require_registered(300, E33) ok; protocol v1.0 c4ffb9d7 and
+  0.3 a2a2856f; freeze file eb565a37; guard dry-check "4 of 4 refused", rc=0 (PIPESTATUS); trial_amendments.jsonl 1
+  line, 511ae4c3; git log -3 head 88d4eb8 (no commit yet); git status --short 2,154 lines against 2,148 at S1, the 6
+  new lines all this stage's (STATE M; ?? trial_amendments.jsonl, E.33c_RETURN.md, protocol_v0.3.md and .sha256,
+  stage_e33_briefs/work/logs/search_real_c.log); no line dropped.
+- 21:35:23-21:36:38 freeze33.py verify --remeasure (stage_e33c_briefs/freeze_verify_end.txt): 227 files + 4,125 derived
+  inputs, 0 differences, rc 0. search_real.log sha256 63c0a802 (unchanged). search_real.log is tracked, so
+  search_real_c.log joins the commit.
+- 21:36:38 Session cost, sessions 1 and 2 (stage_e33c_briefs/cost_e33c.txt, cost.py): session 1 18,316,926 tokens (lead
+  opus 16,501,417; FoldTimes haiku 601,139; AmendReviewer fable 1,214,370); session 2 40,694,911 (lead opus
+  19,156,706; StatsCoder opus 13,270,018; VerifyWorker fable 4,849,271; StatsReviewer fable 3,418,916). Session 3
+  is added at the end, at a stated cutoff.
+- Return section 1 counts 307 words of body against STAGE_E.33.md's cap of 300: to be trimmed (open choice 28).
+
+### E.33c session-3 task status
+| # | Task | Owner | Model / effort | Status | Start | End | Artifacts |
+|---|---|---|---|---|---|---|---|
+| s3a | Reads + holdout status at start | lead | opus max | done | 21:31:22 | 21:32:51 | stage_e33c_briefs/holdout_session3_start.txt |
+| s3b | End checks + freeze verify --remeasure | lead | opus max | done | 21:35:18 | 21:36:38 | checks_end.txt, freeze_verify_end.txt |
+| s3c | Cost, sessions 1 and 2 | lead | opus max | done | 21:36:38 | 21:36:38 | cost_e33c.txt |
+| s3d | Return: section 1 trim (307 -> 290 words), header, section 2 End, section 6 (26-31), section 7 check (one line reflowed) | lead | opus max | done | 21:37 | 21:41 | reports/E.33c_RETURN.md |
+| s3e | progress.md entry + STAGES.md line | lead | opus max | done | 21:41 | 21:43 | progress.md, docs/STAGES.md |
+| s3f | Cost session 3 (cutoff 21:43:15), three-session sum, section 8 + progress Session cost with the final table | lead | opus max | done | 21:43:15 | 21:46 | stage_e33c_briefs/cost_e33c.txt |
+| s3g | Holdout at end + no-process check, commit (no push), post-commit holdout (chat) | lead | opus max | done at the commit | 21:45 | 21:46:19 (the commit's author time) | stage_e33c_briefs/holdout_session3_end.txt |
+- 21:43:15 Cost cutoff. Three sessions + 5 workers: 65,724,236 tokens (Opus 55,640,540, 84.7%; Fable 9,482,557,
+  14.4%; Haiku 601,139, 0.9%); lead 42,370,522 (64.5%; 16,501,417 + 19,156,706 + 6,712,399), workers 23,353,714
+  (35.5%); cache reads 96.3%. Wall clock 18:05-21:43, 3 h 38 min; wipe 2 (21:22-21:31) a pause; work 3 h 29 min.
+- 21:45:31 Holdout status at session 3's end, before the commit (holdout_session3_end.txt): all_ok True,
+  unlocks_logged 0 on all 6 stores, rc 0. No-process check: ps lists 0 stage processes and the search group 2835340
+  is empty (a pgrep -fc count of 2 was the checking shell itself; corrected in the file). Session 3 spawned no worker
+  and started no background shell.
+- 21:46 Staged 60 files, only this stage's (0 __pycache__); return section 6 re-read in full (items 1-31) as the last
+  step; commit "Stage E.33c ZM discovery search (completion)" next, no push. A last holdout status after the commit is
+  reported in the chat only.
+
+## E.33c FINAL STATUS (2026-10-28 21:46 PDT)
+Stage E.33c is complete: a clean negative (Tier A empty, no finalist, no E.34 registration, the test window stays
+sealed, no purchase); N 838. Return reports/E.33c_RETURN.md (sections 1-8 final); the progress.md entry and the
+docs/STAGES.md line are written; committed, not pushed. Nothing is pending: no Fable-routed check outstanding, no
+worker or job running. For the user: return section 7 (D1 accept the clean negative; D2 the next step, (a)
+recommended; D3 E.32 D2 stays open).

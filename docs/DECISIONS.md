@@ -1091,3 +1091,21 @@
      time; quality before usage.
   4. E.32 D2 (amend V14 (c) for the test's DSR variance) stays open until
      the test stage is drafted.
+- 2026-10-28 (user, planning chat, 18:04 PDT): V53. E.33b (e968a28)
+  accepted.
+  1. E.33b D1: option (a). Amend the frozen protocol to version 0.3 for
+     registration r009-E33 only. Replace P5/P10's synthetic-probe 3x
+     reference with one projected from the real per-fold wall times
+     already measured in work/logs/search_real.log. Those are timings
+     only and contain no outcomes. Keep a 3x stop against the new
+     reference. Hash version 0.3 before the search resumes. Nothing else
+     in the protocol changes.
+  2. The search resumes the same registration from its DONE markers (N
+     stays 838). It then runs P8 on all 300 configurations and Parts D
+     and E, in Stage E.33c. No finished configuration's outcome may be
+     read before all 300 are done.
+  3. E.33b D3 is accepted for future protocols: a compute-stop reference
+     is set from a real-data timing probe, registered as its own trial,
+     or from the protocol's own guess range.
+  4. Workers: Opus (or Fable for reviews) by default. Haiku only for pure
+     extraction, as the program's routing allows. Never Sonnet.

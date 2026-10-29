@@ -1120,3 +1120,17 @@
      with each model confirmed from the transcript. Checks are never cut
      to save usage.
   3. Ultracode may be used (user, 18:08).
+- 2026-10-28 (user, planning chat, 18:10 PDT): V55. Model routing,
+  back to the original scheme. It supersedes V54's routing details.
+  - Lead: Opus 5.5 at MAX effort, for every stage.
+  - Reviewers and independent verifiers: Fable, each model confirmed
+    from its transcript. If Fable is unavailable, use Opus in a fresh
+    context and say so.
+  - Extraction and file parsing: Haiku.
+  - Low-to-mid level tasks (well-specified coding, reading, summarising):
+    Sonnet.
+  - Everything else: Opus.
+  - Worker effort runs from medium to max, set by the task. Each worker's
+    model and effort are stated before it is spawned, as CLAUDE.md
+    requires.
+  - Ultracode may be used. Checks are never cut to save usage.

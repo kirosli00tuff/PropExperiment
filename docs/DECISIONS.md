@@ -1156,3 +1156,17 @@
      per sigma, power and prop rules by horizon. It runs under V55
      routing (lead Opus max).
   4. E.32 D2 stays open until a test is registered.
+- 2026-10-29 (user, planning chat, 10:55-11:51 PDT): V57. E.32b (fe15e06)
+  accepted.
+  1. docs/STAGES.md's "Stage E.3b onward" line is superseded. Every
+     cluster was screened and confirmed or closed, so no Stage E
+     cluster sequence remains. E.33c's option (a) rested on that stale
+     line.
+  2. The user asked for work that needs no Databento key. Stage E.34
+     (docs/prompts/STAGE_E.34.md) designs the ZL program (E.32b section
+     4.5) and freezes its protocol, with no purchase and no
+     registration. N stays 838.
+  3. E.32b decisions D1 to D5 stay open. D2 (ZL's single sealed read)
+     and D3 (power rule instead of V31's cost gate) must be decided
+     before any ZL registration. D1 and D4 follow E.32b's
+     recommendations until the user says otherwise.

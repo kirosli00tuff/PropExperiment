@@ -268,7 +268,8 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     RecsReviewer PASS with one ruling (LR-Q3b), FixVerifier PASS (all Fable); run 2026-10-28/29 (see
     reports/E.32b_RETURN.md). N 838. The user decides D1-D5 (V31 scope, the ZL read, the cost gate, 2024-03+ data,
     the next stage).
-  - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
-    cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
+  - Stage E.3b onward — SUPERSEDED (V57, 2026-10-29). This was the original E.0/E.1 plan line. Every cluster K1-K8
+    was screened (E.3-E.9) and confirmed or closed (E.5, E.22); V38 and V40 closed the intraday clusters. There is no
+    remaining Stage E cluster sequence. E.33c's return option (a) cited this line in error.
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;
   renumbered when the CME universe program took the E label. Runs only if an edge survives.)

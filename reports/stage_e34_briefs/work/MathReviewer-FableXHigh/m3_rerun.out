@@ -1,0 +1,54 @@
+== 1. Grid, latest entries, trades a day (P0.3 grid, P3.8 re-entry rule)
+h=15: starts 263; latest start 12:57 CT = 10:57 PT; max FH trades/day P3.8 17, if re-entry at the exit minute 18, E.32b n_cap 19; e80_test at P3.8 max 0.956 (E.32b 0.9)
+h=30: starts 248; latest start 12:42 CT = 10:42 PT; max FH trades/day P3.8 8, if re-entry at the exit minute 9, E.32b n_cap 9; e80_test at P3.8 max 1.923 (E.32b 1.81)
+h=60: starts 218; latest start 12:12 CT = 10:12 PT; max FH trades/day P3.8 4, if re-entry at the exit minute 4, E.32b n_cap 4; e80_test at P3.8 max 3.699 (E.32b 3.7)
+== 2. Dead zone and break-even hit rates (normal, magnitudes independent of sign)
+s=1 + fee          h=15: threshold |dM| > 1.880 = 0.0923 sigma; P(dead zone) 0.0735; q* 0.5578
+s=1 + fee          h=30: threshold |dM| > 1.880 = 0.0669 sigma; P(dead zone) 0.0533; q* 0.5419
+s=1 + fee          h=60: threshold |dM| > 1.880 = 0.0492 sigma; P(dead zone) 0.0392; q* 0.5308
+c_f E.32b          h=15: threshold |dM| > 2.380 = 0.1168 sigma; P(dead zone) 0.0930; q* 0.5732
+c_f E.32b          h=30: threshold |dM| > 2.380 = 0.0847 sigma; P(dead zone) 0.0675; q* 0.5531
+c_f E.32b          h=60: threshold |dM| > 2.380 = 0.0623 sigma; P(dead zone) 0.0497; q* 0.5390
+s=2.06 (u) + fee   h=15: threshold |dM| > 2.940 = 0.1443 sigma; P(dead zone) 0.1148; q* 0.5904
+s=2.06 (u) + fee   h=30: threshold |dM| > 2.940 = 0.1046 sigma; P(dead zone) 0.0833; q* 0.5656
+s=2.06 (u) + fee   h=60: threshold |dM| > 2.940 = 0.0769 sigma; P(dead zone) 0.0613; q* 0.5482
+== 3. Triple barrier b = kappa sigma_1 sqrt(h), kappa 1
+h=15: b 21.38 ticks (128 USD); b/sigma_h 1.050; P(vertical) BM at sigma_1 0.3708, BM at sigma_h/sqrt(h) 0.4154; p* barrier exits (mid barriers, cost s+f=1.88) 0.5440
+h=30: b 30.23 ticks (181 USD); b/sigma_h 1.076; P(vertical) BM at sigma_1 0.3708, BM at sigma_h/sqrt(h) 0.4386; p* barrier exits (mid barriers, cost s+f=1.88) 0.5311
+h=60: b 42.76 ticks (257 USD); b/sigma_h 1.119; P(vertical) BM at sigma_1 0.3708, BM at sigma_h/sqrt(h) 0.4753; p* barrier exits (mid barriers, cost s+f=1.88) 0.5220
+k=1.0: E[min(tau,h)]/h 0.7056; P(vertical) sim 0.3774 (series 0.3708, discrete grid biases it up)
+k=1.05: E[min(tau,h)]/h 0.7385; P(vertical) sim 0.4256 (series 0.4158, discrete grid biases it up)
+k=1.076: E[min(tau,h)]/h 0.7496; P(vertical) sim 0.4469 (series 0.4386, discrete grid biases it up)
+k=1.119: E[min(tau,h)]/h 0.7736; P(vertical) sim 0.4840 (series 0.4753, discrete grid biases it up)
+== 4. Rows and n_eff per date (P3.7 uniqueness; release window [10:58, 11:30])
+h=15: rows 263, n_eff 18.47; over 796 dates rows 209,348, n_eff 14,699; release day rows 215 (excluded 48), n_eff 16.27
+h=30: rows 248, n_eff 9.23; over 796 dates rows 197,408, n_eff 7,350; release day rows 185 (excluded 63), n_eff 8.13
+h=60: rows 218, n_eff 4.62; over 796 dates rows 173,528, n_eff 3,675; release day rows 125 (excluded 93), n_eff 4.07
+== 5. Latency drift SD (BM)
+L=0.3s: sd 0.390 ticks
+L=1.0s: sd 0.713 ticks
+== 6. Trade-through limit entry vs market (stylised BM, sigma_1 5.52, W = 60 s, 1 s grid)
+s=1.0 h=15 alpha=0.00: p_fill 0.7987; E[G|fill] -1.365; E[G|no fill] 5.641; V_M -1.835; V_L -1.793; V_LC -2.161; OC 0.757; p*s 0.799
+s=1.0 h=15 alpha=2.38: p_fill 0.7928; E[G|fill] 0.968; E[G|no fill] 7.853; V_M 0.515; V_L 0.070; V_LC 0.135; OC 1.238; p*s 0.793
+s=1.0 h=15 alpha=3.38: p_fill 0.7902; E[G|fill] 1.910; E[G|no fill] 8.825; V_M 1.480; V_L 0.814; V_LC 1.074; OC 1.457; p*s 0.790
+s=1.0 h=15 alpha=3.28: p_fill 0.7900; E[G|fill] 1.788; E[G|no fill] 8.776; V_M 1.375; V_L 0.717; V_LC 0.972; OC 1.448; p*s 0.790
+s=1.0 h=30 alpha=0.00: p_fill 0.7981; E[G|fill] -1.358; E[G|no fill] 5.760; V_M -1.801; V_L -1.786; V_LC -2.136; OC 0.783; p*s 0.798
+s=1.0 h=30 alpha=2.38: p_fill 0.7945; E[G|fill] 0.962; E[G|no fill] 7.969; V_M 0.522; V_L 0.065; V_LC 0.163; OC 1.251; p*s 0.795
+s=1.0 h=30 alpha=3.38: p_fill 0.7930; E[G|fill] 1.880; E[G|no fill] 9.002; V_M 1.474; V_L 0.793; V_LC 1.100; OC 1.474; p*s 0.793
+s=1.0 h=30 alpha=4.19: p_fill 0.7929; E[G|fill] 2.682; E[G|no fill] 9.599; V_M 2.235; V_L 1.429; V_LC 1.854; OC 1.598; p*s 0.793
+s=1.0 h=60 alpha=0.00: p_fill 0.7994; E[G|fill] -1.489; E[G|no fill] 5.553; V_M -1.956; V_L -1.894; V_LC -2.278; OC 0.737; p*s 0.799
+s=1.0 h=60 alpha=2.38: p_fill 0.7969; E[G|fill] 0.847; E[G|no fill] 8.036; V_M 0.427; V_L -0.026; V_LC 0.088; OC 1.250; p*s 0.797
+s=1.0 h=60 alpha=3.38: p_fill 0.7968; E[G|fill] 1.900; E[G|no fill] 8.950; V_M 1.453; V_L 0.813; V_LC 1.107; OC 1.437; p*s 0.797
+s=1.0 h=60 alpha=6.08: p_fill 0.7938; E[G|fill] 4.604; E[G|no fill] 11.645; V_M 4.176; V_L 2.957; V_LC 3.807; OC 2.013; p*s 0.794
+s=2.0 h=15 alpha=0.00: p_fill 0.6635; E[G|fill] -2.402; E[G|no fill] 4.713; V_M -2.888; V_L -2.178; V_LC -3.151; OC 0.617; p*s 1.327
+s=2.0 h=15 alpha=2.38: p_fill 0.6552; E[G|fill] -0.085; E[G|no fill] 7.090; V_M -0.491; V_L -0.632; V_LC -0.845; OC 1.452; p*s 1.310
+s=2.0 h=15 alpha=3.38: p_fill 0.6520; E[G|fill] 0.904; E[G|no fill] 7.964; V_M 0.481; V_L 0.016; V_LC 0.102; OC 1.769; p*s 1.304
+s=2.0 h=15 alpha=3.28: p_fill 0.6522; E[G|fill] 0.775; E[G|no fill] 8.000; V_M 0.408; V_L -0.069; V_LC 0.025; OC 1.781; p*s 1.304
+s=2.0 h=30 alpha=0.00: p_fill 0.6625; E[G|fill] -2.362; E[G|no fill] 4.687; V_M -2.863; V_L -2.148; V_LC -3.137; OC 0.610; p*s 1.325
+s=2.0 h=30 alpha=2.38: p_fill 0.6577; E[G|fill] 0.061; E[G|no fill] 7.150; V_M -0.392; V_L -0.539; V_LC -0.714; OC 1.462; p*s 1.315
+s=2.0 h=30 alpha=3.38: p_fill 0.6563; E[G|fill] 1.046; E[G|no fill] 8.035; V_M 0.568; V_L 0.109; V_LC 0.233; OC 1.772; p*s 1.313
+s=2.0 h=30 alpha=4.19: p_fill 0.6558; E[G|fill] 1.835; E[G|no fill] 8.885; V_M 1.382; V_L 0.626; V_LC 1.041; OC 2.067; p*s 1.312
+s=2.0 h=60 alpha=0.00: p_fill 0.6618; E[G|fill] -2.453; E[G|no fill] 4.822; V_M -2.873; V_L -2.206; V_LC -3.154; OC 0.657; p*s 1.324
+s=2.0 h=60 alpha=2.38: p_fill 0.6613; E[G|fill] -0.110; E[G|no fill] 7.082; V_M -0.554; V_L -0.655; V_LC -0.843; OC 1.423; p*s 1.323
+s=2.0 h=60 alpha=3.38: p_fill 0.6593; E[G|fill] 0.850; E[G|no fill] 8.234; V_M 0.486; V_L -0.020; V_LC 0.184; OC 1.824; p*s 1.319
+s=2.0 h=60 alpha=6.08: p_fill 0.6582; E[G|fill] 3.670; E[G|no fill] 10.553; V_M 3.142; V_L 1.836; V_LC 2.819; OC 2.622; p*s 1.316

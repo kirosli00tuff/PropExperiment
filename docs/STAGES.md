@@ -268,6 +268,14 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     RecsReviewer PASS with one ruling (LR-Q3b), FixVerifier PASS (all Fable); run 2026-10-28/29 (see
     reports/E.32b_RETURN.md). N 838. The user decides D1-D5 (V31 scope, the ZL read, the cost gate, 2024-03+ data,
     the next stage).
+  - Stage E.34 — ZL program design and frozen protocol (E.32b recs 4.5; no purchase, no registration): the E.32 seal
+    covers every ZL, ZS and ZM file of 2017-05..2020-11; exposure audit (no F10 or F09 feature ever tested against a
+    ZL outcome; 10 firewall rules, 6 exclusions); Part M (MBP-1 in both windows, 5-minute floor, the crush residual with
+    ZL adjusting and ZS/ZM bar leads, CL out, labels FH15-FH60 and TB15-TB30; at N 1038 G4 0.2028, SR80_test 0.1957);
+    data facts; protocol FROZEN v1.0 (46556059; 200 configurations, N_reg 1038; the test buys about USD 26.5, including
+    ZM bars of 2017-05..2019-04 that are not owned). MathReviewer and ProtocolReviewer GO WITH FIXES, FixVerifier PASS
+    WITH FIXES (all Fable); run 2026-10-29 (see reports/E.34_RETURN.md). N 838. The user decides E.32b-D2, E.32b-D3,
+    E.32-D2 and the V43 reading (OC-5) before any registration.
   - Stage E.3b onward — SUPERSEDED (V57, 2026-10-29). This was the original E.0/E.1 plan line. Every cluster K1-K8
     was screened (E.3-E.9) and confirmed or closed (E.5, E.22); V38 and V40 closed the intraday clusters. There is no
     remaining Stage E cluster sequence. E.33c's return option (a) cited this line in error.

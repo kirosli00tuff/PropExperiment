@@ -1,0 +1,318 @@
+3c3,5
+< Status: DRAFT v0.1 (2026-10-29, lead Opus 5.5 max, session 2), for ProtocolReviewer and MathReviewer (Fable xhigh).
+---
+> Status: DRAFT v0.2 (2026-10-29, lead Opus 5.5 max, session 3): v0.1 (session 2) with every BLOCKING and SHOULD FIX
+> item of the two reviews (MathReviewer and ProtocolReviewer, Fable xhigh) fixed, and some NOTEs; each change and its
+> review item are listed in reports/stage_e34_briefs/review/FixLog.md. For FixVerifier (Fable xhigh).
+8c10,14
+< - E.32-D2: the test DSR variance rule (P9.4).
+---
+> - E.32-D2: the test DSR variance rule (P9.4);
+> - OC-5, the reading of V43 (ProtocolReview S10): that S_crush and S_prop, built from bar leaders and ZL's book
+>   context and traded against ZL's book, run as ML under V43 (option A, this text). Otherwise option B (12 F09 rules
+>   under V28 beside ML for F10, E.32b recs 4.5(b); M2 (f)'s rules variant on the grid of L.c, without M2's 12:50 CT
+>   cap, MathReview S3) is registered instead, as an amendment, and P7 is recomputed at N_before + 62.
+15,16c21,24
+< - M1-M4 and L: Part M, reports/stage_e34_zl_methods.md (M1 F10 on ZL, M2 F09 into ZL, M3 labels, M4 power, L the
+<   lead's reconciliations);
+---
+> - M1-M4 and L: Part M, reports/stage_e34_zl_methods.md: a lead front (verdicts and errata), then M1 F10 on ZL, M2
+>   F09 into ZL, M3 labels, M4 power and L the lead's reconciliations, the files reports/stage_e34_briefs/M1_F10_ZL.md,
+>   M2_F09_ZL.md, M3_labels_ZL.md, M4_power_ZL.md and L_lead_reconciliations.md concatenated unchanged (ProtocolReview
+>   S3). Where the errata correct a worker file, the errata govern;
+63,65c71,77
+<   update is the state after a record carrying F_LAST, timed at that record's ts_recv. Bad-book reading for MBP-1
+<   (M3 g, P3.0): an update is bad iff its F_LAST record carries F_MAYBE_BAD_BOOK. "As of u" is the last good-or-bad
+<   book update with ts_recv <= u. Mid M_ZL(u) = (bid_1 + ask_1)/2 as of u, defined only when both sides exist,
+---
+>   update is the state after a record carrying F_LAST, of any action (F and R records included, as
+>   feat33.stream_mbp1), timed at that record's ts_recv; its batch is the records after the previous F_LAST record up
+>   to and including its own. Bad-book reading for MBP-1, the same for features, labels, exclusions and fills (E.33
+>   reading FA-4, feat33.stream_mbp1; MathReview S2, ProtocolReview B2): an update is bad iff any record of its batch
+>   carries F_MAYBE_BAD_BOOK. The mark belongs to that update only (MBP-1 has no R record; E.33's code clears it at
+>   each F_LAST record), so the book is undefined from a bad update to the next good one. "As of u" is the last
+>   good-or-bad book update with ts_recv <= u. Mid M_ZL(u) = (bid_1 + ask_1)/2 as of u, defined only when both sides exist,
+67,68c79,82
+< - Bars: an ohlcv-1m record of root X stamped m covers [m, m + 1 min). Rule B: at decision time t the last usable bar
+<   of any root is the one stamped t - 1 min. A bar is built from trades by exchange time, and its last trade's ts_recv
+---
+> - Bars: an ohlcv-1m record of root X stamped m covers [m, m + 1 min) (Databento's convention; the run stage saves
+>   and hashes the schema page that states it before the registration). Under the other convention (a bar stamped m
+>   covering [m - 1 min, m)) the rule-B bar would be one minute older, never later, so rule B cannot look ahead under
+>   either (MathReview N12 b). Rule B: at decision time t the last usable bar of any root is the one stamped t - 1 min. A bar is built from trades by exchange time, and its last trade's ts_recv
+74c88,90
+<   bar-close changes, chained across rolls, in ticks of X.
+---
+>   bar-close changes, chained across rolls, in ticks of X, over the 1-minute intervals inside 08:35-13:13 whose two end
+>   marks both have a usable bar under rule B (an interval with a missing bar is skipped, not filled: E.32 0.3's "valid
+>   mids at both ends" read for bars; ProtocolReview N5).
+84a101,109
+> Counts and names in inherited text (ProtocolReview S2): 300 configurations -> 200; S5 -> S_pool, S1 -> S_crush, S2 ->
+> S_prop, S3 -> S_book, S4 -> none; the 59 S5 feature columns -> the 43 S_pool columns; N 838 -> N_reg (1038 if no other
+> trial registers first); the binding-threshold z 5.66 -> 5.72 (G4 x sqrt(T_disc) = 0.2028 x sqrt(796)), and any other
+> E.32 threshold figure -> its value at N_reg from the functions of P7.1; the five MDA blocks C, F1, F2, F3, F4 -> the
+> four blocks C, F09c, F09p, F10; SFI 59 x 6 = 354 fits -> 43 x 6 = 258; a set's fold counts 216 LOGIT and 144 LGBM ->
+> 180 and 120 (5 labels x 6 or 4 settings x 6 folds); E.32's run order S5, S1, S3, S2, S4 -> S_pool, S_crush, S_book,
+> S_prop; labels F05, F15, F30, F60, T15, T30 -> F15, F30, F60, T15, T30; P4.2's planted-proof figures 0.91 and 0.914 ->
+> 0.90 and 0.905 (select-and-pass 0.898 and selection 0.905 at a realised daily Sharpe of 0.25 at N 1038; ProtocolReview
+> recompute_p7.out). The synthetic proofs (P4.2) run at the thresholds of P7.2.
+90c115
+< 60 (L.b).
+---
+> 60 for the FH labels (L.b); the TB labels' count per date is realised and capped at 20 (P3.8).
+102,103c127,129
+<   (sha256 c329f443...; 156 of 156 must match), then hashes the 117 bar files into its freeze list, and stops on any
+<   mismatch or missing file.
+---
+>   (sha256 c329f443...; 156 of 156 must match), then hashes the 117 bar files once, before any read of them (no
+>   expected list exists before the run stage, so this first hashing is the reference, and the list is part of the
+>   pipeline freeze; ProtocolReview N12), and stops on any mismatch or missing file.
+120,123c146,152
+< - Record drops (L.d), applied on load, before any feature or label, counted by rule and reported:
+<   (1) records flagged F_SNAPSHOT or F_BAD_TS_RECV; (2) records with ts_event before 2020-11-30T22:00:00Z or with
+<   ts_recv - ts_event above 86,400 s. Dropping reads ts_event; nothing else does. Records outside D's ts_recv window
+<   are refused by the guard (E.33's _check_window).
+---
+> - Record drops (L.d), applied on load, before any feature or label, counted by rule and reported (a record that
+>   meets several rules is counted under each and once in the total, so the overlap of rules 1 and 2 is visible;
+>   MathReview N5): (1) records flagged F_SNAPSHOT or F_BAD_TS_RECV; (2) records with ts_event before
+>   2020-11-30T22:00:00Z or with ts_recv - ts_event above 86,400 s; (3) records whose instrument_id is not D's ZL front
+>   (0.3; DF34 section 5: 83 records on 14 dates; ProtocolReview S5). Dropping reads ts_event; no feature, label,
+>   exclusion or fill reads it; the G6 clock report and the LT8 count read it for reports only (counts, no outcome;
+>   ProtocolReview S4). Records outside D's ts_recv window are refused by the guard (E.33's _check_window).
+145c174
+<   back-and-forth flips (for example ZLN1 and ZLK1 alternating 2021-04-04..04-10); each change is a roll date here.
+---
+>   back-and-forth flips (for example ZLN1 and ZLK1 alternating 2021-04-05..04-12; ProtocolReview N2); each change is a roll date here.
+159c188,189
+< The firewall (X section 3, rules 1-10, adopted as written):
+---
+> The firewall (X section 3, rules 1-10; adopted and restated below, with rules 2, 6 and 7 tightened against X's text;
+> ProtocolReview N9):
+184,185c214,220
+< quantities, so the disclosure above stands: the earlier ZL own-price trials selected nothing here, and their reads of
+< the test window's 2019-05..2020-11 bars are named in the seal document (reports/stage_e32_test_seal.md section 4).
+---
+> quantities: in S_prop and S_pool, ZL's own scaled k-minute return is a linear function of gR_k, rS_k and rM_k with
+> date-varying coefficients (before clipping, -dO_k/(0.01 sigma_ZL sqrt k) = gR_k - b_S (0.25 sigma_ZS/(0.01 sigma_ZL))
+> rS_k - b_M (0.10 sigma_ZM/(0.01 sigma_ZL)) rM_k), which a LOGIT model can recover approximately and a tree model
+> partially. E3 therefore removes the stand-alone feature and its direct test history, not the information
+> (ProtocolReview S12). The disclosure above stands: the earlier ZL own-price trials selected nothing here, and their
+> reads of the test window's 2019-05..2020-11 bars are named in the seal document (reports/stage_e32_test_seal.md
+> section 4).
+197c232
+< - Evidence and reasoning (M2 bottom line 1, (a), (d), (e)): expected gross per trade G = s_L x D x (1 - 2^-m) / 0.11
+---
+> - Evidence and reasoning (M2 bottom line 1, (a), (d); (e) for the prior only): expected gross per trade G = s_L x D x (1 - 2^-m) / 0.11
+204c239,243
+<   split (L1.5-L1.6) replace ZM-specific items; the overnight items F1.7-F1.8 are dropped (E5).
+---
+>   split (L1.5-L1.6) replace ZM-specific items; the overnight items F1.7-F1.8 are dropped (E5). Sources of the two
+>   additions (ProtocolReview S9): the rolling ZL-dependent residual from M2 (a).2 (never fixed physical weights:
+>   Janzen and Wang's weekly cash regression; beans decoupled from oil after 2020); the origin split from M2 (a).1-2 and
+>   (d).4 (in the renewable-diesel regime biofuel shocks start in ZL: Avileis and Swanson). Neither cites an E.31 or
+>   E.33 result.
+212,213c251,255
+<   test window; buying one would add a test-window purchase), so no leader OFI feature exists; k = 1 is dropped (bid-ask
+<   bounce is 29% of sigma_1, M2 b.3).
+---
+>   test window; buying one would add a larger test-window purchase than the ZM bars of P11), so no leader OFI feature
+>   exists; k = 1 is dropped (the bars' bid-ask bounce in the implied-oil gap, over the two bar closes of a k-minute
+>   change, is about 2.25 ZL ticks: 41% of sigma_1 and 19% of sigma_5; M2 (b).3 as corrected by MathReview S4); k = 30
+>   is added because it matches band B's h_c (M2 (b).1: holds of 15-60 minutes), the reason F10's OFI_30 and TI_30 are
+>   added (P4). Neither change cites an E.31 or E.33 result (ProtocolReview S9).
+218c260
+<   MBP-1 unchanged, 2 are adapted (F10.7 seasoned queue imbalance by a 1-second running minimum; F10.9 cancellations
+---
+>   MBP-1 with their definitions unchanged (windows changed as listed after the P4 F10 table), 2 are adapted (F10.7 seasoned queue imbalance by a 1-second running minimum; F10.9 cancellations
+240,241c282,283
+<   crush and propagation sets as ML under V51 ("ML is a core tool, under V43"). The user may choose option B before
+<   registration (E.34_RETURN section 7); that is an amendment.
+---
+>   crush and propagation sets as ML under V51 ("ML is a core tool, under V43"). The reading is the user's to confirm
+>   before registration (header; E.34_RETURN section 7; ProtocolReview S10); option B is then an amendment.
+255c297,298
+< apply with ZL's front and its limits (P3.6 rule 5); m0 of P3.4 is M_ZL as of the entry fill update.
+---
+> apply with ZL's front and its limits (P3.6 rule 5); m0 of P3.4 is M_ZL as of the entry fill update. Labels and
+> fills read the ZL MBP-1 book in both windows, with the same code (MathReview S2).
+294c337,339
+< a date are 17, 8 and 4 at h 15, 30 and 60 (L.b); the latest entries are 12:57, 12:42 and 12:12 CT (L.c). X_D is the
+---
+> a date are 17, 8 and 4 at h 15, 30 and 60 (L.b), so the 20-entry cap never binds for FH15, FH30 and FH60; it can bind
+> for TB15 and TB30, whose trade count per date is realised (a barrier exit frees the account early; MathReview S1,
+> ProtocolReview N8). The latest entries are 12:57, 12:42 and 12:12 CT (L.c). X_D is the
+300a346,348
+>   Trade counts (C.5, TI_k, F10.12's sv_i) count each T record by its own ts_recv <= t, even when its batch's F_LAST
+>   record arrives after t; book-state features use the last book update with ts_recv <= t; F10.9, F10.10 and F10.11
+>   work per batch and count a batch once its F_LAST record has ts_recv <= t. Each is known at t (MathReview N12 c).
+305c353,355
+<   ZL instrument ids is invalid (M1 section 7).
+---
+>   ZL instrument ids is invalid (M1 section 7). A trade date on which a root's bars carry two instrument_ids is a
+>   front change of that root (its segment breaks there); the run stage counts such dates per root (DF34 found none for
+>   ZL; not verified for ZS and ZM, ProtocolReview "not finished").
+312,313c362,365
+< - G5 Model standardisation, G6 clocks and G7 agreement tolerance: as E.32 P4 G5-G7 (lines 388-395) with the ZL book in
+<   place of the ZM book. Under G6 the run stage reports, per month, the distribution of ts_recv - ts_event for the ZL
+---
+> - G5 Model standardisation, G6 clocks and G7 agreement tolerance: as E.32 P4 G5-G7 (lines 383-394; ProtocolReview N1)
+>   with the ZL book in place of the ZM book. The run stage writes two independent implementations of every feature
+>   and label (E.33's practice, its B3) and compares them on the discovery dates within G7's tolerance before any
+>   real-outcome fit (ProtocolReview N10); P10.3's compute reference does not include this work. Under G6 the run stage reports, per month, the distribution of ts_recv - ts_event for the ZL
+328,329c380,383
+< B). V_X(15) in L1.7 is, for each of ZL, ZS and ZM, the sum of its bar volumes over the 15 bars stamped t - 15 min ..
+< t - 1 min (one source type for all three legs; a change from M2 (f), which took ZL's volume from its book).
+---
+> B). V_X(15) in L1.7 is, for each of ZL, ZS and ZM, the sum of its bar volumes over the bars stamped m - 1 min for the
+> 15 minute marks m of the window of 15 minutes ending at t on the open-time axis (0.3), so a window at 08:35-08:49
+> reaches back across the 07:45-08:30 pause as C.5's does (ProtocolReview N4); one source type for all three legs (a
+> change from M2 (f), which took ZL's volume from its book).
+357,358c411,413
+< Book updates are F_LAST records; F and R records enter no count; a batch containing F_MAYBE_BAD_BOOK marks the book
+< bad; windows of k minutes run on ZL's open-time axis; trailing references as 0.3.
+---
+> Book updates are F_LAST records of any action, F and R included (0.3); F and R records are neither trades nor
+> removals and enter no T, C or M count (ProtocolReview S8); a batch containing F_MAYBE_BAD_BOOK marks its update bad
+> (0.3, FA-4); windows of k minutes run on ZL's open-time axis; trailing references as 0.3.
+363c418
+< | F10.7 | QI1s = (qb~ - qa~)/(qb~ + qa~): qb~ = 0 if bid_1 rose in (t - 1 s, t]; else min of qb_1 over the book states with ts_recv in [t_c, t] and the state as of t_c, t_c = max(t - 1.000 s, last change of bid_1); qa~ symmetric (ask_1 fell -> 0) | seasoning 1.000 s | none | no |
+---
+> | F10.7 | QI1s = (qb~ - qa~)/(qb~ + qa~): qb~ = 0 if the most recent change of bid_1 with ts_recv in (t - 1 s, t] was an increase (MathReview B1); else min of qb_1 over the book states with ts_recv in [t_c, t] and the state as of t_c, t_c = max(t - 1.000 s, last change of bid_1); qa~ symmetric (0 if the most recent change of ask_1 in (t - 1 s, t] was a decrease) | seasoning 1.000 s; invalid if qb~ + qa~ = 0 (ProtocolReview S6) | none | no |
+365c420
+< | F10.9 | CR5 = (Ca_5 - Cb_5)/(Ca_5 + Cb_5): Cb = contracts removed from the bid touch by C or M records (state difference record to record: same price and lower size -> the decrease; touch price fell -> the whole previous size), less, within one event batch, the T contracts printed at that bid price (first lots attributed to fills; no carry across batches); Ca symmetric | 5 min; invalid if Ca_5 + Cb_5 = 0 | none | no |
+---
+> | F10.9 | CR5 = (Ca_5 - Cb_5)/(Ca_5 + Cb_5): Cb_5 = the sum, over the event batches b whose F_LAST record has ts_recv in (t - 5 min, t] and over bid touch prices p, of max(0, D_b(p) - T_b(p)); D_b(p) = the decrease of the bid touch at p summed over every consecutive pair of front records from the state before b to b's F_LAST record, of any action (same price and lower size -> the decrease; touch price fell from p -> the whole previous size at p); T_b(p) = the contracts of b's T records printed at p (fills attributed first; no carry across batches). This is correct whether the post-fill size reduction sits on the T record or on a later C or M record (MathReview B2). A pair with a one-sided state, or inside a bad batch, contributes 0 and is counted. Ca_5 symmetric on the ask | 5 min; invalid if Ca_5 + Cb_5 = 0 | none | no |
+368c423
+< | F10.12 | lam60 = OLS slope (with intercept) of dM_i (ZL mid change over 1-minute interval i, ticks) on sv_i = B_i - S_i (contracts, side N excluded), over the trade-bearing 1-minute intervals among the 60 ending at t | 60 min; invalid with fewer than 30 intervals | / trailing 20-date reference median of the same slope | [-5, 5] |
+---
+> | F10.12 | lam60 = OLS slope (with intercept) of dM_i (ZL mid change over 1-minute interval i, ticks) on sv_i = B_i - S_i (contracts, side N excluded), over the trade-bearing 1-minute intervals among the 60 ending at t | 60 min; invalid with fewer than 30 intervals | / abs(trailing 20-date reference median of the same slope), so lam60 keeps the slope's sign; invalid if that median is 0 (ProtocolReview N3) | [-5, 5] |
+371c426,430
+< F3.4 IOFI5 and F3.8 QI3 (depth beyond level 1) and F3.1-F3.3's 1-minute window (L.a).
+---
+> F3.4 IOFI5 and F3.8 QI3 (depth beyond level 1) and F3.1-F3.3's 1-minute window (L.a). Windows changed against E.32
+> F3, with reasons, none from an outcome (ProtocolReview S7): OFI k = 1, 5, 15 -> 5, 15, 30 and TI k = 5, 15 -> 5, 15,
+> 30 (L.a: the minimum aggregation horizon is 5 minutes at ZL's trade rate; 30 is added to span band B's h_c); the
+> sweep window 5 -> 15 minutes (SW5 -> SW15; M1 2.3 d: sweeps are rarer than trades); QIbar5 (F10.8), a 5-minute mean
+> of QI1s, takes QI3's place (M1 2.3 b).
+380c439
+<   record inside the rule-B bar, by ts_event, has ts_recv > t.
+---
+>   record inside the rule-B bar, by ts_event, has ts_recv > t. The count changes no rule (ProtocolReview N7).
+384c443,452
+<   DF34 section 5 is a P1.4 roll date.
+---
+>   DF34 section 5 is a P1.4 roll date. The run stage reports, per F09 family, the share of OOF dates and of rows on
+>   which the family flag is 0 by construction (segment starts, stale roots); P10.5 shows it beside the F09 sets'
+>   results (ProtocolReview N11).
+> - LT12 F10 hand values (M1 trap 9, M1_F10_ZL.md line 407, and its siblings): synthetic MBP-1 streams with
+>   hand-computed F10.7 and F10.9, including the rise-then-fall second (bid_1 p -> p + 1 -> p inside the last second,
+>   old orders resting at p: qb~ = the min over [t - 0.2 s, t], not 0; MathReview B1) and both placements of a
+>   post-fill size reduction (on the T record; on a later C or M record of the batch), which must give the same
+>   removal count (MathReview B2).
+> - LT13 Clock (MathReview N12 a): the grid is built per date in America/Chicago, and the decision-minute count is
+>   278 - h on every ordinary trade date of both windows, across the CST and CDT changes.
+386c454,455
+<   batch with a T at the touch, whether the C/M touch decrease equals the traded size (F10.9's attribution); DC3
+---
+>   batch with a T at the touch, which record carries the post-fill size reduction (the T record or a later C or M
+>   record; F10.9 is correct in both cases); DC3
+406c475,477
+<   not run: MBP-1 has no order queue.
+---
+>   not run: MBP-1 has no order queue. For Tier A, E.32 P6.4's prop-account simulator (lines 659-661: the E.19
+>   simulator and prop_econ) runs on the OOF trade list under Topstep's 50K rules: daily-loss-limit and
+>   trailing-drawdown breach probabilities per month and expected trade dates to the first payout (ProtocolReview N6).
+419,421c490,499
+< 200 configurations, run in that nested order. All 200 count into N at the registration, whatever runs: N_reg =
+< N_before + 200, which is 1038 if no other trial is registered first. Execution variants, diagnostics and reports are
+< not configurations. The registration recomputes P7.2 at the registry's N immediately after it, with the functions
+---
+> 200 configurations. Run order (ProtocolReview S1): sets S_pool, S_crush, S_book, S_prop (P10.3's cut order); inside a
+> set FH15, FH30, FH60, TB15, TB30; inside a label the P5 grid order (6 LOGIT, then 4 LGBM). All 200 count into N at the
+> registration, whatever runs: N_reg = N_before + 200, which is 1038 if no other trial is registered first. Execution
+> variants, diagnostics and reports are not configurations. Registration mechanics as E.32 P7.1 (lines 685-701;
+> ProtocolReview S11), with "E33" read as the run stage's test name and 300 as 200: one
+> screening.trial_registry.register call for all 200 before any real-outcome fit; registry IDs <test>-<set><label><grid>
+> with set C (S_crush), P (S_prop), B (S_book), L (S_pool), label F15, F30, F60, T15, T30 and grid as E.32 P7.1 (L001A
+> .. G3200); the freeze file's fields as E.32 P7.1 (set, label, h, model, hyperparameters, pipeline sha256, protocol
+> sha256, and once the readings file's sha256); after any stop or restart the one registration is re-used and
+> re-checked with trial_registry.require_registered. The registration recomputes P7.2 at the registry's N immediately after it, with the functions
+433c511
+< | test e80 at the grid caps 17 / 8 / 4 (h 15 / 30 / 60), ticks a trade net | 0.97 / 1.94 / 3.74 (L.b) |
+---
+> | test e80 at the FH grid caps 17 / 8 / 4 (h 15 / 30 / 60), ticks a trade net; not for TB labels (P3.8) | 0.97 / 1.94 / 3.74 (L.b) |
+436,437c514,518
+< The e80 figures assume independent trades with sigma_h; heavy tails add 2-11% and same-day correlation multiplies
+< them by sqrt(1 + (k - 1) rho), so they are floors (M4 c). P10.5 reports the measured version (SR80_test x SD(X_D) /
+---
+> The e80 figures assume independent trades with sigma_h; heavy tails add about 1-3% at kurtosis 6-20 and about 11%
+> (13% on the binding threshold) at skew -2 and kurtosis 30 (M4 c as recomputed by MathReview N2), and same-day
+> correlation multiplies them by sqrt(1 + (k - 1) rho), so they are floors (M4 c). For TB configurations the trade
+> count is realised and the measured K2 form governs (P10.2). SR80 follows E.32's convention, se taken at the bar (the
+> exact bisection gives 0.1958 against 0.1957; MathReview N1). P10.5 reports the measured version (SR80_test x SD(X_D) /
+461,462c542,549
+< ZL.v.0 MBP-1 and ZL definitions for trade dates 2017-05-22..2020-11-30, requested from 2017-05-21 (L.e); the ZL, ZS
+< and ZM ohlcv-1m bars inside the sealed soy files (owned; docs/soy_test/SOY_TEST_MANIFEST.json). 890 program trade
+---
+> ZL.v.0 MBP-1 and ZL definitions for trade dates 2017-05-22..2020-11-30, requested from 2017-05-21 (L.e). The ZL and
+> ZS ohlcv-1m bars inside the sealed soy files (owned: 44 raw monthly chunks each, 2017-04..2020-11,
+> reports/stage_e32_test_seal.md section 2; docs/soy_test/SOY_TEST_MANIFEST.json). The ZM ohlcv-1m bars for
+> 2019-05..2020-11 inside the sealed files (19 raw monthly chunks) and, for 2017-05-01..2019-04-30, ZM.v.0 ohlcv-1m
+> bought with the test data (not owned: "no earlier ZM file is owned", seal section 2; ProtocolReview B1), requested
+> from 2017-05-01 to the start of the owned 2019-05 chunk so that the two abut. Without them ZM would be stale on
+> 2017-05-22..2019-05-03, more than half of the test dates, and the F09 sets would have no like-for-like test; if they
+> cannot be bought, the run stage stops before the read and reports (P9.2). 890 program trade
+470,473c557,565
+<   accounts 1-3 have less than USD 3 of headroom). Estimate: USD 23.36 for ZL MBP-1 (census USD 0.5432 a month x 43;
+<   E.32b recs 4.5(c)); definitions not priced. The files land under the soy seal's read guard (soy_test_seal.py) and
+<   are opened once. If the definitions cannot be bought, the run stage stops before the read and reports (C.7 and P3.6
+<   rule 5 need them); it does not substitute a rule.
+---
+>   accounts 1-3 have less than USD 3 of headroom), for three items: ZL.v.0 MBP-1, ZL definitions and ZM.v.0 ohlcv-1m
+>   2017-05-01..2019-04-30 (P9.1). Estimates, not quotes: USD 23.36 for ZL MBP-1 (census USD 0.5432 a month x 43; E.32b
+>   recs 4.5(c)); about USD 1.46 for the ZM bars (24 months x USD 0.0608, the median of the 73 settled ZM.v.0 ohlcv-1m
+>   monthly buys in ledger/databento_spend.jsonl; USD 1.77 at the dearest month, 0.0738); at most about USD 1.66 for
+>   the definitions (43 months x USD 0.0385, the median settled month of the three-parent ZM/ZS/ZL definition buys, of
+>   which a ZL-only request is a subset); about USD 26.5 in all. The files land under the soy seal's read guard
+>   (soy_test_seal.py) and are opened once. If the definitions or the ZM bars cannot be bought, the run stage stops
+>   before the read and reports (C.7 and P3.6 rule 5 need the definitions; every F09 feature needs ZM); it does not
+>   substitute a rule.
+477c569,570
+<   pages; any other count stops the read.
+---
+>   pages; any other count stops the read. The builder records each NOPA release's time from the saved pages, and the
+>   rule-3 window follows the recorded time, 11:00 CT where none is recorded (ProtocolReview N13).
+527c620,621
+<   0.1957); it binds if the test window shrinks. The fixed figures 0.97 / 1.94 / 3.74 ticks (and E.32b's 1.8) are
+---
+>   0.1957); it can bind only if SR80_test at the realised T_test exceeds 0.2028, roughly T_test below 810 (870 x
+>   (0.1957/0.2028)^2, about 60 dates lost; MathReview N13). The fixed figures 0.97 / 1.94 / 3.74 ticks (and E.32b's 1.8) are
+545,546c639,640
+< prompt may set feasibility limits, and its cut unit is a whole set in the order S_pool, S_crush, S_book, S_prop,
+< with the rules of E.32 P10 (lines 839-858).
+---
+> prompt may set feasibility limits, and its cut unit is a whole set in P7.1's run order (S_pool, S_crush, S_book,
+> S_prop), with the rules of E.32 P10 (lines 839-858) after 0.4's substitutions (180 LOGIT and 120 LGBM fits a set).
+552c646,647
+< reports/stage_e33_pipeline_freeze.sha256; the review files of reports/stage_e34_briefs/review/. They are listed in
+---
+> reports/stage_e33_pipeline_freeze.sha256; the review files of reports/stage_e34_briefs/review/ (the two reviews, the
+> fix log, the fix verification and the v0.1 snapshot). They are listed in
+559c654,655
+< measured (P7.2); per family, whether a null statement under docs/NULL_CRITERIA_E.md is supportable; and the sentence
+---
+> measured (P7.2); per F09 family, the share of OOF dates on which it is invalid by construction (LT11); per family,
+> whether a null statement under docs/NULL_CRITERIA_E.md is supportable; and the sentence
+570,571c666,668
+< | test, C.7 and limits | definition | ZL | 2017-05-21..2020-11-30 | not owned | not priced; bought with the MBP-1 |
+< | test, F09 | ohlcv-1m | ZL, ZS, ZM | 2017-05-01..2020-11-30 | owned inside the sealed soy files | 0 |
+---
+> | test, C.7 and limits | definition | ZL | 2017-05-21..2020-11-30 | not owned | at most about USD 1.66 (P9.2); bought with the MBP-1 |
+> | test, F09 | ohlcv-1m | ZL and ZS 2017-04..2020-11; ZM 2019-05..2020-11 | to 2020-11-30 | owned inside the sealed soy files | 0 |
+> | test, F09 | ohlcv-1m | ZM.v.0 | 2017-05-01..2019-04-30 | not owned (ProtocolReview B1); bought with the test MBP-1, under the seal guard | about USD 1.46 (P9.2) |
+576c673,674
+< decided E.32b-D2, E.32b-D3 and E.32-D2, a quote is logged, and the user approves the spend.
+---
+> decided E.32b-D2, E.32b-D3, E.32-D2 and OC-5, a quote is logged, and the user approves the spend. Estimated test
+> purchase: about USD 26.5 (23.36 + 1.46 + at most 1.66); the quote decides.

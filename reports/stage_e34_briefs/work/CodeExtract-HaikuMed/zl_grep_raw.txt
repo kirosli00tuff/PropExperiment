@@ -1,0 +1,102 @@
+reports/stage_e31_briefs/work/pilot/kalgo31.py:43:ZM_K = KParams()  # spec 3.1: ZM (and ZS, ZL) outrights
+reports/stage_e31_briefs/work/pilot/canary_check31.py:10:- Z4 (definitions): for the ZM, ZS and ZL outrights (instrument_class F): match_algorithm,
+reports/stage_e31_briefs/work/pilot/canary_check31.py:16:  uses min_price_increment x unit_of_measure_qty, ZS and ZL in cents). Also the
+reports/stage_e31_briefs/work/pilot/canary_check31.py:72:    "ZL": {"contract_size": 60000, "tick": None, "tick_usd": 6.00},
+reports/stage_e31_briefs/work/pilot/canary_check31.py:145:    # 1.0, 1.0 and 0.06 for ZM, ZS and ZL, which is not the USD tick value (canary 2026-10-23)
+reports/stage_e31_briefs/work/pilot/stats31.py:21:- Splits (spec 5, decide nothing): ZS, ZL and joint move buckets at L = 1 and 10 s, USDA buckets
+reports/stage_e31_briefs/work/pilot/stats31.py:338:             for lag in (1, 10) for name, col in (("ZS", "zs"), ("ZL", "zl"))}
+reports/stage_e31_briefs/work/pilot/stats31.py:342:        out[f"ZS+ZL L={lag} s"] = (core.joint_bucket(moves[f"ZS L={lag} s"],
+reports/stage_e31_briefs/work/pilot/stats31.py:343:                                                     moves[f"ZL L={lag} s"]),
+reports/stage_e31_briefs/work/pilot/pilot31_common.py:12:  Z1 mbo [ZM.v.0, ZM.v.1] continuous; Z2 mbp-1 [ZS.v.0] continuous; Z3 mbp-1 [ZL.v.0]
+reports/stage_e31_briefs/work/pilot/pilot31_common.py:13:  continuous; Z4 definition [ZM.FUT, ZS.FUT, ZL.FUT] parent.
+reports/stage_e31_briefs/work/pilot/pilot31_common.py:121:    Series("Z2", "mbp-1", ("ZS.v.0",), "continuous", ("ZS",)),
+reports/stage_e31_briefs/work/pilot/pilot31_common.py:122:    Series("Z3", "mbp-1", ("ZL.v.0",), "continuous", ("ZL",)),
+reports/stage_e31_briefs/work/pilot/pilot31_common.py:123:    Series("Z4", "definition", ("ZM.FUT", "ZS.FUT", "ZL.FUT"), "parent", ("ZM", "ZS", "ZL")),
+reports/stage_e31_briefs/work/pilot/pilot31_common.py:126:PILOT_ROOTS = frozenset({"ZM", "ZS", "ZL"})  # literal: the guard does not follow SERIES
+reports/stage_e31_briefs/work/pilot/pilot31_common.py:128:    raise RuntimeError("a pilot series names a root outside ZM, ZS, ZL")
+reports/stage_e31_briefs/work/pilot/pilot31_common.py:129:EXPECTED_RTYPE = {"mbo": 0xA0, "mbp-1": 0x01, "definition": 0x13}
+reports/stage_e31_briefs/work/pilot/stats31_core.py:34:# Section 5 buckets. A ZS / ZL move d is a difference of mids in ticks, so it is a multiple of half
+reports/stage_e31_briefs/work/pilot/measure31.py:11:and implied fields of every ZM, ZS and ZL outright go to <out>/definitions31.json. (3) Split: each
+reports/stage_e31_briefs/work/pilot/measure31.py:57:COND_SYMBOLS = {"Z2": "ZS.v.0", "Z3": "ZL.v.0"}
+reports/stage_e31_briefs/work/pilot/measure31.py:165:    """The last definition of every outright future (instrument_class F) of ZM, ZS and ZL."""
+reports/stage_e31_briefs/work/pilot/measure31.py:171:        if root not in ("ZM", "ZS", "ZL") or _text(r["instrument_class"]) != "F":
+reports/stage_e31_briefs/work/pilot/measure31.py:201:TICK_VALUE_USD = {"ZM": 10.00, "ZS": 12.50, "ZL": 6.00}  # spec 0; lead note item 2
+reports/stage_e31_briefs/work/pilot/measure31.py:202:# Databento quotes ZM in USD per short ton but ZS and ZL in US cents (per bushel, per pound), as
+reports/stage_e31_briefs/work/pilot/measure31.py:204:# ZL; ticks are used as found (the engine only divides by them).
+reports/stage_e31_briefs/work/pilot/measure31.py:205:PRICE_UNIT_TO_USD = {"ZM": (1.0,), "ZS": (1.0, 0.01), "ZL": (1.0, 0.01)}
+reports/stage_e31_briefs/work/pilot/measure31.py:245:                                            if d["root"] == r}) for r in ("ZM", "ZS", "ZL")},
+reports/stage_e31_briefs/work/pilot/measure31.py:246:            "ticks_1e9": {r: root_tick(defs, r) for r in ("ZM", "ZS", "ZL")}}
+reports/stage_e31_briefs/work/pilot/measure31.py:509:    zs_tick, zl_tick = checked_tick(defs, "ZS"), checked_tick(defs, "ZL")
+reports/stage_e33_briefs/work/pipeline/data33.py:10:- ``load_mbp1(root, D)``, root "ZS" or "ZL": the E.33 split (DERIVED/split/<root>/<D>.npy), dtype
+reports/stage_e33_briefs/work/pipeline/data33.py:13:  ZL, see cal33.tick).
+reports/stage_e33_briefs/work/pipeline/data33.py:15:  keeps the 148 ZM/ZS/ZL outright futures, instrument_class F) with the fields ``DEF_FIELDS``, in
+reports/stage_e33_briefs/work/pipeline/data33.py:56:ROOT_SERIES = {"ZS": "Z2", "ZL": "Z3"}
+reports/stage_e33_briefs/work/pipeline/data33.py:167:        raise ValueError(f"root must be ZS or ZL, not {root!r}")
+reports/stage_e33_briefs/work/pipeline/data33.py:172:    """The E.33 ZS or ZL MBP-1 split records of trade date D (MBP1_SPLIT, every field), in
+reports/stage_e33_briefs/work/pipeline/data33.py:201:    ts_recv <= cutoff_ns when given. outright_only=True keeps the ZM/ZS/ZL outright futures
+reports/stage_e33_briefs/work/pipeline/g6_33.py:2:ts_recv - ts_event for ZM, ZS and ZL side by side; months whose medians differ by more than
+reports/stage_e33_briefs/work/pipeline/g6_33.py:6:instrument ids, plus a ZM front-only column; ZS/ZL: the E.33 split), grouped by the trade date's
+reports/stage_e33_briefs/work/pipeline/g6_33.py:10:CLI: g6_33.py run ZM|ZS|ZL (resumable per month; partials under DERIVED/probes/g6/), then
+reports/stage_e33_briefs/work/pipeline/g6_33.py:42:FEEDS = ("ZM", "ZS", "ZL")
+reports/stage_e33_briefs/work/pipeline/g6_33.py:43:COLS = ("ZM", "ZM_front", "ZS", "ZL")
+reports/stage_e33_briefs/work/pipeline/g6_33.py:123:        "instrument ids, and the ZM.v.0 front only; ZS and ZL: the E.33 MBP-1 split), grouped by "
+reports/stage_e33_briefs/work/pipeline/g6_33.py:127:        "and ZL exceeds 100 ms; the ZM front-only median is checked the same way (flag column "
+reports/stage_e33_briefs/work/pipeline/g6_33.py:130:        "ZL median | ZL p1 | ZL p99 | max median diff (ms) | flag | front |",
+reports/stage_e33_briefs/work/pipeline/g6_33.py:138:        main = max(abs(med[a] - med[b]) for a, b in combinations(("ZM", "ZS", "ZL"), 2))
+reports/stage_e33_briefs/work/pipeline/g6_33.py:139:        front = max(abs(med[a] - med[b]) for a, b in combinations(("ZM_front", "ZS", "ZL"), 2))
+reports/stage_e33_briefs/work/pipeline/g6_33.py:147:            f"{_ms(rec['ZS']['p1_ns'])} | {_ms(rec['ZS']['p99_ns'])} | {_ms(med['ZL'])} | "
+reports/stage_e33_briefs/work/pipeline/g6_33.py:148:            f"{_ms(rec['ZL']['p1_ns'])} | {_ms(rec['ZL']['p99_ns'])} | {_ms(max(main, front))} | "
+reports/stage_e33_briefs/work/pipeline/build_features33.py:116:    return F.DayInfo(day=day, fronts=(int(fr["ZM"]), int(fr["ZS"]), int(fr["ZL"])),
+reports/stage_e33_briefs/work/pipeline/build_features33.py:154:    ticks = {r: int(cal33.tick(r)) for r in ("ZM", "ZS", "ZL")}
+reports/stage_e33_briefs/work/pipeline/build_features33.py:159:    zl = np.concatenate([data33.load_mbp1("ZL", d, cutoff_ns) for d in days])
+reports/stage_e33_briefs/work/pipeline/build_features33.py:170:                                                 "ZL": int(len(zl))},
+reports/stage_e32b_briefs/work/F3/f3_guard.py:20:    "ZT", "ZF", "ZN", "ZB", "MZC", "MZS", "MZW", "MZL", "MZM", "XC", "XK", "XW", "ZC", "ZS", "ZW", "ZL", "ZM",
+reports/stage_e33_briefs/work/pipeline/cal33.py:9:- fronts(D): {"ZM", "ZS", "ZL": instrument_id} of ZM.v.0, ZS.v.0, ZL.v.0 on UTC date D from the
+reports/stage_e33_briefs/work/pipeline/cal33.py:50:FRONT_SYMBOLS = {"ZM": ("Z1", "ZM.v.0"), "ZS": ("Z2", "ZS.v.0"), "ZL": ("Z3", "ZL.v.0")}
+reports/stage_e33_briefs/work/pipeline/cal33.py:172:    """{"ZM", "ZS", "ZL": instrument_id} of ZM.v.0, ZS.v.0, ZL.v.0 on UTC date D (P0.3)."""
+reports/stage_e33_briefs/work/pipeline/cal33.py:193:    """P4 G2: segment number (0-based) of D; a new segment starts at any ZM, ZS or ZL front
+reports/stage_e33_briefs/work/pipeline/cal33.py:410:    measure31.checked_tick (E.31's lead ruling: ZS and ZL quotes are US cents, so the USD check
+reports/stage_e33_briefs/work/pipeline/cal33.py:412:    ZL 10_000_000 (0.01 c/lb)."""
+reports/stage_e33_briefs/work/pipeline/cal33.py:414:        raise ValueError(f"root must be ZM, ZS or ZL, not {root!r}")
+reports/stage_e31_briefs/work/pilot/stats31_report.py:203:           "ZS / ZL moves: sign of s x d, d = mid(t_f) - mid(t_f - L) in that contract's ticks; "
+reports/stage_e32b_briefs/work/F3/f3_vol.py:45:    "grains": "MZC MZS MZW MZL MZM XC XK XW ZC ZS ZW ZL ZM"}.items() for c in cs.split()}
+reports/stage_e32b_briefs/work/F3/f3_vol.py:47:              "MYM": "YM", "MNQ": "NQ", "MZC": "ZC", "MZS": "ZS", "MZW": "ZW", "MZL": "ZL", "MZM": "ZM",
+reports/stage_e31_briefs/work/pilot/verify31.py:66:RECORD_SIZE = {"mbo": 56, "mbp-1": 80, "definition": 520}  # DBN v3 wire record bytes
+reports/stage_e31_briefs/work/pilot/verify31.py:227:    'ZMH4', 'ZSX6-ZSN7', 'ZL:BF F5-H5-K5', not by 'ZM.FUT'): every parent root has a child key
+reports/stage_e31_briefs/work/pilot/verify31.py:250:    parent request those are children; CME combos ('ZM:BF K5-N5-Q5', 'ZL:CF N4Q4U4V4') listed
+reports/stage_e31_briefs/work/pilot/verify31.py:311:    # canary_check31. Z1-Z3 (mbo, mbp-1) keep the hard rule.
+reports/stage_e33_briefs/work/pipeline/feat33.py:10:ZS and ZL MBP-1 of their fronts; P0.3) and, at every minute mark of D's open-time axis, the loop
+reports/stage_e33_briefs/work/pipeline/feat33.py:23:ZL cents/lb). Mids are kept as the exact integer raw2 = bid_1 + ask_1 (twice the mid).
+reports/stage_e33_briefs/work/pipeline/feat33.py:89:CRUSH_ZL = 11.0  # F1: 11 lb of oil per bushel
+reports/stage_e33_briefs/work/pipeline/feat33.py:95:MC = ("vol", "ofi", "ofi_bad")  # ZS, ZL counters
+reports/stage_e33_briefs/work/pipeline/feat33.py:553:# ------------------------------------------------------------------ pass 1: ZS / ZL MBP-1 ----
+reports/stage_e33_briefs/work/pipeline/feat33.py:559:    """Pass 1 for a ZS or ZL front from MBP-1 (top of book and trades; P0.3), arrays over
+reports/stage_e33_briefs/work/pipeline/feat33.py:630:    raw.update(stream_mbp1(zl, int(fronts["ZL"]), ax, "zl"))
+reports/stage_e33_briefs/work/pipeline/feat33.py:642:    out["fronts"] = np.array([fronts["ZM"], fronts["ZS"], fronts["ZL"]], dtype=np.int64)
+reports/stage_e33_briefs/work/pipeline/feat33.py:643:    out["ticks"] = np.array([ticks["ZM"], ticks["ZS"], ticks["ZL"]], dtype=np.int64)
+reports/stage_e33_briefs/work/pipeline/feat33.py:734:    fronts: tuple[int, int, int]  # ZM, ZS, ZL instrument ids (P0.3)
+reports/stage_e33_briefs/work/pipeline/feat33.py:744:    """F1 crush at every mark, exact (READING FA-29): C2 = 2e9 x C(u) cents/bu = 11 raw2_ZL
+reports/stage_e33_briefs/work/pipeline/feat33.py:816:    """F1.3 before D's open: OLS of M_ZM = a + b_S M_ZS + b_L M_ZL + eps (natural units) on the
+reports/stage_e33_briefs/work/pipeline/feat33.py:820:    b_L mean M_ZL; sd_e = sqrt(SSR/n) / 0.10 in ZM ticks."""
+reports/stage_e33_briefs/work/pipeline/feat33.py:1037:    # F2.7 d5 = [(dZS_5 - 11 dZL_5)/2.2 - dZM_5]/0.10/(sigma_ZM(D) sqrt 5), natural units
+reports/stage_e33_briefs/work/pipeline/feat33.py:1046:        d5 = ((dzs - CRUSH_ZL * dzl) / CRUSH_ZM - dzm) / ZM_TICK_USD / (d.sz * math.sqrt(5))
+reports/stage_e33_briefs/work/pipeline/guard33.py:7:- any ZM, ZS or ZL data dated 2017-05-01..2020-11-30 (the soy test window), by requested trade
+reports/stage_e33_briefs/work/pipeline/guard33.py:51:    "Z2": VENDOR / "mbp-1" / "Z2_ZS_v_0",
+reports/stage_e33_briefs/work/pipeline/guard33.py:52:    "Z3": VENDOR / "mbp-1" / "Z3_ZL_v_0",
+reports/stage_e33_briefs/work/pipeline/guard33.py:53:    "Z4": VENDOR / "definition" / "Z4_ZM_FUT-ZS_FUT-ZL_FUT",
+reports/stage_e33_briefs/work/pipeline/guard33.py:276:                      "2017-05-01..2020-11-30 (ZM, ZS, ZL)")
+reports/stage_e33_briefs/work/pipeline/synth33.py:125:    fronts: tuple           # {"ZM", "ZS", "ZL": instrument id} per date (from cal33; labels only)
+reports/stage_e33_briefs/work/pipeline/synth33.py:283:    # F2 cross-asset (independent ZS and ZL walks and order flow)
+reports/stage_e33_briefs/work/pipeline/synth33.py:322:    # F2.7 d5: implied-meal 5-minute move (ZS, ZL; noise) minus ZM's own 5-minute move, scaled
+reports/stage_e32b_briefs/work/F3/f3_md.py:166:  no mbo, mbp-1 or tbbo file, nothing of the E.32 soy test seal (2017-05 .. 2020-11).
+reports/stage_e32b_briefs/work/F3/f3_md.py:169:  name, a ../ traversal to MES, a path into mbp-1, a symlink whose given path contains each forbidden token, a symlink
+reports/stage_e32b_briefs/work/F3/f3_md.py:170:  resolving into mbp-1 and one resolving outside the ohlcv-1m folder; on the real tree, 2024-03, 2023-11 and a 2019 ZS
+reports/stage_e32b_briefs/work/F3/f3_md.py:196:  MZL, MZM, XC, XK, XW) take E.28 A1_<family>.json tick_size, converted from US cents to USD where A1 states cents, and
+reports/stage_e33_briefs/work/pipeline/split33.py:1:"""The E.33 ZS/ZL per-trade-date MBP-1 split (brief_DataCoder deliverable 3; P1.1, F 6.3 item 3).
+reports/stage_e33_briefs/work/pipeline/split33.py:3:For each of the 816 trade dates D (P1.4) and root in {ZS, ZL}: every record of the raw Z2/Z3
+reports/stage_e33_briefs/work/pipeline/split33.py:15:per-date counts, totals). CLI: split33.py ZS | ZL | manifest ZS | manifest ZL
+reports/stage_e32b_briefs/work/F3/test_f3.py:197:    side = repo / "data/vendor/databento/GLBX.MDP3/mbp-1/CL_v_0"
+reports/stage_e32b_briefs/work/F3/test_f3.py:225:    "../mbp-1/CL_v_0/range=2022-11-01_2022-12-01.dbn.zst",  # other schema
+reports/stage_e32b_briefs/work/F3/test_f3.py:250:    bad.symlink_to(repo / "data/vendor/databento/GLBX.MDP3/mbp-1/CL_v_0/range=2022-11-01_2022-12-01.dbn.zst")
+reports/stage_e33_briefs/work/pipeline/check33.py:11:  check33.py split ROOT D1 D2 D3     ZS/ZL: E.33 split length and DONE count vs the raw count
+reports/stage_e31_briefs/work/pilot/measure31_core.py:659:    """A ZS or ZL mbp-1 state series of the trade date (time axis, mid, validity, tick)."""

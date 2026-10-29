@@ -1,0 +1,96 @@
+3,5c3,6
+< Status: DRAFT v0.2 (2026-10-29, lead Opus 5.5 max, session 3): v0.1 (session 2) with every BLOCKING and SHOULD FIX
+< item of the two reviews (MathReviewer and ProtocolReviewer, Fable xhigh) fixed, and some NOTEs; each change and its
+< review item are listed in reports/stage_e34_briefs/review/FixLog.md. For FixVerifier (Fable xhigh).
+---
+> Status: FROZEN v1.0 (2026-10-29, lead Opus 5.5 max, session 3). Review rounds: MathReviewer (Part M) and
+> ProtocolReviewer on v0.1; every BLOCKING and SHOULD FIX item fixed in v0.2; FixVerifier on v0.2 (PASS WITH FIXES);
+> its 4 SHOULD FIX and 7 NOTE items applied in v1.0 in its own wording (all Fable xhigh, models confirmed from the
+> transcripts). Each change and its review item: reports/stage_e34_briefs/review/FixLog.md.
+75,76c76,78
+<   carries F_MAYBE_BAD_BOOK. The mark belongs to that update only (MBP-1 has no R record; E.33's code clears it at
+<   each F_LAST record), so the book is undefined from a bad update to the next good one. "As of u" is the last
+---
+>   carries F_MAYBE_BAD_BOOK. The mark belongs to that update only (the mark is per update: E.33's code clears it at
+>   each F_LAST record, and no record type resets it otherwise; MBP-1 carries no clear-and-rebuild semantics, and DF34
+>   counts one R record in the ZL files; FixVerify F4), so the book is undefined from a bad update to the next good one. "As of u" is the last
+107,109c109,112
+< S_prop; labels F05, F15, F30, F60, T15, T30 -> F15, F30, F60, T15, T30; P4.2's planted-proof figures 0.91 and 0.914 ->
+< 0.90 and 0.905 (select-and-pass 0.898 and selection 0.905 at a realised daily Sharpe of 0.25 at N 1038; ProtocolReview
+< recompute_p7.out). The synthetic proofs (P4.2) run at the thresholds of P7.2.
+---
+> S_prop; labels F05, F15, F30, F60, T15, T30 -> F15, F30, F60, T15, T30; P4.2's P7.2-derived figures ("P7.2's joint
+> select-and-pass probability is 0.91 at a realised daily Sharpe of 0.25, and selection alone 0.914") -> 0.90 and 0.905
+> (0.898 and 0.905 at N 1038; ProtocolReview recompute_p7.out); P4.2's binomial figures 0.91 (P(at least 14 of 20) at
+> a per-seed power of 0.8) and 0.26 (P(at least 2 of 20) at 0.05) do not depend on N and stay (FixVerify F2). The synthetic proofs (P4.2) run at the thresholds of P7.2.
+150,152c153,156
+<   (0.3; DF34 section 5: 83 records on 14 dates; ProtocolReview S5). Dropping reads ts_event; no feature, label,
+<   exclusion or fill reads it; the G6 clock report and the LT8 count read it for reports only (counts, no outcome;
+<   ProtocolReview S4). Records outside D's ts_recv window are refused by the guard (E.33's _check_window).
+---
+>   (0.3; DF34 section 5: 83 records on 14 dates; ProtocolReview S5). Dropping reads ts_event. No feature, label,
+>   exclusion or fill reads it as a clock; F10.10 and F10.11 use it only as the key that groups the T records of one
+>   trade set (E.32 F3.10), and the set enters a window by its batch end's ts_recv (G1). The G6 clock report and the
+>   LT8 count read it for reports only (counts, no outcome; ProtocolReview S4, FixVerify F3). Records outside D's ts_recv window are refused by the guard (E.33's _check_window).
+251c255,256
+<   test window; buying one would add a larger test-window purchase than the ZM bars of P11), so no leader OFI feature
+---
+>   test window; buying one would add a larger test-window purchase than the ZM bars of P11: of the
+>   order of the ZL MBP-1's USD 23.36, against about USD 1.46), so no leader OFI feature
+318c323,324
+<    parse rule, the NOPA rule dates and the asserted counts) for the discovery dates. For the test window the run
+---
+>    parse rule, the NOPA rule dates and the asserted counts) for the discovery dates; the discovery calendar keeps
+>    E.32's R = 11:00 CT for NOPA, and the test calendar follows the recorded time (P9.2; FixVerify F9). For the test window the run
+380,383c386,390
+< B). V_X(15) in L1.7 is, for each of ZL, ZS and ZM, the sum of its bar volumes over the bars stamped m - 1 min for the
+< 15 minute marks m of the window of 15 minutes ending at t on the open-time axis (0.3), so a window at 08:35-08:49
+< reaches back across the 07:45-08:30 pause as C.5's does (ProtocolReview N4); one source type for all three legs (a
+< change from M2 (f), which took ZL's volume from its book).
+---
+> B). V_X(15) in L1.7 is, for each of ZL, ZS and ZM, the sum of its bar volumes over the 15 bars stamped at the minute
+> marks t - 15, ..., t - 1 of the open-time axis (0.3): the bars covering [t - 15 min, t), the last of them the rule-B
+> bar. A window at 08:35 reaches back across the 07:45-08:30 pause to the bars stamped 07:35-07:44 and 08:30-08:34, as
+> C.5's T-record window does (ProtocolReview N4, FixVerify F1); one source type for all three legs (a change from M2
+> (f), which took ZL's volume from its book). A missing bar contributes 0 to the sum.
+412c419,420
+< removals and enter no T, C or M count (ProtocolReview S8); a batch containing F_MAYBE_BAD_BOOK marks its update bad
+---
+> removals by themselves: they enter no T count (C.5, TI_k, lam60's sv_i, T_b) and start no sweep or refill; their book
+> states enter the state differences of OFI and F10.9 like any other record's (ProtocolReview S8, FixVerify F10); a batch containing F_MAYBE_BAD_BOOK marks its update bad
+418c426
+< | F10.7 | QI1s = (qb~ - qa~)/(qb~ + qa~): qb~ = 0 if the most recent change of bid_1 with ts_recv in (t - 1 s, t] was an increase (MathReview B1); else min of qb_1 over the book states with ts_recv in [t_c, t] and the state as of t_c, t_c = max(t - 1.000 s, last change of bid_1); qa~ symmetric (0 if the most recent change of ask_1 in (t - 1 s, t] was a decrease) | seasoning 1.000 s; invalid if qb~ + qa~ = 0 (ProtocolReview S6) | none | no |
+---
+> | F10.7 | QI1s = (qb~ - qa~)/(qb~ + qa~): qb~ = 0 if the most recent change of bid_1 with ts_recv in (t - 1 s, t] was an increase (a change from an undefined bid_1 counts as an increase; MathReview B1, FixVerify F7); else min of qb_1 over the book states with ts_recv in [t_c, t] and the state as of t_c, t_c = max(t - 1.000 s, last change of bid_1); qa~ symmetric (0 if the most recent change of ask_1 in (t - 1 s, t] was a decrease, a change from an undefined ask_1 counting as a decrease) | seasoning 1.000 s; invalid if qb~ + qa~ = 0 (ProtocolReview S6) | none | no |
+420c428
+< | F10.9 | CR5 = (Ca_5 - Cb_5)/(Ca_5 + Cb_5): Cb_5 = the sum, over the event batches b whose F_LAST record has ts_recv in (t - 5 min, t] and over bid touch prices p, of max(0, D_b(p) - T_b(p)); D_b(p) = the decrease of the bid touch at p summed over every consecutive pair of front records from the state before b to b's F_LAST record, of any action (same price and lower size -> the decrease; touch price fell from p -> the whole previous size at p); T_b(p) = the contracts of b's T records printed at p (fills attributed first; no carry across batches). This is correct whether the post-fill size reduction sits on the T record or on a later C or M record (MathReview B2). A pair with a one-sided state, or inside a bad batch, contributes 0 and is counted. Ca_5 symmetric on the ask | 5 min; invalid if Ca_5 + Cb_5 = 0 | none | no |
+---
+> | F10.9 | CR5 = (Ca_5 - Cb_5)/(Ca_5 + Cb_5): Cb_5 = the sum, over the event batches b whose F_LAST record has ts_recv in (t - 5 min, t] and over bid touch prices p, of max(0, D_b(p) - T_b(p)); D_b(p) = the decrease of the bid touch at p summed over every consecutive pair of front records from the state before b to b's F_LAST record, of any action (same price and lower size -> the decrease; touch price fell from p -> the whole previous size at p); T_b(p) = the contracts of b's T records printed at p with side A or N (for the ask: side B or N; M1 2.3 c, FixVerify F8) (fills attributed first; no carry across batches). This is correct whether the post-fill size reduction sits on the T record or on a later C or M record of the same batch (MathReview B2). A pair with a one-sided state, or inside a bad batch, contributes 0 and is counted. Ca_5 symmetric on the ask | 5 min; invalid if Ca_5 + Cb_5 = 0 | none | no |
+454,455c462,464
+<   batch with a T at the touch, which record carries the post-fill size reduction (the T record or a later C or M
+<   record; F10.9 is correct in both cases); DC3
+---
+>   batch with a T at the touch, which record carries the post-fill size reduction (the T record, a later C or M
+>   record of the same batch, or a record of a later batch; F10.9 is correct in the first two cases and counts the fill
+>   as a removal in the third; FixVerify F6); DC3
+560,562c569,572
+<   monthly buys in ledger/databento_spend.jsonl; USD 1.77 at the dearest month, 0.0738); at most about USD 1.66 for
+<   the definitions (43 months x USD 0.0385, the median settled month of the three-parent ZM/ZS/ZL definition buys, of
+<   which a ZL-only request is a subset); about USD 26.5 in all. The files land under the soy seal's read guard
+---
+>   buys in ledger/databento_spend.jsonl, 72 whole months and one 20-day span; USD 1.77 at the dearest month, 0.0738); about USD 1.66 for
+>   the definitions (43 months x USD 0.0385, the median settled month of the 39 three-parent ZM/ZS/ZL definition buys,
+>   of which a ZL-only request is a subset; USD 2.18 at the dearest month, 0.0506); about USD 26.5 in all (27.3 at the
+>   dearest months; FixVerify F5). The files land under the soy seal's read guard
+600c610
+< 4.5(b) P9).
+---
+> 4.5(b) P9), and the test calendar's NOPA release time where the record differs from 11:00 CT (P9.2).
+666c676
+< | test, C.7 and limits | definition | ZL | 2017-05-21..2020-11-30 | not owned | at most about USD 1.66 (P9.2); bought with the MBP-1 |
+---
+> | test, C.7 and limits | definition | ZL | 2017-05-21..2020-11-30 | not owned | about USD 1.66 (P9.2); bought with the MBP-1 |
+674c684
+< purchase: about USD 26.5 (23.36 + 1.46 + at most 1.66); the quote decides.
+---
+> purchase: about USD 26.5 (23.36 + 1.46 + 1.66; 27.3 at the dearest months); the quote decides.

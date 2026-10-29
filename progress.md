@@ -5520,3 +5520,90 @@ worker's span covers all its runs; tokens from the transcripts):
 | 43 | RecsAssembler-OpusXHigh | opus (xhigh) | 08:57-09:22 | 25 min | 27,063,610 | done |
 | 44 | FixVerifier-FableXHigh | fable (xhigh) | 09:23-09:41 | 18 min | 4,578,675 | done: PASS, 0 / 0 / 7 |
 | all | Stage E.32b | lead (4 sessions) + 38 spawns | 22:06-09:45 | 11 h 39 min wall-clock; 9 h 07 min work | 709,233,693 (lead 134,767,260; workers 574,466,433) | initial estimate (session 1, 22:35): T0 + 12:00 from 22:40, about 10:40; session 2's table (22:48): 09:20; session 4's (08:44): 11:07, revised 10:43; actual 09:45 |
+
+## 2026-10-29 — Stage E.34: ZL program design and frozen protocol (no purchase, no registration): MBP-1 in both windows, F10 + F09 in 200 configurations, protocol FROZEN v1.0 (46556059); N = 838
+
+Prompt docs/prompts/STAGE_E.34.md (V57; binding E.32b recs 4.5 and 6, V43, V50, V51, V55, V56). Return:
+reports/E.34_RETURN.md. STATE reports/stage_e34_STATE.md (three lead sessions). Outputs: reports/stage_e34_zl_methods.md
+(Part M), reports/stage_e34_exposure.md (0.2), reports/stage_e34_data_facts.md (Part F), reports/stage_e34_zl_protocol.md
+(FROZEN v1.0, sha256 46556059b09b8317..., freeze list reports/stage_e34_zl_protocol.sha256 with 17 files). Holdout
+unlocks_logged 0 at start and end; REGISTRATION.md 0 bytes; spend ledger unchanged (37,290 lines, 42589d7b); harness
+2e908c81 preflight OK at start and end; the E.32 test seal 114 of 114 sealed and guard33 refusing 4 of 4 at both ends;
+N 838 (registry 11777e46 unchanged); no Databento, TopstepX or broker call; nothing pushed.
+
+**What ran.** Three lead sessions (Opus 5.5, max effort), split by two planned context wipes (12:30, 14:30), and 13
+worker spawns with models confirmed from their transcripts: haiku medium (ExposureExtract, CodeExtract); opus high
+(ExposureAuditor, MathReaderM1-M4, ComputeRef); sonnet high (DataFacts); fable xhigh (MathReviewer, ProtocolReviewer,
+FixVerifier, all claude-fable-5-1); sonnet medium (CostTally).
+
+**Result.** 0.1: the E.32 seal covers every ZL, ZS and ZM file of 2017-05..2020-11; nothing sealed, no guard changed.
+0.2: no F10 or F09 feature was ever tested against a ZL outcome; earlier ZL-labelled outcomes were unrelated bar work,
+all null or FAIL; 10 firewall rules and 6 exclusions (ZL's own returns, 60-minute cross-market leads, E.31's buckets).
+Part M: MBP-1 in both windows (USD 23.36 for the test against 40.96 for MBO in both windows); 5-minute floor; the crush
+residual with ZL adjusting and ZS/ZM leads on bars USE, CL excluded; labels FH15, FH30, FH60, TB15, TB30; at N 1038 G3
+0.1746, G4 0.2028, SR80_test 0.1957, e80 0.97 / 1.94 / 3.74 ticks at the FH caps 17 / 8 / 4; as coded, E.32's DSR rule
+lets a lone finalist pass with probability about 0 (amended 0.845 at a true 0.20). Part F: 158,046,466 ZL MBP-1 records,
+median 188,782 a date, 76.2% of trades in the day session. Part P: 200 configurations (4 sets x 5 labels x 10
+settings), N_reg 1038, compute stop 23,895 s; the test buys ZL MBP-1, ZL definitions and the ZM bars of 2017-05..2019-04
+(not owned; ProtocolReview B1), about USD 26.5 in estimates. Honest prior about 3-4%, conditional on amending E.32-D2.
+
+**Verification.** MathReviewer GO WITH FIXES (2 BLOCKING, 4 SHOULD FIX, 14 NOTE; every M4 and L number recomputed);
+ProtocolReviewer GO WITH FIXES (2 / 12 / 14; every threshold reproduced, no leak); all fixed in v0.2
+(review/FixLog.md); FixVerifier PASS WITH FIXES (32 of 32 recomputations match; 4 new SHOULD FIX and 7 NOTE items),
+applied in its own wording in v1.0.
+
+**Decisions for the user.** E.32b-D2 (give ZL's sealed read to this program: yes, with E.32-D2 amended); E.32b-D3
+(admit the power-rule discovery: yes, for this program); E.32-D2 (amend); OC-5 (option A, all ML under V43); the test
+purchase (a quote on DATABENTO_API_KEY4 after K1 and K2 pass, about USD 26.5).
+
+**Session cost.**
+
+Counted by reports/stage_e34_briefs/work/cost/make_cost.py (E.32b's script with the three E.34 sessions; summary line
+`models=4 spawns=13 sessions=3 problems=0 grand_total=128,757,530`) from message.usage in the three lead transcripts and
+the 13 subagent transcripts, 2026-10-29T18:50:00Z to 22:50:05Z (15:50:05 PDT). Lead messages after the cutoff (these
+tables and the commit) are not counted; CostTally's own count stops at the cutoff.
+
+| Model | Messages | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|---|
+| claude-opus-5-5 | 523 | 1,080 | 778,566 | 94,012,384 | 2,177,830 | 96,969,860 |
+| claude-fable-5-1 | 71 | 2,194 | 260,904 | 10,388,121 | 1,154,411 | 11,805,630 |
+| claude-haiku-5-5 | 86 | 172 | 122,945 | 10,913,137 | 403,808 | 11,440,062 |
+| claude-sonnet-5-5 | 58 | 118 | 78,022 | 8,166,627 | 297,211 | 8,541,978 |
+| all | 738 | 3,564 | 1,240,437 | 123,480,269 | 4,033,260 | 128,757,530 |
+
+Per spawn (agent file, model from the transcript, effort, tokens): ExposureExtract-HaikuMed worker-medium haiku medium
+4,844,358; CodeExtract-HaikuMed worker-medium haiku medium 6,595,704; ExposureAuditor-OpusHigh worker-high opus high
+4,256,519; MathReaderM1-OpusHigh worker-high opus high 9,494,922; MathReaderM2-OpusHigh 18,315,086; MathReaderM3-OpusHigh
+12,312,165; MathReaderM4-OpusHigh 3,975,091 (all worker-high opus high); DataFacts-SonnetHigh worker-high sonnet high
+8,327,840; MathReviewer-FableXHigh worker-xhigh fable xhigh 3,276,958; ComputeRef-OpusHigh worker-high opus high
+2,488,911; ProtocolReviewer-FableXHigh worker-xhigh fable xhigh 4,734,364; FixVerifier-FableXHigh worker-xhigh fable
+xhigh 3,794,308; CostTally-SonnetMed worker-medium sonnet medium 214,138 (to the cutoff).
+
+Lead: session 1 18,845,495; session 2 14,448,452; session 3 12,833,219 (to the cutoff); 46,127,166 in all (35.8%).
+Workers: 82,630,364 (64.2%). By model tier: Opus 75.3%, Fable 9.2%, Haiku 8.9%, Sonnet 6.6%. Wall-clock 11:53-15:55
+PDT, 4 h 02 min; work 2 h 01 min (sessions of 37, 39 and 45 minutes); the planned wipes 12:30-13:51 (1 h 21 min) and
+14:30-15:10 (40 min) are pauses, not work.
+
+Final table:
+
+| # | Task or agent | Model (effort) | PDT | Time | Tokens | Status and deviations |
+|---|---|---|---|---|---|---|
+| 1 | Lead session 1: start checks, 0.1 seal check and census, briefs, wave 1 | opus (max) | 11:53-12:30 | 37 min | 18,845,495 (lead) | done |
+| 2 | ExposureExtract-HaikuMed | haiku (medium) | 12:10-12:15 | 5 min | 4,844,358 | done; corrected by the auditor (E.33 S1 also reads ZL) |
+| 3 | CodeExtract-HaikuMed | haiku (medium) | 12:15-12:22 | 6 min | 6,595,704 | done; one untraced load sent to the auditor |
+| 4 | ExposureAuditor-OpusHigh | opus (high) | 12:22-12:29 | 7 min | 4,256,519 | done |
+| 5 | MathReaderM1-OpusHigh | opus (high) | 12:10-12:22 | 11 min | 9,494,922 | done; MathReview found 2 BLOCKING (F10.7, F10.9) |
+| 6 | MathReaderM2-OpusHigh | opus (high) | 12:10-12:28 | 18 min | 18,315,086 | done; 2 SHOULD FIX (12:50 cap, sqrt 2) |
+| 7 | MathReaderM3-OpusHigh | opus (high) | 12:10-12:23 | 13 min | 12,312,165 | done; bad-book reading superseded (L.f.2) |
+| 8 | MathReaderM4-OpusHigh | opus (high) | 12:10-12:17 | 6 min | 3,975,091 | done; every number reproduced |
+| 9 | DataFacts-SonnetHigh | sonnet (high) | 12:10-12:24 | 13 min | 8,327,840 | done |
+| 10 | Planned wipe 1 (nothing running) | - | 12:30-13:51 | 1 h 21 min | - | pause, not counted |
+| 11 | Lead session 2: reconciliations L.a-L.e, protocol v0.1 | opus (max) | 13:51-14:30 | 39 min | 14,448,452 (lead) | done |
+| 12 | MathReviewer-FableXHigh | fable (xhigh) | 14:02-14:23 | 20 min | 3,276,958 | GO WITH FIXES, 2 / 4 / 14 |
+| 13 | ComputeRef-OpusHigh | opus (high) | 14:02-14:08 | 5 min | 2,488,911 | done; reproduced by ProtocolReview |
+| 14 | ProtocolReviewer-FableXHigh | fable (xhigh) | 14:13-14:30 | 17 min | 4,734,364 | GO WITH FIXES, 2 / 12 / 14 |
+| 15 | Planned wipe 2 (nothing running) | - | 14:30-15:10 | 40 min | - | pause, not counted |
+| 16 | Lead session 3: v0.2 fixes, methods file, freeze v1.0, return, progress, STAGES, end checks, commit | opus (max) | 15:10-15:55 | 45 min | 12,833,219 (lead, to 15:50:05) | done |
+| 17 | FixVerifier-FableXHigh | fable (xhigh) | 15:28-15:45 | 17 min | 3,794,308 | PASS WITH FIXES, 0 / 4 / 7; applied in v1.0 |
+| 18 | CostTally-SonnetMed | sonnet (medium) | 15:49-15:50 | 1 min | 214,138 (to 15:50:05) | done |
+| all | Stage E.34 | lead (3 sessions) + 13 spawns | 11:53-15:55 | 4 h 02 min wall-clock; 2 h 01 min work | 128,757,530 (lead 46,127,166; workers 82,630,364) | initial estimate (session 1, 12:10 PDT): end 18:15 PDT; actual 15:55, 2 h 20 min earlier, with 2 h 01 min of pauses |

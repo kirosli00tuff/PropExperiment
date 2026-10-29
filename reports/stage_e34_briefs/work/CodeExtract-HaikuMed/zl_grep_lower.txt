@@ -1,0 +1,85 @@
+pilot/measure31.py:12:Z1, Z2 and Z3 file is streamed once into per-trade-date compact arrays under
+pilot/measure31.py:58:SPLIT_SERIES = ("Z1", "Z2", "Z3")
+pilot/measure31.py:123:    if sf.series not in ("Z1", "Z2", "Z3", "Z4"):
+pilot/measure31.py:428:    """Stream one Z1/Z2/Z3 file once into per-trade-date compact arrays (resumable per file)."""
+pilot/measure31.py:492:    zl_path: str | None
+pilot/measure31.py:503:    cond_maps = {s: merge_mappings(markers.get(s, [])) for s in ("Z2", "Z3")}
+pilot/measure31.py:518:                          zm_tick_1e9=ZM_TICK_1E9, zs_tick_1e9=zs_tick, zl_tick_1e9=zl_tick,
+pilot/measure31.py:519:                          zs_iid=instrument_on(cond_maps["Z2"], COND_SYMBOLS["Z2"], day),
+pilot/measure31.py:520:                          zl_iid=instrument_on(cond_maps["Z3"], COND_SYMBOLS["Z3"], day),
+pilot/measure31.py:527:        tasks.append(DayTask(job, path("Z1"), path("Z2"), path("Z3"), str(out)))
+pilot/measure31.py:553:                              _load(task.zl_path, MBP_COMPACT))
+pilot/pilot31_common.py:121:    Series("Z2", "mbp-1", ("ZS.v.0",), "continuous", ("ZS",)),
+pilot/pilot31_common.py:218:    """The 4k requests in buy order (Z1 latest month first, then earlier Z1 months, then Z2, Z3,
+pipeline/build_features33.py:6:_day/<D>.json (sigma_zm, sigma_zs, sigma_zl in ticks, null when undefined; the fronts) for every
+pipeline/build_features33.py:162:    p1 = F.stream_day(day, zm, zs, zl, fr, ticks, ax)
+pipeline/build_features33.py:209:            "sigma_zm": ref.sigma["zm"], "sigma_zs": ref.sigma["zs"], "sigma_zl": ref.sigma["zl"],
+pilot/measure31_core.py:75:    "mo_1", "mo_10", "mo_60", "mo_nd_1", "mo_nd_10", "mo_nd_60", "zs_d1", "zs_d10", "zl_d1",
+pilot/measure31_core.py:76:    "zl_d10", "usda_min", "imb", "touched")
+pilot/measure31_core.py:98:                   **{f"{c}_d{lag}": _F64 for c in ("zs", "zl") for lag in LAGS_S}},
+pilot/measure31_core.py:149:    zl_tick_1e9: int | None = None
+pilot/measure31_core.py:151:    zl_iid: int | None = None
+pilot/measure31_core.py:786:                zl: dict[str, np.ndarray] | None) -> dict[str, Any]:
+pilot/measure31_core.py:788:    _guard(job.day, [zm, zs, zl])
+pilot/measure31_core.py:809:             "zl": CondSeries.of(_filter(zl, job.zl_iid), job.zl_tick_1e9)}
+pilot/measure31_core.py:900:    for name in ("zs", "zl"):
+pilot/stats31.py:92:    **{f"{c}_d{lag}": "float" for c in ("zs", "zl") for lag in (1, 10)},
+pilot/verify31.py:29:the metadata maps on that date; Z1, Z2, Z3: ts_event max reaches the month's last DAY session
+pilot/verify31.py:71:TAIL_SERIES = ("Z1", "Z2", "Z3")
+pilot/verify31.py:311:    # canary_check31. Z1-Z3 (mbo, mbp-1) keep the hard rule.
+pilot/stats31_core.py:192:def joint_bucket(zs: np.ndarray, zl: np.ndarray) -> np.ndarray:
+pilot/stats31_core.py:196:    out[(zs == "against") & (zl == "against")] = "both against"
+pilot/stats31_core.py:197:    out[(zs == "with") & (zl == "with")] = "both with"
+pilot/stats31_core.py:198:    out[(zs == MISSING) | (zl == MISSING)] = MISSING
+pipeline/guard33.py:5:- any path under data/sealed/SOY_test_v1 (both spellings, symlinks resolved) and any original
+pipeline/guard33.py:6:  location of a sealed file listed in docs/soy_test/SOY_TEST_MANIFEST.json;
+pipeline/guard33.py:51:    "Z2": VENDOR / "mbp-1" / "Z2_ZS_v_0",
+pipeline/guard33.py:59:SEALED = REPO / "data" / "sealed" / "SOY_test_v1"
+pipeline/guard33.py:60:SEAL_MANIFEST = REPO / "docs" / "soy_test" / "SOY_TEST_MANIFEST.json"
+pipeline/guard33.py:211:        raise _refuse("soy test window", f"{where}: its date span meets the sealed window "
+pipeline/guard33.py:252:        raise _refuse("soy test window", f"{where}: dates {first}..{last} meet the soy test "
+pipeline/guard33.py:270:    """Refuse a trade date in the soy test window (2017-05-01..2020-11-30), on or after
+pipeline/guard33.py:275:        raise _refuse("soy test window", f"{label}date {day} lies in the sealed soy test window "
+pipeline/guard33.py:292:            raise _refuse("sealed soy test data", f"{where} lies under data/sealed/SOY_test_v1")
+pipeline/guard33.py:294:        raise _refuse("sealed soy test data", f"{where} is the original location of a sealed "
+pipeline/guard33.py:295:                      "file (SOY_TEST_MANIFEST.json raw_files)")
+pipeline/guard33.py:333:        raise _refuse("soy test window", f"{where}: a record has ts_recv before "
+pilot/canary_check31.py:27:- Z2, Z3 (MBP-1): record counts per grains trade date (data.group_session.assign_trade_dates:
+pilot/canary_check31.py:413:# ------------------------------------------------------------------ Z2, Z3 ----
+pilot/canary_check31.py:471:        for name in ("Z2", "Z3"):
+pilot/canary_check31.py:514:    for name in ("Z2", "Z3"):
+pipeline/synth33.py:272:    z30 = ar1(f1, (816, NJ), 0.95)[oof]
+pipeline/synth33.py:273:    out["F1_1"] = z30[:, j_i]
+pipeline/synth33.py:276:    out["F1_4"] = z30[:, j_i] - z30[:, j_i - 5]
+pipeline/synth33.py:636:                     "sigma_zl": 9.0 if np.isfinite(sz) else None, "n_history": min(d, N_BURN)})
+pipeline/data33.py:124:    if sorted(out) != ["Z1", "Z2", "Z3", "Z4"] or any(len(v) != 39 for v in out.values()):
+pilot/pull31.py:32:               first, then earlier Z1 months, then Z2, Z3, Z4 in the same month order. Per
+pilot/pull31.py:511:    ap.add_argument("--series", help="--retry-download: Z1, Z2, Z3 or Z4")
+pipeline/feat33.py:619:def stream_day(day: date, zm: np.ndarray, zs: np.ndarray, zl: np.ndarray,
+pipeline/feat33.py:634:    for r in ("zm", "zs", "zl"):
+pipeline/feat33.py:651:    k = {"zm": 0, "zs": 1, "zl": 2}[root]
+pipeline/feat33.py:659:    k = {"zm": 0, "zs": 1, "zl": 2}[root]
+pipeline/feat33.py:713:    s["ref_aofi_zl1"] = np.abs(_ofi_series(p1["zl_cnt"], MI["ofi"], MI["ofi_bad"], 1, ps))
+pipeline/feat33.py:714:    s["ref_aofi_zl5"] = np.abs(_ofi_series(p1["zl_cnt"], MI["ofi"], MI["ofi_bad"], 5, ps))
+pipeline/feat33.py:747:    ok = p1[f"zm_{w}ok"] & p1[f"zs_{w}ok"] & p1[f"zl_{w}ok"]
+pipeline/feat33.py:751:    c2 = 11 * p1[f"zl_{w}raw2"] + (22 * zm) // 10 - p1[f"zs_{w}raw2"]
+pipeline/feat33.py:798:    sigma: dict = field(default_factory=dict)  # "zm", "zs", "zl" -> ticks or None
+pipeline/feat33.py:799:    obar: dict = field(default_factory=dict)  # "zs1", "zs5", "zl1", "zl5", "zm1", "zm5", "zm15"
+pipeline/feat33.py:826:        ok = (h["zm_wok"] & h["zs_wok"] & h["zl_wok"])[:N_REF]  # as of the wall minutes
+pipeline/feat33.py:837:        xl.append(h["zl_wraw2"][:N_REF][use] / 2e9)
+pipeline/feat33.py:891:    for root in ("zm", "zs", "zl"):
+pipeline/feat33.py:893:    for key in ("zs1", "zs5", "zl1", "zl5", "zm1", "zm5", "zm15"):
+pipeline/feat33.py:958:        self.mz, self.ms, self.ml = (mid_ticks(p1, r) for r in ("zm", "zs", "zl"))
+pipeline/feat33.py:964:        self.sz, self.ss, self.sl = (ref.sigma.get(r) for r in ("zm", "zs", "zl"))
+pipeline/feat33.py:966:        self.zc, self.scnt, self.lcnt = zc, p1["zs_cnt"], p1["zl_cnt"]
+pipeline/feat33.py:1008:    z30 = d.zc30(p)
+pipeline/feat33.py:1009:    row.set("F1_1", z30)  # F1.1 zC30
+pipeline/feat33.py:1016:        mln = d.p1["zl_raw2"][p] / 2e9
+pipeline/feat33.py:1020:    z30_5 = d.zc30(p - 5)
+pipeline/feat33.py:1021:    row.set("F1_4", None if (z30 is None or z30_5 is None) else z30 - z30_5)  # F1.4 (FA-3)
+pipeline/feat33.py:1027:    row.set("F1_6", None if (z30 is None or vrel is None) else z30 * vrel)  # F1.6
+pipeline/feat33.py:1042:            and p1["zl_ok"][p] and p1["zl_ok"][q] and d.sz:
+pipeline/feat33.py:1044:        dzl = (int(p1["zl_raw2"][p]) - int(p1["zl_raw2"][q])) / 2e9
+pipeline/feat33.py:1050:    row.set("F2_10", d.ofi(d.lcnt, MI["ofi"], MI["ofi_bad"], p, 1, ref.obar.get("zl1")))
+pipeline/feat33.py:1051:    row.set("F2_11", d.ofi(d.lcnt, MI["ofi"], MI["ofi_bad"], p, 5, ref.obar.get("zl5")))
+F3/f3_md.py:166:  no mbo, mbp-1 or tbbo file, nothing of the E.32 soy test seal (2017-05 .. 2020-11).

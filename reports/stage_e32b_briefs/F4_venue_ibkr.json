@@ -1,0 +1,1344 @@
+{
+ "spec_sha256": "09ebe6970fcf027009152fa81a414360a015d535b095138cdf65cf1a4eb58635",
+ "generated_pdt": "2026-10-29 01:17 PDT",
+ "venue": "IBKR own account, British Columbia resident (Interactive Brokers Canada Inc.)",
+ "source": "reports/stage_e32b_briefs/F2_nonprop.json (fetched 2026-10-28 23:33 to 23:40)",
+ "fee_rule": "all_in_usd_per_side = IBKR execution (USD 0.85, the <=1,000 contracts/month band, equal for Tiered and Fixed) + clearing (USD 0.00 per the worked examples) + exchange fee (non-member / Tier I, exchange page of the product) + regulatory fee (exchange page). Plain sum; no overnight fee, no GST/PST, no market data.",
+ "overnight_position_fee": {
+  "applies_to": "Tiered only (not listed under Fixed)",
+  "usd_per_contract_per_night": {
+   "meets margin requirements": 0.1,
+   "2x margin": 0.05,
+   "3x margin": 0.0
+  },
+  "quote": "Overnight position charges are applied for each net futures contract ... for each business day the net futures position is held overnight. (ibkrca_overnight_pos_fee.html.txt); table rows: 3x Margin Requirements 0.00; 2x Margin Requirements 0.05; Meets Margin Requirements 0.10 (USD column)",
+  "note": "the US section of the commissions page only links to this page (overnight-position-fee-europe.php); the USD column is the one used; a strategy flat by the close pays none"
+ },
+ "market_data": {
+  "page": "ibkrca_market_data.html (tbl: ibkrca_market_data.tbl.txt)",
+  "page_date": "no date shown; fetched 2026-10-28 23:33 PDT",
+  "non_professional_usd_per_month": {
+   "US Securities Snapshot and Futures Value Bundle": {
+    "price": "USD 10.00 Base Waived for Activity + USD 0.01 per Snapshot",
+    "includes": "top of book quotes for CBOT, CME, COMEX, and NYMEX (footnote 2)",
+    "waiver_footnote_quote": "Accounts must generate at least USD 30 in commissions per month per each user subscribed. (footnote 4, as numbered in the page disclosure list)",
+    "requires": "Access to US Futures data requires clients to have US Futures Trading Permissions. (footnote 3)"
+   },
+   "US Futures Value Bundle PLUS": {
+    "price": "USD 5.00 (non-professional; N/A professional)",
+    "includes": "depth of book quotes for CBOT, CME, COMEX, and NYMEX",
+    "requires": "Requires a subscription to the US Securities Snapshot and Futures Value Bundle. (footnote 5)"
+   },
+   "CME Real-Time (L1)": "USD 1.55 (each of CBOT, CME, COMEX, NYMEX L1 is a separate line at USD 1.55; footnote 14: \"For each subscriber the account must generate at least USD 20 in commissions per month to have the monthly fee waived for all users.\")",
+   "CME/CBOT/COMEX/NYMEX Real-Time (L2)": "USD 12.10 each",
+   "professional_comparison": "Real-Time (L1, L2) per exchange USD 145.00 (professional rows only)"
+  },
+  "four_exchange_l1_cost": {
+   "bundle_route_usd": 10.0,
+   "bundle_waived_if": "USD 30 monthly commissions (page wording \"Base Waived for Activity\")",
+   "a_la_carte_usd": 6.2,
+   "sum_formula": "4 x 1.55",
+   "plus_l2_bundle_usd": 5.0
+  },
+  "low_equity_rule_quote": "Trading accounts with less than USD 500 (or non-USD equivalent) in equity will have their market data turned off.",
+  "taxes_quote": "Goods and services tax (GST) and provincial sales tax (PST) where applicable, will be separately applied to eligible services.",
+  "llc_comparison": "ibkrllc_market_data.html: same prices; LLC rows add footnote 31 (waived above USD 15 commissions)."
+ },
+ "account_minimum_usd": 0.0,
+ "account_minimum_quote": "Individual, Joint, Trust and Org Accounts | IBKR Account | Account Minimums | USD 0.00 | Inactivity Fees | USD 0.00 (ibkrca_minimums.html.txt)",
+ "overnight_holds_allowed": true,
+ "overnight_note": "own account: overnight holds allowed subject to overnight margin (margin columns above)",
+ "dll": null,
+ "mll": null,
+ "flat_by_close": null,
+ "limits_note": "own account: no DLL, MLL or flat-by-close rule",
+ "capital_ceiling_usd": null,
+ "capital_ceiling_note": "none recorded in docs/DECISIONS.md: spec 8.3 uses USD 6,000 (u)",
+ "capital_ceiling_search": {
+  "recorded_in_docs_DECISIONS_md": false,
+  "search": "grep for capital, ceiling, own account, IBKR, broker, fund, 25K, personal in docs/DECISIONS.md (read by line ranges 386-396, 456-464, 520-526, 575-585, 686-694, 728-735)",
+  "finding": "No capital ceiling for an own account is recorded as a number in docs/DECISIONS.md. The spec rule therefore takes USD 6,000, marked u.",
+  "nearby_text_not_a_ceiling": [
+   "docs/DECISIONS.md line 580-581 (V32): \"The user cannot fund a personal IBKR account yet and plans to build that capital from Topstep XFA payouts.\"",
+   "docs/DECISIONS.md lines 391-393: \"enough to fund a small personal micro futures account\"",
+   "docs/DECISIONS.md lines 731-733: a design-study capital of $25K for the micro trend book (\"Sharpe at $25K 0.41 ... the book is not traded live at $25K at a 20% target\"), which is a study input, not a recorded ceiling",
+   "reports/stage_e13_briefs/return_s3_s7.md line 89-90: \"Trend and carry at $10K-$100K earns about $40-$430 a month\""
+  ]
+ },
+ "not_done": [
+  "SIL exchange fee not published on the IBKR COMEX fee page.",
+  "Margin figures not cross-checked against CME clearing margins.",
+  "No Scrapling or Firecrawl needed; all pages via curl with browser headers (IBKR sites answered 200). No WebSearch budget issue (2 of 30 searches used)."
+ ],
+ "codes": {
+  "MCL": {
+   "fee_per_side_usd": 1.46,
+   "fee_rt_usd": 2.92,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.6,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.6 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "MCL || USD 0.60 || USD 0.60 || USD 0.30",
+    "exchange_page": "ibkrca_fees_NYMEX.html (tbl: ibkrca_fees_NYMEX.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_NYMEX.tbl.txt: \"All || USD 0.01 || USD 0.01 || USD 0.00\" (Tier I)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 2351.48,
+   "margin_overnight_initial_usd": 2351.48,
+   "margin_overnight_maintenance_usd": 1650.79,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "NYMEX || MCL || MICRO WTI CRUDE OIL || MCL || 2351.48 || N/A || 2351.48 || 1650.79 || USD || Yes || 2063.48 || 1650.79",
+    "trading_class": "MCL"
+   }
+  },
+  "QM": {
+   "fee_per_side_usd": 2.06,
+   "fee_rt_usd": 4.12,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.2,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 1.2 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "QM || USD 1.20 || USD 1.20 || USD 0.55",
+    "exchange_page": "ibkrca_fees_NYMEX.html (tbl: ibkrca_fees_NYMEX.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_NYMEX.tbl.txt: \"All || USD 0.01 || USD 0.01 || USD 0.00\" (Tier I)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 11757.5,
+   "margin_overnight_initial_usd": 11757.5,
+   "margin_overnight_maintenance_usd": 8253.93,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "NYMEX || QM || NYMEX MINY LIGHT SWEET CRUDE OIL || QM || 11757.50 || N/A || 11757.50 || 8253.93 || USD || No || 10317.50 || 8253.93",
+    "trading_class": "QM"
+   }
+  },
+  "CL": {
+   "fee_per_side_usd": 2.36,
+   "fee_rt_usd": 4.72,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.5,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 1.5 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "CL, HO, RB || USD 1.50 || USD 1.50 || USD 0.75",
+    "exchange_page": "ibkrca_fees_NYMEX.html (tbl: ibkrca_fees_NYMEX.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_NYMEX.tbl.txt: \"All || USD 0.01 || USD 0.01 || USD 0.00\" (Tier I)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 23442.08,
+   "margin_overnight_initial_usd": 23442.08,
+   "margin_overnight_maintenance_usd": 16441.66,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "NYMEX || CL || LIGHT SWEET CRUDE OIL || CL || 23442.08 || N/A || 23442.08 || 16441.66 || USD || Yes || 20552.08 || 16441.66",
+    "trading_class": "CL"
+   }
+  },
+  "MNG": {
+   "fee_per_side_usd": 1.56,
+   "fee_rt_usd": 3.12,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.7,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.7 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "MHNG || USD 0.70 || USD 0.70 || USD 0.40",
+    "exchange_page": "ibkrca_fees_NYMEX.html (tbl: ibkrca_fees_NYMEX.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_NYMEX.tbl.txt: \"All || USD 0.01 || USD 0.01 || USD 0.00\" (Tier I)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": "IBKR fee row is MHNG; margin page shows underlying MHNG trading class MNG"
+   },
+   "margin_intraday_initial_usd": 553.19,
+   "margin_overnight_initial_usd": 553.19,
+   "margin_overnight_maintenance_usd": 440.166,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "NYMEX || MHNG || MICRO HENRY HUB NATURAL GAS || MNG || 553.19 || N/A || 553.19 || 440.166 || USD || No || 506.191 || 440.166",
+    "trading_class": "MNG"
+   }
+  },
+  "QG": {
+   "fee_per_side_usd": 1.36,
+   "fee_rt_usd": 2.72,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.5,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.5 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "QG || USD 0.50 || USD 0.50 || USD 0.45",
+    "exchange_page": "ibkrca_fees_NYMEX.html (tbl: ibkrca_fees_NYMEX.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_NYMEX.tbl.txt: \"All || USD 0.01 || USD 0.01 || USD 0.00\" (Tier I)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 1383.08,
+   "margin_overnight_initial_usd": 1383.08,
+   "margin_overnight_maintenance_usd": 1100.41,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "NYMEX || QG || NYMEX MINY NATURAL GAS INDEX || QG || 1383.08 || N/A || 1383.08 || 1100.41 || USD || No || 1265.58 || 1100.41",
+    "trading_class": "QG"
+   }
+  },
+  "NG": {
+   "fee_per_side_usd": 2.46,
+   "fee_rt_usd": 4.92,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.6,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 1.6 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "NG || USD 1.60 || USD 0.90 || USD 0.80",
+    "exchange_page": "ibkrca_fees_NYMEX.html (tbl: ibkrca_fees_NYMEX.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_NYMEX.tbl.txt: \"All || USD 0.01 || USD 0.01 || USD 0.00\" (Tier I)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 5531.9,
+   "margin_overnight_initial_usd": 5531.9,
+   "margin_overnight_maintenance_usd": 4401.66,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "NYMEX || NG || HENRY HUB NATURAL GAS || NG || 5531.90 || N/A || 5531.90 || 4401.66 || USD || Yes || 5061.90 || 4401.66",
+    "trading_class": "NG"
+   }
+  },
+  "MGC": {
+   "fee_per_side_usd": 1.56,
+   "fee_rt_usd": 3.12,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.7,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.7 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "MGC || USD 0.70 || USD 0.20",
+    "exchange_page": "ibkrca_fees_COMEX.html (tbl: ibkrca_fees_COMEX.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_COMEX.tbl.txt: \"All || USD 0.01\" (regulatory fee table, Non-Member)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 3606.35,
+   "margin_overnight_initial_usd": 3606.35,
+   "margin_overnight_maintenance_usd": 3135.96,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "COMEX || MGC || E-MICRO GOLD || MGC || 3606.35 || N/A || 3606.35 || 3135.96 || USD || Yes || 3805.35 || 3135.96",
+    "trading_class": "MGC"
+   }
+  },
+  "GC": {
+   "fee_per_side_usd": 2.51,
+   "fee_rt_usd": 5.02,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.65,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 1.65 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "GC, HG, SI || USD 1.65 || USD 0.75",
+    "exchange_page": "ibkrca_fees_COMEX.html (tbl: ibkrca_fees_COMEX.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_COMEX.tbl.txt: \"All || USD 0.01\" (regulatory fee table, Non-Member)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 36063.5,
+   "margin_overnight_initial_usd": 36063.5,
+   "margin_overnight_maintenance_usd": 31359.56,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "COMEX || GC || GOLD || GC || 36063.50 || N/A || 36063.50 || 31359.56 || USD || Yes || 38053.50 || 31359.56",
+    "trading_class": "GC"
+   }
+  },
+  "SIL": {
+   "fee_per_side_usd": null,
+   "fee_rt_usd": null,
+   "fee_status": "not published",
+   "fee_components_per_side": {
+    "ibkr_execution": null,
+    "exchange_non_member_tier1": null,
+    "clearing": null,
+    "regulatory": null,
+    "formula": null
+   },
+   "fee_items": {
+    "exchange_row_quote": null,
+    "exchange_page": null,
+    "regulatory_source": null,
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": null
+   },
+   "margin_intraday_initial_usd": 10216.35,
+   "margin_overnight_initial_usd": 10216.35,
+   "margin_overnight_maintenance_usd": 8883.78,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "COMEX || SI || SILVER INDEX || SIL || 10216.35 || N/A || 10216.35 || 8883.78 || USD || No || 11775.60 || 8883.78",
+    "trading_class": "SIL"
+   }
+  },
+  "SI": {
+   "fee_per_side_usd": 2.51,
+   "fee_rt_usd": 5.02,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.65,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 1.65 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "GC, HG, SI || USD 1.65 || USD 0.75",
+    "exchange_page": "ibkrca_fees_COMEX.html (tbl: ibkrca_fees_COMEX.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_COMEX.tbl.txt: \"All || USD 0.01\" (regulatory fee table, Non-Member)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 51081.74,
+   "margin_overnight_initial_usd": 51081.74,
+   "margin_overnight_maintenance_usd": 44418.91,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "COMEX || SI || SILVER INDEX || SI || 51081.74 || N/A || 51081.74 || 44418.91 || USD || Yes || 58878 || 44418.91",
+    "trading_class": "SI"
+   }
+  },
+  "MHG": {
+   "fee_per_side_usd": 1.56,
+   "fee_rt_usd": 3.12,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.7,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.7 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "MHG || USD 0.70 || USD 0.30",
+    "exchange_page": "ibkrca_fees_COMEX.html (tbl: ibkrca_fees_COMEX.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_COMEX.tbl.txt: \"All || USD 0.01\" (regulatory fee table, Non-Member)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 2484.69,
+   "margin_overnight_initial_usd": 2484.69,
+   "margin_overnight_maintenance_usd": 1780.47,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "COMEX || MHG || MICRO COPPER || MHG || 2484.69 || N/A || 2484.69 || 1780.47 || USD || No || 2504.69 || 1780.47",
+    "trading_class": "MHG"
+   }
+  },
+  "HG": {
+   "fee_per_side_usd": 2.51,
+   "fee_rt_usd": 5.02,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.65,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 1.65 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "GC, HG, SI || USD 1.65 || USD 0.75",
+    "exchange_page": "ibkrca_fees_COMEX.html (tbl: ibkrca_fees_COMEX.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_COMEX.tbl.txt: \"All || USD 0.01\" (regulatory fee table, Non-Member)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 24771.875,
+   "margin_overnight_initial_usd": 24771.875,
+   "margin_overnight_maintenance_usd": 17804.73,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "COMEX || HG || COPPER INDEX || HG || 24771.875 || N/A || 24771.875 || 17804.73 || USD || Yes || 25121.875 || 17804.73",
+    "trading_class": "HG"
+   }
+  },
+  "M6E": {
+   "fee_per_side_usd": 1.101,
+   "fee_rt_usd": 2.202,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.24,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 0.24 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "E-micro Forex Futures / M6A, M6B, M6E, MIR, MCD, MJY, MSF, MNH, M6C, M6J, M6S || USD || 0.24",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 349.27,
+   "margin_overnight_initial_usd": 349.27,
+   "margin_overnight_maintenance_usd": 303.713,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || M6E || EUROPEAN MONETARY UNION EURO || M6E || 349.27 || N/A || 349.27 || 303.713 || USD || No || 349.895 || 303.713",
+    "trading_class": "M6E"
+   }
+  },
+  "6E": {
+   "fee_per_side_usd": 2.461,
+   "fee_rt_usd": 4.922,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.6,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 1.6 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Forex Futures^[9] / AUD, BRE, CAD, CHF, CLP, CZK, EUR, GBP, HUF, ILS, JPY, KRW, MXP, NOK, NZD, PLN, RMB, RUR, SEK, ZAR, CNH, SIR, ACD, ECD, AJY, CJY, PJY, RY, SJY, ECK, EHF, EPZ, RME, PSF, RF, RP, 6H || USD || 1.60",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": "IBKR lists FX futures by currency code (EUR); margin page maps 6E to underlying EUR"
+   },
+   "margin_intraday_initial_usd": 3492.7,
+   "margin_overnight_initial_usd": 3492.7,
+   "margin_overnight_maintenance_usd": 3037.13,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || EUR || EUROPEAN MONETARY UNION EURO || 6E || 3492.70 || N/A || 3492.70 || 3037.13 || USD || Yes || 3498.95 || 3037.13",
+    "trading_class": "6E"
+   }
+  },
+  "M6A": {
+   "fee_per_side_usd": 1.101,
+   "fee_rt_usd": 2.202,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.24,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 0.24 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "E-micro Forex Futures / M6A, M6B, M6E, MIR, MCD, MJY, MSF, MNH, M6C, M6J, M6S || USD || 0.24",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 247.801,
+   "margin_overnight_initial_usd": 247.801,
+   "margin_overnight_maintenance_usd": 206.349,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || M6A || AUSTRALIAN DOLLAR || M6A || 247.801 || N/A || 247.801 || 206.349 || USD || No || 237.301 || 206.349",
+    "trading_class": "M6A"
+   }
+  },
+  "6A": {
+   "fee_per_side_usd": 2.461,
+   "fee_rt_usd": 4.922,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.6,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 1.6 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Forex Futures^[9] / AUD, BRE, CAD, CHF, CLP, CZK, EUR, GBP, HUF, ILS, JPY, KRW, MXP, NOK, NZD, PLN, RMB, RUR, SEK, ZAR, CNH, SIR, ACD, ECD, AJY, CJY, PJY, RY, SJY, ECK, EHF, EPZ, RME, PSF, RF, RP, 6H || USD || 1.60",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": "IBKR lists FX futures by currency code (AUD); margin page maps 6A to underlying AUD"
+   },
+   "margin_intraday_initial_usd": 2478.01,
+   "margin_overnight_initial_usd": 2478.01,
+   "margin_overnight_maintenance_usd": 2063.49,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || AUD || AUSTRALIAN DOLLAR || 6A || 2478.01 || N/A || 2478.01 || 2063.49 || USD || Yes || 2373.01 || 2063.49",
+    "trading_class": "6A"
+   }
+  },
+  "MET": {
+   "fee_per_side_usd": 0.961,
+   "fee_rt_usd": 1.922,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.1,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 0.1 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro Ether Futures / MET || USD || 0.10",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 108.048,
+   "margin_overnight_initial_usd": 108.048,
+   "margin_overnight_maintenance_usd": 93.9544,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || MET || MICRO ETHER || MET || 108.048 || N/A || 108.048 || 93.9544 || USD || Yes || 136.809 || 117.443",
+    "trading_class": "MET"
+   }
+  },
+  "ETH": {
+   "fee_per_side_usd": 6.911,
+   "fee_rt_usd": 13.822,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 6.05,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 6.05 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Ethereum Cryptocurrency Futures / ETH, ETHEURRR, ETHUSDRRR || USD || 6.05",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 54023.76,
+   "margin_overnight_initial_usd": 54023.76,
+   "margin_overnight_maintenance_usd": 46977.18,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || ETHUSDRR || CME CF ETHER-DOLLAR REFERENCE RATE || ETH || 54023.76 || N/A || 54023.76 || 46977.18 || USD || Yes || 68379.70 || 58721.48",
+    "trading_class": "ETH"
+   }
+  },
+  "MBT": {
+   "fee_per_side_usd": 2.011,
+   "fee_rt_usd": 4.022,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.15,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 1.15 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Bitcoin Micro Futures / BRR - Micro || USD || 1.15",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": "fee row symbol is \"BRR - Micro\"; margin page shows MBT under MICRO BITCOIN; mapping is an inference"
+   },
+   "margin_intraday_initial_usd": 2802.55,
+   "margin_overnight_initial_usd": 2802.55,
+   "margin_overnight_maintenance_usd": 2423.62,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || MBT || MICRO BITCOIN || MBT || 2802.55 || N/A || 2802.55 || 2423.62 || USD || Yes || 2852.55 || 2423.62",
+    "trading_class": "MBT"
+   }
+  },
+  "BTC": {
+   "fee_per_side_usd": 9.111,
+   "fee_rt_usd": 18.222,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 8.25,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 8.25 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Bitcoin Futures / BRR, BTCEURRR || USD || 8.25",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": "fee row symbols BRR, BTCEURRR; margin page maps BTC to underlying BRR"
+   },
+   "margin_intraday_initial_usd": 140152.58,
+   "margin_overnight_initial_usd": 140152.58,
+   "margin_overnight_maintenance_usd": 121180.78,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || BRR || CME CF BITCOIN REFERENCE RATE || BTC || 140152.58 || N/A || 140152.58 || 121180.78 || USD || Yes || 142602.59 || 121180.78",
+    "trading_class": "BTC"
+   }
+  },
+  "M2K": {
+   "fee_per_side_usd": 1.211,
+   "fee_rt_usd": 2.422,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.35,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 0.35 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro E-Mini Futures Products / MES, MNQ, M2K, VOLQ || USD || 0.35^[3]",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 876.056,
+   "margin_overnight_initial_usd": 1251.51,
+   "margin_overnight_maintenance_usd": 1088.27,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || M2K || MICRO E-MINI RUSSELL 2000 INDEX || M2K || 876.056 || 761.787 || 1251.51 || 1088.27 || USD || No || 1250.94 || 1087.77",
+    "trading_class": "M2K"
+   }
+  },
+  "RTY": {
+   "fee_per_side_usd": 2.241,
+   "fee_rt_usd": 4.482,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.38,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 1.38 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "E-mini Equity Futures / BQX, ER2, NQ, QCN, RS1, RSG, RSV, RTY, SPSOX, XAZ || USD || 1.38^[6]",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 8760.56,
+   "margin_overnight_initial_usd": 12515.08,
+   "margin_overnight_maintenance_usd": 10882.68,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || RTY || E-MINI RUSSELL 2000 INDEX || RTY || 8760.56 || 7617.87 || 12515.08 || 10882.68 || USD || Yes || 12509.36 || 10877.70",
+    "trading_class": "RTY"
+   }
+  },
+  "MYM": {
+   "fee_per_side_usd": 1.21,
+   "fee_rt_usd": 2.42,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.35,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.35 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro E-Mini Futures / MYM || USD 0.35 || USD 0.08 || USD 0.13 || USD 0.13 || USD 0.18",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 1269.99,
+   "margin_overnight_initial_usd": 1814.27,
+   "margin_overnight_maintenance_usd": 1534.6,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || MYM || MICRO E-MINI DOW JONES INDUSTRIAL AVERAGE INDEX || MYM || 1269.99 || 1074.22 || 1814.27 || 1534.60 || USD || No || 1764.79 || 1534.60",
+    "trading_class": "MYM"
+   }
+  },
+  "YM": {
+   "fee_per_side_usd": 2.24,
+   "fee_rt_usd": 4.48,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.38,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 1.38 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Mini-sized Dow / & DJ US Real Estate / YM, DJUSRE || USD 1.38 / || USD 0.20 || USD 0.35 || USD 0.35 || USD 0.75",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 12699.91,
+   "margin_overnight_initial_usd": 18142.73,
+   "margin_overnight_maintenance_usd": 15345.97,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || YM || E-MINI DOW JONES INDUSTRIAL AVERAGE || YM || 12699.91 || 10742.18 || 18142.73 || 15345.97 || USD || Yes || 17647.87 || 15345.97",
+    "trading_class": "YM"
+   }
+  },
+  "MNQ": {
+   "fee_per_side_usd": 1.211,
+   "fee_rt_usd": 2.422,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.35,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 0.35 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro E-Mini Futures Products / MES, MNQ, M2K, VOLQ || USD || 0.35^[3]",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 4622.9,
+   "margin_overnight_initial_usd": 6604.14,
+   "margin_overnight_maintenance_usd": 4233.24,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || MNQ || MICRO E-MINI NASDAQ-100 INDEX || MNQ || 4622.90 || 2963.27 || 6604.14 || 4233.24 || USD || Yes || 5916.90 || 4233.24",
+    "trading_class": "MNQ"
+   }
+  },
+  "NQ": {
+   "fee_per_side_usd": 2.241,
+   "fee_rt_usd": 4.482,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.38,
+    "clearing": 0.0,
+    "regulatory": 0.011,
+    "formula": "0.85 + 1.38 + 0.00 + 0.011"
+   },
+   "fee_items": {
+    "exchange_row_quote": "E-mini Equity Futures / BQX, ER2, NQ, QCN, RS1, RSG, RSV, RTY, SPSOX, XAZ || USD || 1.38^[6]",
+    "exchange_page": "ibkrca_fees_CME.html (tbl: ibkrca_fees_CME.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CME.tbl.txt: \"All Products || USD || 0.011\" (Regulatory Fee Recovery Charge, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": "NQ excluded (V49), fact only"
+   },
+   "margin_intraday_initial_usd": 46228.98,
+   "margin_overnight_initial_usd": 66041.4,
+   "margin_overnight_maintenance_usd": 42332.44,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CME || NQ || E-MINI NASDAQ 100 || NQ || 46228.98 || 29632.71 || 66041.40 || 42332.44 || USD || Yes || 59169 || 42332.44",
+    "trading_class": "NQ"
+   }
+  },
+  "2YY": {
+   "fee_per_side_usd": 1.16,
+   "fee_rt_usd": 2.32,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.3,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.3 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro Treasury Futures / 2YY, 5YY, 10Y, 30Y, MWN, MTN || USD 0.30 || USD 0.03 || USD 0.08 || USD 0.10 || USD 0.21",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 953.416,
+   "margin_overnight_initial_usd": 953.416,
+   "margin_overnight_maintenance_usd": 829.058,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || 2YY || 2 YEAR MICRO TREASURY YIELD || 2YY || 953.416 || N/A || 953.416 || 829.058 || USD || No || 953.416 || 829.058",
+    "trading_class": "2YY"
+   }
+  },
+  "5YY": {
+   "fee_per_side_usd": 1.16,
+   "fee_rt_usd": 2.32,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.3,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.3 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro Treasury Futures / 2YY, 5YY, 10Y, 30Y, MWN, MTN || USD 0.30 || USD 0.03 || USD 0.08 || USD 0.10 || USD 0.21",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 3079.38,
+   "margin_overnight_initial_usd": 3079.38,
+   "margin_overnight_maintenance_usd": 2677.72,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || 5YY || 5 YEAR MICRO TREASURY YIELD || 5YY || 3079.38 || N/A || 3079.38 || 2677.72 || USD || No || 3079.38 || 2677.72",
+    "trading_class": "5YY"
+   }
+  },
+  "10Y": {
+   "fee_per_side_usd": 1.16,
+   "fee_rt_usd": 2.32,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.3,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.3 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro Treasury Futures / 2YY, 5YY, 10Y, 30Y, MWN, MTN || USD 0.30 || USD 0.03 || USD 0.08 || USD 0.10 || USD 0.21",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 667.399,
+   "margin_overnight_initial_usd": 667.399,
+   "margin_overnight_maintenance_usd": 549.912,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || 10Y || 10 YEAR MICRO TREASURY YIELD || 10Y || 667.399 || N/A || 667.399 || 549.912 || USD || No || 632.399 || 549.912",
+    "trading_class": "10Y"
+   }
+  },
+  "30Y": {
+   "fee_per_side_usd": 1.16,
+   "fee_rt_usd": 2.32,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.3,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.3 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro Treasury Futures / 2YY, 5YY, 10Y, 30Y, MWN, MTN || USD 0.30 || USD 0.03 || USD 0.08 || USD 0.10 || USD 0.21",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 981.618,
+   "margin_overnight_initial_usd": 981.618,
+   "margin_overnight_maintenance_usd": 853.581,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || 30Y || 30 YEAR MICRO TREASURY YIELD || 30Y || 981.618 || N/A || 981.618 || 853.581 || USD || No || 981.618 || 853.581",
+    "trading_class": "30Y"
+   }
+  },
+  "ZT": {
+   "fee_per_side_usd": 1.51,
+   "fee_rt_usd": 3.02,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.65,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.65 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "U.S. Treasury Futures / ZT || USD 0.65 || USD 0.13 || USD 0.31 || USD 0.44 || USD 0.54",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 1379.84,
+   "margin_overnight_initial_usd": 1379.84,
+   "margin_overnight_maintenance_usd": 1199.86,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || ZT || 2 YEAR US TREASURY NOTE || ZT || 1379.84 || N/A || 1379.84 || 1199.86 || USD || Yes || 1504.46 || 1199.86",
+    "trading_class": "ZT"
+   }
+  },
+  "ZF": {
+   "fee_per_side_usd": 1.51,
+   "fee_rt_usd": 3.02,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.65,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.65 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "U.S. Treasury Futures / ZF || USD 0.65 || USD 0.13 || USD 0.31 || USD 0.44 || USD 0.54",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 1438.82,
+   "margin_overnight_initial_usd": 1438.82,
+   "margin_overnight_maintenance_usd": 1251.15,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || ZF || 5 YEAR US TREASURY NOTE || ZF || 1438.82 || N/A || 1438.82 || 1251.15 || USD || Yes || 1587.04 || 1251.15",
+    "trading_class": "ZF"
+   }
+  },
+  "ZN": {
+   "fee_per_side_usd": 1.66,
+   "fee_rt_usd": 3.32,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.8,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.8 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "U.S. Treasury Futures / ZN, TN || USD 0.80 || USD 0.14 || USD 0.31 || USD 0.44 || USD 0.54",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 2161.39,
+   "margin_overnight_initial_usd": 2161.39,
+   "margin_overnight_maintenance_usd": 1879.47,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || ZN || 10 YEAR US TREASURY NOTE || ZN || 2161.39 || N/A || 2161.39 || 1879.47 || USD || Yes || 2380.22 || 1879.47",
+    "trading_class": "ZN"
+   }
+  },
+  "ZB": {
+   "fee_per_side_usd": 1.73,
+   "fee_rt_usd": 3.46,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.87,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.87 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "U.S. Treasury Futures / ZB, TWE || USD 0.87 || USD 0.14 || USD 0.31 || USD 0.44 || USD 0.54",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 4283.66,
+   "margin_overnight_initial_usd": 4283.66,
+   "margin_overnight_maintenance_usd": 3724.92,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || ZB || US TREASURY BOND || ZB || 4283.66 || N/A || 4283.66 || 3724.92 || USD || Yes || 4627.66 || 3724.92",
+    "trading_class": "ZB"
+   }
+  },
+  "MZC": {
+   "fee_per_side_usd": 1.36,
+   "fee_rt_usd": 2.72,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.5,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.5 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro Ags-Electronic Futures / MZC,MZS,MZW,MZL,MZM / || USD 0.50 || USD 0.15 || USD 0.25 || USD 0.30 || USD 0.50",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 196.777,
+   "margin_overnight_initial_usd": 196.777,
+   "margin_overnight_maintenance_usd": 148.284,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || MZC || MICRO CORN FUTURES || MZC || 196.777 || N/A || 196.777 || 148.284 || USD || No || 170.527 || 148.284",
+    "trading_class": "MZC"
+   }
+  },
+  "MZS": {
+   "fee_per_side_usd": 1.36,
+   "fee_rt_usd": 2.72,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.5,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.5 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro Ags-Electronic Futures / MZC,MZS,MZW,MZL,MZM / || USD 0.50 || USD 0.15 || USD 0.25 || USD 0.30 || USD 0.50",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 416.013,
+   "margin_overnight_initial_usd": 416.013,
+   "margin_overnight_maintenance_usd": 361.75,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || MZS || MICRO SOYBEAN FUTURES || MZS || 416.013 || N/A || 416.013 || 361.75 || USD || No || 418.513 || 361.75",
+    "trading_class": "MZS"
+   }
+  },
+  "MZW": {
+   "fee_per_side_usd": 1.36,
+   "fee_rt_usd": 2.72,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.5,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.5 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro Ags-Electronic Futures / MZC,MZS,MZW,MZL,MZM / || USD 0.50 || USD 0.15 || USD 0.25 || USD 0.30 || USD 0.50",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 287.143,
+   "margin_overnight_initial_usd": 287.143,
+   "margin_overnight_maintenance_usd": 249.69,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || MZW || MICRO WHEAT FUTURES || MZW || 287.143 || N/A || 287.143 || 249.69 || USD || No || 343.393 || 249.69",
+    "trading_class": "MZW"
+   }
+  },
+  "MZL": {
+   "fee_per_side_usd": 1.36,
+   "fee_rt_usd": 2.72,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.5,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.5 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro Ags-Electronic Futures / MZC,MZS,MZW,MZL,MZM / || USD 0.50 || USD 0.15 || USD 0.25 || USD 0.30 || USD 0.50",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 478.96,
+   "margin_overnight_initial_usd": 478.96,
+   "margin_overnight_maintenance_usd": 416.487,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || MZL || MICRO SOYBEAN OIL FUTURES || MZL || 478.96 || N/A || 478.96 || 416.487 || USD || No || 525.167 || 416.487",
+    "trading_class": "MZL"
+   }
+  },
+  "MZM": {
+   "fee_per_side_usd": 1.36,
+   "fee_rt_usd": 2.72,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 0.5,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 0.5 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Micro Ags-Electronic Futures / MZC,MZS,MZW,MZL,MZM / || USD 0.50 || USD 0.15 || USD 0.25 || USD 0.30 || USD 0.50",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 301.244,
+   "margin_overnight_initial_usd": 301.244,
+   "margin_overnight_maintenance_usd": 261.952,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || MZM || MICRO SOYBEAN MEAL FUTURES || MZM || 301.244 || N/A || 301.244 || 261.952 || USD || No || 317.244 || 261.952",
+    "trading_class": "MZM"
+   }
+  },
+  "XC": {
+   "fee_per_side_usd": 1.92,
+   "fee_rt_usd": 3.84,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.06,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 1.06 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Agricultural mini-sized / YC, YK, YW / || USD 1.06 || USD 0.23 || USD 0.66 || USD 0.81 || USD 0.90",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": "fee row symbols YC, YK, YW (IBKR); margin page maps XC to YC"
+   },
+   "margin_intraday_initial_usd": 381.054,
+   "margin_overnight_initial_usd": 381.054,
+   "margin_overnight_maintenance_usd": 296.569,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || YC || MINI SIZED CORN FUTURES || XC || 381.054 || N/A || 381.054 || 296.569 || USD || No || 341.054 || 296.569",
+    "trading_class": "XC"
+   }
+  },
+  "XK": {
+   "fee_per_side_usd": 1.92,
+   "fee_rt_usd": 3.84,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.06,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 1.06 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Agricultural mini-sized / YC, YK, YW / || USD 1.06 || USD 0.23 || USD 0.66 || USD 0.81 || USD 0.90",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": "fee row symbols YC, YK, YW; margin maps XK to YK"
+   },
+   "margin_intraday_initial_usd": 832.025,
+   "margin_overnight_initial_usd": 832.025,
+   "margin_overnight_maintenance_usd": 723.5,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || YK || MINI SIZED SOYBEAN FUTURES || XK || 832.025 || N/A || 832.025 || 723.50 || USD || No || 842.025 || 723.50",
+    "trading_class": "XK"
+   }
+  },
+  "XW": {
+   "fee_per_side_usd": 1.92,
+   "fee_rt_usd": 3.84,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 1.06,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 1.06 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Agricultural mini-sized / YC, YK, YW / || USD 1.06 || USD 0.23 || USD 0.66 || USD 0.81 || USD 0.90",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": "fee row symbols YC, YK, YW; margin maps XW to YW"
+   },
+   "margin_intraday_initial_usd": 574.287,
+   "margin_overnight_initial_usd": 574.287,
+   "margin_overnight_maintenance_usd": 499.38,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || YW || MINI SIZED WHEAT FUTURES || XW || 574.287 || N/A || 574.287 || 499.38 || USD || No || 689.287 || 499.38",
+    "trading_class": "XW"
+   }
+  },
+  "ZC": {
+   "fee_per_side_usd": 3.01,
+   "fee_rt_usd": 6.02,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 2.15,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 2.15 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Ags-Electronic Futures / ZC, ZL, ZM, ZO, ZR, ZS, ZW, KE || USD 2.15 || USD 0.30 || USD 0.81 || USD 0.96 || USD 1.11",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 1905.27,
+   "margin_overnight_initial_usd": 1905.27,
+   "margin_overnight_maintenance_usd": 1482.84,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || ZC || CORN FUTURES || ZC || 1905.27 || N/A || 1905.27 || 1482.84 || USD || Yes || 1705.27 || 1482.84",
+    "trading_class": "ZC"
+   }
+  },
+  "ZS": {
+   "fee_per_side_usd": 3.01,
+   "fee_rt_usd": 6.02,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 2.15,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 2.15 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Ags-Electronic Futures / ZC, ZL, ZM, ZO, ZR, ZS, ZW, KE || USD 2.15 || USD 0.30 || USD 0.81 || USD 0.96 || USD 1.11",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 4160.13,
+   "margin_overnight_initial_usd": 4160.13,
+   "margin_overnight_maintenance_usd": 3617.5,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || ZS || SOYBEAN FUTURES || ZS || 4160.13 || N/A || 4160.13 || 3617.50 || USD || Yes || 4210.13 || 3617.50",
+    "trading_class": "ZS"
+   }
+  },
+  "ZW": {
+   "fee_per_side_usd": 3.01,
+   "fee_rt_usd": 6.02,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 2.15,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 2.15 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Ags-Electronic Futures / ZC, ZL, ZM, ZO, ZR, ZS, ZW, KE || USD 2.15 || USD 0.30 || USD 0.81 || USD 0.96 || USD 1.11",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 2871.43,
+   "margin_overnight_initial_usd": 2871.43,
+   "margin_overnight_maintenance_usd": 2496.9,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || ZW || WHEAT FUTURES || ZW || 2871.43 || N/A || 2871.43 || 2496.90 || USD || Yes || 3446.43 || 2496.90",
+    "trading_class": "ZW"
+   }
+  },
+  "ZL": {
+   "fee_per_side_usd": 3.01,
+   "fee_rt_usd": 6.02,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 2.15,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 2.15 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Ags-Electronic Futures / ZC, ZL, ZM, ZO, ZR, ZS, ZW, KE || USD 2.15 || USD 0.30 || USD 0.81 || USD 0.96 || USD 1.11",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 4661.63,
+   "margin_overnight_initial_usd": 4661.63,
+   "margin_overnight_maintenance_usd": 4053.59,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || ZL || SOYBEAN OIL FUTURES || ZL || 4661.63 || N/A || 4661.63 || 4053.59 || USD || Yes || 5189.63 || 4053.59",
+    "trading_class": "ZL"
+   }
+  },
+  "ZM": {
+   "fee_per_side_usd": 3.01,
+   "fee_rt_usd": 6.02,
+   "fee_status": "published",
+   "fee_components_per_side": {
+    "ibkr_execution": 0.85,
+    "exchange_non_member_tier1": 2.15,
+    "clearing": 0.0,
+    "regulatory": 0.01,
+    "formula": "0.85 + 2.15 + 0.00 + 0.01"
+   },
+   "fee_items": {
+    "exchange_row_quote": "Ags-Electronic Futures / ZC, ZL, ZM, ZO, ZR, ZS, ZW, KE || USD 2.15 || USD 0.30 || USD 0.81 || USD 0.96 || USD 1.11",
+    "exchange_page": "ibkrca_fees_CBOT.html (tbl: ibkrca_fees_CBOT.tbl.txt)",
+    "regulatory_source": "ibkrca_fees_CBOT.tbl.txt: \"All || USD 0.01 || USD 0.00\" (Tier I & V, Non-Members & IIP)",
+    "commission_page": "ibkrca_commissions_futures.html",
+    "mapping_note": ""
+   },
+   "margin_intraday_initial_usd": 2920.5,
+   "margin_overnight_initial_usd": 2920.5,
+   "margin_overnight_maintenance_usd": 2539.57,
+   "margin_item": {
+    "source": "ibkrca_margin_fut_ca_us.tbl.txt (resident Canada, trading US)",
+    "row_quote": "CBOT || ZM || SOYBEAN MEAL FUTURES || ZM || 2920.50 || N/A || 2920.50 || 2539.57 || USD || Yes || 3040.51 || 2539.57",
+    "trading_class": "ZM"
+   }
+  }
+ }
+}

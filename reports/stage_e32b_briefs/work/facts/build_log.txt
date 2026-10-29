@@ -1,0 +1,56 @@
+FactTable-OpusHigh (Stage E.32b C1) build log. Times PDT from TZ=America/Vancouver date.
+01:05 start (brief read).
+01:16:45 output 1 F4_facts_unmasked.json written and validated (validate_final.log: score32b.validate OK with stub
+  econ blocks, 47 soft findings all 'data access X.o_owned_36m' = the 0/1-score vs boolean format; econ
+  jobs_from_facts 112 pairs / 224 jobs / 123 not computed (109 unlisted, 9 sigma unknown, 5 NQ); firm_check no
+  mismatch (topstep and bulenox dll 'none' = unverifiable, not a mismatch); F5 readers OK on 39 codes and 5 firms).
+  sha256 4a4d1e2965ee6dbc8497c6dc2b08ac74fa51b61df548cd1b2173ecbf4171397c -> F4_unmasked_READY.txt. File set
+  read-only; build_f4.py now refuses to run.
+  counts: codes 47; firms 5; pairs 235 (listed 126, unlisted 109, unknown 0); S sourced 13
+  (CL NG QG GC HG SI ZC ZS ZF ZN ZB 6E 6A); touch sourced 5 (NG QG MNG GC SI).
+  validation iterations: run1 failed on grain tick units (E.28 cents vs F3 USD) -> converted /100; leader rule
+  fixed (readers' leader where a group notional is unknown) before READY.
+01:18-01:20 outputs 2 and 3: F4_smean.json (S_mean spread changes 3: MNG 2.414 NATGAS-3, BTC 4.72 CRYPTO-2,
+  10Y 1.67 RATES-5; touch_mean 11: CL HG ZC ZW ZS ZT ZF ZN ZB 6E 6A; ZW unchanged: pooled grains mean only).
+  F4_venue_ibkr.json (47 codes; SIL fee not published; capital ceiling null, USD 6,000 (u) note).
+01:20-01:30 outputs 4 and 5: mask_build.py (secrets labels K-xxxx contracts, V-xxxx firms, W-xxxx platforms,
+  I-nnnnnnn items; none equal an E.28 label). Masked items: contract sheets 1565 (D2a 300, D2b 190, s1 171,
+  s2 249, s3 194, Sat iii 65, D6 396), firm sheets 149, pair R facts 970; key items 2684.
+  applies_to counts: this contract 472, same-underlying sibling 463, asset class broadly 203, another venue 197,
+  product group 188, close cousin 42 (latest run; key 'relations' lists every assignment).
+  Leak check (leak_check.py, 379 patterns: 47 codes, product names, firm/plan names, platforms, http, www, .com,
+  reports/, .json, .md, E.28 labels and other codes): run1 102 hits (false positives CLOB/QMUL/NGI/SIRCA/SIM
+  from a loose lookahead, random item ids containing code letters, ETHUSD_RR index names, 'HTTP 404'), fixed;
+  run3 4 hits (unmasked D6 horizon flag), fixed; final leak_final.log: 0 hits in both files.
+  Lead addendum applied: applies_to on every contract item; D6 after_2010 / out_of_sample / net_of_costs /
+  horizon keyword flags; plan names -> plan P1..; modelled_plan per firm; dates on A and Rel items and lookup
+  dates per firm; spec 0 strategy text verbatim in the firm sheet format (grep count 1).
+  NOTE: mask_build.py draws fresh labels on every run; the sheets and key on disk (sha256 prefixes:
+  contracts 15775a9f, firms e9a3a413, key 1a1bd6e7) are one consistent set. Do not rerun once the BlindScorer
+  has started.
+01:30-01:32 output 6: unmask.py + test_unmask.py (19 passed); integration check on the real key with synthetic
+  ratings (scratchpad): 47 codes, 126 pairs, 5 firms.
+01:32 output 7 F4_facts.md (228 lines). No corrections to the frozen F4 (F4_corrections.json not created).
+01:33-01:35 lead follow-up (for_lead 10): mask_vocab.LITIGATION applied first in Masker.text (plaintiff and
+  defendant names -> [a plaintiff]/[a defendant], case number -> [case number], court district -> "a US federal
+  district court", docket receipt number redacted, news-site name -> [news site]); suit facts kept. mask_build.py
+  rerun ONCE (new labels). leak_check.py with 8 litigation patterns added: 387 patterns, 0 hits in both files
+  (leak_final2.log). test_unmask.py 19 passed; integration on the new key: 47 codes, 126 pairs, 5 firms.
+  F4_masks_FINAL.txt written 01:35:01 PDT (contracts a64a78eb, firms e1ee7791, key cbd8d3e2). The mask set is
+  final: mask_build.py must not be rerun. F4_facts_unmasked.json untouched (sha256 4a4d1e29...).
+(patch after F4_audit.md B1/S2/S3/S1; finished 03:20:50 PDT per F4_masks_FINAL2.txt) mask_patch.py on the FINAL set
+  (labels, pair keys and item ids kept: checked against a backup of the FINAL key). Development runs restored the
+  FINAL backup before each rerun; the files on disk come from one run on the FINAL inputs.
+  B1: 20 substitutions in V-PCDG (LucidBLACK -> plan P5, LucidDaily/Daily Trading -> plan P4, LucidMaxx -> plan P6,
+  Flex/Pro/Direct -> P2/P1/P3, LucidLive -> live stage); extension after leak v2: V-FRQI 16 (xfa/lfa key words,
+  'Pro' -> plan P2, live funded account -> live-stage account), V-PCAN 2, V-CXFO 4 (Pro -> P3, Flex -> P5). Key gets
+  plan_labels per firm.
+  S2: 35 IIP items rewritten: own fee-table row + verbatim purpose/eligibility/ADV/discount/term text; applies_to
+  'this contract' for CL QM QG NG GC SI HG MGC SIL, 'the product group' for 26; 0 other-contract labels in any copy.
+  S3: 31 s1 items and 12 D2b items changed (134 substitutions: bbl parentheticals, size ratios, EUR/AUD sizes,
+  spread-tick figures, '$5 Multiplier', CRYPTO-34 spread-tick figures).
+  Leak check v2 (leak_check_v2.py -> leak_v2_out.txt): 141 hits, all justified (Daily Trading generic 46, ATAS in
+  'dataset' 8, Rithmic in 'algorithmic' 15, USD book size/currency pair/incentive pool 40, '[multiplier]'
+  placeholder 12, cost/quoting ticks 16, 'Daily Loss Limit' 1); 0 unjustified. Leak check v1: 0 hits.
+  test_unmask.py 19 passed; integration on the patched key: 47 codes, 126 pairs, 5 firms.
+  F4_corrections.json: 1 entry (HG spread_S sourced true -> false, METALS-50). F4_facts_unmasked.json untouched.

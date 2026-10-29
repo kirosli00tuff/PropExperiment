@@ -5370,3 +5370,153 @@ Final table (times PDT, from STATE, logs and transcripts; tokens from the transc
 | 19 | Lead wipe 2 (planned; nothing ran) | - | 21:22-21:31 | 9 min | - | pause, not counted |
 | 20 | Lead session 3: end checks, return sections 1, 2, 6 and 8, progress, STAGES, cost | opus (max) | 21:31-21:43 (cutoff) | 12 min | (lead) | done; commit and end status after the cutoff |
 | all | Stage E.33c | lead (3 sessions) + 5 workers | 18:05-21:43 | 3 h 38 min (3 h 29 min excluding wipe 2) | 65,724,236 (lead 42,370,522; workers 23,353,714) | initial estimates: 18:17 table "finish about 01:30", 20:03 table "about 01:25", 21:33 table (session 3) "about 22:27"; actual: closing steps done 21:43, commit right after |
+
+## 2026-10-29 — Stage E.32b: directional rerank of the firm-contract pairs: YM, MNQ and RTY lead, 15-60 minute holds (not hours), one ZL build candidate (prior about 4%); N = 838
+
+Prompt docs/prompts/STAGE_E.32b.md (V50 item 2, V51; binding V49, V50, V37; routing V55). Return:
+reports/E.32b_RETURN.md. STATE reports/stage_e32b_STATE.md (four lead sessions); rulings and open choices
+reports/stage_e32b_briefs/RULINGS.md. Spec reports/stage_e32b_ranking_spec.md (09ebe697, hashed 22:32:14 before any
+new lookup or score). Outputs: reports/stage_e32b_ranking.md, reports/stage_e32b_holding_scope.md,
+reports/stage_e32b_recommendations.md (the main output). Holdout unlocks_logged 0 at start and end; REGISTRATION.md 0
+bytes; spend ledger unchanged (37,290 lines, 42589d7b); harness freeze 2e908c81 preflight OK at start and end; the E.32
+test seal 114 of 114 sealed and the E.33 guard refusing 4 of 4 forbidden reads at both ends; N 838 (registry 11777e46
+unchanged); no Databento, TopstepX or broker call; nothing pushed.
+
+**What ran.** Four lead sessions (Opus 5.5, max effort), split by three planned context wipes (22:35, 00:56, 07:28)
+and one usage-limit pause (01:56-03:10), and 38 worker spawns with models confirmed from their transcripts: opus high
+(eight family readers, FirmRules, IdeaFamilies, FactTable, RankingWriter, ScopeWriter, ScoreFixer, R1Fixer); opus xhigh
+(VolCoder, ScoreCoder, EconSetup, HoldingCoder, BlindScorer (rater 1, cut by the usage limit, superseded),
+BlindScorer2, F5Runner, DossierWriter, CombinationScorer, RecsDrafter, RecsAssembler); sonnet high (DataAccess,
+ClosedLines, NonProp, VariantBuilder, CostTabler); haiku medium (AttentionCounter, DelegationTabler); fable (FableProbe
+at medium; FactAuditor, RankingReviewer, RecsReviewer, FixVerifier at xhigh; all claude-fable-5-1). Detached econ runs on 8 workers: pass 1 (224 jobs, 01:17-05:24), S_mean (03:53-04:05),
+pass 2 (E_dir 30/120/240 for the top 15, 05:26-07:28).
+
+**Result.** Layer 1: 35 of 47 codes survive (8 fail on unknown sigma, QG, QM and XW on D4 = 0; NQ excluded, V49);
+103 pairs ranked. Top 10: Bulenox YM 3.113, Topstep MNQ 3.096, Tradeify MNQ 3.087, Tradeify YM 3.081, Topstep YM
+3.055, MFFU YM 3.026, Bulenox RTY 3.017, MFFU MNQ 3.014, Topstep RTY 3.009, Tradeify RTY 2.994; YM is in the top 5 of
+all 28 variants; E.28's QM leaders fail Layer 1; ZM falls to 24, ZL is 15. Holding scope: every top-15 pair's band is
+15-30 minutes (15-60 for Topstep ZL, 30-60 for MFFU MYM), minimum at 30 minutes, and the E_dir economics agree; no band
+reaches 120 minutes and no prop firm allows overnight holds, so the user's minutes-to-hours prior holds only for
+minutes. Recommendations: 23 closed lines (838 trials) filtered, 185 combinations scored by the hashed R3 rule; R4 =
+one ZL program at Topstep (F10 order-book state + F09 soy-complex lead-lag, one registration on the single sealed read
+2017-05..2020-11, prior about 4%), then MNQ F08, YM F08 and the EQ3 F08 pool (each under 1%; YM about 1.5% only if
+V31 were narrowed); own broker C141 ZL F10 at IBKR 2.60, not favoured now. Stop rule: at most one more registered
+build.
+
+**Verification.** FactAuditor (Fable): two blinding leaks (B1, B2) found and patched before the final blind ratings;
+every value PASS. RankingReviewer (Fable): PASS, 0 BLOCKING, 3 SHOULD FIX, 13 NOTE, every score recomputed exactly.
+RecsReviewer (Fable): PASS WITH ONE RULING NEEDED, 1 BLOCKING (RTY and ZL F09 Q3: ruled LR-Q3b, which drops RTY F09
+from the R4 and adds the EQ3 F08 pool), 6 SHOULD FIX, 7 NOTE. All fixed in session 4. FixVerifier (Fable): PASS, 0 BLOCKING, 0 SHOULD FIX, 7 NOTE; the lead applied six NOTE
+wording fixes afterwards.
+
+**Decisions for the user.** D1 keep V31's scope for YM (recommended); D2 assign the ZL sealed window's single read to
+the ZL program if a prior of about 4% is acceptable, else stop the directional program; D3 admit V51-style discovery
+without a published expected gross, judged by the power rule (recommended), or keep the gate and stop; D4 keep
+2024-03+ data closed unless the ZL program passes (recommended); D5 if D2 and D3 are accepted, one pre-registration
+stage for the ZL program with a Databento quote logged first.
+
+**Session cost.**
+
+Computed at 09:44:52 PDT 2026-10-29 (the cutoff) from the transcripts of the four lead sessions and their subagents
+(main .jsonl and subagents/**/*.jsonl of 3d79635b, 7e35d21b, 3860d0d1 and 0d036ce2) with
+reports/stage_e32b_briefs/work/cost/make_cost.py (adapted from E.25/E.26; it keeps each message's final usage, as
+reports/stage_e10_briefs/cost.py does; output work/cost/ret_cost_tokens.md and cost_raw.txt). No session is a resume
+of another and none holds usage from before the stage. These are token counts, not plan-credit percentages; the
+commit and the checks after 09:44:52 are not counted.
+
+Wall clock: 22:06:09 (2026-10-28) to 09:44:52, 11 h 39 min. Not counted as work: the usage-limit pause (01:55:44-03:11:01,
+1 h 15 min; the local econ run kept going) and three planned context wipes with nothing running (22:35:17-22:40:26,
+5 min; 00:56:14-00:56:45; 07:28:50-08:39:23, 1 h 11 min). Counted: the lead's wait while econ pass 1 ran (04:09-05:24,
+stage compute). Work time: 9 h 07 min. Per session (first to last record): 1 0 h 29 min; 2 2 h 16 min; 3 6 h 32 min
+(5 h 17 min without the pause); 4 1 h 05 min to the cutoff.
+
+| Model | Input | Output | Cache read | Cache creation | Total |
+|---|---|---|---|---|---|
+| claude-fable-5-1 | 3,382 | 385,969 | 21,663,145 | 1,851,038 | 23,903,534 |
+| claude-haiku-5-5 | 58 | 79,231 | 3,743,478 | 319,077 | 4,141,844 |
+| claude-opus-5-5 | 5,844 | 3,645,088 | 627,519,667 | 11,011,541 | 642,182,140 |
+| claude-sonnet-5-5 | 526 | 238,462 | 37,525,195 | 1,241,992 | 39,006,175 |
+| all | 9,810 | 4,348,750 | 690,451,485 | 14,423,648 | 709,233,693 |
+
+(Three records marked <synthetic>, with zero usage, are the usage-limit cuts.)
+
+Worker spawns (agent file, model from the transcript, effort, tokens):
+- Session 1: FableProbe-FableMed: worker-medium, claude-fable-5-1, medium, 65,309
+- Session 2: CrudeReader-OpusHigh: worker-high, claude-opus-5-5, high, 32,162,972; NatgasReader-OpusHigh: same, 28,090,644;
+  MetalsReader-OpusHigh: same, 22,423,835; GrainsReader-OpusHigh: same, 31,237,627; RatesReader-OpusHigh: same,
+  23,549,545; EquityReader-OpusHigh: same, 22,171,338; FXReader-OpusHigh: same, 21,236,586; CryptoReader-OpusHigh:
+  same, 21,612,823; FirmRules-OpusHigh: same, 27,291,824; IdeaFamilies-OpusHigh: same, 10,643,052; VolCoder-OpusXHigh:
+  worker-xhigh, claude-opus-5-5, xhigh, 5,038,247; ScoreCoder-OpusXHigh: same, 14,892,068; EconSetup-OpusXHigh: same,
+  28,798,889; HoldingCoder-OpusXHigh: same, 7,374,669; DataAccess-SonnetHigh: worker-high, claude-sonnet-5-5, high,
+  14,815,324; ClosedLines-SonnetHigh: same, 8,793,559; NonProp-SonnetHigh: same, 10,188,926; AttentionCounter-HaikuMed:
+  worker-medium, claude-haiku-5-5, medium, 672,961
+- Session 3: FactTable-OpusHigh: worker-high, claude-opus-5-5, high, 39,400,501; RankingWriter-OpusHigh: same,
+  13,086,414; ScopeWriter-OpusHigh: same, 6,819,605; BlindScorer-OpusXHigh: worker-xhigh, claude-opus-5-5, xhigh,
+  15,031,894; BlindScorer2-OpusXHigh: same, 12,026,958; F5Runner-OpusXHigh: same, 7,640,619; DossierWriter-OpusXHigh:
+  same, 29,440,132; CombinationScorer-OpusXHigh: same, 4,504,982; RecsDrafter-OpusXHigh: same, 38,031,774;
+  VariantBuilder-SonnetHigh: worker-high, claude-sonnet-5-5, high, 4,185,724; FactAuditor-FableXHigh: worker-xhigh,
+  claude-fable-5-1, xhigh, 5,783,847; RankingReviewer-FableXHigh: same, 8,010,050; RecsReviewer-FableXHigh: same,
+  5,465,653
+- Session 4: ScoreFixer-OpusHigh: worker-high, claude-opus-5-5, high, 8,892,840; R1Fixer-OpusHigh: same, 8,951,432;
+  RecsAssembler-OpusXHigh: worker-xhigh, claude-opus-5-5, xhigh, 27,063,610; CostTabler-SonnetHigh: worker-high,
+  claude-sonnet-5-5, high, 1,022,642; DelegationTabler-HaikuMed: worker-medium, claude-haiku-5-5, medium, 3,468,883;
+  FixVerifier-FableXHigh: worker-xhigh, claude-fable-5-1, xhigh, 4,578,675
+
+Lead sessions (claude-opus-5-5, max effort): 3d79635b 13,097,805; 7e35d21b 19,115,950; 3860d0d1 74,510,690; 0d036ce2
+28,042,815 (to the cutoff).
+
+Delegation share: lead 134,767,260 (19.0%), workers 574,466,433 (81.0%). By model: Opus 642,182,140 (90.5%; lead
+134,767,260, workers 507,414,880), Sonnet 39,006,175 (5.5%), Fable 23,903,534 (3.4%), Haiku 4,141,844 (0.6%). Cache
+reads are 97.4% of all tokens. By session: 1 13,163,114; 2 350,110,839 (the eight research readers alone 202,485,370);
+3 263,938,843; 4 82,020,897.
+
+Final table (times PDT from the STATE file and the transcripts' first and last records, rounded to the minute; a resumed
+worker's span covers all its runs; tokens from the transcripts):
+
+| # | Task / agent | Model (effort) | Start-end | Time | Tokens | Status, deviations |
+|---|---|---|---|---|---|---|
+| 1 | Lead session 1: start checks, Fable probe, spec (hashed 22:32:14), reader rules | opus (max) | 22:06-22:35 | 29 min | 13,097,805 (lead) | done; wipe at ~345k tokens |
+| 2 | FableProbe-FableMed | fable (medium) | 22:22 | <1 min | 65,309 | done: Fable available |
+| 3 | Planned wipe 1 (nothing running) | - | 22:35-22:40 | 5 min | - | pause, not counted |
+| 4 | Lead session 2: reader and wave-B briefs, rulings LR-F3 to LR-D3, readings | opus (max) | 22:40-00:56 | 2 h 16 min | 19,115,950 (lead) | done; wipe at ~312k |
+| 5 | CrudeReader, NatgasReader, MetalsReader, GrainsReader, RatesReader, EquityReader (-OpusHigh) | opus (high) | 22:48-23:09 | 15-21 min each | 32,162,972; 28,090,644; 22,423,835; 31,237,627; 23,549,545; 22,171,338 | done (F2) |
+| 6 | FXReader-OpusHigh, CryptoReader-OpusHigh | opus (high) | 23:03-23:21 | 15, 18 min | 21,236,586; 21,612,823 | done (F2) |
+| 7 | VolCoder-OpusXHigh | opus (xhigh) | 23:05-23:17 | 12 min | 5,038,247 | done (F3) |
+| 8 | FirmRules-OpusHigh | opus (high) | 23:07-23:34 | 27 min | 27,291,824 | done |
+| 9 | ScoreCoder-OpusXHigh | opus (xhigh) | 23:09-23:39 | 29 min | 14,892,068 | done |
+| 10 | EconSetup-OpusXHigh | opus (xhigh) | 23:10-00:55 | 1 h 45 min (span) | 28,798,889 | done (econ code, E.28 regression) |
+| 11 | DataAccess-SonnetHigh | sonnet (high) | 23:17-23:33 | 16 min | 14,815,324 | done |
+| 12 | AttentionCounter-HaikuMed | haiku (medium) | 23:18-23:19 | 1 min | 672,961 | done |
+| 13 | HoldingCoder-OpusXHigh | opus (xhigh) | 23:19-23:33 | 13 min | 7,374,669 | done |
+| 14 | ClosedLines-SonnetHigh | sonnet (high) | 23:21-23:28 | 7 min | 8,793,559 | done |
+| 15 | IdeaFamilies-OpusHigh | opus (high) | 23:29-23:41 | 12 min | 10,643,052 | done |
+| 16 | NonProp-SonnetHigh | sonnet (high) | 23:33-23:42 | 9 min | 10,188,926 | done |
+| 17 | Planned wipe 2 (nothing running) | - | 00:56 | <1 min | - | pause, not counted |
+| 18 | Lead session 3: rulings LR-SC to LR-Q3b, econ supervision, score runs, F5, R3 runs, R4 text, review briefs | opus (max) | 00:57-07:29 | 6 h 32 min (5 h 17 min without the pause) | 74,510,690 (lead) | done; wipe 07:25 |
+| 19 | Econ pass 1 (script, 8 workers, 224 jobs) | - | 01:17-05:24 | 4 h 07 min | - | done; kept running through the pause |
+| 20 | FactTable-OpusHigh (resumed twice) | opus (high) | 01:06-03:22 | 2 h 16 min (span, incl. pause) | 39,400,501 | done; masks rebuilt twice for leaks |
+| 21 | BlindScorer-OpusXHigh (rater 1) | opus (xhigh) | 01:36-01:53 | 17 min | 15,031,894 | cut by the usage limit; superseded (inter-rater only) |
+| 22 | FactAuditor-FableXHigh (resumed once) | fable (xhigh) | 01:36-03:26 | 1 h 50 min (span, incl. pause) | 5,783,847 | done; cut at the end of run 1; B1, B2 |
+| 23 | Usage-limit pause (5-hour window) | - | 01:56-03:11 | 1 h 15 min | - | pause, not counted |
+| 24 | BlindScorer2-OpusXHigh (rater 2) | opus (xhigh) | 03:29-03:55 | 26 min | 12,026,958 | done |
+| 25 | VariantBuilder-SonnetHigh (resumed twice) | sonnet (high) | 03:32-05:40 | 2 h 09 min (span) | 4,185,724 | done |
+| 26 | Econ S_mean (script) | - | 03:53-04:05 | 12 min | - | done |
+| 27 | F5Runner-OpusXHigh | opus (xhigh) | 03:57-04:07 | 10 min | 7,640,619 | done; found the attention-file format defect (LR-ATT) |
+| 28 | Lead wait while econ pass 1 ran | - | 04:09-05:24 | 1 h 15 min | - | stage compute, counted |
+| 29 | Econ pass 2 (script, E_dir 30/120/240) | - | 05:26-07:28 | 2 h 02 min | - | done |
+| 30 | DossierWriter-OpusXHigh | opus (xhigh) | 05:27-05:59 | 32 min | 29,440,132 | done |
+| 31 | RankingWriter-OpusHigh (resumed) | opus (high) | 05:27-05:43 | 16 min | 13,086,414 | done |
+| 32 | ScopeWriter-OpusHigh (resumed) | opus (high) | 05:27-05:38 | 11 min | 6,819,605 | done |
+| 33 | CombinationScorer-OpusXHigh | opus (xhigh) | 06:01-06:19 | 18 min | 4,504,982 | done |
+| 34 | RecsDrafter-OpusXHigh (resumed twice) | opus (xhigh) | 06:21-07:06 | 45 min | 38,031,774 | done; its fact check reversed the 06:21 F01 ruling (LR-Q3a) |
+| 35 | RankingReviewer-FableXHigh (RV1) | fable (xhigh) | 06:58-07:25 | 27 min | 8,010,050 | done: PASS, 0 / 3 / 13 |
+| 36 | RecsReviewer-FableXHigh (RV2) | fable (xhigh) | 06:58-07:18 | 20 min | 5,465,653 | done: PASS with one ruling, 1 / 6 / 7 |
+| 37 | Planned wipe 3 (nothing running) | - | 07:29-08:39 | 1 h 11 min | - | pause, not counted |
+| 38 | Lead session 4: plan, LR-Q3b text, q3bleg, scope, NOTE fixes, return, progress, STAGES, end checks, cost | opus (max) | 08:39-09:45 | 1 h 05 min | 28,042,815 (lead, to the cutoff) | done |
+| 39 | ScoreFixer-OpusHigh (resumed once) | opus (high) | 08:47-08:57 | 9 min | 8,892,840 | done; no rank change |
+| 40 | R1Fixer-OpusHigh | opus (high) | 08:47-08:56 | 9 min | 8,951,432 | done; corrected three of RV2's statements |
+| 41 | CostTabler-SonnetHigh | sonnet (high) | 08:54-08:56 | 2 min | 1,022,642 | done |
+| 42 | DelegationTabler-HaikuMed | haiku (medium) | 08:55-09:01 | 7 min | 3,468,883 | done |
+| 43 | RecsAssembler-OpusXHigh | opus (xhigh) | 08:57-09:22 | 25 min | 27,063,610 | done |
+| 44 | FixVerifier-FableXHigh | fable (xhigh) | 09:23-09:41 | 18 min | 4,578,675 | done: PASS, 0 / 0 / 7 |
+| all | Stage E.32b | lead (4 sessions) + 38 spawns | 22:06-09:45 | 11 h 39 min wall-clock; 9 h 07 min work | 709,233,693 (lead 134,767,260; workers 574,466,433) | initial estimate (session 1, 22:35): T0 + 12:00 from 22:40, about 10:40; session 2's table (22:48): 09:20; session 4's (08:44): 11:07, revised 10:43; actual 09:45 |

@@ -1,0 +1,801 @@
+{
+ "spec_sha256": "09ebe6970fcf027009152fa81a414360a015d535b095138cdf65cf1a4eb58635",
+ "generated_pdt": "2026-10-29 04:04:51 PDT",
+ "fingerprint": "27af1bdb86ecd928",
+ "inputs": {
+  "F3": {
+   "path": "reports/stage_e32b_briefs/F3_vol.json",
+   "sha256": "9ba14d568d283d11c2a19889ea57c3b6dcc12fa11682b44f6eecd32a3ea18fcc"
+  },
+  "F4": {
+   "path": "reports/stage_e32b_briefs/work/econ_smean/F4_facts_smean.json",
+   "sha256": "f9bbef68689dd0594460dd4ebe313092dbcc53d3872a65706a24033d8c6135e3"
+  },
+  "edir_pairs": null
+ },
+ "firm_check": {
+  "rows": {
+   "bulenox": {
+    "plan": "Qualification 50K, Option 1 trailing (USD 175 one-time, 30 days)",
+    "mll_50k": {
+     "f4": 2500,
+     "model": 2500.0,
+     "status": "match"
+    },
+    "dll_50k": {
+     "f4": "none",
+     "model": null,
+     "status": "unverifiable (F4 value not a number)"
+    }
+   },
+   "lucid": {
+    "plan": "LucidPro 50K (USD 172 one-time, DLL on)",
+    "mll_50k": {
+     "f4": 2000,
+     "model": 2000.0,
+     "status": "match"
+    },
+    "dll_50k": {
+     "f4": 1200,
+     "model": 1200.0,
+     "status": "match"
+    }
+   },
+   "mffu": {
+    "plan": "Builder 50K Default (USD 153 one-time)",
+    "mll_50k": {
+     "f4": 2000,
+     "model": 2000.0,
+     "status": "match"
+    },
+    "dll_50k": {
+     "f4": 1000,
+     "model": 1000.0,
+     "status": "match"
+    }
+   },
+   "topstep": {
+    "plan": "50K Trading Combine, Standard Path (USD 49/month)",
+    "mll_50k": {
+     "f4": 2000,
+     "model": 2000.0,
+     "status": "match"
+    },
+    "dll_50k": {
+     "f4": "none",
+     "model": null,
+     "status": "unverifiable (F4 value not a number)"
+    }
+   },
+   "tradeify": {
+    "plan": "Growth 50K (USD 145 one-time)",
+    "mll_50k": {
+     "f4": 2000,
+     "model": 2000.0,
+     "status": "match"
+    },
+    "dll_50k": {
+     "f4": 1250,
+     "model": 1250.0,
+     "status": "match"
+    }
+   }
+  },
+  "mismatches": []
+ },
+ "run": {
+  "fingerprint": "27af1bdb86ecd928",
+  "jobs": 8,
+  "ran": 8,
+  "workers": 8,
+  "wall_s": 696.8,
+  "peak_pss_mb": 2191,
+  "min_mem_available_mb": 8831
+ },
+ "tag": "smean",
+ "grid": {
+  "step_ticks": 0.01,
+  "cap_rule": "max(4, ceil(0.30 sigma_60)) ticks, every curve of a pair",
+  "search": "bisection on k, then E.28's grid confirmation",
+  "confirmation": {
+   "subgrid_ticks": 0.1,
+   "dense_below_ticks": 0.1,
+   "near_ev": "EV >= -max(5.0 SE, USD 100.0)",
+   "near_p10k": "P10K >= 0.4"
+  }
+ },
+ "model": {
+  "paths_per_pool": 20000,
+  "cycles": 20000,
+  "campaign_replications": 20000,
+  "horizon_trading_days": 756,
+  "attempt_cap": 60,
+  "campaign_days": 250,
+  "campaign_target_usd": 10000.0,
+  "base_seed": 20261021,
+  "size": 1,
+  "source": "E.28 A3_funnel.py / A3_models.py (copied unchanged)",
+  "daily_pnl": "normal, mean T (mu - c) v, sd sqrt(T) sigma_T v",
+  "c_mkt": "F_rt / v + S_rt",
+  "cost_per_attempt": "E.28: evaluation fees per attempt at mu = 0, limit case (d = -F_rt / v); cost_per_attempt_mkt_mu0 = the same at d = -c_mkt"
+ },
+ "pairs": {
+  "bulenox|HG": {
+   "inputs": {
+    "S_rt_ticks": 1.55,
+    "S_rt_status": "sourced",
+    "spread_item": "METALS-50",
+    "F_rt_usd": 4.62,
+    "fee_kind": "stated",
+    "v_usd": 12.5,
+    "L_main": 390.0,
+    "f3_status": "owned",
+    "sigma_1": 3.13887570571587,
+    "sigma60": 22.7439812334256,
+    "grid_cap": 7.0,
+    "notes": []
+   },
+   "primary": {
+    "curve": "primary",
+    "h": 1,
+    "T": 20,
+    "sigma_T": 3.13887570571587,
+    "mu_star_mkt": 2.29,
+    "mu10K_mkt": 2.68,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": false
+    },
+    "cost_per_attempt": 175.0,
+    "cost_per_attempt_mkt_mu0": 175.0,
+    "sigma60": 22.7439812334256,
+    "m_star": 0.1006859782593608,
+    "m10K": 0.1178333719367192,
+    "grid_cap": 7.0,
+    "F_rt_usd": 4.62,
+    "v_usd": 12.5,
+    "S_rt_ticks": 1.55,
+    "c_lim_ticks": 0.3696,
+    "c_mkt_ticks": 1.9196,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 229,
+      "f_at_k": 333.55855805000004,
+      "f_at_k_minus_1": -39.435818999999945,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 34,
+      "max_below": {
+       "k": 228,
+       "f": -39.435818999999945,
+       "se": 21.4351153656723
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": 268,
+      "f_at_k": 0.05179999999999996,
+      "f_at_k_minus_1": -0.006900000000000017,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 48,
+      "max_below": {
+       "k": 267,
+       "f": -0.006900000000000017,
+       "se": null
+      }
+     }
+    }
+   },
+   "spread1": {
+    "curve": "primary",
+    "h": 1,
+    "T": 20,
+    "sigma_T": 3.13887570571587,
+    "mu_star_mkt": 1.74,
+    "mu10K_mkt": 2.13,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": false
+    },
+    "cost_per_attempt": 175.0,
+    "cost_per_attempt_mkt_mu0": 175.0,
+    "sigma60": 22.7439812334256,
+    "m_star": 0.0765037564066759,
+    "m10K": 0.09365115008403428,
+    "grid_cap": 7.0,
+    "F_rt_usd": 4.62,
+    "v_usd": 12.5,
+    "S_rt_ticks": 1.0,
+    "c_lim_ticks": 0.3696,
+    "c_mkt_ticks": 1.3696,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 174,
+      "f_at_k": 333.55855805000004,
+      "f_at_k_minus_1": -39.435818999999945,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 47,
+      "max_below": {
+       "k": 173,
+       "f": -39.435818999999945,
+       "se": 21.4351153656723
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": 213,
+      "f_at_k": 0.05179999999999996,
+      "f_at_k_minus_1": -0.006900000000000017,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 65,
+      "max_below": {
+       "k": 212,
+       "f": -0.006900000000000017,
+       "se": null
+      }
+     }
+    }
+   },
+   "E_dir60": {
+    "curve": "dir60",
+    "h": 60,
+    "T": 6,
+    "sigma_T": 22.7439812334256,
+    "mu_star_mkt": 2.69,
+    "mu10K_mkt": 5.17,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": false
+    },
+    "cost_per_attempt": 175.00000000000003,
+    "cost_per_attempt_mkt_mu0": 175.0,
+    "sigma60": 22.7439812334256,
+    "m_star": 0.11827304869767709,
+    "m10K": 0.22731288541523814,
+    "grid_cap": 7.0,
+    "F_rt_usd": 4.62,
+    "v_usd": 12.5,
+    "S_rt_ticks": 1.55,
+    "c_lim_ticks": 0.3696,
+    "c_mkt_ticks": 1.9196,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 269,
+      "f_at_k": 6.042438100000005,
+      "f_at_k_minus_1": -6.303698049999995,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 45,
+      "max_below": {
+       "k": 268,
+       "f": -6.303698049999995,
+       "se": 11.157628299106001
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": 517,
+      "f_at_k": 0.0012499999999999734,
+      "f_at_k_minus_1": -0.004500000000000004,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 100,
+      "max_below": {
+       "k": 516,
+       "f": -0.004500000000000004,
+       "se": null
+      }
+     }
+    }
+   }
+  },
+  "lucid|HG": {
+   "inputs": {
+    "S_rt_ticks": 1.55,
+    "S_rt_status": "sourced",
+    "spread_item": "METALS-50",
+    "F_rt_usd": 6.2,
+    "fee_kind": "RR-05 (u)",
+    "v_usd": 12.5,
+    "L_main": 390.0,
+    "f3_status": "owned",
+    "sigma_1": 3.13887570571587,
+    "sigma60": 22.7439812334256,
+    "grid_cap": 7.0,
+    "notes": []
+   },
+   "primary": {
+    "curve": "primary",
+    "h": 1,
+    "T": 20,
+    "sigma_T": 3.13887570571587,
+    "mu_star_mkt": 2.05,
+    "mu10K_mkt": 2.49,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": false
+    },
+    "cost_per_attempt": 120.86666666666666,
+    "cost_per_attempt_mkt_mu0": 120.86666666666666,
+    "sigma60": 22.7439812334256,
+    "m_star": 0.090133735996371,
+    "m10K": 0.10947951347851896,
+    "grid_cap": 7.0,
+    "F_rt_usd": 6.2,
+    "v_usd": 12.5,
+    "S_rt_ticks": 1.55,
+    "c_lim_ticks": 0.496,
+    "c_mkt_ticks": 2.0460000000000003,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 205,
+      "f_at_k": 157.3371227,
+      "f_at_k_minus_1": -173.62626025,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 31,
+      "max_below": {
+       "k": 204,
+       "f": -173.62626025,
+       "se": 8.387861028929759
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": 249,
+      "f_at_k": 0.019549999999999956,
+      "f_at_k_minus_1": -0.06385000000000002,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 47,
+      "max_below": {
+       "k": 248,
+       "f": -0.06385000000000002,
+       "se": null
+      }
+     }
+    }
+   },
+   "spread1": {
+    "curve": "primary",
+    "h": 1,
+    "T": 20,
+    "sigma_T": 3.13887570571587,
+    "mu_star_mkt": 1.5,
+    "mu10K_mkt": 1.94,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": false
+    },
+    "cost_per_attempt": 120.86666666666666,
+    "cost_per_attempt_mkt_mu0": 120.86666666666666,
+    "sigma60": 22.7439812334256,
+    "m_star": 0.06595151414368611,
+    "m10K": 0.08529729162583403,
+    "grid_cap": 7.0,
+    "F_rt_usd": 6.2,
+    "v_usd": 12.5,
+    "S_rt_ticks": 1.0,
+    "c_lim_ticks": 0.496,
+    "c_mkt_ticks": 1.496,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 150,
+      "f_at_k": 157.3371227,
+      "f_at_k_minus_1": -173.62626025,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 40,
+      "max_below": {
+       "k": 149,
+       "f": -173.62626025,
+       "se": 8.387861028929759
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": 194,
+      "f_at_k": 0.019549999999999956,
+      "f_at_k_minus_1": -0.06385000000000002,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 60,
+      "max_below": {
+       "k": 193,
+       "f": -0.06385000000000002,
+       "se": null
+      }
+     }
+    }
+   },
+   "E_dir60": {
+    "curve": "dir60",
+    "h": 60,
+    "T": 6,
+    "sigma_T": 22.7439812334256,
+    "mu_star_mkt": 1.96,
+    "mu10K_mkt": 3.7,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": false
+    },
+    "cost_per_attempt": 129.83926054172696,
+    "cost_per_attempt_mkt_mu0": 123.32338448362914,
+    "sigma60": 22.7439812334256,
+    "m_star": 0.08617664514774985,
+    "m10K": 0.16268040155442576,
+    "grid_cap": 7.0,
+    "F_rt_usd": 6.2,
+    "v_usd": 12.5,
+    "S_rt_ticks": 1.55,
+    "c_lim_ticks": 0.496,
+    "c_mkt_ticks": 2.0460000000000003,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 196,
+      "f_at_k": 5.453343800000005,
+      "f_at_k_minus_1": -2.8934871999999974,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 35,
+      "max_below": {
+       "k": 195,
+       "f": -2.8934871999999974,
+       "se": 11.287126473358516
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": 370,
+      "f_at_k": 0.0019500000000000073,
+      "f_at_k_minus_1": -0.004149999999999987,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 73,
+      "max_below": {
+       "k": 369,
+       "f": -0.004149999999999987,
+       "se": null
+      }
+     }
+    }
+   }
+  },
+  "topstep|MNG": {
+   "inputs": {
+    "S_rt_ticks": 2.414,
+    "S_rt_status": "sourced",
+    "spread_item": "NATGAS-3",
+    "F_rt_usd": 1.92,
+    "fee_kind": "stated",
+    "v_usd": 1.0,
+    "L_main": 390.0,
+    "f3_status": "OC1",
+    "sigma_1": 6.274602856432453,
+    "sigma60": 47.2648984387072,
+    "grid_cap": 15.0,
+    "notes": []
+   },
+   "primary": {
+    "curve": "primary",
+    "h": 1,
+    "T": 20,
+    "sigma_T": 6.274602856432453,
+    "mu_star_mkt": 8.29,
+    "mu10K_mkt": 10.33,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": false
+    },
+    "cost_per_attempt": 100.00850999999999,
+    "cost_per_attempt_mkt_mu0": 49.740961666666664,
+    "sigma60": 47.2648984387072,
+    "m_star": 0.17539443167851965,
+    "m10K": 0.2185554257224497,
+    "grid_cap": 15.0,
+    "F_rt_usd": 1.92,
+    "v_usd": 1.0,
+    "S_rt_ticks": 2.414,
+    "c_lim_ticks": 1.92,
+    "c_mkt_ticks": 4.334,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 829,
+      "f_at_k": 30.5835,
+      "f_at_k_minus_1": -6.019875,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 93,
+      "max_below": {
+       "k": 828,
+       "f": -6.019875,
+       "se": 6.655430352053335
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": 1033,
+      "f_at_k": 0.009399999999999964,
+      "f_at_k_minus_1": -0.01419999999999999,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 127,
+      "max_below": {
+       "k": 1032,
+       "f": -0.01419999999999999,
+       "se": null
+      }
+     }
+    }
+   },
+   "spread1": {
+    "curve": "primary",
+    "h": 1,
+    "T": 20,
+    "sigma_T": 6.274602856432453,
+    "mu_star_mkt": 6.87,
+    "mu10K_mkt": 8.92,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": false
+    },
+    "cost_per_attempt": 100.00850999999999,
+    "cost_per_attempt_mkt_mu0": 50.446398333333335,
+    "sigma60": 47.2648984387072,
+    "m_star": 0.1453509946479409,
+    "m10K": 0.18872356219208627,
+    "grid_cap": 15.0,
+    "F_rt_usd": 1.92,
+    "v_usd": 1.0,
+    "S_rt_ticks": 1.0,
+    "c_lim_ticks": 1.92,
+    "c_mkt_ticks": 2.92,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 687,
+      "f_at_k": 9.201725,
+      "f_at_k_minus_1": -28.408625,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 81,
+      "max_below": {
+       "k": 686,
+       "f": -28.408625,
+       "se": 6.609338153567033
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": 892,
+      "f_at_k": 0.021299999999999986,
+      "f_at_k_minus_1": -0.004599999999999993,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 116,
+      "max_below": {
+       "k": 891,
+       "f": -0.004599999999999993,
+       "se": null
+      }
+     }
+    }
+   },
+   "E_dir60": {
+    "curve": "dir60",
+    "h": 60,
+    "T": 6,
+    "sigma_T": 47.2648984387072,
+    "mu_star_mkt": 5.9,
+    "mu10K_mkt": null,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": true
+    },
+    "cost_per_attempt": 280.76962853166475,
+    "cost_per_attempt_mkt_mu0": 140.16515333333334,
+    "sigma60": 47.2648984387072,
+    "m_star": 0.1248283651270526,
+    "m10K": null,
+    "grid_cap": 15.0,
+    "F_rt_usd": 1.92,
+    "v_usd": 1.0,
+    "S_rt_ticks": 2.414,
+    "c_lim_ticks": 1.92,
+    "c_mkt_ticks": 4.334,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 590,
+      "f_at_k": 11.112422700000037,
+      "f_at_k_minus_1": -3.108257649999969,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 70,
+      "max_below": {
+       "k": 589,
+       "f": -3.108257649999969,
+       "se": 13.481318380253501
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": null,
+      "f_at_k": null,
+      "f_at_k_minus_1": null,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 166,
+      "max_below": {
+       "k": 1500,
+       "f": -0.174,
+       "se": null
+      }
+     }
+    }
+   }
+  },
+  "tradeify|HG": {
+   "inputs": {
+    "S_rt_ticks": 1.55,
+    "S_rt_status": "sourced",
+    "spread_item": "METALS-50",
+    "F_rt_usd": 6.2,
+    "fee_kind": "stated",
+    "v_usd": 12.5,
+    "L_main": 390.0,
+    "f3_status": "owned",
+    "sigma_1": 3.13887570571587,
+    "sigma60": 22.7439812334256,
+    "grid_cap": 7.0,
+    "notes": []
+   },
+   "primary": {
+    "curve": "primary",
+    "h": 1,
+    "T": 20,
+    "sigma_T": 3.13887570571587,
+    "mu_star_mkt": 2.05,
+    "mu10K_mkt": 2.36,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": false
+    },
+    "cost_per_attempt": 95.83333333333333,
+    "cost_per_attempt_mkt_mu0": 95.83333333333333,
+    "sigma60": 22.7439812334256,
+    "m_star": 0.090133735996371,
+    "m10K": 0.10376371558606615,
+    "grid_cap": 7.0,
+    "F_rt_usd": 6.2,
+    "v_usd": 12.5,
+    "S_rt_ticks": 1.55,
+    "c_lim_ticks": 0.496,
+    "c_mkt_ticks": 2.0460000000000003,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 205,
+      "f_at_k": 326.9169636,
+      "f_at_k_minus_1": -2.1563883,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 31,
+      "max_below": {
+       "k": 204,
+       "f": -2.1563883,
+       "se": 9.679598395645233
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": 236,
+      "f_at_k": 0.038900000000000046,
+      "f_at_k_minus_1": -0.0378,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 46,
+      "max_below": {
+       "k": 235,
+       "f": -0.0378,
+       "se": null
+      }
+     }
+    }
+   },
+   "spread1": {
+    "curve": "primary",
+    "h": 1,
+    "T": 20,
+    "sigma_T": 3.13887570571587,
+    "mu_star_mkt": 1.5,
+    "mu10K_mkt": 1.81,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": false
+    },
+    "cost_per_attempt": 95.83333333333333,
+    "cost_per_attempt_mkt_mu0": 95.83333333333333,
+    "sigma60": 22.7439812334256,
+    "m_star": 0.06595151414368611,
+    "m10K": 0.07958149373338125,
+    "grid_cap": 7.0,
+    "F_rt_usd": 6.2,
+    "v_usd": 12.5,
+    "S_rt_ticks": 1.0,
+    "c_lim_ticks": 0.496,
+    "c_mkt_ticks": 1.496,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 150,
+      "f_at_k": 326.9169636,
+      "f_at_k_minus_1": -2.1563883,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 40,
+      "max_below": {
+       "k": 149,
+       "f": -2.1563883,
+       "se": 9.679598395645233
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": 181,
+      "f_at_k": 0.038900000000000046,
+      "f_at_k_minus_1": -0.0378,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 58,
+      "max_below": {
+       "k": 180,
+       "f": -0.0378,
+       "se": null
+      }
+     }
+    }
+   },
+   "E_dir60": {
+    "curve": "dir60",
+    "h": 60,
+    "T": 6,
+    "sigma_T": 22.7439812334256,
+    "mu_star_mkt": 1.91,
+    "mu10K_mkt": 3.62,
+    "above_cap": {
+     "mu_star": false,
+     "mu10K": false
+    },
+    "cost_per_attempt": 103.94422382025687,
+    "cost_per_attempt_mkt_mu0": 98.0708758137821,
+    "sigma60": 22.7439812334256,
+    "m_star": 0.08397826134296031,
+    "m10K": 0.1591629874667625,
+    "grid_cap": 7.0,
+    "F_rt_usd": 6.2,
+    "v_usd": 12.5,
+    "S_rt_ticks": 1.55,
+    "c_lim_ticks": 0.496,
+    "c_mkt_ticks": 2.0460000000000003,
+    "search": {
+     "mu_star_mkt": {
+      "k_bisection": 191,
+      "f_at_k": 0.917,
+      "f_at_k_minus_1": -13.99625,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 30,
+      "max_below": {
+       "k": 190,
+       "f": -13.99625,
+       "se": 12.029163020549085
+      }
+     },
+     "mu10K_mkt": {
+      "k_bisection": 362,
+      "f_at_k": 0.00385000000000002,
+      "f_at_k_minus_1": -0.0013000000000000234,
+      "confirmed": true,
+      "violations": [],
+      "n_checked": 71,
+      "max_below": {
+       "k": 361,
+       "f": -0.0013000000000000234,
+       "se": null
+      }
+     }
+    }
+   }
+  }
+ },
+ "not_computed": {}
+}

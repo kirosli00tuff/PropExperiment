@@ -1,0 +1,17 @@
+# E.32b economics: regression against E.28 (A3_econ.json)
+
+Written by econ32b_regress.py at 2026-10-29 00:53:38 PDT (EconSetup-OpusXHigh). Code: work/econ/econ32b*.py on E.28's A3_funnel.py / A3_models.py / A3_run.py (copied unchanged, COPY_MANIFEST.json); inputs: E.28's A3_inputs.json (copied), S = 1 tick for every pair, T = 20, sigma_T = sigma_1m, market case only, grid 0..5.00 ticks at 0.01, bisection then E.28's grid confirmation.
+
+E.28 reports mu10K in the limit case; with S = 1.00 its market twin is mu10K + 1.00 exactly (EV and P10K depend on mu only through d = mu - c, on the same common random numbers). The grid runs to 5.00 so every E.28 value <= 4 has its twin on the grid. A pass is a difference of at most one grid step (0.01).
+
+## Result: PASS
+
+- Pairs compared: 121 (every E.28 pair computed; 11 E.28 pairs not computed there either: bulenox|MET, bulenox|SI, lucid|SI, lucid|SIL, mffu|MET, mffu|SI, mffu|SIL, topstep|MET, topstep|SI, topstep|SIL, tradeify|SI).
+- mu*_mkt within one grid step: 121 / 121; identical (or above 4 in both): 121 / 121.
+- mu10K_mkt = E.28 mu10K + 1.00 within one grid step: 121 / 121; identical (or above the cap in both): 121 / 121.
+- Cost per attempt (E.28's definition): largest absolute difference USD 0.
+- EV at the mu*_mkt grid point vs E.28's grid_check f_at_k: largest absolute difference 4.500000002849447e-06 USD over 92 pairs (floating point only: E.28 passed the unrounded d to the day law, this code d rounded to 1e-9 ticks; no threshold moves).
+- Thresholds corrected by the grid confirmation: 0; unconfirmed: 0.
+- Work: 6462 evaluations, 19590 s summed over jobs; run stats: {"chunks": [{"fingerprint": "27af1bdb86ecd928", "jobs": 31, "ran": 31, "workers": 6, "wall_s": 901.4, "peak_pss_mb": 1879, "min_mem_available_mb": 8589}, {"fingerprint": "27af1bdb86ecd928", "jobs": 30, "ran": 29, "workers": 6, "wall_s": 839.3, "peak_pss_mb": 1932, "min_mem_available_mb": 6223}, {"fingerprint": "27af1bdb86ecd928", "jobs": 30, "ran": 29, "workers": 6, "wall_s": 805.8, "peak_pss_mb": 2006, "min_mem_available_mb": 6380}, {"fingerprint": "27af1bdb86ecd928", "jobs": 30, "ran": 30, "workers": 6, "wall_s": 823.1, "peak_pss_mb": 2032, "min_mem_available_mb": 6426}], "wall_s_total": 3369.6, "peak_pss_mb_max": 2032}.
+
+

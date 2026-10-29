@@ -1,0 +1,57 @@
+import json
+R = {}
+def r(v, reason, unk=False): return {"value": v, "unknown": unk, "reason": reason}
+grp = lambda ids, fig, name: "No figure for this contract (only sibling/leader items); most specific post-2012 product-group figure: %s ATS share %s%% of volume 2016-18 [%s]; >= 50%%" % (name, fig, ids)
+D = {
+ "K-SGKW": r(1, grp("I-7061672", "70.4", "subgroup Energy - Crude Oil") + "; group Energy 66.5% [I-4888951]"),
+ "K-PXYN": r(1, grp("I-3548445", "70.4", "subgroup Energy - Crude Oil") + "; group Energy 66.5% [I-3605110]"),
+ "K-LRVK": r(1, "This contract: ATS share 69.4% of volume 2016-18 [I-4639192], 60.4% 2014-16 [I-0430256]; HFT share 53.9% in 2020 [I-1840791]; all >= 50%. Pre-2012 35.34% (2010) not used [I-8218782]"),
+ "K-LIRS": r(1, grp("I-1597290", "65.7", "subgroup Energy - Natural Gas") + "; group Energy 66.5% [I-5058928]"),
+ "K-DLUC": r(1, grp("I-0503598", "65.7", "subgroup Energy - Natural Gas") + "; group Energy 66.5% [I-7404135]"),
+ "K-YJXE": r(1, "This contract: ATS share 69.9% of volume 2016-18 [I-9016881], 63.4% 2014-16 [I-1896805] (>= 50%); conflicting narrower HFT share 31.7% in 2020 [I-0244447] (< 50%); a >= 50% automated share exists, so 1"),
+ "K-NYZZ": r(1, grp("I-7699433", "67.1", "subgroup Metals - Precious") + "; group Metals 67.6% [I-6067220]"),
+ "K-LGJM": r(1, "This contract: ATS share 67.6% 2016-18 [I-2522729], 53.1% 2014-16 [I-7092689] (>= 50%); conflicting HFT share 48.1% in 2020 [I-4993657]; a >= 50% automated share exists, so 1"),
+ "K-OEVC": r(1, grp("I-8482891", "67.1", "subgroup Metals - Precious") + "; group Metals 67.6% [I-0555499]"),
+ "K-AAUT": r(1, "This contract: ATS share 67.1% of volume 2016-18 [I-5882287], 54.0% 2014-16 [I-7950192]; >= 50%"),
+ "K-SLBV": r(1, grp("I-6356903", "70.0", "subgroup Metals - Base") + "; group Metals 67.6% [I-8712916]"),
+ "K-YBWI": r(1, "This contract: ATS share 70.2% of volume 2016-18 [I-1422962]; >= 50%"),
+ "K-OTEO": r(1, grp("I-3401056", "70.9", "subgroup FX - [size class]") + " (source does not establish it is the same contract set); FX - G10 85.4% [I-1265864], FX 84.4% [I-9806213]; all >= 50%"),
+ "K-ASSS": r(1, "This contract: ATS share 82.0% 2016-18 [I-1368448], 80.3% 2014-16 [I-3378117] (>= 50%); conflicting HFT share 46.2% in 2020 [I-3614803]; a >= 50% automated share exists, so 1"),
+ "K-QIUI": r(1, grp("I-3123365", "70.9", "subgroup FX - [size class]") + " (same-contract match not established); FX - G10 85.4% [I-1543163], FX 84.4% [I-4405931]; all >= 50%"),
+ "K-LTAT": r(1, grp("I-0479260", "85.4", "subgroup FX - G10") + "; group FX 84.4% [I-7847507]"),
+ "K-UQNU": r(1, "No automated or HFT share for the contract or its product group (crypto) found; negative search item [I-0817364]; unknown rule gives 1", True),
+ "K-JGJF": r(1, "No automated or HFT share for the contract or its product group (crypto) found; negative search item [I-2723040]; unknown rule gives 1", True),
+ "K-ZXJD": r(1, "No automated or HFT share for the contract or its product group (crypto) found; negative search item [I-2861634]; unknown rule gives 1", True),
+ "K-OJGY": r(1, "No automated or HFT share for the contract or its product group (crypto) found; negative search item [I-2732663]; unknown rule gives 1", True),
+ "K-RISF": r(1, grp("I-5024080", "73.7", "subgroup Equities - US Index") + "; group Equities 73.7% [I-1794094]; cousin 2010 HFT 34.22% pre-2012 not used [I-7204588]"),
+ "K-FICQ": r(1, grp("I-1527447", "73.7", "subgroup Equities - US Index") + "; group Equities 73.7% [I-3350183]; cousin 2010 figure pre-2012 not used [I-8010834]"),
+ "K-DNXQ": r(1, grp("I-6207241", "73.7", "subgroup Equities - US Index") + "; group Equities 73.7% [I-0788735]"),
+ "K-QAJV": r(1, "This contract: ATS share 81.2% of volume 2016-18 [I-1855197] (80.2% 2014-16); >= 50%"),
+ "K-YEPF": r(1, grp("I-1696014", "73.7", "subgroup Equities - US Index") + "; group Equities 73.7% [I-4390455]"),
+ "K-KVJD": r(1, "This contract: ATS share 74.0% 2016-18 [I-9335725], 77.1% 2014-16 [I-6012764]; >= 50%"),
+ "K-AIIW": r(1, "No product-level automated share (not tabulated [I-0578841]; PTF share [I-1488081] and message share [I-4599609] are not automated-volume shares); subgroup Interest Rate - US Treasury ATS share 73.1% 2016-18 [I-0025019]; >= 50%"),
+ "K-HIOT": r(1, "This contract: ATS share 74.0% of volume 2016-18 [I-6260593], 70.2% 2014-16 [I-9939772]; >= 50%"),
+ "K-TATP": r(1, "This contract: ATS share 72.7% 2016-18 [I-5459118], 67.8% 2014-16 [I-8675173] (>= 50%); conflicting HFT share 45.2% in 2020 [I-7567369]; a >= 50% automated share exists, so 1"),
+ "K-UPOR": r(1, "No product-level automated share (not tabulated [I-2648488]; PTF [I-3609043] and message shares [I-8217612] are not automated-volume shares); subgroup Interest Rate - US Treasury ATS share 73.1% 2016-18 [I-7634482]; >= 50%"),
+ "K-JCID": r(1, grp("I-4539272", "55.2", "subgroup Agriculture - Grain and Oilseed") + "; group Agriculture 55.5% [I-6087904]; near the threshold"),
+ "K-ASNW": r(1, grp("I-5494011", "55.2", "subgroup Agriculture - Grain and Oilseed") + "; group Agriculture 55.5% [I-7071509]; near the threshold"),
+ "K-OMOR": r(1, grp("I-9109779", "55.2", "subgroup Agriculture - Grain and Oilseed") + "; group Agriculture 55.5% [I-5884122]; near the threshold"),
+ "K-GOMC": r(1, grp("I-8828729", "55.2", "subgroup Agriculture - Grain and Oilseed") + "; group Agriculture 55.5% [I-6093106]; near the threshold"),
+ "K-WSRZ": r(1, grp("I-3703152", "55.2", "subgroup Agriculture - Grain and Oilseed") + "; group Agriculture 55.5% [I-6659893]; near the threshold"),
+ "K-AMNJ": r(1, grp("I-0443253", "55.2", "subgroup Agriculture - Grain and Oilseed") + "; group Agriculture 55.5% [I-0317015]; near the threshold"),
+ "K-BMTO": r(1, grp("I-8614170", "55.2", "subgroup Agriculture - Grain and Oilseed") + "; group Agriculture 55.5% [I-2189168]; near the threshold"),
+ "K-CSTX": r(1, grp("I-3209804", "55.2", "subgroup Agriculture - Grain and Oilseed") + "; group Agriculture 55.5% [I-8438683]; near the threshold"),
+ "K-OQCY": r(1, "This contract: ATS share 52.5% of volume 2016-18 [I-1131224] (>= 50%, near threshold); earlier 45.7% 2014-16 [I-4547482] and HFT share 23.9% in 2020 [I-4818309] are below 50%; a >= 50% automated share exists, so 1"),
+ "K-IXHJ": r(1, "This contract: ATS share 53.3% of volume 2016-18 [I-7436349] (>= 50%, near threshold); earlier 47.9% 2014-16 [I-3787207] and HFT share 36.0% in 2020 [I-4926121] below 50%; a >= 50% automated share exists, so 1"),
+ "K-AJZH": r(1, "This contract: ATS share 62.2% of volume 2016-18 [I-5314344] (>= 50%); conflicting HFT share 26.6% in 2020 [I-4420312]; a >= 50% automated share exists, so 1"),
+ "K-ODAS": r(1, grp("I-6240806", "55.2", "subgroup Agriculture - Grain and Oilseed") + "; group Agriculture 55.5% [I-8756877]; near the threshold"),
+ "K-KQRO": r(1, grp("I-9369860", "55.2", "subgroup Agriculture - Grain and Oilseed") + "; group Agriculture 55.5% [I-3220011]; near the threshold"),
+ "K-EXGX": r(1, grp("I-3485877", "73.1", "subgroup Interest Rate - US Treasury") + " (contract listed only from 2021, after the window; group figure); group Interest Rate 71.2% [I-8726977]"),
+ "K-DCJJ": r(1, grp("I-2616775", "73.1", "subgroup Interest Rate - US Treasury") + " (contract listed only from 2021, after the window; group figure); group Interest Rate 71.2% [I-0606241]"),
+ "K-NUPE": r(1, grp("I-5549572", "73.1", "subgroup Interest Rate - US Treasury") + " (contract listed only from 2021, after the window; group figure); group Interest Rate 71.2% [I-9166273]"),
+ "K-LWIK": r(1, grp("I-3496040", "73.1", "subgroup Interest Rate - US Treasury") + " (contract listed only from 2021, after the window; group figure); group Interest Rate 71.2% [I-3403141]"),
+}
+labs = list(json.load(open('/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e32b_briefs/F4_masked_contracts.json'))['contracts'])
+assert set(D) == set(labs), (set(labs) - set(D), set(D) - set(labs))
+json.dump({k: {"D2a": v} for k, v in D.items()}, open('/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e32b_briefs/work/blind2/r_d2a.json', 'w'), indent=1)
+print('ok', len(D))

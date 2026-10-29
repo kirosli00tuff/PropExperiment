@@ -1,0 +1,21 @@
+2026-10-28 23:21:16 PDT fingerprint 27af1bdb86ecd928: 2 jobs, 2 to run on 2 workers
+2026-10-28 23:22:39 PDT bulenox|6A regress 83s 63 evals | regress: mu*=3.17 mu10K=3.75
+2026-10-28 23:25:06 PDT topstep|MNQ regress 229s 66 evals | regress: mu*=4.26 mu10K=None
+2026-10-28 23:25:06 PDT done: wall 229.4 s, peak PSS 909 MB, min MemAvailable 9268 MB
+# E.32b economics: regression against E.28 (A3_econ.json)
+
+Written by econ32b_regress.py at 2026-10-28 23:25:06 PDT (EconSetup-OpusXHigh). Code: work/econ/econ32b*.py on E.28's A3_funnel.py / A3_models.py / A3_run.py (copied unchanged, COPY_MANIFEST.json); inputs: E.28's A3_inputs.json (copied), S = 1 tick for every pair, T = 20, sigma_T = sigma_1m, market case only, grid 0..5.00 ticks at 0.01, bisection then E.28's grid confirmation.
+
+E.28 reports mu10K in the limit case; with S = 1.00 its market twin is mu10K + 1.00 exactly (EV and P10K depend on mu only through d = mu - c, on the same common random numbers). The grid runs to 5.00 so every E.28 value <= 4 has its twin on the grid. A pass is a difference of at most one grid step (0.01).
+
+## Result: PASS
+
+- Pairs compared: 2 (every E.28 pair computed; 11 E.28 pairs not computed there either: bulenox|MET, bulenox|SI, lucid|SI, lucid|SIL, mffu|MET, mffu|SI, mffu|SIL, topstep|MET, topstep|SI, topstep|SIL, tradeify|SI).
+- mu*_mkt within one grid step: 2 / 2; identical (or above 4 in both): 2 / 2.
+- mu10K_mkt = E.28 mu10K + 1.00 within one grid step: 2 / 2; identical (or above the cap in both): 2 / 2.
+- Cost per attempt (E.28's definition): largest absolute difference USD 0.
+- EV at the mu*_mkt grid point vs E.28's grid_check f_at_k: largest absolute difference 0.0 USD over 1 pairs.
+- Thresholds corrected by the grid confirmation: 0; unconfirmed: 0.
+- Work: 129 evaluations, 311 s summed over jobs; run stats: {"fingerprint": "27af1bdb86ecd928", "jobs": 2, "ran": 2, "workers": 2, "wall_s": 229.4, "peak_pss_mb": 909, "min_mem_available_mb": 9268}.
+
+

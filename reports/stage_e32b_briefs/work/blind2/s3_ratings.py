@@ -1,0 +1,57 @@
+import json
+def r(v, reason, unk=False): return {"value": v, "unknown": unk, "reason": reason}
+crude = "Jump clustering at the former day-session open (8:55-9:10 ET), its close and the 18:00 Globex open, full text 2013-14 %s (jump/volatility effect, no direction); settlement window 2:28-2:30 ET with no effect study %s"
+ng = "Settlement-window handoff: last half-hour before the day close (14:00-14:30 ET) predicted by the rest-of-day return, 1993-2020, reused full text %s; settlement window 14:28-14:30 ET %s"
+D = {
+ "K-LRVK": r(1, crude % ("[I-1640979]", "[I-3076916]")),
+ "K-SGKW": r(1, "Same underlying: " + crude % ("[I-2066423]", "[I-1738431]")),
+ "K-PXYN": r(1, "Same underlying: " + crude % ("[I-1959469]", "[I-7345560]")),
+ "K-YJXE": r(1, ng % ("[I-0386511]", "[I-9917861]")),
+ "K-LIRS": r(1, "Same underlying: " + ng % ("[I-5119402]", "[I-6955528]")),
+ "K-DLUC": r(1, "Same underlying: " + ng % ("[I-1327429]", "[I-3387387]")),
+ "K-LGJM": r(1, "London gold fix handoff: signed price effect around the fix before the 2015 reform, discovery done within minutes after [I-6724703]; 24-hour pattern with return drops around fix times (thesis) [I-3883164]; settlement window [I-5064135]"),
+ "K-NYZZ": r(1, "Same underlying: London gold fix handoff effect before the 2015 reform [I-9053794]; return drops around fix times (thesis) [I-5027665]"),
+ "K-AAUT": r(1, "London silver fixing: 10-12 bp downward bias in the futures for about 10 min before and after the fix start, 2000-2013 (pre-2014 regime, working paper) [I-2448113]; settlement window [I-9021282]"),
+ "K-OEVC": r(1, "Same underlying: London silver fixing 10-12 bp bias around the fix, 2000-2013 [I-4467794]"),
+ "K-YBWI": r(0, "Session hours [I-2554322] and settlement window [I-1298450] are structure only; the only effect item is a group-level volume pattern by region (no price effect, not this product) [I-8886948]"),
+ "K-SLBV": r(0, "Session hours [I-1602887] and settlement window [I-5301602] structure only; group-level volume pattern only [I-7217126]"),
+ "K-ASSS": r(1, "Regional sessions: a currency depreciates in its own local hours (spot, 1997-2007) [I-1997533]; fix handoffs: USD appreciates into each fix and reverses after, futures show the same pattern [I-0385912]"),
+ "K-OTEO": r(1, "Same underlying: regional-session effect (spot) [I-1420487]; fix handoff pattern [I-5528222]"),
+ "K-LTAT": r(1, "Regional sessions: a currency depreciates in its own local hours (spot, 1997-2007) [I-0545225]; fix handoffs with appreciation into and reversal after [I-4509167]"),
+ "K-QIUI": r(1, "Same underlying: regional-session effect (spot) [I-3902529]; fix handoff pattern [I-5512704]"),
+ "K-OJGY": r(1, "US-hours open (volume spike) to the 17:00 EST futures break: first half-hour return predicts the last half hour, spot 2013-2020, in and out of sample, gross, full text [I-9184146]; structure changed to 24/7 from 2026-05-29 [I-2974317]"),
+ "K-ZXJD": r(1, "US-hours open to the 17:00 EST break: first half-hour predicts last half hour, spot 2013-2020, full text [I-6761635]; 24/7 from 2026-05-29 [I-8578632]"),
+ "K-JGJF": r(1, "US-hours open to the 17:00 EST break: first half-hour predicts last half hour (spot study, documented for this underlying's session per the item) [I-2153729]; 24/7 from 2026-05-29 [I-2359180]"),
+ "K-UQNU": r(1, "US-hours open to the 17:00 EST break: first half-hour predicts last half hour (spot study) [I-8330014]; 24/7 from 2026-05-29 [I-2949503]"),
+ "K-KVJD": r(1, "Cash-close handoff: last half hour (15:30-16:00 ET) predicted by the rest of day, full text, to 2020-05, weaker after 2018 [I-3605243]; settlement at the cash close [I-9383535]; European-open drift on a cousin [I-0108886]"),
+ "K-FICQ": r(1, "Cash-close handoff: last half hour predicted by the rest of day, full text [I-4155899]; settlement at the cash close [I-9570812]"),
+ "K-QAJV": r(1, "Cash-close handoff: last half hour predicted by the rest of day, full text [I-0921042]; settlement at the cash close [I-2066339]"),
+ "K-RISF": r(1, "Cash-close handoff: last half hour predicted by the rest of day, full text [I-8854546]"),
+ "K-YEPF": r(1, "Cash-close handoff: last half hour predicted by the rest of day, full text [I-9922552]"),
+ "K-DNXQ": r(1, "Cash-close handoff: last half hour predicted by the rest of day, full text [I-8150962]"),
+ "K-TATP": r(1, "Settlement-window handoff: rest-of-day return predicts the last 30 min to the end of daily settlement, this contract's own row significant, 1983-2020 [I-3708033]; New York open volatility/volume peak in cash Treasuries [I-9587597]"),
+ "K-AIIW": r(1, "New York open handoff: volatility and volume peak 08:30-09:00 ET in the cash underlying (volatility/volume only, 1994) [I-1145866]; settlement-window effect in a 16-bond-futures study (asset class) [I-1928689]"),
+ "K-HIOT": r(1, "New York open handoff: volatility and volume peak in the cash underlying (volatility/volume only, 1994) [I-2305996]; settlement-window effect in a 16-bond-futures study [I-4520870]"),
+ "K-UPOR": r(1, "New York open handoff: volatility and volume peak in the cash underlying (volatility/volume only, 1994) [I-5884774]; settlement-window effect in a 16-bond-futures study [I-6525360]"),
+ "K-EXGX": r(1, "New York open handoff: volatility and volume peak 08:30-09:00 ET in cash Treasuries (another venue of the underlying; volatility/volume only, 1994) [I-9155500]; hours structure [I-1022631]"),
+ "K-DCJJ": r(1, "New York open handoff: volatility and volume peak in cash Treasuries (volatility/volume only, 1994) [I-8276903]; hours [I-9790908]"),
+ "K-NUPE": r(1, "New York open handoff: volatility and volume peak in cash Treasuries (volatility/volume only, 1994) [I-9139150]; hours [I-9582986]"),
+ "K-LWIK": r(1, "New York open handoff: volatility and volume peak in cash Treasuries (volatility/volume only, 1994) [I-1217845]; hours [I-8838855]"),
+ "K-OQCY": r(1, "Settlement-window reversals (pre-close to settlement moves reversed at the next open, fewer after 2012) [I-8239414]; U-shaped day-session volatility at the open after the 07:45-08:30 pause and at the close [I-3315214]; pause structure [I-2912436]"),
+ "K-JCID": r(1, "Same underlying: settlement-window reversals [I-7530066]; U-shaped day-session volatility at the post-pause open and close [I-7900497]"),
+ "K-AMNJ": r(1, "Same underlying: settlement-window reversals [I-6324359]; U-shaped day-session volatility at the post-pause open and close [I-3259029]"),
+ "K-IXHJ": r(1, "U-shaped day-session volatility at the open after the 07:45-08:30 pause and at the close, corn/soybeans 2015-2017 (volatility only, thesis) [I-7178522]; settlement window [I-2295042]"),
+ "K-ASNW": r(1, "Same underlying: U-shaped day-session volatility at the post-pause open and close (volatility only) [I-0382745]"),
+ "K-BMTO": r(1, "Same underlying: U-shaped day-session volatility at the post-pause open and close (volatility only) [I-5087908]"),
+ "K-AJZH": r(0, "Session pause [I-9550181] [I-7665519] and settlement window [I-9976623] are structure only; no handoff effect documented for this product"),
+ "K-OMOR": r(0, "Session pause [I-3793663] [I-9894022] and settlement window [I-4773215] structure only; no handoff effect documented"),
+ "K-CSTX": r(0, "Session pause [I-1116014] [I-5460583] and settlement window [I-9522623] structure only; no handoff effect documented"),
+ "K-ODAS": r(0, "Session pause [I-9064652] [I-4536229] structure only; no handoff effect documented"),
+ "K-KQRO": r(0, "Session pause [I-6318745] [I-5320277] structure only; no handoff effect documented"),
+ "K-GOMC": r(0, "Session pause [I-1781636] [I-9362044] structure only; no handoff effect documented"),
+ "K-WSRZ": r(0, "Session pause [I-5417062] [I-7887729] structure only; no handoff effect documented"),
+}
+labs = list(json.load(open('/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e32b_briefs/F4_masked_contracts.json'))['contracts'])
+assert set(D) == set(labs), (set(labs) - set(D), set(D) - set(labs))
+json.dump({k: {"s3": v} for k, v in D.items()}, open('/home/kiros-li/Documents/GitHub/PropExperiment/reports/stage_e32b_briefs/work/blind2/r_s3.json', 'w'), indent=1)
+print('ok', len(D))

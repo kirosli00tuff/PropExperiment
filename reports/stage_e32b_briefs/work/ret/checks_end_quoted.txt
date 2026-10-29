@@ -1,0 +1,52 @@
+# E.32b checks: end
+$ date
+Thu Oct 29 09:43:24 PDT 2026
+$ git status --short
+[2156 lines: 2155 untracked, 1 tracked changes; quoted below: every tracked change and every line naming E.32b (9)]
+ M docs/STAGES.md
+?? reports/E.32b_RETURN.md
+?? reports/stage_e32b_STATE.md
+?? reports/stage_e32b_briefs/
+?? reports/stage_e32b_holding_scope.md
+?? reports/stage_e32b_ranking.md
+?? reports/stage_e32b_ranking_spec.md
+?? reports/stage_e32b_ranking_spec.sha256
+?? reports/stage_e32b_recommendations.md
+$ git status --short | wc -l
+2156
+$ git log --oneline -3
+3a8edf0 docs: Stage E.32b adds build recommendations (step 3b) as its main output
+3efe70b docs: V56 (ZM clean negative accepted) and Stage E.32b updated with the holding-time scope
+2661261 Stage E.33c ZM discovery search (completion)
+$ uv run python -m data.holdout status (keys)
+top all_ok True unlocks_logged 0 unlock_log_ok True
+holdout_2 all_ok True unlocks_logged 0 unlock_log_ok True
+MCL all_ok True unlocks_logged 0 unlock_log_ok True
+MGC all_ok True unlocks_logged 0 unlock_log_ok True
+MHG all_ok True unlocks_logged 0 unlock_log_ok True
+NG all_ok True unlocks_logged 0 unlock_log_ok True
+$ uv run python reports/stage_e32_briefs/seal/soy_test_seal.py status (keys)  [the E.32 test seal]
+soy test {'state': 'sealed', 'files_sealed': 114, 'files_ok': 114, 'plaintext_in_window_present': [], 'unlocks_logged': 0, 'all_ok': True}
+$ guard33.py dry-check  [E.33 test-seal read guard: must refuse every forbidden read]
+dry-check: 4 of 4 refused
+rc=0
+$ wc -c REGISTRATION.md
+0 REGISTRATION.md
+$ uv run python -m screening.harness_freeze verify --expected 2e908c81e01d0aad835b30ab7b95f628182666dd8d76301cdd4ea465bb41edd1
+preflight OK: 2e908c81e01d0aad835b30ab7b95f628182666dd8d76301cdd4ea465bb41edd1
+$ ledger
+37290 ledger/databento_spend.jsonl
+42589d7bc02696383cbf5d800ceb922491a4dea90fb2c3d3e2f82da36834c9bb
+$ ledger total per account (SpendGate.account_spent_usd)
+acct-1: spent 118.390020 cap 120.00 headroom 1.609980
+acct-2: spent 353.455228 cap 355.38 headroom 1.924772
+acct-3: spent 122.370573 cap 125.00 headroom 2.629427
+$ trial registry: current_n and last entry (N)
+current_n 838 | registrations 10 | last r009-E33 538 -> 838 2026-10-28T14:23:13-07:00
+$ sha256sum ledger/trial_registrations.jsonl
+11777e468fa6f2db9e7d7da16bd57681a985b9370c8e6058f8dd6ae8bd75f24c
+.env DATABENTO_API_KEY: absent
+.env DATABENTO_API_KEY2: absent
+.env DATABENTO_API_KEY3: non-empty
+$ ls reports | grep -c stage_e32b
+7

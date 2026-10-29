@@ -257,6 +257,17 @@ docs/prompts/ (index in docs/prompts/README.md), committed before it is sent.
     the binding 0.2007, inside the synthetic null's per-seed maxima; PBO 0.14. Clean negative: no finalist, no E.34
     registration, the test window stays sealed, no purchase. VerifyWorker (Fable) CONFIRMED all 300 from the raw
     predictions; StatsReviewer (Fable) 0 BLOCKING; run 2026-10-28 (see reports/E.33c_RETURN.md). N 838.
+  - Stage E.32b — directional rerank of the firm-contract pairs (V50 item 2, V51): a new two-layer spec (09ebe697,
+    hashed before any lookup), eight family readers, F3 volatility in E.28's window only, a masked fact table rated
+    blind (FactAuditor's two leaks patched first), E.28's economics rerun for market orders. 35 of 47 codes pass
+    Layer 1 (QM fails on D4 = 0); 103 pairs ranked: Bulenox YM 3.113, Topstep MNQ 3.096, Tradeify MNQ 3.087; YM in
+    the top 5 of all 28 variants; ZL 15, ZM 24. Holding scope: 15-30 minute bands (15-60 for Topstep ZL), not hours;
+    no prop firm allows overnight holds. Build recommendations: one ZL program at Topstep (F10 order-book state +
+    F09 soy-complex lead-lag, one registration on the single sealed read 2017-05..2020-11, prior about 4%); MNQ F08,
+    YM F08 and the EQ3 F08 pool under 1%; stop rule at most one more registered build. RankingReviewer PASS,
+    RecsReviewer PASS with one ruling (LR-Q3b), FixVerifier PASS (all Fable); run 2026-10-28/29 (see
+    reports/E.32b_RETURN.md). N 838. The user decides D1-D5 (V31 scope, the ZL read, the cost gate, 2024-03+ data,
+    the next stage).
   - Stage E.3b onward — K2's confirmation session, then one screening and one confirmation session per remaining
     cluster, in the order of docs/STAGE_E_DESIGN.md D12 (planned).
 - Stage F — Practice-account forward test, then one 50K Combine. (Listed as "Stage E" until 2026-09-23;

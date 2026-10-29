@@ -1,0 +1,697 @@
+# R2 Q1-Q3 ratings (Stage E.32b step 3b)
+
+> **Lead errata (session 4, 2026-10-29 08:53 PDT; R1Fixer-OpusHigh for RV2 B1; no rating line below is changed).**
+> The rater's RTY|F09 and ZL|F09 Q3 lines are kept as written (Q3 = 2). LR-Q3b (RULINGS.md, 07:19:57) replaced the
+> value with Q3 = 1 for C112-C116 (RTY|F09) and C138-C139 (ZL|F09): E.12 Gate 0 (R1-11) and E.20's search (R1-15)
+> held G17 cross-market lead features (60-minute returns of the other clusters' lead prices; never the product's own
+> cluster) on M2K/RTY and ZL at h60-hF, a neighbouring horizon of both bands (spec 8.3 Q3 = 1, the reading the rater
+> used for ZL F01 and F11); the leg-level reading (the dossiers' leaders, NQ for RTY and ZS/ZM for ZL, were never live
+> features there: Q3 = 2) is the sensitivity. The RTY|F09 reason "no cross-market configuration closed on RTY or M2K"
+> is wrong as a fact: leads from five other asset classes (ZN, 6E, CL, GC, ZC) were live on RTY and M2K in both
+> searches (R2_dossiers.md errata items 4 and 5). briefs/R2_combinations.json carries both values for these seven
+> combinations: Q3 (1, reason LR-Q3b) and Q3_rater (2, the rater's reason).
+
+Rater: CombinationScorer-OpusXHigh (worker-xhigh, opus, fresh context). Generated 2026-10-29 06:18:47 PDT. Inputs read: brief_wave_d.md section D2 and R2_dossiers_for_rating.md only (no combinations file, ranking, F5 or score). Q4-Q7 are the script's. JSON: R2_Q_ratings.json (185 ids). Helper code: work/cscore/.
+
+## Rules applied
+
+- Q3 = 0 (re-test) when a band member repeats a closed single-product configuration of the same family on this price path at the same horizon (MNQ F01 = R1-14 H6 T1; ZL F01 = R1-08 K6-cp1-01). Q3 = 1 (close variant) for a pooled closed test that contains the product (R1-13 E16-H1/H4), an ML search whose bar features span the family at a band or neighbouring horizon (R1-11, R1-15), a shorter hold of a closed signal (K1/K6-cp3-01), or a same-family closed line at a neighbouring horizon. Q3 = 2 when the family was closed only on another product (incl. R1-21 on ZM, per LR-R1). Venue never reopens a closed configuration (LR-R1), so ids in one dossier share Q3.
+- Same underlying counts as this product: MYM = YM (OC-1), MNQ = NQ price path (lead's instruction in the dossiers), M2K = RTY.
+- Q2 policy: product-specific negative evidence gives 0 even when pool evidence is positive (ZL F01, MNQ F11, ZL F08 with none on ZL and cousins decayed); positive gross product evidence with a failed net program test stays 3 (F01 equities: F01.E02 against F01.E14/F01.E15), since costs are Q4-Q7's question.
+- Pools (EQ3, EQ3m) take the weakest member on Q1, Q2 and Q3: a pooled test assumes the mechanism on every member, and a pool that contains a re-test re-tests.
+- Evidence rule: every Q2 of 0 or 3 rests on full-text or reused rows (no 4 given), so no value is marked unverified. Within each dossier all ids share the shortest member, so Q1 never differs by id.
+
+## Ratings by dossier
+
+Q values are integers 0-4; 'unv' is the Q2 evidence-rule flag (none set). Every id in a dossier shares the dossier's mechanism, evidence and closed-line overlap; the reasons are in the JSON and, per dossier, below each table.
+
+### YM|F01
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C001 | 15, 30 | 15 | 3 | 3 | 1 | no |
+| C002 | 15, 30 | 15 | 3 | 3 | 1 | no |
+| C003 | 15, 30 | 15 | 3 | 3 | 1 | no |
+| C004 | 15, 30 | 15 | 3 | 3 | 1 | no |
+| C005 | 15, 30 | 15 | 3 | 3 | 1 | no |
+| C006 | 15, 30 | 15 | 3 | 3 | 1 | no |
+
+- Q1: Identified non-informational hedging flow into the close (short-gamma and leveraged-ETF rebalancing, mechanism quote); the YM row F01.E02 runs to 2020-05, mostly pre-2015, and post-2015 evidence is cousin, conditional or flat (F01.E10, F01.E11, F01.E14), so 3 not 4.
+- Q2: F01.E02 (full text): peer-reviewed recursive out-of-sample R2 2.18% on the YM row at 30 min, but gross (F01.E04: no costs considered), so 3 not 4; pooled program test incl. YM net negative (F01.E15).
+- Q3: Close variant, not a re-test: R1-13 E16-H1 settlement-window momentum was closed pooled over 27 roots incl. YM; R1-03 K1-cp1-01 (MYM traded, YM path) is a first-half-hour momentum port whose decision time the dossier does not state; the documented C-30-to-close configuration was run singly only on NQ (R1-14).
+
+### YM|F04
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C007 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C008 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C009 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C010 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C011 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C012 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Plausible slow-digestion story without an identified participant; the only drift evidence at the band is a weak joint test on ES 2008-2014 (F04.E03), while F04.E01 puts most permanent change within minutes and F04.E08 (abstract) within 1 s.
+- Q2: Best evidence is peer-reviewed in sample on a cousin (F04.E03, ES, full text) plus a regulator paper on ES and ZN (F04.E01); nothing on this underlying: other-product evidence.
+- Q3: Family overlap only: R1-01 MES family E scheduled-macro windows (cousin) and R1-04 K2 ISM pre-drift (rates); no macro-release configuration closed on YM or MYM.
+
+### YM|F05
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C013 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C014 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C015 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C016 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C017 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C018 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Slow policy-path repricing is documented only in cash Treasuries (F05.E01, about 3 h, to 2024) and as FOMC-day close momentum on SPY 1993-2013 (F05.E02); no post-statement drift on equity-index futures at the band; F05.E06 is the pre-FOMC drift, gone after 2015.
+- Q2: Peer-reviewed in sample on another venue (F05.E02, SPY) and a central-bank working paper on another asset class (F05.E01); nothing on this underlying.
+- Q3: Family overlap only: R1-04 K2 post-FOMC (rates), R1-07 K5-fomc-01 (MGC, confirmation null) and R1-01 MES family E; no FOMC configuration closed on this underlying.
+
+### YM|F08
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C019 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C020 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C021 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C022 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C023 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C024 | 15, 30 | 15 | 3 | 2 | 1 | no |
+
+- Q1: Identified carry-over of prior-US-close imbalances into the European open on the ES cousin (F08.E03, 1998-2020, gross Sharpe 1.1, -0.5 after spreads), documented at 60 min outside the 15-30 band and outside the main session; the cash-open handoff has only F01.E05 (SPY, to 2013).
+- Q2: Peer-reviewed in sample on a cousin (F08.E03, ES, full text; negative after spreads) and other-venue SPY (F01.E05); nothing on this underlying.
+- Q3: Same family and underlying: R1-03 K1-cp3-01 prior-day close-location (MYM traded, 08:30 CT entry to flat) and R1-13 E16-H4 next-day reversal (pooled incl. YM, intraday) are closed; a 15-30 min hold of the same handoff signals is a close variant; R1-01 MES family overlap.
+
+### YM|F10
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C025 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C026 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C027 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C028 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C029 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C030 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Plausible participant story (worked orders, refill) but forward order-flow predictability decays to insignificance by 5-30 min (F10.E01, NYSE 1996) and lasts seconds in F10.E02 (abstract); the only 10-60 min support is gamma-conditioned reversal on ES (F10.E06, working paper).
+- Q2: Cousin working paper in sample, gross (F10.E06, ES) and other-asset-class peer-reviewed evidence that decays (F10.E01); ZM program test net negative (F10.E07); nothing on this underlying.
+- Q3: Family overlap only: R1-21 S3 order flow and book state closed on ZM; R1-11 MYM Gate 0 used bar features without book data (other family); R1-20 is an execution line.
+
+### YM|F11
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C031 | 15, 30 | 15 | 1 | 2 | 1 | no |
+| C032 | 15, 30 | 15 | 1 | 2 | 1 | no |
+| C033 | 15, 30 | 15 | 1 | 2 | 1 | no |
+| C034 | 15, 30 | 15 | 1 | 2 | 1 | no |
+| C035 | 15, 30 | 15 | 1 | 2 | 1 | no |
+| C036 | 15, 30 | 15 | 1 | 2 | 1 | no |
+
+- Q1: Generic price-path autocorrelation with no identified flow or clock; F11.E01 documents reversion at 2-16 min and weak trend at >= 1 h with OOS R2 under 1 bp; F11.E09 dropped post-publication; F11.E10 OHLCV families fail OOS net on MNQ and NQ.
+- Q2: Peer-reviewed OOS on a cross-asset futures pool, gross and tiny, equity membership unrecorded (F11.E01, full text); SPY practitioner WP dropped (F11.E09); cousin preprints negative (F11.E10); nothing on this underlying.
+- Q3: Same family and underlying at a neighbouring horizon: R1-11 MYM Gate 0 ML over 64 bar features at h60 and R1-03 K1-cp2-01 ORB (MYM traded) are closed; R1-01 MES and R1-21 ZM family overlap.
+
+### YM|F12
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C037 | 15, 30 | 15 | 3 | 2 | 2 | no |
+| C038 | 15, 30 | 15 | 3 | 2 | 2 | no |
+| C039 | 15, 30 | 15 | 3 | 2 | 2 | no |
+| C040 | 15, 30 | 15 | 3 | 2 | 2 | no |
+| C041 | 15, 30 | 15 | 3 | 2 | 2 | no |
+| C042 | 15, 30 | 15 | 3 | 2 | 2 | no |
+
+- Q1: Identified non-informational flow at fixed dates (dealer delta and gamma hedging, LETF rebalancing); evidence on the ES cousin (F12.E01 3rd-Friday reversal 2003-2021, 2015-23 not significant alone; F12.E03 high-gamma reversal 2018-24) and stocks/ETFs (F12.E02), not on this underlying.
+- Q2: Working papers in sample and gross on a cousin (F12.E01, F12.E03, ES) and another venue (F12.E02, stocks and ETFs, full text); nothing on this underlying.
+- Q3: Family overlap only: R1-14 H6 T3 GEX-conditioned close momentum closed on NQ; R1-23 C2 is a stop before any test and R1-19 an evidence finding (LR-R1).
+
+### MYM|F01
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C043 | 30, 60 | 30 | 3 | 3 | 1 | no |
+| C044 | 30, 60, 120 | 30 | 3 | 3 | 1 | no |
+
+- Q1: As YM|F01 (same underlying): identified hedging flow into the close; YM row F01.E02 mostly pre-2015, post-2015 evidence cousin, conditional or flat (F01.E10, F01.E11, F01.E14); shortest member 30 = the documented horizon.
+- Q2: As YM|F01: F01.E02 (full text) peer-reviewed recursive OOS on the YM row at 30 min, a band member, gross (F01.E04), so 3 not 4.
+- Q3: Close variant: R1-13 E16-H1 pooled incl. YM; R1-03 K1-cp1-01 on MYM itself (first-half-hour momentum port, decision time not stated); R1-11 MYM Gate 0 at h60/h120 used generic bar features (other family); no single-product run of the documented configuration.
+
+### MYM|F04
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C045 | 30, 60 | 30 | 2 | 2 | 2 | no |
+| C046 | 30, 60, 120 | 30 | 2 | 2 | 2 | no |
+
+- Q1: As YM|F04; the shortest member 30 sits at the end of the weak t+10..t+30 ES window (F04.E03); fast absorption per F04.E01 and F04.E08 (abstract).
+- Q2: Best evidence is peer-reviewed in sample on a cousin (F04.E03, ES, full text) plus a regulator paper on ES and ZN (F04.E01); nothing on this underlying: other-product evidence.
+- Q3: Family overlap only: R1-01 MES family E (cousin) and R1-04 K2 ISM pre-drift (rates); no macro-release configuration closed on MYM or YM.
+
+### MYM|F05
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C047 | 30, 60 | 30 | 2 | 2 | 2 | no |
+| C048 | 30, 60, 120 | 30 | 2 | 2 | 2 | no |
+
+- Q1: Slow policy-path repricing is documented only in cash Treasuries (F05.E01, about 3 h, to 2024) and as FOMC-day close momentum on SPY 1993-2013 (F05.E02); no post-statement drift on equity-index futures at the band; F05.E06 is the pre-FOMC drift, gone after 2015.
+- Q2: Peer-reviewed in sample on another venue (F05.E02, SPY) and a central-bank working paper on another asset class (F05.E01); nothing on this underlying.
+- Q3: Family overlap only: R1-04 K2 post-FOMC (rates), R1-07 K5-fomc-01 (MGC, confirmation null) and R1-01 MES family E; no FOMC configuration closed on this underlying.
+
+### MYM|F08
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C049 | 30, 60 | 30 | 3 | 2 | 1 | no |
+| C050 | 30, 60, 120 | 30 | 3 | 2 | 1 | no |
+
+- Q1: Identified carry-over of prior-US-close imbalances into the European open on the ES cousin (F08.E03, 1998-2020, gross Sharpe 1.1, -0.5 after spreads), documented at 60 min, inside the band but outside the main session; the cash-open handoff has only F01.E05 (SPY, to 2013).
+- Q2: Peer-reviewed in sample on a cousin (F08.E03, ES, full text; negative after spreads) and other-venue SPY (F01.E05); nothing on this underlying.
+- Q3: Same family and product: R1-03 K1-cp3-01 prior-day close-location on MYM (08:30 CT entry to flat) and R1-13 E16-H4 (pooled incl. YM) are closed; a 30-120 min hold of the same signal is a shorter-hold close variant; R1-01 MES family overlap.
+
+### MYM|F10
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C051 | 30, 60 | 30 | 2 | 2 | 2 | no |
+| C052 | 30, 60, 120 | 30 | 2 | 2 | 2 | no |
+
+- Q1: Plausible participant story but the shortest member 30 lies at the end of the documented decay to insignificance (F10.E01, NYSE 1996; F10.E02 seconds, abstract); only gamma-conditioned reversal on ES reaches 60 min (F10.E06, working paper).
+- Q2: Cousin working paper in sample, gross (F10.E06, ES) and other-asset-class peer-reviewed evidence that decays (F10.E01); ZM program test net negative (F10.E07); nothing on this underlying.
+- Q3: Family overlap only: R1-21 S3 closed on ZM; R1-11 MYM Gate 0 at h60/h120 used bar features without book data (other family); R1-20 is an execution line.
+
+### MYM|F11
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C053 | 30, 60 | 30 | 1 | 2 | 1 | no |
+| C054 | 30, 60, 120 | 30 | 1 | 2 | 1 | no |
+
+- Q1: As YM|F11: generic pattern with no identified flow or clock; the 30-120 band is nearer F11.E01's weak >= 1 h trend but OOS R2 is under 1 bp; F11.E10 cousin OOS fails net.
+- Q2: Peer-reviewed OOS on a cross-asset futures pool, gross and tiny, equity membership unrecorded (F11.E01, full text); SPY practitioner WP dropped (F11.E09); cousin preprints negative (F11.E10); nothing on this underlying.
+- Q3: Close variant: R1-11 MYM Gate 0 ML over 64 bar features tested this product at h60, a band member, with a superset feature space; R1-03 K1-cp2-01 ORB on MYM; an own-price-path rule is narrower than the closed ML configuration.
+- Q3 (C054): Close variant: R1-11 MYM Gate 0 ML over 64 bar features tested this product at h60 and h120, both band members, with a superset feature space; R1-03 K1-cp2-01 ORB on MYM; an own-price-path rule is narrower than the closed ML configuration.
+
+### MYM|F12
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C055 | 30, 60 | 30 | 3 | 2 | 2 | no |
+| C056 | 30, 60, 120 | 30 | 3 | 2 | 2 | no |
+
+- Q1: Identified non-informational flow at fixed dates (dealer delta and gamma hedging, LETF rebalancing); evidence on the ES cousin (F12.E01 3rd-Friday reversal 2003-2021, 2015-23 not significant alone; F12.E03 high-gamma reversal 2018-24) and stocks/ETFs (F12.E02), not on this underlying.
+- Q2: Working papers in sample and gross on a cousin (F12.E01, F12.E03, ES) and another venue (F12.E02, stocks and ETFs, full text); nothing on this underlying.
+- Q3: Family overlap only: R1-14 H6 T3 GEX-conditioned close momentum closed on NQ; R1-23 C2 is a stop before any test and R1-19 an evidence finding (LR-R1).
+
+### MNQ|F01
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C057 | 15, 30 | 15 | 3 | 3 | 0 | no |
+| C058 | 15, 30 | 15 | 3 | 3 | 0 | no |
+| C059 | 15, 30 | 15 | 3 | 3 | 0 | no |
+| C060 | 15, 30 | 15 | 3 | 3 | 0 | no |
+| C061 | 15, 30 | 15 | 3 | 3 | 0 | no |
+
+- Q1: Identified hedging flow into the close (mechanism quote); NQ row OOS R2 3.76% to 2020-05 (F01.E02); the post-2015 test on the NQ path shows gross 1.25 ticks only (F01.E14) and cousin evidence is conditional or flat (F01.E10, F01.E11).
+- Q2: F01.E02 (full text): peer-reviewed recursive OOS on the NQ row (MNQ's price path) at 30 min, gross (F01.E04), so 3 not 4; the registered net test on this path is negative (F01.E14).
+- Q3: Re-tests R1-14 (E.20 H6 rest-of-day to last-half-hour momentum on the NQ price path at MNQ cost, entry 14:30 CT to the close, 2020-06..2024-02, closed V38): the 30-min member is H6 T1; R1-03 K1-cp1-01 on MNQ and R1-15 r_ROD ML on NQ are also closed.
+
+### MNQ|F04
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C062 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C063 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C064 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C065 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C066 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Plausible slow-digestion story without an identified participant; the only drift evidence at the band is a weak joint test on ES 2008-2014 (F04.E03), while F04.E01 puts most permanent change within minutes and F04.E08 (abstract) within 1 s.
+- Q2: Best evidence is peer-reviewed in sample on a cousin (F04.E03, ES, full text) plus a regulator paper on ES and ZN (F04.E01); nothing on this underlying: other-product evidence.
+- Q3: Family overlap only: R1-01 MES family E (cousin); R1-19 lists NQ in the census as an evidence finding, not a ban (LR-R1).
+
+### MNQ|F05
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C067 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C068 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C069 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C070 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C071 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Slow policy-path repricing is documented only in cash Treasuries (F05.E01, about 3 h, to 2024) and as FOMC-day close momentum on SPY 1993-2013 (F05.E02); no post-statement drift on equity-index futures at the band; F05.E06 is the pre-FOMC drift, gone after 2015.
+- Q2: Peer-reviewed in sample on another venue (F05.E02, SPY) and a central-bank working paper on another asset class (F05.E01); nothing on this underlying.
+- Q3: Family overlap only: R1-04 K2 post-FOMC (rates), R1-07 K5-fomc-01 (MGC, confirmation null) and R1-01 MES family E; no FOMC configuration closed on this underlying.
+
+### MNQ|F08
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C072 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C073 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C074 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C075 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C076 | 15, 30 | 15 | 3 | 2 | 1 | no |
+
+- Q1: Identified carry-over of prior-US-close imbalances into the European open on the ES cousin (F08.E03, 1998-2020, gross Sharpe 1.1, -0.5 after spreads), documented at 60 min outside the 15-30 band and outside the main session; the cash-open handoff has only F01.E05 (SPY, to 2013).
+- Q2: Peer-reviewed in sample on a cousin (F08.E03, ES, full text; negative after spreads) and other-venue SPY (F01.E05); nothing on this underlying.
+- Q3: Same family and underlying: R1-03 K1-cp3-01 prior-day close-location (MNQ traded, 08:30 CT to flat), R1-13 E16-H4 (pooled incl. NQ) and R1-10 K8-wkndbtc-01 (MNQ) are closed; a 15-30 min hold of these handoff signals is a close variant; R1-01 MES family overlap.
+
+### MNQ|F10
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C077 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C078 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C079 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C080 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C081 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Plausible participant story (worked orders, refill) but forward order-flow predictability decays to insignificance by 5-30 min (F10.E01, NYSE 1996) and lasts seconds in F10.E02 (abstract); the only 10-60 min support is gamma-conditioned reversal on ES (F10.E06, working paper).
+- Q2: Cousin working paper in sample, gross (F10.E06, ES) and other-asset-class peer-reviewed evidence that decays (F10.E01); ZM program test net negative (F10.E07); nothing on this underlying.
+- Q3: Family overlap only: R1-21 S3 closed on ZM; R1-11 MNQ Gate 0 used bar features without book data; R1-22 drops NQ for the passive direction with directional scope unstated; R1-20 is an execution line.
+
+### MNQ|F11
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C082 | 15, 30 | 15 | 1 | 0 | 1 | no |
+| C083 | 15, 30 | 15 | 1 | 0 | 1 | no |
+| C084 | 15, 30 | 15 | 1 | 0 | 1 | no |
+| C085 | 15, 30 | 15 | 1 | 0 | 1 | no |
+| C086 | 15, 30 | 15 | 1 | 0 | 1 | no |
+
+- Q1: Generic price-path pattern with no identified flow or clock (F11.E01 OOS R2 under 1 bp at 2-16 min and >= 1 h); on this underlying F11.E10 finds no OHLCV family passing OOS net on MNQ 5-min and no direction on NQ 15-min; near 0, but not a full-text contradiction at 15-30 min.
+- Q2: Negative evidence on this underlying: F11.E10 (reused / full text) walk-forward OOS net on MNQ 5-min (none of 14 families passes) and NQ 15-min; the only support is the cross-asset pool at other horizons (F11.E01); the 0 rests on full-text and reused rows, not abstracts.
+- Q3: Same family and underlying at a neighbouring horizon: R1-11 MNQ Gate 0 (64 bar features) and R1-15 NQ E20S (36 bar features) at h60, and R1-03 K1 ORB, VXN band fade and VWAP stop-and-reverse on MNQ are closed; R1-19 noise-area momentum is an evidence finding.
+
+### MNQ|F12
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C087 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C088 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C089 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C090 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C091 | 15, 30 | 15 | 3 | 2 | 1 | no |
+
+- Q1: Identified non-informational flow at fixed dates (dealer delta and gamma hedging, LETF rebalancing); evidence on the ES cousin (F12.E01 3rd-Friday reversal 2003-2021, 2015-23 not significant alone; F12.E03 high-gamma reversal 2018-24) and stocks/ETFs (F12.E02), not on this underlying.
+- Q2: Working papers in sample and gross on a cousin (F12.E01, F12.E03, ES) and another venue (F12.E02, stocks and ETFs, full text); nothing on this underlying.
+- Q3: Close variant: R1-14 H6 T3 (GEX-conditioned momentum into the close on the NQ path, 134 trades) is closed at the band's 30 min; the 3rd-Friday restriction and the high-gamma reversal side are untested, but negative-GEX close momentum on all days would re-test R1-14.
+
+### RTY|F01
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C092 | 15, 30 | 15 | 3 | 3 | 1 | no |
+| C093 | 15, 30 | 15 | 3 | 3 | 1 | no |
+| C094 | 15, 30 | 15 | 3 | 3 | 1 | no |
+| C095 | 15, 30 | 15 | 3 | 3 | 1 | no |
+| C096 | 15, 30 | 15 | 3 | 3 | 1 | no |
+
+- Q1: Identified hedging flow into the close (mechanism quote); Russell row OOS R2 3.15% to 2020-05 (F01.E02) and IWM OOS R2 2.43% 2000-2013 (F01.E05); post-2015 evidence is cousin, conditional or flat (F01.E10, F01.E11, F01.E14).
+- Q2: F01.E02 (full text): peer-reviewed recursive OOS on the Russell row at 30 min, gross (F01.E04), so 3 not 4; same-index ETF OOS (F01.E05); pooled program test incl. RTY net negative (F01.E15).
+- Q3: Close variant: R1-13 E16-H1 pooled incl. RTY, R1-15 E20S r_ROD ML on RTY at t4 = F-60 / h60 (neighbouring horizon) and R1-03 K1-cp1-01 on M2K (RTY path, decision time not stated) are closed; the documented C-30 configuration was never run singly on RTY.
+
+### RTY|F04
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C097 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C098 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C099 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C100 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C101 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Plausible slow-digestion story without an identified participant; the only drift evidence at the band is a weak joint test on ES 2008-2014 (F04.E03), while F04.E01 puts most permanent change within minutes and F04.E08 (abstract) within 1 s.
+- Q2: Best evidence is peer-reviewed in sample on a cousin (F04.E03, ES, full text) plus a regulator paper on ES and ZN (F04.E01); nothing on this underlying: other-product evidence.
+- Q3: Family overlap only: R1-01 MES family E (cousin); R1-19 lists RTY in the census as an evidence finding, not a ban (LR-R1).
+
+### RTY|F05
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C102 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C103 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C104 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C105 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C106 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Slow policy-path repricing is documented only in cash Treasuries (F05.E01, about 3 h, to 2024) and as FOMC-day close momentum on SPY 1993-2013 (F05.E02); no post-statement drift on equity-index futures at the band; F05.E06 is the pre-FOMC drift, gone after 2015.
+- Q2: Peer-reviewed in sample on another venue (F05.E02, SPY) and a central-bank working paper on another asset class (F05.E01); nothing on this underlying.
+- Q3: Family overlap only: R1-04 K2 post-FOMC (rates), R1-07 K5-fomc-01 (MGC, confirmation null) and R1-01 MES family E; no FOMC configuration closed on this underlying.
+
+### RTY|F08
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C107 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C108 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C109 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C110 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C111 | 15, 30 | 15 | 3 | 2 | 1 | no |
+
+- Q1: Identified carry-over of prior-US-close imbalances into the European open on the ES cousin (F08.E03, 1998-2020, gross Sharpe 1.1, -0.5 after spreads), documented at 60 min outside the 15-30 band and outside the main session; the cash-open handoff has only F01.E05 (SPY, to 2013).
+- Q2: Peer-reviewed in sample on a cousin (F08.E03, ES, full text; negative after spreads) and other-venue SPY (F01.E05); nothing on this underlying.
+- Q3: Same family and underlying: R1-03 K1-cp3-01 prior-day close-location (M2K traded, RTY path, 08:30 CT to flat) and R1-13 E16-H4 (pooled incl. RTY) are closed; a 15-30 min hold of the same signals is a close variant; R1-01 MES family overlap.
+
+### RTY|F09
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C112 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C113 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C114 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C115 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C116 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Plausible slow diffusion from the deeper market; the only evidence is a preprint on 60-min chart extrema 2004-2014 with no trading test (F09.E06: NQ leads Russell by 8-11 min); E.25 prices information within seconds on NQ; M2K-RTY is arbitrage-tight (F09.E10).
+- Q2: Preprint in sample on this underlying (F09.E06, Russell futures on ICE, full text), not peer-reviewed and not a trading test, so below 3: other-venue evidence.
+- Q3: Family overlap only: R1-10 K8 cross-market (MGC, 6C, MNQ legs), R1-13 E16-H2 NQ vs ZN pair and R1-21 S1/S2 on ZM; no cross-market configuration closed on RTY or M2K.
+
+### RTY|F10
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C117 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C118 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C119 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C120 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C121 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Plausible participant story (worked orders, refill) but forward order-flow predictability decays to insignificance by 5-30 min (F10.E01, NYSE 1996) and lasts seconds in F10.E02 (abstract); the only 10-60 min support is gamma-conditioned reversal on ES (F10.E06, working paper).
+- Q2: Cousin working paper in sample, gross (F10.E06, ES) and other-asset-class peer-reviewed evidence that decays (F10.E01); ZM program test net negative (F10.E07); nothing on this underlying.
+- Q3: Family overlap only: R1-21 S3 closed on ZM; R1-11 M2K Gate 0 used bar features without book data (other family); R1-20 is an execution line.
+
+### RTY|F11
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C122 | 15, 30 | 15 | 1 | 2 | 1 | no |
+| C123 | 15, 30 | 15 | 1 | 2 | 1 | no |
+| C124 | 15, 30 | 15 | 1 | 2 | 1 | no |
+| C125 | 15, 30 | 15 | 1 | 2 | 1 | no |
+| C126 | 15, 30 | 15 | 1 | 2 | 1 | no |
+
+- Q1: Generic price-path autocorrelation with no identified flow or clock; F11.E01 documents reversion at 2-16 min and weak trend at >= 1 h with OOS R2 under 1 bp; F11.E09 dropped post-publication; F11.E10 OHLCV families fail OOS net on MNQ and NQ.
+- Q2: Peer-reviewed OOS on a cross-asset futures pool, gross and tiny, equity membership unrecorded (F11.E01, full text); SPY practitioner WP dropped (F11.E09); cousin preprints negative (F11.E10); nothing on this underlying.
+- Q3: Same family and product at a neighbouring horizon: R1-15 E20S on RTY (36 bar features) and R1-11 M2K Gate 0 at h60, and R1-03 K1-cp2-01 ORB (M2K) are closed; R1-01 MES and R1-21 ZM family overlap.
+
+### RTY|F12
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C127 | 15, 30 | 15 | 3 | 2 | 2 | no |
+| C128 | 15, 30 | 15 | 3 | 2 | 2 | no |
+| C129 | 15, 30 | 15 | 3 | 2 | 2 | no |
+| C130 | 15, 30 | 15 | 3 | 2 | 2 | no |
+| C131 | 15, 30 | 15 | 3 | 2 | 2 | no |
+
+- Q1: Identified non-informational flow at fixed dates (dealer delta and gamma hedging, LETF rebalancing); evidence on the ES cousin (F12.E01 3rd-Friday reversal 2003-2021, 2015-23 not significant alone; F12.E03 high-gamma reversal 2018-24) and stocks/ETFs (F12.E02), not on this underlying.
+- Q2: Working papers in sample and gross on a cousin (F12.E01, F12.E03, ES) and another venue (F12.E02, stocks and ETFs, full text); nothing on this underlying.
+- Q3: Family overlap only: R1-14 H6 T3 GEX-conditioned close momentum closed on NQ; R1-23 C2 is a stop before any test and R1-19 an evidence finding (LR-R1).
+
+### ZL|F01
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C132 | 15, 30, 60 | 15 | 0 | 0 | 0 | no |
+| C133 | 15, 30, 60 | 15 | 0 | 0 | 0 | no |
+
+- Q1: Contradicted by full text on this product: Baltussen's BO row is null or negative out of sample (F01.E03) and the CBOT meal cousin's slope is negative with OOS R2 < 0 (F01.E16); the gamma and LETF story has no documented soybean-oil counterpart; only DCE 2002-2013 (F01.E09) and the in-sample commodity pool (F01.E01, R2 0.12%) are positive.
+- Q2: Negative evidence on this product: F01.E03 (full text, peer-reviewed) OOS R2 negative or nil for BO; pooled program test incl. ZL net negative (F01.E15); the 0 rests on full-text rows.
+- Q3: Re-tests R1-08 K6-cp1-01 (momentum port on ZL, decision 12:44 CT, about 30 min before the flat, closed V40) at the band's 30-min member; the 60-min member sits on R1-15 E20S r_ROD ML on ZL at t4 = F-60 / h60; R1-13 E16-H1 pooled incl. ZL.
+
+### ZL|F03
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C134 | 15, 30, 60 | 15 | 3 | 2 | 2 | no |
+| C135 | 15, 30, 60 | 15 | 3 | 2 | 2 | no |
+
+- Q1: Report digestion with documented drift on cousins: soybean reaction significant at 30 min and growing to the close 2010-2021 (F03.E01), big-event drift after minute 10 in corn (F03.E02); against it F03.E03 (no systematic under- or overreaction) and F03.E04/F03.E05 (abstracts); nothing intraday on ZL (F03.E08 snippet, F03.E09).
+- Q2: Working paper and dissertation in sample on cousins (F03.E01 ZS/ZC, F03.E02 corn, full text) and a paper on ZS that finds no systematic drift (F03.E03); ZL itself only a news snippet (F03.E08): other-product evidence.
+- Q3: Family overlap only: R1-08 K6-wasdepre-01 and K6-wasdepost-01 closed on ZC and ZS, R1-21 post-USDA dropped on ZM; R1-23 V39 'commodity event drift' names crude, metals and natgas, not grains (ambiguity flagged).
+
+### ZL|F08
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C136 | 15, 30, 60 | 15 | 1 | 0 | 1 | no |
+| C137 | 15, 30, 60 | 15 | 1 | 0 | 1 | no |
+
+- Q1: Clock pattern without a grain-specific participant flow (the imbalance story is Boyarchenko's for equities); cousin evidence is null or decayed: ZM overnight plus first half-hour no prediction OOS (F08.E09), ZC settlement reversals declined after the 2012 rule change (F08.E08), DCE effect stopped (F08.E07, abstract); F08.E13 is volatility only.
+- Q2: No evidence on ZL; the cousin full-text and reused rows are negative or volatility-only (F08.E08, F08.E09, F08.E13), so the 0 does not rest on the abstract row F08.E07.
+- Q3: Close variant: R1-08 K6-cp3-01 prior-day close-location on ZL decides at the 08:30 CT reopen and holds to the flat; a 15-60 min hold at the same reopen is a shorter-hold variant; R1-13 E16-H4 pooled incl. ZL; R1-01 MES family overlap.
+
+### ZL|F09
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C138 | 15, 30, 60 | 15 | 2 | 2 | 2 | no |
+| C139 | 15, 30, 60 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Identified economic anchor (crush margin) but no evidence at the horizon: cointegration on 180 of 243 days in 2015 with no half-life or trading test (F09.E01); the crush-residual and propagation test on ZM finds nothing net (F09.E02); spillovers within 30 s (F09.E03, abstract).
+- Q2: Peer-reviewed in sample on this product but of cointegration only, with no horizon or trading test (F09.E01, full text), so below 3; sibling-leg program test net negative (F09.E02).
+- Q3: Family overlap: R1-21 S1 crush residual and S2 propagation closed on ZM with ZL as an input leg (LR-R1: family overlap on other products); R1-08 K6-crushgap-01 on ZS; trading ZL on the same residual is the mirror leg (1 if read as a close variant).
+
+### ZL|F10
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C140 | 15, 30, 60 | 15 | 2 | 2 | 2 | no |
+| C141 | 15, 30, 60 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Plausible participant story but forward predictability decays by 5-30 min (F10.E01); grain evidence is a drift-burst reversal with look-ahead (F10.E03, ZC) and an abstract with unknown horizon (F10.E04); the ZM order-flow and book test with ZL MBP-1 input fails net (F10.E07).
+- Q2: Cousin peer-reviewed in sample (F10.E03, ZC, full text via E.32, look-ahead to remove) and other-asset evidence (F10.E01); sibling program test net negative (F10.E07); nothing on ZL.
+- Q3: Family overlap: R1-21 S3 order flow and book state closed on ZM with ZL MBP-1 as an input; R1-20 ZL passive follow-up skipped (execution line); R1-11 ZL bar-feature ML (other family); V50 item 4: ZL MBP-1 2020-12..2024-02 is not a clean holdout.
+
+### ZL|F11
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C142 | 15, 30, 60 | 15 | 1 | 2 | 1 | no |
+| C143 | 15, 30, 60 | 15 | 1 | 2 | 1 | no |
+
+- Q1: Generic price-path pattern; F11.E01 (pool incl. crude) reversion 2-16 min and weak trend >= 1 h, OOS R2 under 1 bp; Chinese commodity intraday momentum and reversal do not cover costs (F11.E05, abstract); no commodity study positive OOS net at 1-240 min (E.32 front).
+- Q2: Peer-reviewed OOS gross on a cross-asset futures pool (F11.E01, full text); F11.E05 abstract negative; nothing on ZL.
+- Q3: Close variant: R1-11 ZL Gate 0 (64 bar features) and R1-15 ZL E20S (36 bar features) at h60, a band member, and R1-08 K6-cp2-01 ORB on ZL are closed; an own-price-path rule is narrower than the closed ML searches.
+
+### EQ3|F01
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C144 | 15, 30 | 15 | 3 | 3 | 0 | no |
+| C151 | 15, 30 | 15 | 3 | 3 | 0 | no |
+| C158 | 15, 30 | 15 | 3 | 3 | 0 | no |
+| C165 | 15, 30 | 15 | 3 | 3 | 0 | no |
+
+- Q1: Weakest member 3: all three underlyings have the identified hedging flow with product rows dominated by pre-2015 data (F01.E02: YM 2.18%, NQ 3.76%, Russell 3.15% OOS R2) and only cousin, conditional or flat post-2015 evidence (F01.E10, F01.E11, F01.E14).
+- Q2: Weakest member 3: peer-reviewed recursive OOS product rows for all three, gross (F01.E02, F01.E04; full text); asset-class pool in sample (F01.E01).
+- Q3: Re-tests R1-14 through the MNQ member (E.20 H6 on the NQ path, C-30 to the close, closed V38); the YM and RTY members are close variants of R1-13 E16-H1 (pooled).
+
+### EQ3|F04
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C145 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C152 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C159 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C166 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Weakest member 2 (all three as YM|F04): only a weak ES joint test at t+10..t+30 (F04.E03); fast absorption (F04.E01, F04.E08 abstract).
+- Q2: Weakest member 2: cousin peer-reviewed in sample (F04.E03) and regulator paper (F04.E01); nothing on any member.
+- Q3: Weakest member 2: family overlap only (R1-01 MES family E, R1-04 K2 ISM pre-drift; R1-19 evidence finding).
+
+### EQ3|F05
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C146 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C153 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C160 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C167 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Weakest member 2: post-statement drift documented only in cash Treasuries (F05.E01) and SPY FOMC-day close momentum (F05.E02); F05.E06 is the pre-FOMC drift.
+- Q2: Weakest member 2: other-venue and other-asset-class evidence (F05.E02, F05.E01).
+- Q3: Weakest member 2: family overlap only (R1-04, R1-07, R1-01).
+
+### EQ3|F08
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C147 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C154 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C161 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C168 | 15, 30 | 15 | 3 | 2 | 1 | no |
+
+- Q1: Weakest member 3: identified imbalance carry-over at the European open on the ES cousin (F08.E03), 60 min outside the band; cash-open handoff only F01.E05.
+- Q2: Weakest member 2: cousin peer-reviewed in sample, negative after spreads (F08.E03) and SPY (F01.E05).
+- Q3: Weakest member 1: R1-03 K1-cp3-01 closed on MYM, MNQ and M2K and R1-13 E16-H4 pooled incl. YM, NQ and RTY; 15-30 min holds of these handoff signals are close variants.
+
+### EQ3|F10
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C148 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C155 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C162 | 15, 30 | 15 | 2 | 2 | 2 | no |
+| C169 | 15, 30 | 15 | 2 | 2 | 2 | no |
+
+- Q1: Weakest member 2: plausible order-flow story, decay to insignificance by 5-30 min (F10.E01); gamma-conditioned ES reversal only (F10.E06).
+- Q2: Weakest member 2: cousin working paper (F10.E06) and other-asset evidence (F10.E01); ZM program test negative (F10.E07).
+- Q3: Weakest member 2: family overlap only (R1-21 S3 on ZM; R1-22 passive-direction drop of NQ, directional scope unstated).
+
+### EQ3|F11
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C149 | 15, 30 | 15 | 1 | 0 | 1 | no |
+| C156 | 15, 30 | 15 | 1 | 0 | 1 | no |
+| C163 | 15, 30 | 15 | 1 | 0 | 1 | no |
+| C170 | 15, 30 | 15 | 1 | 0 | 1 | no |
+
+- Q1: Weakest member 1: generic price-path pattern, OOS R2 under 1 bp (F11.E01); F11.E09 dropped; F11.E10 fails on MNQ and NQ.
+- Q2: Weakest member 0: MNQ's own-underlying evidence is negative OOS net (F11.E10, reused / full text); YM and RTY have only the cross-asset pool (F11.E01).
+- Q3: Weakest member 1: bar-feature ML at h60 closed on MYM, MNQ, NQ, RTY and M2K (R1-11, R1-15) and K1 price-path rules (R1-03); neighbouring horizon.
+
+### EQ3|F12
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C150 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C157 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C164 | 15, 30 | 15 | 3 | 2 | 1 | no |
+| C171 | 15, 30 | 15 | 3 | 2 | 1 | no |
+
+- Q1: Weakest member 3: identified dealer-hedging flow at fixed dates, evidence on the ES cousin (F12.E01, F12.E03) and stocks/ETFs (F12.E02).
+- Q2: Weakest member 2: cousin and other-venue working papers in sample (F12.E01, F12.E02, F12.E03).
+- Q3: Weakest member 1 (MNQ): R1-14 H6 T3 GEX-conditioned close momentum on the NQ path is closed at 30 min; YM and RTY members are family overlap only.
+
+### EQ3m|F01
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C172 | 30 | 30 | 3 | 3 | 0 | no |
+| C179 | 30 | 30 | 3 | 3 | 0 | no |
+
+- Q1: Weakest member 3: identified hedging flow; product rows mostly pre-2015 (F01.E02); post-2015 evidence cousin, conditional or flat (F01.E10, F01.E11, F01.E14); band = documented 30 min.
+- Q2: Weakest member 3: peer-reviewed recursive OOS rows for the Dow, NQ and Russell at 30 min, gross (F01.E02, F01.E04; full text).
+- Q3: Re-tests R1-14 through the MNQ member: the 30-min band is E.20 H6 T1 on the NQ path (C-30 to close, closed V38); MYM and RTY members are close variants of R1-13 E16-H1.
+
+### EQ3m|F04
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C173 | 30 | 30 | 2 | 2 | 2 | no |
+| C180 | 30 | 30 | 2 | 2 | 2 | no |
+
+- Q1: Weakest member 2: weak ES joint test ending at t+30 (F04.E03); fast absorption (F04.E01, F04.E08).
+- Q2: Weakest member 2: cousin peer-reviewed in sample (F04.E03) and regulator paper (F04.E01).
+- Q3: Weakest member 2: family overlap only (R1-01, R1-04; R1-19 evidence finding).
+
+### EQ3m|F05
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C174 | 30 | 30 | 2 | 2 | 2 | no |
+| C181 | 30 | 30 | 2 | 2 | 2 | no |
+
+- Q1: Weakest member 2: drift documented only in cash Treasuries (F05.E01) and SPY FOMC-day close momentum (F05.E02).
+- Q2: Weakest member 2: other-venue and other-asset-class evidence (F05.E02, F05.E01).
+- Q3: Weakest member 2: family overlap only (R1-04, R1-07, R1-01).
+
+### EQ3m|F08
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C175 | 30 | 30 | 3 | 2 | 1 | no |
+| C182 | 30 | 30 | 3 | 2 | 1 | no |
+
+- Q1: Weakest member 3: identified European-open imbalance carry-over on the ES cousin at 60 min (F08.E03); cash-open handoff only F01.E05.
+- Q2: Weakest member 2: cousin peer-reviewed in sample, negative after spreads (F08.E03) and SPY (F01.E05).
+- Q3: Weakest member 1: R1-03 K1-cp3-01 closed on MYM, MNQ and M2K, R1-13 E16-H4 pooled; a 30-min hold of these signals is a close variant.
+
+### EQ3m|F10
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C176 | 30 | 30 | 2 | 2 | 2 | no |
+| C183 | 30 | 30 | 2 | 2 | 2 | no |
+
+- Q1: Weakest member 2: the 30-min band sits at the end of the documented decay (F10.E01); only gamma-conditioned ES reversal reaches 60 min (F10.E06).
+- Q2: Weakest member 2: cousin working paper (F10.E06) and other-asset evidence (F10.E01); ZM test negative (F10.E07).
+- Q3: Weakest member 2: family overlap only (R1-21 S3 on ZM; R1-22 directional scope unstated).
+
+### EQ3m|F11
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C177 | 30 | 30 | 1 | 0 | 1 | no |
+| C184 | 30 | 30 | 1 | 0 | 1 | no |
+
+- Q1: Weakest member 1: generic price-path pattern, OOS R2 under 1 bp (F11.E01); F11.E10 fails on MNQ and NQ.
+- Q2: Weakest member 0: MNQ's own-underlying evidence is negative OOS net (F11.E10, reused / full text).
+- Q3: Weakest member 1: bar-feature ML at h60 closed on MYM, MNQ, NQ, RTY, M2K (R1-11, R1-15) and K1 price-path rules (R1-03); neighbouring horizon.
+
+### EQ3m|F12
+
+| id | band | shortest | Q1 | Q2 | Q3 | unv |
+|---|---|---|---|---|---|---|
+| C178 | 30 | 30 | 3 | 2 | 1 | no |
+| C185 | 30 | 30 | 3 | 2 | 1 | no |
+
+- Q1: Weakest member 3: identified dealer-hedging flow at fixed dates; ES cousin and stocks/ETFs evidence (F12.E01, F12.E02, F12.E03).
+- Q2: Weakest member 2: cousin and other-venue working papers in sample (F12.E01, F12.E02, F12.E03).
+- Q3: Weakest member 1 (MNQ): R1-14 H6 T3 GEX-conditioned close momentum on the NQ path closed at 30 min, the band itself; MYM and RTY family overlap only.
+
+## Counts
+
+| Q | 0 | 1 | 2 | 3 | 4 |
+|---|---|---|---|---|---|
+| Q1 | 2 | 28 | 81 | 74 | 0 |
+| Q2 | 15 | 0 | 146 | 24 | 0 |
+| Q3 | 13 | 76 | 96 | 0 | 0 |
+
+Q2 unverified: 0. Q unknown: 0.
+
+## Q3 = 0 (gate: excluded) with the closed line
+
+| id | closed line |
+|---|---|
+| C057 | Re-tests R1-14 (E.20 H6 rest-of-day to last-half-hour momentum on the NQ price path at MNQ cost, entry 14:30 CT to the close, 2020-06..2024-02, closed V38): the 30-min member is H6 T1; R1-03 K1-cp1-01 on MNQ and R1-15 r_ROD ML on NQ are also closed. |
+| C058 | Re-tests R1-14 (E.20 H6 rest-of-day to last-half-hour momentum on the NQ price path at MNQ cost, entry 14:30 CT to the close, 2020-06..2024-02, closed V38): the 30-min member is H6 T1; R1-03 K1-cp1-01 on MNQ and R1-15 r_ROD ML on NQ are also closed. |
+| C059 | Re-tests R1-14 (E.20 H6 rest-of-day to last-half-hour momentum on the NQ price path at MNQ cost, entry 14:30 CT to the close, 2020-06..2024-02, closed V38): the 30-min member is H6 T1; R1-03 K1-cp1-01 on MNQ and R1-15 r_ROD ML on NQ are also closed. |
+| C060 | Re-tests R1-14 (E.20 H6 rest-of-day to last-half-hour momentum on the NQ price path at MNQ cost, entry 14:30 CT to the close, 2020-06..2024-02, closed V38): the 30-min member is H6 T1; R1-03 K1-cp1-01 on MNQ and R1-15 r_ROD ML on NQ are also closed. |
+| C061 | Re-tests R1-14 (E.20 H6 rest-of-day to last-half-hour momentum on the NQ price path at MNQ cost, entry 14:30 CT to the close, 2020-06..2024-02, closed V38): the 30-min member is H6 T1; R1-03 K1-cp1-01 on MNQ and R1-15 r_ROD ML on NQ are also closed. |
+| C132 | Re-tests R1-08 K6-cp1-01 (momentum port on ZL, decision 12:44 CT, about 30 min before the flat, closed V40) at the band's 30-min member; the 60-min member sits on R1-15 E20S r_ROD ML on ZL at t4 = F-60 / h60; R1-13 E16-H1 pooled incl. ZL. |
+| C133 | Re-tests R1-08 K6-cp1-01 (momentum port on ZL, decision 12:44 CT, about 30 min before the flat, closed V40) at the band's 30-min member; the 60-min member sits on R1-15 E20S r_ROD ML on ZL at t4 = F-60 / h60; R1-13 E16-H1 pooled incl. ZL. |
+| C144 | Re-tests R1-14 through the MNQ member (E.20 H6 on the NQ path, C-30 to the close, closed V38); the YM and RTY members are close variants of R1-13 E16-H1 (pooled). |
+| C151 | Re-tests R1-14 through the MNQ member (E.20 H6 on the NQ path, C-30 to the close, closed V38); the YM and RTY members are close variants of R1-13 E16-H1 (pooled). |
+| C158 | Re-tests R1-14 through the MNQ member (E.20 H6 on the NQ path, C-30 to the close, closed V38); the YM and RTY members are close variants of R1-13 E16-H1 (pooled). |
+| C165 | Re-tests R1-14 through the MNQ member (E.20 H6 on the NQ path, C-30 to the close, closed V38); the YM and RTY members are close variants of R1-13 E16-H1 (pooled). |
+| C172 | Re-tests R1-14 through the MNQ member: the 30-min band is E.20 H6 T1 on the NQ path (C-30 to close, closed V38); MYM and RTY members are close variants of R1-13 E16-H1. |
+| C179 | Re-tests R1-14 through the MNQ member: the 30-min band is E.20 H6 T1 on the NQ path (C-30 to close, closed V38); MYM and RTY members are close variants of R1-13 E16-H1. |
+
+## Flags for the lead
+
+1. Q3 = 0, 13 ids: C057-C061 (MNQ|F01) re-test R1-14 (E.20 H6, NQ path at MNQ cost, C-30 to close, V38); C132-C133 (ZL|F01) re-test R1-08 K6-cp1-01 (ZL momentum port, decision 12:44 CT, V40); C144, C151, C158, C165 (EQ3|F01) and C172, C179 (EQ3m|F01) re-test R1-14 through the MNQ member.
+2. Boundary 1 vs 0, YM/MYM/RTY F01 (C001-C006, C043-C044, C092-C096): the dossier gives K1-cp1-01 only a 'signal bar 08:59 CT'; K6-cp1-01's 12:44 CT decision (30 min before the 13:14 CT flat) suggests the CP1 port trades the last 30 min before F; if so, the 30-min member re-tests K1-cp1-01 on MYM / M2K and these become 0. R1-13 H1 (V31: 'no rerun or variant on these windows') also bears on them.
+3. Boundary 0 vs 1, ZL F01 (C132-C133): rated a re-test of K6-cp1-01 (same product, family and 30-min horizon); if the lead treats a different momentum signal (first half-hour vs rest of day) as a variant, 1. Q1 = Q2 = 0 there either way.
+4. Boundary 1 vs 0, MYM F11 (C053-C054) and ZL F11 (C142-C143): R1-11 and R1-15 ML searches tested these products at h60 (and h120) over bar features; rated close variants; a reading that the ML spanned the rule's information gives 0.
+5. Boundary 1 vs 0, MNQ F12 (C087-C091) and the EQ3/EQ3m F12 pools: 1 holds only if the F12 search stays on the expiry calendar (or the high-gamma reversal side); negative-GEX momentum into the close on all days at 30 min is R1-14 H6 T3.
+6. Boundary 2 vs 1, ZL F09 (C138-C139) and ZL F10 (C140-C141): ZL data were inputs to the closed R1-21 S1/S2/S3 configurations on ZM; rated 2 per LR-R1 (family overlap on other products); a mirror-leg reading gives 1. ZL F10: V50 item 4, ZL MBP-1 2020-12..2024-02 is not a clean holdout for order-flow tests.
+7. Ambiguity, ZL F03 (C134-C135): V39 closed 'commodity event drift as a standalone stage' and R1-23 lists only crude, metals and natgas; rated 2 on the reading that grain report drift is not covered; if V39 covers it, 0.
+8. Ambiguity, MNQ F10 (C077-C081) and the F10 pools: R1-22 (V49 NQ drop) is stated for the passive direction; its scope for directional book-state use on the NQ path is unstated; rated 2 on R1-21 family overlap.
+9. Q1 boundary 2 vs 3, every F04 and F05 id: F04's drift evidence is a weak joint test on ES before 2015 (F04.E03) against fast absorption (F04.E01); F05's drift is documented only in cash Treasuries (F05.E01) and as SPY FOMC-day close momentum (F05.E02); reading either as 'identified mechanism, evidence on a cousin' gives 3.
+10. Q1 boundaries elsewhere: F11 rated 1 (generic story; 2 on a literal reading of 'participant story'); MNQ F11 near 0 (F11.E10 is a net-of-cost failure at 5-15 min on this underlying, not a full-text contradiction at 15-30); ZL F08 rated 1 (no grain participant flow; cousin evidence null or decayed).
+11. Q2 boundary ZL F09: F09.E01 is peer-reviewed in sample on this product but documents cointegration only (no half-life or trading test); rated 2, not 3.
+12. Pools: EQ3/EQ3m F01 are gated and F11 get Q2 = 0 only through the MNQ member; whether to re-form a pool without MNQ is the lead's call, not the rater's.
+13. Unclear or conflicting facts: F01.E14 ('T1 gross 1.25 ticks vs 4.08 cost, t -0.53') does not say whether t is gross or net; equity F08 evidence (F08.E03) is at the European open, 23:00-00:00 PT outside the main session, so a cash-open F08 test has no direct evidence; F04's 08:30 ET releases fall before the main session; the documented-horizon column differs for the same evidence between YM|F04 ([60]) and MYM|F04 ([20]) and between EQ3|F11 ([5, 60]) and EQ3m|F11 ([5, 15, 60]) (extraction inconsistency, no effect on the ratings).

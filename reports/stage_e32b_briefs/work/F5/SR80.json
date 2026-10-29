@@ -1,0 +1,128 @@
+{
+  "spec_sha256": "09ebe6970fcf027009152fa81a414360a015d535b095138cdf65cf1a4eb58635",
+  "generated_pdt": "2026-10-28 23:32:05 PDT",
+  "generated_by": "reports/stage_e32b_briefs/work/F5/sr80.py",
+  "inputs": {
+    "N": 838,
+    "N_prior": 538,
+    "budget": 300,
+    "T_disc": 796,
+    "T_test": 870,
+    "power": 0.8,
+    "dsr_level": 0.95,
+    "t_stat_bar": 3.0,
+    "V_disc": 0.0012578616352201257,
+    "V_test": 0.0011507479861910242,
+    "moments": "normal (skewness 0, kurtosis 3)",
+    "source": "reports/stage_e32_briefs/protocol/p7_final.py (read-only, imported)"
+  },
+  "formula": {
+    "se": "se(s, T) = sqrt((1 - g3 s + (g4 - 1)/4 s^2) / (T - 1)) = sqrt((1 + s^2/2) / (T - 1)) at normal moments",
+    "SR0": "E[max SR] = sqrt(V) [(1 - gamma) Phi^-1(1 - 1/N) + gamma Phi^-1(1 - 1/(N e))], V = 1/(T - 1)",
+    "G3": "smallest s with Phi((s - SR0) sqrt(T_disc - 1) / sqrt(1 + s^2/2)) >= 0.95 (N = 838, T = 796)",
+    "b_test": "max(3.0 / sqrt(T_test), smallest s with DSR >= 0.95 at N = 838, T = 870)",
+    "G4": "smallest s with s - se(s, T_disc) >= b_test",
+    "G3_G4_binding": "max(G3, G4)",
+    "SR80": "bar + Phi^-1(0.80) se(bar, T): p7_final's '80%-power true daily Sharpe' (s80 in report())",
+    "SR80_exact": "root of p7_final.power(s, bar, T) = Phi((s - bar) / se(s, T)) = 0.80",
+    "bars": "disc_G3: G3 at T = 796; disc_G3G4: max(G3, G4) at T = 796; test: b_test at T = 870"
+  },
+  "thresholds": {
+    "SR0_disc": 0.11365258253614735,
+    "SR0_test": 0.1087058671537616,
+    "G3": 0.17242150688451255,
+    "t_bar_test": 0.10170952554312156,
+    "DSR_test": 0.16488165417252623,
+    "b_test": 0.16488165417252623,
+    "G4": 0.20070338124341464,
+    "G3_G4_binding": 0.20070338124341464
+  },
+  "SR80": {
+    "disc_G3": 0.2024917659005044,
+    "disc_G3G4": 0.230851707369528,
+    "test": 0.19362508422185357
+  },
+  "SR80_exact_root": {
+    "disc_G3": 0.20257541026991618,
+    "disc_G3G4": 0.2309480084933135,
+    "test": 0.19369824717257744
+  },
+  "power_at_SR80_by_p7_power": {
+    "disc_G3": 0.7993477170284342,
+    "disc_G3G4": 0.7992514659652241,
+    "test": 0.7994028749706865
+  },
+  "bars": {
+    "disc_G3": {
+      "bar": 0.17242150688451255,
+      "T": 796
+    },
+    "disc_G3G4": {
+      "bar": 0.20070338124341464,
+      "T": 796
+    },
+    "test": {
+      "bar": 0.16488165417252623,
+      "T": 870
+    }
+  },
+  "cross_check": {
+    "method_A": "p7_final.py functions imported (required_sharpe, expected_max_sharpe, se_sharpe, g4_threshold, power, trade_dates), sys.dont_write_bytecode set",
+    "method_B": "independent re-implementation in this file with statistics.NormalDist only",
+    "max_abs_diff_A_vs_B": 8.411496499327598e-11,
+    "tolerance": 1e-07,
+    "p7_frozen_output": "reports/stage_e32_briefs/protocol/p7_final_budget300.md",
+    "p7_frozen_output_sha256": "88269842b9b5702288e65ca6c0a8959f6788b4ca9451035eb3eb3540cadb6536",
+    "printed_vs_recomputed": {
+      "SR0_disc": {
+        "printed": 0.1137,
+        "recomputed": 0.11365258253614735,
+        "agrees_at_4dp": true
+      },
+      "G3": {
+        "printed": 0.1724,
+        "recomputed": 0.17242150688451255,
+        "agrees_at_4dp": true
+      },
+      "t_bar_test": {
+        "printed": 0.1017,
+        "recomputed": 0.10170952554312156,
+        "agrees_at_4dp": true
+      },
+      "DSR_test": {
+        "printed": 0.1649,
+        "recomputed": 0.16488165417252623,
+        "agrees_at_4dp": true
+      },
+      "b_test": {
+        "printed": 0.1649,
+        "recomputed": 0.16488165417252623,
+        "agrees_at_4dp": true
+      },
+      "G4": {
+        "printed": 0.2007,
+        "recomputed": 0.20070338124341464,
+        "agrees_at_4dp": true
+      },
+      "G3_G4_binding": {
+        "printed": 0.2007,
+        "recomputed": 0.20070338124341464,
+        "agrees_at_4dp": true
+      },
+      "SR80_test": {
+        "printed": 0.1936,
+        "recomputed": 0.19362508422185357,
+        "agrees_at_4dp": true
+      }
+    },
+    "checks": {
+      "N_equals_838": true,
+      "T_disc_equals_796": true,
+      "T_test_equals_870": true,
+      "A_vs_B_max_abs_diff_below_tol": true,
+      "p7_report_regenerated_equals_disk": true,
+      "printed_values_agree_at_4dp": true
+    },
+    "pass": true
+  }
+}

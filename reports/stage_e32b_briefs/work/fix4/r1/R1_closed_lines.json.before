@@ -1,0 +1,4530 @@
+{
+ "schema": "R1_closed_lines/1",
+ "generated_pdt": "2026-10-28 23:28:02 PDT",
+ "sources": [
+  "docs/DECISIONS.md",
+  "docs/STAGES.md",
+  "reports/stage_e23_briefs/inventory_compact.txt",
+  "reports/stage_e23_briefs/inventory/*.json",
+  "ledger/trial_registrations.jsonl",
+  "reports/E.33c_RETURN.md",
+  "reports/E.31_RETURN.md",
+  "reports/E.12_RETURN.md",
+  "reports/E.17_RETURN.md",
+  "reports/E.25_RETURN.md",
+  "reports/stage_e12_gate0.json",
+  "reports/stage_e20_search_freeze.json"
+ ],
+ "ledger_ladder": [
+  {
+   "entry": "baseline",
+   "n_after": 471,
+   "trials_added": null,
+   "note": "N after E.12 (198 screened + 273 Gate 0)"
+  },
+  {
+   "entry": "r001-C1",
+   "n_after": 473,
+   "trials_added": 2,
+   "note": "C1 NG backward replication"
+  },
+  {
+   "entry": "r002-E16",
+   "n_after": 478,
+   "trials_added": 5,
+   "note": "E16-H1..H5"
+  },
+  {
+   "entry": "r003-C1b",
+   "n_after": 480,
+   "trials_added": 2,
+   "note": "C1b"
+  },
+  {
+   "entry": "r004-E20H6",
+   "n_after": 483,
+   "trials_added": 3,
+   "note": "E20H6-T1..T3"
+  },
+  {
+   "entry": "r005-E20S",
+   "n_after": 528,
+   "trials_added": 45,
+   "note": "E20S-01..45"
+  },
+  {
+   "entry": "r006-E21",
+   "n_after": 532,
+   "trials_added": 4,
+   "note": "E21-T1..T4"
+  },
+  {
+   "entry": "r007-E22",
+   "n_after": 533,
+   "trials_added": 1,
+   "note": "E22-F1"
+  },
+  {
+   "entry": "r008-E23",
+   "n_after": 538,
+   "trials_added": 5,
+   "note": "E23 trigger-holds"
+  },
+  {
+   "entry": "r009-E33",
+   "n_after": 838,
+   "trials_added": 300,
+   "note": "E33 ZM search"
+  }
+ ],
+ "n_total": 838,
+ "trials_by_line": {
+  "R1-01": 58,
+  "R1-02": 0,
+  "R1-03": 11,
+  "R1-04": 44,
+  "R1-05": 27,
+  "R1-06": 12,
+  "R1-07": 9,
+  "R1-08": 27,
+  "R1-09": 6,
+  "R1-10": 4,
+  "R1-11": 273,
+  "R1-12": 4,
+  "R1-13": 5,
+  "R1-14": 3,
+  "R1-15": 45,
+  "R1-16": 4,
+  "R1-17": 1,
+  "R1-18": 5,
+  "R1-19": 0,
+  "R1-20": 0,
+  "R1-21": 300,
+  "R1-22": 0,
+  "R1-23": 0
+ },
+ "lines": [
+  {
+   "id": "R1-01",
+   "type": "intraday_screen_confirm",
+   "family": "MES intraday program (Stage D.1, D.1a, D.1b, D.1d, D.1e, D.1f): 58 Tier A tests in 7 classes C1-C7; families A calendar/clock windows, B opening-range and breakout, C reversal and fade, D vol-regime gates and gaps, E scheduled-macro and calendar, F data-native, G bucket/price-path statistics, H NR4/NR7/inside-day ORB and prior-close follow-through",
+   "products": [
+    {
+     "code": "MES",
+     "role": "traded"
+    }
+   ],
+   "horizons": "from 5 minutes to the session close (A-H2 30 min; A-H1 about 60 min; B-H1 hold 5 and 75; D.1d sweep at 5/15/30/60-minute bars)",
+   "bar_data": "ohlcv-1m MES (docs/STAGES.md:8,48); D.1d sweep at 5/15/30/60-minute bars (STAGES:38-43)",
+   "windows": [
+    "screens D.1/D.1a/D.1b/D.1d/D.1e: research window 2025-04-01..2026-05-13 (289 train-union dates)",
+    "D.1f confirmation 2020-02-03..2024-02-29 (S = 2020-02-03, 1,055 window days); Family H never read before D.1f",
+    "holdout-2 2024-04-01..2025-03-31 sealed (docs/STAGES.md:44-47)"
+   ],
+   "registrations": [],
+   "n_trials": 58,
+   "n_note": "N 31 after D.1d (STAGES:41-42); N 58 after D.1f (+21 event statistics +6 Family H); pre-ledger; baseline 471 includes them. D.1f class counts of the 58: C1 6, C2 19, C3 16, C4 6, C5 4, C6 1, C7 6 (inventory CDE.json)",
+   "closing": {
+    "decision": "V38/V40 (programme level); D.1f verdict in STAGES",
+    "quote": "no member passed confirmation (Holm rejects none of 58); C1\u2013C5 and C7 null under docs/NULL_CRITERIA.md (C5 null by inactivity via E-H3), C6 awaits D.1g; independently verified with no discrepancy; N = 58.",
+    "source": "docs/STAGES.md:55"
+   },
+   "exceptions": [
+    "MES enters later only as a leg (STAGES:65: \"MES is closed and enters only as a leg\")"
+   ],
+   "notes": [
+    "all 7 D.1d re-tests at the source grid failed; the 28-statistic 5/15/30/60-minute sweep admitted zero hypotheses (STAGES:38-43)"
+   ],
+   "members": [
+    {
+     "member_id": "A-H1 european-open overnight drift",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "01:00 CT (first bar with decision time in [02:00, 03:00) ET); exit at ",
+     "hold": "about 60 minutes (01:00-02:00 CT, inside the ETH session)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "A-H2 rth close window (buy)",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "14:30 CT; exit 15:00 CT",
+     "hold": "30 minutes (14:30-15:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "A-H2 rth close window (sell)",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "14:30 CT; exit 15:00 CT",
+     "hold": "30 minutes (14:30-15:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "A-H3 weekend effect",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "08:30 CT (09:30 ET); exit 15:00 CT",
+     "hold": "about 6.5 hours (08:30-15:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "A-H4 eth leg",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "first bar of the trade date (about 17:00 CT the prior calendar evening",
+     "hold": "about 15.5 hours (ETH, 17:00 CT prior evening to 08:30 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "A-H4 rth leg",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "08:30 CT; exit 15:00 CT",
+     "hold": "about 6.5 hours (08:30-15:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "B-H1 opening-range breakout (hold 5)",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: the first close-through bar, from the 08:45 CT bar on (entri",
+     "hold": "5 minutes (hold_minutes=5)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "B-H1 opening-range breakout (hold 75)",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: the first close-through bar, from the 08:45 CT bar on (entri",
+     "hold": "75 minutes (hold_minutes=75)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "B-H2 prior-day stop cascade",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: the first RTH close-through bar (08:30 CT on)",
+     "hold": "at most 15 minutes (volume-decay exit can end it sooner)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "B-H3 breakout leg",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: the first close-through bar, from the 09:00 CT bar on",
+     "hold": "30 minutes",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "B-H3 fade leg",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "variable: the first close-through bar, from the 09:00 CT bar on",
+     "hold": "30 minutes",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "B-H4 narrow-range breakout",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: the first close-through bar, from the 08:45 CT bar on",
+     "hold": "30 minutes",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "C-H1 magnitude-conditioned reversal",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "variable: any bar close in the session",
+     "hold": "5 minutes",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "C-H2 post-spike exhaustion fade",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "variable: any spike bar close",
+     "hold": "2 bars (2 minutes)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "C-H3 close-location-value reversal",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "variable: any trigger bar close",
+     "hold": "3 bars (3 minutes)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "C-H4 passive-fill reversal",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "variable: any bar close in the session",
+     "hold": "5 bars after the fill, then a passive exit (TTL 5) with market fallbac",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "D-H1 trailing-vol regime gate",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "the trade date's bar index 60 (about 18:00 CT the prior calendar eveni",
+     "hold": "30 one-minute bars",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "D-H2 inverse-vol sizing",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "the trade date's bar index 60 (about 18:00 CT the prior calendar eveni",
+     "hold": "30 one-minute bars",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "D-H3 range-compression gate",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: any bar close (no trade-date reset)",
+     "hold": "15 minutes",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "D-H4 overnight gap fade",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "the trade date's first bar (about 17:00 CT the prior calendar evening,",
+     "hold": "30 minutes",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "E-H1 scheduled macro drift",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "first bar of the release trade date (about 17:00 CT the prior calendar",
+     "hold": "about 14.5 to 20 hours (overnight session into the release)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "E-H2 post-release momentum",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "end of the 5-minute reaction window after the release (about 07:35 CT ",
+     "hold": "10 minutes",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "E-H3 quarterly witching short",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "14:30 CT; exit 15:00 CT",
+     "hold": "30 minutes",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "E-H4 turn-of-month long",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "first bar of the trade date (about 17:00 CT the prior calendar evening",
+     "hold": "about 22 hours (whole trade-date session to 15:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1/D.1d train_union"
+    },
+    {
+     "member_id": "RT1 B-H1 ORB 5-min bars (hold 1 bar)",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: completion of the first close-through 5-min bar, 09:00 CT on",
+     "hold": "1 five-minute bar",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1d train_union"
+    },
+    {
+     "member_id": "RT2 B-H1 ORB 5-min bars (hold 15 bars)",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: as RT1",
+     "hold": "15 five-minute bars (75 minutes), earlier if the RTH segment ends",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1d train_union"
+    },
+    {
+     "member_id": "RT3 B-H3 breakout leg 5-min bars",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: as RT1",
+     "hold": "6 five-minute bars (30 minutes)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1d train_union"
+    },
+    {
+     "member_id": "RT4 B-H3 fade leg 5-min bars",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "variable: as RT1",
+     "hold": "6 five-minute bars (30 minutes)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1d train_union"
+    },
+    {
+     "member_id": "RT5 C-H2 spike fade 5-min bars",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "variable: any 5-min bar completion (ETH or RTH)",
+     "hold": "1 five-minute bar",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1d train_union"
+    },
+    {
+     "member_id": "RT6 D-H1 daily-vol regime gate",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "the trade date's 1-minute bar index 60 (about 18:00 CT the prior calen",
+     "hold": "30 one-minute bars",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1d train_union"
+    },
+    {
+     "member_id": "RT7 D-H2 daily-vol sizing",
+     "roots": [
+      "MES"
+     ],
+     "side": "calendar",
+     "decision": "the trade date's 1-minute bar index 60",
+     "hold": "30 one-minute bars",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1d train_union"
+    },
+    {
+     "member_id": "F6_1_overnight_range_position",
+     "roots": [
+      "MES"
+     ],
+     "side": "other: side = s x sign(p",
+     "decision": "08:30 CT (the 08:30 bar's open; ETH bars before it)",
+     "hold": "60 minutes (08:30-09:30 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F4_4_round_number_multiples_of_100",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade (s = -1: side = min",
+     "decision": "variable: the approach bar, any session",
+     "hold": "15 minutes from L",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F4_1_rth_open_crossing",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade (s = -1: against th",
+     "decision": "variable: the crossing bar, 09:00-14:29 CT",
+     "hold": "15 minutes",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "G2.RTH.30",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum (s = +1; d = si",
+     "decision": "variable: completion of the event 30-min slot (08:30-15:00 CT RTH)",
+     "hold": "30 minutes (next slot)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "G2.ETH.30",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade (s = -1; d = sign o",
+     "decision": "variable: completion of the event 30-min slot (ETH, 17:00 CT prior eve",
+     "hold": "30 minutes (next slot)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "G2.ETH.5",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade (s = -1; d = sign o",
+     "decision": "variable: completion of the event 5-min slot (ETH, 17:00 CT prior even",
+     "hold": "5 minutes (next slot)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "G5.RTH.15",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade (s = -1; d = sign o",
+     "decision": "variable: completion of the event 15-min slot (08:30-15:00 CT RTH)",
+     "hold": "15 minutes (next slot)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "G5.RTH.30",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum (s = +1; d = si",
+     "decision": "variable: completion of the event 30-min slot (08:30-15:00 CT RTH)",
+     "hold": "30 minutes (next slot)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "G3.RTH.15",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade (s = -1; d = sign o",
+     "decision": "variable: completion of the event 15-min slot (08:30-15:00 CT RTH)",
+     "hold": "to the RTH segment end (about 15:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F3_2_bucket07_bucket08",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "12:00 CT (close of bucket 07; last 1-minute bar opening 11:59 CT)",
+     "hold": "30 minutes (12:00-12:30 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F3_3_opening_30min_to_close_momentum",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "predictor complete at 09:00 CT; position taken over 14:30-15:00 CT",
+     "hold": "30 minutes (14:30-15:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F3_2_bucket08_bucket09",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "12:30 CT (close of bucket 08; last 1-minute bar opening 12:29 CT)",
+     "hold": "30 minutes (12:30-13:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F3_3_overnight_to_close_momentum",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "predictor complete at 09:00 CT; position taken over 14:30-15:00 CT",
+     "hold": "30 minutes (14:30-15:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F3_2_bucket01_bucket02",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "09:00 CT (close of bucket 01; last 1-minute bar opening 08:59 CT)",
+     "hold": "30 minutes (09:00-09:30 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F3_2_bucket10_bucket11",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "13:30 CT (close of bucket 10; last 1-minute bar opening 13:29 CT)",
+     "hold": "30 minutes (13:30-14:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F3_2_bucket02_bucket03",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "09:30 CT (close of bucket 02; last 1-minute bar opening 09:29 CT)",
+     "hold": "30 minutes (09:30-10:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F3_2_bucket05_bucket06",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "11:00 CT (close of bucket 05; last 1-minute bar opening 10:59 CT)",
+     "hold": "30 minutes (11:00-11:30 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F3_2_bucket04_bucket05",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "10:30 CT (close of bucket 04; last 1-minute bar opening 10:29 CT)",
+     "hold": "30 minutes (10:30-11:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F3_2_bucket06_bucket07",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "11:30 CT (close of bucket 06; last 1-minute bar opening 11:29 CT)",
+     "hold": "30 minutes (11:30-12:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "F3_2_bucket12_bucket13",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "14:30 CT (close of bucket 12; last 1-minute bar opening 14:29 CT)",
+     "hold": "30 minutes (14:30-15:00 CT)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "G1.RTH.5",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum (s = +1; d = si",
+     "decision": "variable: completion of the event 5-min slot (08:30-15:00 CT RTH)",
+     "hold": "5 minutes (next slot)",
+     "tiers": [
+      "A (D.1f Tier A, Holm family m = 58)"
+     ],
+     "verdict": "D.1b/D.1d discovery"
+    },
+    {
+     "member_id": "H1 NR4 opening-range breakout",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: the first close-through 1-minute bar in [09:00, 14:30) CT; c",
+     "hold": "entry to 14:58 CT",
+     "tiers": [
+      "A (D.1f Tier A, class C7; new in D.1f, never screened on the research window)"
+     ],
+     "verdict": "D.1f"
+    },
+    {
+     "member_id": "H2 NR7 opening-range breakout",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: the first close-through 1-minute bar in [09:00, 14:30) CT; c",
+     "hold": "entry to 14:58 CT",
+     "tiers": [
+      "A (D.1f Tier A, class C7; new in D.1f, never screened on the research window)"
+     ],
+     "verdict": "D.1f"
+    },
+    {
+     "member_id": "H3 inside-day opening-range breakout",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: the first close-through 1-minute bar in [09:00, 14:30) CT; c",
+     "hold": "entry to 14:58 CT",
+     "tiers": [
+      "A (D.1f Tier A, class C7; new in D.1f, never screened on the research window)"
+     ],
+     "verdict": "D.1f"
+    },
+    {
+     "member_id": "H4 bottom-tercile prior range, breakout",
+     "roots": [
+      "MES"
+     ],
+     "side": "momentum",
+     "decision": "variable: the first close-through 1-minute bar in [09:00, 14:30) CT; c",
+     "hold": "entry to 14:58 CT",
+     "tiers": [
+      "A (D.1f Tier A, class C7; new in D.1f, never screened on the research window)"
+     ],
+     "verdict": "D.1f"
+    },
+    {
+     "member_id": "H5 top-tercile prior range, opening-range fade",
+     "roots": [
+      "MES"
+     ],
+     "side": "fade",
+     "decision": "variable: the first close-through 1-minute bar in [09:00, 14:30) CT; c",
+     "hold": "entry to 14:58 CT",
+     "tiers": [
+      "A (D.1f Tier A, class C7; new in D.1f, never screened on the research window)"
+     ],
+     "verdict": "D.1f"
+    },
+    {
+     "member_id": "H6 prior-close location follow-through",
+     "roots": [
+      "MES"
+     ],
+     "side": "other: side follows day ",
+     "decision": "08:30 CT bar of day d (fills 08:31); condition uses day d-1's RTH bars",
+     "hold": "08:31 to 14:58 CT",
+     "tiers": [
+      "A (D.1f Tier A, class C7; new in D.1f, never screened on the research window)"
+     ],
+     "verdict": "D.1f"
+    }
+   ]
+  },
+  {
+   "id": "R1-02",
+   "type": "passive_execution",
+   "family": "C6 passive execution (C-H4 reversal with resting limit orders); Stage D.1g not run",
+   "products": [
+    {
+     "code": "MES",
+     "role": "traded"
+    }
+   ],
+   "horizons": "n/a (reversal, passive fill)",
+   "bar_data": "would have bought 181 full trade-date MBO days; not bought",
+   "windows": [
+    "none read"
+   ],
+   "registrations": [],
+   "n_trials": 0,
+   "n_note": "C-H4 is inside R1-01 counts; D.1g not run, no C6 null statement exists",
+   "closing": {
+    "decision": "user decision 2026-09-23 (\"C6 closed, Stage D.1g not run\")",
+    "quote": "C6, passive execution (C-H4's resting limit orders), is closed as non-deployable on the XFA, and Stage D.1g (a queue-position fill model on 181 purchased MBO days) will not run.",
+    "source": "docs/DECISIONS.md:30-34"
+   },
+   "exceptions": [],
+   "notes": [
+    "STAGES:56-60: \"A scope decision, not a null: no C6 null statement exists.\""
+   ]
+  },
+  {
+   "id": "R1-03",
+   "type": "intraday_screen",
+   "family": "K1 equity-index screen: CP1 open-to-first-half-hour momentum port, CP2 opening-range breakout, CP3 prior-day close-location, VXN band fade, VWAP stop-and-reverse",
+   "products": [
+    {
+     "code": "MNQ",
+     "role": "traded"
+    },
+    {
+     "code": "M2K",
+     "role": "traded"
+    },
+    {
+     "code": "MYM",
+     "role": "traded"
+    },
+    {
+     "code": "NQ",
+     "role": "price path/W_ext"
+    },
+    {
+     "code": "RTY",
+     "role": "price path/W_ext"
+    },
+    {
+     "code": "YM",
+     "role": "price path"
+    }
+   ],
+   "horizons": "intraday holds, flat by the exchange-set F (15:08 CT equity/rates; see members); decision times in members",
+   "bar_data": "1-minute step bars (Stage E harness; bar-based)",
+   "windows": [
+    "E.7 screen: research window 2025-04-01..2026-06-12, 299 trade dates",
+    "all eleven Tier B, Tier A empty; no confirmation run"
+   ],
+   "registrations": [],
+   "n_trials": 11,
+   "n_note": "counted in N 198 (STAGES ladder); 5 members, 11 trials on MNQ, M2K, MYM (STAGES:105-107)",
+   "closing": {
+    "decision": "V40 (and V38)",
+    "quote": "Stage E's intraday clusters are closed (E.22 return item 3 accepted); no holdout read.",
+    "source": "docs/DECISIONS.md:728-729"
+   },
+   "exceptions": [],
+   "notes": [
+    "K1-cp3-01 MNQ Tier B rests on four MLL-liquidated days (STAGES:106)"
+   ],
+   "members": [
+    {
+     "member_id": "K1-cp1-01",
+     "roots": [
+      "M2K",
+      "MNQ",
+      "MYM"
+     ],
+     "side": "momentum",
+     "decision": "08:59 (signal bar; last bar the decision reads); entry intent on the 1",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_M2K_h60/h120/hF decision 'FAIL"
+    },
+    {
+     "member_id": "K1-cp2-01",
+     "roots": [
+      "M2K",
+      "MNQ",
+      "MYM"
+     ],
+     "side": "momentum",
+     "decision": "variable: the close of the first qualifying bar in [08:45, 15:00); lat",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_M2K_h60/h120/hF decision 'FAIL"
+    },
+    {
+     "member_id": "K1-cp3-01",
+     "roots": [
+      "M2K",
+      "MNQ",
+      "MYM"
+     ],
+     "side": "other: side from the PRI",
+     "decision": "08:30 (entry intent on the 08:30 bar at its close, fill at the 08:31 o",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_M2K_h60/h120/hF decision 'FAIL"
+    },
+    {
+     "member_id": "K1-vxnband-01",
+     "roots": [
+      "MNQ"
+     ],
+     "side": "fade",
+     "decision": "variable: the close of the first breach bar in [08:30, 14:29); latest ",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_MNQ_h60/h120/hF decision 'FAIL"
+    },
+    {
+     "member_id": "K1-vwap-01",
+     "roots": [
+      "MNQ"
+     ],
+     "side": "other: stop-and-reverse;",
+     "decision": "variable: every bar opening in [08:30, 14:57); latest rule-intent bar ",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0 (ML, pooled): 'Verdict: **FAIL**. Passing pairs: none.' (reports/stage_e12_gate0.md); vehicle row(s) gate0B_MNQ_h60/h120/hF decision 'FAIL"
+    }
+   ]
+  },
+  {
+   "id": "R1-04",
+   "type": "intraday_screen",
+   "family": "K2 rates screen: CP1/CP2/CP3 ports, pre/post Treasury-auction windows, post-FOMC, ISM pre-drift, month-end",
+   "products": [
+    {
+     "code": "ZT",
+     "role": "traded"
+    },
+    {
+     "code": "ZF",
+     "role": "traded"
+    },
+    {
+     "code": "ZN",
+     "role": "traded"
+    },
+    {
+     "code": "TN",
+     "role": "traded"
+    },
+    {
+     "code": "ZB",
+     "role": "traded"
+    },
+    {
+     "code": "UB",
+     "role": "traded"
+    }
+   ],
+   "horizons": "intraday holds, flat by the exchange-set F (15:08 CT equity/rates; see members); decision times in members",
+   "bar_data": "1-minute step bars (Stage E harness; bar-based)",
+   "windows": [
+    "E.3 screen: research window 2025-04-01..2026-06-17, 299 trade dates (15 roll-blackout, 2 UR-1 removed)",
+    "all 44 Tier B; K2 confirmation never run (STAGES:260 still lists it \"planned\")"
+   ],
+   "registrations": [],
+   "n_trials": 44,
+   "n_note": "counted in N 198 (STAGES ladder); 8 members, 44 trials (STAGES:86-88)",
+   "closing": {
+    "decision": "V40 (and V38)",
+    "quote": "Stage E's intraday clusters are closed (E.22 return item 3 accepted); no holdout read.",
+    "source": "docs/DECISIONS.md:728-729"
+   },
+   "exceptions": [],
+   "notes": [
+    "K2-monthend-01 is reused at 5-day holds in R1-18",
+    "E.16 overlap audit (E.16_RETURN:222-229) names K2-aucpre-01/aucpost-01 as the closest tested member of E16-H3 and K2-monthend-01 of E16-H2: \"related, not identical\""
+   ],
+   "members": [
+    {
+     "member_id": "K2-cp1-01",
+     "roots": [
+      "TN",
+      "UB",
+      "ZB",
+      "ZF",
+      "ZN",
+      "ZT"
+     ],
+     "side": "momentum",
+     "decision": "13:29 (the entry decision bar; the signal reads only the 17:00 CT day ",
+     "hold": "true: 13:30 open to 13:59 open (about 29 minutes); flat by F (15:08 CT",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "Confirmation (W_cf): not run; 'Stage E.3b onward - K2's confirmation session ... (planned)', docs/STAGES.md line 190; no later return reports a K2 con"
+    },
+    {
+     "member_id": "K2-cp2-01",
+     "roots": [
+      "TN",
+      "UB",
+      "ZB",
+      "ZF",
+      "ZN",
+      "ZT"
+     ],
+     "side": "momentum",
+     "decision": "variable, 07:35..13:59 (the first qualifying bar)",
+     "hold": "true: 75 present bars (E.3 mean hold 74.8-75.9 min); flat by F (15:08 ",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "Confirmation (W_cf): not run; 'Stage E.3b onward - K2's confirmation session ... (planned)', docs/STAGES.md line 190; no later return reports a K2 con"
+    },
+    {
+     "member_id": "K2-cp3-01",
+     "roots": [
+      "TN",
+      "UB",
+      "ZB",
+      "ZF",
+      "ZN",
+      "ZT"
+     ],
+     "side": "other: side from d-1's c",
+     "decision": "07:20 (the entry decision bar; the condition reads d-1's bars in [07:2",
+     "hold": "true: 07:21 open to 13:59 open (E.3 mean hold 376.5-397.5 min); flat b",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "Confirmation (W_cf): not run; 'Stage E.3b onward - K2's confirmation session ... (planned)', docs/STAGES.md line 190; no later return reports a K2 con"
+    },
+    {
+     "member_id": "K2-aucpre-01",
+     "roots": [
+      "TN",
+      "UB",
+      "ZB",
+      "ZF",
+      "ZN",
+      "ZT"
+     ],
+     "side": "calendar",
+     "decision": "T_a - 181 min: 08:59 for T_a 12:00, 07:29 for T_a 10:30 (one T_a 09:00",
+     "hold": "true: 179 minutes; flat by F (15:08 CT on a regular rates day)",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "Confirmation (W_cf): not run; 'Stage E.3b onward - K2's confirmation session ... (planned)', docs/STAGES.md line 190; no later return reports a K2 con"
+    },
+    {
+     "member_id": "K2-aucpost-01",
+     "roots": [
+      "TN",
+      "UB",
+      "ZB",
+      "ZF",
+      "ZN",
+      "ZT"
+     ],
+     "side": "calendar",
+     "decision": "T_a + 4 min: 12:04 for T_a 12:00, 10:34 for T_a 10:30",
+     "hold": "true: 180 minutes; flat by F (15:08 CT on a regular rates day)",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "Confirmation (W_cf): not run; 'Stage E.3b onward - K2's confirmation session ... (planned)', docs/STAGES.md line 190; no later return reports a K2 con"
+    },
+    {
+     "member_id": "K2-fomcpost-01",
+     "roots": [
+      "TN",
+      "UB",
+      "ZB",
+      "ZF",
+      "ZN",
+      "ZT"
+     ],
+     "side": "calendar",
+     "decision": "13:29",
+     "hold": "true: 95 minutes; flat by F (15:08 CT on a regular rates day)",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "Confirmation (W_cf): not run; 'Stage E.3b onward - K2's confirmation session ... (planned)', docs/STAGES.md line 190; no later return reports a K2 con"
+    },
+    {
+     "member_id": "K2-predrift-01",
+     "roots": [
+      "ZB",
+      "ZN"
+     ],
+     "side": "momentum",
+     "decision": "08:49",
+     "hold": "true: 15 minutes; flat by F (15:08 CT on a regular rates day)",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "Confirmation (W_cf): not run; 'Stage E.3b onward - K2's confirmation session ... (planned)', docs/STAGES.md line 190; no later return reports a K2 con"
+    },
+    {
+     "member_id": "K2-monthend-01",
+     "roots": [
+      "TN",
+      "UB",
+      "ZB",
+      "ZF",
+      "ZN",
+      "ZT"
+     ],
+     "side": "calendar",
+     "decision": "07:20",
+     "hold": "true: 07:21 open to 15:05 open (464 min); flat by F (15:08 CT on a reg",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "Confirmation (W_cf): not run; 'Stage E.3b onward - K2's confirmation session ... (planned)', docs/STAGES.md line 190; no later return reports a K2 con"
+    }
+   ]
+  },
+  {
+   "id": "R1-05",
+   "type": "intraday_screen",
+   "family": "K3 FX screen: CP1/CP2/CP3, London-fix reversal and momentum (ldnrev, ldnmom), ECB fix, Tokyo fix pre/post, month-end hedge",
+   "products": [
+    {
+     "code": "6E",
+     "role": "traded"
+    },
+    {
+     "code": "6A",
+     "role": "traded"
+    },
+    {
+     "code": "6B",
+     "role": "traded"
+    },
+    {
+     "code": "6C",
+     "role": "traded"
+    },
+    {
+     "code": "6J",
+     "role": "traded"
+    },
+    {
+     "code": "6N",
+     "role": "traded"
+    },
+    {
+     "code": "6S",
+     "role": "traded"
+    }
+   ],
+   "horizons": "intraday holds, flat by the exchange-set F (15:08 CT equity/rates; see members); decision times in members",
+   "bar_data": "1-minute step bars (Stage E harness; bar-based)",
+   "windows": [
+    "E.4c screen: research 2025-04-01..2026-06-17 (299 trade dates)",
+    "E.22 confirmation of K3-ldnrev-01 6E on 2019-05-06..2024-02-29 (1191 trade dates): null"
+   ],
+   "registrations": [],
+   "n_trials": 27,
+   "n_note": "counted in N 198 (STAGES ladder); 9 members, 30 trials, 27 counted (3 excluded on coverage; STAGES:96-98; N 123 -> 150)",
+   "closing": {
+    "decision": "V40 (and V38)",
+    "quote": "Stage E's intraday clusters are closed (E.22 return item 3 accepted); no holdout read.",
+    "source": "docs/DECISIONS.md:728-729"
+   },
+   "exceptions": [],
+   "notes": [
+    "K3-mehedge-01 on EUR not traded (no free index history); K3-ldnrev-01 6E Tier A -> E.22 null (STAGES:183)"
+   ],
+   "members": [
+    {
+     "member_id": "K3-cp1-01",
+     "roots": [
+      "6A",
+      "6B",
+      "6C",
+      "6E",
+      "6J",
+      "6N",
+      "6S"
+     ],
+     "side": "momentum",
+     "decision": "13:29 (entry decision bar; signal bars: 17:00 CT on d-1 open and 07:49",
+     "hold": "True",
+     "tiers": [
+      "B",
+      "n/a"
+     ],
+     "verdict": "'excluded_before_screening (coverage_below_0.95)' (reports/E.4c_RETURN.md section 3 'The screen per trial' (= reports/E.4_RETURN.md final section))"
+    },
+    {
+     "member_id": "K3-cp2-01",
+     "roots": [
+      "6A",
+      "6B",
+      "6C",
+      "6E",
+      "6J",
+      "6N",
+      "6S"
+     ],
+     "side": "momentum: breakout: side",
+     "decision": "variable 07:35..13:59 (the first qualifying bar's close)",
+     "hold": "True",
+     "tiers": [
+      "B",
+      "n/a"
+     ],
+     "verdict": "'excluded_before_screening (coverage_below_0.95)' (reports/E.4c_RETURN.md section 3 'The screen per trial' (= reports/E.4_RETURN.md final section))"
+    },
+    {
+     "member_id": "K3-cp3-01",
+     "roots": [
+      "6A",
+      "6B",
+      "6C",
+      "6E",
+      "6J",
+      "6N",
+      "6S"
+     ],
+     "side": "other: side from d-1's c",
+     "decision": "07:20 (bar at O on CT date d; reads d-1's complete daily bar)",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "'inconclusive' (E.22; reports/E.22_RETURN.md section 3.2, '#### K3' table (verdict reports/stage_e22_k3_verdict.json), line 362: blocking)"
+    },
+    {
+     "member_id": "K3-ldnrev-01",
+     "roots": [
+      "6E",
+      "6J",
+      "6S"
+     ],
+     "side": "fade",
+     "decision": "T_L + 4 = 10:04 (11:04 in C9 mismatch weeks); signal bars 09:49 and 09",
+     "hold": "True",
+     "tiers": [
+      "A",
+      "B"
+     ],
+     "verdict": "'K3-ldnrev-01 6E: NULL, no edge. UCB95 +0.10 against 12; Holm p 0.797.' and 'no edge (first failing: holm)' (reports/E.22_RETURN.md lines 14, 293)"
+    },
+    {
+     "member_id": "K3-ldnmom-01",
+     "roots": [
+      "6E",
+      "6J"
+     ],
+     "side": "momentum",
+     "decision": "T_L - 13 = 09:47 close (10:47 in C9 mismatch weeks)",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "'null' (E.22 Status; reports/E.22_RETURN.md section 3.2, '#### K3' table (verdict reports/stage_e22_k3_verdict.json))"
+    },
+    {
+     "member_id": "K3-mehedge-01",
+     "roots": [
+      "6J"
+     ],
+     "side": "other: side = minus the ",
+     "decision": "T_L - 61 = 08:59 (09:59 in C9 mismatch weeks); signal is the literal N",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "'null' (E.22 Status; reports/E.22_RETURN.md section 3.2, '#### K3' table (verdict reports/stage_e22_k3_verdict.json))"
+    },
+    {
+     "member_id": "K3-ecbfix-01",
+     "roots": [
+      "6E"
+     ],
+     "side": "calendar",
+     "decision": "leg 1: 00:59 CT on d; leg 2: T_E = 07:15 (08:15 in C9 mismatch weeks)",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "'null' (E.22 Status; reports/E.22_RETURN.md section 3.2, '#### K3' table (verdict reports/stage_e22_k3_verdict.json))"
+    },
+    {
+     "member_id": "K3-tkypre-01",
+     "roots": [
+      "6J"
+     ],
+     "side": "calendar",
+     "decision": "17:29 CT on calendar day d-1",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "'null' (E.22 Status; reports/E.22_RETURN.md section 3.2, '#### K3' table (verdict reports/stage_e22_k3_verdict.json))"
+    },
+    {
+     "member_id": "K3-tkypost-01",
+     "roots": [
+      "6J"
+     ],
+     "side": "calendar",
+     "decision": "T_T on calendar day d-1 = 18:55 CST / 19:55 CDT",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "'null' (E.22 Status; reports/E.22_RETURN.md section 3.2, '#### K3' table (verdict reports/stage_e22_k3_verdict.json))"
+    }
+   ]
+  },
+  {
+   "id": "R1-06",
+   "type": "intraday_screen",
+   "family": "K4 energy screen: CP1/CP2/CP3, NG storage pre-release, API/EIA pre/post, overreaction fade",
+   "products": [
+    {
+     "code": "MCL",
+     "role": "traded (CL bars)"
+    },
+    {
+     "code": "NG",
+     "role": "traded"
+    },
+    {
+     "code": "CL",
+     "role": "price path"
+    }
+   ],
+   "horizons": "intraday holds, flat by the exchange-set F (15:08 CT equity/rates; see members); decision times in members",
+   "bar_data": "1-minute step bars (Stage E harness; bar-based)",
+   "windows": [
+    "E.4 screen: 2025-04-01..2026-06-19 (270 MCL / 269 NG dates)",
+    "E.5 confirmation: NG 2019-05-06..2024-02-29, MCL 2021-07-12..2024-02-29: NULL (K4-ngpre-01 fails Holm)"
+   ],
+   "registrations": [],
+   "n_trials": 12,
+   "n_note": "counted in N 198 (STAGES ladder); 8 members, 12 trials (STAGES:89-92)",
+   "closing": {
+    "decision": "V40 (and V38)",
+    "quote": "Stage E's intraday clusters are closed (E.22 return item 3 accepted); no holdout read.",
+    "source": "docs/DECISIONS.md:728-729"
+   },
+   "exceptions": [],
+   "notes": [],
+   "members": [
+    {
+     "member_id": "K4-cp1-01",
+     "roots": [
+      "MCL",
+      "NG"
+     ],
+     "side": "momentum",
+     "decision": "12:59 (entry bar; signal fixed at 08:29)",
+     "hold": "13:00 to 13:29 CT, same trade date",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)"
+    },
+    {
+     "member_id": "K4-cp2-01",
+     "roots": [
+      "MCL",
+      "NG"
+     ],
+     "side": "momentum",
+     "decision": "variable: the qualifying bar, 08:15..13:29",
+     "hold": "75 present bars after the entry decision bar, or F (15:08 CT) if earli",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)"
+    },
+    {
+     "member_id": "K4-cp3-01",
+     "roots": [
+      "MCL",
+      "NG"
+     ],
+     "side": "other",
+     "decision": "08:00 (entry bar; uses d-1's complete daily bar)",
+     "hold": "08:01 to 13:29 CT",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)"
+    },
+    {
+     "member_id": "K4-ngpre-01",
+     "roots": [
+      "NG"
+     ],
+     "side": "calendar",
+     "decision": "T - 91 (07:59 for a 09:30 CT release; 09:29 for an 11:00 CT release)",
+     "hold": "T-90 to T+30 (standard 08:00 to 10:00 CT)",
+     "tiers": [
+      "A"
+     ],
+     "verdict": "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)"
+    },
+    {
+     "member_id": "K4-apipre-01",
+     "roots": [
+      "MCL"
+     ],
+     "side": "momentum",
+     "decision": "07:29 of W (entry bar; signal from W-1's 15:24 and 15:39 closes)",
+     "hold": "07:30 to 09:29 CT on W",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)"
+    },
+    {
+     "member_id": "K4-eiafade-01",
+     "roots": [
+      "MCL"
+     ],
+     "side": "fade",
+     "decision": "T_W + 14 (09:44 for the 09:30 slot; up to 12:14 for the 12:00 slot)",
+     "hold": "T_W + 15 to 13:29 CT",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)"
+    },
+    {
+     "member_id": "K4-eiamom-01",
+     "roots": [
+      "MCL"
+     ],
+     "side": "momentum",
+     "decision": "14:29 (entry bar; signal from the 09:29 and 09:59 closes)",
+     "hold": "14:30 to 14:59 CT",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)"
+    },
+    {
+     "member_id": "K4-ovr-01",
+     "roots": [
+      "MCL",
+      "NG"
+     ],
+     "side": "fade",
+     "decision": "t-1: 08:59, 09:59, 10:59, 11:59, 12:59",
+     "hold": "t to t+59 (latest 13:00-13:59)",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.12 Gate 0: FAIL (reports/E.12_RETURN.md line 1)"
+    }
+   ]
+  },
+  {
+   "id": "R1-07",
+   "type": "intraday_screen",
+   "family": "K5 metals screen: CP1/CP2/CP3, LBMA AM/PM auction windows, FOMC, overreaction fade",
+   "products": [
+    {
+     "code": "MGC",
+     "role": "traded (GC bars)"
+    },
+    {
+     "code": "MHG",
+     "role": "traded (HG bars)"
+    },
+    {
+     "code": "GC",
+     "role": "price path"
+    }
+   ],
+   "horizons": "intraday holds, flat by the exchange-set F (15:08 CT equity/rates; see members); decision times in members",
+   "bar_data": "1-minute step bars (Stage E harness; bar-based)",
+   "windows": [
+    "E.4b screen: research 2025-04-01..2026-06-17, 295 trade dates",
+    "E.22 confirmation K5-fomc-01 MGC W_cf 2019-05-06..2024-02-29 (1174 days): null"
+   ],
+   "registrations": [],
+   "n_trials": 9,
+   "n_note": "counted in N 198 (STAGES ladder); 7 members, 11 trials in STAGES:93, 9 counted (N 114 -> 123; 3 excluded: two MHG ports, pmfix)",
+   "closing": {
+    "decision": "V40 (and V38)",
+    "quote": "Stage E's intraday clusters are closed (E.22 return item 3 accepted); no holdout read.",
+    "source": "docs/DECISIONS.md:728-729"
+   },
+   "exceptions": [],
+   "notes": [
+    "inventory shows 11 K5 rows, counted 9: row/counted mismatch (see ambiguities)"
+   ],
+   "members": [
+    {
+     "member_id": "K5-cp1-01",
+     "roots": [
+      "MGC",
+      "MHG"
+     ],
+     "side": "momentum",
+     "decision": "07:49 (signal bar, last bar the decision reads); entry intent on the 1",
+     "hold": "True",
+     "tiers": [
+      "B",
+      "n/a"
+     ],
+     "verdict": "E.22: \"| 1 | K5-cp1-01 MGC | B | null | 1174 | 1132 | -3.2051 | -2.1072 |\" (E.22_RETURN.md:300); cluster K5 \"no statement\""
+    },
+    {
+     "member_id": "K5-cp2-01",
+     "roots": [
+      "MGC",
+      "MHG"
+     ],
+     "side": "momentum",
+     "decision": "variable: the first qualifying eligible bar, 07:35..12:29 CT (the inte",
+     "hold": "True",
+     "tiers": [
+      "B",
+      "n/a"
+     ],
+     "verdict": "E.22: \"| 3 | K5-cp2-01 MGC | B | null | 1174 | 1166 | -3.8527 | -0.3417 |\" (E.22_RETURN.md:302); cluster K5 \"no statement\""
+    },
+    {
+     "member_id": "K5-cp3-01",
+     "roots": [
+      "MGC",
+      "MHG"
+     ],
+     "side": "other: side fixed by the",
+     "decision": "07:20 (the O bar of d, which carries the early-halt and instrument gua",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.22: \"| 5 | K5-cp3-01 MGC | B | null | 1174 | 489 | -5.1667 | -1.5998 |\" (E.22_RETURN.md:304); cluster K5 \"no statement\""
+    },
+    {
+     "member_id": "K5-preauc-01",
+     "roots": [
+      "MGC"
+     ],
+     "side": "calendar",
+     "decision": "03:59 (or 04:59 in 5-hour weeks): the entry bar T-31 is the only bar r",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.20: k5_preauc_msince DROPPED by F6, \"no gold fix calendar for 2010-2019 on disk (GC reader)\" (stage_e20_product_summary.md:61)"
+    },
+    {
+     "member_id": "K5-pmfix-01",
+     "roots": [
+      "MGC"
+     ],
+     "side": "momentum",
+     "decision": "09:01 (or 10:01 in 5-hour weeks): the T_P+1 bar; fill at the T_P+2 ope",
+     "hold": "True",
+     "tiers": [
+      "n/a"
+     ],
+     "verdict": "E.20: k5_pmfix_move DROPPED by F6, \"no gold fix calendar for 2010-2019 on disk (GC reader)\" (stage_e20_product_summary.md:61)"
+    },
+    {
+     "member_id": "K5-fomc-01",
+     "roots": [
+      "MGC"
+     ],
+     "side": "momentum",
+     "decision": "13:04 (the entry decision bar); fill at the 13:05 open",
+     "hold": "True",
+     "tiers": [
+      "A"
+     ],
+     "verdict": "E.11: excluded from the v2 signal library, \"known after the last decision time\" (E.11_RETURN.md:221)"
+    },
+    {
+     "member_id": "K5-ovr-01",
+     "roots": [
+      "MGC",
+      "MHG"
+     ],
+     "side": "fade",
+     "decision": "t-1 for each t: 08:19, 09:19, 10:19, 11:19, 12:19 CT (last 12:19); fil",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.22: \"| 10 | K5-ovr-01 MGC | B | null | 1174 | 1221 | -5.5728 | -2.8922 |\" (E.22_RETURN.md:309); cluster K5 \"no statement\""
+    }
+   ]
+  },
+  {
+   "id": "R1-08",
+   "type": "intraday_screen",
+   "family": "K6 grains/oilseeds/livestock screen: CP1/CP2/CP3, soybean crush gap, WASDE pre/post, livestock limit continuation",
+   "products": [
+    {
+     "code": "ZC",
+     "role": "traded"
+    },
+    {
+     "code": "ZS",
+     "role": "traded"
+    },
+    {
+     "code": "ZL",
+     "role": "traded"
+    },
+    {
+     "code": "ZM",
+     "role": "traded"
+    },
+    {
+     "code": "ZW",
+     "role": "traded"
+    },
+    {
+     "code": "HE",
+     "role": "traded"
+    },
+    {
+     "code": "LE",
+     "role": "traded"
+    }
+   ],
+   "horizons": "intraday holds, flat by the exchange-set F (15:08 CT equity/rates; see members); decision times in members",
+   "bar_data": "1-minute step bars (Stage E harness; bar-based)",
+   "windows": [
+    "E.8 screen: research window 2025-04-01..2026-06-19 (264-287 dates per trial)",
+    "E.22 confirmation K6-limitcont-01 HE: null by inactivity (2019-05-06..2024-02-29)"
+   ],
+   "registrations": [],
+   "n_trials": 27,
+   "n_note": "counted in N 198 (STAGES ladder); 7 members, 27 trials (STAGES:108-110)",
+   "closing": {
+    "decision": "V40 (and V38)",
+    "quote": "Stage E's intraday clusters are closed (E.22 return item 3 accepted); no holdout read.",
+    "source": "docs/DECISIONS.md:728-729"
+   },
+   "exceptions": [],
+   "notes": [
+    "K6-crushgap-01 ZS used ZM 1-minute bars as the signal leg (ZM is also R1-14/R1-21 product)"
+   ],
+   "members": [
+    {
+     "member_id": "K6-cp1-01",
+     "roots": [
+      "HE",
+      "LE",
+      "ZC",
+      "ZL",
+      "ZM",
+      "ZS",
+      "ZW"
+     ],
+     "side": "momentum",
+     "decision": "12:44",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+    },
+    {
+     "member_id": "K6-cp2-01",
+     "roots": [
+      "HE",
+      "LE",
+      "ZC",
+      "ZL",
+      "ZM",
+      "ZS",
+      "ZW"
+     ],
+     "side": "momentum",
+     "decision": "variable 08:45..13:14",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+    },
+    {
+     "member_id": "K6-cp3-01",
+     "roots": [
+      "HE",
+      "LE",
+      "ZC",
+      "ZL",
+      "ZM",
+      "ZS",
+      "ZW"
+     ],
+     "side": "other",
+     "decision": "08:30",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+    },
+    {
+     "member_id": "K6-crushgap-01",
+     "roots": [
+      "ZS"
+     ],
+     "side": "other",
+     "decision": "08:30",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+    },
+    {
+     "member_id": "K6-limitcont-01",
+     "roots": [
+      "HE",
+      "LE"
+     ],
+     "side": "momentum",
+     "decision": "08:44",
+     "hold": "True",
+     "tiers": [
+      "A",
+      "B"
+     ],
+     "verdict": "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+    },
+    {
+     "member_id": "K6-wasdepre-01",
+     "roots": [
+      "ZC",
+      "ZS"
+     ],
+     "side": "momentum",
+     "decision": "10:29",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+    },
+    {
+     "member_id": "K6-wasdepost-01",
+     "roots": [
+      "ZC"
+     ],
+     "side": "momentum",
+     "decision": "11:14",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.22 cluster K6: 'no statement'; Tier A K6-limitcont-01 HE 'null by inactivity', 'no edge (first failing: holm)' (reports/E.22_RETURN.md 3.2)"
+    }
+   ]
+  },
+  {
+   "id": "R1-09",
+   "type": "intraday_screen",
+   "family": "K7 bitcoin screen: CP1/CP2/CP3, expiry, 2-hour reversal, monthly trend",
+   "products": [
+    {
+     "code": "MBT",
+     "role": "traded"
+    }
+   ],
+   "horizons": "intraday holds, flat by the exchange-set F (15:08 CT equity/rates; see members); decision times in members",
+   "bar_data": "1-minute step bars (Stage E harness; bar-based)",
+   "windows": [
+    "E.6 screen: research 2025-04-01..2026-06-17, 265 trade dates",
+    "all six Tier B, Tier A empty"
+   ],
+   "registrations": [],
+   "n_trials": 6,
+   "n_note": "counted in N 198 (STAGES ladder); 6 members, 6 trials (STAGES:102-104)",
+   "closing": {
+    "decision": "V40 (and V38)",
+    "quote": "Stage E's intraday clusters are closed (E.22 return item 3 accepted); no holdout read.",
+    "source": "docs/DECISIONS.md:728-729"
+   },
+   "exceptions": [],
+   "notes": [
+    "K7-expiry-01 not traded (every research expiry day in a roll blackout)"
+   ],
+   "members": [
+    {
+     "member_id": "K7-cp1-01",
+     "roots": [
+      "MBT"
+     ],
+     "side": "momentum",
+     "decision": "08:59 (signal bar; last bar the decision reads); entry intent on the 1",
+     "hold": "yes: 14:30 fill to 14:59 open (about 29 min)",
+     "tiers": [
+      "None"
+     ],
+     "verdict": "E.6: screen 'fail', Tier 'B' (mean -7.4610 ticks, daily t -1.790, coverage 0.9985; reports/E.6_RETURN.md Task 5 table row 1)"
+    },
+    {
+     "member_id": "K7-cp2-01",
+     "roots": [
+      "MBT"
+     ],
+     "side": "momentum",
+     "decision": "variable: the first qualifying bar in [08:45, 14:59]; latest possible ",
+     "hold": "yes: 75 bars after the fill, or engine F 15:08 if earlier",
+     "tiers": [
+      "None"
+     ],
+     "verdict": "E.6: screen 'fail', Tier 'B' (mean -14.3785 ticks, daily t -1.350, coverage 0.9969, 1 MLL liquidation; reports/E.6_RETURN.md Task 5 row 2)"
+    },
+    {
+     "member_id": "K7-cp3-01",
+     "roots": [
+      "MBT"
+     ],
+     "side": "other: side = sign of th",
+     "decision": "08:30 (the 08:30 bar of CT date d; the signal itself is d-1's 08:30-14",
+     "hold": "yes: 08:31 fill to 14:59 open",
+     "tiers": [
+      "None"
+     ],
+     "verdict": "E.6: screen 'fail', Tier 'B' (mean -3.1197 ticks, daily t -0.259, coverage 0.9969; reports/E.6_RETURN.md Task 5 row 3)"
+    },
+    {
+     "member_id": "K7-expiry-01",
+     "roots": [
+      "MBT"
+     ],
+     "side": "calendar",
+     "decision": "04:59 or 05:59 (the T_exp - 301 min bar; no signal read), fill at 05:0",
+     "hold": "yes: T_exp - 300 min fill to T_exp - 1 min (about 5 h)",
+     "tiers": [
+      "None"
+     ],
+     "verdict": "E.6: screen 'fail', Tier 'B', 'none (calendar partly unverified; not traded)', 0 trips, t 'undefined' (reports/E.6_RETURN.md Task 5 row 4)"
+    },
+    {
+     "member_id": "K7-rev2h-01",
+     "roots": [
+      "MBT"
+     ],
+     "side": "fade",
+     "decision": "10:29 and 12:29 (signal bars), entries on the 10:30 / 12:30 bars, fill",
+     "hold": "yes: up to 14:29 bar (final exit fills at 14:30 open)",
+     "tiers": [
+      "None"
+     ],
+     "verdict": "E.6: screen 'fail', Tier 'B' (mean -28.9198 ticks, daily t -2.285, coverage 0.9967, 2 MLL liquidations; reports/E.6_RETURN.md Task 5 row 5)"
+    },
+    {
+     "member_id": "K7-montrend-01",
+     "roots": [
+      "MBT"
+     ],
+     "side": "momentum",
+     "decision": "hourly t - 1 min bars: Sunday 17:59 .. Monday 12:59 (entries on the t ",
+     "hold": "yes, within the Monday trade date (Sunday 18:01 CT at the earliest, fi",
+     "tiers": [
+      "None"
+     ],
+     "verdict": "E.6: screen 'fail', Tier 'B' (mean -4.7260 ticks, daily t -0.441, coverage 0.9596; reports/E.6_RETURN.md Task 5 row 6)"
+    }
+   ]
+  },
+  {
+   "id": "R1-10",
+   "type": "intraday_screen",
+   "family": "K8 cross-market screen: equity-flight into gold (H30, HEOD), oil/CAD, weekend bitcoin to NQ",
+   "products": [
+    {
+     "code": "MGC",
+     "role": "traded"
+    },
+    {
+     "code": "MES",
+     "role": "signal leg"
+    },
+    {
+     "code": "6C",
+     "role": "traded"
+    },
+    {
+     "code": "MCL",
+     "role": "signal leg"
+    },
+    {
+     "code": "MNQ",
+     "role": "traded"
+    },
+    {
+     "code": "MBT",
+     "role": "signal leg"
+    }
+   ],
+   "horizons": "intraday holds, flat by the exchange-set F (15:08 CT equity/rates; see members); decision times in members",
+   "bar_data": "1-minute step bars (Stage E harness; bar-based)",
+   "windows": [
+    "E.9 screen: research 2025-04-01..2026-06-16 (250-280 dates)",
+    "E.22 confirmation: K8-flight-01 HEOD null (2020-02-04..2024-02-29, 944 dates); K8-wkndbtc-01 inconclusive by design (not run)"
+   ],
+   "registrations": [],
+   "n_trials": 4,
+   "n_note": "counted in N 198 (STAGES ladder); 3 members, 4 trials (STAGES:111-114)",
+   "closing": {
+    "decision": "V40 (and V38)",
+    "quote": "Stage E's intraday clusters are closed (E.22 return item 3 accepted); no holdout read.",
+    "source": "docs/DECISIONS.md:728-729"
+   },
+   "exceptions": [],
+   "notes": [],
+   "members": [
+    {
+     "member_id": "K8-flight-01",
+     "roots": [
+      "MGC"
+     ],
+     "side": "other: always long MGC; ",
+     "decision": "t_k = 08:35..14:55 every 5 min; latest bar used = MES bar opening t_k ",
+     "hold": "True",
+     "tiers": [
+      "A",
+      "B"
+     ],
+     "verdict": "E.22: \"**NULL**, no edge. UCB95 +2.25 against 71; Holm p 0.574\" (reports/E.22_RETURN.md line 17)"
+    },
+    {
+     "member_id": "K8-oilcad-01",
+     "roots": [
+      "6C"
+     ],
+     "side": "momentum (sign of the tr",
+     "decision": "t = 08:05..13:25 every 5 min; latest bars used = MCL bar opening t - 1",
+     "hold": "True",
+     "tiers": [
+      "B"
+     ],
+     "verdict": "E.22: status \"null\", 1438 trips, p_upper +1.0000 (reports/E.22_RETURN.md line 321)"
+    },
+    {
+     "member_id": "K8-wkndbtc-01",
+     "roots": [
+      "MNQ"
+     ],
+     "side": "momentum (sign of the we",
+     "decision": "Sunday 18:00 CT (decision on the view at Sunday 17:59); latest bars us",
+     "hold": "True",
+     "tiers": [
+      "A"
+     ],
+     "verdict": "E.22: \"**INCONCLUSIVE BY DESIGN** (D4: MBT-limited window 34 days < n_b 43; BTC not owned); not run.\" (reports/E.22_RETURN.md line 18)"
+    }
+   ]
+  },
+  {
+   "id": "R1-11",
+   "type": "ml_search",
+   "family": "ML route v2 Gate 0: Family A (64 generic signals x 3 horizons = 192 tests) and Family B (27 products x 3 horizons = 81 product-horizon tests), ridge/LightGBM design, cost-gated",
+   "products": [
+    {
+     "code": "6A",
+     "role": "tested"
+    },
+    {
+     "code": "6B",
+     "role": "tested"
+    },
+    {
+     "code": "6C",
+     "role": "tested"
+    },
+    {
+     "code": "6E",
+     "role": "tested"
+    },
+    {
+     "code": "6J",
+     "role": "tested"
+    },
+    {
+     "code": "6N",
+     "role": "tested"
+    },
+    {
+     "code": "6S",
+     "role": "tested"
+    },
+    {
+     "code": "HE",
+     "role": "tested"
+    },
+    {
+     "code": "LE",
+     "role": "tested"
+    },
+    {
+     "code": "M2K",
+     "role": "tested"
+    },
+    {
+     "code": "MCL",
+     "role": "tested"
+    },
+    {
+     "code": "MGC",
+     "role": "tested"
+    },
+    {
+     "code": "MHG",
+     "role": "tested"
+    },
+    {
+     "code": "MNQ",
+     "role": "tested"
+    },
+    {
+     "code": "MYM",
+     "role": "tested"
+    },
+    {
+     "code": "NG",
+     "role": "tested"
+    },
+    {
+     "code": "TN",
+     "role": "tested"
+    },
+    {
+     "code": "UB",
+     "role": "tested"
+    },
+    {
+     "code": "ZB",
+     "role": "tested"
+    },
+    {
+     "code": "ZC",
+     "role": "tested"
+    },
+    {
+     "code": "ZF",
+     "role": "tested"
+    },
+    {
+     "code": "ZL",
+     "role": "tested"
+    },
+    {
+     "code": "ZM",
+     "role": "tested"
+    },
+    {
+     "code": "ZN",
+     "role": "tested"
+    },
+    {
+     "code": "ZS",
+     "role": "tested"
+    },
+    {
+     "code": "ZT",
+     "role": "tested"
+    },
+    {
+     "code": "ZW",
+     "role": "tested"
+    }
+   ],
+   "horizons": "h60, h120, hF (minutes; hF = to flat)",
+   "bar_data": "1-minute bars, 64-feature library, decision clock",
+   "windows": [
+    "training window 2019-05..2024-02 (S_X 2019-05-06; ZF 2020-10-01, ZT 2021-10-01); 1,067-1,068 dates",
+    "MBT no Gate 0 row; holdout-2 not read"
+   ],
+   "registrations": [
+    "ledger baseline (N 471); ledger/ml_v2_config_ledger.jsonl 273 entries"
+   ],
+   "n_trials": 273,
+   "n_note": "N 198 + 273 = 471 (reports/E.12_RETURN.md:28)",
+   "closing": {
+    "decision": "V24",
+    "quote": "Under the frozen V2.2b, ML route v2 stops: no phase-2 purchase, no V2.6 model, no holdout-2 registration.",
+    "source": "docs/DECISIONS.md:449-451"
+   },
+   "exceptions": [
+    "V24: \"any reuse needs a new pre-registration that counts N = 471\" (DECISIONS:453-454)",
+    "V43 reopens ML for order-book/limit-order strategies only"
+   ],
+   "notes": [
+    "best pair NG h60: mean gross 5.57 ticks vs c 1.71, t_B 2.51, Holm rank 1 of 273 not rejected (reports/E.12_RETURN.md:10-12)",
+    "pooled family B mean gross -0.72 ticks vs cost 2.26, t 0.28 (E.12_RETURN:13)"
+   ]
+  },
+  {
+   "id": "R1-12",
+   "type": "replication",
+   "family": "C1 / C1b backward NG replication (frozen ridge M1 with world-market features)",
+   "products": [
+    {
+     "code": "NG",
+     "role": "traded"
+    },
+    {
+     "code": "NQ",
+     "role": "feature leg"
+    },
+    {
+     "code": "ZN",
+     "role": "feature leg"
+    },
+    {
+     "code": "6E",
+     "role": "feature leg"
+    },
+    {
+     "code": "GC",
+     "role": "feature leg"
+    },
+    {
+     "code": "ZC",
+     "role": "feature leg"
+    }
+   ],
+   "horizons": "h60, hF",
+   "bar_data": "1-minute bars (ext2010 store)",
+   "windows": [
+    "W_ext NG 2010-07..2019-04 (store 2010-06-07..2019-04-30), read once each"
+   ],
+   "registrations": [
+    "r001-C1 (2; stopped at guard C10, no statistic)",
+    "r003-C1b (2; evaluated once)"
+   ],
+   "n_trials": 4,
+   "n_note": "ledger: r001-C1 N 471->473; r003-C1b N 478->480",
+   "closing": {
+    "decision": "V31 (C1 attempt closed), V32 (NG near-miss closed)",
+    "quote": "C1b failed (NG h60 t_B -0.83, hF -0.41; Fable verified); the NG near-miss is closed; N is 480.",
+    "source": "docs/DECISIONS.md:578-580"
+   },
+   "exceptions": [],
+   "notes": [
+    "V31 :564 \"no statistic exists; the attempt is closed\" for C1",
+    "STAGES:160-162: T1 NG h60 mean 0.585 ticks vs bar 2.562; T2 NG hF -0.113 vs 2.649"
+   ]
+  },
+  {
+   "id": "R1-13",
+   "type": "base_rule_batch",
+   "family": "E.16 forced-flow base rules: H1 settlement-window intraday momentum (pooled), H2 month-end NQ vs ZN pair, H3 Treasury auction cycle, H4 next-day reversal of the settlement-window move, H5 equal-risk combination",
+   "products": [
+    {
+     "code": "NQ",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "YM",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "RTY",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "ZT",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "ZF",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "ZN",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "TN",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "ZB",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "UB",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "6E",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "6A",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "6B",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "6C",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "6J",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "6S",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "6N",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "CL",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "NG",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "GC",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "HG",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "ZC",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "ZW",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "ZS",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "ZM",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "ZL",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "LE",
+     "role": "pooled (H1/H4)"
+    },
+    {
+     "code": "HE",
+     "role": "pooled (H1/H4)"
+    }
+   ],
+   "horizons": "H1/H4 settlement-window intraday; H2 and H3 hold overnight (multi-day, personal-account venue); H5 combination",
+   "bar_data": "1-minute bars",
+   "windows": [
+    "2010-07..2024-02 on the 17 W_ext roots; 2019-05-06..2024-02-29 on the 10 fallback roots (YM 6A 6B 6C 6J 6S 6N HG ZW ZM)"
+   ],
+   "registrations": [
+    "r002-E16 (E16-H1..H5; 5)"
+   ],
+   "n_trials": 5,
+   "n_note": "N 473 -> 478",
+   "closing": {
+    "decision": "V31",
+    "quote": "The base-rule batch H1 to H5 is closed: all five failed (H1's gross is about a quarter of its D8 cost; H2 positive at p 0.068, not a pass); no rerun or variant on these windows, no purchase of the 10 fallback roots, no holdout-2 read.",
+    "source": "docs/DECISIONS.md:568-571"
+   },
+   "exceptions": [
+    "H2 (month-end NQ/ZN) noted as a personal-account candidate only, not pursued (V33 item 4, DECISIONS:608)"
+   ],
+   "notes": [
+    "H3 roots not extracted (Treasury tenors per E.16 freeze)",
+    "E.16 overlap audit closest tested members: H1 CP1 port, H2 K2-monthend-01, H3 K2-aucpre/aucpost-01, H4 CP3 port, H5 none (E.16_RETURN:222-229)",
+    "ambiguous: for lead: V28 (DECISIONS:524) says H2 and H3 hold overnight; E.16 overlap audit lists their closest members as intraday-only",
+    "DSR at N=478: all about 0 (E.17_RETURN:575)"
+   ]
+  },
+  {
+   "id": "R1-14",
+   "type": "intraday_test",
+   "family": "H6 rest-of-day to last-half-hour momentum on NQ (Baltussen, Da, Lammers, Martens 2021): T1 always, T2 above trailing |r_ROD| median, T3 negative prior-day GEX",
+   "products": [
+    {
+     "code": "NQ",
+     "role": "traded (MNQ cost)"
+    }
+   ],
+   "horizons": "last half hour (about 30 min), entry at 14:30 CT",
+   "bar_data": "1-minute NQ step2 store",
+   "windows": [
+    "2020-06-01..2024-02-29 (GEX rows 2020-05-29..2024-02-28), run once"
+   ],
+   "registrations": [
+    "r004-E20H6 (3)"
+   ],
+   "n_trials": 3,
+   "n_note": "N 480 -> 483",
+   "closing": {
+    "decision": "V38",
+    "quote": "The intraday program on Topstep is closed: nothing in 528 trials passed",
+    "source": "docs/DECISIONS.md:678-679"
+   },
+   "exceptions": [],
+   "notes": [
+    "T1 gross 1.25 ticks vs 4.08 cost, t -0.53 (STAGES:172-173)",
+    "reversal direction reused at 5/20-day holds in R1-18"
+   ],
+   "members": [
+    {
+     "member_id": "E20H6-T1 (prompt name E20-H6-T1; registration r004-E20H6, label E20H6)",
+     "roots": [
+      "NQ (price path)"
+     ],
+     "side": "momentum",
+     "decision": "14:30 CT on a normal day (close of the bar opening 14:29 = C-30); on a",
+     "hold": "entry fill at the open of the bar at C-30 (14:30 CT normal) to the exi",
+     "tiers": [
+      "n/a"
+     ],
+     "verdict": "'No Holm rejection (m = 3, 0.025). Fable reproduced every number independently.' (E.20_RETURN.md section 1)"
+    },
+    {
+     "member_id": "E20H6-T2 (prompt name E20-H6-T2; registration r004-E20H6, label E20H6)",
+     "roots": [
+      "NQ (price path)"
+     ],
+     "side": "momentum",
+     "decision": "14:30 CT on a normal day (close of the bar opening 14:29); C-30 of the",
+     "hold": "C-30 open fill to the fill after the first bar at or after C-2 (about ",
+     "tiers": [
+      "n/a"
+     ],
+     "verdict": "FAIL (E.20_RETURN.md section 1: 'T2 (|r_ROD| above its 60-date median): FAIL. 446 trades; gross -3.27 ticks (-0.35 bp), net -7.35 (-1.11 bp); t_B -0.9"
+    },
+    {
+     "member_id": "E20H6-T3 (prompt name E20-H6-T3; registration r004-E20H6, label E20H6)",
+     "roots": [
+      "NQ (price path)"
+     ],
+     "side": "momentum",
+     "decision": "14:30 CT on a normal day (close of the bar opening 14:29); GEX row of ",
+     "hold": "C-30 open fill to the fill after the first bar at or after C-2 (about ",
+     "tiers": [
+      "n/a"
+     ],
+     "verdict": "FAIL (E.20_RETURN.md section 1: 'T3 (previous day's GEX negative; ran, the source cleared under its terms): FAIL. 134 trades; gross -3.52 ticks (-0.52"
+    }
+   ]
+  },
+  {
+   "id": "R1-15",
+   "type": "ml_search",
+   "family": "E.20 Part C ML pattern search: ridge and shallow LightGBM, 45 configurations, extra decision time t4 = F_X - 60 min, r_ROD features",
+   "products": [
+    {
+     "code": "NQ",
+     "role": "searched"
+    },
+    {
+     "code": "RTY",
+     "role": "searched"
+    },
+    {
+     "code": "ZT",
+     "role": "searched"
+    },
+    {
+     "code": "ZF",
+     "role": "searched"
+    },
+    {
+     "code": "ZN",
+     "role": "searched"
+    },
+    {
+     "code": "TN",
+     "role": "searched"
+    },
+    {
+     "code": "ZB",
+     "role": "searched"
+    },
+    {
+     "code": "UB",
+     "role": "searched"
+    },
+    {
+     "code": "6E",
+     "role": "searched"
+    },
+    {
+     "code": "CL",
+     "role": "searched"
+    },
+    {
+     "code": "NG",
+     "role": "searched"
+    },
+    {
+     "code": "GC",
+     "role": "searched"
+    },
+    {
+     "code": "ZC",
+     "role": "searched"
+    },
+    {
+     "code": "ZS",
+     "role": "searched"
+    },
+    {
+     "code": "ZL",
+     "role": "searched"
+    },
+    {
+     "code": "LE",
+     "role": "searched"
+    },
+    {
+     "code": "HE",
+     "role": "searched"
+    }
+   ],
+   "horizons": "h60, h120, hF",
+   "bar_data": "1-minute step2 stores, 36 features",
+   "windows": [
+    "2019-05-06..2024-02-29 (nested CPCV, 57,775 decision rows); backward 2010-2019 read not run"
+   ],
+   "registrations": [
+    "r005-E20S (E20S-01..45; 45)"
+   ],
+   "n_trials": 45,
+   "n_note": "N 483 -> 528",
+   "closing": {
+    "decision": "V38",
+    "quote": "nothing in 528 trials passed, and no published post-2015 intraday effect on the 17 roots exceeds 1.5 x the D8 round trip (E.20 Part A, 157 evidence rows)",
+    "source": "docs/DECISIONS.md:679-681"
+   },
+   "exceptions": [
+    "V45 item 4 amends the sentence: three working-paper effects (see R1-19)"
+   ],
+   "notes": [
+    "all 45 configurations negative out of sample; median-path t -1.33, PBO 0.60, net Sharpe -0.83 (STAGES:172-174)",
+    "E.20 Part A: 17 root readers, 0 features accepted"
+   ]
+  },
+  {
+   "id": "R1-16",
+   "type": "multiday",
+   "family": "E.21 multi-day: T1 12-month TSMOM (MOP 2012), T2 1/3/12-month trend blend (HOP 2017), T3 equity turn of the month, T4 equal-risk book with H2",
+   "products": [
+    {
+     "code": "NQ",
+     "role": "traded"
+    },
+    {
+     "code": "RTY",
+     "role": "traded"
+    },
+    {
+     "code": "ZT",
+     "role": "traded"
+    },
+    {
+     "code": "ZF",
+     "role": "traded"
+    },
+    {
+     "code": "ZN",
+     "role": "traded"
+    },
+    {
+     "code": "TN",
+     "role": "traded"
+    },
+    {
+     "code": "ZB",
+     "role": "traded"
+    },
+    {
+     "code": "UB",
+     "role": "traded"
+    },
+    {
+     "code": "6E",
+     "role": "traded"
+    },
+    {
+     "code": "CL",
+     "role": "traded"
+    },
+    {
+     "code": "NG",
+     "role": "traded"
+    },
+    {
+     "code": "GC",
+     "role": "traded"
+    },
+    {
+     "code": "ZC",
+     "role": "traded"
+    },
+    {
+     "code": "ZS",
+     "role": "traded"
+    },
+    {
+     "code": "ZL",
+     "role": "traded"
+    },
+    {
+     "code": "LE",
+     "role": "traded"
+    },
+    {
+     "code": "HE",
+     "role": "traded"
+    }
+   ],
+   "horizons": "monthly/multi-day (T3 turn of month on NQ and RTY)",
+   "bar_data": "daily/settlement paths from owned 1-minute stores",
+   "windows": [
+    "2010-2024 owned data (E.21 return: AQR comparison 2010-07..2024-02)"
+   ],
+   "registrations": [
+    "r006-E21 (4)"
+   ],
+   "n_trials": 4,
+   "n_note": "N 528 -> 532",
+   "closing": {
+    "decision": "V39",
+    "quote": "Trend is recorded as consistent with the published evidence, not established by this program's bar; no further trend variant on 2010-2024.",
+    "source": "docs/DECISIONS.md:697-699"
+   },
+   "exceptions": [],
+   "notes": [
+    "T1 net Sharpe 0.50 [-0.06, 1.05], t 1.78, p 0.042; T2 0.44; T3 0.15; T4 0.12; all FAIL on Holm 0.025 (STAGES:177-180)",
+    "V39: no ML overlay on trend built (DECISIONS:709)"
+   ]
+  },
+  {
+   "id": "R1-17",
+   "type": "forward_registered_parked",
+   "family": "E22-F1 micro trend book forward test at USD 25,000 (E.21 trend rule on 12 micros)",
+   "products": [
+    {
+     "code": "MICROS12",
+     "role": "12 micros on E.21 owned paths (list in the E.22 freeze; not extracted)"
+    }
+   ],
+   "horizons": "daily",
+   "bar_data": "daily settlement",
+   "windows": [
+    "forward test, 36 months from the first ledger record after a settlement source is approved; warm-up read approved in V42 (2024-03-01 to start)"
+   ],
+   "registrations": [
+    "r007-E22 (1)"
+   ],
+   "n_trials": 1,
+   "n_note": "N 532 -> 533",
+   "closing": {
+    "decision": "V43 (parked), not a closing",
+    "quote": "no paper trading for now and no 24/7 gateway on the laptop (E22-F1, E22-F1b, E22-F2 and any C1 forward record parked, unregistered, N 538)",
+    "source": "docs/DECISIONS.md:804-806"
+   },
+   "exceptions": [],
+   "notes": [
+    "ambiguous: for lead: V43 says \"unregistered\" while the ledger holds r007-E22 (N 533)"
+   ]
+  },
+  {
+   "id": "R1-18",
+   "type": "multiday",
+   "family": "E.23 program triggers at 5- and 20-day holds (entered at the trigger day's settlement; alpha over E.21 trend returns): K2-monthend-01 long ZF/ZN/ZB at 5 days; E20H6-T1 reversal on NQ at 5 and 20 days",
+   "products": [
+    {
+     "code": "ZF",
+     "role": "traded"
+    },
+    {
+     "code": "ZN",
+     "role": "traded"
+    },
+    {
+     "code": "ZB",
+     "role": "traded"
+    },
+    {
+     "code": "NQ",
+     "role": "traded"
+    }
+   ],
+   "horizons": "5 and 20 trading days",
+   "bar_data": "daily from owned stores",
+   "windows": [
+    "discovery W_ext 2011-07-27..2019-04-30, read once",
+    "confirmation W_cf 2019-05..2024-02 not computed (power 0.18)"
+   ],
+   "registrations": [
+    "r008-E23 (E23-MEZFh5, MEZNh5, MEZBh5, H6NQh5, H6NQh20; 5)"
+   ],
+   "n_trials": 5,
+   "n_note": "N 533 -> 538",
+   "closing": {
+    "decision": "V41",
+    "quote": "\"The program's intraday triggers at multi-day holds\" is closed as a direction; no variant (other roots, other holds, the opposite H6 direction) is tested on these windows.",
+    "source": "docs/DECISIONS.md:749-751"
+   },
+   "exceptions": [
+    "W_cf (2019-05..2024-02, trigger-conditional multi-day outcomes unread) and holdout-2 kept for a hypothesis with a stronger prior (DECISIONS:751-754)"
+   ],
+   "notes": [
+    "alpha t 0.55/0.38/0.10/-1.61/-0.71; Holm smallest p 0.31 (STAGES:194-195)",
+    "the month-end gain is the bonds' drift"
+   ]
+  },
+  {
+   "id": "R1-19",
+   "type": "intraday_closure_umbrella",
+   "family": "Intraday program closure with its exceptions (E.20 Part A literature, 17 roots, 157 evidence rows; re-dug in E.25)",
+   "products": [
+    {
+     "code": "NQ",
+     "role": "scope"
+    },
+    {
+     "code": "RTY",
+     "role": "scope"
+    },
+    {
+     "code": "ZT",
+     "role": "scope"
+    },
+    {
+     "code": "ZF",
+     "role": "scope"
+    },
+    {
+     "code": "ZN",
+     "role": "scope"
+    },
+    {
+     "code": "TN",
+     "role": "scope"
+    },
+    {
+     "code": "ZB",
+     "role": "scope"
+    },
+    {
+     "code": "UB",
+     "role": "scope"
+    },
+    {
+     "code": "6E",
+     "role": "scope"
+    },
+    {
+     "code": "CL",
+     "role": "scope"
+    },
+    {
+     "code": "NG",
+     "role": "scope"
+    },
+    {
+     "code": "GC",
+     "role": "scope"
+    },
+    {
+     "code": "ZC",
+     "role": "scope"
+    },
+    {
+     "code": "ZS",
+     "role": "scope"
+    },
+    {
+     "code": "ZL",
+     "role": "scope"
+    },
+    {
+     "code": "LE",
+     "role": "scope"
+    },
+    {
+     "code": "HE",
+     "role": "scope"
+    }
+   ],
+   "horizons": "intraday",
+   "bar_data": "published-effect census, no data read",
+   "windows": [
+    "n/a"
+   ],
+   "registrations": [],
+   "n_trials": 0,
+   "n_note": "covers 528 trials at V38 (N 538 later)",
+   "closing": {
+    "decision": "V38 as amended by V45 item 4",
+    "quote": "no published post-2015 intraday effect on the 17 roots exceeds 1.5 x the D8 round trip, except three working-paper effects whose samples run past 2015, none with a significant post-2015 estimate",
+    "source": "docs/DECISIONS.md:910-916"
+   },
+   "exceptions": [
+    "V45: pre-refunding-announcement ZN gain (Wang and Zhao 2025, cash, +12.62 bp, t 3.32)",
+    "V45: pre-FOMC ZN drift (Pan and Peng 2026, futures, +7.26 bp, t 2.82, 2004-01..2025-06)",
+    "V45: ES 3rd-Friday reversal (Baltussen, Terstegge and Whelan, -12.89 bp, t -2.40, 2003-2021; 2015-23 not significant alone)",
+    "V45: \"Each gives 3 to 15 events in the research window (power 0.11 to 0.22 at the published sizes), so none can be tested with adequate power on owned data.\" (DECISIONS:919-921)"
+   ],
+   "notes": [
+    "quote of the closure end: \"The closure of the intraday program (V38) stays in place.\" (DECISIONS:922)",
+    "E.25 shortlist also named noise-area intraday momentum on MNQ (V34 item 4 had dropped it as \"unsized\"); never tested (reports/E.25_RETURN.md:13,29)"
+   ]
+  },
+  {
+   "id": "R1-20",
+   "type": "passive_execution_measured",
+   "family": "Passive spread capture at the touch, one lot, trade-through fills (E.31 ZM order-book pilot); covers ZM, QM (frozen QM pilot never bought) and ZL follow-up (skipped)",
+   "products": [
+    {
+     "code": "ZM",
+     "role": "measured"
+    },
+    {
+     "code": "QM",
+     "role": "closed by decision, not measured"
+    },
+    {
+     "code": "ZL",
+     "role": "closed by decision, skipped"
+    },
+    {
+     "code": "ZS",
+     "role": "conditioning data (MBP-1)"
+    }
+   ],
+   "horizons": "10 s markout per fill",
+   "bar_data": "ZM MBO (front two months), ZS and ZL MBP-1; 156 files, 24.2 GB",
+   "windows": [
+    "2020-12..2024-02 (39 whole months; 816 trade dates measured, 764 DAY dates usable)",
+    "nothing on or after 2024-03-01"
+   ],
+   "registrations": [
+    "none (nothing registered; N 538)"
+   ],
+   "n_trials": 0,
+   "n_note": "E.31 registered nothing",
+   "closing": {
+    "decision": "V50",
+    "quote": "Passive spread capture at the touch with a one-lot at prop-firm simulators is closed. This covers ZM, QM (E.28's frozen QM pilot is closed, never bought) and the ZL follow-up of V49 (skipped). E.29 D2 (baskets around ZM) is not run.",
+    "source": "docs/DECISIONS.md:1034-1037"
+   },
+   "exceptions": [
+    "V50 item 2: \"Limit orders stay allowed as an execution method for a directional signal. They are not a source of edge in themselves.\"",
+    "V56 item 2: limit orders as execution of a directional signal stay open; \"Order-book direction is not closed for other products.\" (DECISIONS:1149-1152)"
+   ],
+   "notes": [
+    "ZM front-month DAY 10 s edge net of Topstep fee -1.234 ticks [-1.252, -1.214]; gross -0.970; K-algorithm -0.29, FIFO -0.25 gross (E.31_RETURN:20-27)",
+    "V50 item 4: E.31 read these dates for passive-fill markouts incl. queue-imbalance splits; \"Any test of an order-flow signal on these dates is therefore not a clean holdout.\" (DECISIONS:1046-1050)",
+    "V49 item 2: MGC out of passive spread capture (fee 1.5-2.2 ticks vs 1-tick maximum capture): decision, not measurement; MGC kept \"only as a possible directional test\""
+   ]
+  },
+  {
+   "id": "R1-21",
+   "type": "directional_search",
+   "family": "ZM directional 5-60 minute search, five feature sets: S1 crush residual, S2 cross-asset propagation from ZS and ZL, S3 ZM order flow and book state, S4 ZM own price path, S5 all four pooled; x 6 labels x 10 model settings (6 regularised multinomial logits, 4 shallow LightGBM)",
+   "products": [
+    {
+     "code": "ZM",
+     "role": "traded"
+    },
+    {
+     "code": "ZS",
+     "role": "input"
+    },
+    {
+     "code": "ZL",
+     "role": "input"
+    }
+   ],
+   "horizons": "fixed horizons 5, 15, 30, 60 minutes; triple barrier at 15 and 30",
+   "bar_data": "ZM MBO plus ZS/ZL MBP-1 (order-book schemas), 59 features, Topstep market orders 1 s latency, fee 0.528 tick",
+   "windows": [
+    "796 out-of-fold dates 2020-12-30..2024-02-29, 6 blocked folds, 21-date embargo",
+    "test window 2017-05-01..2020-11-30 sealed, unread"
+   ],
+   "registrations": [
+    "r009-E33 (300 configurations)"
+   ],
+   "n_trials": 300,
+   "n_note": "N 538 -> 838",
+   "closing": {
+    "decision": "V56",
+    "quote": "ZM's directional route at 5-60 minute holds is closed. There is no E.34 and no purchase. The 2017-05..2020-11 window stays sealed for a future hypothesis family.",
+    "source": "docs/DECISIONS.md:1146-1148"
+   },
+   "exceptions": [
+    "V56 item 2: order-book direction not closed for other products; limit orders as execution of a directional signal stay open"
+   ],
+   "notes": [
+    "Tier A empty; best loses 1.098 ticks/trade; best daily Sharpe 0.0478 vs binding 0.2007; DSR at most 0.025; BH and Holm reject 0; PBO 0.14 (E.33c_RETURN:15-31)",
+    "61 of 300 met G1 (all lose over 1.0 tick/trade); 8 averaged at least 0.5 tick on at most 55 trades",
+    "minimum detectable edge 1.5-4.4 ticks/trade at the trade rates seen (E.33c_RETURN:355-357)",
+    "E.33c: \"not a null statement in the program's sense\"; no statement for all five sets"
+   ]
+  },
+  {
+   "id": "R1-22",
+   "type": "product_decision",
+   "family": "NQ dropped for the passive limit-order direction",
+   "products": [
+    {
+     "code": "NQ",
+     "role": "dropped"
+    }
+   ],
+   "horizons": "n/a",
+   "bar_data": "n/a",
+   "windows": [
+    "none read"
+   ],
+   "registrations": [],
+   "n_trials": 0,
+   "n_note": "decision from E.28 ranks 33, 45, 52, 54, 62",
+   "closing": {
+    "decision": "V49 item 1",
+    "quote": "NQ is dropped as a candidate at every firm (E.28 ranks 33, 45, 52, 54 and 62), despite Topstep's 0.44-tick break-even. Reasons: very long queues and HFT competition ... Topstep's Tier 1 news windows block NQ. NQ is not used as a pilot or comparison contract.",
+    "source": "docs/DECISIONS.md:1010-1016"
+   },
+   "exceptions": [],
+   "notes": [
+    "ambiguous: for lead: V49 is headed \"For the passive limit-order direction (V43, E.28)\"; its scope for directional market-order use of NQ is not stated. Ranking spec section 0 treats NQ as \"excluded (V49)\"",
+    "NQ appears in other closed lines: R1-03 (price path of MNQ), R1-12 (feature leg), R1-13, R1-14, R1-15, R1-16, R1-18"
+   ]
+  },
+  {
+   "id": "R1-23",
+   "type": "closed_directions_no_trials",
+   "family": "Directions closed by the user without a program trial: prediction markets; crypto; commodity event drift as a standalone stage; ML overlay on trend; C2 GEX late-session momentum stopped before freeze",
+   "products": [
+    {
+     "code": "MBT",
+     "role": "crypto direction (K7 screened, R1-09)"
+    },
+    {
+     "code": "CRUDE_METALS_NATGAS",
+     "role": "commodity event drift direction, no product list given"
+    }
+   ],
+   "horizons": "n/a",
+   "bar_data": "n/a",
+   "windows": [
+    "none read"
+   ],
+   "registrations": [],
+   "n_trials": 0,
+   "n_note": "C2 stopped at its power rule, N unchanged",
+   "closing": {
+    "decision": "V39 (and V27 for C2)",
+    "quote": "Closed as directions: prediction markets (user), crypto (every prior crypto line closed negative across the user's projects), commodity event drift as a standalone stage (planning research: geopolitical news is priced fast, OPEC drift has decayed; at most an overlay on trend).",
+    "source": "docs/DECISIONS.md:702-706"
+   },
+   "exceptions": [
+    "V39: small caps \"marginal ... not run now\" (DECISIONS:706-709): not closed",
+    "V27: C2 \"stays stopped with no rerun planned\" (DECISIONS:499-501)"
+   ],
+   "notes": [
+    "ambiguous: for lead: V27 says C2 stopped at its power rule before its freeze (135 eligible negative-GEX dates, floor 200); a stop, not a test"
+   ]
+  }
+ ],
+ "standing_constraints": [
+  {
+   "id": "V28",
+   "text": "No deep network, reinforcement learning or other ML layer goes onto a rule set that has not passed a pre-registered test",
+   "source": "docs/DECISIONS.md:509-512",
+   "note": "amended by V33 item 5 (E.20) and V43 (order-book/limit-order ML may itself be the strategy)"
+  },
+  {
+   "id": "V31",
+   "text": "cost-feasibility gate: every future hypothesis states expected gross per trade from published evidence against the D8 round-trip cost and is dropped if it does not clear the pass multiple",
+   "source": "docs/DECISIONS.md:571-576"
+  },
+  {
+   "id": "V33",
+   "text": "No Combine is bought until a strategy passes a registered test and its follow-up reads with a net Sharpe of about 0.5 or more",
+   "source": "docs/DECISIONS.md:596-598"
+  },
+  {
+   "id": "V51",
+   "text": "ZM test window 2017-05-01..2020-11-30 sealed by E.32 Part 0, covers every schema; 2024-03 onward closed unless the user approves",
+   "source": "docs/DECISIONS.md:1062-1067"
+  }
+ ],
+ "lookup_by_product": {
+  "codes47": [
+   {
+    "code": "MCL",
+    "lines": [
+     {
+      "line": "R1-06",
+      "role": "traded (CL bars)"
+     },
+     {
+      "line": "R1-10",
+      "role": "signal leg"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     }
+    ],
+    "siblings": [
+     "QM",
+     "CL"
+    ],
+    "sibling_lines": [
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19",
+     "R1-20"
+    ]
+   },
+   {
+    "code": "QM",
+    "lines": [
+     {
+      "line": "R1-20",
+      "role": "closed by decision, not measured"
+     }
+    ],
+    "siblings": [
+     "MCL",
+     "CL"
+    ],
+    "sibling_lines": [
+     "R1-06",
+     "R1-10",
+     "R1-11",
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19"
+    ]
+   },
+   {
+    "code": "CL",
+    "lines": [
+     {
+      "line": "R1-06",
+      "role": "price path"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [
+     "MCL",
+     "QM"
+    ],
+    "sibling_lines": [
+     "R1-10",
+     "R1-11",
+     "R1-20"
+    ]
+   },
+   {
+    "code": "MNG",
+    "lines": [],
+    "siblings": [
+     "QG",
+     "NG"
+    ],
+    "sibling_lines": [
+     "R1-06",
+     "R1-11",
+     "R1-12",
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19"
+    ]
+   },
+   {
+    "code": "QG",
+    "lines": [],
+    "siblings": [
+     "MNG",
+     "NG"
+    ],
+    "sibling_lines": [
+     "R1-06",
+     "R1-11",
+     "R1-12",
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19"
+    ]
+   },
+   {
+    "code": "NG",
+    "lines": [
+     {
+      "line": "R1-06",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-12",
+      "role": "traded"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [
+     "MNG",
+     "QG"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "MGC",
+    "lines": [
+     {
+      "line": "R1-07",
+      "role": "traded (GC bars)"
+     },
+     {
+      "line": "R1-10",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     }
+    ],
+    "siblings": [
+     "GC"
+    ],
+    "sibling_lines": [
+     "R1-12",
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19"
+    ]
+   },
+   {
+    "code": "GC",
+    "lines": [
+     {
+      "line": "R1-07",
+      "role": "price path"
+     },
+     {
+      "line": "R1-12",
+      "role": "feature leg"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [
+     "MGC"
+    ],
+    "sibling_lines": [
+     "R1-10",
+     "R1-11"
+    ]
+   },
+   {
+    "code": "SIL",
+    "lines": [],
+    "siblings": [
+     "SI"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "SI",
+    "lines": [],
+    "siblings": [
+     "SIL"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "MHG",
+    "lines": [
+     {
+      "line": "R1-07",
+      "role": "traded (HG bars)"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     }
+    ],
+    "siblings": [
+     "HG"
+    ],
+    "sibling_lines": [
+     "R1-13"
+    ]
+   },
+   {
+    "code": "HG",
+    "lines": [
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     }
+    ],
+    "siblings": [
+     "MHG"
+    ],
+    "sibling_lines": [
+     "R1-07",
+     "R1-11"
+    ]
+   },
+   {
+    "code": "M6E",
+    "lines": [],
+    "siblings": [
+     "6E"
+    ],
+    "sibling_lines": [
+     "R1-05",
+     "R1-11",
+     "R1-12",
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19"
+    ]
+   },
+   {
+    "code": "6E",
+    "lines": [
+     {
+      "line": "R1-05",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-12",
+      "role": "feature leg"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [
+     "M6E"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "M6A",
+    "lines": [],
+    "siblings": [
+     "6A"
+    ],
+    "sibling_lines": [
+     "R1-05",
+     "R1-11",
+     "R1-13"
+    ]
+   },
+   {
+    "code": "6A",
+    "lines": [
+     {
+      "line": "R1-05",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     }
+    ],
+    "siblings": [
+     "M6A"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "MET",
+    "lines": [],
+    "siblings": [
+     "ETH"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "ETH",
+    "lines": [],
+    "siblings": [
+     "MET"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "MBT",
+    "lines": [
+     {
+      "line": "R1-09",
+      "role": "traded"
+     },
+     {
+      "line": "R1-10",
+      "role": "signal leg"
+     },
+     {
+      "line": "R1-23",
+      "role": "crypto direction (K7 screened, R1-09)"
+     }
+    ],
+    "siblings": [
+     "BTC"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "BTC",
+    "lines": [],
+    "siblings": [
+     "MBT"
+    ],
+    "sibling_lines": [
+     "R1-09",
+     "R1-10",
+     "R1-23"
+    ]
+   },
+   {
+    "code": "M2K",
+    "lines": [
+     {
+      "line": "R1-03",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     }
+    ],
+    "siblings": [
+     "RTY"
+    ],
+    "sibling_lines": [
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19"
+    ]
+   },
+   {
+    "code": "RTY",
+    "lines": [
+     {
+      "line": "R1-03",
+      "role": "price path/W_ext"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [
+     "M2K"
+    ],
+    "sibling_lines": [
+     "R1-11"
+    ]
+   },
+   {
+    "code": "MYM",
+    "lines": [
+     {
+      "line": "R1-03",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     }
+    ],
+    "siblings": [
+     "YM"
+    ],
+    "sibling_lines": [
+     "R1-13"
+    ]
+   },
+   {
+    "code": "YM",
+    "lines": [
+     {
+      "line": "R1-03",
+      "role": "price path"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     }
+    ],
+    "siblings": [
+     "MYM"
+    ],
+    "sibling_lines": [
+     "R1-11"
+    ]
+   },
+   {
+    "code": "MNQ",
+    "lines": [
+     {
+      "line": "R1-03",
+      "role": "traded"
+     },
+     {
+      "line": "R1-10",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     }
+    ],
+    "siblings": [
+     "NQ"
+    ],
+    "sibling_lines": [
+     "R1-12",
+     "R1-13",
+     "R1-14",
+     "R1-15",
+     "R1-16",
+     "R1-18",
+     "R1-19",
+     "R1-22"
+    ]
+   },
+   {
+    "code": "NQ",
+    "lines": [
+     {
+      "line": "R1-03",
+      "role": "price path/W_ext"
+     },
+     {
+      "line": "R1-12",
+      "role": "feature leg"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-14",
+      "role": "traded (MNQ cost)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-18",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     },
+     {
+      "line": "R1-22",
+      "role": "dropped"
+     }
+    ],
+    "siblings": [
+     "MNQ"
+    ],
+    "sibling_lines": [
+     "R1-10",
+     "R1-11"
+    ]
+   },
+   {
+    "code": "2YY",
+    "lines": [],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "5YY",
+    "lines": [],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "10Y",
+    "lines": [],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "30Y",
+    "lines": [],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "ZT",
+    "lines": [
+     {
+      "line": "R1-04",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "ZF",
+    "lines": [
+     {
+      "line": "R1-04",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-18",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "ZN",
+    "lines": [
+     {
+      "line": "R1-04",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-12",
+      "role": "feature leg"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-18",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "ZB",
+    "lines": [
+     {
+      "line": "R1-04",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-18",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "MZC",
+    "lines": [],
+    "siblings": [
+     "XC",
+     "ZC"
+    ],
+    "sibling_lines": [
+     "R1-08",
+     "R1-11",
+     "R1-12",
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19"
+    ]
+   },
+   {
+    "code": "MZS",
+    "lines": [],
+    "siblings": [
+     "XK",
+     "ZS"
+    ],
+    "sibling_lines": [
+     "R1-08",
+     "R1-11",
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19",
+     "R1-20",
+     "R1-21"
+    ]
+   },
+   {
+    "code": "MZW",
+    "lines": [],
+    "siblings": [
+     "XW",
+     "ZW"
+    ],
+    "sibling_lines": [
+     "R1-08",
+     "R1-11",
+     "R1-13"
+    ]
+   },
+   {
+    "code": "MZL",
+    "lines": [],
+    "siblings": [
+     "ZL"
+    ],
+    "sibling_lines": [
+     "R1-08",
+     "R1-11",
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19",
+     "R1-20",
+     "R1-21"
+    ]
+   },
+   {
+    "code": "MZM",
+    "lines": [],
+    "siblings": [
+     "ZM"
+    ],
+    "sibling_lines": [
+     "R1-08",
+     "R1-11",
+     "R1-13",
+     "R1-20",
+     "R1-21"
+    ]
+   },
+   {
+    "code": "XC",
+    "lines": [],
+    "siblings": [
+     "MZC",
+     "ZC"
+    ],
+    "sibling_lines": [
+     "R1-08",
+     "R1-11",
+     "R1-12",
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19"
+    ]
+   },
+   {
+    "code": "XK",
+    "lines": [],
+    "siblings": [
+     "MZS",
+     "ZS"
+    ],
+    "sibling_lines": [
+     "R1-08",
+     "R1-11",
+     "R1-13",
+     "R1-15",
+     "R1-16",
+     "R1-19",
+     "R1-20",
+     "R1-21"
+    ]
+   },
+   {
+    "code": "XW",
+    "lines": [],
+    "siblings": [
+     "MZW",
+     "ZW"
+    ],
+    "sibling_lines": [
+     "R1-08",
+     "R1-11",
+     "R1-13"
+    ]
+   },
+   {
+    "code": "ZC",
+    "lines": [
+     {
+      "line": "R1-08",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-12",
+      "role": "feature leg"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [
+     "MZC",
+     "XC"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "ZS",
+    "lines": [
+     {
+      "line": "R1-08",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     },
+     {
+      "line": "R1-20",
+      "role": "conditioning data (MBP-1)"
+     },
+     {
+      "line": "R1-21",
+      "role": "input"
+     }
+    ],
+    "siblings": [
+     "MZS",
+     "XK"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "ZW",
+    "lines": [
+     {
+      "line": "R1-08",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     }
+    ],
+    "siblings": [
+     "MZW",
+     "XW"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "ZL",
+    "lines": [
+     {
+      "line": "R1-08",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     },
+     {
+      "line": "R1-20",
+      "role": "closed by decision, skipped"
+     },
+     {
+      "line": "R1-21",
+      "role": "input"
+     }
+    ],
+    "siblings": [
+     "MZL"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "ZM",
+    "lines": [
+     {
+      "line": "R1-08",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-20",
+      "role": "measured"
+     },
+     {
+      "line": "R1-21",
+      "role": "traded"
+     }
+    ],
+    "siblings": [
+     "MZM"
+    ],
+    "sibling_lines": []
+   }
+  ],
+  "other_roots": [
+   {
+    "code": "ES",
+    "lines": [],
+    "siblings": [
+     "MES"
+    ],
+    "sibling_lines": [
+     "R1-01",
+     "R1-02",
+     "R1-10"
+    ]
+   },
+   {
+    "code": "MES",
+    "lines": [
+     {
+      "line": "R1-01",
+      "role": "traded"
+     },
+     {
+      "line": "R1-02",
+      "role": "traded"
+     },
+     {
+      "line": "R1-10",
+      "role": "signal leg"
+     }
+    ],
+    "siblings": [
+     "ES"
+    ],
+    "sibling_lines": []
+   },
+   {
+    "code": "TN",
+    "lines": [
+     {
+      "line": "R1-04",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "UB",
+    "lines": [
+     {
+      "line": "R1-04",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "6B",
+    "lines": [
+     {
+      "line": "R1-05",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "6C",
+    "lines": [
+     {
+      "line": "R1-05",
+      "role": "traded"
+     },
+     {
+      "line": "R1-10",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "6J",
+    "lines": [
+     {
+      "line": "R1-05",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "6S",
+    "lines": [
+     {
+      "line": "R1-05",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "6N",
+    "lines": [
+     {
+      "line": "R1-05",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "HE",
+    "lines": [
+     {
+      "line": "R1-08",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "LE",
+    "lines": [
+     {
+      "line": "R1-08",
+      "role": "traded"
+     },
+     {
+      "line": "R1-11",
+      "role": "tested"
+     },
+     {
+      "line": "R1-13",
+      "role": "pooled (H1/H4)"
+     },
+     {
+      "line": "R1-15",
+      "role": "searched"
+     },
+     {
+      "line": "R1-16",
+      "role": "traded"
+     },
+     {
+      "line": "R1-19",
+      "role": "scope"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   }
+  ],
+  "unlisted_in_either": [
+   {
+    "code": "CRUDE_METALS_NATGAS",
+    "lines": [
+     {
+      "line": "R1-23",
+      "role": "commodity event drift direction, no product list given"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   },
+   {
+    "code": "MICROS12",
+    "lines": [
+     {
+      "line": "R1-17",
+      "role": "12 micros on E.21 owned paths (list in the E.22 freeze; not extracted)"
+     }
+    ],
+    "siblings": [],
+    "sibling_lines": []
+   }
+  ]
+ },
+ "lookup_by_family": [
+  {
+   "family": "Opening-range / breakout momentum (CP2 port; MES B-H1,B-H3,B-H4, Family H NR4/NR7/inside-day ORB)",
+   "lines": [
+    "R1-01",
+    "R1-03",
+    "R1-04",
+    "R1-05",
+    "R1-06",
+    "R1-07",
+    "R1-08",
+    "R1-09"
+   ],
+   "members": "members *-cp2-01 on every K cluster; MES B-*, H1-H5"
+  },
+  {
+   "family": "Open-to-first-half-hour / overnight-to-decision momentum into the close (CP1 port; E20 H6 rest-of-day; E16-H1 settlement-window)",
+   "lines": [
+    "R1-01",
+    "R1-03",
+    "R1-04",
+    "R1-05",
+    "R1-06",
+    "R1-07",
+    "R1-08",
+    "R1-09",
+    "R1-13",
+    "R1-14"
+   ],
+   "members": "*-cp1-01; H6 T1-T3; E16-H1,H4"
+  },
+  {
+   "family": "Prior-day close-location continuation or reversal (CP3 port; MES C-H3)",
+   "lines": [
+    "R1-01",
+    "R1-03",
+    "R1-04",
+    "R1-05",
+    "R1-06",
+    "R1-07",
+    "R1-08",
+    "R1-09"
+   ],
+   "members": "*-cp3-01; MES C-H3"
+  },
+  {
+   "family": "Overreaction / spike fade after an intraday move (ovr, C-H1,C-H2, VXN band)",
+   "lines": [
+    "R1-01",
+    "R1-03",
+    "R1-06",
+    "R1-07"
+   ],
+   "members": "K4-ovr-01, K5-ovr-01, K1-vxnband-01, MES C-H*"
+  },
+  {
+   "family": "Scheduled macro / event windows: FOMC, Treasury auctions, ISM, API/EIA, NG storage, WASDE, LBMA fix, ECB/Tokyo fix",
+   "lines": [
+    "R1-01",
+    "R1-04",
+    "R1-05",
+    "R1-06",
+    "R1-07",
+    "R1-08"
+   ],
+   "members": "K2 aucpre/aucpost/fomcpost/predrift; K3 ldnrev/ldnmom/ecbfix/tky*; K4 ngpre/apipre/eia*; K5 preauc/pmfix/fomc; K6 wasde*"
+  },
+  {
+   "family": "Calendar: month-end, turn of the month, weekend, overnight / European-open drift",
+   "lines": [
+    "R1-01",
+    "R1-04",
+    "R1-13",
+    "R1-16",
+    "R1-18"
+   ],
+   "members": "K2-monthend-01; E16-H2; E21 T3; MES A-H1,A-H3,E-H4"
+  },
+  {
+   "family": "Volatility-regime gates, range compression, gaps, sizing",
+   "lines": [
+    "R1-01",
+    "R1-03"
+   ],
+   "members": "MES D-H1..D-H4; K1-vxnband-01"
+  },
+  {
+   "family": "Cross-market relationships: equity flight to gold, oil/CAD, weekend bitcoin, soybean crush gap",
+   "lines": [
+    "R1-08",
+    "R1-10"
+   ],
+   "members": "K8-*; K6-crushgap-01"
+  },
+  {
+   "family": "Crypto (MBT) rules",
+   "lines": [
+    "R1-09",
+    "R1-10"
+   ],
+   "members": "K7-*; K8-wkndbtc-01"
+  },
+  {
+   "family": "ML pooled-feature or model search at 60 minutes, 120 minutes, to flat",
+   "lines": [
+    "R1-11",
+    "R1-12",
+    "R1-15",
+    "R1-21"
+   ],
+   "members": "Gate 0 (192+81), C1/C1b M1, E20S-01..45, E33 logit/LightGBM"
+  },
+  {
+   "family": "Trend / TSMOM / trend blend and equity turn of month (multi-day)",
+   "lines": [
+    "R1-16",
+    "R1-17",
+    "R1-18"
+   ],
+   "members": "E21 T1-T4, E22-F1, E23"
+  },
+  {
+   "family": "Intraday triggers held 5 and 20 days",
+   "lines": [
+    "R1-18"
+   ],
+   "members": "E23-MEZFh5/MEZNh5/MEZBh5/H6NQh5/H6NQh20"
+  },
+  {
+   "family": "Passive spread capture / resting limit orders (one lot, trade-through)",
+   "lines": [
+    "R1-02",
+    "R1-20"
+   ],
+   "members": "C-H4/C6; E.31 ZM pilot; QM and ZL by decision"
+  },
+  {
+   "family": "Order flow and book state on ZM at 5-60 minutes; crush residual; ZS/ZL propagation; own price path",
+   "lines": [
+    "R1-21"
+   ],
+   "members": "E33 sets S1-S5"
+  },
+  {
+   "family": "Published-effect census on 17 roots (intraday)",
+   "lines": [
+    "R1-15",
+    "R1-19"
+   ],
+   "members": "E.20 Part A, E.25 re-dig"
+  }
+ ],
+ "type_counts": {
+  "intraday_screen_confirm": 1,
+  "passive_execution": 1,
+  "intraday_screen": 8,
+  "ml_search": 2,
+  "replication": 1,
+  "base_rule_batch": 1,
+  "intraday_test": 1,
+  "multiday": 2,
+  "forward_registered_parked": 1,
+  "intraday_closure_umbrella": 1,
+  "passive_execution_measured": 1,
+  "directional_search": 1,
+  "product_decision": 1,
+  "closed_directions_no_trials": 1
+ },
+ "ambiguities_for_lead": [
+  "V49 scope (R1-22): headed \"For the passive limit-order direction\"; whether NQ is closed for directional market-order use is not stated.",
+  "V38 scope (R1-15, R1-19): V38 says \"intraday program on Topstep is closed\"; V45 item 4 says \"closure of the intraday program (V38) stays in place\" without \"on Topstep\".",
+  "V39 / V41 scope (R1-16, R1-18): \"no further trend variant on 2010-2024\" and \"no variant ... tested on these windows\" bind windows; V41 keeps W_cf and holdout-2 for a stronger prior.",
+  "V43 vs ledger (R1-17): V43 calls E22-F1 \"parked, unregistered, N 538\"; ledger r007-E22 registered it (N 533). It has no outcome; counted in N, not a closed line.",
+  "E.25 shortlist (R1-19): noise-area MNQ (V34 item 4 dropped it as \"unsized\"), the 3rd-Friday spike and the two ZN drifts were never tested; V45 lists the last three as exceptions to V38. Closed or open is for the lead.",
+  "V27 (R1-23): C2 GEX late-session momentum stopped at its power rule before any test; \"stays stopped with no rerun planned\".",
+  "docs/STAGES.md:260 still lists \"Stage E.3b onward\" (K2 confirmation and later cluster confirmations) as planned; V40 (DECISIONS:728-729) closes Stage E intraday clusters. K1, K2, K3 (except ldnrev), K6 (except limitcont), K7 had no confirmation.",
+  "Counts: K5 inventory has 11 rows, STAGES counts 9 trials (N 114 -> 123); K3 30 rows vs 27 counted; K6 inventory excludes 4 of 27 though 27 counted. N ladder (STAGES) used for counts.",
+  "E16-H2/H3: V28 (DECISIONS:524) says they hold overnight; E.16 overlap audit names intraday K2 members as closest.",
+  "MES/ES/other roots are outside the 47-code universe (spec section 0) but are closed lines R1-01, R1-10 (leg)."
+ ]
+}

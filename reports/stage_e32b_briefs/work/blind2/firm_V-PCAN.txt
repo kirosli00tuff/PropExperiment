@@ -1,0 +1,109 @@
+FIRM V-PCAN | modelled_plan: plan P1 (50K)
+lookup_date: {"F2_refetch": "2026-10-28 (FirmRules, PDT; page fetch times per item)", "E28": "2026-10-21", "firm_note": "no change detectable (no permitted capture after 2026-10-14); evaluation MLL lock wording conflict noted"}
+
+#### A_facts 8
+-- I-6910816 | automation.bots_allowed | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) | binds: evaluation and funded stages (as the text states)
+   value: yes, own non-HFT bots, eval and funded
+   quote: At V-PCAN, we allow the use of bots and algorithms under certain conditions:
+-- I-9347528 | automation.api | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) | binds: evaluation and funded stages (as the text states)
+   value: platform W-BTVV API only on LIVE funded; none in eval/sim funded; platform W-PCBM API unstated; no platform W-MGTI
+   quote: The platform W-BTVV API is only available for live-stage account(s). It is not available for evaluation or sim funded accounts.
+-- I-9054740 | automation.order_rate_limit | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) | binds: plan-wide: no stage distinction stated (applies to the modelled plan's evaluation and funded stages)
+   note: HFT banned without threshold
+-- I-4228654 | automation.min_hold | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) | binds: evaluation and funded stages (as the text states)
+   value: 10 s rule (>50% trades and profit), funded payout gate
+   quote: This rule applies to funded accounts only. It does not apply during an evaluation.
+   note: news article says it also gates evaluation activation: conflict
+-- I-5030482 | automation.sim_exploit | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) | binds: plan-wide: no stage distinction stated (applies to the modelled plan's evaluation and funded stages)
+   value: prohibited
+   quote: exploitation of simulated conditions
+-- I-6411270 | funded.microscalping | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) | binds: funded stage(s) (as the text states)
+   value: >50% of trades and >50% of profit from holds >10 s, payout gate
+   quote: Over 50% of your trades are longer than 10 seconds / Over 50% of your profit must come from trades held longer than 10 seconds.
+-- I-2445725 | platform.brokers | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) | binds: plan-wide: no stage distinction stated (applies to the modelled plan's evaluation and funded stages)
+   value: ["platform W-BTVV", "platform W-PCBM", "platform W-EXVY"]
+   quote: V-PCAN supports three broker connections: platform W-BTVV, platform W-PCBM, and platform W-EXVY.
+-- I-8591560 | automation | date: fetched 2026-10-29T06:21:29Z UTC | ver: full text (firm page) | binds: evaluation and funded stages (as the text states)
+   value: {"evaluation": "allowed (own, non-HFT, not shared)", "funded": "allowed", "api": "platform W-BTVV API only on live-stage account(s); none in evaluation or sim funded (E.28, products page)", "hft": "not allowed (undefined)", "min_hold": "10 s rule (>50% of trades and profit), funded payout gate", "order_rate_limit": null, "changes_since_2026-10-21": "none detectable (no capture after 2026-10-14)"}
+   quote: HFT Bots: High-frequency trading bots not allowed Algorithmic Trading Allowed if: - You own the strategy exclusively - Not shared with other traders/firms - Not high-frequency trading - Can prove ownership if requested
+   old_value_e28: own non-HFT bots in eval and funded; platform W-BTVV API live only
+   changed_since_e28: False
+
+#### R_facts_firm_wide 7
+-- I-5502425 | restrictions.news | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) | binds: plan-wide: no stage distinction stated (applies to the modelled plan's evaluation and funded stages)
+   value: none
+   quote: We do not have any rules against or guidelines around trading news events.
+-- I-8751774 | restrictions.product_specific | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) | binds: plan-wide: no stage distinction stated (applies to the modelled plan's evaluation and funded stages)
+   value: none found
+   note: EUREX platform W-BTVV only; hedging rule firm-wide
+-- I-0143481 | restrictions.hours | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) | binds: plan-wide: no stage distinction stated (applies to the modelled plan's evaluation and funded stages)
+   value: Globex 18:00-17:00 ET; flat by 16:45 ET; no overnight or weekend holds
+   quote: A trading day runs from 6:00 PM ET to 5:00 PM ET the next calendar day.
+-- I-4794371 | plan.flat_by | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) | binds: plan-wide: no stage distinction stated (applies to the modelled plan's evaluation and funded stages)
+   value: 16:45 ET (12:59 ET holiday early close)
+   quote: Close all positions by 4:45 PM Eastern Time (Monday-Friday)
+-- I-0428370 | news_windows | date: fetched 2026-10-29T06:20:54Z UTC | ver: full text (firm page) | binds: evaluation and funded stages (as the text states)
+   value: {"events": [], "note": "no news rule at all; evaluation and funded"}
+   quote: We do not have any rules against or guidelines around trading news events.
+   note: Capture 2026-06-24; E.28 mirror copy of 2026-10-21 has the same sentence.
+   old_value_e28: none
+   changed_since_e28: False
+-- I-3808624 | flat_by_close | date: fetched 2026-10-29T06:21:29Z UTC | ver: full text (firm page) | binds: plan-wide: no stage distinction stated (applies to the modelled plan's evaluation and funded stages)
+   value: {"time": "16:45", "zone": "ET", "holiday_early_close": "12:59 ET", "reopen": "18:00 ET Sun-Thu", "auto_close": "positions left open are closed by V-PCAN, no failure"}
+   quote: Close all positions by 4:45 PM Eastern Time (Monday-Friday) Holiday Early Close Days: Close all positions by 12:59 PM Eastern Time ... Any positions left open when the market closes will be automatically closed by V-PCAN.
+   old_value_e28: 16:45 ET (12:59 ET holiday early close)
+   changed_since_e28: False
+-- I-9580140 | overnight | date: fetched 2026-10-29T06:21:29Z UTC | ver: full text (firm page) | binds: evaluation and funded stages (as the text states)
+   value: {"evaluation": false, "funded": false, "weekend": false}
+   quote: All positions must be closed before the market closes each day. No swing trading or holding positions overnight is allowed.
+   old_value_e28: no overnight or weekend holds
+   changed_since_e28: False
+
+#### Rel_facts 8
+-- I-9843044 | reliability.operating_since | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) 
+   value: <= 2022-12-05
+   quote: V-PCAN – Accessible trading education and funding
+   note: interview says futures prop launched 2024 (pointer)
+-- I-8403831 | reliability.regulatory_actions | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) 
+   value: none found
+   note: Firecrawl gov search + WebSearch; NFA BASIC unread; absence is a gap
+-- I-8308966 | reliability.disputes_12m | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) 
+   value: review-site reports only (pointer)
+   note: [ref], PropFirmMatch [snippet]
+-- I-3748198 | reliability.rule_changes_12m | date: as of E.28 lookup 2026-10-21 (FirmRules 2026-10-28: unchanged unless a later item says so) | ver: full text (firm page) 
+   value: ["V-PCAN 3.0 (~2026-04): subscriptions ended, ~3% price rise, plan P2 50K target 2,500->3,000", "plan P1 eval consistency removed (2026-10)", "plan P1 100K/150K reset fees up (2026-10)", "K-LRVK fee 6.00->5.98", "VPS clause / Risk & Compliance FAQ (~2026-09)"]
+   note: see md for sources
+-- I-8936355 | rel_founded | date: reused from E.28 (lookup 2026-10-21) | ver: full text (firm page) 
+   value: <= 2022-12-05 (home page capture)
+   old_value_e28: same
+   changed_since_e28: False
+-- I-4305239 | rel_payout_disputes_12m | date: reused from E.28 (lookup 2026-10-21) | ver: full text (firm page) 
+   value: review-site reports only (pointers); no firm or regulator evidence
+   old_value_e28: same
+   changed_since_e28: False
+-- I-1314511 | rel_rule_changes_12m | date: fetched 2026-10-29T06:20:28Z UTC | ver: full text (firm page) 
+   value: ["V-PCAN 3.0 (~2026-04): subscriptions ended, ~3% price rise, plan P2 50K target 2,500 -> 3,000", "plan P1 evaluation consistency removed (2026-10)", "plan P1 payout min balance 52,100 -> 53,000 and new caps for accounts bought from 2025-09-12"]
+   quote: Account Balance Needed for plan P1 purchased before September 12, 2025 at 8:00 AM EST:
+   note: Third item is dated 2025-09-12, just outside or at the edge of the 12-month window before 2026-10-28.
+   old_value_e28: E.28 list
+   changed_since_e28: False
+-- I-9130969 | rel_regulatory | date: reused from E.28 (lookup 2026-10-21) | ver: full text (firm page) 
+   value: none found
+   note: Search-negative (pointer-level).
+   old_value_e28: none found
+   changed_since_e28: False
+
+#### plan_facts 1
+-- I-9780314 | plan | date: fetched 2026-10-29T06:21:29Z UTC | ver: full text (firm page) 
+   value: plan P1 50K (evaluation with EOD trailing drawdown and DLL; simulated funded)
+   quote: A plan P1 account with a $2,000 trailing drawdown locks its floor at $50,100 once its end-of-day balance reaches $52,100.
+   note: V-PCAN terms forbid robots/scrapers: Wayback captures only. Newest captures: plan P1 eval 2026-10-14, payout 2026-10-11, essential rules 2026-10-12; products/news/fees/times captures are June-July 2026, older than E.28 (2026-10-21 mirror fetches), so E.28 values are carried for those.
+   old_value_e28: plan P1 50K
+   changed_since_e28: False
+
+#### payout_context 1
+-- I-9319674 | payout_qualification | date: fetched 2026-10-29T06:20:28Z UTC | ver: full text (firm page) 
+   value: {"winning_days": 5, "min_profit_per_winning_day": 150, "consistency": 0.35, "min_balance_to_request": 53000, "caps": [1500, 2000, 2500, 3000], "min_payout": 500, "microscalping_gate": ">50% of trades AND profits from holds > 10 s (funded only)", "min_activity": "at least 1 trade per week (eval and funded)", "eval_consistency": null, "eval_min_days": 1}
+   quote: Abide by the 35% Consistency Rule ... 5 or more of the Trading Days must show a profit greater than: ... $150 in profit for 50k accounts ... $50,000 $53,000
+   old_value_e28: 5 winning days, 35% consistency, min balance 53,000, caps 1500/2000/2500/3000
+   changed_since_e28: False

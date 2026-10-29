@@ -16,15 +16,19 @@ The program now looks for DIRECTIONAL signals (V50 item 2, V51), executed
 with market orders or with limit orders priced under the trade-through
 rule. This stage builds a new two-layer ranking for that purpose. It
 reuses E.28's verified facts wherever they still apply, adds the facts a
-directional ranking needs, and scores blind as E.28 did. It runs beside
-Stage E.32 and does not change it. If the rerank puts another contract
-above ZM, E.32/E.33 still finish on ZM (the user's thesis, V51), and the
-rerank sets the order of the products that follow.
+directional ranking needs, and scores blind as E.28 did. ZM's
+directional route is closed (E.33c, a verified clean negative), so the rerank sets which product, if any, the
+program tries next.
 
-No outcome is read, no strategy is tested, N stays 538, and no Databento
+It also answers a scope question the user raised after E.33's clean
+negative (2026-10-28): with costs this harsh, which holding times give a
+one-contract directional strategy the best chance? The user's prior is
+holds of multiple minutes to hours (step F5).
+
+No outcome is read, no strategy is tested, N stays 838, and no Databento
 call is made.
 
-Decisions in force: docs/DECISIONS.md V20 to V51. Binding: this prompt,
+Decisions in force: docs/DECISIONS.md V20 to V56. Binding: this prompt,
 V49 (NQ is dropped and is not scored; list it as excluded), V50, V37.
 E.28's spec reports/stage_e28_ranking_spec.md is the model for method,
 blinding and arithmetic, except where this prompt changes it.
@@ -39,19 +43,24 @@ Read first:
 - reports/E.31_RETURN.md sections 1 and 7
 - reports/stage_e31_inputs/planner_research_notes.md
 - reports/stage_e32_inputs/planner_research_soy_complex.md
+- reports/E.33c_RETURN.md sections 1 and 7 (the ZM clean negative; use
+  its cost and trade-count facts only)
 
-Lead: Opus 5.5, effort xhigh, Ultracode on (launched interactively on
-Max).
-- Readers are Opus high.
-- The blind scorer is Opus xhigh.
-- Reviews are Fable xhigh, each model confirmed from its transcript (V50
-  item 5). If Fable is unavailable or the transcript shows another model,
-  use Opus 5.5 xhigh in a fresh context and say so. Never Sonnet.
-- At most 4 workers at once, because E.32 runs beside this stage.
+Lead: Opus 5.5, effort max. Ultracode off unless the lead judges a wave
+of parallel readers needs it. Routing per V55:
+- Readers: Opus high, or Sonnet for narrow lookups.
+- Extraction and file parsing: Haiku.
+- The blind scorer: Opus xhigh.
+- The RankingReviewer: Fable xhigh, model confirmed from its
+  transcript; if Fable is unavailable, use Opus xhigh in a fresh
+  context and say so.
+- At most 6 workers at once.
 
-Time: launched about 23:00 PDT on 2026-10-26. The return is due by 23:00
-PDT on 2026-10-27. Checkpoint reports/stage_e32b_STATE.md after every
-step, and resume from it after any usage limit or reboot.
+Time: launched about 22:15 PDT on 2026-10-28, with no fixed end. Never
+sacrifice quality to save usage. Checkpoint reports/stage_e32b_STATE.md
+after every step, and resume from it after any usage limit or reboot.
+When the lead's context passes about 300k tokens at a quiet point, it
+writes a RESUME HERE block, adds "READY FOR WIPE <time>", and stops.
 
 Do not stop to ask, and do not use AskUserQuestion. Decide, log the choice
 under Open choices in the return document, and continue.
@@ -70,7 +79,9 @@ Layer 1, contract (directional suitability):
   in ticks (the firm-independent part: 1 spread tick, from a sourced
   median where one exists, plus a slippage allowance stated in the spec)
   divided by sigma_h, the typical absolute move over horizon h in ticks.
-  Use h = 15, 60 and 240 minutes and the day session. Score each h by
+  Use h = 5, 15, 30, 60, 120 and 240 minutes, and open to close of the
+  main session. The score averages h = 30 to 240 minutes, the user's
+  prior band. Score each h by
   fixed bands, then average. Lower cost per sigma scores higher. This
   criterion replaces E.28's volatility-per-tick criterion as the main
   driver.
@@ -166,6 +177,31 @@ F3 Volatility at horizons (script):
 F4 FactTable (Opus high): build the masked fact table (contracts and
 firms coded, as in E.28) and the mask key.
 
+F5 Holding-time scope (script plus lead; facts only, no outcome). For
+every contract that passes Layer 1, and every top-15 pair:
+- the cost-per-sigma curve over h = 1 minute to the session close (from
+  F3's statistics, extended to 1, 2 and 5 minutes and the full session);
+- the round-trip fee per firm in ticks;
+- the hit rate and the gross edge per trade that a signal needs at each
+  h to net 1 tick and to break even;
+- the number of non-overlapping trades per day and per year at each h,
+  and the minimum detectable edge at each h over 39 months of discovery
+  and over a 43-month test, at the program's usual power (80%, with the
+  DSR at the current N 838);
+- prop-rule limits per firm by horizon: the daily loss limit against
+  sigma_h at one contract, trailing drawdown, flat-by-close and
+  overnight rules, news windows, and session pauses (ZM's 07:45-08:30 CT
+  pause, for example);
+- the overnight hold: which firms allow it, at what margin and rules.
+  Report it beside the intraday holds, not mixed with them.
+Write reports/stage_e32b_holding_scope.md. It gives each top pair's
+recommended holding band (for example, 30 to 120 minutes) with the
+reason: where cost per sigma flattens, against where power and the prop
+rules bind. It also tests the user's prior that minutes-to-hours holds
+are best, and says plainly where the facts disagree. E.33's results (cost
+and trade-count facts only, from its return) may be cited; no new outcome
+read.
+
 ============================================================
 STEP 3: BLIND SCORING, ECONOMICS, TABLE
 ============================================================
@@ -199,8 +235,8 @@ This stage does NOT:
   beyond F3's volatility statistics in the standard window
 - call Databento; prices per month come from published pricing or E.31's
   ledger
-- touch E.32's or E.33's files; this stage writes only stage_e32b_*
-  files, plus its return
+- change E.32's or E.33's files (reading them is fine); this stage writes
+  only stage_e32b_* files, plus its return
 - register anything; N stays 538
 - touch live/, ops/, any TopstepX credential or the ProjectX API
 - print, copy or log any key. REGISTRATION.md stays 0 bytes.
@@ -223,14 +259,17 @@ is still running.
 
 Write:
 - reports/stage_e32b_ranking.md (the table and its reading);
+- reports/stage_e32b_holding_scope.md;
 - reports/E.32b_RETURN.md;
 - one progress.md entry;
 - one docs/STAGES.md line;
 - one final commit "Stage E.32b directional rerank". Do not push.
 
 The return's fixed sections:
-1. Summary, at most 250 words. Cover:
+1. Summary, at most 300 words. Cover:
    - the new top 10 pairs;
+   - the recommended holding band per top pair, and whether the
+     minutes-to-hours prior holds;
    - where ZM, ZL, QM, MGC and the micros landed, and why;
    - the next products after ZM.
 2. Guardrail evidence.

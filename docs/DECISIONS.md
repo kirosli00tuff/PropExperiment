@@ -1134,3 +1134,25 @@
     model and effort are stated before it is spawned, as CLAUDE.md
     requires.
   - Ultracode may be used. Checks are never cut to save usage.
+- 2026-10-28 (user, planning chat, 21:36-22:05 PDT): V56. E.33c
+  (2661261) accepted.
+  1. The ZM directional search (r009-E33, 300 configurations) is a clean
+     negative:
+     - Tier A is empty: no configuration had a positive mean net, the
+       best lost 1.098 ticks a trade, the best daily Sharpe was 0.048,
+       DSR at most 0.025, and BH and Holm reject 0;
+     - Fable recomputed it independently and a Fable StatsReview passed
+       it.
+     ZM's directional route at 5-60 minute holds is closed. There is no
+     E.34 and no purchase. The 2017-05..2020-11 window stays sealed for a
+     future hypothesis family. N = 838.
+  2. Limit orders as the execution of a directional signal stay open
+     (V50 item 2; E.32 M6: market orders are primary, Rithmic queue
+     limits a measured "maybe"). Order-book direction is not closed for
+     other products.
+  3. Next: Stage E.32b, the directional rerank, with an added holding-time
+     scope (step F5). The user's prior: given the costs, holds of
+     multiple minutes to hours are best. E.32b tests that against cost
+     per sigma, power and prop rules by horizon. It runs under V55
+     routing (lead Opus max).
+  4. E.32 D2 stays open until a test is registered.

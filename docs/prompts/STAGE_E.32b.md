@@ -216,6 +216,78 @@ STEP 3: BLIND SCORING, ECONOMICS, TABLE
 - Run sensitivity variants for every lead ruling that changes the top 5.
 
 ============================================================
+STEP 3b: BUILD RECOMMENDATIONS (THE STAGE'S MAIN OUTPUT; user, 2026-10-28)
+============================================================
+
+The goal is a short list of the most probable and best options to build
+a strategy around. Write reports/stage_e32b_recommendations.md.
+
+R1 Closed-lines filter. List everything the program has already closed,
+so that no recommendation re-tests it:
+- the 538 bar-based trials by family (E.23 inventory);
+- passive spread capture (V50);
+- the ZM 5-60 minute directional families (E.33c);
+- NQ (V49);
+- the intraday closure of V38, with its V45 exceptions.
+
+R2 Candidate combinations. Build them as product x firm x idea family x
+holding band (from F5).
+- Idea families come from the methods briefs (E.28, E.32), the planner
+  research inputs, and the readers' F2 structural and event facts. For
+  example:
+  - event drift (EIA for crude, USDA, macro releases for rates and
+    gold);
+  - cross-market or spread reversion (crush, cracks, calendar spreads,
+    mini/full pairs);
+  - session handoffs;
+  - order-book state at longer horizons.
+- Each combination states:
+  - its mechanism and why the edge could exist at retail size;
+  - its evidence quality;
+  - its overlap with R1;
+  - the minimum edge per trade in ticks and as a hit rate at that firm's
+    costs (market orders; a Rithmic queue-limit variant only where the
+    route admits it);
+  - the expected trades a year, and the power over a discovery window
+    and a test window;
+  - the prop fit (DLL against sigma at that hold, flat-by-close,
+    overnight, news rules, payout reachability at one contract, per
+    E.29);
+  - the data needed: schema, discovery and test windows, what the
+    program owns or has sealed, what is spent, the approximate Databento
+    cost.
+
+R3 Rank the combinations by a hashed rule written before scoring. It
+weighs:
+- the plausibility of the mechanism and the evidence;
+- distance from closed lines;
+- the minimum edge relative to sigma;
+- power;
+- prop fit;
+- data cost and access to a clean test window.
+
+Pooled designs across products that share a mechanism are allowed as
+candidates, with the effective-sample caveat from E.28.
+
+R4 Recommendations: the top 3 to 5 build candidates. Each gets:
+- a one-paragraph case;
+- the pre-registration outline (families, labels or horizons, models,
+  windows);
+- the data purchase plan with quotes to obtain;
+- kill criteria;
+- an honest prior probability of passing a sealed test, with its
+  reasoning.
+Also add:
+- the best non-prop alternative (own broker account), if the facts
+  favour it;
+- a stop rule for the whole directional program: what result would mean
+  the program should stop looking.
+
+R5 The RankingReviewer (Step 4) also reviews R1 to R4: the arithmetic,
+the closed-line overlaps, the realism of the priors, and that no
+outcome was read.
+
+============================================================
 STEP 4: REVIEW
 ============================================================
 
@@ -260,6 +332,7 @@ is still running.
 Write:
 - reports/stage_e32b_ranking.md (the table and its reading);
 - reports/stage_e32b_holding_scope.md;
+- reports/stage_e32b_recommendations.md (the main output);
 - reports/E.32b_RETURN.md;
 - one progress.md entry;
 - one docs/STAGES.md line;
@@ -271,7 +344,9 @@ The return's fixed sections:
    - the recommended holding band per top pair, and whether the
      minutes-to-hours prior holds;
    - where ZM, ZL, QM, MGC and the micros landed, and why;
-   - the next products after ZM.
+   - the next products after ZM;
+   - the top build recommendations, with their priors and kill
+     criteria.
 2. Guardrail evidence.
 3. Results.
 4. Delegation record, with each reviewer's confirmed model.

@@ -1170,3 +1170,26 @@
      and D3 (power rule instead of V31's cost gate) must be decided
      before any ZL registration. D1 and D4 follow E.32b's
      recommendations until the user says otherwise.
+- 2026-10-29 (user, planning chat, 16:40 PDT): V58. E.34 (9a8916a)
+  accepted. The user said yes to E.34's recommendations and asked to keep
+  running stages until one needs Databento credits.
+  1. E.32b-D2: yes. ZL's single sealed read (2017-05..2020-11) goes to
+     the ZL program, together with item 3.
+  2. E.32b-D3: yes, for this program only. Discovery is judged by the
+     power rule (protocol P7, P10.2), not V31's cost gate. K0 does not
+     fire.
+  3. E.32-D2: amended for the ZL test. The program DSR at the test uses
+     V = 1/(T_test - 1). Holm, the daily t, PBO and check (2) are
+     unchanged. This is protocol v1.1: v1.0 plus the P9.4 amendment and
+     the status lines, nothing else.
+  4. OC-5: option A. All 200 configurations run as ML under V43. N rises
+     from 838 to 1038 at registration.
+  5. The test purchase is deferred. The run stage stops before any quote.
+     A quote needs a funded account slot DATABENTO_API_KEY4, added by the
+     user, and the user's approval of the quoted spend.
+  6. E.32b D1 and D4 follow E.32b's recommendations (YM scope as V31;
+     2024-03-01 onward stays closed). D5 is met by Stage E.36
+     (docs/prompts/STAGE_E.36.md): amendment, registration and discovery
+     search on owned data, ending at K1, K2 or the purchase request.
+  7. If E.36 returns a clean negative, the directional program stops
+     (E.32b section 6). The next stage that needs no credits is E.35.
